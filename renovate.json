@@ -1,0 +1,23 @@
+{
+  "extends": ["config:base"],
+  "packageRules": [
+    {
+      "matchManagers": ["npm"],
+      "automerge": true,
+      "automergeType": "pr",
+      "automergeStrategy": "merge-commit"
+    },
+    {
+      "matchManagers": ["pnpm"],
+      "automerge": true,
+      "automergeType": "branch"
+    },
+    {
+      "matchPackagePatterns": ["prisma", "next", "neon"],
+      "automerge": true
+    }
+  ],
+  "prCreation": "not-pending",
+  "rebaseWhen": "behind-base-branch",
+  "ignoreTests": false
+}
