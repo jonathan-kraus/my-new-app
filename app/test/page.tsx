@@ -5,7 +5,9 @@ export default function TestPage() {
         Weather Dashboard
       </h1>
 
-      <p className="text-xl text-gray-300 mb-6">Real-time weather for all monitored locations</p>
+      <p className="text-xl text-gray-300 mb-6">
+        Real-time weather for all monitored locations
+      </p>
 
       <div className="text-2xl">Hello</div>
     </div>

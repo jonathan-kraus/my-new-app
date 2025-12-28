@@ -1,23 +1,36 @@
 {
   "extends": ["config:base"],
+  "prCreation": "not-pending",
+  "rebaseWhen": "behind-base-branch",
+  "ignoreTests": false,
+
   "packageRules": [
     {
+      "matchManagers": ["npm", "pnpm"],
+      "automerge": true
+    },
+    {
       "matchManagers": ["npm"],
-      "automerge": true,
       "automergeType": "pr",
       "automergeStrategy": "merge-commit"
     },
     {
       "matchManagers": ["pnpm"],
-      "automerge": true,
       "automergeType": "branch"
     },
     {
-      "matchPackagePatterns": ["prisma", "next", "neon"],
+      "matchPackagePatterns": ["next", "neon"],
       "automerge": true
+    },
+    {
+      "matchPackagePatterns": ["prisma", "@prisma/client"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true
+    },
+    {
+      "matchPackagePatterns": ["prisma", "@prisma/client"],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
     }
-  ],
-  "prCreation": "not-pending",
-  "rebaseWhen": "behind-base-branch",
-  "ignoreTests": false
+  ]
 }
