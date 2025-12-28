@@ -1,65 +1,59 @@
-"use server";
+'use server';
 
-import { prisma } from "@/lib/prisma";
-import { auth } from "@neon/auth"; // or your auth provider
+import { db } from '@/lib/db';
+import { auth } from '@/auth';
 
 // Get all visible notes for the current user
 export async function getNotes() {
-  const session = await auth();
-  if (!session) return [];
+  const user = await auth.user();
 
-  return prisma.note.findMany({
+  if (!user) return [];
+
+  return db.note.findMany({
     where: {
-      authorId: session.user.id,
+      authorId: user.id,
       visible: true,
     },
-    orderBy: { createdAt: "desc" },
+    orderBy: { createdAt: 'desc' },
   });
 }
 
-// Get a single note (RLS will enforce access)
 export async function getNoteById(id: string) {
-  return prisma.note.findUnique({
+  return db.note.findUnique({
     where: { id },
   });
 }
 
-// Create a new note
 export async function createNote(data: { title: string; content?: string }) {
-  const session = await auth();
-  if (!session) throw new Error("Not authenticated");
+  const user = await auth.user();
 
-  return prisma.note.create({
+  if (!user) throw new Error('Not authenticated');
+
+  return db.note.create({
     data: {
       title: data.title,
-      content: data.content ?? "",
-      authorId: session.user.id,
+      content: data.content ?? '',
+      authorId: user.id,
     },
   });
 }
 
-// Update a note
-export async function updateNote(
-  id: string,
-  data: { title?: string; content?: string },
-) {
-  return prisma.note.update({
+export async function updateNote(id: string, data: { title?: string; content?: string }) {
+  return db.note.update({
     where: { id },
     data,
   });
 }
 
-// Soft-hide a note
 export async function hideNote(id: string) {
-  return prisma.note.update({
+  return db.note.update({
     where: { id },
     data: { visible: false },
   });
 }
 
-// Delete a note (optional)
 export async function deleteNote(id: string) {
-  return prisma.note.delete({
+  return db.note.delete({
     where: { id },
   });
 }
