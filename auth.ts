@@ -1,4 +1,5 @@
 export const runtime = 'nodejs';
+console.log('AUTH FILE LOADED');
 import { betterAuth } from 'better-auth';
 import { Pool } from 'pg';
 
@@ -14,8 +15,11 @@ export const auth = betterAuth({
 
   baseURL: process.env.AUTH_BASE_URL,
 
-  emailAndPassword: {
-    enabled: true,
+  providers: {
+    github: {
+      clientId: process.env.GITHUB_ID!,
+      clientSecret: process.env.GITHUB_SECRET!,
+    },
   },
 
   user: {

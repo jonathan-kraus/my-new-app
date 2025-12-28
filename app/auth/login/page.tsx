@@ -8,7 +8,7 @@ export default function LoginPage() {
       <form
         action={async (formData) => {
           'use server';
-          await auth.signIn.emailAndPassword({
+          await auth.api.emailPasswordSignIn({
             email: formData.get('email') as string,
             password: formData.get('password') as string,
           });
