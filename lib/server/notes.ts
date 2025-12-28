@@ -5,7 +5,10 @@ import { auth } from '@/auth';
 
 // Get all visible notes for the current user
 export async function getNotes() {
-  const user = await auth.user();
+  const session = await auth.api.getSession();
+  console.log('SESSION:', session);
+  const user = session?.user;
+  console.log('user:', user);
 
   if (!user) return [];
 
