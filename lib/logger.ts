@@ -1,5 +1,6 @@
 // lib/logger.ts - ONE CALL TO RULE THEM ALL
 import { db } from "@/lib/db";
+import type { CreateLogInput } from '@/lib/types';
 export interface LogMessage {
 	level: "debug" | "info" | "warn" | "error";
 	message: string;
@@ -43,7 +44,16 @@ async function logToClient(data: LogMessage): Promise<{ success: boolean }> {
 // SERVER logger (database)
 async function logToServer(data: LogMessage): Promise<{ success: boolean }> {
 	try {
-		await db.log.create({ data: enriched });
+		await db.log.create({
+      data: {
+        level: data.level,
+        message: data.message,
+        data: data.data || null,
+        userId: data.userId,
+        page: data.page,
+
+      } satisfies db.LogCreateInput['data'], // ✅ EXACT TYPE
+    });
 		console.log("[SERVER LOG]", data);
 		return { success: true };
 	} catch {
