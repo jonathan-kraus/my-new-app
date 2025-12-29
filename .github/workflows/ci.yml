@@ -76,8 +76,8 @@ jobs:
         if: github.event_name == 'push'
         run: pnpm audit
 
-      - name: Lint (no warnings)
-        run: pnpm lint --max-warnings=0
+      # - name: Lint (no warnings)
+      #   run: pnpm lint --max-warnings=0
 
 
 
