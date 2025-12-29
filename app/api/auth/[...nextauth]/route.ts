@@ -1,6 +1,7 @@
 // app/api/auth/[...nextauth]/route.ts ← EXPORT authOptions
 import NextAuth from "next-auth";
 import GitHub from "next-auth/providers/github";
+import { appLog } from '@/lib/logger';
 
 export const authOptions = {
   providers: [
@@ -11,6 +12,7 @@ export const authOptions = {
   ],
   secret: process.env.AUTH_SECRET!,
 };
+await appLog({ level: 'info', message: 'Prisma v7 working!', page: 'auth' });
 
 const handler = NextAuth(authOptions);
 

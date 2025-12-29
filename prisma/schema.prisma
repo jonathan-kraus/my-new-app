@@ -48,6 +48,26 @@ model verificationToken {
   expires    DateTime
   @@unique([identifier, token])
 }
+model Log {
+  id        String   @id @default(cuid())
+  level     LogLevel
+  message   String
+  data      Json?    // Flexible Record<string, any>
+  timestamp DateTime @default(now())
+  userId    String?
+  page      String?
+  sessionId String?  // Add for client tracking
+  ipAddress String?  // Add for analytics
+
+  @@map("logs")
+}
+
+enum LogLevel {
+  debug
+  info
+  warn
+  error
+}
 
 model Note {
   id        String   @id @default(cuid())
