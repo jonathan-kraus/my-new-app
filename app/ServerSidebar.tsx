@@ -2,10 +2,12 @@
 "use client"; // ✅ Client Component for hover effects
 
 import Link from "next/link";
-import Image from "next/image";
+import { signOut, useSession } from "next-auth/react"; // ✅ Add imports
 import { appLog } from "@/lib/logger";
-await appLog({ level: "info", message: "SideNav", page: "init" });
+appLog({ level: "info", message: "SideNav", page: "init" });
 export default function ServerSidebar() {
+	const { data: session } = useSession(); // ✅ Get session
+
 	return (
 		<aside
 			style={{
@@ -14,7 +16,7 @@ export default function ServerSidebar() {
 				color: "white",
 				height: "100vh",
 				display: "flex",
-				flexDirection: "column" as const,
+				flexDirection: "column",
 				boxShadow: "4px 0 20px rgba(0,0,0,0.1)",
 				borderRight: "1px solid rgba(255,255,255,0.1)",
 			}}
@@ -24,10 +26,10 @@ export default function ServerSidebar() {
 				<h1
 					style={{
 						fontSize: "1.875rem",
-						fontWeight: "900" as const,
+						fontWeight: "900",
 						backgroundImage: "linear-gradient(90deg, white 0%, #93c5fd 100%)",
-						WebkitBackgroundClip: "text" as const,
-						WebkitTextFillColor: "transparent" as const,
+						WebkitBackgroundClip: "text",
+						WebkitTextFillColor: "transparent",
 						margin: "0 0 0.5rem 0",
 					}}
 				>
@@ -51,38 +53,60 @@ export default function ServerSidebar() {
 
 			{/* User */}
 			<div style={{ padding: "1.5rem", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
-				<div
-					style={{
-						display: "flex",
-						alignItems: "center",
-						gap: "1rem",
-						padding: "1rem",
-						background: "rgba(255,255,255,0.15)",
-						borderRadius: "12px",
-						border: "1px solid rgba(255,255,255,0.2)",
-					}}
-				>
+				{session?.user ? (
 					<div
 						style={{
-							width: "48px",
-							height: "48px",
-							borderRadius: "50%",
-							background: "rgba(255,255,255,0.3)",
+							display: "flex",
+							alignItems: "center",
+							gap: "1rem",
+							padding: "1rem",
+							background: "rgba(255,255,255,0.15)",
+							borderRadius: "12px",
+							border: "1px solid rgba(255,255,255,0.2)",
+						}}
+					>
+						<div
+							style={{
+								width: "48px",
+								height: "48px",
+								borderRadius: "50%",
+								background: "rgba(255,255,255,0.3)",
+								display: "flex",
+								alignItems: "center",
+								justifyContent: "center",
+								fontSize: "1.25rem",
+							}}
+						>
+							👤
+						</div>
+						<div>
+							<p style={{ fontWeight: "600", margin: "0 0 0.25rem 0", fontSize: "0.95rem" }}>
+								{session.user.name || "User"}
+							</p>
+							<p style={{ margin: 0, fontSize: "0.8rem", opacity: 0.8 }}>{session.user.email}</p>
+						</div>
+					</div>
+				) : (
+					<a
+						href="/api/auth/signin/github"
+						style={{
 							display: "flex",
 							alignItems: "center",
 							justifyContent: "center",
-							fontSize: "1.25rem",
+							gap: "0.75rem",
+							padding: "1rem 1.5rem",
+							background: "rgba(255,255,255,0.2)",
+							borderRadius: "12px",
+							fontWeight: "600",
+							color: "white",
+							textDecoration: "none",
+							border: "2px solid rgba(255,255,255,0.3)",
 						}}
 					>
-						👤
-					</div>
-					<div>
-						<p style={{ fontWeight: "600" as const, margin: "0 0 0.25rem 0", fontSize: "0.95rem" }}>
-							Jonathan Kraus
-						</p>
-						<p style={{ margin: 0, fontSize: "0.8rem", opacity: 0.8 }}>jonat@example.com</p>
-					</div>
-				</div>
+						<span style={{ fontSize: "1.25rem" }}>⚡️</span>
+						<span>Sign in GitHub</span>
+					</a>
+				)}
 			</div>
 
 			{/* Navigation */}
@@ -91,7 +115,7 @@ export default function ServerSidebar() {
 					flex: 1,
 					padding: "1.5rem 1rem",
 					display: "flex",
-					flexDirection: "column" as const,
+					flexDirection: "column",
 					gap: "0.75rem",
 				}}
 			>
@@ -100,8 +124,8 @@ export default function ServerSidebar() {
 						padding: "0.5rem 0",
 						color: "rgba(255,255,255,0.6)",
 						fontSize: "0.75rem",
-						fontWeight: "600" as const,
-						textTransform: "uppercase" as const,
+						fontWeight: "600",
+						textTransform: "uppercase",
 						letterSpacing: "0.05em",
 					}}
 				>
@@ -129,19 +153,63 @@ export default function ServerSidebar() {
 				</Link>
 			</nav>
 
-			{/* Footer */}
-			<div style={{ padding: "1.5rem", borderTop: "1px solid rgba(255,255,255,0.1)" }}>
-				<p
+			{/* ✅ LOGOUT BUTTON */}
+			{session?.user && (
+				<div
 					style={{
-						fontSize: "0.75rem",
-						color: "rgba(255,255,255,0.6)",
-						textAlign: "center" as const,
-						margin: 0,
+						padding: "1rem 1.5rem",
+						borderTop: "1px solid rgba(255,255,255,0.1)",
+						marginTop: "auto",
 					}}
 				>
-					Powered by Neon & Next.js
-				</p>
-			</div>
+					<button
+						onClick={() => signOut({ callbackUrl: "/" })}
+						style={{
+							width: "100%",
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "center",
+							gap: "0.75rem",
+							padding: "0.875rem 1.25rem",
+							background: "rgba(239,68,68,0.2)",
+							color: "white",
+							border: "1px solid rgba(239,68,68,0.4)",
+							borderRadius: "12px",
+							fontWeight: "600",
+							fontSize: "0.95rem",
+							cursor: "pointer",
+							transition: "all 0.2s ease",
+						}}
+						onMouseEnter={(e) => {
+							e.currentTarget.style.background = "rgba(239,68,68,0.3)";
+							e.currentTarget.style.transform = "scale(1.02)";
+						}}
+						onMouseLeave={(e) => {
+							e.currentTarget.style.background = "rgba(239,68,68,0.2)";
+							e.currentTarget.style.transform = "scale(1)";
+						}}
+					>
+						<span>🚪</span>
+						<span>Logout</span>
+					</button>
+				</div>
+			)}
+
+			{/* Footer */}
+			{!session?.user && (
+				<div style={{ padding: "1.5rem", borderTop: "1px solid rgba(255,255,255,0.1)" }}>
+					<p
+						style={{
+							fontSize: "0.75rem",
+							color: "rgba(255,255,255,0.6)",
+							textAlign: "center",
+							margin: 0,
+						}}
+					>
+						Powered by Neon & Next.js
+					</p>
+				</div>
+			)}
 		</aside>
 	);
 }
