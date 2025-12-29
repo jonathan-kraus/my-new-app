@@ -1,25 +1,51 @@
-// app/layout.tsx
-import ServerSidebar from "@/app/components/ServerSidebar";
-import { ToasterClient } from "@/app/components/ToasterClient";
+import ServerSidebar from "./ServerSidebar";
+import { ToasterClient } from "./components/ToasterClient";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-	return (
-		<html lang="en">
-			<body className="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 min-h-screen antialiased">
-				{/* ✅ Flex container WRAPS both sidebar + main */}
-				<div className="flex min-h-screen">
-					<ServerSidebar />
-					<main className="flex-1 overflow-auto">
-						<div className="p-8 max-w-7xl mx-auto w-full">{children}</div>
-						<ToasterClient />
-					</main>
-				</div>
-				{/* ✅ Analytics/SpeedInsights outside flex */}
-				<Analytics />
-				<SpeedInsights />
-			</body>
-		</html>
-	);
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en">
+      <head>
+        <title>Weather Hub</title>
+      </head>
+      <body style={{
+        margin: 0,
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #f8fafc 0%, #e0f2fe 50%, #dbeafe 100%)',
+        fontFamily: '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif'
+      }}>
+        <div style={{ display: 'flex', height: '100vh' }}>
+          <ServerSidebar />
+          <main style={{
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column' as const,
+            overflow: 'hidden',
+            minWidth: 0,
+            background: 'rgba(255,255,255,0.9)',
+            backdropFilter: 'blur(10px)'
+          }}>
+            <div style={{
+              flex: 1,
+              overflowY: 'auto' as const,
+              padding: '2rem',
+              maxWidth: '1200px',
+              margin: '0 auto',
+              width: '100%'
+            }}>
+              {children}
+            </div>
+            <ToasterClient />
+          </main>
+        </div>
+        <Analytics />
+        <SpeedInsights />
+      </body>
+    </html>
+  );
 }
