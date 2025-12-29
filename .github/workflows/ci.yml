@@ -50,20 +50,20 @@ jobs:
           key: ${{ runner.os }}-pnpm-project-${{ hashFiles('**/package.json','**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-project-
-      - name: Generate Prisma Client
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: pnpm prisma generate
+      # - name: Generate Prisma Client
+      #   env:
+      #     DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      #   run: pnpm prisma generate
 
-      - name: Run Prisma Migrations
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: pnpm prisma db push
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      # - name: Run Prisma Migrations
+      #   env:
+      #     DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      #   run: pnpm prisma db push
+      # - name: Install dependencies
+      #   run: pnpm install --frozen-lockfile
 
-      - name: Generate Prisma client
-        run: npx prisma generate
+      # - name: Generate Prisma client
+      #   run: npx prisma generate
 
       - name: Check for outdated dependencies
         run: pnpm outdated | grep -v -E '(prisma|@prisma)' || true
