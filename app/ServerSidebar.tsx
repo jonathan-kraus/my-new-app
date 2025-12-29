@@ -3,7 +3,8 @@
 
 import Link from "next/link";
 import Image from "next/image";
-
+import { appLog } from "@/lib/logger";
+await appLog({ level: "info", message: "SideNav", page: "init" });
 export default function ServerSidebar() {
 	return (
 		<aside
