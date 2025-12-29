@@ -1,13 +1,12 @@
-@import "tailwindcss";
+/* app/globals.css */
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
+/* CSS Variables for light/dark mode */
 :root {
   --background: #ffffff;
   --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -22,5 +21,25 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  margin: 0;
+  min-height: 100vh;
+}
+
+/* Custom nav link classes for ServerSidebar */
+.nav-link-base {
+  @apply flex items-center space-x-4 px-5 py-4 rounded-2xl backdrop-blur-xl font-semibold text-white transition-all duration-300 border border-transparent hover:border-white/40 hover:scale-[1.02] shadow-lg hover:shadow-xl group;
+}
+
+.nav-link-active {
+  @apply bg-white/20 border-white/40 ring-2 ring-white/30;
+}
+
+.nav-link {
+  @apply hover:bg-white/20;
+}
+
+/* Sidebar specific overrides */
+aside.w-72 {
+  background: linear-gradient(180deg, #2563eb 0%, #1e40af 50%, #3730a3 100%);
 }
