@@ -1,0 +1,97 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: Audit, lint, test, and build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Clean workspace
+        run: git clean -fdx
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Enable Corepack and pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/package.json','**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Cache project pnpm files
+        uses: actions/cache@v4
+        with:
+          path: |
+            .pnpm
+            node_modules
+          key: ${{ runner.os }}-pnpm-project-${{ hashFiles('**/package.json','**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-project-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: npx prisma generate
+
+      - name: Check for outdated dependencies
+        run: pnpm outdated | grep -v -E '(prisma|@prisma)' || true
+
+      - name: Show .prettierignore contents
+        run: |
+          echo ".prettierignore exists?"; test -f .prettierignore && echo "yes" || echo "no"
+          echo "Contents of .prettierignore:"
+          sed -n '1,200p' .prettierignore || true
+
+      - name: Prettier check
+        run: pnpm run prettier:check
+
+      - name: Type check
+        run: pnpm run type-check
+
+      - name: Security audit
+        if: github.event_name == 'push'
+        run: pnpm audit
+
+      - name: Lint (no warnings)
+        run: pnpm lint --max-warnings=0
+
+
+
+      - name: Show workspace files for diagnostics
+        if: always()
+        run: |
+          echo "Working directory: $(pwd)"
+          echo "List root files:"; ls -la
+          echo "List coverage dir (if present):"; ls -la coverage || true
+
+
+
+
+
+
+      - name: Build
+        run: pnpm build

@@ -6,4 +6,10 @@ module.exports = defineConfig({
 	datasource: {
 		datasourceUrl: process.env.DATABASE_URL?.replace(/\/\/[^@]*@/, '//***:***@')
 	}
+  schema: "./prisma/schema.prisma",
+  datasource: {
+    db: {
+      url: process.env.DATABASE_URL,
+    },
+  },
 });
