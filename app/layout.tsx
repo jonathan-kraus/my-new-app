@@ -11,7 +11,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="flex min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-         <div className="flex"></div>
+        <div className="flex"></div>
         <ServerSidebar />
         <main className="flex-1 p-8 overflow-auto">
           {children}
