@@ -4,6 +4,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export default async function ServerSidebar() {
 	const session = await getServerSession(authOptions);
+	const notes: unknown[] = [];
 	const today = new Date().toLocaleDateString("en-US", {
 		weekday: "long",
 		year: "numeric",
@@ -27,7 +28,7 @@ export default async function ServerSidebar() {
 					<div className="flex items-center space-x-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl border border-green-200">
 						<img
 							src={session.user.image || "/default-avatar.png"}
-							alt={session.user.name}
+							alt={session.user.name || "User avatar"}
 							className="w-12 h-12 rounded-full ring-2 ring-green-200"
 						/>
 						<div>

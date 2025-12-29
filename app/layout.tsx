@@ -1,6 +1,7 @@
 // app/layout.tsx
 import ServerSidebar from "@/app/components/ServerSidebar";
 import { ToasterClient } from "@/app/components/ToasterClient";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
 	return (
@@ -10,6 +11,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 				<main className="flex-1 p-8 overflow-auto">
 					{children}
 					<ToasterClient />
+					<SpeedInsights />
 				</main>
 			</body>
 		</html>
