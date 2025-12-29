@@ -1,7 +1,7 @@
-import Sidebar from '@/app/components/Sidebar';
+import Sidebar from '@/app/components/ServerSidebar';
 import { ToasterClient } from '@/app/components/ToasterClient';
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body className="flex">
