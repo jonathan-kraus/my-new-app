@@ -1,6 +1,13 @@
 // next.config.js
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  experimental: {
+    serverExternalPackages: [
+      '@prisma/client/edge',
+      '@neondatabase/serverless',
+      '@prisma/adapter-neon'
+    ],
+  },
   images: {
     remotePatterns: [
       {

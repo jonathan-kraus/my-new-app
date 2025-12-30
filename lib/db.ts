@@ -1,14 +1,19 @@
-// lib/db.ts - STANDARD PRISMA ONLY (Build + Production SAFE)
-import { PrismaClient } from "@prisma/client";
+// lib/db.ts - NEON API FIXED
+import { PrismaClient } from '@prisma/client/edge';
+import { neon } from '@neondatabase/serverless';
+import { PrismaNeon } from '@prisma/adapter-neon';
+
+const connectionString = process.env.DATABASE_URL!;
+const adapter = new PrismaNeon({ connectionString });  // ✅ connectionString NOT sql
 
 declare global {
-	var prisma: PrismaClient | undefined;
+  var prisma: undefined | ReturnType<typeof getPrismaClient>;
 }
 
-export const db =
-	globalThis.prisma ??
-	new PrismaClient({
-		log: ["query", "error", "warn"],
-	});
+function getPrismaClient() {
+  return new PrismaClient({ adapter });
+}
 
-if (process.env.NODE_ENV !== "production") globalThis.prisma = db;
+export const db = globalThis.prisma ?? getPrismaClient();
+
+if (process.env.NODE_ENV !== 'production') globalThis.prisma = db;
