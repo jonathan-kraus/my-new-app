@@ -1,7 +1,13 @@
 // app/maps/page.tsx
-export const dynamic = 'force-dynamic';
+// app/(client)/maps/page.tsx
+'use client';
+import { SessionProvider } from "next-auth/react";
+import ClientNav from "../ClientNav";
 export default function Maps() {
   return (
+    <SessionProvider>
+      <ClientNav />
+
     <div className="max-w-4xl space-y-6 py-4">
       <h1 className="text-3xl font-black bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
         Interactive Weather Maps
@@ -23,5 +29,6 @@ export default function Maps() {
         </div>
       </div>
     </div>
+  </SessionProvider>
   );
 }

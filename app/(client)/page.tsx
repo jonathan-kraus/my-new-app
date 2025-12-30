@@ -1,15 +1,14 @@
-// app/(client)/page.tsx - PAGE-LEVEL SessionProvider
-'use client';
+// app/(client)/page.tsx - SESSION HERE
+"use client";
 
 import { SessionProvider } from "next-auth/react";
-import ClientProviders from "@/app/ClientProviders";
+import ClientNav from "../ClientNav";
 
 export default function Home() {
-  return (
-    <SessionProvider>
-      <ClientProviders>
-        <h1>Weather Hub Home</h1>
-      </ClientProviders>
-    </SessionProvider>
-  );
+	return (
+		<SessionProvider>
+			<ClientNav />
+			<h1>Weather Hub Home</h1>
+		</SessionProvider>
+	);
 }
