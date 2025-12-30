@@ -1,23 +1,14 @@
-// lib/db.ts - BUNDLER SAFE (Neon + Standard Prisma)
+// lib/db.ts - STANDARD PRISMA ONLY (Build + Production SAFE)
 import { PrismaClient } from "@prisma/client";
 
 declare global {
 	var prisma: PrismaClient | undefined;
 }
 
-// ✅ SERVER ONLY - Client ignores this
-if (typeof window === "undefined") {
-	try {
-		const { neon } = require("@neondatabase/serverless");
-		const { PrismaNeon } = require("@prisma/adapter-neon");
-		const connectionString = process.env.DATABASE_URL!;
-		const adapter = new PrismaNeon({ connectionString });
-		// Use adapter on server
-	} catch {
-		// Fallback to standard Prisma
-	}
-}
-
-export const db = globalThis.prisma ?? new PrismaClient();
+export const db =
+	globalThis.prisma ??
+	new PrismaClient({
+		log: ["query", "error", "warn"],
+	});
 
 if (process.env.NODE_ENV !== "production") globalThis.prisma = db;
