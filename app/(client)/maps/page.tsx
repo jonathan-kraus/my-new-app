@@ -2,7 +2,7 @@
 // app/(client)/maps/page.tsx
 'use client';
 import { SessionProvider } from "next-auth/react";
-import ClientNav from "../ClientNav";
+import ClientNav from "@/app/ClientNav";
 export default function Maps() {
   return (
     <SessionProvider>
