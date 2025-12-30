@@ -1,5 +1,12 @@
-// app/layout.tsx - FLEX FIXED (from screenshot)
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+// app/layout.tsx - TYPE FIXED
+import ServerSidebar from "./ServerSidebar";
+import { ReactNode } from "react"; // ✅ ADD TYPE
+
+export default function RootLayout({
+	children,
+}: {
+	children: ReactNode; // ✅ TYPE CHILDREN
+}) {
 	return (
 		<html lang="en">
 			<body
@@ -14,15 +21,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 					style={{
 						display: "flex",
 						height: "100vh",
-						width: "100vw", // ✅ FIXES GOOFY LAYOUT
+						width: "100vw",
 					}}
 				>
-					<ServerSidebar style={{ flexShrink: 0 }} /> {/* ✅ NO GROW */}
-					<div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
-						{" "}
-						{/* ✅ FLEX 1 */}
-						{children}
+					<div
+						style={{
+							flexShrink: 0,
+							width: "280px",
+						}}
+					>
+						<ServerSidebar />
 					</div>
+					<div style={{ flex: 1, display: "flex", flexDirection: "column" }}>{children}</div>
 				</div>
 			</body>
 		</html>

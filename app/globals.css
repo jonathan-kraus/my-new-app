@@ -58,3 +58,7 @@ body {
 .logout-btn:hover {
 	background: rgba(239, 68, 68, 0.3);
 }
+.sidebar-container {
+	flex-shrink: 0; /* ✅ NO SHRINK */
+	width: 280px; /* ✅ FIXED WIDTH */
+}

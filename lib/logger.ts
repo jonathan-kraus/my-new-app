@@ -1,63 +1,41 @@
-// lib/logger.ts - ONE CALL TO RULE THEM ALL
-import { db } from "@/lib/db";
-import { Prisma } from "@prisma/client";
-import type { CreateLogInput } from "@/lib/types";
+// lib/logger.ts - PRISMA JSON NULL FIXED
+import { Prisma } from "@prisma/client"; // ✅ PRISMA NULL TYPES
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../app/api/auth/[...nextauth]/route";
+import { db } from "./db";
+
 export interface LogMessage {
-	level: "debug" | "info" | "warn" | "error";
+	level: "info" | "warn" | "error" | "debug";
 	message: string;
 	data?: Record<string, any>;
-	timestamp?: Date;
 	userId?: string;
 	page?: string;
+	timestamp: Date;
 }
 
 export async function appLog(msg: Omit<LogMessage, "timestamp">): Promise<{ success: boolean }> {
-	const logData: LogMessage = {
-		...msg,
-		timestamp: new Date(),
-	};
-
-	// Client vs Server auto-detection
-	if (typeof window === "undefined") {
-		// SERVER - Direct database call
-		return logToServer(logData);
-	} else {
-		// CLIENT - Fetch to API route
-		return logToClient(logData);
-	}
-}
-
-// CLIENT logger (fetch)
-async function logToClient(data: LogMessage): Promise<{ success: boolean }> {
 	try {
-		const res = await fetch("/api/log", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify(data),
-		});
-		return { success: res.ok };
-	} catch {
-		console.log("Logger offline:", data.message); // Graceful fallback
-		return { success: false };
-	}
-}
+		const session = await getServerSession(authOptions);
+		const logData: LogMessage = {
+			...msg,
+			userId: session?.user?.name || msg.userId || "anonymous",
+			timestamp: new Date(),
+		};
 
-// SERVER logger (database)
-async function logToServer(data: LogMessage): Promise<{ success: boolean }> {
-	try {
 		await db.log.create({
 			data: {
-				level: data.level,
-				message: data.message,
-				data: data.data ? (data.data as Prisma.InputJsonValue) : Prisma.JsonNull, // ✅ PRISMA 7 EXACT TYPE
-				userId: data.userId,
-				page: data.page,
+				level: logData.level,
+				message: logData.message,
+				data: logData.data ?? Prisma.JsonNull, // ✅ PRISMA NULL
+				userId: logData.userId,
+				page: logData.page,
 			},
 		});
-		console.log("[SERVER LOG]", data);
+
+		console.log("[SERVER LOG]", logData);
 		return { success: true };
-	} catch {
-		console.error("[LOGGER ERROR]", data);
+	} catch (error) {
+		console.error("Log error:", error);
 		return { success: false };
 	}
 }
