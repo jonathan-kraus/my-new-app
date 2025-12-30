@@ -1,4 +1,5 @@
 // app/maps/page.tsx
+export const dynamic = 'force-dynamic';
 export default function Maps() {
   return (
     <div className="max-w-4xl space-y-6 py-4">
