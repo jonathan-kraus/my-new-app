@@ -1,5 +1,5 @@
-// lib/logger.ts - PRISMA JSON NULL FIXED
-import { Prisma } from "@prisma/client"; // ✅ PRISMA NULL TYPES
+// lib/logger.ts - LAZY SESSION (no global call)
+import { Prisma } from "@prisma/client";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../app/api/auth/[...nextauth]/route";
 import { db } from "./db";
@@ -15,7 +15,9 @@ export interface LogMessage {
 
 export async function appLog(msg: Omit<LogMessage, "timestamp">): Promise<{ success: boolean }> {
 	try {
+		// ✅ LAZY: Only call session INSIDE async function
 		const session = await getServerSession(authOptions);
+
 		const logData: LogMessage = {
 			...msg,
 			userId: session?.user?.name || msg.userId || "anonymous",
@@ -26,13 +28,12 @@ export async function appLog(msg: Omit<LogMessage, "timestamp">): Promise<{ succ
 			data: {
 				level: logData.level,
 				message: logData.message,
-				data: logData.data ?? Prisma.JsonNull, // ✅ PRISMA NULL
+				data: logData.data ?? Prisma.JsonNull,
 				userId: logData.userId,
 				page: logData.page,
 			},
 		});
 
-		console.log("[SERVER LOG]", logData);
 		return { success: true };
 	} catch (error) {
 		console.error("Log error:", error);

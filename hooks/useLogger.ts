@@ -1,17 +1,22 @@
-// hooks/useLogger.ts - React Hook wrapper
+// hooks/useLogger.ts
 "use client";
 import { useCallback } from "react";
-import { appLog, LogMessage } from "@/lib/logger";
 
 export function useLogger() {
-	const log = useCallback(async (partial: Omit<LogMessage, "timestamp">) => {
-		return appLog(partial);
-	}, []);
+	const log = useCallback(
+		async (partial: {
+			level: "info" | "warn" | "error" | "debug";
+			message: string;
+			data?: Record<string, any>;
+		}) => {
+			await fetch("/api/log", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(partial),
+			});
+		},
+		[],
+	);
 
-	return {
-		debug: (msg: string, data?: any) => log({ level: "debug", message: msg, data }),
-		info: (msg: string, data?: any) => log({ level: "info", message: msg, data }),
-		warn: (msg: string, data?: any) => log({ level: "warn", message: msg, data }),
-		error: (msg: string, data?: any) => log({ level: "error", message: msg, data }),
-	};
+	return { log };
 }
