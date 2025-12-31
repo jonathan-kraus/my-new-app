@@ -11,12 +11,12 @@ export default async function Sidebar() {
   const session = await getServerSession(authOptions);
 
 
-export default function Forecast() {
+
   const log = useLogger();
 
   useEffect(() => {
-    log.info("Initializing forecast page", {
-      endpoint: "app/forecast/page.tsx",
+    log.info("Initializing sidebar", {
+      endpoint: "app/components/Sidebar.tsx",
       createdAt: new Date().toISOString(),
     });
   }, []);
