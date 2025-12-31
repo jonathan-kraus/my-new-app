@@ -10,5 +10,5 @@ export default function HomePage() {
     info("HomePage rendered");
   }, []);
 
-  return <div>Dashvoard</div>;
+  return <div>Dashboard</div>;
 }

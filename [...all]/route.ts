@@ -1,6 +1,9 @@
 import { getAuth } from "@/lib/auth";
 
-const auth = getAuth();
+export async function GET(req: Request) {
+  return getAuth().handler(req);
+}
 
-export const GET = auth.handler;
-export const POST = auth.handler;
+export async function POST(req: Request) {
+  return getAuth().handler(req);
+}
