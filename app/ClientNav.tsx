@@ -18,7 +18,7 @@ export default function ClientNav() {
         <Link href="/" className="nav-active">🏠 Dashboard</Link>
         <Link href="/forecast" className="nav-link">🌤️ Forecast</Link>
         <Link href="/notes" className="nav-link">📝 Notes</Link>
-        <Link href="/maps" className="nav-link">🗺️ Weather Maps</Link>
+        <Link href="/weather-maps" className="nav-link">🗺️ Weather Maps</Link>
       </nav>
 
       {/* Logout */}
