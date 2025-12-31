@@ -28,7 +28,7 @@ export default function Forecast() {
 		<SessionProvider>
 			<ClientNav />
 			<div className="max-w-4xl space-y-6 py-4">
-				<h1 className="text-3xl font-black bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+				<h1 className="text-3xl font-black bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
 					7-Day Forecast
 				</h1>
 				<div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-4">
