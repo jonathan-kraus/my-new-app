@@ -1,11 +1,14 @@
-// lib/db.ts - NO WASM = INSTANT FIX
-import { PrismaClient } from "@prisma/client"; // ✅ Standard (no edge/neon)
+// lib/db.ts - BUILD-SAFE LAZY PRISMA
+import { PrismaClient } from "@prisma/client";
+
+const prismaClientSingleton = () => {
+	return new PrismaClient();
+};
 
 declare global {
-	var prisma: PrismaClient | undefined;
+	var prisma: undefined | ReturnType<typeof prismaClientSingleton>;
 }
 
-const db = global.prisma || new PrismaClient();
-if (process.env.NODE_ENV !== "production") global.prisma = db;
+export const db = globalThis.prisma ?? prismaClientSingleton();
 
-export { db };
+if (process.env.NODE_ENV !== "production") globalThis.prisma = db as any;
