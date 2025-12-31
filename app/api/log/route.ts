@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/server/db";
+import { db } from "@/lib/db";
 
 export async function POST(req: NextRequest) {
 	try {
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
 			ipAddress,
 		};
 
-		await prisma.log.create({ data: logData });
+		await db.log.create({ data: logData });
 
 		return NextResponse.json({ success: true });
 	} catch (err) {
