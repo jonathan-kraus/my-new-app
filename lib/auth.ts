@@ -4,13 +4,20 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export const auth = betterAuth({
-  database: prisma,
+let _auth: ReturnType<typeof betterAuth> | null = null;
 
-  socialProviders: {
-    github: {
-      clientId: process.env.GITHUB_CLIENT_ID!,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-    },
-  },
-});
+export function getAuth() {
+	if (!_auth) {
+		_auth = betterAuth({
+			database: prisma,
+			socialProviders: {
+				github: {
+					clientId: process.env.GITHUB_CLIENT_ID!,
+					clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+				},
+			},
+		});
+	}
+
+	return _auth;
+}
