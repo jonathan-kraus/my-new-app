@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
 			level: body.level || "info",
 			message: body.message || "",
 			data: body.data || null,
-			timestamp: new Date(),
+			createdAt: new Date(),
 			userId: body.userId || null,
 			page: body.page || null,
 			userAgent,

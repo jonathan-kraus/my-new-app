@@ -9,7 +9,7 @@ appLog({
 	level: "info",
 	message: "initializing forecast page",
 	page: "forecast",
-	data: { endpoint: "app/forecast/page.tsx", timestamp: new Date().toISOString() },
+	data: { endpoint: "app/forecast/page.tsx", createdAt: new Date().toISOString() },
 });
 export default function Forecast() {
 	const logTest = useCallback(async () => {

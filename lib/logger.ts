@@ -8,8 +8,8 @@ export interface LogMessage {
 }
 
 // ✅ Universal - works Client/Server/Mars
-export async function appLog(msg: Omit<LogMessage, "timestamp">): Promise<{ success: boolean }> {
-  const payload = { ...msg, timestamp: new Date().toISOString() };
+export async function appLog(msg: Omit<LogMessage, "createdAt">): Promise<{ success: boolean }> {
+  const payload = { ...msg, createdAt: new Date().toISOString() };
 
   try {
     const response = await fetch('/api/log', {
