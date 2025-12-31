@@ -12,7 +12,7 @@ export async function logToDatabase(input: CreateLogInput): Promise<{ success: b
 				data: input.data ? (input.data as Prisma.InputJsonValue) : Prisma.JsonNull, // ✅ PRISMA 7 EXACT TYPE
 				userId: input.userId,
 				page: input.page,
-				sessionId: input.sessionId,
+				//sessionId: input.sessionId,
 				ipAddress: input.ipAddress,
 			},
 		});
