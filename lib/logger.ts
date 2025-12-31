@@ -16,6 +16,7 @@ export interface LogMessage {
 export async function appLog(msg: Omit<LogMessage, "timestamp">): Promise<{ success: boolean }> {
 	try {
 		// ✅ LAZY: Only call session INSIDE async function
+		console.log(`[AUTO-LOG] ${msg.level.toUpperCase()}: ${msg.message}`, msg.data || {});
 		const session = await getServerSession(authOptions);
 
 		const logData: LogMessage = {
