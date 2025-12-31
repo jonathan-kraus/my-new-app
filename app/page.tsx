@@ -2,8 +2,7 @@
   import { useLogger } from "@/lib/log";
 export default function HomePage() {
 
-  const log = useLogger();
-  log.info("HomePage rendered");
+
 
   return (
     <div className="p-6">
