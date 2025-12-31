@@ -1,12 +1,10 @@
-// app/maps/page.tsx
-// app/(client)/maps/page.tsx
+// app/weather-maps/page.tsx
+
 'use client';
-import { SessionProvider } from "next-auth/react";
-import ClientNav from "@/app/ClientNav";
+
 export default function Maps() {
   return (
-    <SessionProvider>
-      <ClientNav />
+
 
     <div className="max-w-4xl space-y-6 py-4">
       <h1 className="text-3xl font-black bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
@@ -29,6 +27,6 @@ export default function Maps() {
         </div>
       </div>
     </div>
-  </SessionProvider>
+
   );
 }
