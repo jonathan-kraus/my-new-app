@@ -1,4 +1,4 @@
-// app/api/notes/route.ts - UNCOMMENT + SECURE
+// app/api/notes/route.ts -  UNCOMMENT + SECURE
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getAuth } from "@/lib/auth";
