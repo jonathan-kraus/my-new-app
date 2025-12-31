@@ -5,12 +5,12 @@ import ClientNav from "@/app/ClientNav";
 import { appLog } from "@/lib/logger";
 import { useCallback } from "react";
 
-// appLog({
-// 	level: "info",
-// 	message: "initializing forecast page",
-// 	page: "forecast",
-// 	data: { endpoint: "app/forecast/page.tsx", timestamp: new Date().toISOString() },
-// });
+appLog({
+	level: "info",
+	message: "initializing forecast page",
+	page: "forecast",
+	data: { endpoint: "app/forecast/page.tsx", timestamp: new Date().toISOString() },
+});
 export default function Forecast() {
 	const logTest = useCallback(async () => {
 		await fetch("/api/log", {
