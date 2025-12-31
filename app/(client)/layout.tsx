@@ -16,7 +16,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 									<span className="text-2xl font-bold text-white">J</span>
 								</div>
 								<h2 className="text-2xl font-bold text-gray-900 mb-2">Jonathan</h2>
-								<p className="text-gray-600 text-sm mb-6">jonat@gmail.com</p>
+								<p className="text-gray-600 text-sm mb-6">email</p>
 								<button className="w-full bg-red-500 hover:bg-red-600 text-white py-3 px-6 rounded-xl font-semibold shadow-lg">
 									Logout
 								</button>
