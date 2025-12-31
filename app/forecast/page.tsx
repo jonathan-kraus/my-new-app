@@ -1,17 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
-import { useLogger } from "@/lib/log";
+
+
 
 export default function Forecast() {
-  const log = useLogger();
 
-  useEffect(() => {
-    log.info("Initializing forecast page", {
-      endpoint: "app/forecast/page.tsx",
-      createdAt: new Date().toISOString(),
-    });
-  }, []);
 
   return (
     <div className="max-w-4xl space-y-6 py-4">
