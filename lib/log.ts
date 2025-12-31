@@ -12,7 +12,7 @@ export function useLogger() {
     const payload = {
       level: "info",
       message,
-      userId: session?.user?.id ?? null,
+      userId: 3456,
       page: window.location.pathname,
       data,
       createdAt: new Date().toISOString(),
