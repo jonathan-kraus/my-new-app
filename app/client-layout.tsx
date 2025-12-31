@@ -1,6 +1,6 @@
 "use client";
 
-import { SessionProvider } from "next-auth/react";
+
 import ProfileSection from "./ProfileSection";
 
 interface ClientLayoutProps {
@@ -9,7 +9,7 @@ interface ClientLayoutProps {
 
 export default function ClientLayout({ children }: ClientLayoutProps) {
   return (
-    <SessionProvider>
+
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="max-w-7xl mx-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
 
@@ -46,6 +46,6 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
 
         </div>
       </div>
-    </SessionProvider>
+
   );
 }

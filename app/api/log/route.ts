@@ -4,13 +4,10 @@ import { db } from "@/lib/db";
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth.api.getSession();
+    const authSession = await auth.api.getSession();
 
-    if (!session) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+    if (!authSession) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await req.json();
@@ -19,7 +16,7 @@ export async function POST(req: NextRequest) {
       data: {
         level: body.level,
         message: body.message,
-        userId: session.user.id,
+        userId: authSession.user.id,
         page: body.page,
         data: body.data,
       },

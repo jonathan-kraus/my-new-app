@@ -1,12 +1,11 @@
 // app/api/notes/route.ts - UNCOMMENT + SECURE
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { auth } from "@/lib/auth";
 
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth.api.getSession();
 
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

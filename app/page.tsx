@@ -1,11 +1,14 @@
 "use client";
 
+import { useEffect } from "react";
 import { useLogger } from "@/app/hooks/useLogger";
 
 export default function HomePage() {
-  const log = useLogger();
+  const { info } = useLogger();
 
-  log.info("HomePage rendered");
+  useEffect(() => {
+    info("HomePage rendered");
+  }, []);
 
-  return <div>Dashboard</div>;
+  return <div>Dashvoard</div>;
 }

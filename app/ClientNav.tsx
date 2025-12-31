@@ -1,11 +1,12 @@
 // app/ClientNav.tsx - 'use client'
 'use client';
+export const dynamic = "force-dynamic";
 
 import Link from "next/link";
-import { signOut, useSession } from "next-auth/react";
+import { authClient } from "@/lib/auth-client";
 
 export default function ClientNav() {
-  const { data: session } = useSession();  // ✅ Works here!
+  const { data: session } = authClient.useSession();
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: 'linear-gradient(180deg, #1d4ed8 0%, #1e3a8a 100%)' }}>
@@ -24,7 +25,7 @@ export default function ClientNav() {
       {/* Logout */}
       {session && (
         <div style={{ padding: '1rem 1.5rem', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-          <button onClick={() => signOut({ callbackUrl: '/' })} className="logout-btn">
+          <button onClick={() => authClient.signOut()} className="logout-btn">
             🚪 Logout
           </button>
         </div>
