@@ -32,6 +32,8 @@ export async function POST(req: NextRequest) {
 			data: body.data || null,
 			createdAt: new Date(),
 			userId,
+			sessionEmail,
+			sessionUser,
 			page: body.page || null,
 			userAgent,
 			ipAddress,

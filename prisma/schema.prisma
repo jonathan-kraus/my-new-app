@@ -27,18 +27,17 @@ model account {
 
 
 model Log {
-  id        String   @id @default(cuid())
-  level     LogLevel
-  message   String
-  data      Json?    // Flexible Record<string, any>
-  createdAt DateTime @default(now())
-  userId    String?
-  page      String?
-  sessionId String?  // Add for client tracking
-  userAgent String?  // ✅ ADD THIS
-  ipAddress String?  // Add for analytics
-
-  @@map("logs")
+  id           String   @id @default(cuid())
+  level        String
+  message      String
+  data         Json?
+  createdAt    DateTime @default(now())
+  userId       String?
+  sessionEmail String?
+  sessionUser  String?
+  page         String?
+  userAgent    String?
+  ipAddress    String?
 }
 
 enum LogLevel {
