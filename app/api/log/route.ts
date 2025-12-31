@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAuth, auth } from '@/lib/auth';
+import { getAuth } from '@/lib/auth';
 import { db } from "@/lib/db";
 const auth = getAuth();
 export async function POST(req: NextRequest) {
