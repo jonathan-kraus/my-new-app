@@ -1,7 +1,7 @@
 // app/notes/page.tsx - TYPE NOTES ✅
 import { db } from "@/lib/db";
 import { Note } from "@prisma/client"; // ✅ PRISMA TYPES
-
+export const dynamic = 'force-dynamic';  // ✅ Skip static prerender
 export default async function NotesPage() {
 	const notes: Note[] = await db.note.findMany({
 		// ✅ Typed array
