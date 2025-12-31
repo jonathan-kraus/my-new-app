@@ -1,13 +1,13 @@
-// app/(client)/logs/page.tsx - CORRECT ORDERBY
+// app/(client)/logs/page.tsx
 import { db } from "@/lib/db";
-import { Log } from "@prisma/client";
+import { formatDistanceToNow } from "date-fns";
 
 export const dynamic = "force-dynamic";
 
 export default async function LogsPage() {
 	const logs = await db.log.findMany({
 		orderBy: {
-			createdAt: "desc" as const, // ✅ Prisma scalar sort
+			createdAt: "desc",
 		},
 		take: 50,
 	});
@@ -15,6 +15,7 @@ export default async function LogsPage() {
 	return (
 		<div>
 			<h1 className="text-4xl font-bold mb-8">Recent Logs</h1>
+
 			<div className="overflow-x-auto">
 				<table className="w-full bg-white rounded-2xl shadow-xl">
 					<thead>
@@ -27,27 +28,57 @@ export default async function LogsPage() {
 							<th className="p-4 text-left">IP</th>
 						</tr>
 					</thead>
+
 					<tbody>
-						{logs.map((log) => (
-							<tr key={log.id} className="border-t hover:bg-gray-50">
-								<td className="p-4">{new Date(log.createdAt).toLocaleString()}</td>
-								<td
-									className={`p-4 font-bold ${
-										log.level === "error"
-											? "text-red-600"
-											: log.level === "warn"
-												? "text-yellow-600"
-												: "text-green-600"
-									}`}
-								>
-									{log.level.toUpperCase()}
-								</td>
-								<td className="p-4 font-mono text-sm">{log.message}</td>
-								<td className="p-4">{log.userId}</td>
-								<td className="p-4 font-mono text-xs">{log.page}</td>
-								<td className="p-4 font-mono text-xs">{log.ipAddress}</td>
-							</tr>
-						))}
+						{logs.map((log) => {
+							const utc = new Date(log.createdAt + "Z"); // force UTC interpretation
+
+							return (
+								<tr key={log.id} className="border-t hover:bg-gray-50">
+									{/* TIME COLUMN */}
+									<td className="p-4">
+										<div className="flex flex-col leading-tight">
+											{/* Local EST time */}
+											<span className="font-semibold text-gray-900">
+												{utc.toLocaleString("en-US", {
+													timeZone: "America/New_York",
+												})}
+											</span>
+
+											{/* Relative time */}
+											<span className="text-xs text-gray-500 italic">
+												{formatDistanceToNow(utc, { addSuffix: true })}
+											</span>
+										</div>
+									</td>
+
+									{/* LEVEL */}
+									<td
+										className={`p-4 font-bold ${
+											log.level === "error"
+												? "text-red-600"
+												: log.level === "warn"
+													? "text-yellow-600"
+													: "text-green-600"
+										}`}
+									>
+										{log.level.toUpperCase()}
+									</td>
+
+									{/* MESSAGE */}
+									<td className="p-4 font-mono text-sm">{log.message}</td>
+
+									{/* USER */}
+									<td className="p-4">{log.userId}</td>
+
+									{/* PAGE */}
+									<td className="p-4 font-mono text-xs">{log.page}</td>
+
+									{/* IP */}
+									<td className="p-4 font-mono text-xs">{log.ipAddress}</td>
+								</tr>
+							);
+						})}
 					</tbody>
 				</table>
 			</div>
