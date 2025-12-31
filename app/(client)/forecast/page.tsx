@@ -11,18 +11,7 @@ appLog({
 	data: { endpoint: "app/forecast/page.tsx", createdAt: new Date().toISOString() },
 });
 export default function Forecast() {
-	const logTest = useCallback(async () => {
-		await fetch("/api/log", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({
-				level: "info" as const,
-				message: "TEST LOG",
-				data: { page: window.location.pathname },
-			}),
-		});
-	}, []);
-	logTest();
+	
 	return (
 
 
