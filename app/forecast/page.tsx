@@ -7,7 +7,7 @@ export default function Forecast() {
   const log = useLogger();
 
   useEffect(() => {
-    log.info("initializing forecast page", {
+    log.info("Initializing forecast page", {
       endpoint: "app/forecast/page.tsx",
       createdAt: new Date().toISOString(),
     });

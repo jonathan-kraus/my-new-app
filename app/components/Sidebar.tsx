@@ -1,14 +1,25 @@
-// app/ServerSidebar.tsx -
+// app/components/Sidebar.tsx -
 'use client';  // ✅ NOW CLIENT COMPONENT
 
-import { db } from "@/lib/db";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "./api/auth/[...nextauth]/route";
+import { authOptions } from "../api/auth/[...nextauth]/route";
 import { appLog } from "@/lib/logger";
+import { useLogger } from "@/lib/log";
+import { useEffect } from "react";
 appLog({ level: "info", message: "SideNav", page: "init" });
-export default async function ServerSidebar() {
+export default async function Sidebar() {
   const session = await getServerSession(authOptions);
 
+
+export default function Forecast() {
+  const log = useLogger();
+
+  useEffect(() => {
+    log.info("Initializing forecast page", {
+      endpoint: "app/forecast/page.tsx",
+      createdAt: new Date().toISOString(),
+    });
+  }, []);
   return (
     <div style={{ width: '290px', height: '100vh', display: 'flex', flexDirection: 'column' }}>
       {/* SERVER: Header + Profile */}

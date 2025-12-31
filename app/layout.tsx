@@ -1,18 +1,24 @@
+// app/layout.tsx
 import "./globals.css";
-import { Inter } from "next/font/google";
-import ClientLayout from "./client-layout";
+import Sidebar from "@/components/Sidebar";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
-const inter = Inter({ subsets: ["latin"] });
-
-interface RootLayoutProps {
-  children: React.ReactNode;
-}
-
-export default function RootLayout({ children }: RootLayoutProps) {
+export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <ClientLayout>{children}</ClientLayout>
+      <body className="flex">
+        <Sidebar />
+
+        <main className="flex-1 p-6">
+          {children}
+
+          {/* Vercel Analytics */}
+          <Analytics />
+
+          {/* Vercel Speed Insights */}
+          <SpeedInsights />
+        </main>
       </body>
     </html>
   );
