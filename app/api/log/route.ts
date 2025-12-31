@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 const auth = getAuth();
 export async function POST(req: NextRequest) {
   try {
+  
     const authSession = await auth.api.getSession();
 
     if (!authSession) {
