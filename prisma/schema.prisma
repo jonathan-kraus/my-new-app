@@ -38,8 +38,9 @@ model Log {
   page         String?
   userAgent    String?
   ipAddress    String?
-}
 
+  @@map("logs")
+}
 enum LogLevel {
   debug
   info
