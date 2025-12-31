@@ -1,8 +1,8 @@
 // app/api/notes/route.ts - UNCOMMENT + SECURE
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { auth } from "@/lib/auth";
-
+import { getAuth } from "@/lib/auth";
+const auth = getAuth();
 export async function GET() {
   try {
     const session = await auth.api.getSession();

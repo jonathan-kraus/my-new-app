@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { getAuth, auth } from '@/lib/auth';
 import { db } from "@/lib/db";
-
+const auth = getAuth();
 export async function POST(req: NextRequest) {
   try {
     const authSession = await auth.api.getSession();
