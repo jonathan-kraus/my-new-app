@@ -8,13 +8,17 @@ export async function POST(req: NextRequest) {
 	try {
 		const msg = await req.json();
 		const session = await getServerSession(authOptions);
-
+		const ip =
+			req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+			req.headers.get("cf-connecting-ip") ||
+			req.headers.get("x-real-ip") ||
+			"unknown";
 		// ✅ Extract IP from headers (Vercel/Cloudflare/Standard)
 		const ipAddress =
 			req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
 			req.headers.get("cf-connecting-ip") ||
 			req.headers.get("x-real-ip") ||
-			req.ip ||
+			ip ||
 			"unknown";
 
 		const logData = {
