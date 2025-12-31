@@ -1,34 +1,28 @@
-// lib/logger.ts - PURE DB (no session/headers)
-import { Prisma } from "@prisma/client";
-import { db } from "./db";
-
+// lib/logger.ts - TYPES ONLY (no DB!)
 export interface LogMessage {
-	level: "info" | "warn" | "error" | "debug";
-	message: string;
-	data?: Record<string, any>;
-	userId?: string;
-	page?: string;
-	timestamp: Date;
+  level: 'info' | 'warn' | 'error' | 'debug';
+  message: string;
+  data?: Record<string, any>;
+  userId?: string;
+  page?: string;
 }
 
+// ✅ Universal - works Client/Server/Mars
 export async function appLog(msg: Omit<LogMessage, "timestamp">): Promise<{ success: boolean }> {
-	try {
-		console.log(`[AUTO-LOG] ${msg.level.toUpperCase()}: ${msg.message}`, msg.data || {});
+  const payload = { ...msg, timestamp: new Date().toISOString() };
 
-		await db.log.create({
-			data: {
-				level: msg.level,
-				message: msg.message,
-				data: msg.data ?? Prisma.JsonNull,
-				userId: msg.userId || "anonymous",
-				page: msg.page || "unknown",
-			},
-		});
+  try {
+    const response = await fetch('/api/log', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
 
-		console.log(`[DB-SAVED] ${msg.message}`);
-		return { success: true };
-	} catch (error) {
-		console.error("DB Log error:", error);
-		return { success: false };
-	}
+    const result = await response.json();
+    console.log(`[LOG-${result.success ? 'OK' : 'FAIL'}] ${msg.message}`);
+    return result;
+  } catch (error) {
+    console.error('[LOG-ERROR]', error);
+    return { success: false };
+  }
 }
