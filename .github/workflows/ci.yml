@@ -59,8 +59,10 @@ jobs:
       #   env:
       #     DATABASE_URL: ${{ secrets.DATABASE_URL }}
       #   run: pnpm prisma db push
-      # - name: Install dependencies
-      #   run: pnpm install --frozen-lockfile
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Add Prisma adapter for Neon
+        run: pnpm add @neon/prisma-adapter
 
       # - name: Generate Prisma client
       #   run: npx prisma generate

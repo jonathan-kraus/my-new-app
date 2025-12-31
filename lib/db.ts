@@ -1,19 +1,22 @@
-// lib/db.ts - NEON API FIXED
+// lib/db.ts - WASM RUNTIME SAFE
 import { PrismaClient } from "@prisma/client/edge";
 import { neon } from "@neondatabase/serverless";
 import { PrismaNeon } from "@prisma/adapter-neon";
 
 const connectionString = process.env.DATABASE_URL!;
-const adapter = new PrismaNeon({ connectionString }); // ✅ connectionString NOT sql
+
+let db: PrismaClient;
+
+if (typeof window === "undefined") {
+	// ✅ Server-only
+	const adapter = new PrismaNeon({ connectionString });
+	db = new PrismaClient({ adapter });
+}
 
 declare global {
-	var prisma: undefined | ReturnType<typeof getPrismaClient>;
+	var prisma: PrismaClient | undefined;
 }
 
-function getPrismaClient() {
-	return new PrismaClient({ adapter });
-}
+if (process.env.NODE_ENV !== "production") global.prisma = db!;
 
-export const db = globalThis.prisma ?? getPrismaClient();
-
-if (process.env.NODE_ENV !== "production") globalThis.prisma = db;
+export { db };
