@@ -31,7 +31,7 @@ model Log {
   level     LogLevel
   message   String
   data      Json?    // Flexible Record<string, any>
-  timestamp DateTime @default(now())
+  createdAt DateTime @default(now())
   userId    String?
   page      String?
   sessionId String?  // Add for client tracking
