@@ -1,7 +1,5 @@
-// lib/logger.ts - LAZY SESSION (no global call)
+// lib/logger.ts - PURE DB (no session/headers)
 import { Prisma } from "@prisma/client";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../app/api/auth/[...nextauth]/route";
 import { db } from "./db";
 
 export interface LogMessage {
@@ -15,29 +13,22 @@ export interface LogMessage {
 
 export async function appLog(msg: Omit<LogMessage, "timestamp">): Promise<{ success: boolean }> {
 	try {
-		// ✅ LAZY: Only call session INSIDE async function
 		console.log(`[AUTO-LOG] ${msg.level.toUpperCase()}: ${msg.message}`, msg.data || {});
-		const session = await getServerSession(authOptions);
-
-		const logData: LogMessage = {
-			...msg,
-			userId: session?.user?.name || msg.userId || "anonymous",
-			timestamp: new Date(),
-		};
 
 		await db.log.create({
 			data: {
-				level: logData.level,
-				message: logData.message,
-				data: logData.data ?? Prisma.JsonNull,
-				userId: logData.userId,
-				page: logData.page,
+				level: msg.level,
+				message: msg.message,
+				data: msg.data ?? Prisma.JsonNull,
+				userId: msg.userId || "anonymous",
+				page: msg.page || "unknown",
 			},
 		});
 
+		console.log(`[DB-SAVED] ${msg.message}`);
 		return { success: true };
 	} catch (error) {
-		console.error("Log error:", error);
+		console.error("DB Log error:", error);
 		return { success: false };
 	}
 }
