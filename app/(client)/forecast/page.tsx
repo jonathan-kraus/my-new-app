@@ -1,7 +1,6 @@
 // app/forecast/page.tsx - COMPACT
 "use client";
-import { SessionProvider } from "next-auth/react";
-import ClientNav from "@/app/ClientNav";
+
 import { appLog } from "@/lib/logger";
 import { useCallback } from "react";
 
@@ -25,8 +24,8 @@ export default function Forecast() {
 	}, []);
 	logTest();
 	return (
-		<SessionProvider>
-			<ClientNav />
+
+
 			<div className="max-w-4xl space-y-6 py-4">
 				<h1 className="text-3xl font-black bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
 					7-Day Forecast
@@ -45,6 +44,6 @@ export default function Forecast() {
 					))}
 				</div>
 			</div>
-		</SessionProvider>
+
 	);
 }
