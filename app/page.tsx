@@ -1,7 +1,8 @@
 // app/page.tsx
-  import { useLogger } from "@/lib/log";
+  import { useLogger } from "@/app/hooks/useLogger";
 export default function HomePage() {
-
+  const log = useLogger();
+  log.info("HomePage rendered");
 
 
   return (
