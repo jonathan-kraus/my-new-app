@@ -1,28 +1,29 @@
 // lib/log.ts
+"use client";
+
 import { useSession } from "next-auth/react";
 
 export function useLogger() {
-	const session = typeof window !== "undefined" ? useSession() : null;
+  const { data: session } = useSession(); // safe, unconditionally called
 
-	function info(message: string, data?: Record<string, any>) {
-		if (typeof window === "undefined") return; // SSR guard
+  function info(message: string, data?: Record<string, any>) {
+    if (typeof window === "undefined") return; // never run on server
 
-		const payload = {
-			level: "info",
-			message,
-			userId: 12345, // optional: set server-side if needed
-			page: window.location.pathname,
-			ipAddress: null, // optional: set server-side if needed
-			data,
-			createdAt: new Date().toISOString(),
-		};
+    const payload = {
+      level: "info",
+      message,
+      userId: session?.user?.id ?? null,
+      page: window.location.pathname,
+      data,
+      createdAt: new Date().toISOString(),
+    };
 
-		fetch("/api/log", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify(payload),
-		});
-	}
+    fetch("/api/log", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+  }
 
-	return { info };
+  return { info };
 }
