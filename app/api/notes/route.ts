@@ -1,28 +1,27 @@
-import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
 import { getAuth } from "@/lib/auth";
-console.log("Notes module loaded");
+import { db } from "@/lib/db";
+
 export async function GET() {
-  try {
-    // Move getAuth() inside the handler
-    const auth = getAuth();
-    const session = await auth.api.getSession();
+	const auth = getAuth();
+	let session;
+	try {
+		session = await auth.api.getSession();
+	} catch (err) {
+		// eslint-disable-next-line no-console
+		console.error("Failed while getting session:", err);
+		// eslint-disable-next-line no-console
+		console.error("ENV: DATABASE_URL set?", !!process.env.DATABASE_URL);
+		throw err;
+	}
 
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+	if (!session?.user) {
+		return Response.json({ error: "Unauthorized" }, { status: 401 });
+	}
 
-    const notes = await db.note.findMany({
-      where: { userEmail: session.user.email },
-      orderBy: { createdAt: "desc" },
-    });
+	const notes = await db.note.findMany({
+		where: { userEmail: session.user.email },
+		orderBy: { createdAt: "desc" },
+	});
 
-    return NextResponse.json(notes);
-  } catch (error) {
-    console.error("Notes error:", error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
-    );
-  }
+	return Response.json(notes);
 }

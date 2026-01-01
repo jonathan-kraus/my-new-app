@@ -50,10 +50,10 @@ jobs:
           key: ${{ runner.os }}-pnpm-project-${{ hashFiles('**/package.json','**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-project-
-      - name: Generate Prisma Client
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: pnpm prisma generate
+      # - name: Generate Prisma Client
+      #   env:
+      #     DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      #   run: pnpm prisma generate
 
       # - name: Run Prisma Migrations
       #   env:
