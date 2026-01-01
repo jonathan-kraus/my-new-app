@@ -1,3 +1,4 @@
+// app/api/prisma-test/route.ts
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
@@ -10,4 +11,4 @@ export async function GET() {
 		return NextResponse.json({ error: String(error) }, { status: 500 });
 	}
 }
-// app/api/prisma-test.ts - SIMPLE TEST
+
