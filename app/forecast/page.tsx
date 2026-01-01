@@ -1,10 +1,11 @@
+// app/forecast/page.tsx
 "use client";
 import { useEffect } from "react";
 import { appLog } from "@/lib/logger";
 
 export default function Forecast() {
 	useEffect(() => {
-		void appLog({ level: "info", message: "Forecast page loaded", page: "/forecast" });
+		void appLog({ level: "info", message: "Forecast initialized", page: "app/forecast/page.tsx" });
 	}, []);
 
 	return (

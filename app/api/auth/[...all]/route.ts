@@ -1,4 +1,5 @@
 import { getAuth } from "@/lib/auth";
+import { setLastAuthHeaders } from "@/lib/auth-debug";
 export const runtime = "nodejs";
 
 export async function GET(req: Request) {
@@ -7,7 +8,11 @@ export async function GET(req: Request) {
 		const res = await auth.handler(req);
 		// Log response headers to inspect Set-Cookie and cookie attributes
 		// eslint-disable-next-line no-console
-		console.error("Auth handler response headers:", Object.fromEntries(res.headers.entries()));
+		const headers = Object.fromEntries(res.headers.entries());
+		// store for debug endpoint
+		setLastAuthHeaders(headers as Record<string, string>);
+		// eslint-disable-next-line no-console
+		console.error("Auth handler response headers:", headers);
 		return res;
 	} catch (err) {
 		// eslint-disable-next-line no-console
@@ -28,7 +33,11 @@ export async function POST(req: Request) {
 		const res = await auth.handler(req);
 		// Log response headers to inspect Set-Cookie and cookie attributes
 		// eslint-disable-next-line no-console
-		console.error("Auth handler response headers:", Object.fromEntries(res.headers.entries()));
+		const headers = Object.fromEntries(res.headers.entries());
+		// store for debug endpoint
+		setLastAuthHeaders(headers as Record<string, string>);
+		// eslint-disable-next-line no-console
+		console.error("Auth handler response headers:", headers);
 		return res;
 	} catch (err) {
 		// eslint-disable-next-line no-console

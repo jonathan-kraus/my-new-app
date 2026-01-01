@@ -7,6 +7,26 @@ type AuthType = ReturnType<typeof betterAuth>;
 let _auth: AuthType | undefined;
 let _dbConnected = false;
 
+// Build social providers from environment at module load so the CLI can read `auth`
+const githubClientId =
+	process.env.GITHUB_CLIENT_ID ?? process.env.GITHUB_ID ?? process.env.AUTH_GITHUB_ID;
+const githubClientSecret =
+	process.env.GITHUB_CLIENT_SECRET ?? process.env.GITHUB_SECRET ?? process.env.AUTH_GITHUB_SECRET;
+
+const socialProviders: any = {};
+if (githubClientId && githubClientSecret) {
+	socialProviders.github = {
+		clientId: githubClientId,
+		clientSecret: githubClientSecret,
+	};
+}
+
+// Export a named `auth` instance so the Better Auth CLI can detect the config.
+export const auth = betterAuth({
+	database: prismaAdapter(db, { provider: "postgresql" }),
+	socialProviders: Object.keys(socialProviders).length ? socialProviders : undefined,
+});
+
 export async function getAuth(): Promise<AuthType> {
 	if (_auth) return _auth;
 
@@ -20,28 +40,13 @@ export async function getAuth(): Promise<AuthType> {
 			_dbConnected = true;
 		}
 
-		const githubClientId =
-			process.env.GITHUB_CLIENT_ID ?? process.env.GITHUB_ID ?? process.env.AUTH_GITHUB_ID;
-		const githubClientSecret =
-			process.env.GITHUB_CLIENT_SECRET ??
-			process.env.GITHUB_SECRET ??
-			process.env.AUTH_GITHUB_SECRET;
-
-		const socialProviders: any = {};
-		if (githubClientId && githubClientSecret) {
-			socialProviders.github = {
-				clientId: githubClientId,
-				clientSecret: githubClientSecret,
-			};
-		} else {
+		if (!Object.keys(socialProviders).length) {
 			// eslint-disable-next-line no-console
 			console.warn("GitHub OAuth not configured: missing GITHUB client id/secret env vars");
 		}
 
-		_auth = betterAuth({
-			database: prismaAdapter(db, { provider: "postgresql" }),
-			socialProviders: Object.keys(socialProviders).length ? socialProviders : undefined,
-		});
+		// Use the exported `auth` instance (so CLI can import this file and read `auth`).
+		_auth = auth;
 	} catch (err: any) {
 		// More detailed logs to help diagnose adapter init failures
 		// eslint-disable-next-line no-console
