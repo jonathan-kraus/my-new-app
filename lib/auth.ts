@@ -20,14 +20,27 @@ export async function getAuth(): Promise<AuthType> {
 			_dbConnected = true;
 		}
 
+		const githubClientId =
+			process.env.GITHUB_CLIENT_ID ?? process.env.GITHUB_ID ?? process.env.AUTH_GITHUB_ID;
+		const githubClientSecret =
+			process.env.GITHUB_CLIENT_SECRET ??
+			process.env.GITHUB_SECRET ??
+			process.env.AUTH_GITHUB_SECRET;
+
+		const socialProviders: any = {};
+		if (githubClientId && githubClientSecret) {
+			socialProviders.github = {
+				clientId: githubClientId,
+				clientSecret: githubClientSecret,
+			};
+		} else {
+			// eslint-disable-next-line no-console
+			console.warn("GitHub OAuth not configured: missing GITHUB client id/secret env vars");
+		}
+
 		_auth = betterAuth({
 			database: prismaAdapter(db, { provider: "postgresql" }),
-			socialProviders: {
-				github: {
-					clientId: process.env.GITHUB_CLIENT_ID!,
-					clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-				},
-			},
+			socialProviders: Object.keys(socialProviders).length ? socialProviders : undefined,
 		});
 	} catch (err: any) {
 		// More detailed logs to help diagnose adapter init failures
