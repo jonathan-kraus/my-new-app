@@ -2,7 +2,7 @@ import { getAuth } from "@/lib/auth";
 export const runtime = "nodejs";
 
 export async function GET(req: Request) {
-	const auth = getAuth();
+	const auth = await getAuth();
 	try {
 		return await auth.handler(req);
 	} catch (err) {
@@ -19,7 +19,7 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-	const auth = getAuth();
+	const auth = await getAuth();
 	try {
 		return await auth.handler(req);
 	} catch (err) {

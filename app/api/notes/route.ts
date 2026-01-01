@@ -2,7 +2,7 @@ import { getAuth } from "@/lib/auth";
 import { db } from "@/lib/db";
 
 export async function GET() {
-	const auth = getAuth();
+	const auth = await getAuth();
 	let session;
 	try {
 		session = await auth.api.getSession();
