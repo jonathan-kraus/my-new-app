@@ -3,9 +3,9 @@ export const dynamic = "force-dynamic";
 
 import { authClient } from "@/lib/auth-client";
 export default function ProfileSection() {
-  const { data: session } = authClient.useSession();
+  const { data: session, isPending } = authClient.useSession();
 
-  if (status === "loading") {
+  if (isPending) {
     return (
       <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-white/50 text-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
@@ -24,7 +24,7 @@ export default function ProfileSection() {
         <p className="text-gray-600 text-sm mb-6">Sign in with GitHub to continue</p>
 
         <button
-          onClick={() => authClient.signIn.social({ provider: "github: github({ clientId, clientSecret })" })}
+          onClick={() => authClient.signIn.social({ provider: "github" })}
           className="w-full bg-black hover:bg-gray-800 text-white py-3 px-6 rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
