@@ -50,8 +50,8 @@ export default function Sidebar() {
 				<Link href="/notes" className="nav-link">
 					📝 Notes
 				</Link>
-				<Link href="/notes" className="nav-link">
-					📝 Notes
+				<Link href="/api/ping" className="nav-link">
+					📝 Ping
 				</Link>
 				<Link href="/weather-maps" className="nav-link">
 					🗺️ Weather Maps
