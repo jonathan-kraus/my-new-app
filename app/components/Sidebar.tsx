@@ -32,7 +32,7 @@ export default function Sidebar() {
           </div>
         ) : (
           <button
-            onClick={() => authClient.signIn.social({ provider: "github" })}
+            onClick={() => authClient.signIn.social({ provider: "github: github({ clientId, clientSecret })" })}
             className="w-full rounded bg-blue-700 px-3 py-2 text-sm hover:bg-blue-800"
           >
             Sign in with GitHub
