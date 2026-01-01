@@ -1,7 +1,11 @@
 "use client";
-//import { appLog } from "@/lib/logger";
+import { useEffect } from "react";
+import { appLog } from "@/lib/logger";
+
 export default function Forecast() {
-//appLog({ level: "info", message: "Forecast page loaded", page: "/forecast" });
+	useEffect(() => {
+		void appLog({ level: "info", message: "Forecast page loaded", page: "/forecast" });
+	}, []);
 
 	return (
 		<div className="max-w-4xl space-y-6 py-4">
