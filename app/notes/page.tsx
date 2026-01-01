@@ -4,8 +4,17 @@ import { useEffect, useState } from "react";
 
 export const dynamic = "force-dynamic";
 
+type Note = {
+	id: string;
+	title: string;
+	content: string | null;
+	createdAt: string;
+	updatedAt: string;
+	userEmail: string | null;
+};
+
 export default function NotesPage() {
-	const [notes, setNotes] = useState(null);
+	const [notes, setNotes] = useState<Note[] | null>(null);
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
@@ -17,7 +26,7 @@ export default function NotesPage() {
 				});
 
 				if (!res.ok) {
-					setNotes([]);
+					setNotes([]); // now valid
 					setLoading(false);
 					return;
 				}
@@ -26,7 +35,7 @@ export default function NotesPage() {
 				setNotes(data);
 			} catch (err) {
 				console.error("Notes fetch error:", err);
-				setNotes([]);
+				setNotes([]); // also valid
 			} finally {
 				setLoading(false);
 			}
@@ -46,7 +55,7 @@ export default function NotesPage() {
 
 				{!loading && notes?.length === 0 && <p className="text-gray-600">No notes yet.</p>}
 
-				{!loading && notes?.length > 0 && (
+				{!loading && notes && notes.length > 0 && (
 					<ul className="space-y-4">
 						{notes.map((note) => (
 							<li key={note.id} className="p-4 bg-white rounded-xl shadow-sm border">
