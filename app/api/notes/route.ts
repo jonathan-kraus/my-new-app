@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getAuth } from "@/lib/auth";
-
+console.log("Notes module loaded");
 export async function GET() {
   try {
     // Move getAuth() inside the handler
