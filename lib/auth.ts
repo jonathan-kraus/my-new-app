@@ -10,11 +10,7 @@ let _dbConnected = false;
 export async function getAuth(): Promise<AuthType> {
 	if (_auth) return _auth;
 
-	try {
-		if (!__DEV__ && !process.env.NODE_ENV) {
-			// noop - keep typescript happy in some environments
-		}
-	} catch {}
+	// no-op: ensure runtime env checks are handled via `process.env.NODE_ENV`
 
 	try {
 		if (!_dbConnected) {
@@ -25,7 +21,7 @@ export async function getAuth(): Promise<AuthType> {
 		}
 
 		_auth = betterAuth({
-			database: prismaAdapter(db, { provider: "postgres" }),
+			database: prismaAdapter(db, { provider: "postgresql" }),
 			socialProviders: {
 				github: {
 					clientId: process.env.GITHUB_CLIENT_ID!,
