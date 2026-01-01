@@ -1,7 +1,7 @@
 "use client";
-import { appLog } from "@/lib/logger";
+//import { appLog } from "@/lib/logger";
 export default function Forecast() {
-	appLog({ level: "info", message: "Ping page loaded", page: "/ping" });
+	//appLog({ level: "info", message: "Ping page loaded", page: "/ping" });
 
 	return (
 		<div className="max-w-4xl space-y-6 py-4">
