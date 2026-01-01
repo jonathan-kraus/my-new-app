@@ -44,6 +44,12 @@ export default function Sidebar() {
 				<Link href="/forecast" className="nav-link">
 					🌤️ Forecast
 				</Link>
+				<Link href="/logs" className="nav-link">
+					📝 Logs
+				</Link>
+				<Link href="/notes" className="nav-link">
+					📝 Notes
+				</Link>
 				<Link href="/notes" className="nav-link">
 					📝 Notes
 				</Link>
