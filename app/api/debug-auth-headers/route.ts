@@ -1,3 +1,5 @@
+// app/api/debug-auth-headers/route.ts
+
 import {
 	getLastAuthResponseHeaders,
 	clearLastAuthResponseHeaders,
