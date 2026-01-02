@@ -1,36 +1,58 @@
 {
-  "extends": ["config:base"],
+  "extends": [
+    "config:recommended"
+  ],
   "prCreation": "not-pending",
   "rebaseWhen": "behind-base-branch",
   "ignoreTests": false,
-
   "packageRules": [
     {
-      "matchManagers": ["npm", "pnpm"],
+      "matchManagers": [
+        "npm",
+        "pnpm"
+      ],
       "automerge": true
     },
     {
-      "matchManagers": ["npm"],
+      "matchManagers": [
+        "npm"
+      ],
       "automergeType": "pr",
       "automergeStrategy": "merge-commit"
     },
     {
-      "matchManagers": ["pnpm"],
+      "matchManagers": [
+        "pnpm"
+      ],
       "automergeType": "branch"
     },
     {
-      "matchPackagePatterns": ["next", "neon"],
-      "automerge": true
+      "automerge": true,
+      "matchPackageNames": [
+        "/next/",
+        "/neon/"
+      ]
     },
     {
-      "matchPackagePatterns": ["prisma", "@prisma/client"],
-      "matchUpdateTypes": ["minor", "patch"],
-      "automerge": true
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "automerge": true,
+      "matchPackageNames": [
+        "/prisma/",
+        "/@prisma/client/"
+      ]
     },
     {
-      "matchPackagePatterns": ["prisma", "@prisma/client"],
-      "matchUpdateTypes": ["major"],
-      "enabled": false
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "enabled": false,
+      "matchPackageNames": [
+        "/prisma/",
+        "/@prisma/client/"
+      ]
     }
   ]
 }
