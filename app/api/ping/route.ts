@@ -1,7 +1,7 @@
 // app/api/ping/route.ts - SIMPLE TEST
 import { appLog } from "@/lib/logger";
 import { NextResponse } from "next/server";
-import { useEffect } from "react";
+
 console.log("PING route loaded");
 //
 

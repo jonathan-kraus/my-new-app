@@ -84,11 +84,21 @@ model Location {
   astronomy AstronomySnapshot[]
 }
 model WeatherSnapshot {
-  id         String   @id @default(cuid())
-  locationId String
-  fetchedAt  DateTime @default(now())
+  id            String   @id @default(cuid())
+  locationId    String
 
-  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  temperature   Float
+  feelsLike     Float?
+  humidity      Float?
+  windSpeed     Float?
+  windDirection Float?
+  pressure      Float?
+  visibility    Float?
+  weatherCode   Int?
+
+  fetchedAt     DateTime @default(now())
+
+  location      Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
 
   @@index([locationId, fetchedAt])
 }
@@ -96,12 +106,19 @@ model WeatherSnapshot {
 model AstronomySnapshot {
   id         String   @id @default(cuid())
   locationId String
+
+  sunrise    DateTime
+  sunset     DateTime
+  moonrise   DateTime?
+  moonset    DateTime?
+
   fetchedAt  DateTime @default(now())
 
   location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
 
   @@index([locationId, fetchedAt])
 }
+
 
 model Log {
   id            String   @id @default(cuid())
