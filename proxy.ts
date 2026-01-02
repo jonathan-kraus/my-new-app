@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 
-export function middleware(req: Request) {
+export function proxy(req: Request) {
   const requestId = randomUUID();
 
   const res = NextResponse.next();

@@ -39,7 +39,7 @@ export default function ProfileSection() {
 	return (
 		<div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-white/50 sticky top-6">
 			<div className="text-center">
-				<div className="w-20 h-20 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+				<div className="w-20 h-20 bg-linear-to-r from-blue-500 to-indigo-600 rounded-full mx-auto mb-4 flex items-center justify-center">
 					<span className="text-2xl font-bold text-white">{session.user?.name?.[0] || "J"}</span>
 				</div>
 
