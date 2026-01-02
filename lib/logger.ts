@@ -7,22 +7,37 @@ export interface LogMessage {
 	page?: string;
 }
 function getCallsite() {
-	const stack = new Error().stack;
-	if (!stack) return {};
+  const stack = new Error().stack;
+  if (!stack) return {};
 
-	const lines = stack.split("\n");
-	const caller = lines.find((l) => l.includes(".ts") || l.includes(".tsx"));
+  const lines = stack.split("\n");
 
-	if (!caller) return {};
+  for (const line of lines) {
+    // Skip logger internals
+    if (
+      line.includes("appLog") ||
+      line.includes("getCallsite") ||
+      line.includes("node_modules")
+    ) {
+      continue;
+    }
 
-	const match = caller.match(/\((.*):(\d+):(\d+)\)/);
-	if (!match) return {};
+    // Match both client & server formats
+    const match =
+      line.match(/\(?(.+?):(\d+):(\d+)\)?$/) ||
+      line.match(/at .* \((.+?):(\d+):(\d+)\)/);
 
-	return {
-		file: match[1],
-		line: Number(match[2]),
-	};
+    if (match) {
+      return {
+        file: match[1],
+        line: Number(match[2]),
+      };
+    }
+  }
+
+  return {};
 }
+
 
 // ✅ Universal - works Client/Server/Mars
 export async function appLog(msg: Omit<LogMessage, "createdAt">): Promise<{ success: boolean }> {

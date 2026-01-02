@@ -5,9 +5,13 @@ export interface CreateLogInput {
   level: LogLevel;
   message: string;
   data?: Record<string, any>;
-  userId?: string | null;
   page?: string | null;
-  sessionId?: string | null;
+  userId?: string | null;
+  sessionEmail?: string | null;
+  sessionUser?: string | null;
+  requestId?: string | null;
   file?: string | null;
   line?: number | null;
+  createdAt?: Date;
 }
+

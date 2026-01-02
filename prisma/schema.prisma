@@ -77,15 +77,12 @@ model Log {
   message       String
   data          Json?
   page          String?
-
   userId        String?
   sessionEmail  String?
   sessionUser   String?
-
   requestId     String?
   file          String?
   line          Int?
-
   createdAt     DateTime @default(now())
 }
 
