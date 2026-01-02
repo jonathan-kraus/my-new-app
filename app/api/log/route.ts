@@ -8,7 +8,7 @@ export async function POST(req: Request) {
 		headers: req.headers,
 	});
 
-	const requestId = req.headers.get("x-request-id");
+	//const requestId = req.headers.get("x-request-id");
 
 	await db.log.create({
 		data: {
@@ -23,9 +23,9 @@ export async function POST(req: Request) {
 			sessionUser: session?.user?.name ?? null,
 
 			// 🧭 observability
-			requestId,
-			file: body.file ?? null,
-			line: body.line ?? null,
+			//requestId,
+			//file: body.file ?? null,
+			//line: body.line ?? null,
 
 			createdAt: new Date(body.createdAt),
 		},
