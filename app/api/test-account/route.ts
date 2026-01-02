@@ -1,18 +1,19 @@
-// app/api/test-account/route.ts
-import { db } from "@/lib/db";
-
+// app/api/test-session/route.ts
+import { db } from "@/lib/prisma";
 export async function GET() {
-	const user = await db.user.create({
-		data: { email: "test@example.com" },
-	});
+  const user = await db.user.create({
+    data: { email: `test+${Date.now()}@example.com` },
+  });
 
-	const account = await db.account.create({
-		data: {
-			userId: user.id,
-			provider: "github",
-			providerAccountId: "123",
-		},
-	});
+  const session = await db.session.create({
+    data: {
+      userId: user.id,
+      token: `tok_${Date.now()}`,
+      expiresAt: new Date(Date.now() + 1000 * 60 * 60),
+      ipAddress: "127.0.0.1",
+      userAgent: "test",
+    },
+  });
 
-	return Response.json({ user, account });
+  return Response.json({ user, session });
 }
