@@ -1,6 +1,7 @@
 // app/api/ping/route.ts - SIMPLE TEST
 import { appLog } from "@/lib/logger";
 import { NextResponse } from "next/server";
+import { useEffect } from "react";
 console.log("PING route loaded");
 //
 
@@ -9,8 +10,12 @@ export function GET() {
 		db: process.env.DATABASE_URL ?? "missing",
 	});
 }
-// export async function log() {
-// 	appLog({ level: "info", message: "ping", page: "init" });
-// 	return NextResponse.json({ message: "API works!" });
-// }
-// log(); // Simple ping route to test if API is working
+export function Log() {
+
+	//fetch("/api/ping");
+const level = 1;
+	 appLog({ level: "info", message: "ping", page: "init" });
+	return (level);
+
+
+}

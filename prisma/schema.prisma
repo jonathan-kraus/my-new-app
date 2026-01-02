@@ -69,7 +69,39 @@ model Verification {
   @@index([identifier])
   @@map("verification")
 }
+model Location {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  name      String
+  latitude  Float
+  longitude Float
+  timezone  String
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  weather   WeatherSnapshot[]
+  astronomy AstronomySnapshot[]
+}
+model WeatherSnapshot {
+  id         String   @id @default(cuid())
+  locationId String
+  fetchedAt  DateTime @default(now())
+
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  @@index([locationId, fetchedAt])
+}
+
+model AstronomySnapshot {
+  id         String   @id @default(cuid())
+  locationId String
+  fetchedAt  DateTime @default(now())
+
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  @@index([locationId, fetchedAt])
+}
 
 model Log {
   id            String   @id @default(cuid())
