@@ -1,8 +1,5 @@
 import { getAuth } from "@/lib/auth";
-import {
-	setLastAuthResponseHeaders,
-	setLastAuthRequestHeaders,
-} from "@/lib/auth-debug";
+import { setLastAuthResponseHeaders, setLastAuthRequestHeaders } from "@/lib/auth-debug";
 export const runtime = "nodejs";
 
 export async function GET(req: Request) {

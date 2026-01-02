@@ -11,11 +11,8 @@ export async function GET() {
 	// Clear after read to avoid leaking between requests
 	clearLastAuthResponseHeaders();
 	clearLastAuthRequestHeaders();
-	return new Response(
-		JSON.stringify({ requestHeaders, responseHeaders }),
-		{
-			status: 200,
-			headers: { "content-type": "application/json" },
-		}
-	);
+	return new Response(JSON.stringify({ requestHeaders, responseHeaders }), {
+		status: 200,
+		headers: { "content-type": "application/json" },
+	});
 }
