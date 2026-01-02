@@ -1,24 +1,34 @@
 // app/api/log/route.ts
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
-  const body = await req.json();
+  try {
+    const body = await req.json();
 
-  const session = await auth.api.getSession({
-    headers: req.headers,
-  });
+    const session = await auth.api.getSession({
+      headers: req.headers,
+    });
 
-  await db.log.create({
-    data: {
-      level: body.level,
-      message: body.message,
-      data: body.data,
-      page: body.page,
-      userId: session?.user?.id ?? null,
-      createdAt: new Date(body.createdAt),
-    },
-  });
+    await prisma.log.create({
+      data: {
+        level: body.level,
+        message: body.message,
+        data: body.data ?? null,
+        page: body.page ?? null,
 
-  return Response.json({ success: true });
+        // 🔑 Session enrichment
+        userId: session?.user?.id ?? null,
+        sessionEmail: session?.user?.email ?? null,
+        sessionUser: session?.user?.name ?? null,
+
+        createdAt: new Date(body.createdAt),
+      },
+    });
+
+    return Response.json({ success: true });
+  } catch (error) {
+    console.error("[LOG API ERROR]", error);
+    return Response.json({ success: false }, { status: 500 });
+  }
 }
