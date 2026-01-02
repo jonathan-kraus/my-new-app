@@ -72,20 +72,23 @@ model Verification {
 
 
 model Log {
-  id           String   @id @default(cuid())
-  level        String
-  message      String
-  data         Json?
-  createdAt    DateTime @default(now())
-  userId       String?
-  sessionEmail String?
-  sessionUser  String?
-  page         String?
-  userAgent    String?
-  ipAddress    String?
+  id            String   @id @default(cuid())
+  level         String
+  message       String
+  data          Json?
+  page          String?
 
-  @@map("logs")
+  userId        String?
+  sessionEmail  String?
+  sessionUser   String?
+
+  requestId     String?
+  file          String?
+  line          Int?
+
+  createdAt     DateTime @default(now())
 }
+
 
 model Note {
   id        String   @id @default(cuid())
