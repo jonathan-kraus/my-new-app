@@ -25,6 +25,7 @@ model Account {
   id                String  @id @default(cuid())
   userId            String
   provider          String
+  accountId         String
   providerAccountId String
   accessToken       String?
   refreshToken      String?
@@ -36,10 +37,11 @@ model Account {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([provider, providerAccountId])
+  @@unique([provider, accountId])
   @@index([userId])
   @@map("account")
 }
+
 
 
 model Session {
