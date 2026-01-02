@@ -1,11 +1,21 @@
-import { getLastAuthHeaders, clearLastAuthHeaders } from "@/lib/auth-debug";
+import {
+	getLastAuthResponseHeaders,
+	clearLastAuthResponseHeaders,
+	getLastAuthRequestHeaders,
+	clearLastAuthRequestHeaders,
+} from "@/lib/auth-debug";
 
 export async function GET() {
-	const headers = getLastAuthHeaders();
+	const responseHeaders = getLastAuthResponseHeaders();
+	const requestHeaders = getLastAuthRequestHeaders();
 	// Clear after read to avoid leaking between requests
-	clearLastAuthHeaders();
-	return new Response(JSON.stringify({ headers }), {
-		status: 200,
-		headers: { "content-type": "application/json" },
-	});
+	clearLastAuthResponseHeaders();
+	clearLastAuthRequestHeaders();
+	return new Response(
+		JSON.stringify({ requestHeaders, responseHeaders }),
+		{
+			status: 200,
+			headers: { "content-type": "application/json" },
+		}
+	);
 }
