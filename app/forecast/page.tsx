@@ -18,6 +18,7 @@ type WeatherSnapshot = {
 export default function ForecastPage() {
 	const [weather, setWeather] = useState<WeatherSnapshot | null>(null);
 	const [error, setError] = useState<string | null>(null);
+console.log("🔥 forecast page executed");
 
 	useEffect(() => {
 		appLog({

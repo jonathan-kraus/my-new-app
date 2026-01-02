@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 
 const CACHE_MINUTES = Number(process.env.WEATHER_CACHE_MINUTES ?? 10);
 const API_KEY = process.env.TOMORROWIO_APIKEY!;
+console.log("🔥 /api/weather route executed");
 
 export async function GET() {
   const location = await db.location.findUnique({
