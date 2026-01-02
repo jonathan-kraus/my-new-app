@@ -21,6 +21,7 @@ function getCallsite() {
     ) {
       continue;
     }
+console.log(new Error().stack);
 
     // Match both client & server formats
     const match =
