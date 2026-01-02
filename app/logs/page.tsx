@@ -22,7 +22,7 @@ export default async function LogsPage() {
               <th className="p-4 text-left">Message</th>
               <th className="p-4 text-left">User</th>
               <th className="p-4 text-left">Page</th>
-              <th className="p-4 text-left">IP</th>
+              <th className="p-4 text-left">File</th>
             </tr>
           </thead>
 
@@ -73,7 +73,7 @@ export default async function LogsPage() {
                   <td className="p-4 font-mono text-xs">{log.page}</td>
 
                   {/* IP */}
-                  <td className="p-4 font-mono text-xs">{log.ipAddress}</td>
+                  <td className="p-4 font-mono text-xs">{log.file}</td>
                 </tr>
               );
             })}
