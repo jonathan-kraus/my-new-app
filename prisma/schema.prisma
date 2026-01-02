@@ -23,25 +23,20 @@ model User {
 }
 
 model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  provider          String
-  accountId         String
-  providerAccountId String
-  accessToken       String?
-  refreshToken      String?
-  expiresAt         Int?
-  tokenType         String?
-  scope             String?
-  idToken           String?
-  sessionState      String?
+  id          String  @id @default(cuid())
+  userId      String
+  providerId  String
+  accountId   String
+  accessToken String?
+  scope       String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([provider, accountId])
+  @@unique([providerId, accountId])
   @@index([userId])
   @@map("account")
 }
+
 
 
 
