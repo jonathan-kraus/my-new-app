@@ -14,11 +14,13 @@ const githubClientSecret =
 	process.env.GITHUB_CLIENT_SECRET ?? process.env.GITHUB_SECRET ?? process.env.AUTH_GITHUB_SECRET;
 
 const socialProviders: any = {};
+
 if (githubClientId && githubClientSecret) {
 	socialProviders.github = {
 		clientId: githubClientId,
 		clientSecret: githubClientSecret,
-    scope: ["read:user", "user:email"],
+		user: { requireEmail: false },
+		scope: ["read:user", "user:email"],
 	};
 }
 
