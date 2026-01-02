@@ -50,12 +50,18 @@ export async function POST(req: Request) {
 	});
 	const auth = await getAuth();
 	try {
+		// capture incoming request headers for debugging (POST)
+		const reqHeaders = Object.fromEntries(req.headers.entries());
+		setLastAuthRequestHeaders(reqHeaders as Record<string, string>);
+		// eslint-disable-next-line no-console
+		console.error("Auth handler request headers:", reqHeaders);
+
 		const res = await auth.handler(req);
 		// Log response headers to inspect Set-Cookie and cookie attributes
 		// eslint-disable-next-line no-console
 		const headers = Object.fromEntries(res.headers.entries());
 		// store for debug endpoint
-		setLastAuthHeaders(headers as Record<string, string>);
+		setLastAuthResponseHeaders(headers as Record<string, string>);
 		// eslint-disable-next-line no-console
 		console.error("Auth handler response headers:", headers);
 		return res;
