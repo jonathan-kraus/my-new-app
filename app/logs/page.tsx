@@ -16,7 +16,7 @@ export default async function LogsPage() {
       <div className="overflow-x-auto">
         <table className="w-full bg-white rounded-2xl shadow-xl">
           <thead>
-            <tr className="bg-gradient-to-r from-gray-50 to-gray-100">
+            <tr className="bg-linear-to-r from-gray-50 to-gray-100">
               <th className="p-4 text-left">Time</th>
               <th className="p-4 text-left">Level</th>
               <th className="p-4 text-left">Message</th>
