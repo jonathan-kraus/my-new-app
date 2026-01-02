@@ -67,7 +67,7 @@ export default async function LogsPage() {
                   <td className="p-4 font-mono text-sm">{log.message}</td>
 
                   {/* USER */}
-                  <td className="p-4">{log.userId}</td>
+                  <td className="p-4">{log.sessionUser}</td>
 
                   {/* PAGE */}
                   <td className="p-4 font-mono text-xs">{log.page}</td>
