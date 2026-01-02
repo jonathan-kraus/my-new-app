@@ -21,7 +21,7 @@ function getCallsite() {
     ) {
       continue;
     }
-console.log(new Error().stack);
+
 
     // Match both client & server formats
     const match =
@@ -38,7 +38,7 @@ console.log(new Error().stack);
 
   return {};
 }
-
+console.log(new Error().stack);
 
 // ✅ Universal - works Client/Server/Mars
 export async function appLog(msg: Omit<LogMessage, "createdAt">): Promise<{ success: boolean }> {
@@ -48,6 +48,16 @@ export async function appLog(msg: Omit<LogMessage, "createdAt">): Promise<{ succ
 		...callsite,
 		createdAt: new Date().toISOString(),
 	};
+const baseUrl =
+  typeof window === "undefined"
+    ? process.env.NEXT_PUBLIC_SITE_URL || "https://www.kraus.my.id"
+    : "";
+
+await fetch(`${baseUrl}/api/log`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(payload),
+});
 
 	try {
 		const response = await fetch("/api/log", {
