@@ -47,7 +47,7 @@ export async function GET() {
   });
 
   const res = await fetch(
-    `https://api.tomorrow.io/v4/weather/realtime?location=${location.latitude},${location.longitude}&apikey=${API_KEY}`,
+    `https://api.tomorrow.io/v4/weather/realtime?location=${location.latitude},${location.longitude}&units=imperial&apikey=${API_KEY}`,
     { headers: { accept: "application/json" } }
   );
 
