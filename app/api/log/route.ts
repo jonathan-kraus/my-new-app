@@ -1,6 +1,6 @@
 // app/api/log/route.ts
 import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/db";
 
 export async function POST(req: Request) {
   const body = await req.json();
@@ -11,7 +11,7 @@ export async function POST(req: Request) {
 
   const requestId = req.headers.get("x-request-id");
 
-  await prisma.log.create({
+  await db.log.create({
     data: {
       level: body.level,
       message: body.message,
