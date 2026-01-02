@@ -9,11 +9,12 @@ export async function logToDatabase(input: CreateLogInput): Promise<{ success: b
 			data: {
 				level: input.level,
 				message: input.message,
-				data: input.data ? (input.data as Prisma.InputJsonValue) : Prisma.JsonNull, // ✅ PRISMA 7 EXACT TYPE
+				data: input.data ? (input.data as Prisma.InputJsonValue) : Prisma.JsonNull,
 				userId: input.userId,
 				page: input.page,
 				//sessionId: input.sessionId,
-				ipAddress: input.ipAddress,
+				file: input.file,
+				line: input.line,
 			},
 		});
 		return { success: true };

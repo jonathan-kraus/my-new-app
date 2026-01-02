@@ -8,5 +8,6 @@ export interface CreateLogInput {
   userId?: string | null;
   page?: string | null;
   sessionId?: string | null;
-  ipAddress?: string | null;
+  file?: string | null;
+  line?: number | null;
 }
