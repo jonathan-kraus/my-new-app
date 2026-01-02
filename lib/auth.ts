@@ -23,6 +23,8 @@ if (githubClientId && githubClientSecret) {
 
 // Export a named `auth` instance so the Better Auth CLI can detect the config.
 export const auth = betterAuth({
+	baseURL: "https://www.kraus.my.id",
+	trustedOrigins: ["https://www.kraus.my.id", "https://kraus.my.id"],
 	database: prismaAdapter(db, { provider: "postgresql" }),
 	socialProviders: Object.keys(socialProviders).length ? socialProviders : undefined,
 });
