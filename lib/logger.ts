@@ -1,3 +1,5 @@
+import { headers } from "next/headers";
+
 // lib/logger.ts - TYPES ONLY (no DB!)
 export interface LogMessage {
 	level: "info" | "warn" | "error" | "debug";
@@ -6,6 +8,8 @@ export interface LogMessage {
 	userId?: string;
 	page?: string;
 }
+let requestId: string | undefined;
+
 function getCallsite() {
   const stack = new Error().stack;
   if (!stack) return {};
@@ -46,6 +50,7 @@ export async function appLog(msg: Omit<LogMessage, "createdAt">): Promise<{ succ
 	const payload = {
 		...msg,
 		...callsite,
+    requestId,
 		createdAt: new Date().toISOString(),
 	};
 const baseUrl =
