@@ -3,7 +3,8 @@
 import { useEffect } from "react";
 import { logit } from "@/lib/log/client";
 import { Button } from "@/components/ui/button";
-import { CurrentWeatherCard } from "@/app/components/dashboard/current-weather-card";
+import CurrentWeatherCard from "@/app/components/dashboard/current-weather-card";
+import Link from "next/link";
 // import { TodayAtAGlanceCard } from "@/components/dashboard/today-at-a-glance-card";
 // import { AstronomyCard } from "@/components/dashboard/astronomy-card";
 // import { SystemHealthGrid } from "@/components/dashboard/system-health-grid";
@@ -55,10 +56,20 @@ export default function HomePage() {
 
 			{/* Quick Actions */}
 			<section className="flex gap-4">
-				{/* <Button href="/forecast">Full Forecast</Button>
-				<Button href="/logs">Logs</Button>
-				<Button href="/locations">Locations</Button>
-				<Button href="/admin/runtime">Runtime Settings</Button> */}
+<section className="flex gap-4">
+  <Button asChild>
+    <Link href="/forecast">Full Forecast</Link>
+  </Button>
+  <Button asChild>
+    <Link href="/logs">Logs</Link>
+  </Button>
+  <Button asChild>
+    <Link href="/locations">Locations</Link>
+  </Button>
+  <Button asChild>
+    <Link href="/admin/runtime">Runtime Settings</Link>
+  </Button>
+</section>
 			</section>
 		</div>
 	);
