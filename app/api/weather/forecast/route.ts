@@ -3,7 +3,16 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { logit } from "@/lib/log/server";
 
+
 export async function GET(req: Request) {
+  await logit({
+  level: "info",
+  message: "Weather forecast initiated",
+  file: "app/api/weather/forecast/route.ts",
+  line: 7,
+  data: { initTime: Date.now() },
+});
+
   const { searchParams } = new URL(req.url);
   const locationId = searchParams.get("locationId");
 
@@ -20,14 +29,16 @@ export async function GET(req: Request) {
   }
 
   // Example: Open‑Meteo (no API key required)
-  const weatherRes = await fetch(
-    `https://api.open-meteo.com/v1/forecast` +
-      `?latitude=${location.latitude}` +
-      `&longitude=${location.longitude}` +
-      `&daily=temperature_2m_max,temperature_2m_min,weathercode` +
-      `&temperature_unit=fahrenheit` +
-      `&timezone=auto`,
-  );
+const weatherRes = await fetch(
+  `https://api.open-meteo.com/v1/forecast` +
+    `?latitude=${location.latitude}` +
+    `&longitude=${location.longitude}` +
+    `&current_weather=true` +
+    `&daily=temperature_2m_max,temperature_2m_min,weathercode` +
+    `&temperature_unit=fahrenheit` +
+    `&timezone=auto`
+);
+
 
   const weather = await weatherRes.json();
 
