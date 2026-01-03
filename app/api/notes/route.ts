@@ -7,7 +7,7 @@ import { auth } from "@/lib/auth";
 
 export async function GET() {
   const session = await auth.api.getSession({
-headers: await headers(),
+    headers: await headers(),
   });
 
   if (!session?.user) {
@@ -18,10 +18,7 @@ headers: await headers(),
       line: 13,
     });
 
-    return NextResponse.json(
-      { error: "Unauthorized" },
-      { status: 401 }
-    );
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const notes = await db.note.findMany({

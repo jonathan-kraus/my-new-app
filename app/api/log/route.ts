@@ -27,7 +27,6 @@ export async function POST(req: Request) {
       requestId,
       file: body.file ?? null,
       line: body.line ?? null,
-
     },
   });
 

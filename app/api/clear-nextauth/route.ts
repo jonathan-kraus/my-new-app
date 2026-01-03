@@ -22,13 +22,13 @@ export async function GET() {
     // expire for current host
     res.headers.append(
       "Set-Cookie",
-      `${name}=; Path=/; Expires=${expire}; HttpOnly; Secure; SameSite=None`
+      `${name}=; Path=/; Expires=${expire}; HttpOnly; Secure; SameSite=None`,
     );
 
     // expire for www domain (useful if your site uses www)
     res.headers.append(
       "Set-Cookie",
-      `${name}=; Domain=www.kraus.my.id; Path=/; Expires=${expire}; HttpOnly; Secure; SameSite=None`
+      `${name}=; Domain=www.kraus.my.id; Path=/; Expires=${expire}; HttpOnly; Secure; SameSite=None`,
     );
   }
 

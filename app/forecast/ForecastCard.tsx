@@ -6,14 +6,20 @@ type ForecastDay = {
   description: string;
 };
 
-export function ForecastCard({ day, icon, high, low, description }: ForecastDay) {
+export function ForecastCard({
+  day,
+  icon,
+  high,
+  low,
+  description,
+}: ForecastDay) {
   return (
     <div className="bg-white/70 backdrop-blur-xl rounded-2xl p-4 shadow-lg border border-white/50 text-center">
-      <p className="text-sm font-semibold text-gray-700 mb-1">{day}</p>
+      <p className="text-sm font-semibold text-gray-800">{day}</p>
       <div className="text-4xl mb-2">{icon}</div>
       <p className="text-xl font-bold text-gray-900">{high}°</p>
-      <p className="text-sm text-gray-500">{low}°</p>
-      <p className="text-xs text-gray-600 mt-1">{description}</p>
+      <p className="text-sm text-gray-700">{low}°</p>
+      <p className="text-xs text-gray-800 mt-1">{description}</p>
     </div>
   );
 }

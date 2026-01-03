@@ -56,8 +56,8 @@ export default async function LogsPage() {
                       log.level === "error"
                         ? "text-red-600"
                         : log.level === "warn"
-                        ? "text-yellow-600"
-                        : "text-green-600"
+                          ? "text-yellow-600"
+                          : "text-green-600"
                     }`}
                   >
                     {log.level.toUpperCase()}

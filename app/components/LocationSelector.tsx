@@ -14,7 +14,7 @@ export function LocationSelector({
     <select
       value={selectedId}
       onChange={(e) => onChange(e.target.value)}
-      className="rounded-lg px-3 py-2 bg-white/80 backdrop-blur border shadow"
+      className=" rounded-lg px-3 py-2 bg-white/90 backdrop-blur border border-blue/60 shadow text-gray-900 font-medium "
     >
       {locations.map((loc) => (
         <option key={loc.id} value={loc.id}>

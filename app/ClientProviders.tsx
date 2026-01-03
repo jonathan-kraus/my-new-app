@@ -1,19 +1,18 @@
 // app/ClientProviders.tsx - CONDITIONAL SessionProvider
-'use client';
-
+"use client";
 
 import ClientNav from "./ClientNav";
 import { ToasterClient } from "./components/ToasterClient";
 
 export default function ClientProviders({
-  children
+  children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <>
       <ClientNav />
-      <main style={{ flex: 1, padding: '2rem' }}>
+      <main style={{ flex: 1, padding: "2rem" }}>
         {children}
         <ToasterClient />
       </main>

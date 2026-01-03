@@ -1,58 +1,35 @@
 {
-  "extends": [
-    "config:recommended"
-  ],
+  "extends": ["config:recommended"],
   "prCreation": "not-pending",
   "rebaseWhen": "behind-base-branch",
   "ignoreTests": false,
   "packageRules": [
     {
-      "matchManagers": [
-        "npm",
-        "pnpm"
-      ],
+      "matchManagers": ["npm", "pnpm"],
       "automerge": true
     },
     {
-      "matchManagers": [
-        "npm"
-      ],
+      "matchManagers": ["npm"],
       "automergeType": "pr",
       "automergeStrategy": "merge-commit"
     },
     {
-      "matchManagers": [
-        "pnpm"
-      ],
+      "matchManagers": ["pnpm"],
       "automergeType": "branch"
     },
     {
       "automerge": true,
-      "matchPackageNames": [
-        "/next/",
-        "/neon/"
-      ]
+      "matchPackageNames": ["/next/", "/neon/"]
     },
     {
-      "matchUpdateTypes": [
-        "minor",
-        "patch"
-      ],
+      "matchUpdateTypes": ["minor", "patch"],
       "automerge": true,
-      "matchPackageNames": [
-        "/prisma/",
-        "/@prisma/client/"
-      ]
+      "matchPackageNames": ["/prisma/", "/@prisma/client/"]
     },
     {
-      "matchUpdateTypes": [
-        "major"
-      ],
+      "matchUpdateTypes": ["major"],
       "enabled": false,
-      "matchPackageNames": [
-        "/prisma/",
-        "/@prisma/client/"
-      ]
+      "matchPackageNames": ["/prisma/", "/@prisma/client/"]
     }
   ]
 }
