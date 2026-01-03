@@ -20,8 +20,13 @@ export async function GET(req: Request) {
   }
 
   // Example: Open‑Meteo (no API key required)
-  const weatherRes = await fetch(
-    `https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto`
+const weatherRes = await fetch(
+  `https://api.open-meteo.com/v1/forecast` +
+  `?latitude=${location.latitude}` +
+  `&longitude=${location.longitude}` +
+  `&daily=temperature_2m_max,temperature_2m_min,weathercode` +
+  `&temperature_unit=fahrenheit` +
+  `&timezone=auto`
   );
 
   const weather = await weatherRes.json();
