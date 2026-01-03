@@ -79,17 +79,15 @@ jobs:
       - name: Fix Prettier
         run: pnpm prettier --write .
 
-      # - name: Type check
-      #   run: pnpm run type-check
+      - name: Type check
+        run: pnpm run type-check
 
       - name: Security audit
         if: github.event_name == 'push'
         run: pnpm audit
 
-      # - name: Lint (no warnings)
-      #   run: pnpm lint --max-warnings=0
-
-
+      - name: Lint (no warnings)
+        run: pnpm lint --max-warnings=0
 
       - name: Show workspace files for diagnostics
         if: always()
