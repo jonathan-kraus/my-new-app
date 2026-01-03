@@ -8,13 +8,13 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String?  @unique
+  id            String   @id @default(cuid())
+  email         String?  @unique
   emailVerified Boolean  @default(false)
-  name      String?
-  image     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  name          String?
+  image         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   accounts Account[]
   sessions Session[]
@@ -41,22 +41,20 @@ model Account {
 }
 
 model Session {
-  id         String   @id @default(cuid())
-  userId     String
-  token      String   @unique
-  expiresAt  DateTime
-  ipAddress  String?
-  userAgent  String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@map("session")
 }
-
-
 
 model Verification {
   id         String   @id @default(cuid())
@@ -69,23 +67,26 @@ model Verification {
   @@index([identifier])
   @@map("verification")
 }
+
 model Location {
-  id        String   @id @default(cuid())
-  key       String   @unique
+  id        String @id @default(cuid())
+  key       String @unique
   name      String
   latitude  Float
   longitude Float
   timezone  String
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
   weather   WeatherSnapshot[]
   astronomy AstronomySnapshot[]
+  forecast  ForecastSnapshot[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
+
 model WeatherSnapshot {
-  id            String   @id @default(cuid())
-  locationId    String
+  id         String @id @default(cuid())
+  locationId String
 
   temperature   Float
   feelsLike     Float?
@@ -96,43 +97,51 @@ model WeatherSnapshot {
   visibility    Float?
   weatherCode   Int?
 
-  fetchedAt     DateTime @default(now())
+  fetchedAt DateTime @default(now())
 
-  location      Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  location Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
 
   @@index([locationId, fetchedAt])
 }
 
 model AstronomySnapshot {
-  id         String   @id @default(cuid())
+  id         String @id @default(cuid())
   locationId String
 
-  sunrise    DateTime
-  sunset     DateTime
-  moonrise   DateTime?
-  moonset    DateTime?
+  sunrise  DateTime
+  sunset   DateTime
+  moonrise DateTime?
+  moonset  DateTime?
 
-  fetchedAt  DateTime @default(now())
+  fetchedAt DateTime @default(now())
 
-  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  location Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
 
   @@index([locationId, fetchedAt])
 }
 
+model ForecastSnapshot {
+  id         String   @id @default(cuid())
+  locationId String
+  fetchedAt  DateTime @default(now())
+  payload    Json
+
+  location Location @relation(fields: [locationId], references: [id])
+}
 
 model Log {
-  id            String   @id @default(cuid())
-  level         String
-  message       String
-  data          Json?
-  page          String?
-  userId        String?
-  sessionEmail  String?
-  sessionUser   String?
-  requestId     String?
-  file          String?
-  line          Int?
-  createdAt     DateTime @default(now())
+  id           String   @id @default(cuid())
+  level        String
+  message      String
+  data         Json?
+  page         String?
+  userId       String?
+  sessionEmail String?
+  sessionUser  String?
+  requestId    String?
+  file         String?
+  line         Int?
+  createdAt    DateTime @default(now())
 }
 
 enum LogLevel {
@@ -149,4 +158,10 @@ model Note {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   userEmail String?
+}
+
+model RuntimeConfig {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
 }
