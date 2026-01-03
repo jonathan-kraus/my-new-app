@@ -16,7 +16,7 @@ export default function HomePage() {
 		logit({
 			level: "info",
 			message: "Visited dashboard",
-			page: "/",
+			file: "app/page.tsx",
 			line: 16,
 			sessionUser: "Jonathan",
 		});
@@ -56,20 +56,20 @@ export default function HomePage() {
 
 			{/* Quick Actions */}
 			<section className="flex gap-4">
-<section className="flex gap-4">
-  <Button asChild>
-    <Link href="/forecast">Full Forecast</Link>
-  </Button>
-  <Button asChild>
-    <Link href="/logs">Logs</Link>
-  </Button>
-  <Button asChild>
-    <Link href="/locations">Locations</Link>
-  </Button>
-  <Button asChild>
-    <Link href="/admin/runtime">Runtime Settings</Link>
-  </Button>
-</section>
+				<section className="flex gap-4">
+					<Button asChild>
+						<Link href="/forecast">Full Forecast</Link>
+					</Button>
+					<Button asChild>
+						<Link href="/logs">Logs</Link>
+					</Button>
+					<Button asChild>
+						<Link href="/locations">Locations</Link>
+					</Button>
+					<Button asChild>
+						<Link href="/admin/runtime">Runtime Settings</Link>
+					</Button>
+				</section>
 			</section>
 		</div>
 	);
