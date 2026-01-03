@@ -28,7 +28,6 @@ export async function POST(req: Request) {
       file: body.file ?? null,
       line: body.line ?? null,
 
-      createdAt: new Date(body.createdAt),
     },
   });
 

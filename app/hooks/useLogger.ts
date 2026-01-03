@@ -10,7 +10,6 @@ export function useLogger() {
         message,
         page: window.location.pathname,
         data,
-        createdAt: new Date().toISOString(),
       }),
     });
   }
