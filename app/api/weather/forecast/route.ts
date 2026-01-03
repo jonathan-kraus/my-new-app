@@ -55,7 +55,7 @@ export async function GET(req: Request) {
 		level: "info",
 		message: "Weather API request completed",
 		page: "/api/weather/forecast",
-		data: { status: weatherRes.status, statusText: weatherRes.statusText },
+		data: { status: weatherRes.status, parsed: parsed },
 	});
 
 
