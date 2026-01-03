@@ -1,32 +1,40 @@
-import { getAuth } from "@/lib/auth";
+// app/api/notes/route.ts
+import { NextResponse } from "next/server";
+import { headers } from "next/headers";
 import { db } from "@/lib/db";
+import { logit } from "@/lib/log/server";
+import { auth } from "@/lib/auth";
 
-export async function GET(req: Request) {
-	const auth = await getAuth();
-	let session;
-	try {
-		session = await auth.api.getSession({ headers: req.headers });
-	} catch (err) {
-		// eslint-disable-next-line no-console
-		console.error("Failed while getting session:", err);
-		// eslint-disable-next-line no-console
-		console.error("ENV: DATABASE_URL set?", !!process.env.DATABASE_URL);
-		throw err;
-	}
+export async function GET() {
+  const session = await auth.api.getSession({
+headers: await headers(),
+  });
 
-	if (!session?.user) {
-		// log session and incoming headers to help debug missing session
-		// eslint-disable-next-line no-console
-		console.error("Missing session user. Session:", session);
-		// eslint-disable-next-line no-console
-		console.error("Request headers:", Object.fromEntries(req.headers.entries()));
-		return Response.json({ error: "Unauthorized" }, { status: 401 });
-	}
+  if (!session?.user) {
+    await logit({
+      level: "warn",
+      message: "Unauthorized notes access attempt",
+      page: "app/api/notes/route.ts",
+      line: 13,
+    });
 
-	const notes = await db.note.findMany({
-		where: { userEmail: session.user.email },
-		orderBy: { createdAt: "desc" },
-	});
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401 }
+    );
+  }
 
-	return Response.json(notes);
+  const notes = await db.note.findMany({
+    where: { userEmail: session.user.email },
+    orderBy: { updatedAt: "desc" },
+  });
+
+  await logit({
+    level: "info",
+    message: `Retrieved ${notes.length} notes`,
+    page: "/notes",
+    data: { userId: session.user.id },
+  });
+
+  return NextResponse.json(notes);
 }
