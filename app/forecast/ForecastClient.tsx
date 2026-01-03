@@ -4,6 +4,14 @@ import { useEffect, useState } from "react";
 import { LocationSelector } from "@/components/LocationSelector";
 import { ForecastCard } from "./ForecastCard";
 import { Location } from "@/lib/types";
+function formatDayLabel(dateStr: string, index: number) {
+  if (index === 0) return "Today";
+  if (index === 1) return "Tomorrow";
+
+  return new Date(dateStr).toLocaleDateString(undefined, {
+    weekday: "short",
+  });
+}
 
 export default function ForecastClient({
   locations,
@@ -45,7 +53,7 @@ export default function ForecastClient({
                 (high: number, i: number) => (
                   <ForecastCard
                     key={i}
-                    day={forecast.forecast.time[i]}
+                    day={formatDayLabel(forecast.forecast.time[i], i)}
                     icon="🌤️"
                     high={Math.round(high)}
                     low={Math.round(

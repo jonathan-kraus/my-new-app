@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import ForecastClient from "./ForecastClient";
+import ForecastClient from "@/app/forecast/ForecastClient";
 
 export const dynamic = "force-dynamic";
 
