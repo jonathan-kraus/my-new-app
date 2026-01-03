@@ -1,6 +1,8 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { db } from "./prisma";
+import { logit } from "@/lib/log/server";
+logit
 
 type AuthType = ReturnType<typeof betterAuth>;
 
@@ -40,7 +42,12 @@ export const auth = betterAuth({
 
 export async function getAuth(): Promise<AuthType> {
   if (_auth) return _auth;
-
+   await logit({
+      level: "warn",
+      message: "in getAuth - _auth is undefined",
+      file: "lib/auth.ts",
+      line: 45,
+    });
   // no-op: ensure runtime env checks are handled via `process.env.NODE_ENV`
 
   try {
@@ -60,6 +67,13 @@ export async function getAuth(): Promise<AuthType> {
 
     // Use the exported `auth` instance (so CLI can import this file and read `auth`).
     _auth = auth;
+       await logit({
+      level: "info",
+      message: "in getAuth - what is auth",
+      file: "lib/auth.ts",
+      line: 70,
+      data: { auth: JSON.stringify(_auth) },
+    });
   } catch (err: any) {
     // More detailed logs to help diagnose adapter init failures
     // eslint-disable-next-line no-console
