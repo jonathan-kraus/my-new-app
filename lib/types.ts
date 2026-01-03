@@ -15,3 +15,9 @@ export interface CreateLogInput {
   createdAt?: Date;
 }
 
+export type Location = {
+  id: string;
+  name: string;
+  latitude: number;
+  longitude: number;
+};
