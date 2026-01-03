@@ -1,7 +1,7 @@
 "use client";
-
+// app/notes/page.tsx
 import { useEffect, useState } from "react";
-import { appLog } from "@/lib/logger";
+import { logit } from "@/lib/log/client";
 export const dynamic = "force-dynamic";
 
 type Note = {
@@ -18,8 +18,10 @@ export default function NotesPage() {
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-
-				appLog({ level: "info", message: "Notes initialized", page: "app/notes/page.tsx" });
+		logit({ level: "info",
+		message: "Notes initialized",
+		page: "app/notes/page.tsx",
+		line: 21, });
 		async function loadNotes() {
 			try {
 				const res = await fetch("/api/notes", {

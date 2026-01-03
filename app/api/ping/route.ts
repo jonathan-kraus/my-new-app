@@ -1,5 +1,5 @@
 // app/api/ping/route.ts - SIMPLE TEST
-import { appLog } from "@/lib/logger";
+import { logit } from "@/lib/log/client";
 import { NextResponse } from "next/server";
 
 console.log("PING route loaded");
@@ -11,11 +11,12 @@ export function GET() {
 	});
 }
 export function Log() {
-
 	//fetch("/api/ping");
-const level = 1;
-	 appLog({ level: "info", message: "ping", page: "init" });
-	return (level);
-
-
+	const level = 1;
+	logit({ level: "info",
+		message: "ping",
+		page: "app/api/ping/route.ts",
+		line: 16,
+	 });
+	return level;
 }

@@ -1,7 +1,7 @@
 "use client";
-
+// app/forecast/page.tsx
 import { useEffect, useState } from "react";
-import { appLog } from "@/lib/logger";
+import { logit } from "@/lib/log/client";
 
 type WeatherSnapshot = {
 	temperature: number;
@@ -18,13 +18,14 @@ type WeatherSnapshot = {
 export default function ForecastPage() {
 	const [weather, setWeather] = useState<WeatherSnapshot | null>(null);
 	const [error, setError] = useState<string | null>(null);
-console.log("🔥 forecast page executed");
+	console.log("🔥 forecast page executed");
 
 	useEffect(() => {
-		appLog({
+		logit({
 			level: "info",
 			message: "Forecast page mounted",
-			page: "/forecast",
+			page: "app/forecast/page.tsx",
+			line: 24,
 		});
 
 		const loadWeather = async () => {
