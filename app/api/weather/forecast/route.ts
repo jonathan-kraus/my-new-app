@@ -53,6 +53,7 @@ const weatherRes = await fetch(
 
   return NextResponse.json({
     location,
+    current: weather.current_weather,
     forecast: weather.daily,
   });
 }

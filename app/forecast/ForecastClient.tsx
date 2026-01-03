@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { LocationSelector } from "@/components/LocationSelector";
 import { ForecastCard } from "./ForecastCard";
+import { CurrentWeather } from "./CurrentWeather";
 import { Location } from "@/lib/types";
 function formatDayLabel(dateStr: string, index: number) {
   if (index === 0) return "Today";
@@ -45,7 +46,8 @@ export default function ForecastClient({
         {forecast && (
           <>
             <p className="mb-4 text-lg opacity-90">{forecast.location.name}</p>
-
+              <CurrentWeather temperature={forecast.current.temperature}
+               windspeed={forecast.current.windspeed} />
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
               {forecast.forecast.temperature_2m_max.map(
                 (high: number, i: number) => (
