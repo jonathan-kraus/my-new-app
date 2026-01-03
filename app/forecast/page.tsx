@@ -1,89 +1,32 @@
 "use client";
 // app/forecast/page.tsx
-import { useEffect, useState } from "react";
-import { logit } from "@/lib/log/client";
 
-type WeatherSnapshot = {
-	temperature: number;
-	feelsLike?: number;
-	humidity?: number;
-	windSpeed?: number;
-	windDirection?: number;
-	pressure?: number;
-	visibility?: number;
-	weatherCode?: number;
-	fetchedAt: string;
-};
+import { ForecastCard } from "./ForecastCard";
+
+export const dynamic = "force-dynamic";
+
+const mockForecast = [
+  { day: "Today", icon: "☀️", high: 72, low: 55, description: "Sunny" },
+  { day: "Sat", icon: "⛅", high: 68, low: 52, description: "Partly Cloudy" },
+  { day: "Sun", icon: "🌧️", high: 64, low: 50, description: "Light Rain" },
+  { day: "Mon", icon: "🌤️", high: 66, low: 49, description: "Clearing" },
+  { day: "Tue", icon: "❄️", high: 38, low: 28, description: "Snow Showers" },
+];
 
 export default function ForecastPage() {
-	const [weather, setWeather] = useState<WeatherSnapshot | null>(null);
-	const [error, setError] = useState<string | null>(null);
-	console.log("🔥 forecast page executed");
+  return (
+    <div className="min-h-screen bg-linear-to-br from-sky-400 via-blue-500 to-indigo-600 px-6 py-10">
+      <div className="max-w-5xl mx-auto">
+        <h1 className="text-4xl font-black text-white mb-8 drop-shadow">
+          5‑Day Forecast
+        </h1>
 
-	useEffect(() => {
-		logit({
-			level: "info",
-			message: "Forecast page mounted",
-			page: "app/forecast/page.tsx",
-			line: 24,
-		});
-
-		const loadWeather = async () => {
-			try {
-				const res = await fetch("/api/weather");
-
-				if (!res.ok) {
-					throw new Error(`Weather fetch failed (${res.status})`);
-				}
-
-				const json = await res.json();
-				setWeather(json.data);
-			} catch (err) {
-				console.error(err);
-				setError("Unable to load weather data");
-			}
-		};
-
-		loadWeather();
-	}, []);
-
-	if (error) {
-		return <div className="text-red-600">{error}</div>;
-	}
-	if (!weather) {
-		return (
-			<div className="max-w-4xl space-y-4 py-4 animate-pulse">
-				<div className="h-8 w-48 bg-gray-200 rounded" />
-				<div className="h-32 bg-gray-200 rounded-xl" />
-			</div>
-		);
-	}
-
-	return (
-		<div className="max-w-4xl space-y-6 py-4">
-			<h1 className="text-3xl font-black bg-linear-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-				Current Weather
-			</h1>
-
-			<div className="bg-white/70 backdrop-blur-xl rounded-xl p-6 shadow-lg border border-white/50">
-				<p className="text-2xl font-bold">
-					{weather.temperature}°F
-					{weather.feelsLike && (
-						<span className="text-sm text-gray-600"> (feels like {weather.feelsLike}°F)</span>
-					)}
-				</p>
-
-				<div className="mt-4 grid grid-cols-2 gap-4 text-sm text-gray-700">
-					{weather.humidity !== undefined && <p>Humidity: {Math.round(weather.humidity * 100)}%</p>}
-					{weather.windSpeed !== undefined && <p>Wind: {weather.windSpeed} mph</p>}
-					{weather.pressure !== undefined && <p>Pressure: {weather.pressure} inHg</p>}
-					{weather.visibility !== undefined && <p>Visibility: {weather.visibility} mi</p>}
-				</div>
-
-				<p className="mt-4 text-xs text-gray-500">
-					Updated at {new Date(weather.fetchedAt).toLocaleTimeString()}
-				</p>
-			</div>
-		</div>
-	);
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+          {mockForecast.map((day) => (
+            <ForecastCard key={day.day} {...day} />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 }
