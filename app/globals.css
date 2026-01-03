@@ -63,3 +63,24 @@ body {
   flex-shrink: 0; /* ✅ NO SHRINK */
   width: 280px; /* ✅ FIXED WIDTH */
 }
+@keyframes breeze {
+  0% {
+    transform: translateX(0);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateX(6px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 0.6;
+  }
+}
+
+.wind-breeze {
+  animation: breeze 2.5s ease-in-out infinite;
+}
+.fade-in {
+  animation: fadeIn 0.5s ease-in forwards;
+}
