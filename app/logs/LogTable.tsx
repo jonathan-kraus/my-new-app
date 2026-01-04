@@ -33,7 +33,7 @@ export default function LogTable({ logs }: LogTableProps) {
 				<div
 					key={log.id}
 					onClick={() => toggle(log.id)}
-					className="cursor-pointer border-b py-2 hover:bg-gray-50"
+					className="cursor-pointer border-b py-2 hover:bg-slate-50"
 				>
 					<div className="flex justify-between">
 						<div className="font-mono text-sm">{log.level.toUpperCase()}</div>

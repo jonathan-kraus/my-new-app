@@ -14,7 +14,7 @@ export function ForecastCard({
   description,
 }: ForecastDay) {
   return (
-    <div className="bg-white/70 backdrop-blur-xl rounded-2xl p-4 shadow-lg border border-white/50 text-center">
+    <div className="bg-sky-500 backdrop-blur-xl rounded-2xl p-4 shadow-lg border border-white/50 text-center">
       <p className="text-sm font-semibold text-gray-800">{day}</p>
       <div className="text-4xl mb-2">{icon}</div>
       <p className="text-xl font-bold text-gray-900">{high}°</p>

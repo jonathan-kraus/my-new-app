@@ -23,7 +23,7 @@ export default async function HomePage() {
 					where: { isDefault: true },
 					 });
 			return (
-				 <div className="space-y-8 p-6">
+				 <div className="space-y-8 p-6 bg-sky-500 min-h-screen text-white">
 					 {/* Header */}
 					  <section>
 							 <h1 className="text-3xl font-semibold">Good evening, Jonathan.</h1>

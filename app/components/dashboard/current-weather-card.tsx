@@ -20,15 +20,14 @@ export default function CurrentWeatherCard({ location }: CurrentWeatherCardProps
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-        logit({
+      logit({
         level: "info",
-         message: `"Rendering CurrentWeatherCard with location:", ${location}`,
-         file: "app/components/dashboard/current-weather-card.tsx",
-         line: 23,
-          data: {
-          locationId: location?.id,
-          },
-        });
+        message: `Rendering CurrentWeatherCard with location: ${location?.name ?? "null"}`,
+        data: { locationId: location?.id ?? "null" },
+        file: "app/components/dashboard/current-weather-card.tsx",
+        line: 23,
+        sessionUser: "jonathan-kraus",
+      });
   useEffect(() => {
     async function load() {
       try {
