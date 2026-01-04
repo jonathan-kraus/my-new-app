@@ -89,7 +89,7 @@ export default function CurrentWeatherCard({ location }: CurrentWeatherCardProps
 			</div>
 
 			<div className="flex items-end gap-4">
-				<div className="text-5xl font-bold">{Math.round(current.feelsLike)}°</div>
+				<div> temp {Math.round(current.feelsLike)}°</div>
 				{/* <div className="text-5xl font-bold">{Math.round(current.temperature)}°</div> */}
 				<div className="text-gray-600">
 					<div>Feels like {Math.round(current.feelsLike)}°</div>
