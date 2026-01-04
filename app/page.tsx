@@ -10,49 +10,58 @@ import { db } from "@/lib/db";
 // import { SystemHealthGrid } from "@/components/dashboard/system-health-grid";
 // import { RuntimeConfigPanel } from "@/components/dashboard/runtime-config-panel";
 // import { RecentLogsFeed } from "@/components/dashboard/recent-logs-feed";
-
+function getGreeting(): string {
+	const hour = new Date().getHours();
+	if (hour < 5) return "Good night";
+	if (hour < 12) return "Good morning";
+	if (hour < 17) return "Good afternoon";
+	return "Good evening";
+}
 export default async function HomePage() {
-	 await logit({
-		 level: "info",
-		  message: "Visited dashboard",
-			file: "app/page.tsx",
-			line: 16,
-			sessionUser: "Jonathan",
-			 });
-			  const location = await db.location.findFirst({
-					where: { isDefault: true },
-					 });
-			return (
-				 <div className="space-y-8 p-6 bg-sky-500 min-h-screen text-white">
-					 {/* Header */}
-					  <section>
-							 <h1 className="text-3xl font-semibold">Good evening, Jonathan.</h1>
-							  <p className="text-muted-foreground">
-									 Your weather system is online and running smoothly.
-								</p>
-								 </section> {/* Current Weather */} <section className="grid grid-cols-1 md:grid-cols-3 gap-4"> <CurrentWeatherCard location={location} /> </section>
-				{/* <TodayAtAGlanceCard /> */}
-				{/* <AstronomyCard /> */}
+	await logit({
+		level: "info",
+		message: "Visited dashboard",
+		file: "app/page.tsx",
+		line: 21,
+		sessionUser: "Jonathan",
+	});
+	const location = await db.location.findFirst({
+		where: { isDefault: true },
+	});
+	return (
+		<div className="bg-sky-500 min-h-screen text-white p-6">
+			<div className="bg-sky-700 rounded-xl p-6 shadow-md">
+				{/* Header */}
+				<section>
+					<h1 className="text-3xl font-semibold">{getGreeting()}, Jonathan.</h1>
+					<p className="text-muted-foreground">
+						Your weather system is online and running smoothly.
+					</p>
+				</section>{" "}
+				{/* Current Weather */}{" "}
+				<section className="grid grid-cols-1 md:grid-cols-3 gap-4">
+					{" "}
+					<CurrentWeatherCard location={location} />{" "}
+				</section>
+			</div>
+			{/* <TodayAtAGlanceCard /> */}
+			{/* <AstronomyCard /> */}
 			<section></section>
-
 			{/* System Health */}
 			<section>
 				<h2 className="text-xl font-medium mb-2">System Health</h2>
 				{/* <SystemHealthGrid /> */}
 			</section>
-
 			{/* Runtime Controls */}
 			<section>
 				<h2 className="text-xl font-medium mb-2">Runtime Controls</h2>
 				{/* <RuntimeConfigPanel /> */}
 			</section>
-
 			{/* Recent Activity */}
 			<section>
 				<h2 className="text-xl font-medium mb-2">Recent Activity</h2>
 				{/* <RecentLogsFeed /> */}
 			</section>
-
 			{/* Quick Actions */}
 			<section className="flex gap-4">
 				<section className="flex gap-4">

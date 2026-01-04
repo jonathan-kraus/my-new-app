@@ -38,6 +38,15 @@ export default function CurrentWeatherCard({ location }: CurrentWeatherCardProps
 				const res = await fetch(`/api/weather?locationId=${locationId}`);
 				const json = await res.json();
 				setData(json);
+				logit({
+					level: "info",
+					message: `Weather fetch → ${location?.name ?? "unknown"} | source: ${sources.current ?? "unknown"} | temp: ${Math.round(current.temperature)}°`,
+
+					data: { locationId: location?.id ?? "null" },
+					file: "app/components/dashboard/current-weather-card.tsx",
+					line: 41,
+					sessionUser: "jonathan-kraus",
+				});
 			} catch (error) {
 				logit({
 					level: "error",
@@ -82,18 +91,14 @@ export default function CurrentWeatherCard({ location }: CurrentWeatherCardProps
 	}
 
 	const { current, sources } = data;
-logit({
-					level: "info",
-					message: `Fetch weather for: ${location?.name ?? "null"} from sources:
-					${sources.current ?? "null", "Temp"}: ${current.temperature ?? "null"}°`,
-					data: { locationId: location?.id ?? "null", weatherData: current,
-                        sources:sources,
-
-                     },
-					file: "app/components/dashboard/current-weather-card.tsx",
-					line: 85,
-
-				});
+	logit({
+		level: "info",
+		message: `Fetch weather for: ${location?.name ?? "null"} from sources:
+					${(sources.current ?? "null", "Temp")}: ${current.temperature ?? "null"}°`,
+		data: { locationId: location?.id ?? "null", weatherData: current, sources: sources },
+		file: "app/components/dashboard/current-weather-card.tsx",
+		line: 85,
+	});
 	return (
 		<div className="p-6 rounded-xl border bg-white shadow-sm transition-all duration-300 hover:shadow-md">
 			<div className="flex items-center justify-between mb-4">
