@@ -112,7 +112,7 @@ export async function POST(req: NextRequest) {
             creator: deployment.creator?.login,
             description: deployment.description,
           },
-          });        );
+          });
       }
       break;
     case 'deployment_status':
