@@ -1,5 +1,7 @@
 'use client';
+// app/components/dashboard/current-weather-card.tsx
 
+import { logit } from "@/lib/log/client";
 import { useEffect, useState } from "react";
 type CurrentWeatherCardProps = {
    location: {
@@ -18,6 +20,15 @@ export default function CurrentWeatherCard({ location }: CurrentWeatherCardProps
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
+        logit({
+        level: "info",
+         message: `"Rendering CurrentWeatherCard with location:", ${location}`,
+         file: "app/components/dashboard/current-weather-card.tsx",
+         line: 23,
+          data: {
+          locationId: location?.id,
+          },
+        });
   useEffect(() => {
     async function load() {
       try {
