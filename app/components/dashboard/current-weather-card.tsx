@@ -90,8 +90,10 @@ export default function CurrentWeatherCard({ location }: CurrentWeatherCardProps
 
 	<div className="flex items-center gap-4">
 		<div className="flex flex-col items-center">
+			<div className="bg-red-500">
 			<div className="text-sm text-muted-foreground">Temp</div>
 			<div className="text-5xl font-bold text-white"> {Math.round(current.temperature)}° </div>
+			</div>
 		</div>
 		<div className="text-gray-600">
 			<div>Feels like {Math.round(current.feelsLike)}°</div>
