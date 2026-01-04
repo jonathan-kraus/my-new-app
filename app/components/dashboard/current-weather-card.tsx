@@ -1,15 +1,28 @@
 'use client';
 
 import { useEffect, useState } from "react";
-
-export default function CurrentWeatherCard() {
+type CurrentWeatherCardProps = {
+   location: {
+     id: string;
+     key: string;
+     name: string;
+     latitude: number;
+     longitude: number;
+     timezone: string;
+     isDefault: boolean;
+     createdAt: Date;
+     updatedAt: Date;
+   } | null;
+};
+export default function CurrentWeatherCard({ location }: CurrentWeatherCardProps) {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch(`/api/weather?locationId=KOP`);
+        const res = await fetch(`/api/weather?locationId=${location?.id}`);
+
         const json = await res.json();
         setData(json);
       } finally {

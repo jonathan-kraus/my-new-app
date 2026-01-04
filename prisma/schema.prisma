@@ -75,6 +75,8 @@ model Location {
   latitude  Float
   longitude Float
   timezone  String
+  isDefault Boolean @default(false)
+
 
   weather   WeatherSnapshot[]
   astronomy AstronomySnapshot[]

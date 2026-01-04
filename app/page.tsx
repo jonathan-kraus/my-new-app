@@ -1,40 +1,39 @@
-"use client";
+// app/page.tsx
 
-import { useEffect } from "react";
-import { logit } from "@/lib/log/client";
+import { logit } from "@/lib/log/server";
 import { Button } from "@/components/ui/button";
 import CurrentWeatherCard from "@/app/components/dashboard/current-weather-card";
 import Link from "next/link";
+import { db } from "@/lib/db";
 // import { TodayAtAGlanceCard } from "@/components/dashboard/today-at-a-glance-card";
 // import { AstronomyCard } from "@/components/dashboard/astronomy-card";
 // import { SystemHealthGrid } from "@/components/dashboard/system-health-grid";
 // import { RuntimeConfigPanel } from "@/components/dashboard/runtime-config-panel";
 // import { RecentLogsFeed } from "@/components/dashboard/recent-logs-feed";
 
-export default function HomePage() {
-	useEffect(() => {
-		logit({
-			level: "info",
-			message: "Visited dashboard",
+export default async function HomePage() {
+	 await logit({
+		 level: "info",
+		  message: "Visited dashboard",
 			file: "app/page.tsx",
 			line: 16,
 			sessionUser: "Jonathan",
-		});
-	}, []);
-	return (
-		<div className="space-y-8 p-6">
-			{/* Header */}
-			<section>
-				<h1 className="text-3xl font-semibold">Good evening, Jonathan.</h1>
-				<p className="text-muted-foreground">Your weather system is online and running smoothly.</p>
-			</section>
-
-			{/* Current Weather */}
-			<section className="grid grid-cols-1 md:grid-cols-3 gap-4">
-				<CurrentWeatherCard />
+			 });
+			  const location = await db.location.findFirst({
+					where: { isDefault: true },
+					 });
+			return (
+				 <div className="space-y-8 p-6">
+					 {/* Header */}
+					  <section>
+							 <h1 className="text-3xl font-semibold">Good evening, Jonathan.</h1>
+							  <p className="text-muted-foreground">
+									 Your weather system is online and running smoothly.
+								</p>
+								 </section> {/* Current Weather */} <section className="grid grid-cols-1 md:grid-cols-3 gap-4"> <CurrentWeatherCard location={location} /> </section>
 				{/* <TodayAtAGlanceCard /> */}
 				{/* <AstronomyCard /> */}
-			</section>
+			<section></section>
 
 			{/* System Health */}
 			<section>
