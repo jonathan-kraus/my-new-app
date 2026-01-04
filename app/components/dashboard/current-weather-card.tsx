@@ -40,7 +40,7 @@ export default function CurrentWeatherCard({ location }: CurrentWeatherCardProps
 				setData(json);
 				logit({
 					level: "info",
-					message: `Weather fetch → ${location?.name ?? "unknown"} | source: ${json.sources?.current ?? "unknown"} | temp: ${Math.round(json.weatherData?.temperature ?? -99)}°`,
+					message: `Weather fetch → ${location?.name ?? "unknown"} | source: ${json.sources?.current ?? "unknown"} )}°`,
 					data: { locationId: location?.id ?? "null", json },
 					file: "app/components/dashboard/current-weather-card.tsx",
 					line: 41,
