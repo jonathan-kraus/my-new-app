@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { logit } from '@/lib/log/client';
 import { getCommitMessage, getSha } from '@/lib/github';
-
+import crypto from 'crypto';
 
 async function verifySignature(
   req: NextRequest,
