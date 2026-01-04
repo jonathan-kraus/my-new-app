@@ -27,7 +27,7 @@ export default function CurrentWeatherCard({ location }: CurrentWeatherCardProps
 		message: `Rendering CurrentWeatherCard with location: ${location?.name ?? "null"}`,
 		data: { locationId: location?.id ?? "null" },
 		file: "app/components/dashboard/current-weather-card.tsx",
-		line: 23,
+		line: 25,
 		sessionUser: "jonathan-kraus",
 	});
 
@@ -40,12 +40,10 @@ export default function CurrentWeatherCard({ location }: CurrentWeatherCardProps
 				setData(json);
 				logit({
 					level: "info",
-					message: `Weather fetch → ${location?.name ?? "unknown"} | source: ${sources.current ?? "unknown"} | temp: ${Math.round(current.temperature)}°`,
-
+					message: `Weather fetch → ${location?.name ?? "unknown"} | source: ${json.sources?.current ?? "unknown"} | temp: ${Math.round(json.weatherData?.temperature ?? 0)}°`,
 					data: { locationId: location?.id ?? "null" },
 					file: "app/components/dashboard/current-weather-card.tsx",
 					line: 41,
-					sessionUser: "jonathan-kraus",
 				});
 			} catch (error) {
 				logit({
@@ -53,7 +51,7 @@ export default function CurrentWeatherCard({ location }: CurrentWeatherCardProps
 					message: `Error fetching weather data: ${error}`,
 					data: { locationId },
 					file: "app/components/dashboard/current-weather-card.tsx",
-					line: 38,
+					line: 49,
 					sessionUser: "jonathan-kraus",
 				});
 			} finally {
@@ -97,10 +95,10 @@ export default function CurrentWeatherCard({ location }: CurrentWeatherCardProps
 					${(sources.current ?? "null", "Temp")}: ${current.temperature ?? "null"}°`,
 		data: { locationId: location?.id ?? "null", weatherData: current, sources: sources },
 		file: "app/components/dashboard/current-weather-card.tsx",
-		line: 85,
+		line: 92,
 	});
 	return (
-		<div className="p-6 rounded-xl border bg-white shadow-sm transition-all duration-300 hover:shadow-md">
+		<div className="p-6 rounded-xl border bg-sky-700/60 backdrop-blur-md text-white shadow-md transition-all duration-300 hover:shadow-lg">
 			<div className="flex items-center justify-between mb-4">
 				<h2 className="text-xl font-semibold">Current Weather</h2>
 				<span
@@ -121,14 +119,14 @@ export default function CurrentWeatherCard({ location }: CurrentWeatherCardProps
 						{Math.round(current.temperature)}°
 					</div>
 				</div>
-				<div className="text-gray-600">
+				<div className="text-sky-200">
 					<div>Feels like {Math.round(current.feelsLike)}°</div>
 					<div className="text-sm mt-1">Humidity: {current.humidity}%</div>
 					<div className="text-sm">Wind: {current.windSpeed} mph</div>
 				</div>
 			</div>
 
-			<div className="mt-4 text-sm text-gray-500">
+			<div className="mt-4 text-sm text-sky-200">
 				Updated {new Date(current.fetchedAt).toLocaleTimeString()}
 			</div>
 		</div>
