@@ -1,5 +1,6 @@
+// app/api/github-webhook/route.ts
 import { NextRequest } from 'next/server';
-import { logit } from '@/lib/log/client';
+import { logit } from '@/lib/log/server';
 import { getCommitMessage, getSha } from '@/lib/github';
 import crypto from 'crypto';
 
@@ -17,7 +18,7 @@ async function verifySignature(
   const hmac = crypto.createHmac('sha256', secret);
   const digest = 'sha256=' + hmac.update(body).digest('hex');
 
-  return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(digest));
+  try { return crypto.timingSafeEqual( Buffer.from(signature), Buffer.from(digest) ); } catch { return false; }
 }
 
 export async function POST(req: NextRequest) {
