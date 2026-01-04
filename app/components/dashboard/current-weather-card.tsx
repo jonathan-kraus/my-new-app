@@ -82,7 +82,17 @@ export default function CurrentWeatherCard({ location }: CurrentWeatherCardProps
 	}
 
 	const { current, sources } = data;
+logit({
+					level: "info",
+					message: `After fetching weather data for location: ${location?.name ?? "null"}`,
+					data: { locationId: location?.id ?? "null", weatherData: current,
+                        sources:sources,
 
+                     },
+					file: "app/components/dashboard/current-weather-card.tsx",
+					line: 85,
+					
+				});
 	return (
 		<div className="p-6 rounded-xl border bg-white shadow-sm transition-all duration-300 hover:shadow-md">
 			<div className="flex items-center justify-between mb-4">
