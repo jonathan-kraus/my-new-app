@@ -88,19 +88,20 @@ export default function CurrentWeatherCard({ location }: CurrentWeatherCardProps
 				</span>
 			</div>
 
-	<div className="flex items-center gap-4">
-		<div className="flex flex-col items-center">
-			<div className="bg-red-500">
-			<div className="text-sm text-muted-foreground">Temp</div>
-			<div className="text-5xl font-bold text-white"> {Math.round(current.temperature)}° </div>
+			<div className="flex items-center bg-blue-500 gap-4">
+				<div className="flex flex-col items-center">
+					<div className="text-sm text-muted-foreground">Temp</div>
+					<div className="text-5xl font-bold text-yellow-500">
+						{" "}
+						{Math.round(current.temperature)}°{" "}
+					</div>
+				</div>
+				<div className="text-gray-600">
+					<div>Feels like {Math.round(current.feelsLike)}°</div>
+					<div className="text-sm mt-1">Humidity: {current.humidity}%</div>
+					<div className="text-sm">Wind: {current.windSpeed} mph</div>
+				</div>
 			</div>
-		</div>
-		<div className="text-gray-600">
-			<div>Feels like {Math.round(current.feelsLike)}°</div>
-			<div className="text-sm mt-1">Humidity: {current.humidity}%</div>
-			<div className="text-sm">Wind: {current.windSpeed} mph</div>
-		</div>
-	</div>
 
 			<div className="mt-4 text-sm text-gray-500">
 				Updated {new Date(current.fetchedAt).toLocaleTimeString()}
