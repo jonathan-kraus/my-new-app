@@ -36,14 +36,14 @@ export default function CurrentWeatherCard({ location }: CurrentWeatherCardProps
 
         async function load() {
             try {
-                const res = await fetch(`/api/weather?locationId=${location.id}`);
+                const res = await fetch(`/api/weather?locationId=${location!.id}`);
                 const json = await res.json();
                 setData(json);
             } catch (error) {
                 logit({
                     level: "error",
                     message: `Error fetching weather data: ${error}`,
-                    data: { locationId: location.id },
+                    data: { locationId: location!.id },
                     file: "app/components/dashboard/current-weather-card.tsx",
                     line: 38,
                     sessionUser: "jonathan-kraus",
