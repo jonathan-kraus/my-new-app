@@ -49,6 +49,7 @@ export async function POST(req: NextRequest) {
 
     data: {
       sha,
+      je,
       commitMessage,
     },
 });
