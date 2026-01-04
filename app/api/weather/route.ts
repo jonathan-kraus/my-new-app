@@ -1,10 +1,45 @@
+// app/api/weather/route.ts
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { z } from "zod";
 import { logit } from "@/lib/log/server";
 import { getRuntimeNumber } from "@/lib/runtimeConfig";
 
 const API_KEY = process.env.TOMORROWIO_APIKEY!;
+// Zod schemas
+const TomorrowRealtimeSchema = z.object({
+  data: z.object({
+    values: z.object({
+      temperature: z.number(),
+      temperatureApparent: z.number().nullable(),
+      humidity: z.number().nullable(),
+      windSpeed: z.number().nullable(),
+      windDirection: z.number().nullable(),
+      pressureSurfaceLevel: z.number().nullable(),
+      visibility: z.number().nullable(),
+      weatherCode: z.number().nullable(),
+    }),
+  }),
+});
 
+const TomorrowTimelineSchema = z.object({
+  data: z.object({
+    timelines: z.array(
+      z.object({
+        intervals: z.array(
+          z.object({
+            values: z.object({
+              sunriseTime: z.string().datetime(),
+              sunsetTime: z.string().datetime(),
+              moonriseTime: z.string().datetime().nullable(),
+              moonsetTime: z.string().datetime().nullable(),
+            }),
+          })
+        ),
+      })
+    ),
+  }),
+});
 // Default cache windows
 const DEFAULT_CURRENT_MIN = Number(process.env.WEATHER_CACHE_MINUTES ?? 10);
 const DEFAULT_FORECAST_MIN = Number(process.env.FORECAST_CACHE_MINUTES ?? 30);
@@ -55,19 +90,40 @@ export async function GET(req: Request) {
     const res = await fetch(
       `https://api.tomorrow.io/v4/weather/realtime?location=${location.latitude},${location.longitude}&units=imperial&apikey=${API_KEY}`,
     );
-
+await logit({
+        level: "info",
+        message: "Realtime weather fetch attempted",
+        page: "/api/weather",
+        file: "app/api/weather/route.ts",
+        line:  59,
+        data: { status: res },
+      });
     if (!res.ok) {
       await logit({
         level: "error",
         message: "Realtime weather fetch failed",
         page: "/api/weather",
+        file: "app/api/weather/route.ts",
+        line:  69,
         data: { status: res.status },
       });
       return NextResponse.json({ error: "Weather fetch failed" }, { status: 500 });
     }
 
     const json = await res.json();
-    const v = json.data.values;
+const validated = TomorrowRealtimeSchema.safeParse(json);
+
+if (!validated.success) {
+  await logit({
+    level: "error",
+    message: "Realtime weather validation failed",
+    page: "/api/weather",
+    data: { issues: validated.error.issues.slice(0, 3) }, // ✅ Fixed
+  });
+  return NextResponse.json({ error: "Invalid weather data" }, { status: 500 });
+}
+
+    const v = validated.data.data.values;
 
     current = await db.weatherSnapshot.create({
       data: {
@@ -86,6 +142,7 @@ export async function GET(req: Request) {
     currentSource = "api";
   }
 
+
   // ----------------------------------------
   // FORECAST (temporarily disabled)
   // ----------------------------------------
@@ -93,50 +150,51 @@ export async function GET(req: Request) {
   const forecastSource = "disabled";
   const forecastAge = null;
 
-  // ----------------------------------------
-  // ASTRONOMY (NOW ENABLED via Tomorrow.io Timelines)
-  // ----------------------------------------
-  const astronomyCutoff = new Date(Date.now() - astronomyCacheHours * 60 * 60_000);
+// ----------------------------------------
+// ASTRONOMY (CACHED via AstronomySnapshot + Zod)
+// ----------------------------------------
+const astronomyCutoff = new Date(Date.now() - astronomyCacheHours * 60 * 60_000);
 
-  // Check cache first
-  const astronomyCached = await db.weatherSnapshot.findFirst({
-    where: {
-      locationId,
-      fetchedAt: { gte: astronomyCutoff },
-      // Assuming you have astronomy fields in weatherSnapshot or separate table
-      // For now, we'll fetch fresh since schema might not have astronomy yet
-    },
-    orderBy: { fetchedAt: "desc" },
-  });
+const astronomyCached = await db.astronomySnapshot.findFirst({
+  where: {
+    locationId,
+    fetchedAt: { gte: astronomyCutoff }
+  },
+  orderBy: { fetchedAt: "desc" },
+});
 
-  let astronomy;
-  let astronomySource: "cache" | "api" | "disabled";
-  const astronomyAge = astronomyCached
-    ? Math.round((Date.now() - astronomyCached.fetchedAt.getTime()) / 3600000)
-    : null;
+let astronomy: {
+  sunrise: string;
+  sunset: string;
+  moonrise?: string | null;
+  moonset?: string | null;
+  source: "tomorrow.io";
+  fetchedAt: string;
+} | null = null;
+let astronomySource: "cache" | "api" | "disabled" = "disabled";
+let astronomyAge: number | null = null;
 
-  if (astronomyCached && astronomyCached.sunriseTime && astronomyCached.sunsetTime) {
-    // Use cached if enriched (you'll need to add these fields to schema/migrations)
-    astronomy = {
-      sunrise: astronomyCached.sunriseTime,
-      sunset: astronomyCached.sunsetTime,
-      source: "tomorrow.io" as const,
-      fetchedAt: astronomyCached.fetchedAt.toISOString(),
-    };
-    astronomySource = "cache";
-  } else {
-    // Fresh API call - Tomorrow.io timelines for today + astronomy
+if (astronomyCached) {
+  astronomyAge = Math.round((Date.now() - astronomyCached.fetchedAt.getTime()) / 3600000);
+  astronomy = {
+    sunrise: astronomyCached.sunrise.toISOString(),
+    sunset: astronomyCached.sunset.toISOString(),
+    moonrise: astronomyCached.moonrise?.toISOString(),
+    moonset: astronomyCached.moonset?.toISOString(),
+    source: "tomorrow.io",
+    fetchedAt: astronomyCached.fetchedAt.toISOString(),
+  };
+  astronomySource = "cache";
+} else {
+  // Fresh API call + Zod validation
+  try {
     const timelineBody = {
       location: `${location.latitude},${location.longitude}`,
-      fields: [
-        "sunriseTime",
-        "sunsetTime",
-        // Add "moonPhase", "moonriseTime", "moonsetTime" if available in your plan
-      ],
+      fields: ["sunriseTime", "sunsetTime", "moonriseTime", "moonsetTime"],
       units: "imperial",
       timesteps: ["1d"],
-      startTime: new Date().toISOString().split("T")[0], // Today only
-      endTime: new Date().toISOString().split("T")[0],
+      startTime: new Date().toISOString().split("T")[0],
+      endTime: new Date(Date.now() + 24*60*60*1000).toISOString().split("T")[0],
     };
 
     const res = await fetch("https://api.tomorrow.io/v4/timelines", {
@@ -145,37 +203,50 @@ export async function GET(req: Request) {
       body: JSON.stringify(timelineBody),
     });
 
-    if (!res.ok) {
-      await logit({
-        level: "warn",
-        message: "Astronomy fetch failed, disabling",
-        page: "/api/weather",
-        data: { status: res.status },
-      });
-      astronomy = null;
-      astronomySource = "disabled";
-    } else {
-      const json = await res.json();
-      const dailyData = json.data.timelines?.[0]?.intervals?.[0]?.values;
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-      if (dailyData?.sunriseTime && dailyData?.sunsetTime) {
-        astronomy = {
-          sunrise: dailyData.sunriseTime,  // ISO string e.g. "2026-01-04T12:15:00Z"
-          sunset: dailyData.sunsetTime,
-          source: "tomorrow.io" as const,
-          fetchedAt: new Date().toISOString(),
-        };
+    const json = await res.json();
+    const validated = TomorrowTimelineSchema.safeParse(json);
 
-        // TODO: Enrich cache - add to your weatherSnapshot or new table
-        // await db.weatherSnapshot.updateMany({... sunriseTime: dailyData.sunriseTime, etc.});
-
-        astronomySource = "api";
-      } else {
-        astronomy = null;
-        astronomySource = "disabled";
-      }
+    if (!validated.success) {
+      throw new Error(`Zod: ${validated.error.issues[0]?.message ?? "invalid"}`);
     }
+
+    const dailyData = validated.data.data.timelines[0]?.intervals[0]?.values;
+
+    if (dailyData?.sunriseTime && dailyData?.sunsetTime) {
+      // Cache validated data
+      await db.astronomySnapshot.create({
+        data: {
+          locationId,
+          sunrise: new Date(dailyData.sunriseTime),
+          sunset: new Date(dailyData.sunsetTime),
+          moonrise: dailyData.moonriseTime ? new Date(dailyData.moonriseTime) : null,
+          moonset: dailyData.moonsetTime ? new Date(dailyData.moonsetTime) : null,
+        },
+      });
+
+      astronomy = {
+        sunrise: dailyData.sunriseTime,
+        sunset: dailyData.sunsetTime,
+        moonrise: dailyData.moonriseTime,
+        moonset: dailyData.moonsetTime,
+        source: "tomorrow.io",
+        fetchedAt: new Date().toISOString(),
+      };
+      astronomySource = "api";
+      astronomyAge = 0;
+    }
+  } catch (error) {
+    await logit({
+      level: "warn",
+      message: "Astronomy fetch failed",
+      page: "/api/weather",
+      data: { error: error instanceof Error ? error.message : "unknown" },
+    });
   }
+}
+
 
   // ----------------------------------------
   // LOG EVERYTHING
@@ -211,7 +282,7 @@ export async function GET(req: Request) {
     location,
     current,
     forecast,
-    astronomy,  // Now has { sunrise, sunset, source, fetchedAt }
+    astronomy,
     sources: {
       current: currentSource,
       forecast: forecastSource,
