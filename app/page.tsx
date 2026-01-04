@@ -5,80 +5,78 @@ import { Button } from "@/components/ui/button";
 import CurrentWeatherCard from "@/app/components/dashboard/current-weather-card";
 import Link from "next/link";
 import { db } from "@/lib/db";
-// import { TodayAtAGlanceCard } from "@/components/dashboard/today-at-a-glance-card";
-// import { AstronomyCard } from "@/components/dashboard/astronomy-card";
-// import { SystemHealthGrid } from "@/components/dashboard/system-health-grid";
-// import { RuntimeConfigPanel } from "@/components/dashboard/runtime-config-panel";
-// import { RecentLogsFeed } from "@/components/dashboard/recent-logs-feed";
+
 function getGreeting(): string {
-	const hour = new Date().getHours();
-	if (hour < 5) return "Good night";
-	if (hour < 12) return "Good morning";
-	if (hour < 17) return "Good afternoon";
-	return "Good evening";
+  const hour = new Date().getHours();
+  if (hour < 5) return "Good night";
+  if (hour < 12) return "Good morning";
+  if (hour < 17) return "Good afternoon";
+  return "Good evening";
 }
+
 export default async function HomePage() {
-	await logit({
-		level: "info",
-		message: "Visited dashboard",
-		file: "app/page.tsx",
-		line: 21,
-		sessionUser: "Jonathan",
-	});
-	const location = await db.location.findFirst({
-		where: { isDefault: true },
-	});
-	return (
-		<div className="bg-sky-500 min-h-screen text-white p-6">
-			<div className="bg-sky-700 rounded-xl p-6 shadow-md">
-				{/* Header */}
-				<section>
-					<h1 className="text-3xl font-semibold">{getGreeting()}, Jonathan.</h1>
-					<p className="text-muted-foreground">
-						Your weather system is online and running smoothly.
-					</p>
-				</section>{" "}
-				{/* Current Weather */}{" "}
-				<section className="grid grid-cols-1 md:grid-cols-3 gap-4">
-					{" "}
-					<CurrentWeatherCard location={location} />{" "}
-				</section>
-			</div>
-			{/* <TodayAtAGlanceCard /> */}
-			{/* <AstronomyCard /> */}
-			<section></section>
-			{/* System Health */}
-			<section>
-				<h2 className="text-xl font-medium mb-2">System Health</h2>
-				{/* <SystemHealthGrid /> */}
-			</section>
-			{/* Runtime Controls */}
-			<section>
-				<h2 className="text-xl font-medium mb-2">Runtime Controls</h2>
-				{/* <RuntimeConfigPanel /> */}
-			</section>
-			{/* Recent Activity */}
-			<section>
-				<h2 className="text-xl font-medium mb-2">Recent Activity</h2>
-				{/* <RecentLogsFeed /> */}
-			</section>
-			{/* Quick Actions */}
-			<section className="flex gap-4">
-				<section className="flex gap-4">
-					<Button asChild>
-						<Link href="/forecast">Full Forecast</Link>
-					</Button>
-					<Button asChild>
-						<Link href="/logs">Logs</Link>
-					</Button>
-					<Button asChild>
-						<Link href="/locations">Locations</Link>
-					</Button>
-					<Button asChild>
-						<Link href="/admin/runtime">Runtime Settings</Link>
-					</Button>
-				</section>
-			</section>
-		</div>
-	);
+  await logit({
+    level: "info",
+    message: "Visited dashboard",
+    file: "app/page.tsx",
+    line: 21,
+    sessionUser: "Jonathan",
+  });
+
+  const location = await db.location.findFirst({
+    where: { isDefault: true },
+  });
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-sky-600 to-sky-900 text-white p-8">
+      <div className="max-w-5xl mx-auto bg-sky-800/60 backdrop-blur-md rounded-2xl p-8 shadow-xl border border-white/10">
+
+        {/* Header */}
+        <section className="mb-8">
+          <h1 className="text-4xl font-semibold mb-1">
+            {getGreeting()}, Jonathan.
+          </h1>
+          <p className="text-sky-200">
+            Your weather system is online and running smoothly.
+          </p>
+        </section>
+
+        {/* Current Weather */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <CurrentWeatherCard location={location} />
+        </section>
+
+        {/* System Health */}
+        <section className="mt-10">
+          <h2 className="text-xl font-medium mb-2 text-sky-200">System Health</h2>
+        </section>
+
+        {/* Runtime Controls */}
+        <section className="mt-6">
+          <h2 className="text-xl font-medium mb-2 text-sky-200">Runtime Controls</h2>
+        </section>
+
+        {/* Recent Activity */}
+        <section className="mt-6">
+          <h2 className="text-xl font-medium mb-2 text-sky-200">Recent Activity</h2>
+        </section>
+
+        {/* Quick Actions */}
+        <section className="mt-8 flex gap-4">
+          <Button asChild>
+            <Link href="/forecast">Full Forecast</Link>
+          </Button>
+          <Button asChild>
+            <Link href="/logs">Logs</Link>
+          </Button>
+          <Button asChild>
+            <Link href="/locations">Locations</Link>
+          </Button>
+          <Button asChild>
+            <Link href="/admin/runtime">Runtime Settings</Link>
+          </Button>
+        </section>
+      </div>
+    </div>
+  );
 }
