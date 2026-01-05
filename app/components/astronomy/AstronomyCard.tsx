@@ -115,36 +115,8 @@ export function AstronomyCard({ data, location }: AstronomyCardProps) {
 				</div>
 			)}
 
-			{/* Moonlight Phases */}
-			{lunarPhases && (
-				<div className="mt-4 text-xs text-sky-300 space-y-1">
-					<div>
-						🌕 Moonrise Golden:{" "}
-						{lunarPhases.moonriseGolden.start.toLocaleTimeString([], {
-							hour: "2-digit",
-							minute: "2-digit",
-						})}{" "}
-						–{" "}
-						{lunarPhases.moonriseGolden.end.toLocaleTimeString([], {
-							hour: "2-digit",
-							minute: "2-digit",
-						})}
-					</div>
 
-					<div>
-						🌘 Moonset Blue:{" "}
-						{lunarPhases.moonsetBlue.start.toLocaleTimeString([], {
-							hour: "2-digit",
-							minute: "2-digit",
-						})}{" "}
-						–{" "}
-						{lunarPhases.moonsetBlue.end.toLocaleTimeString([], {
-							hour: "2-digit",
-							minute: "2-digit",
-						})}
-					</div>
-				</div>
-			)}
+
 		</div>
 	);
 }
