@@ -43,15 +43,10 @@ export function AstronomyCard({ data, location }: AstronomyCardProps) {
 			<div className="grid grid-cols-2 gap-3 text-sm text-white">
 				<div>🌅 Sunrise: {format(data.sunrise)}</div>
 				<div>🌇 Sunset: {format(data.sunset)}</div>
-				<div>🌙 Moonrise: {format(data.moonrise)}</div>
-				<div>🌘 Moonset: {format(data.moonset)}</div>
+
 			</div>
 
-			{/* Moon Phase */}
-			<div className="mt-4 flex items-center gap-2 text-sm text-sky-200">
-				<span className="text-xl">{moonIcon}</span>
-				<span>{moonName}</span>
-			</div>
+
 
 			{/* Countdown */}
 			<div className="mt-4 text-sm text-sky-200">

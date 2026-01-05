@@ -7,7 +7,8 @@ import { AstronomyCard } from "./components/astronomy/AstronomyCard";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import LunarEventsCard from "./components/astronomy/LunarEventsCard";
-
+        {/* <div>🌙 Moonrise: {format(data.moonrise)}</div> */}
+				// <div>🌘 Moonset: {format(data.moonset)}</div>
 function getGreeting(): string {
 	const hour = new Date().getHours();
 	if (hour < 5) return "Good night";
