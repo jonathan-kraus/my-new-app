@@ -15,7 +15,7 @@ export async function GET() {
       level: "warn",
       message: "Unauthorized notes access attempt",
       page: "app/api/notes/route.ts",
-      line: 13,
+      line: 14,
     });
 
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -25,7 +25,7 @@ export async function GET() {
     where: { userEmail: session.user.email },
     orderBy: { updatedAt: "desc" },
   });
-
+JSON.parse(session.user.email);
   await logit({
     level: "info",
     message: `Retrieved ${notes.length} notes`,
