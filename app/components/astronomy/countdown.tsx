@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
 type Props = {
-  sunsetIso: string;     // e.g. "2026-01-04T21:32:00Z"
+  sunsetIso: string; // e.g. "2026-01-04T21:32:00Z"
   locationName: string;
 };
 
@@ -56,6 +56,59 @@ export function SunsetCountdown({ sunsetIso, locationName }: Props) {
   return (
     <span>
       Sunset in {hours} hours {minutes} minutes
+    </span>
+  );
+}
+
+type PropsSunrise = {
+  sunriseIso: string;
+  locationName: string;
+};
+
+export function SunriseCountdown({ sunriseIso, locationName }: PropsSunrise) {
+  const [timeLeft, setTimeLeft] = useState(() => {
+    const sunrise = new Date(sunriseIso).getTime();
+    const now = Date.now();
+    return Math.max(sunrise - now, 0);
+  });
+
+  const [lastHours, setLastHours] = useState<number | null>(null);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      const sunrise = new Date(sunriseIso).getTime();
+      const now = Date.now();
+      setTimeLeft(Math.max(sunrise - now, 0));
+    }, 60_000);
+
+    return () => clearInterval(id);
+  }, [sunriseIso]);
+
+  useEffect(() => {
+    if (timeLeft === 0) return;
+
+    const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+
+    if (lastHours !== null && hours !== lastHours) {
+      toast(`🌅 Sunrise in ${hours}h ${minutes}m in ${locationName}`, {
+        duration: 4000,
+      });
+    }
+
+    setLastHours(hours);
+  }, [timeLeft, lastHours, locationName]);
+
+  const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+  const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+
+  if (timeLeft <= 0) {
+    return <span>The sun has risen</span>;
+  }
+
+  return (
+    <span>
+      Sunrise in {hours} hours {minutes} minutes
     </span>
   );
 }

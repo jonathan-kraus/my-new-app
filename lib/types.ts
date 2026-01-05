@@ -14,10 +14,22 @@ export interface CreateLogInput {
   line?: number | null;
   createdAt?: Date;
 }
+export interface AstronomyCardProps {
+  data: {
+    sunrise: string;
+    sunset: string;
+    moonrise?: string | null;
+    moonset?: string | null;
+    source: string;
+    fetchedAt: string;
+  } | null;
+  location: Location; // non-nullable Location
+}
 
 export type Location = {
   id: string;
   name: string;
   latitude: number;
   longitude: number;
+  timezone: string;
 };

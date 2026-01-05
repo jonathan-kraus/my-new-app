@@ -1,52 +1,59 @@
-// Add this NEW component
-export const AstronomyCard = ({ data, location }: { data: any; location: any }) => {
-	const astronomy = data?.astronomy;
+"use client";
+// app/components/astronomy/AstronomyCard.tsx
+import { SunriseCountdown, SunsetCountdown, } from "@/components/astronomy/countdown";
+import { getMoonPhaseIcon, getMoonPhaseName } from "@/lib/astro/moonPhase";
+import { AstronomyCardProps } from "@/lib/types";
+export function AstronomyCard({ data, location }: AstronomyCardProps) {
+  if (!data) return null;
 
-	if (!astronomy) {
-		return (
-			<div className="p-6 rounded-xl border bg-white shadow-sm">
-				<p>Astronomy data unavailable</p>
-			</div>
-		);
-	}
+  const format = (iso: string | null | undefined) =>
+    iso ? new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "—";
 
-	return (
-		<div className="p-6 rounded-xl border bg-purple-700/60 backdrop-blur-md text-white shadow-md">
-			<div className="flex items-center justify-between mb-4">
-				<h2 className="text-xl font-semibold">🌅 Astronomy</h2>
-				<span
-					className={`text-xs px-2 py-1 rounded-full ${
-						data.sources.astronomy === "cache"
-							? "bg-blue-100 text-blue-700"
-							: "bg-green-100 text-green-700"
-					}`}
-				>
-					{data.sources.astronomy.toUpperCase()}
-				</span>
-			</div>
+  const now = new Date();
+  const sunrise = data.sunrise ? new Date(data.sunrise) : null;
+  const sunset = data.sunset ? new Date(data.sunset) : null;
 
-			<div className="grid grid-cols-2 gap-4 text-center">
-				<div>
-					<div className="text-2xl font-bold">
-						{new Date(astronomy.sunrise).toLocaleTimeString()}
-					</div>
-					<div className="text-sm opacity-90">Sunrise</div>
-				</div>
-				<div>
-					<div className="text-2xl font-bold">
-						{new Date(astronomy.sunset).toLocaleTimeString()}
-					</div>
-					<div className="text-sm opacity-90">Sunset</div>
-				</div>
-			</div>
+  const nextEvent =
+    sunrise && now < sunrise
+      ? { type: "sunrise", time: sunrise }
+      : sunset && now < sunset
+      ? { type: "sunset", time: sunset }
+      : null;
 
-			{/* Your existing SunsetCountdown */}
-			{/* {astronomy.sunset && (
-        <SunsetCountdown
-          sunsetIso={astronomy.sunset}
-          locationName={location?.name || "Location"}
-        />
-      )} */}
-		</div>
-	);
-};
+  const moonIcon = getMoonPhaseIcon(now);
+  const moonName = getMoonPhaseName(now);
+
+  return (
+    <div className="p-4 rounded-xl bg-gradient-to-br from-indigo-700 to-sky-800 border border-white/10 shadow-md">
+      <h3 className="text-lg font-semibold mb-2 text-white">Astronomy</h3>
+
+      <p className="text-sm text-sky-200 mb-4">
+        {location.name} • 📡 {data.source} • Updated{" "}
+        {new Date(data.fetchedAt).toLocaleTimeString()}
+      </p>
+
+      <div className="grid grid-cols-2 gap-3 text-sm text-white">
+        <div>🌅 Sunrise: {format(data.sunrise)}</div>
+        <div>🌇 Sunset: {format(data.sunset)}</div>
+        <div>🌙 Moonrise: {format(data.moonrise)}</div>
+        <div>🌘 Moonset: {format(data.moonset)}</div>
+      </div>
+
+      <div className="mt-4 flex items-center justify-between text-sm text-sky-200">
+        <div className="flex items-center gap-2">
+          <span className="text-xl">{moonIcon}</span>
+          <span>{moonName}</span>
+        </div>
+
+        {nextEvent?.type === "sunrise" && (
+          <SunriseCountdown sunriseIso={data.sunrise!} locationName={location.name} />
+        )}
+
+        {nextEvent?.type === "sunset" && (
+          <SunsetCountdown sunsetIso={data.sunset!} locationName={location.name} />
+        )}
+      </div>
+    </div>
+  );
+}
+

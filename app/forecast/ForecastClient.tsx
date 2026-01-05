@@ -81,9 +81,7 @@ export default function ForecastClient({
 
         {forecast && (
           <>
-            <p className="mb-4 text-lg opacity-90">
-              {forecast.location.name}
-            </p>
+            <p className="mb-4 text-lg opacity-90">{forecast.location.name}</p>
 
             <CurrentWeather
               temperature={forecast.current.temperature}
@@ -91,23 +89,16 @@ export default function ForecastClient({
             />
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-              {forecast.forecast.temperature_2m_max.map(
-                (high, i) => (
-                  <ForecastCard
-                    key={i}
-                    day={formatDayLabel(
-                      forecast.forecast.time[i],
-                      i
-                    )}
-                    icon="🌤️"
-                    high={Math.round(high)}
-                    low={Math.round(
-                      forecast.forecast.temperature_2m_min[i]
-                    )}
-                    description="Forecast"
-                  />
-                )
-              )}
+              {forecast.forecast.temperature_2m_max.map((high, i) => (
+                <ForecastCard
+                  key={i}
+                  day={formatDayLabel(forecast.forecast.time[i], i)}
+                  icon="🌤️"
+                  high={Math.round(high)}
+                  low={Math.round(forecast.forecast.temperature_2m_min[i])}
+                  description="Forecast"
+                />
+              ))}
             </div>
           </>
         )}

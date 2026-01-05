@@ -7,6 +7,7 @@ import { AstronomyCard } from "./components/astronomy/AstronomyCard";
 import Link from "next/link";
 import { db } from "@/lib/db";
 
+
 function getGreeting(): string {
 	const hour = new Date().getHours();
 	if (hour < 5) return "Good night";
@@ -27,6 +28,9 @@ export default async function HomePage() {
 	const location = await db.location.findFirst({
 		where: { isDefault: true },
 	});
+	if (!location) {
+		return <div>No default location configured.</div>;
+	}
 	const weatherRes = await fetch(
 		`${process.env.NEXT_PUBLIC_BASE_URL}/api/weather?locationId=${location?.id}`,
 		{ cache: "no-store" },
