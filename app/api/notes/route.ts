@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { db } from "@/lib/db";
 import { logit } from "@/lib/log/server";
 import { auth } from "@/lib/auth";
+import { getTraceEvents } from "next/dist/trace/trace";
 
 export async function GET() {
   const session = await auth.api.getSession({
@@ -25,13 +26,14 @@ export async function GET() {
     where: { userEmail: session.user.email },
     orderBy: { updatedAt: "desc" },
   });
-JSON.parse(session.user.email);
+
   await logit({
     level: "info",
     message: `Retrieved ${notes.length} notes`,
     page: "/notes",
     data: { userId: session.user.id },
   });
-
+async function GET() { return new Response("Intentional 500", { status: 500 }); }
+GET()
   return NextResponse.json(notes);
 }
