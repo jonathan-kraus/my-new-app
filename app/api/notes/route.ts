@@ -33,7 +33,6 @@ export async function GET() {
     page: "/notes",
     data: { userId: session.user.id },
   });
-async function GET() { return new Response("Intentional 500", { status: 500 }); }
-GET()
+
   return NextResponse.json(notes);
 }

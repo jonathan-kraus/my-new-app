@@ -4,8 +4,8 @@ import { useEffect, useState, useRef } from "react";
 import { toast } from "react-hot-toast";
 
 type SunriseCountdownProps = {
-   sunrise: string;
-   timezone: string;
+  sunrise: string;
+  timezone: string;
 };
 
 export function SunriseCountdown({ sunrise, timezone }: SunriseCountdownProps) {
@@ -64,8 +64,8 @@ export function SunriseCountdown({ sunrise, timezone }: SunriseCountdownProps) {
 }
 
 type SunsetCountdownProps = {
-   sunset: string;
-   timezone: string;
+  sunset: string;
+  timezone: string;
 };
 export function SunsetCountdown({ sunset, timezone }: SunsetCountdownProps) {
   const [remaining, setRemaining] = useState<number | null>(null);
@@ -123,9 +123,8 @@ export function SunsetCountdown({ sunset, timezone }: SunsetCountdownProps) {
   );
 }
 
-
 type MoonsetCountdownProps = {
-  moonset: string;     // ISO timestamp
+  moonset: string; // ISO timestamp
   timezone: string;
 };
 
@@ -184,11 +183,14 @@ export function MoonsetCountdown({ moonset, timezone }: MoonsetCountdownProps) {
 }
 
 type MoonriseCountdownProps = {
-  moonrise: string;     // ISO timestamp
+  moonrise: string; // ISO timestamp
   timezone: string;
 };
 
-export function MoonriseCountdown({ moonrise, timezone }: MoonriseCountdownProps) {
+export function MoonriseCountdown({
+  moonrise,
+  timezone,
+}: MoonriseCountdownProps) {
   const [remaining, setRemaining] = useState<number | null>(null);
 
   const lastHourRef = useRef<number | null>(null);
@@ -241,4 +243,3 @@ export function MoonriseCountdown({ moonrise, timezone }: MoonriseCountdownProps
     </div>
   );
 }
-

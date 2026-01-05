@@ -17,14 +17,14 @@ export function getMoonPhaseIndex(date: Date): number {
   const phase = r % 30;
 
   // Convert 0–29 into 0–7 buckets
-  if (phase < 1) return 0;        // New Moon
-  if (phase < 7) return 1;        // Waxing Crescent
-  if (phase < 9) return 2;        // First Quarter
-  if (phase < 15) return 3;       // Waxing Gibbous
-  if (phase < 17) return 4;       // Full Moon
-  if (phase < 23) return 5;       // Waning Gibbous
-  if (phase < 25) return 6;       // Last Quarter
-  return 7;                       // Waning Crescent
+  if (phase < 1) return 0; // New Moon
+  if (phase < 7) return 1; // Waxing Crescent
+  if (phase < 9) return 2; // First Quarter
+  if (phase < 15) return 3; // Waxing Gibbous
+  if (phase < 17) return 4; // Full Moon
+  if (phase < 23) return 5; // Waning Gibbous
+  if (phase < 25) return 6; // Last Quarter
+  return 7; // Waning Crescent
 }
 
 export function getMoonPhaseIcon(date: Date): string {

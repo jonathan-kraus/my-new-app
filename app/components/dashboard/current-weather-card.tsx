@@ -18,7 +18,9 @@ type CurrentWeatherCardProps = {
   } | null;
 };
 
-export default function CurrentWeatherCard({ location }: CurrentWeatherCardProps) {
+export default function CurrentWeatherCard({
+  location,
+}: CurrentWeatherCardProps) {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -80,7 +82,7 @@ export default function CurrentWeatherCard({ location }: CurrentWeatherCardProps
 
     toast.success(
       `🌡️ ${Math.round(data.current.temperature)}° in ${location?.name}`,
-      { duration: 4000 }
+      { duration: 4000 },
     );
 
     hasToasted.current = true;
@@ -128,7 +130,9 @@ export default function CurrentWeatherCard({ location }: CurrentWeatherCardProps
   return (
     <>
       <div className="p-4 rounded-xl bg-linear-to-br from-indigo-700 to-sky-800 border border-white/10 shadow-md">
-        <h3 className="text-lg font-semibold mb-2 text-white">Current Weather</h3>
+        <h3 className="text-lg font-semibold mb-2 text-white">
+          Current Weather
+        </h3>
 
         <p className="text-sm text-sky-200 mb-4">
           {location?.name} • {source} • Updated {formattedTime}
@@ -142,9 +146,7 @@ export default function CurrentWeatherCard({ location }: CurrentWeatherCardProps
         </div>
       </div>
 
-      <div className="mt-4 text-sm text-sky-200">
-        Updated {formattedTime}
-      </div>
+      <div className="mt-4 text-sm text-sky-200">Updated {formattedTime}</div>
     </>
   );
 }

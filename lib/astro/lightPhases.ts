@@ -28,7 +28,10 @@ export function getLightPhases(sunriseIso: string, sunsetIso: string) {
     },
   };
 }
-export function getMoonLightPhases(moonriseIso?: string | null, moonsetIso?: string | null) {
+export function getMoonLightPhases(
+  moonriseIso?: string | null,
+  moonsetIso?: string | null,
+) {
   if (!moonriseIso || !moonsetIso) return null;
 
   const moonrise = new Date(moonriseIso);
