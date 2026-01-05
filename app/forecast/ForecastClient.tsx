@@ -1,16 +1,10 @@
 "use client";
-// app/forecast/ForecastClient.tsx
 
 import { useEffect, useState } from "react";
 import { LocationSelector } from "@/components/LocationSelector";
 import { ForecastCard } from "./ForecastCard";
 import { CurrentWeather } from "./CurrentWeather";
 import { Location } from "@/lib/types";
-
-const [isReady, setIsReady] = useState(false);
-useEffect(() => {
-  setIsReady(true);
-}, []);
 
 type ForecastResponse = {
   location: Location;
@@ -39,22 +33,19 @@ export default function ForecastClient({
 }: {
   locations: Location[];
 }) {
-  // Initialize from localStorage (runs once)
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    setIsReady(true);
+  }, []);
+
   const [selectedId, setSelectedId] = useState<string | null>(() => {
     if (typeof window === "undefined") return null;
     return localStorage.getItem("lastLocationId");
   });
 
   const [forecast, setForecast] = useState<ForecastResponse | null>(null);
-  {
-    isReady && selectedId && (
-      <LocationSelector
-        locations={locations}
-        selectedId={selectedId}
-        onChange={setSelectedId}
-      />
-    );
-  }
+
   // Fallback to first location if nothing saved
   useEffect(() => {
     if (!selectedId && locations.length > 0) {
@@ -84,7 +75,7 @@ export default function ForecastClient({
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-4xl font-black drop-shadow">Forecast</h1>
 
-          {selectedId && (
+          {isReady && selectedId && (
             <LocationSelector
               locations={locations}
               selectedId={selectedId}
