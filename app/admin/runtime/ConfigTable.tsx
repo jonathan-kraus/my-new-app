@@ -1,8 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { updateConfig, deleteConfig, createConfig } from "@/app/admin/runtime/action";
-type ConfigTableProps = { configs: { key: string; value: string }[]; };
+import {
+  updateConfig,
+  deleteConfig,
+  createConfig,
+} from "@/app/admin/runtime/action";
+type ConfigTableProps = { configs: { key: string; value: string }[] };
 export default function ConfigTable({ configs }: ConfigTableProps) {
   const [rows, setRows] = useState(configs);
   const [newKey, setNewKey] = useState("");

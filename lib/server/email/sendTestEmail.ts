@@ -1,4 +1,5 @@
-// app/forecast/mailersend.ts
+"use server";
+
 import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
 import { getRuntimeBoolean } from "@/lib/runtimeConfig";
 import { buildTestEmail } from "@/lib/buildTestEmail";
@@ -28,9 +29,4 @@ export async function sendTestEmail(to: string) {
     .setText(testEmail.text);
 
   await mailerSend.email.send(emailParams);
-  console.log(
-    "mailersend module loaded, sendTestEmail is defined:",
-    typeof sendTestEmail,
-  );
-  console.log(`Test email sent to ${to}`);
 }

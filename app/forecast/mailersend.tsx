@@ -12,14 +12,14 @@ export async function sendWeatherEmail({
     apiKey: process.env.MAILERSEND_API_KEY!,
   });
 
-    const enabled = await getRuntimeBoolean("email.weather.enabled", true);
-    if (!enabled) {
-      console.log("Weather email disabled via RuntimeConfig");
-      return;
-    }
+  const enabled = await getRuntimeBoolean("email.weather.enabled", true);
+  if (!enabled) {
+    console.log("Weather email disabled via RuntimeConfig");
+    return;
+  }
 
-    const sentFrom = new Sender("weather@yourdomain.com", "Weather Bot");
-    const recipients = [new Recipient(to)];
+  const sentFrom = new Sender("weather@yourdomain.com", "Weather Bot");
+  const recipients = [new Recipient(to)];
 
   const emailParams = new EmailParams()
     .setFrom(sentFrom)
@@ -30,4 +30,3 @@ export async function sendWeatherEmail({
 
   await mailerSend.email.send(emailParams);
 }
-
