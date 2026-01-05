@@ -100,10 +100,8 @@ jobs:
           echo "List root files:"; ls -la
           echo "List coverage dir (if present):"; ls -la coverage || true
 
-
-
-
-
-
       - name: Build
+        env:
+          CI: true
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: pnpm build
