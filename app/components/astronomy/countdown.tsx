@@ -1,114 +1,125 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { toast } from "react-hot-toast";
 
-type Props = {
-  sunsetIso: string; // e.g. "2026-01-04T21:32:00Z"
-  locationName: string;
+type SunriseCountdownProps = {
+   sunrise: string;
+   timezone: string;
 };
 
-export function SunsetCountdown({ sunsetIso, locationName }: Props) {
-  const [timeLeft, setTimeLeft] = useState(() => {
-    const sunset = new Date(sunsetIso).getTime();
-    const now = Date.now();
-    const diff = Math.max(sunset - now, 0);
-    return diff;
-  });
-  const [lastHours, setLastHours] = useState<number | null>(null);
+export function SunriseCountdown({ sunrise, timezone }: SunriseCountdownProps) {
+  const [remaining, setRemaining] = useState<number | null>(null);
+  const lastHourRef = useRef<number | null>(null);
+  const eventFiredRef = useRef(false);
 
   useEffect(() => {
-    const id = setInterval(() => {
-      setTimeLeft((prev) => {
-        const sunset = new Date(sunsetIso).getTime();
-        const now = Date.now();
-        const diff = Math.max(sunset - now, 0);
-        return diff;
-      });
-    }, 60_000); // update every minute
+    if (!sunrise) return;
 
-    return () => clearInterval(id);
-  }, [sunsetIso]);
+    const target = new Date(sunrise).getTime();
 
-  useEffect(() => {
-    const hours = Math.floor(timeLeft / (1000 * 60 * 60));
-    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+    const tick = () => {
+      const now = new Date().getTime();
+      const diff = target - now;
 
-    if (timeLeft === 0) return;
+      if (diff <= 0) {
+        if (!eventFiredRef.current) {
+          toast.success("🌇 Sunrise is happening now");
+          eventFiredRef.current = true;
+        }
+        setRemaining(0);
+        return;
+      }
 
-    // fire toast when the hour bucket changes: 6h -> 5h, 5h -> 4h, etc.
-    if (lastHours !== null && hours !== lastHours) {
-      toast(`☀️ Sunset in ${hours}h ${minutes}m in ${locationName}`, {
-        duration: 4000,
-      });
-    }
+      const hours = Math.floor(diff / (1000 * 60 * 60));
 
-    setLastHours(hours);
-  }, [timeLeft, lastHours, locationName]);
+      // Hour-change toast
+      if (lastHourRef.current !== hours) {
+        if (lastHourRef.current !== null) {
+          toast(`⏳ Sunrise in ${hours} hour${hours === 1 ? "" : "s"}`);
+        }
+        lastHourRef.current = hours;
+      }
 
-  const hours = Math.floor(timeLeft / (1000 * 60 * 60));
-  const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+      setRemaining(diff);
+    };
 
-  if (timeLeft <= 0) {
-    return <span>Sun has set</span>;
-  }
+    tick();
+    const interval = setInterval(tick, 1000);
+
+    return () => clearInterval(interval);
+  }, [sunrise, timezone]);
+
+  if (remaining == null) return null;
+
+  const hours = Math.floor(remaining / (1000 * 60 * 60));
+  const minutes = Math.floor((remaining / (1000 * 60)) % 60);
+  const seconds = Math.floor((remaining / 1000) % 60);
 
   return (
-    <span>
-      Sunset in {hours} hours {minutes} minutes
-    </span>
+    <div className="text-sky-200 text-sm">
+      Sunrise in {hours}h {minutes}m {seconds}s
+    </div>
   );
 }
 
-type PropsSunrise = {
-  sunriseIso: string;
-  locationName: string;
+type SunsetCountdownProps = {
+   sunset: string;
+   timezone: string;
 };
+export function SunsetCountdown({ sunset, timezone }: SunsetCountdownProps) {
+  const [remaining, setRemaining] = useState<number | null>(null);
 
-export function SunriseCountdown({ sunriseIso, locationName }: PropsSunrise) {
-  const [timeLeft, setTimeLeft] = useState(() => {
-    const sunrise = new Date(sunriseIso).getTime();
-    const now = Date.now();
-    return Math.max(sunrise - now, 0);
-  });
-
-  const [lastHours, setLastHours] = useState<number | null>(null);
+  const lastHourRef = useRef<number | null>(null);
+  const eventFiredRef = useRef(false);
 
   useEffect(() => {
-    const id = setInterval(() => {
-      const sunrise = new Date(sunriseIso).getTime();
-      const now = Date.now();
-      setTimeLeft(Math.max(sunrise - now, 0));
-    }, 60_000);
+    if (!sunset) return;
 
-    return () => clearInterval(id);
-  }, [sunriseIso]);
+    const target = new Date(sunset).getTime();
 
-  useEffect(() => {
-    if (timeLeft === 0) return;
+    const tick = () => {
+      const now = new Date().getTime();
+      const diff = target - now;
 
-    const hours = Math.floor(timeLeft / (1000 * 60 * 60));
-    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+      if (diff <= 0) {
+        if (!eventFiredRef.current) {
+          toast.success("🌇 Sunset is happening now");
+          eventFiredRef.current = true;
+        }
+        setRemaining(0);
+        return;
+      }
 
-    if (lastHours !== null && hours !== lastHours) {
-      toast(`🌅 Sunrise in ${hours}h ${minutes}m in ${locationName}`, {
-        duration: 4000,
-      });
-    }
+      const hours = Math.floor(diff / (1000 * 60 * 60));
 
-    setLastHours(hours);
-  }, [timeLeft, lastHours, locationName]);
+      // Hour-change toast
+      if (lastHourRef.current !== hours) {
+        if (lastHourRef.current !== null) {
+          toast(`⏳ Sunset in ${hours} hour${hours === 1 ? "" : "s"}`);
+        }
+        lastHourRef.current = hours;
+      }
 
-  const hours = Math.floor(timeLeft / (1000 * 60 * 60));
-  const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+      setRemaining(diff);
+    };
 
-  if (timeLeft <= 0) {
-    return <span>The sun has risen</span>;
-  }
+    tick();
+    const interval = setInterval(tick, 1000);
+
+    return () => clearInterval(interval);
+  }, [sunset, timezone]);
+
+  if (remaining == null) return null;
+
+  const hours = Math.floor(remaining / (1000 * 60 * 60));
+  const minutes = Math.floor((remaining / (1000 * 60)) % 60);
+  const seconds = Math.floor((remaining / 1000) % 60);
 
   return (
-    <span>
-      Sunrise in {hours} hours {minutes} minutes
-    </span>
+    <div className="text-sky-200 text-sm">
+      Sunset in {hours}h {minutes}m {seconds}s
+    </div>
   );
 }
+

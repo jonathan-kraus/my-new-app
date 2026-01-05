@@ -56,10 +56,10 @@ export function AstronomyCard({ data, location }: AstronomyCardProps) {
 			{/* Countdown */}
 			<div className="mt-4 text-sm text-sky-200">
 				{nextSolarEvent?.type === "sunrise" && (
-					<SunriseCountdown sunriseIso={data.sunrise!} locationName={location.name} />
+					<SunriseCountdown sunrise={data.sunrise!} timezone={location.timezone} />
 				)}
 				{nextSolarEvent?.type === "sunset" && (
-					<SunsetCountdown sunsetIso={data.sunset!} locationName={location.name} />
+					<SunsetCountdown sunset={data.sunset!} timezone={location.timezone} />
 				)}
 			</div>
 
