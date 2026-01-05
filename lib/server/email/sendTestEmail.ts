@@ -18,7 +18,7 @@ export async function sendTestEmail(to: string) {
     apiKey: process.env.MAILERSEND_API_KEY!,
   });
 
-  const sentFrom = new Sender("weather@yourdomain.com", "Weather Bot");
+  const sentFrom = new Sender("weather@www.kraus.my.id", "Weather Bot");
   const recipients = [new Recipient(to)];
 
   const emailParams = new EmailParams()
