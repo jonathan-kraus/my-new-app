@@ -36,7 +36,7 @@ export function AstronomyCard({ data, location }: AstronomyCardProps) {
 			<h3 className="text-lg font-semibold mb-2 text-white">Astronomy</h3>
 
 			<p className="text-sm text-sky-200 mb-4">
-				{location.name} • 📡 {data.source} • Updated {new Date(data.fetchedAt).toLocaleTimeString()}
+				{location.name} • 📡 {data.source} •
 			</p>
 
 			{/* Rise/Set Grid */}
