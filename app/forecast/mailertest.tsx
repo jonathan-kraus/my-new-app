@@ -28,6 +28,6 @@ export async function sendTestEmail(to: string) {
     .setText(testEmail.text);
 
   await mailerSend.email.send(emailParams);
-
+console.log("mailersend module loaded, sendTestEmail is defined:", typeof sendTestEmail);
   console.log(`Test email sent to ${to}`);
 }

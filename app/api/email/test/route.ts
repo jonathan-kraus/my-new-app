@@ -1,14 +1,15 @@
 // app/api/email/test/route.ts
-import { sendTestEmail } from "@/app/forecast/mailersend";
+import { sendTestEmail } from "@/app/forecast/mailertest";
 
 export async function GET(req: Request) {
-	const to = "jonathan.c.kraus@gmail.com";
 
-	if (!to) {
-		return new Response("Missing ?to=", { status: 400 });
-	}
+  const to = "jonathan.c.kraus@gmail.com";
 
-	await sendTestEmail(to);
+  if (!to) {
+    return new Response("Missing ?to=", { status: 400 });
+  }
 
-	return new Response(`Test email sent to ${to}`);
+  await sendTestEmail(to);
+
+  return new Response(`Test email sent to ${to}`);
 }
