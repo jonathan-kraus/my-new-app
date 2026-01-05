@@ -123,3 +123,122 @@ export function SunsetCountdown({ sunset, timezone }: SunsetCountdownProps) {
   );
 }
 
+
+type MoonsetCountdownProps = {
+  moonset: string;     // ISO timestamp
+  timezone: string;
+};
+
+export function MoonsetCountdown({ moonset, timezone }: MoonsetCountdownProps) {
+  const [remaining, setRemaining] = useState<number | null>(null);
+
+  const lastHourRef = useRef<number | null>(null);
+  const eventFiredRef = useRef(false);
+
+  useEffect(() => {
+    if (!moonset) return;
+
+    const target = new Date(moonset).getTime();
+
+    const tick = () => {
+      const now = new Date().getTime();
+      const diff = target - now;
+
+      if (diff <= 0) {
+        if (!eventFiredRef.current) {
+          toast.success("🌕 Moonset is happening now");
+          eventFiredRef.current = true;
+        }
+        setRemaining(0);
+        return;
+      }
+
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+
+      if (lastHourRef.current !== hours) {
+        if (lastHourRef.current !== null) {
+          toast(`⏳ Moonset in ${hours} hour${hours === 1 ? "" : "s"}`);
+        }
+        lastHourRef.current = hours;
+      }
+
+      setRemaining(diff);
+    };
+
+    tick();
+    const interval = setInterval(tick, 1000);
+    return () => clearInterval(interval);
+  }, [moonset, timezone]);
+
+  if (remaining == null) return null;
+
+  const hours = Math.floor(remaining / (1000 * 60 * 60));
+  const minutes = Math.floor((remaining / (1000 * 60)) % 60);
+  const seconds = Math.floor((remaining / 1000) % 60);
+
+  return (
+    <div className="text-sky-200 text-sm">
+      Moonset in {hours}h {minutes}m {seconds}s
+    </div>
+  );
+}
+
+type MoonriseCountdownProps = {
+  moonrise: string;     // ISO timestamp
+  timezone: string;
+};
+
+export function MoonriseCountdown({ moonrise, timezone }: MoonriseCountdownProps) {
+  const [remaining, setRemaining] = useState<number | null>(null);
+
+  const lastHourRef = useRef<number | null>(null);
+  const eventFiredRef = useRef(false);
+
+  useEffect(() => {
+    if (!moonrise) return;
+
+    const target = new Date(moonrise).getTime();
+
+    const tick = () => {
+      const now = new Date().getTime();
+      const diff = target - now;
+
+      if (diff <= 0) {
+        if (!eventFiredRef.current) {
+          toast.success("🌕 Moonrise is happening now");
+          eventFiredRef.current = true;
+        }
+        setRemaining(0);
+        return;
+      }
+
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+
+      if (lastHourRef.current !== hours) {
+        if (lastHourRef.current !== null) {
+          toast(`⏳ Moonrise in ${hours} hour${hours === 1 ? "" : "s"}`);
+        }
+        lastHourRef.current = hours;
+      }
+
+      setRemaining(diff);
+    };
+
+    tick();
+    const interval = setInterval(tick, 1000);
+    return () => clearInterval(interval);
+  }, [moonrise, timezone]);
+
+  if (remaining == null) return null;
+
+  const hours = Math.floor(remaining / (1000 * 60 * 60));
+  const minutes = Math.floor((remaining / (1000 * 60)) % 60);
+  const seconds = Math.floor((remaining / 1000) % 60);
+
+  return (
+    <div className="text-sky-200 text-sm">
+      Moonrise in {hours}h {minutes}m {seconds}s
+    </div>
+  );
+}
+
