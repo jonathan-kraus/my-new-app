@@ -1,8 +1,8 @@
 "use client";
 
-import { logit } from "@/lib/log/client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { toast } from "react-hot-toast";
+import { logit } from "@/lib/log/client";
 
 type CurrentWeatherCardProps = {
   location: {
@@ -18,34 +18,41 @@ type CurrentWeatherCardProps = {
   } | null;
 };
 
-export default function CurrentWeatherCard({
-  location,
-}: CurrentWeatherCardProps) {
+export default function CurrentWeatherCard({ location }: CurrentWeatherCardProps) {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  logit({
-    level: "info",
-    message: `Rendering CurrentWeatherCard with location: ${location?.name ?? "null"}`,
-    data: { locationId: location?.id ?? "null" },
-    file: "app/components/dashboard/current-weather-card.tsx",
-    line: 25,
-    sessionUser: "jonathan-kraus",
-  });
+  // Prevent duplicate toasts on re-renders
+  const hasToasted = useRef(false);
 
+  // Initial render log
+  useEffect(() => {
+    logit({
+      level: "info",
+      message: `Rendering CurrentWeatherCard with location: ${location?.name ?? "null"}`,
+      data: { locationId: location?.id ?? "null" },
+      file: "app/components/dashboard/current-weather-card.tsx",
+      line: 30,
+      sessionUser: "jonathan-kraus",
+    });
+  }, [location]);
+
+  // Fetch weather data
   useEffect(() => {
     if (!location) return;
+
     async function load(locationId: string) {
       try {
         const res = await fetch(`/api/weather?locationId=${locationId}`);
         const json = await res.json();
         setData(json);
+
         logit({
           level: "info",
-          message: `Weather fetch → ${location?.name ?? "unknown"} | source: ${json.sources?.current ?? "unknown"} )}°`,
-          data: { locationId: location?.id ?? "null", json },
+          message: `Weather fetch → ${location!.name} | source: ${json.sources?.current ?? "unknown"}`,
+          data: { locationId, json },
           file: "app/components/dashboard/current-weather-card.tsx",
-          line: 41,
+          line: 50,
         });
       } catch (error) {
         logit({
@@ -53,28 +60,33 @@ export default function CurrentWeatherCard({
           message: `Error fetching weather data: ${error}`,
           data: { locationId },
           file: "app/components/dashboard/current-weather-card.tsx",
-          line: 49,
+          line: 58,
           sessionUser: "jonathan-kraus",
         });
       } finally {
         setLoading(false);
       }
     }
+
+    setLoading(true);
+    hasToasted.current = false;
     load(location.id);
   }, [location]);
 
-  // ✅ Toast only when data.current.temperature is available
+  // Toast once when temperature arrives
   useEffect(() => {
-    if (data?.current?.temperature != null) {
-      toast.success(
-        `🌡️ ${Math.round(data.current.temperature)}° in ${location?.name}`,
-        {
-          duration: 4000,
-        },
-      );
-    }
-  }, [data?.current?.temperature]);
+    if (!data?.current?.temperature) return;
+    if (hasToasted.current) return;
 
+    toast.success(
+      `🌡️ ${Math.round(data.current.temperature)}° in ${location?.name}`,
+      { duration: 4000 }
+    );
+
+    hasToasted.current = true;
+  }, [data?.current?.temperature, location?.name]);
+
+  // Loading skeleton
   if (loading) {
     return (
       <div className="p-6 rounded-xl border bg-white shadow-sm animate-pulse">
@@ -85,6 +97,7 @@ export default function CurrentWeatherCard({
     );
   }
 
+  // Error state
   if (!data?.current) {
     return (
       <div className="p-6 rounded-xl border bg-white shadow-sm">
@@ -93,51 +106,45 @@ export default function CurrentWeatherCard({
     );
   }
 
+  // Derived fields
   const { current, sources } = data;
+
+  const temp = Math.round(current.temperature);
+  const feelsLike = Math.round(current.feelsLike);
+  const humidity = current.humidity;
+  const wind = current.windSpeed;
+  const source = sources.current?.toUpperCase() ?? "UNKNOWN";
+  const formattedTime = new Date(current.fetchedAt).toLocaleTimeString();
+
+  // Final log
   logit({
     level: "info",
-    message: `Fetch weather for: ${location?.name ?? "null"} from sources:
-					${(sources.current ?? "null", "Temp")}: ${current.temperature ?? "null"}°`,
-    data: {
-      locationId: location?.id ?? "null",
-      weatherData: current,
-      sources: sources,
-    },
+    message: `Weather summary for ${location?.name ?? "null"} | ${source} | ${temp}°`,
+    data: { locationId: location?.id ?? "null", current, sources },
     file: "app/components/dashboard/current-weather-card.tsx",
-    line: 92,
+    line: 120,
   });
-  return (
-    <div className="p-6 rounded-xl border bg-sky-700/60 backdrop-blur-md text-white shadow-md transition-all duration-300 hover:shadow-lg">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">Current Weather</h2>
-        <span
-          className={`text-xs px-2 py-1 rounded-full ${
-            sources.current === "cache"
-              ? "bg-blue-100 text-blue-700"
-              : "bg-green-100 text-green-700"
-          }`}
-        >
-          {sources.current.toUpperCase()}
-        </span>
-      </div>
 
-      <div className="flex items-center bg-blue-500 gap-4">
-        <div className="flex flex-col items-center">
-          <div className="text-sm text-muted-foreground">Temp</div>
-          <div className="text-5xl font-bold text-yellow-500">
-            {Math.round(current.temperature)}°
-          </div>
-        </div>
-        <div className="text-sky-200">
-          <div>Feels like {Math.round(current.feelsLike)}°</div>
-          <div className="text-sm mt-1">Humidity: {current.humidity}%</div>
-          <div className="text-sm">Wind: {current.windSpeed} mph</div>
+  return (
+    <>
+      <div className="p-4 rounded-xl bg-linear-to-br from-indigo-700 to-sky-800 border border-white/10 shadow-md">
+        <h3 className="text-lg font-semibold mb-2 text-white">Current Weather</h3>
+
+        <p className="text-sm text-sky-200 mb-4">
+          {location?.name} • {source} • Updated {formattedTime}
+        </p>
+
+        <div className="grid grid-cols-2 gap-3 text-sm text-white">
+          <div>🌡️ Temp: {temp}°</div>
+          <div>🥶 Feels like: {feelsLike}°</div>
+          <div>💧 Humidity: {humidity}%</div>
+          <div>💨 Wind: {wind} mph</div>
         </div>
       </div>
 
       <div className="mt-4 text-sm text-sky-200">
-        Updated {new Date(current.fetchedAt).toLocaleTimeString()}
+        Updated {formattedTime}
       </div>
-    </div>
+    </>
   );
 }
