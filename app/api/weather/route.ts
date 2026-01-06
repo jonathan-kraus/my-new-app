@@ -90,6 +90,7 @@ export async function GET(req: Request) {
 			level: "info",
 			message: "Using cached current weather data",
 			file: "app/api/weather/route.ts",
+			page: "/api/weather",
 			data: {
 				user: session?.user?.name || "Guest",
 				cacheWindowMinutes: currentCacheMin,
