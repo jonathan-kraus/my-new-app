@@ -2,6 +2,7 @@
 
 import { SunriseCountdown, SunsetCountdown } from "@/app/astronomy/countdown";
 import { getMoonPhaseIcon, getMoonPhaseName } from "@/lib/astronomy/moonPhase";
+import { useNow } from "@/hooks/useNow";
 import {
   getLightPhases,
   getMoonLightPhases,
@@ -9,6 +10,7 @@ import {
 import type { AstronomyCardProps } from "@/lib/types";
 
 export function AstronomyCard({ data, location }: AstronomyCardProps) {
+  const now = useNow();
   if (!data) return null;
 
   const format = (iso: string | null | undefined) =>
@@ -19,7 +21,7 @@ export function AstronomyCard({ data, location }: AstronomyCardProps) {
         })
       : "—";
 
-  const now = new Date();
+
 
   // Normalize all ISO strings into Date objects
   const sunriseDate = data.sunrise ? new Date(data.sunrise) : null;
