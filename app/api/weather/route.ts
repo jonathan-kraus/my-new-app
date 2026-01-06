@@ -156,7 +156,7 @@ return NextResponse.json({
 				level: "error",
 				message: "Realtime weather validation failed",
 				page: "/api/weather",
-				data: { issues: validated.error.issues.slice(0, 3) }, // ✅  Fixed
+				data: { issues: validated.error.issues.slice(0, 3) }, // ✅ Fixed
 			});
 			return NextResponse.json({ error: "Invalid weather data" }, { status: 500 });
 		}
@@ -291,31 +291,15 @@ return NextResponse.json({
 					},
 				});
 
-	astronomy = {
-  sunrise: sunrise.toISOString(),
-  sunset: sunset.toISOString(),
-  moonrise: dailyData.moonriseTime
-    ? new Date(dailyData.moonriseTime).toISOString()
-    : null,
-  moonset: dailyData.moonsetTime
-    ? new Date(dailyData.moonsetTime).toISOString()
-    : null,
-
-  // Optional: return the corrected phase windows too
-  sunriseBlueStart: sunriseBlueStart.toISOString(),
-  sunriseBlueEnd: sunriseBlueEnd.toISOString(),
-  sunriseGoldenStart: sunriseGoldenStart.toISOString(),
-  sunriseGoldenEnd: sunriseGoldenEnd.toISOString(),
-  sunsetGoldenStart: sunsetGoldenStart.toISOString(),
-  sunsetGoldenEnd: sunsetGoldenEnd.toISOString(),
-  sunsetBlueStart: sunsetBlueStart.toISOString(),
-  sunsetBlueEnd: sunsetBlueEnd.toISOString(),
-
-  source: "tomorrow.io",
-  fetchedAt: new Date().toISOString(),
-};
-astronomySource = "api";
-
+				astronomy = {
+					sunrise: dailyData.sunriseTime,
+					sunset: dailyData.sunsetTime,
+					moonrise: dailyData.moonriseTime,
+					moonset: dailyData.moonsetTime,
+					source: "tomorrow.io",
+					fetchedAt: new Date().toISOString(),
+				};
+				astronomySource = "api";
 				astronomyAge = 0;
 			}
 		} catch (error) {
