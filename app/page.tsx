@@ -21,7 +21,7 @@ function getGreeting(): string {
   if (hour < 17) return "Good afternoon";
   return "Good evening";
 }
-export async function GET(req: Request) {
+export default async function GET(req: Request) {
 	const session = await auth.api.getSession({
 		headers: req.headers,
 	});
