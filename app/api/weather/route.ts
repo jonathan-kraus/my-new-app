@@ -115,6 +115,11 @@ return NextResponse.json({
     forecastMinutes: null,
     astronomyHours: null,
   },
+
+  headers: {
+    "x-status-code": "200"  // 👈 Inject for logging
+  }
+
 });
 	}
 
