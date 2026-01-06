@@ -6,7 +6,9 @@ import CurrentWeatherCard from "@/app/components/dashboard/current-weather-card"
 import { AstronomyCard } from "@/app/astronomy/AstronomyCard";
 import Link from "next/link";
 import { db } from "@/lib/db";
+import { auth } from "@/lib/auth";
 import LunarEventsCard from "@/app/astronomy/LunarEventsCard";
+
 {
   /* <div>🌙 Moonrise: {format(data.moonrise)}</div> */
 }
@@ -18,14 +20,20 @@ function getGreeting(): string {
   if (hour < 17) return "Good afternoon";
   return "Good evening";
 }
-
+  const session = await auth.api.getSession({
+    headers: req.headers,
+  });
 export default async function HomePage() {
   await logit({
     level: "info",
     message: "Visited dashboard",
     file: "app/page.tsx",
     line: 21,
-    sessionUser: "Jonathan",
+    data: {sessionUser: session?.user?.name ?? null,
+      sessionEmail: session?.user?.email ?? null,
+      userId: session?.user?.id ?? null,
+      session: session ?? null,
+    },
   });
 
   const location = await db.location.findFirst({
