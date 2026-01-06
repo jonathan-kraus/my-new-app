@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 import { db } from "@/lib/db";
 import { logit } from "@/lib/log/server";
 import { auth } from "@/lib/auth";
-import { getTraceEvents } from "next/dist/trace/trace";
+
 
 export async function GET() {
   const session = await auth.api.getSession({

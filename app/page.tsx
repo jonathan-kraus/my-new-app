@@ -8,6 +8,7 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
 import LunarEventsCard from "@/app/astronomy/LunarEventsCard";
+import { headers } from "next/dist/server/request/headers";
 
 {
   /* <div>🌙 Moonrise: {format(data.moonrise)}</div> */
@@ -20,10 +21,12 @@ function getGreeting(): string {
   if (hour < 17) return "Good afternoon";
   return "Good evening";
 }
-  const session = await auth.api.getSession({
-    headers: req.headers,
-  });
-export default async function HomePage() {
+export async function GET(req: Request) {
+	const session = await auth.api.getSession({
+		headers: req.headers,
+	});
+//export default async function HomePage() {
+
   await logit({
     level: "info",
     message: "Visited dashboard",
@@ -64,15 +67,15 @@ export default async function HomePage() {
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <CurrentWeatherCard location={location} />
           <AstronomyCard data={weatherData.astronomy} location={location} />
-          {/* <LunarEventsCard */}
-          {/* // locationName={location.name}
-            // timezone={location.timezone}
-            // moonrise={weatherData.astronomy.moonrise}
-            // moonset={weatherData.astronomy.moonset}
-            // moonPhaseName={weatherData.astronomy.moonPhaseName}
-            // moonPhaseEmoji={weatherData.astronomy.moonPhaseEmoji}
-            // fetchedAt={weatherData.fetchedAt} */}
-          {/* /> */}
+          <LunarEventsCard
+            locationName={location.name}
+            timezone={location.timezone}
+            moonrise={weatherData.astronomy.moonrise}
+            moonset={weatherData.astronomy.moonset}
+            moonPhaseName={weatherData.astronomy.moonPhaseName}
+            moonPhaseEmoji={weatherData.astronomy.moonPhaseEmoji}
+            fetchedAt={weatherData.fetchedAt}
+           />
         </section>
 
         {/* System Health */}
