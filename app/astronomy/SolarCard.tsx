@@ -19,22 +19,20 @@ export function SolarCard({
 
       <div className="space-y-2">
         <p>
-🌅 Sunrise:{" "}
-{t.sunrise.toLocaleTimeString("en-US", {
-  hour: "numeric",
-  minute: "2-digit",
-  timeZone: "America/New_York",
-})}
-
+          🌅 Sunrise:{" "}
+          {t.sunrise.toLocaleTimeString("en-US", {
+            hour: "numeric",
+            minute: "2-digit",
+            timeZone: "America/New_York",
+          })}
         </p>
         <p>
-🌇 Sunset:{" "}
-{t.sunset.toLocaleTimeString("en-US", {
-  hour: "numeric",
-  minute: "2-digit",
-  timeZone: "America/New_York",
-})}
-
+          🌇 Sunset:{" "}
+          {t.sunset.toLocaleTimeString("en-US", {
+            hour: "numeric",
+            minute: "2-digit",
+            timeZone: "America/New_York",
+          })}
         </p>
         <p>🕒 Day Length: {t.dayLengthHours.toFixed(2)} hours</p>
       </div>
@@ -45,16 +43,20 @@ export function SolarCard({
         </p>
 
         <div className="w-full h-3 bg-white/30 rounded-full mt-2 overflow-hidden">
-<ProgressBar
-  value={t.progressPercent}
-  barClassName="bg-yellow-300"
-  className="bg-yellow-900/30"
-/>
-
+          <ProgressBar
+            value={t.progressPercent}
+            barClassName="bg-yellow-300"
+            className="bg-yellow-900/30"
+          />
+        </div>
       </div>
-</div>
       <p className="text-sm opacity-80 mt-4">
-        Updated {new Date(fetchedAt).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: "America/New_York", })}
+        Updated{" "}
+        {new Date(fetchedAt).toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "2-digit",
+          timeZone: "America/New_York",
+        })}
       </p>
     </div>
   );

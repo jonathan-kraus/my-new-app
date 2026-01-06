@@ -8,15 +8,16 @@ export function useForecastTimeline(forecast: any) {
   const warmestDay = forecast.time[warmestIndex];
   const coldestDay = forecast.time[coldestIndex];
 
-  const avgHigh = highs.reduce((a: number, b: number) => a + b, 0) / highs.length;
+  const avgHigh =
+    highs.reduce((a: number, b: number) => a + b, 0) / highs.length;
   const avgLow = lows.reduce((a: number, b: number) => a + b, 0) / lows.length;
 
   const trend =
     highs[highs.length - 1] > highs[0]
       ? "warming"
       : highs[highs.length - 1] < highs[0]
-      ? "cooling"
-      : "steady";
+        ? "cooling"
+        : "steady";
 
   return {
     warmestDay,

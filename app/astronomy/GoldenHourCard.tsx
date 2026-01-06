@@ -15,7 +15,6 @@ type GoldenHourCardProps = {
   fetchedAt: string;
 };
 
-
 export default function GoldenHourCard(props: GoldenHourCardProps) {
   const t = useGoldenHourTimeline(props);
 
@@ -42,11 +41,12 @@ export default function GoldenHourCard(props: GoldenHourCardProps) {
 
         {/* Progress bar */}
         <div className="w-full h-3 bg-white/30 rounded-full mt-2 overflow-hidden">
-        <ProgressBar
-  value={t.progressPercent}
-  barClassName="bg-yellow-300"
-  className="bg-yellow-900/30"
-/></div>
+          <ProgressBar
+            value={t.progressPercent}
+            barClassName="bg-yellow-300"
+            className="bg-yellow-900/30"
+          />
+        </div>
       </div>
 
       {/* Timeline list */}

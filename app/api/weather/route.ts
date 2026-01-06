@@ -6,7 +6,6 @@ import { logit } from "@/lib/log/server";
 import { getRuntimeNumber } from "@/lib/runtimeConfig";
 import { addMinutes } from "@/lib/astronomy/formatters";
 
-
 const API_KEY = process.env.TOMORROWIO_APIKEY!;
 // Zod schemas
 const TomorrowRealtimeSchema = z.object({
@@ -75,38 +74,37 @@ export async function GET(req: Request) {
   );
 
   // ----------------------------------------
-// CURRENT WEATHER (working)
-// ----------------------------------------
-const currentCutoff = new Date(Date.now() - currentCacheMin * 60_000);
+  // CURRENT WEATHER (working)
+  // ----------------------------------------
+  const currentCutoff = new Date(Date.now() - currentCacheMin * 60_000);
 
-const currentCached = await db.weatherSnapshot.findFirst({
-  where: { locationId, fetchedAt: { gte: currentCutoff } },
-  orderBy: { fetchedAt: "desc" },
-});
-
-const currentAge = currentCached
-  ? Math.round((Date.now() - currentCached.fetchedAt.getTime()) / 60000)
-  : null;
-
-if (currentCached) {
-  await logit({
-    level: "info",
-    message: "Using cached current weather data",
-    file: "app/api/weather/route.ts",
-    data: {
-      cacheWindowMinutes: currentCacheMin,
-      actualAgeMinutes: currentAge,
-      locationId,
-      line: 92,
-    },
+  const currentCached = await db.weatherSnapshot.findFirst({
+    where: { locationId, fetchedAt: { gte: currentCutoff } },
+    orderBy: { fetchedAt: "desc" },
   });
 
-  return NextResponse.json({
-    source: "cache",
-    current: currentCached,
-  });
-}
+  const currentAge = currentCached
+    ? Math.round((Date.now() - currentCached.fetchedAt.getTime()) / 60000)
+    : null;
 
+  if (currentCached) {
+    await logit({
+      level: "info",
+      message: "Using cached current weather data",
+      file: "app/api/weather/route.ts",
+      data: {
+        cacheWindowMinutes: currentCacheMin,
+        actualAgeMinutes: currentAge,
+        locationId,
+        line: 92,
+      },
+    });
+
+    return NextResponse.json({
+      source: "cache",
+      current: currentCached,
+    });
+  }
 
   let current;
   let currentSource: "cache" | "api";
@@ -254,47 +252,50 @@ if (currentCached) {
       }
 
       const dailyData = validated.data.data.timelines[0]?.intervals[0]?.values;
-// Convert API times into Date objects
-const sunrise = new Date(dailyData.sunriseTime);
-const sunset = new Date(dailyData.sunsetTime);
+      // Convert API times into Date objects
+      const sunrise = new Date(dailyData.sunriseTime);
+      const sunset = new Date(dailyData.sunsetTime);
 
+      // Sunrise phases
+      const sunriseBlueStart = addMinutes(sunrise, -30);
+      const sunriseBlueEnd = addMinutes(sunrise, -10);
+      const sunriseGoldenStart = addMinutes(sunrise, -10);
+      const sunriseGoldenEnd = addMinutes(sunrise, 30);
 
-// Sunrise phases
-const sunriseBlueStart   = addMinutes(sunrise, -30);
-const sunriseBlueEnd     = addMinutes(sunrise, -10);
-const sunriseGoldenStart = addMinutes(sunrise, -10);
-const sunriseGoldenEnd   = addMinutes(sunrise, 30);
-
-// Sunset phases
-const sunsetGoldenStart = addMinutes(sunset, -30);
-const sunsetGoldenEnd   = sunset;
-const sunsetBlueStart   = sunset;
-const sunsetBlueEnd     = addMinutes(sunset, 20);
+      // Sunset phases
+      const sunsetGoldenStart = addMinutes(sunset, -30);
+      const sunsetGoldenEnd = sunset;
+      const sunsetBlueStart = sunset;
+      const sunsetBlueEnd = addMinutes(sunset, 20);
 
       if (dailyData?.sunriseTime && dailyData?.sunsetTime) {
         // Cache validated data
         await db.astronomySnapshot.create({
-  data: {
-    locationId,
+          data: {
+            locationId,
 
-    sunrise,
-    sunset,
+            sunrise,
+            sunset,
 
-    moonrise: dailyData.moonriseTime ? new Date(dailyData.moonriseTime) : null,
-    moonset: dailyData.moonsetTime ? new Date(dailyData.moonsetTime) : null,
+            moonrise: dailyData.moonriseTime
+              ? new Date(dailyData.moonriseTime)
+              : null,
+            moonset: dailyData.moonsetTime
+              ? new Date(dailyData.moonsetTime)
+              : null,
 
-    sunriseBlueStart,
-    sunriseBlueEnd,
-    sunriseGoldenStart,
-    sunriseGoldenEnd,
-    sunsetGoldenStart,
-    sunsetGoldenEnd,
-    sunsetBlueStart,
-    sunsetBlueEnd,
+            sunriseBlueStart,
+            sunriseBlueEnd,
+            sunriseGoldenStart,
+            sunriseGoldenEnd,
+            sunsetGoldenStart,
+            sunsetGoldenEnd,
+            sunsetBlueStart,
+            sunsetBlueEnd,
 
-    fetchedAt: new Date(),
-  },
-});
+            fetchedAt: new Date(),
+          },
+        });
 
         astronomy = {
           sunrise: dailyData.sunriseTime,

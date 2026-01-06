@@ -1,8 +1,11 @@
 "use client";
 
-import { SunriseCountdown, SunsetCountdown } from "@/app/astronomy/countdown"
+import { SunriseCountdown, SunsetCountdown } from "@/app/astronomy/countdown";
 import { getMoonPhaseIcon, getMoonPhaseName } from "@/lib/astronomy/moonPhase";
-import { getLightPhases, getMoonLightPhases } from "@/lib/astronomy/lightPhases";
+import {
+  getLightPhases,
+  getMoonLightPhases,
+} from "@/lib/astronomy/lightPhases";
 import type { AstronomyCardProps } from "@/lib/types";
 
 export function AstronomyCard({ data, location }: AstronomyCardProps) {

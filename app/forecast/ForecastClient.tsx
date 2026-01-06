@@ -17,6 +17,8 @@ type ForecastResponse = {
     temperature_2m_max: number[];
     temperature_2m_min: number[];
   };
+  fetchedAt: string;
+  source: string;
 };
 
 function formatDayLabel(dateStr: string, index: number) {
@@ -94,18 +96,14 @@ export default function ForecastClient({
             />
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-              {forecast.forecast.temperature_2m_max.map((high, i) => (
-                <ForecastCard
-                  key={i}
-                  day={formatDayLabel(forecast.forecast.time[i], i)}
-                  icon="🌤️"
-                  high={Math.round(high)}
-                  low={Math.round(forecast.forecast.temperature_2m_min[i])}
-                  description="Forecast"
-                />
-              ))}
+              <ForecastCard
+                location={forecast.location}
+                current={forecast.current}
+                forecast={forecast.forecast}
+                fetchedAt={forecast.fetchedAt}
+                source={forecast.source}
+              />
             </div>
-            const t = useForecastTimeline(forecast); <p>Warmest day: {new Date(t.warmestDay).toLocaleDateString()}</p> <p>Coldest day: {new Date(t.coldestDay).toLocaleDateString()}</p> <p>Trend: {t.trend}</p>
           </>
         )}
       </div>

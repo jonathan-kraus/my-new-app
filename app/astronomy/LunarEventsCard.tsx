@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { MoonriseCountdown, MoonsetCountdown } from "@/app/astronomy/countdown";
 
-
 type LunarEventsCardProps = {
   locationName: string;
   timezone: string;

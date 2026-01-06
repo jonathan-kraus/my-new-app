@@ -49,9 +49,7 @@ export function ForecastCard({
               {forecast.temperature_2m_max[i]}° /{" "}
               {forecast.temperature_2m_min[i]}°
             </p>
-            <p className="text-xs opacity-80">
-              Code {forecast.weathercode[i]}
-            </p>
+            <p className="text-xs opacity-80">Code {forecast.weathercode[i]}</p>
           </div>
         ))}
       </div>

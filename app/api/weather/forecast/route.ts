@@ -3,11 +3,8 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { logit } from "@/lib/log/server";
 import { ForecastResponseSchema } from "@/lib/weather/zodschema";
-import { line } from "better-auth";
 
-const FORECAST_CACHE_MINUTES = Number(
-  process.env.FORECAST_CACHE_MINUTES ?? 60
-);
+const FORECAST_CACHE_MINUTES = Number(process.env.FORECAST_CACHE_MINUTES ?? 60);
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -36,9 +33,7 @@ export async function GET(req: Request) {
   });
 
   if (cached) {
-    const age = Math.round(
-      (Date.now() - cached.fetchedAt.getTime()) / 60000
-    );
+    const age = Math.round((Date.now() - cached.fetchedAt.getTime()) / 60000);
 
     await logit({
       level: "info",
@@ -53,10 +48,15 @@ export async function GET(req: Request) {
       },
     });
 
+    const payload = cached.payload as {
+      current: any;
+      forecast: any;
+    };
+
     return NextResponse.json({
       source: "cache",
       location,
-      ...cached.payload,
+      ...payload,
       fetchedAt: cached.fetchedAt.toISOString(),
     });
   }
@@ -68,10 +68,7 @@ export async function GET(req: Request) {
     level: "info",
     message: "Forecast cache miss → fetching external API",
     file: "app/api/weather/forecast/route.ts",
-    data: { locationId,
-      file: "app/api/weather/forecast/route.ts",
-      line: 67,
-     },
+    data: { locationId, file: "app/api/weather/forecast/route.ts", line: 67 },
   });
 
   const weatherRes = await fetch(
@@ -81,7 +78,7 @@ export async function GET(req: Request) {
       `&current_weather=true` +
       `&daily=temperature_2m_max,temperature_2m_min,weathercode` +
       `&temperature_unit=fahrenheit` +
-      `&timezone=auto`
+      `&timezone=auto`,
   );
 
   const raw = await weatherRes.json();
@@ -98,7 +95,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json(
       { error: "Forecast unavailable" },
-      { status: 502 }
+      { status: 502 },
     );
   }
 

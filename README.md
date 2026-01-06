@@ -1,8 +1,10 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
 ## Schema Map
+
 1. Prisma Models
-Location
-id: string
+   Location
+   id: string
 
 name: string
 
@@ -72,8 +74,8 @@ data (JSON)
 createdAt
 
 2. Zod Schemas
-WeatherResponseSchema
-temperature
+   WeatherResponseSchema
+   temperature
 
 humidity
 
@@ -104,8 +106,8 @@ cacheMinutes
 featureFlags
 
 3. API Routes
-/api/weather
-Validates external API
+   /api/weather
+   Validates external API
 
 Checks cache
 
@@ -146,8 +148,8 @@ Logs events
 Handles POST only
 
 4. Hooks
-useNow
-Returns ticking Date
+   useNow
+   Returns ticking Date
 
 Drives all timelines
 
@@ -179,8 +181,8 @@ Blue hour PM
 Next event + countdown
 
 5. UI Components
-SolarCard
-Sunrise
+   SolarCard
+   Sunrise
 
 Sunset
 
@@ -221,8 +223,8 @@ Blue palette harmony
 Source indicators
 
 6. Cache & Logging
-Cache Rules
-Current weather cache
+   Cache Rules
+   Current weather cache
 
 Forecast cache
 
@@ -242,8 +244,8 @@ Admin actions
 Structured JSON logs
 
 7. Data Flow (End‑to‑End)
-Weather Flow
-User loads dashboard
+   Weather Flow
+   User loads dashboard
 
 API checks cache
 
@@ -274,6 +276,7 @@ Zod validates
 DB updates
 
 UI updates optimistically
+
 ## Getting Started
 
 First, run the development server:
