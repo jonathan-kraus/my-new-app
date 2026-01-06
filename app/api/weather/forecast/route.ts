@@ -37,7 +37,7 @@ export async function GET(req: Request) {
 
     await logit({
       level: "info",
-      message: "Forecast cache hit",
+      message: `Forecast cache hit ${age}/${FORECAST_CACHE_MINUTES}`,
       file: "app/api/weather/forecast/route.ts",
       data: {
         cacheWindowMinutes: FORECAST_CACHE_MINUTES,
