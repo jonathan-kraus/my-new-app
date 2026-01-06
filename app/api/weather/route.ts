@@ -291,15 +291,31 @@ return NextResponse.json({
 					},
 				});
 
-				astronomy = {
-					sunrise: dailyData.sunriseTime,
-					sunset: dailyData.sunsetTime,
-					moonrise: dailyData.moonriseTime,
-					moonset: dailyData.moonsetTime,
-					source: "tomorrow.io",
-					fetchedAt: new Date().toISOString(),
-				};
-				astronomySource = "api";
+	astronomy = {
+  sunrise: sunrise.toISOString(),
+  sunset: sunset.toISOString(),
+  moonrise: dailyData.moonriseTime
+    ? new Date(dailyData.moonriseTime).toISOString()
+    : null,
+  moonset: dailyData.moonsetTime
+    ? new Date(dailyData.moonsetTime).toISOString()
+    : null,
+
+  // Optional: return the corrected phase windows too
+  sunriseBlueStart: sunriseBlueStart.toISOString(),
+  sunriseBlueEnd: sunriseBlueEnd.toISOString(),
+  sunriseGoldenStart: sunriseGoldenStart.toISOString(),
+  sunriseGoldenEnd: sunriseGoldenEnd.toISOString(),
+  sunsetGoldenStart: sunsetGoldenStart.toISOString(),
+  sunsetGoldenEnd: sunsetGoldenEnd.toISOString(),
+  sunsetBlueStart: sunsetBlueStart.toISOString(),
+  sunsetBlueEnd: sunsetBlueEnd.toISOString(),
+
+  source: "tomorrow.io",
+  fetchedAt: new Date().toISOString(),
+};
+astronomySource = "api";
+
 				astronomyAge = 0;
 			}
 		} catch (error) {
