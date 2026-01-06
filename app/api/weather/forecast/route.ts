@@ -2,14 +2,14 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { logit } from "@/lib/log/server";
-import { ForecastResponseSchema } from "@/lib/weather/schema";
+import { ForecastResponseSchema } from "@/lib/weather/zodschema";
 
 export async function GET(req: Request) {
   await logit({
     level: "info",
     message: "Weather forecast initiated",
     file: "app/api/weather/forecast/route.ts",
-    line: 7,
+    line: 8,
     data: { initTime: Date.now() },
   });
 
@@ -57,7 +57,8 @@ export async function GET(req: Request) {
   await logit({
     level: "info",
     message: "Weather API request completed",
-    page: "/api/weather/forecast",
+    file: "app/api/weather/forecast/route.ts",
+    line: 57,
     data: { status: weatherRes.status, parsed: parsed },
   });
 
@@ -67,7 +68,7 @@ export async function GET(req: Request) {
     page: "/forecast",
     data: { status: "ok", time: Date.now() },
     file: "app/api/weather/forecast/route.ts",
-    line: 29,
+    line: 65,
   });
 
   return NextResponse.json({

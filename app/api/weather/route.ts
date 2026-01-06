@@ -4,6 +4,8 @@ import { db } from "@/lib/db";
 import { z } from "zod";
 import { logit } from "@/lib/log/server";
 import { getRuntimeNumber } from "@/lib/runtimeConfig";
+import { addMinutes } from "@/lib/astronomy/formatters";
+
 
 const API_KEY = process.env.TOMORROWIO_APIKEY!;
 // Zod schemas
@@ -73,18 +75,38 @@ export async function GET(req: Request) {
   );
 
   // ----------------------------------------
-  // CURRENT WEATHER (working)
-  // ----------------------------------------
-  const currentCutoff = new Date(Date.now() - currentCacheMin * 60_000);
+// CURRENT WEATHER (working)
+// ----------------------------------------
+const currentCutoff = new Date(Date.now() - currentCacheMin * 60_000);
 
-  const currentCached = await db.weatherSnapshot.findFirst({
-    where: { locationId, fetchedAt: { gte: currentCutoff } },
-    orderBy: { fetchedAt: "desc" },
+const currentCached = await db.weatherSnapshot.findFirst({
+  where: { locationId, fetchedAt: { gte: currentCutoff } },
+  orderBy: { fetchedAt: "desc" },
+});
+
+const currentAge = currentCached
+  ? Math.round((Date.now() - currentCached.fetchedAt.getTime()) / 60000)
+  : null;
+
+if (currentCached) {
+  await logit({
+    level: "info",
+    message: "Using cached current weather data",
+    file: "app/api/weather/route.ts",
+    data: {
+      cacheWindowMinutes: currentCacheMin,
+      actualAgeMinutes: currentAge,
+      locationId,
+      line: 92,
+    },
   });
 
-  const currentAge = currentCached
-    ? Math.round((Date.now() - currentCached.fetchedAt.getTime()) / 60000)
-    : null;
+  return NextResponse.json({
+    source: "cache",
+    current: currentCached,
+  });
+}
+
 
   let current;
   let currentSource: "cache" | "api";
@@ -101,7 +123,7 @@ export async function GET(req: Request) {
       message: "Realtime weather fetch attempted",
       page: "/api/weather",
       file: "app/api/weather/route.ts",
-      line: 59,
+      line: 119,
       data: { status: res },
     });
     if (!res.ok) {
@@ -110,7 +132,7 @@ export async function GET(req: Request) {
         message: "Realtime weather fetch failed",
         page: "/api/weather",
         file: "app/api/weather/route.ts",
-        line: 69,
+        line: 128,
         data: { status: res.status },
       });
       return NextResponse.json(
@@ -232,22 +254,47 @@ export async function GET(req: Request) {
       }
 
       const dailyData = validated.data.data.timelines[0]?.intervals[0]?.values;
+// Convert API times into Date objects
+const sunrise = new Date(dailyData.sunriseTime);
+const sunset = new Date(dailyData.sunsetTime);
+
+
+// Sunrise phases
+const sunriseBlueStart   = addMinutes(sunrise, -30);
+const sunriseBlueEnd     = addMinutes(sunrise, -10);
+const sunriseGoldenStart = addMinutes(sunrise, -10);
+const sunriseGoldenEnd   = addMinutes(sunrise, 30);
+
+// Sunset phases
+const sunsetGoldenStart = addMinutes(sunset, -30);
+const sunsetGoldenEnd   = sunset;
+const sunsetBlueStart   = sunset;
+const sunsetBlueEnd     = addMinutes(sunset, 20);
 
       if (dailyData?.sunriseTime && dailyData?.sunsetTime) {
         // Cache validated data
         await db.astronomySnapshot.create({
-          data: {
-            locationId,
-            sunrise: new Date(dailyData.sunriseTime),
-            sunset: new Date(dailyData.sunsetTime),
-            moonrise: dailyData.moonriseTime
-              ? new Date(dailyData.moonriseTime)
-              : null,
-            moonset: dailyData.moonsetTime
-              ? new Date(dailyData.moonsetTime)
-              : null,
-          },
-        });
+  data: {
+    locationId,
+
+    sunrise,
+    sunset,
+
+    moonrise: dailyData.moonriseTime ? new Date(dailyData.moonriseTime) : null,
+    moonset: dailyData.moonsetTime ? new Date(dailyData.moonsetTime) : null,
+
+    sunriseBlueStart,
+    sunriseBlueEnd,
+    sunriseGoldenStart,
+    sunriseGoldenEnd,
+    sunsetGoldenStart,
+    sunsetGoldenEnd,
+    sunsetBlueStart,
+    sunsetBlueEnd,
+
+    fetchedAt: new Date(),
+  },
+});
 
         astronomy = {
           sunrise: dailyData.sunriseTime,
@@ -294,6 +341,8 @@ export async function GET(req: Request) {
         forecastMinutes: forecastCacheMin,
         astronomyHours: astronomyCacheHours,
       },
+      file: "app/api/weather/route.ts",
+      line: 322,
     },
   });
 

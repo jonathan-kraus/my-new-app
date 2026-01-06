@@ -46,10 +46,10 @@ export default function ForecastClient({
 
   const [forecast, setForecast] = useState<ForecastResponse | null>(null);
 
-  // Fallback to first location if nothing saved
+  // Fallback to second location if nothing saved
   useEffect(() => {
     if (!selectedId && locations.length > 0) {
-      setSelectedId(locations[0].id);
+      setSelectedId(locations[1].id);
     }
   }, [locations, selectedId]);
 

@@ -107,20 +107,29 @@ model WeatherSnapshot {
 }
 
 model AstronomySnapshot {
-  id         String @id @default(cuid())
+  id        String   @id @default(cuid())
   locationId String
+  fetchedAt DateTime
+  createdAt DateTime @default(now())
 
-  sunrise  DateTime
-  sunset   DateTime
-  moonrise DateTime?
-  moonset  DateTime?
+  sunrise   DateTime
+  sunset    DateTime
 
-  fetchedAt DateTime @default(now())
+  moonrise  DateTime?
+  moonset   DateTime?
 
-  location Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  sunriseBlueStart    DateTime
+  sunriseBlueEnd      DateTime
+  sunriseGoldenStart  DateTime
+  sunriseGoldenEnd    DateTime
+  sunsetGoldenStart   DateTime
+  sunsetGoldenEnd     DateTime
+  sunsetBlueStart     DateTime
+  sunsetBlueEnd       DateTime
 
-  @@index([locationId, fetchedAt])
+  location Location @relation(fields: [locationId], references: [id])
 }
+
 
 model ForecastSnapshot {
   id         String   @id @default(cuid())

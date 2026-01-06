@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MoonriseCountdown } from "@/components/astronomy/countdown";
-import { MoonsetCountdown } from "@/components/astronomy/countdown";
+import { MoonriseCountdown, MoonsetCountdown } from "@/app/astronomy/countdown";
+
 
 type LunarEventsCardProps = {
   locationName: string;

@@ -1,5 +1,279 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Schema Map
+1. Prisma Models
+Location
+id: string
 
+name: string
+
+latitude: number
+
+longitude: number
+
+timezone: string
+
+createdAt: Date
+
+WeatherSnapshot
+id
+
+locationId
+
+fetchedAt
+
+createdAt
+
+payload (validated weather JSON)
+
+AstronomySnapshot
+id
+
+locationId
+
+fetchedAt
+
+createdAt
+
+sunrise
+
+sunset
+
+moonrise
+
+moonset
+
+sunriseBlueStart
+
+sunriseBlueEnd
+
+sunriseGoldenStart
+
+sunriseGoldenEnd
+
+sunsetGoldenStart
+
+sunsetGoldenEnd
+
+sunsetBlueStart
+
+sunsetBlueEnd
+
+Log
+id
+
+level
+
+message
+
+file
+
+data (JSON)
+
+createdAt
+
+2. Zod Schemas
+WeatherResponseSchema
+temperature
+
+humidity
+
+windSpeed
+
+conditions
+
+sunriseTime
+
+sunsetTime
+
+AstronomyResponseSchema
+sunrise
+
+sunset
+
+moonrise
+
+moonset
+
+golden hour fields
+
+RuntimeConfigSchema
+emailEnabled
+
+cacheMinutes
+
+featureFlags
+
+3. API Routes
+/api/weather
+Validates external API
+
+Checks cache
+
+Logs cache hits
+
+Computes golden hour
+
+Stores snapshot
+
+Returns normalized strings
+
+/api/astronomy
+Fetches sunrise/sunset
+
+Computes blue/golden hour
+
+Stores AstronomySnapshot
+
+Returns ISO strings
+
+/api/admin/runtime-config
+Reads/writes config
+
+Validates with Zod
+
+Logs changes
+
+/api/admin/test-email
+Sends MailerSend test email
+
+Respects runtime toggle
+
+/api/github/webhook
+Validates signature
+
+Logs events
+
+Handles POST only
+
+4. Hooks
+useNow
+Returns ticking Date
+
+Drives all timelines
+
+useSolarTimeline
+Sunrise/sunset timeline
+
+Next event
+
+Countdown
+
+Progress percent
+
+useLunarTimeline
+Moonrise/moonset timeline
+
+Wrap‑around handling
+
+Visibility window
+
+useGoldenHourTimeline
+Blue hour AM
+
+Golden hour AM
+
+Golden hour PM
+
+Blue hour PM
+
+Next event + countdown
+
+5. UI Components
+SolarCard
+Sunrise
+
+Sunset
+
+Timeline
+
+Progress bar
+
+LunarCard
+Moonrise
+
+Moonset
+
+Visibility window
+
+Countdown
+
+GoldenHourCard
+Blue hour
+
+Golden hour
+
+Next event
+
+Progress bar
+
+AdminRuntimeConfig
+Toggles
+
+Optimistic updates
+
+Live feedback
+
+Dashboard
+Time‑aware greeting
+
+Blue palette harmony
+
+Source indicators
+
+6. Cache & Logging
+Cache Rules
+Current weather cache
+
+Forecast cache
+
+Astronomy cache
+
+Cache window per type
+
+Logging
+Cache hits
+
+API failures
+
+Webhook events
+
+Admin actions
+
+Structured JSON logs
+
+7. Data Flow (End‑to‑End)
+Weather Flow
+User loads dashboard
+
+API checks cache
+
+If stale → fetch external API
+
+Validate with Zod
+
+Store snapshot
+
+Return normalized strings
+
+UI cards render timelines
+
+Astronomy Flow
+Fetch sunrise/sunset
+
+Compute golden/blue hour
+
+Store snapshot
+
+UI renders Solar/Lunar/GoldenHour cards
+
+Admin Flow
+User toggles config
+
+Zod validates
+
+DB updates
+
+UI updates optimistically
 ## Getting Started
 
 First, run the development server:

@@ -3,10 +3,10 @@
 import { logit } from "@/lib/log/server";
 import { Button } from "@/components/ui/button";
 import CurrentWeatherCard from "@/app/components/dashboard/current-weather-card";
-import { AstronomyCard } from "./components/astronomy/AstronomyCard";
+import { AstronomyCard } from "@/app/astronomy/AstronomyCard";
 import Link from "next/link";
 import { db } from "@/lib/db";
-import LunarEventsCard from "./components/astronomy/LunarEventsCard";
+import LunarEventsCard from "@/app/astronomy/LunarEventsCard";
 {
   /* <div>🌙 Moonrise: {format(data.moonrise)}</div> */
 }

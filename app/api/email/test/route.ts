@@ -3,7 +3,7 @@ import { logit } from "@/lib/log/server";
 export async function GET() {
   const to = "jonathan.c.kraus@gmail.com";
   await sendTestEmail(to);
-    await logit({
+  await logit({
     level: "info",
     message: "Email test sent",
     file: "app/api/email/test/route.ts",
