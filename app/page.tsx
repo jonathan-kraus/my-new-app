@@ -66,15 +66,6 @@ export default async function HomePage() {
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <CurrentWeatherCard location={location} />
           <AstronomyCard data={weatherData.astronomy} location={location} />
-          <LunarEventsCard
-            locationName={location.name}
-            timezone={location.timezone}
-            moonrise={weatherData.astronomy.moonrise}
-            moonset={weatherData.astronomy.moonset}
-            moonPhaseName={weatherData.astronomy.moonPhaseName}
-            moonPhaseEmoji={weatherData.astronomy.moonPhaseEmoji}
-            fetchedAt={weatherData.fetchedAt}
-           />
         </section>
 
         {/* System Health */}
