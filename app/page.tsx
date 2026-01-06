@@ -7,7 +7,7 @@ import { AstronomyCard } from "@/app/astronomy/AstronomyCard";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
-import LunarEventsCard from "@/app/astronomy/LunarEventsCard";
+import { RecentActivity } from "@/components/activity/RecentActivity";
 import { headers } from "next/dist/server/request/headers";
 
 {
