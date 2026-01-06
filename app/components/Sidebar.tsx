@@ -46,6 +46,9 @@ export default function Sidebar() {
         <Link href="/forecast" className="nav-link">
           🌤️ Forecast
         </Link>
+        <Link href="/astronomy" className="nav-link">
+          🌙 Astronomy
+        </Link>
         <Link href="/logs" className="nav-link">
           📝 Logs
         </Link>
