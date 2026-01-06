@@ -233,14 +233,23 @@ export async function GET(req: Request) {
     astronomyAge = Math.round(
       (Date.now() - astronomyCached.fetchedAt.getTime()) / 3600000,
     );
+
+    // ✅ Always return ISO strings so cached and fresh paths match.
+    //    The UI will convert them to local time with new Date().
+
     astronomy = {
       sunrise: astronomyCached.sunrise.toISOString(),
       sunset: astronomyCached.sunset.toISOString(),
-      moonrise: astronomyCached.moonrise?.toISOString(),
-      moonset: astronomyCached.moonset?.toISOString(),
+      moonrise: astronomyCached.moonrise
+        ? astronomyCached.moonrise.toISOString()
+        : null,
+      moonset: astronomyCached.moonset
+        ? astronomyCached.moonset.toISOString()
+        : null,
       source: "tomorrow.io",
       fetchedAt: astronomyCached.fetchedAt.toISOString(),
     };
+
     astronomySource = "cache";
   } else {
     // Fresh API call + Zod validation
@@ -274,24 +283,25 @@ export async function GET(req: Request) {
       }
 
       const dailyData = validated.data.data.timelines[0]?.intervals[0]?.values;
-      // Convert API times into Date objects
-      const sunrise = new Date(dailyData.sunriseTime);
-      const sunset = new Date(dailyData.sunsetTime);
-
-      // Sunrise phases
-      const sunriseBlueStart = addMinutes(sunrise, -30);
-      const sunriseBlueEnd = addMinutes(sunrise, -10);
-      const sunriseGoldenStart = addMinutes(sunrise, -10);
-      const sunriseGoldenEnd = addMinutes(sunrise, 30);
-
-      // Sunset phases
-      const sunsetGoldenStart = addMinutes(sunset, -30);
-      const sunsetGoldenEnd = sunset;
-      const sunsetBlueStart = sunset;
-      const sunsetBlueEnd = addMinutes(sunset, 20);
 
       if (dailyData?.sunriseTime && dailyData?.sunsetTime) {
-        // Cache validated data
+        // Convert API times into Date objects
+        const sunrise = new Date(dailyData.sunriseTime);
+        const sunset = new Date(dailyData.sunsetTime);
+
+        // Sunrise phases
+        const sunriseBlueStart = addMinutes(sunrise, -30);
+        const sunriseBlueEnd = addMinutes(sunrise, -10);
+        const sunriseGoldenStart = addMinutes(sunrise, -10);
+        const sunriseGoldenEnd = addMinutes(sunrise, 30);
+
+        // Sunset phases
+        const sunsetGoldenStart = addMinutes(sunset, -30);
+        const sunsetGoldenEnd = sunset;
+        const sunsetBlueStart = sunset;
+        const sunsetBlueEnd = addMinutes(sunset, 20);
+
+        // Cache validated data as DateTime
         await db.astronomySnapshot.create({
           data: {
             locationId,
@@ -319,14 +329,20 @@ export async function GET(req: Request) {
           },
         });
 
+        // ✅ Return ISO strings in the same format as the cached path
         astronomy = {
-          sunrise: dailyData.sunriseTime,
-          sunset: dailyData.sunsetTime,
-          moonrise: dailyData.moonriseTime,
-          moonset: dailyData.moonsetTime,
+          sunrise: sunrise.toISOString(),
+          sunset: sunset.toISOString(),
+          moonrise: dailyData.moonriseTime
+            ? new Date(dailyData.moonriseTime).toISOString()
+            : null,
+          moonset: dailyData.moonsetTime
+            ? new Date(dailyData.moonsetTime).toISOString()
+            : null,
           source: "tomorrow.io",
           fetchedAt: new Date().toISOString(),
         };
+
         astronomySource = "api";
         astronomyAge = 0;
       }
