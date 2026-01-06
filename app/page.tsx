@@ -57,7 +57,7 @@ export default async function HomePage() {
           <CurrentWeatherCard location={location} />
           <AstronomyCard data={weatherData.astronomy} location={location} />
           {/* <LunarEventsCard */}
-            {/* // locationName={location.name}
+          {/* // locationName={location.name}
             // timezone={location.timezone}
             // moonrise={weatherData.astronomy.moonrise}
             // moonset={weatherData.astronomy.moonset}

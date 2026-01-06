@@ -92,9 +92,7 @@ export default function ForecastClient({
 
         {forecast && (
           <>
-            <p className="mb-4 text-lg opacity-90">
-              {forecast.location.name}
-            </p>
+            <p className="mb-4 text-lg opacity-90">{forecast.location.name}</p>
 
             <CurrentWeather
               temperature={forecast.current.temperature}
