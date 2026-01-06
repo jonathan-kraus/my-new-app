@@ -1,12 +1,16 @@
 // app/api/weather/forecast/route.ts
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { auth } from "@/lib/auth";
 import { logit } from "@/lib/log/server";
 import { ForecastResponseSchema } from "@/lib/weather/zodschema";
 
 const FORECAST_CACHE_MINUTES = Number(process.env.FORECAST_CACHE_MINUTES ?? 60);
 
 export async function GET(req: Request) {
+  const session = await auth.api.getSession({
+    headers: req.headers,
+  });
   const { searchParams } = new URL(req.url);
   const locationId = searchParams.get("locationId");
 
@@ -42,6 +46,9 @@ export async function GET(req: Request) {
       data: {
         cacheWindowMinutes: FORECAST_CACHE_MINUTES,
         actualAgeMinutes: age,
+        sessionUser: session?.user?.name ?? null,
+        sessionEmail: session?.user?.email ?? null,
+        userId: session?.user?.id ?? null,
         locationId,
         file: "app/api/weather/forecast/route.ts",
         line: 43,

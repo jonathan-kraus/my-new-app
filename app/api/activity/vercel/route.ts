@@ -11,13 +11,13 @@ export async function GET() {
         Authorization: `Bearer ${token}`,
       },
       cache: "no-store",
-    }
+    },
   );
 
   if (!res.ok) {
     return NextResponse.json(
       { error: "Failed to fetch Vercel deployments" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 

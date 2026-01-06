@@ -8,7 +8,7 @@ export async function GET() {
   if (!token || !owner || !repo) {
     return NextResponse.json(
       { error: "Missing GitHub environment variables" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -21,13 +21,13 @@ export async function GET() {
         Accept: "application/vnd.github+json",
       },
       cache: "no-store",
-    }
+    },
   );
 
   if (!deploymentsRes.ok) {
     return NextResponse.json(
       { error: "Failed to fetch deployments" },
-      { status: deploymentsRes.status }
+      { status: deploymentsRes.status },
     );
   }
 
@@ -56,7 +56,7 @@ export async function GET() {
         status: latest?.state ?? "unknown",
         log_url: latest?.log_url ?? null,
       };
-    })
+    }),
   );
 
   return NextResponse.json(enriched);

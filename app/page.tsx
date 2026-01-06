@@ -23,7 +23,7 @@ function getGreeting(): string {
 }
 
 export default async function HomePage() {
-    const session = await auth.api.getSession({
+  const session = await auth.api.getSession({
     headers: await headers(),
   });
   await logit({
@@ -31,7 +31,8 @@ export default async function HomePage() {
     message: "Visited dashboard",
     file: "app/page.tsx",
     line: 21,
-    data: {sessionUser: session?.user?.name ?? null,
+    data: {
+      sessionUser: session?.user?.name ?? null,
       sessionEmail: session?.user?.email ?? null,
       userId: session?.user?.id ?? null,
       session: session ?? null,

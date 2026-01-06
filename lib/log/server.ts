@@ -22,11 +22,10 @@ export async function logit(input: CreateLogInput) {
     .with({
       requestId,
       page: input.page,
-      statusCode,  // 👈 Now every log has this!
+      statusCode, // 👈 Now every log has this!
     })
     .info(input.message, {
       level: input.level,
-      data: input.data
+      data: input.data,
     });
 }
-

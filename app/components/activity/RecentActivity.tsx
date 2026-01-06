@@ -3,7 +3,7 @@
 import useSWR from "swr";
 import { Github, Triangle, CheckCircle, XCircle, Loader2 } from "lucide-react";
 
-const fetcher = (url: string) => fetch(url).then(r => r.json());
+const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 export function RecentActivity() {
   const { data: gh } = useSWR("/api/activity/github", fetcher);
@@ -14,8 +14,11 @@ export function RecentActivity() {
   const items = [
     ...gh.map((d: any) => ({ type: "github", ...d })),
     ...vc.map((d: any) => ({ type: "vercel", ...d })),
-  ].sort((a, b) => new Date(b.created_at || b.createdAt).getTime() -
-                   new Date(a.created_at || a.createdAt).getTime());
+  ].sort(
+    (a, b) =>
+      new Date(b.created_at || b.createdAt).getTime() -
+      new Date(a.created_at || a.createdAt).getTime(),
+  );
 
   return (
     <div className="space-y-4">
@@ -31,9 +34,7 @@ export function RecentActivity() {
                 <Triangle className="w-4 h-4" />
               )}
 
-              <span className="font-medium">
-                {item.ref || item.url}
-              </span>
+              <span className="font-medium">{item.ref || item.url}</span>
 
               <span className="ml-auto">
                 {item.state === "READY" || item.status === "success" ? (

@@ -5,7 +5,6 @@ import { db } from "@/lib/db";
 import { logit } from "@/lib/log/server";
 import { auth } from "@/lib/auth";
 
-
 export async function GET() {
   const session = await auth.api.getSession({
     headers: await headers(),
