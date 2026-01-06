@@ -88,7 +88,7 @@ export async function GET(req: Request) {
 	if (currentCached) {
 		await logit({
 			level: "info",
-			message: "Using cached current weather data",
+			message: `Using cached current weather data ${currentAge}/${currentCacheMin}`,
 			file: "app/api/weather/route.ts",
 			page: "/api/weather",
 			data: {
