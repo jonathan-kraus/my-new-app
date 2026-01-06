@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { z } from "zod";
 import { logit } from "@/lib/log/server";
+import { auth } from "@/lib/auth";
 import { getRuntimeNumber } from "@/lib/runtimeConfig";
 import { addMinutes } from "@/lib/astronomy/formatters";
 
@@ -47,6 +48,9 @@ const DEFAULT_FORECAST_MIN = Number(process.env.FORECAST_CACHE_MINUTES ?? 30);
 const DEFAULT_ASTRONOMY_HOURS = Number(process.env.ASTRONOMY_CACHE_HOURS ?? 24);
 
 export async function GET(req: Request) {
+    const session = await auth.api.getSession({
+    headers: req.headers,
+  });
   const { searchParams } = new URL(req.url);
   const locationId = searchParams.get("locationId");
 
@@ -93,11 +97,11 @@ export async function GET(req: Request) {
       message: "Using cached current weather data",
       file: "app/api/weather/route.ts",
       data: {
+        user: session?.user?.name || "Guest",
         cacheWindowMinutes: currentCacheMin,
         actualAgeMinutes: currentAge,
         locationId,
-        line: 92,
-      },
+        line: 95,      },
     });
 
     return NextResponse.json({
