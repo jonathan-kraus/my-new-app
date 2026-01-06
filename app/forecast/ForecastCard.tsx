@@ -54,26 +54,6 @@ export function ForecastCard({
 				))}
 			</div>
 
-			{/* Summary section */}
-			<div className="mt-6 space-y-1 text-sm opacity-90">
-				<p>
-					Warmest day:{" "}
-					{new Date(t.warmestDay).toLocaleDateString("en-US", {
-						weekday: "long",
-						month: "short",
-						day: "numeric",
-					})}
-				</p>
-				<p>
-					Coldest day:{" "}
-					{new Date(t.coldestDay).toLocaleDateString("en-US", {
-						weekday: "long",
-						month: "short",
-						day: "numeric",
-					})}
-				</p>
-			</div>
-
 			{/* Footer */}
 			<p className="text-sm opacity-70 mt-4">
 				Source: {source} · Updated {updatedAgo}
