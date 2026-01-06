@@ -20,21 +20,28 @@ export function AstronomyCard({ data, location }: AstronomyCardProps) {
       : "—";
 
   const now = new Date();
-  const sunrise = data.sunrise ? new Date(data.sunrise) : null;
-  const sunset = data.sunset ? new Date(data.sunset) : null;
+
+  // Normalize all ISO strings into Date objects
+  const sunriseDate = data.sunrise ? new Date(data.sunrise) : null;
+  const sunsetDate = data.sunset ? new Date(data.sunset) : null;
+  const moonriseDate = data.moonrise ? new Date(data.moonrise) : null;
+  const moonsetDate = data.moonset ? new Date(data.moonset) : null;
 
   // Determine next solar event
   const nextSolarEvent =
-    sunrise && now < sunrise
-      ? { type: "sunrise", time: sunrise }
-      : sunset && now < sunset
-        ? { type: "sunset", time: sunset }
+    sunriseDate && now < sunriseDate
+      ? { type: "sunrise", time: sunriseDate }
+      : sunsetDate && now < sunsetDate
+        ? { type: "sunset", time: sunsetDate }
         : null;
 
-  // Light phases
+  // Light phases (now correctly typed)
   const solarPhases =
-    sunrise && sunset ? getLightPhases(data.sunrise, data.sunset) : null;
-  const lunarPhases = getMoonLightPhases(data.moonrise, data.moonset);
+    sunriseDate && sunsetDate
+      ? getLightPhases(sunriseDate, sunsetDate)
+      : null;
+
+  const lunarPhases = getMoonLightPhases(moonriseDate, moonsetDate);
 
   const moonIcon = getMoonPhaseIcon(now);
   const moonName = getMoonPhaseName(now);
@@ -62,7 +69,10 @@ export function AstronomyCard({ data, location }: AstronomyCardProps) {
           />
         )}
         {nextSolarEvent?.type === "sunset" && (
-          <SunsetCountdown sunset={data.sunset!} timezone={location.timezone} />
+          <SunsetCountdown
+            sunset={data.sunset!}
+            timezone={location.timezone}
+          />
         )}
       </div>
 
