@@ -36,7 +36,8 @@ export async function POST(req: NextRequest) {
       level: "warn",
       message: "Invalid Signature on GitHub Webhook",
       file: "app/api/github-webhook/route.ts",
-      line: 31,
+      line: 35,
+      page: "GitHub Webhook Handler",
     });
     return new Response("Unauthorized", { status: 401 });
   }
@@ -49,8 +50,8 @@ export async function POST(req: NextRequest) {
     level: "info",
     message: "Verifying Signature on GitHub Webhook",
     file: "app/api/github-webhook/route.ts",
-    line: 44,
-
+    line: 49,
+    page: "GitHub Webhook Handler",
     data: {
       sha,
       je,
@@ -65,7 +66,7 @@ export async function POST(req: NextRequest) {
           level: "info",
           message: "✅ check.run 🏃",
           file: "app/api/github-webhook/route.ts",
-          line: 59,
+          line: 65,
           data: {
             id: run.id,
             name: run.name,
@@ -87,7 +88,8 @@ export async function POST(req: NextRequest) {
           level: "info",
           message: `${je}  check.suite executed`,
           file: "app/api/github-webhook/route.ts",
-          line: 82,
+          line: 87,
+          page: "GitHub Webhook Handler",
           data: {
             id: suite.id,
             status: suite.status,
@@ -106,7 +108,8 @@ export async function POST(req: NextRequest) {
           level: "info",
           message: `${je}  deployment.created`,
           file: "app/api/github-webhook/route.ts",
-          line: 101,
+          line: 107,
+          page: "GitHub Webhook Handler",
           data: {
             environment: deployment.environment,
             sha: deployment.sha?.substring(0, 7),
@@ -126,7 +129,8 @@ export async function POST(req: NextRequest) {
           level: "info",
           message: `${je}  deployment.status.updated`,
           file: "app/api/github-webhook/route.ts",
-          line: 122,
+          line: 128,
+          page: "GitHub Webhook Handler",
           data: {
             state: deploymentStatus.state,
             environment: deployment.environment,
@@ -150,7 +154,8 @@ export async function POST(req: NextRequest) {
           level: "info",
           message: `${je}  issue comment`,
           file: "app/api/github-webhook/route.ts",
-          line: 147,
+          line: 153,
+          page: "GitHub Webhook Handler",
           data: {
             event: je,
             commenter: comment.user?.login,
@@ -171,7 +176,8 @@ export async function POST(req: NextRequest) {
           level: "info",
           message: `${je}  issues`,
           file: "app/api/github-webhook/route.ts",
-          line: 168,
+          line: 175,
+          page: "GitHub Webhook Handler",
           data: {
             event: je,
             action: payload.action,
@@ -203,7 +209,8 @@ export async function POST(req: NextRequest) {
               level: "info",
               message: `${je}  dependency.update.opened`,
               file: "app/api/github-webhook/route.ts",
-              line: 200,
+              line: 208,
+              page: "GitHub Webhook Handler",
               data: {
                 source: "renovate",
                 packageGroup,
@@ -219,7 +226,8 @@ export async function POST(req: NextRequest) {
               level: "info",
               message: `${je}  dependency.update.merged`,
               file: "app/api/github-webhook/route.ts",
-              line: 217,
+              line: 225,
+              page: "GitHub Webhook Handler",
               data: {
                 source: "renovate",
                 packageGroup,
@@ -235,7 +243,8 @@ export async function POST(req: NextRequest) {
               level: "info",
               message: `${je}  dependency.update.synchronized`,
               file: "app/api/github-webhook/route.ts",
-              line: 234,
+              line: 242,
+              page: "GitHub Webhook Handler",
               data: {
                 source: "renovate",
                 packageGroup,
@@ -257,7 +266,8 @@ export async function POST(req: NextRequest) {
           level: "info",
           message: `${je}  pull_request_review`,
           file: "app/api/github-webhook/route.ts",
-          line: 256,
+          line: 269,
+          page: "GitHub Webhook Handler",
           data: {
             event: je,
             action: payload.action,
@@ -284,7 +294,8 @@ export async function POST(req: NextRequest) {
           level: "info",
           message: `${je}  pull_request_review_comment`,
           file: "app/api/github-webhook/route.ts",
-          line: 284,
+          line: 293,
+          page: "GitHub Webhook Handler",
           data: {
             event: je,
             action: payload.action,
@@ -311,7 +322,8 @@ export async function POST(req: NextRequest) {
             level: "info",
             message: `${je}  push.commit`,
             file: "app/api/github-webhook/route.ts",
-            line: 312,
+            line: 321,
+            page: "GitHub Webhook Handler",
             data: {
               sha: commit.id.substring(0, 7),
               message: commit.message,
@@ -331,7 +343,8 @@ export async function POST(req: NextRequest) {
           level: "info",
           message: `${je}  repository.event`,
           file: "app/api/github-webhook/route.ts",
-          line: 333,
+          line: 342,
+          page: "GitHub Webhook Handler",
           data: {
             id: repository.id,
             name: repository.name,
@@ -347,7 +360,8 @@ export async function POST(req: NextRequest) {
         level: "info",
         message: `${je}  commit.status`,
         file: "app/api/github-webhook/route.ts",
-        line: 350,
+        line: 359,
+        page: "GitHub Webhook Handler",
         data: {
           state: payload.state,
           context: payload.context,
@@ -365,7 +379,8 @@ export async function POST(req: NextRequest) {
           level: "info",
           message: `${je}  workflow.job`,
           file: "app/api/github-webhook/route.ts",
-          line: 368,
+          line: 378,
+          page: "GitHub Webhook Handler",
           data: {
             jobName: job.name,
             action: payload.action,
@@ -388,7 +403,8 @@ export async function POST(req: NextRequest) {
           level: "info",
           message: `${je}  workflow.run`,
           file: "app/api/github-webhook/route.ts",
-          line: 391,
+          line: 402,
+          page: "GitHub Webhook Handler",
           data: {
             workflowName: workflow.name,
             status: workflow.status,
@@ -407,7 +423,8 @@ export async function POST(req: NextRequest) {
         level: "warn",
         message: `${je}  webhook.unhandled`,
         file: "app/api/github-webhook/route.ts",
-        line: 410,
+        line: 422,
+        page: "GitHub Webhook Handler",
         data: {
           event: je,
           action: payload.action,
