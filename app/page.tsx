@@ -21,12 +21,11 @@ function getGreeting(): string {
   if (hour < 17) return "Good afternoon";
   return "Good evening";
 }
-export default async function GET(req: Request) {
-	const session = await auth.api.getSession({
-		headers: req.headers,
-	});
-//export default async function HomePage() {
 
+export default async function HomePage() {
+    const session = await auth.api.getSession({
+    headers: await headers(),
+  });
   await logit({
     level: "info",
     message: "Visited dashboard",
