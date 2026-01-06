@@ -19,18 +19,22 @@ export function SolarCard({
 
       <div className="space-y-2">
         <p>
-          🌅 Sunrise:{" "}
-          {t.sunrise.toLocaleTimeString([], {
-            hour: "numeric",
-            minute: "2-digit",
-          })}
+🌅 Sunrise:{" "}
+{t.sunrise.toLocaleTimeString("en-US", {
+  hour: "numeric",
+  minute: "2-digit",
+  timeZone: "America/New_York",
+})}
+
         </p>
         <p>
-          🌇 Sunset:{" "}
-          {t.sunset.toLocaleTimeString([], {
-            hour: "numeric",
-            minute: "2-digit",
-          })}
+🌇 Sunset:{" "}
+{t.sunset.toLocaleTimeString("en-US", {
+  hour: "numeric",
+  minute: "2-digit",
+  timeZone: "America/New_York",
+})}
+
         </p>
         <p>🕒 Day Length: {t.dayLengthHours.toFixed(2)} hours</p>
       </div>
@@ -50,7 +54,7 @@ export function SolarCard({
       </div>
 </div>
       <p className="text-sm opacity-80 mt-4">
-        Updated {new Date(fetchedAt).toLocaleTimeString()}
+        Updated {new Date(fetchedAt).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: "America/New_York", })}
       </p>
     </div>
   );

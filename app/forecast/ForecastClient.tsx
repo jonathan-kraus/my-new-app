@@ -105,6 +105,7 @@ export default function ForecastClient({
                 />
               ))}
             </div>
+            const t = useForecastTimeline(forecast); <p>Warmest day: {new Date(t.warmestDay).toLocaleDateString()}</p> <p>Coldest day: {new Date(t.coldestDay).toLocaleDateString()}</p> <p>Trend: {t.trend}</p>
           </>
         )}
       </div>
