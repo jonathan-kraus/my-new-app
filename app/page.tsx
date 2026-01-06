@@ -7,7 +7,7 @@ import { AstronomyCard } from "@/app/astronomy/AstronomyCard";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
-import { RecentActivity } from "@/components/activity/RecentActivity";
+//import { RecentActivity } from "@/components/activity/RecentActivity";
 import { headers } from "next/dist/server/request/headers";
 
 {
@@ -86,7 +86,7 @@ export default async function HomePage() {
         <section className="mt-6">
           <h2 className="text-xl font-medium mb-2 text-sky-200">
             Recent Activity
-            <RecentActivity />
+            {/* <RecentActivity /> */}
           </h2>
         </section>
 
