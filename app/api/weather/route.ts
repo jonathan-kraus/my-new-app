@@ -156,7 +156,7 @@ return NextResponse.json({
 				level: "error",
 				message: "Realtime weather validation failed",
 				page: "/api/weather",
-				data: { issues: validated.error.issues.slice(0, 3) }, // ✅ Fixed
+				data: { issues: validated.error.issues.slice(0, 3) }, // ✅  Fixed
 			});
 			return NextResponse.json({ error: "Invalid weather data" }, { status: 500 });
 		}
