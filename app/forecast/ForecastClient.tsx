@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { LocationSelector } from "@/components/LocationSelector";
 import { ForecastCard } from "./ForecastCard";
 import { CurrentWeather } from "./CurrentWeather";
+import { useForecastTimeline } from "@/hooks/useForecastTimeline";
 import { Location } from "@/lib/types";
 
 type ForecastResponse = {
@@ -16,6 +17,7 @@ type ForecastResponse = {
     time: string[];
     temperature_2m_max: number[];
     temperature_2m_min: number[];
+    weathercode: number[];
   };
   fetchedAt: string;
   source: string;
@@ -71,9 +73,11 @@ export default function ForecastClient({
       .then(setForecast);
   }, [selectedId]);
 
+  const timeline = forecast ? useForecastTimeline(forecast.forecast) : null;
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 px-6 py-10">
-      <div className="max-w-5xl mx-auto text-white">
+    <div className="min-h-screen bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 px-4 sm:px-6 lg:px-8 py-10 text-white">
+      <div className="w-full max-w-6xl mx-auto">
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-4xl font-black drop-shadow">Forecast</h1>
 
@@ -88,22 +92,48 @@ export default function ForecastClient({
 
         {forecast && (
           <>
-            <p className="mb-4 text-lg opacity-90">{forecast.location.name}</p>
+            <p className="mb-4 text-lg opacity-90">
+              {forecast.location.name}
+            </p>
 
             <CurrentWeather
               temperature={forecast.current.temperature}
               windspeed={forecast.current.windspeed}
             />
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-              <ForecastCard
-                location={forecast.location}
-                current={forecast.current}
-                forecast={forecast.forecast}
-                fetchedAt={forecast.fetchedAt}
-                source={forecast.source}
-              />
-            </div>
+            <ForecastCard
+              location={forecast.location}
+              current={forecast.current}
+              forecast={forecast.forecast}
+              fetchedAt={forecast.fetchedAt}
+              source={forecast.source}
+            />
+
+            {timeline && (
+              <div className="mt-6 space-y-1 text-sm opacity-90">
+                <p>
+                  Warmest day:{" "}
+                  {new Date(timeline.warmestDay).toLocaleDateString("en-US", {
+                    weekday: "long",
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </p>
+                <p>
+                  Coldest day:{" "}
+                  {new Date(timeline.coldestDay).toLocaleDateString("en-US", {
+                    weekday: "long",
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </p>
+                <p>Trend: {timeline.trend}</p>
+                <p>
+                  Avg High: {timeline.avgHigh.toFixed(1)}° · Avg Low:{" "}
+                  {timeline.avgLow.toFixed(1)}°
+                </p>
+              </div>
+            )}
           </>
         )}
       </div>
