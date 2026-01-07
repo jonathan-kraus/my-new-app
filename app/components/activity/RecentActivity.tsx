@@ -3,7 +3,7 @@
 import useSWR from "swr";
 import { Github, Triangle, CheckCircle, XCircle, Loader2 } from "lucide-react";
 
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
+const fetcher = (url: string) => fetch(url, { credentials: "include" }).then((res) => res.json());
 
 export function RecentActivity() {
   const { data: gh } = useSWR("/api/activity/github", fetcher);
