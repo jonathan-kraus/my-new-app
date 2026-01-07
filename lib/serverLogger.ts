@@ -15,7 +15,7 @@ export async function logToDatabase(
           ? (input.data as Prisma.InputJsonValue)
           : Prisma.JsonNull,
         userId: input.userId,
-        page: input.page,
+        page: server logger,
         sessionUser: "Jonathan",
         //sessionId: input.sessionId,
         file: input.file,

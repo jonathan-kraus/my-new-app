@@ -16,7 +16,8 @@ export function Log() {
   logit({
     level: "info",
     message: "ping",
-    page: "app/api/ping/route.ts",
+    page: "Ping API",
+    file: "app/api/ping/route.ts",
     line: 16,
   });
   return level;
