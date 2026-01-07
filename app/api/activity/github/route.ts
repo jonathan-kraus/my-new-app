@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { serverLog } from "@/lib/log/server";
+import { logit } from "@/lib/log/server";
 
 export async function GET() {
-  await serverLog({
+  await logit({
     level: "info",
     message: "GitHub Activity Route Loaded",
     file: "app/api/activity/github/route.ts",
