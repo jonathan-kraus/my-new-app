@@ -3,7 +3,7 @@ import { NextRequest } from "next/server";
 import { logit } from "@/lib/log/server";
 import { getCommitMessage, getSha } from "@/lib/github";
 import crypto from "crypto";
-import { log } from "next-axiom/dist/logger";
+import { log } from "next-axiom";
 
 async function verifySignature(
   req: NextRequest,
@@ -50,7 +50,7 @@ const je = req.headers.get("x-github-event");
 const sha = getSha(payload);
 const commitMessage = getCommitMessage(payload);
 
-await log.info("GitHub Webhook Received", {
+await log.info("⭐GitHub Webhook Received⭐", {
   raw,                          // ⭐ raw string for signature + Axiom
   payload,                      // ⭐ parsed JSON for Axiom
   je: payload.action || payload.je,
