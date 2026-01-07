@@ -2,6 +2,20 @@
 
 import { useNow } from "./useNow";
 
+// Interpret an ISO string as LOCAL time instead of UTC
+function toLocalDate(iso: string) {
+  const d = new Date(iso);
+  return new Date(
+    d.getFullYear(),
+    d.getMonth(),
+    d.getDate(),
+    d.getHours(),
+    d.getMinutes(),
+    d.getSeconds(),
+    d.getMilliseconds()
+  );
+}
+
 export function useLunarTimeline(
   moonriseStr: string | null,
   moonsetStr: string | null,
@@ -22,8 +36,9 @@ export function useLunarTimeline(
     };
   }
 
-  const moonrise = new Date(moonriseStr);
-  const moonset = new Date(moonsetStr);
+  // Convert API ISO → local Date
+  const moonrise = toLocalDate(moonriseStr);
+  const moonset = toLocalDate(moonsetStr);
 
   // Handle wrap-around (moonset after midnight)
   let adjustedMoonset = moonset;
@@ -68,7 +83,7 @@ export function useLunarTimeline(
     const elapsed = normalizedNow.getTime() - moonrise.getTime();
     progressPercent = Math.min(
       100,
-      Math.max(0, (elapsed / visibilityMs) * 100),
+      Math.max(0, (elapsed / visibilityMs) * 100)
     );
   }
 

@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   const token = process.env.GITHUB_TOKEN;
-  const owner = process.env.GITHUB_OWNER;
-  const repo = process.env.GITHUB_REPO;
+  const owner = 'jonathan-kraus';
+  const repo = 'my-new-app';
 
   if (!token || !owner || !repo) {
     return NextResponse.json(

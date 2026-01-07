@@ -3,12 +3,27 @@
 import { useMemo } from "react";
 import { useNow } from "@/hooks/useNow";
 
+// Interpret an ISO string as LOCAL time instead of UTC
+function toLocalDate(iso: string) {
+  const d = new Date(iso);
+  return new Date(
+    d.getFullYear(),
+    d.getMonth(),
+    d.getDate(),
+    d.getHours(),
+    d.getMinutes(),
+    d.getSeconds(),
+    d.getMilliseconds()
+  );
+}
+
 export function useSolarTimeline(sunriseStr: string, sunsetStr: string) {
   const now = useNow();
 
   return useMemo(() => {
-    const sunrise = new Date(sunriseStr);
-    const sunset = new Date(sunsetStr);
+    // Convert API ISO → local Date
+    const sunrise = toLocalDate(sunriseStr);
+    const sunset = toLocalDate(sunsetStr);
 
     const dayLengthMs = sunset.getTime() - sunrise.getTime();
     const dayLengthHours = dayLengthMs / 1000 / 60 / 60;
@@ -40,7 +55,7 @@ export function useSolarTimeline(sunriseStr: string, sunsetStr: string) {
       const elapsed = now.getTime() - sunrise.getTime();
       progressPercent = Math.min(
         100,
-        Math.max(0, (elapsed / dayLengthMs) * 100),
+        Math.max(0, (elapsed / dayLengthMs) * 100)
       );
     }
 
