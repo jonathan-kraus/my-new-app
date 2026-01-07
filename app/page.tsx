@@ -31,6 +31,7 @@ export default async function HomePage() {
     message: "Visited dashboard",
     file: "app/page.tsx",
     line: 21,
+    page: "Dashboard",
     data: {
       sessionUser: session?.user?.name ?? null,
       sessionEmail: session?.user?.email ?? null,

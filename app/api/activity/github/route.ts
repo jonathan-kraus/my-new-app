@@ -1,14 +1,24 @@
 import { NextResponse } from "next/server";
 import { logit } from "@/lib/log/server";
+import { auth } from "@/lib/auth";
+import { headers } from "next/dist/server/request/headers";
 
 export async function GET() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
   await logit({
     level: "info",
     message: "GitHub Activity Route Loaded",
     file: "app/api/activity/github/route.ts",
     line: 1,
     page: "GitHub Activity",
-    data: {},
+    data: {
+      sessionUser: session?.user?.name ?? null,
+      sessionEmail: session?.user?.email ?? null,
+      userId: session?.user?.id ?? null,
+      session: session ?? null,
+    },
   });
 
   const token = process.env.GITHUB_TOKEN;
