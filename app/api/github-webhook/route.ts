@@ -3,6 +3,7 @@ import { NextRequest } from "next/server";
 import { logit } from "@/lib/log/server";
 import { getCommitMessage, getSha } from "@/lib/github";
 import crypto from "crypto";
+import { log } from "next-axiom/dist/logger";
 
 async function verifySignature(
   req: NextRequest,
@@ -46,6 +47,13 @@ export async function POST(req: NextRequest) {
   const je = req.headers.get("x-github-event");
   const sha = getSha(payload);
   const commitMessage = getCommitMessage(payload);
+  await log.info("GitHub Webhook Received", {
+  body: JSON.stringify(body),   // ⭐ full raw payload
+  je: body?.action || body?.je, // event type
+  sha: body?.workflow_run?.head_sha || body?.after,
+  page: "GitHub Webhook Handler"
+});
+
   await logit({
     level: "info",
     message: "Verifying Signature on GitHub Webhook -- all data logged",
