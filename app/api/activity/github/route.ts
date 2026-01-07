@@ -15,7 +15,7 @@ export async function GET() {
   const owner = process.env.GITHUB_OWNER;
   const repo = process.env.GITHUB_REPO;
 
-  await serverLog({
+  await logit({
     level: "info",
     message: "Environment Variables Loaded",
     file: "app/api/activity/github/route.ts",
@@ -29,7 +29,7 @@ export async function GET() {
   });
 
   if (!token || !owner || !repo) {
-    await serverLog({
+    await logit({
       level: "error",
       message: "Missing GitHub environment variables",
       file: "app/api/activity/github/route.ts",
@@ -46,7 +46,7 @@ export async function GET() {
 
   const url = `https://api.github.com/repos/${owner}/${repo}/events?per_page=20`;
 
-  await serverLog({
+  await logit({
     level: "info",
     message: "Fetching GitHub Events",
     file: "app/api/activity/github/route.ts",
@@ -63,7 +63,7 @@ export async function GET() {
     cache: "no-store",
   });
 
-  await serverLog({
+  await logit({
     level: "info",
     message: "GitHub Response Received",
     file: "app/api/activity/github/route.ts",
@@ -78,7 +78,7 @@ export async function GET() {
   if (!res.ok) {
     const body = await res.text();
 
-    await serverLog({
+    await logit({
       level: "error",
       message: "GitHub API Error",
       file: "app/api/activity/github/route.ts",
@@ -98,7 +98,7 @@ export async function GET() {
 
   const events = await res.json();
 
-  await serverLog({
+  await logit({
     level: "info",
     message: "GitHub Events Parsed",
     file: "app/api/activity/github/route.ts",
@@ -153,7 +153,7 @@ export async function GET() {
     };
   });
 
-  await serverLog({
+  await logit({
     level: "info",
     message: "GitHub Events Mapped",
     file: "app/api/activity/github/route.ts",
