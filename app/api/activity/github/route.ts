@@ -1,40 +1,43 @@
 import { NextResponse } from "next/server";
+import { log } from "next-axiom";
 import { transformWorkflowRunEvent } from "@/lib/github/transform";
-import { axiom } from "@/lib/axiom"; // or wherever your log client lives
 
 export async function GET() {
   try {
-    // 1. Fetch raw GitHub webhook logs
-    const logs = await axiom.query(`
+    // 1. Query Axiom logs using next-axiom
+    const result = await log.query(`
       ['GitHub Webhook Handler']
       | sort(desc: timestamp)
       | limit(50)
     `);
 
-    const rawEvents = logs.data?.map((row: any) => row.data) ?? [];
+    const rows = result?.data ?? [];
 
-    // 2. Parse the stored JSON safely
-    const parsedEvents = rawEvents
-      .map((e: any) => {
+    // 2. Extract the logged webhook bodies
+    const rawBodies = rows.map((row: any) => row.data?.body).filter(Boolean);
+
+    // 3. Parse JSON safely
+    const parsed = rawBodies
+      .map((body: string) => {
         try {
-          return JSON.parse(e.body);
+          return JSON.parse(body);
         } catch {
           return null;
         }
       })
       .filter(Boolean);
 
-    // 3. Transform into normalized workflow_run events
-    const transformed = parsedEvents
+    // 4. Transform into normalized workflow events
+    const events = parsed
       .map((p: any) => transformWorkflowRunEvent(p))
-      .filter(Boolean);
+      .filter((e: any) => e && e.timestamp);
 
-    // 4. Ensure every item has a timestamp (prevents UI crash)
-    const safe = transformed.filter((e: any) => !!e.timestamp);
-
-    return NextResponse.json(safe);
+    return NextResponse.json(events);
   } catch (err) {
     console.error("GitHub Activity API Error:", err);
-    return NextResponse.json({ error: "Failed to load GitHub activity" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to load GitHub activity" },
+      { status: 500 }
+    );
   }
 }
