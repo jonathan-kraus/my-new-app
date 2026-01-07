@@ -1,12 +1,10 @@
 import { NextResponse } from "next/server";
 import { logit } from "@/lib/log/server";
 import { auth } from "@/lib/auth";
-import { headers } from "next/dist/server/request/headers";
 
 export async function GET() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await auth.api.getSession()
+
   await logit({
     level: "info",
     message: "GitHub Activity Route Loaded",
