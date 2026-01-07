@@ -10,7 +10,7 @@ export async function GET() {
 			return NextResponse.json({ error: "Missing AXIOM_TOKEN or AXIOM_DATASET" }, { status: 500 });
 		}
 
-		// Axiom query to fetch your webhook logs
+		// Axiom query to fetch your webhook logs.
 		const query = `
       ['GitHub Webhook Handler']
       | sort(desc: timestamp)
