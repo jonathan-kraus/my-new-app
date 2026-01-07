@@ -43,32 +43,17 @@ export async function POST(req: NextRequest) {
   }
 
   const payload = JSON.parse(body);
-  // app/api/github-webhook/route.ts
-import { logit } from "@/lib/log/server";
-
-export async function POST(req: Request) {
-  const body = await req.json();
-
-  await logit({
-    level: "info",
-    message: "GitHub Webhook Received",
-    data: body, // ⭐ log EVERYTHING
-    page: "github-webhook",
-  });
-
-  return new Response("ok");
-}
-
   const je = req.headers.get("x-github-event");
   const sha = getSha(payload);
   const commitMessage = getCommitMessage(payload);
   await logit({
     level: "info",
-    message: "Verifying Signature on GitHub Webhook",
+    message: "Verifying Signature on GitHub Webhook -- all data logged",
     file: "app/api/github-webhook/route.ts",
     line: 49,
     page: "GitHub Webhook Handler",
     data: {
+      body,
       sha,
       je,
       commitMessage,
