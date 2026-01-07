@@ -1,4 +1,6 @@
+export const runtime = "nodejs";
 // app/api/github-webhook/route.ts
+
 import { NextRequest } from "next/server";
 import { logit } from "@/lib/log/server";
 import { getCommitMessage, getSha } from "@/lib/github";
