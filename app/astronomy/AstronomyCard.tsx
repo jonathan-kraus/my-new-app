@@ -21,8 +21,6 @@ export function AstronomyCard({ data, location }: AstronomyCardProps) {
         })
       : "—";
 
-
-
   // Normalize all ISO strings into Date objects
   const sunriseDate = data.sunrise ? new Date(data.sunrise) : null;
   const sunsetDate = data.sunset ? new Date(data.sunset) : null;
@@ -39,9 +37,7 @@ export function AstronomyCard({ data, location }: AstronomyCardProps) {
 
   // Light phases (now correctly typed)
   const solarPhases =
-    sunriseDate && sunsetDate
-      ? getLightPhases(sunriseDate, sunsetDate)
-      : null;
+    sunriseDate && sunsetDate ? getLightPhases(sunriseDate, sunsetDate) : null;
 
   const lunarPhases = getMoonLightPhases(moonriseDate, moonsetDate);
 
@@ -71,10 +67,7 @@ export function AstronomyCard({ data, location }: AstronomyCardProps) {
           />
         )}
         {nextSolarEvent?.type === "sunset" && (
-          <SunsetCountdown
-            sunset={data.sunset!}
-            timezone={location.timezone}
-          />
+          <SunsetCountdown sunset={data.sunset!} timezone={location.timezone} />
         )}
       </div>
 

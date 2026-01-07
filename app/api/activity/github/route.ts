@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { logit } from "@/lib/log/client";
+import { logit } from "@/lib/log/server";
 
 export async function GET() {
   await logit({
@@ -40,7 +40,7 @@ export async function GET() {
 
     return NextResponse.json(
       { error: "Missing GitHub environment variables" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -92,7 +92,7 @@ export async function GET() {
 
     return NextResponse.json(
       { error: "Failed to fetch GitHub events", status: res.status, body },
-      { status: 500 }
+      { status: 500 },
     );
   }
 

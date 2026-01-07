@@ -12,7 +12,7 @@ function toLocalDate(iso: string) {
     d.getHours(),
     d.getMinutes(),
     d.getSeconds(),
-    d.getMilliseconds()
+    d.getMilliseconds(),
   );
 }
 
@@ -83,7 +83,7 @@ export function useLunarTimeline(
     const elapsed = normalizedNow.getTime() - moonrise.getTime();
     progressPercent = Math.min(
       100,
-      Math.max(0, (elapsed / visibilityMs) * 100)
+      Math.max(0, (elapsed / visibilityMs) * 100),
     );
   }
 

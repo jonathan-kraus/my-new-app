@@ -13,7 +13,7 @@ function toLocalDate(iso: string) {
     d.getHours(),
     d.getMinutes(),
     d.getSeconds(),
-    d.getMilliseconds()
+    d.getMilliseconds(),
   );
 }
 
@@ -55,7 +55,7 @@ export function useSolarTimeline(sunriseStr: string, sunsetStr: string) {
       const elapsed = now.getTime() - sunrise.getTime();
       progressPercent = Math.min(
         100,
-        Math.max(0, (elapsed / dayLengthMs) * 100)
+        Math.max(0, (elapsed / dayLengthMs) * 100),
       );
     }
 

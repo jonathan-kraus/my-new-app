@@ -15,7 +15,7 @@ export function getLightPhases(sunrise: Date, sunset: Date) {
 
 export function getMoonLightPhases(
   moonrise: Date | null,
-  moonset: Date | null
+  moonset: Date | null,
 ) {
   if (!moonrise || !moonset) return null;
 
