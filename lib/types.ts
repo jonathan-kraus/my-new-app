@@ -33,3 +33,19 @@ export type Location = {
   longitude: number;
   timezone: string;
 };
+
+export type ActivityItemType =
+  | "PushEvent"
+  | "PullRequestEvent"
+  | "WorkflowRunEvent"
+  | "vercel";
+
+export interface ActivityItemData {
+  id: string;
+  type: ActivityItemType;
+  ref?: string;
+  url?: string;
+  state?: string;
+  created_at?: string;
+  createdAt?: string; // for Vercel
+}

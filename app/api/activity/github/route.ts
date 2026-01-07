@@ -40,7 +40,7 @@ export async function GET() {
 
     return NextResponse.json(
       { error: "Missing GitHub environment variables" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -92,7 +92,7 @@ export async function GET() {
 
     return NextResponse.json(
       { error: "Failed to fetch GitHub events", status: res.status, body },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -132,8 +132,8 @@ export async function GET() {
       state = e.payload.pull_request.merged
         ? "success"
         : e.payload.action === "closed"
-        ? "failure"
-        : "info";
+          ? "failure"
+          : "info";
     }
 
     // Workflow Runs

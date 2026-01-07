@@ -22,8 +22,12 @@ export function formatTimeWithSeconds(d: Date): string {
 }
 
 /** Format a Date as "Jan 4, 2026" */
-export function formatDate(d: Date): string {
-  return d.toLocaleDateString([], {
+export function formatDate(d?: string | Date): string {
+  if (!d) return "Unknown time";
+
+  const date = d instanceof Date ? d : new Date(d);
+
+  return date.toLocaleDateString([], {
     month: "short",
     day: "numeric",
     year: "numeric",
