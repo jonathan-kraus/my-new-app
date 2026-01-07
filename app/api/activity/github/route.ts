@@ -1,77 +1,133 @@
 import { NextResponse } from "next/server";
+import { logit } from "@/lib/log/client";
 
 export async function GET() {
+  await logit({
+    level: "info",
+    message: "GitHub Activity Route Loaded",
+    file: "app/api/activity/github/route.ts",
+    line: 1,
+    page: "GitHub Activity",
+    data: {},
+  });
+
   const token = process.env.GITHUB_TOKEN;
   const owner = process.env.GITHUB_OWNER;
   const repo = process.env.GITHUB_REPO;
 
+  await logit({
+    level: "info",
+    message: "Environment Variables Loaded",
+    file: "app/api/activity/github/route.ts",
+    line: 12,
+    page: "GitHub Activity",
+    data: {
+      hasToken: !!token,
+      owner,
+      repo,
+    },
+  });
+
   if (!token || !owner || !repo) {
+    await logit({
+      level: "error",
+      message: "Missing GitHub environment variables",
+      file: "app/api/activity/github/route.ts",
+      line: 25,
+      page: "GitHub Activity",
+      data: { token, owner, repo },
+    });
+
     return NextResponse.json(
       { error: "Missing GitHub environment variables" },
       { status: 500 }
     );
   }
 
-  const res = await fetch(
-    `https://api.github.com/repos/${owner}/${repo}/events?per_page=20`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: "application/vnd.github+json",
-      },
-      cache: "no-store",
-    }
-  );
+  const url = `https://api.github.com/repos/${owner}/${repo}/events?per_page=20`;
+
+  await logit({
+    level: "info",
+    message: "Fetching GitHub Events",
+    file: "app/api/activity/github/route.ts",
+    line: 40,
+    page: "GitHub Activity",
+    data: { url },
+  });
+
+  const res = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/vnd.github+json",
+    },
+    cache: "no-store",
+  });
+
+  await logit({
+    level: "info",
+    message: "GitHub Response Received",
+    file: "app/api/activity/github/route.ts",
+    line: 55,
+    page: "GitHub Activity",
+    data: {
+      status: res.status,
+      ok: res.ok,
+    },
+  });
 
   if (!res.ok) {
+    const body = await res.text();
+
+    await logit({
+      level: "error",
+      message: "GitHub API Error",
+      file: "app/api/activity/github/route.ts",
+      line: 70,
+      page: "GitHub Activity",
+      data: {
+        status: res.status,
+        body,
+      },
+    });
+
     return NextResponse.json(
-      { error: "Failed to fetch GitHub events" },
-      { status: res.status }
+      { error: "Failed to fetch GitHub events", status: res.status, body },
+      { status: 500 }
     );
   }
 
   const events = await res.json();
 
+  await logit({
+    level: "info",
+    message: "GitHub Events Parsed",
+    file: "app/api/activity/github/route.ts",
+    line: 90,
+    page: "GitHub Activity",
+    data: {
+      count: events.length,
+      sampleType: events[0]?.type,
+    },
+  });
+
   const mapped = events.map((e: any) => {
-    const type = e.type;
-
-    // Normalize timestamps
-    const created_at =
-      e.created_at ||
-      e.payload?.pull_request?.created_at ||
-      e.payload?.workflow_run?.created_at ||
-      null;
-
-    // Normalize message / description
-    let message = "";
-    if (type === "PushEvent") {
-      message = e.payload.commits?.[0]?.message || "Push";
-    } else if (type === "PullRequestEvent") {
-      message = `${e.payload.action} PR #${e.payload.number}`;
-    } else if (type === "WorkflowRunEvent") {
-      message = `Workflow: ${e.payload.workflow_run.name}`;
-    } else if (type === "CreateEvent") {
-      message = `Created ${e.payload.ref_type}: ${e.payload.ref}`;
-    } else {
-      message = type;
-    }
-
     return {
       id: e.id,
-      type,
+      type: e.type,
+      created_at: e.created_at,
       actor: e.actor?.login,
-      avatar: e.actor?.avatar_url,
-      message,
-      created_at,
-      url:
-        e.payload?.pull_request?.html_url ||
-        e.payload?.workflow_run?.html_url ||
-        null,
-      status:
-        e.payload?.workflow_run?.conclusion ||
-        e.payload?.pull_request?.state ||
-        null,
     };
+  });
+
+  await logit({
+    level: "info",
+    message: "GitHub Events Mapped",
+    file: "app/api/activity/github/route.ts",
+    line: 110,
+    page: "GitHub Activity",
+    data: {
+      count: mapped.length,
+    },
   });
 
   return NextResponse.json(mapped);
