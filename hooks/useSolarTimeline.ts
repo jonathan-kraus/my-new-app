@@ -1,61 +1,64 @@
-import { useNow } from "@/hooks/useNow";
-import { useMemo } from "react";
+"use client";
 
-export function useSolarTimeline(sunriseStr: string, sunsetStr: string) {
-  const now = useNow();
+import { useEffect, useState } from "react";
+import { selectSolarDay } from "@/lib/solar/selectSolarDay";
+import { logit } from "@/lib/log/client";
+export function useSolarTimeline(
+  days: { date: string; sunrise: string; sunset: string }[],
+) {
+  const [now, setNow] = useState(new Date());
 
-  return useMemo(() => {
-    const sunrise = new Date(sunriseStr);
-    const sunset = new Date(sunsetStr);
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(id);
+  }, []);
 
-    // Compute day length
-    const diffMs = sunset.getTime() - sunrise.getTime();
-    const dayLengthHours = Math.max(0, diffMs / 1000 / 60 / 60);
-
-    // Is the sun above the horizon?
-    const isDaytime = now >= sunrise && now <= sunset;
-
-    // Determine next event
-    let nextEventLabel: string;
-    let nextEventTime: Date;
-
-    if (now < sunrise) {
-      nextEventLabel = "Sunrise";
-      nextEventTime = sunrise;
-    } else if (now < sunset) {
-      nextEventLabel = "Sunset";
-      nextEventTime = sunset;
-    } else {
-      nextEventLabel = "Tomorrow's Sunrise";
-      nextEventTime = new Date(sunrise.getTime() + 24 * 60 * 60 * 1000);
-    }
-
-    // Countdown
-    const diffToNextMs = nextEventTime.getTime() - now.getTime();
-    const diffMin = Math.max(0, Math.floor(diffToNextMs / 1000 / 60));
-    const hours = Math.floor(diffMin / 60);
-    const minutes = diffMin % 60;
-
-    // Progress percent (sunrise → sunset)
-    let progressPercent = 0;
-    if (now <= sunrise) {
-      progressPercent = 0;
-    } else if (now >= sunset) {
-      progressPercent = 100;
-    } else {
-      const elapsed = now.getTime() - sunrise.getTime();
-      const total = sunset.getTime() - sunrise.getTime();
-      progressPercent = Math.min(100, Math.max(0, (elapsed / total) * 100));
-    }
-
+  const selected = selectSolarDay(days);
+  if (!selected) {
     return {
-      sunrise,
-      sunset,
-      isDaytime,
-      dayLengthHours,
-      progressPercent,
-      nextEventLabel,
-      countdown: `${hours}h ${minutes}m`,
+      sunrise: null,
+      sunset: null,
+      nextEventLabel: "No data",
+      countdown: "0h 0m",
+      progressPercent: 0,
+      dayLengthHours: 0,
     };
-  }, [now, sunriseStr, sunsetStr]);
+  }
+
+  const { sunrise, sunset, next } = selected;
+  logit({
+    level: "debug",
+    message: "useSolarTimeline",
+    file: "hooks/useSolarTimeline.ts",
+    line: 29,
+    page: "useSolarTimeline",
+    data: { sunrise: sunrise, sunset: sunset, now: now },
+  });
+  // Countdown
+  const target = next === "sunrise" ? sunrise : sunset;
+  const diffMs = target.getTime() - now.getTime();
+  const diffMin = Math.max(0, Math.floor(diffMs / 1000 / 60));
+  const hours = Math.floor(diffMin / 60);
+  const minutes = diffMin % 60;
+  const seconds = Math.floor((diffMs / 1000) % 60);
+
+  const countdown = `${hours}h ${minutes}m ${seconds}s`;
+
+  // Progress
+  const isDaytime = now >= sunrise && now <= sunset;
+  const dayLengthMs = sunset.getTime() - sunrise.getTime();
+  const elapsedMs = now.getTime() - sunrise.getTime();
+  const progressPercent = isDaytime
+    ? Math.min(100, Math.max(0, (elapsedMs / dayLengthMs) * 100))
+    : 0;
+
+  return {
+    now,
+    sunrise,
+    sunset,
+    nextEventLabel: next === "sunrise" ? "Sunrise" : "Sunset",
+    countdown,
+    progressPercent,
+    dayLengthHours: dayLengthMs / 1000 / 60 / 60,
+  };
 }
