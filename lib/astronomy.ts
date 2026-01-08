@@ -102,7 +102,7 @@ export async function refreshAstronomySnapshotsForLocation(location: Location, d
 	const localHour = now.getHours();
 
 	// USNO returns no sunrise if today's sunrise is already past in UTC
-	const startDate = localHour < 3 ? addDays(now, 1) : now;
+	const startDate = localHour < 6 ? addDays(now, 1) : now;
 
 	const rawDays = await fetchUSNOMultiDay(location.latitude, location.longitude, days, startDate);
 
