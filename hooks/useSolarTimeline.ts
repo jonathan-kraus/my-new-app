@@ -1,44 +1,61 @@
-import { useEffect, useState } from "react";
+import { useNow } from "@/hooks/useNow";
+import { useMemo } from "react";
 
-export function useSolarCountdown(sunrise: Date, sunset: Date) {
-  const [now, setNow] = useState(new Date());
+export function useSolarTimeline(sunriseStr: string, sunsetStr: string) {
+  const now = useNow();
 
-  useEffect(() => {
-    const id = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(id);
-  }, []);
+  return useMemo(() => {
+    const sunrise = new Date(sunriseStr);
+    const sunset = new Date(sunsetStr);
 
-  function diff(target: Date) {
-    const ms = target.getTime() - now.getTime();
-    if (ms <= 0) return { hours: 0, minutes: 0, seconds: 0 };
-    const hours = Math.floor(ms / 1000 / 60 / 60);
-    const minutes = Math.floor((ms / 1000 / 60) % 60);
-    const seconds = Math.floor((ms / 1000) % 60);
-    return { hours, minutes, seconds };
-  }
+    // Compute day length
+    const diffMs = sunset.getTime() - sunrise.getTime();
+    const dayLengthHours = Math.max(0, diffMs / 1000 / 60 / 60);
 
-  const sunriseCountdown = diff(sunrise);
-  const sunsetCountdown = diff(sunset);
+    // Is the sun above the horizon?
+    const isDaytime = now >= sunrise && now <= sunset;
 
-  const nextEvent =
-    now < sunrise
-      ? "sunrise"
-      : now < sunset
-      ? "sunset"
-      : "none";
+    // Determine next event
+    let nextEventLabel: string;
+    let nextEventTime: Date;
 
-  const nextCountdown =
-    nextEvent === "sunrise"
-      ? sunriseCountdown
-      : nextEvent === "sunset"
-      ? sunsetCountdown
-      : { hours: 0, minutes: 0, seconds: 0 };
+    if (now < sunrise) {
+      nextEventLabel = "Sunrise";
+      nextEventTime = sunrise;
+    } else if (now < sunset) {
+      nextEventLabel = "Sunset";
+      nextEventTime = sunset;
+    } else {
+      nextEventLabel = "Tomorrow's Sunrise";
+      nextEventTime = new Date(sunrise.getTime() + 24 * 60 * 60 * 1000);
+    }
 
-  return {
-    now,
-    sunriseCountdown,
-    sunsetCountdown,
-    nextEvent,
-    nextCountdown,
-  };
+    // Countdown
+    const diffToNextMs = nextEventTime.getTime() - now.getTime();
+    const diffMin = Math.max(0, Math.floor(diffToNextMs / 1000 / 60));
+    const hours = Math.floor(diffMin / 60);
+    const minutes = diffMin % 60;
+
+    // Progress percent (sunrise → sunset)
+    let progressPercent = 0;
+    if (now <= sunrise) {
+      progressPercent = 0;
+    } else if (now >= sunset) {
+      progressPercent = 100;
+    } else {
+      const elapsed = now.getTime() - sunrise.getTime();
+      const total = sunset.getTime() - sunrise.getTime();
+      progressPercent = Math.min(100, Math.max(0, (elapsed / total) * 100));
+    }
+
+    return {
+      sunrise,
+      sunset,
+      isDaytime,
+      dayLengthHours,
+      progressPercent,
+      nextEventLabel,
+      countdown: `${hours}h ${minutes}m`,
+    };
+  }, [now, sunriseStr, sunsetStr]);
 }
