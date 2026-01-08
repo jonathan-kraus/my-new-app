@@ -1,14 +1,16 @@
+// lib/usno.ts
 import { addDays, startOfDay } from "date-fns";
 
 export async function fetchUSNOMultiDay(
   lat: number,
   lon: number,
-  days: number
+  days: number,
+  startDate: Date
 ) {
   const results = [];
 
   for (let i = 0; i < days; i++) {
-    const date = startOfDay(addDays(new Date(), i));
+    const date = startOfDay(addDays(startDate, i));
 
     const yyyy = date.getFullYear();
     const mm = String(date.getMonth() + 1).padStart(2, "0");
