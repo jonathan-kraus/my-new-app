@@ -3,7 +3,7 @@ import { addDays, format } from "date-fns";
 export async function fetchAstronomyMultiDay(
   lat: number,
   lon: number,
-  days: number
+  days: number,
 ) {
   const start = new Date();
   const end = addDays(start, days - 1);
@@ -14,6 +14,7 @@ export async function fetchAstronomyMultiDay(
   url.searchParams.set("timezone", "auto");
   url.searchParams.set("start_date", format(start, "yyyy-MM-dd"));
   url.searchParams.set("end_date", format(end, "yyyy-MM-dd"));
+  console.log("Astronomy URL:", url.toString());
 
   const res = await fetch(url.toString());
   if (!res.ok) {
@@ -32,9 +33,7 @@ export async function fetchAstronomyMultiDay(
       moonrise: json.daily.moonrise[i]
         ? new Date(json.daily.moonrise[i])
         : null,
-      moonset: json.daily.moonset[i]
-        ? new Date(json.daily.moonset[i])
-        : null,
+      moonset: json.daily.moonset[i] ? new Date(json.daily.moonset[i]) : null,
       moonPhase: json.daily.moon_phase[i],
     });
   }
