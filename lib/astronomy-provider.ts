@@ -31,14 +31,15 @@ export async function fetchAstronomyMultiDay(
 
   const { daily } = json;
 
-  const enriched = daily.time.map((date: string, i: number) => ({
-    date,
-    sunrise: daily.sunrise[i],
-    sunset: daily.sunset[i],
-    moonrise: `${date}T16:00`,
-    moonset: `${date}T22:00`,
-    moonPhase: 3,
-  }));
+const enriched = daily.time.map((date: string, i: number) => ({
+  date: new Date(date),
+  sunrise: new Date(daily.sunrise[i]),
+  sunset: new Date(daily.sunset[i]),
+  moonrise: new Date(`${date}T16:00`),
+  moonset: new Date(`${date}T22:00`),
+  moonPhase: 3,
+}));
+
 
   return enriched;
 }
