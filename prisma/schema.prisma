@@ -111,7 +111,7 @@ model AstronomySnapshot {
   locationId String
   fetchedAt DateTime
   createdAt DateTime @default(now())
-
+  date      DateTime
   sunrise   DateTime
   sunset    DateTime
 
@@ -128,6 +128,8 @@ model AstronomySnapshot {
   sunsetBlueEnd       DateTime
 
   location Location @relation(fields: [locationId], references: [id])
+
+  @@unique([locationId, date])
 }
 
 

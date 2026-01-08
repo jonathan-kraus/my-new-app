@@ -45,35 +45,35 @@ export async function POST(req: NextRequest) {
     return new Response("Unauthorized", { status: 401 });
   }
 
- const raw = body;                // raw string
-const payload = JSON.parse(body); // parsed JSON
+  const raw = body; // raw string
+  const payload = JSON.parse(body); // parsed JSON
 
-const je = req.headers.get("x-github-event");
-const sha = getSha(payload);
-const commitMessage = getCommitMessage(payload);
+  const je = req.headers.get("x-github-event");
+  const sha = getSha(payload);
+  const commitMessage = getCommitMessage(payload);
 
-await log.info("⭐GitHub Webhook Received⭐", {
-  raw,                          // ⭐ raw string for signature + Axiom
-  payload,                      // ⭐ parsed JSON for Axiom
-  je: payload.action || payload.je,
-  sha: payload.workflow_run?.head_sha || payload.after,
-  page: "GitHub Webhook Handler"
-});
+  await log.info("⭐GitHub Webhook Received⭐", {
+    raw, // ⭐ raw string for signature + Axiom
+    payload, // ⭐ parsed JSON for Axiom
+    je: payload.action || payload.je,
+    sha: payload.workflow_run?.head_sha || payload.after,
+    page: "GitHub Webhook Handler",
+  });
 
-await logit({
-  level: "info",
-  message: "Verifying Signature on GitHub Webhook -- all data logged",
-  file: "app/api/github-webhook/route.ts",
-  line: 49,
-  page: "GitHub Webhook Handler",
-  data: {
-    raw,
-    payload,
-    sha,
-    je,
-    commitMessage,
-  },
-});
+  await logit({
+    level: "info",
+    message: "Verifying Signature on GitHub Webhook -- all data logged",
+    file: "app/api/github-webhook/route.ts",
+    line: 49,
+    page: "GitHub Webhook Handler",
+    data: {
+      raw,
+      payload,
+      sha,
+      je,
+      commitMessage,
+    },
+  });
 
   switch (je) {
     case "check_run":

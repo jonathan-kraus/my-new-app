@@ -1,6 +1,6 @@
 import { Workflow, CheckCircle, XCircle, Loader2 } from "lucide-react";
 import { ActivityItemData } from "@/types/activity";
-import { formatDate } from "@/lib/astronomy/formatters";
+import { formatDate } from "@/lib/astronomy_old/formatters";
 export default function WorkflowRunCard({ item }: { item: ActivityItemData }) {
   const icon =
     item.state === "success" ? (

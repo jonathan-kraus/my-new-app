@@ -1,13 +1,7 @@
 "use client";
 
 import useSWR from "swr";
-import {
-  Github,
-  Triangle,
-  CheckCircle,
-  XCircle,
-  Loader2,
-} from "lucide-react";
+import { Github, Triangle, CheckCircle, XCircle, Loader2 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 
 const fetcher = (url: string) =>
@@ -45,7 +39,7 @@ export function RecentActivity() {
   const items = [...githubItems, ...vercelItems].sort(
     (a, b) =>
       new Date(b.timestamp || b.createdAt).getTime() -
-      new Date(a.timestamp || a.createdAt).getTime()
+      new Date(a.timestamp || a.createdAt).getTime(),
   );
 
   return (
@@ -118,10 +112,9 @@ export function RecentActivity() {
 
             {/* Timestamp */}
             <div className="text-xs text-gray-400 mt-2">
-              {formatDistanceToNow(
-                new Date(item.timestamp || item.createdAt),
-                { addSuffix: true }
-              )}
+              {formatDistanceToNow(new Date(item.timestamp || item.createdAt), {
+                addSuffix: true,
+              })}
             </div>
           </li>
         ))}

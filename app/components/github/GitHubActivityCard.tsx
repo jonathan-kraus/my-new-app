@@ -31,7 +31,8 @@ export function GitHubActivityCard({ event }: { event: GitHubActivityEvent }) {
       </div>
 
       <div className="mt-1 text-xs text-zinc-500">
-        {event.actor} pushed to <span className="text-zinc-300">{event.branch}</span>
+        {event.actor} pushed to{" "}
+        <span className="text-zinc-300">{event.branch}</span>
       </div>
 
       <a

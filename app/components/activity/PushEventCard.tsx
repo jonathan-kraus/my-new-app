@@ -1,5 +1,5 @@
 import { ActivityItemData } from "@/types/activity";
-import { formatDate } from "@/lib/astronomy/formatters";
+import { formatDate } from "@/lib/astronomy_old/formatters";
 import { GitCommit } from "lucide-react";
 
 export default function PushEventCard({ item }: { item: ActivityItemData }) {

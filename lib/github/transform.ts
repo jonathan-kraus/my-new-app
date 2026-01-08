@@ -1,6 +1,8 @@
 import { GitHubActivityEvent } from "@/lib/types";
 
-export function transformWorkflowRunEvent(parsed: any): GitHubActivityEvent | null {
+export function transformWorkflowRunEvent(
+  parsed: any,
+): GitHubActivityEvent | null {
   const run = parsed?.workflow_run;
   if (!run) return null;
 
