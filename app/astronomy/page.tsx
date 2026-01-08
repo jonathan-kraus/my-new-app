@@ -16,12 +16,17 @@ export default async function AstronomyPage() {
       </div>
     );
   }
+const today = new Date();
+const todayDateOnly = new Date(today.toISOString().split("T")[0]); // midnight UTC
 
-  // Fetch the latest astronomy snapshot for that location
-  const snapshot = await db.astronomySnapshot.findFirst({
-    where: { locationId: location.id },
-    orderBy: { fetchedAt: "desc" },
-  });
+  // Fetch the astronomy snapshot for that location and current date
+const snapshot = await db.astronomySnapshot.findFirst({
+  where: {
+    locationId: location.id,
+    date: todayDateOnly,
+  },
+});
+
 
   if (!snapshot) {
     return (
