@@ -65,72 +65,61 @@ function computeGoldenBlueHours(day: AstronomyDayInput): AstronomyDayComputed {
 }
 
 async function fetchAstronomyFromTomorrow(location: Location, days = 7) {
-  const now = new Date();
-  const startTime = startOfDay(now).toISOString();
-  const endTime = startOfDay(addDays(now, days - 1)).toISOString();
-
-  const query = {
-    location: `${location.latitude},${location.longitude}`,
-    fields: ["sunriseTime", "sunsetTime", "moonriseTime", "moonsetTime"],
-    units: "metric",
-    timesteps: ["1d"],
-    startTime,
-    endTime,
-    timezone: location.timezone ?? "UTC",
-  };
-
-  const url = new URL(TOMORROW_TIMELINE_URL);
-  url.searchParams.set("apikey", TOMORROWIO_APIKEY);
-  url.searchParams.set("location", query.location);
-  url.searchParams.set("units", query.units);
-  url.searchParams.set("timesteps", "1d");
-  url.searchParams.set("startTime", query.startTime);
-  url.searchParams.set("endTime", query.endTime);
-  url.searchParams.set("timezone", query.timezone);
-  url.searchParams.set("fields", query.fields.join(","));
+  const url = new URL("https://api.open-meteo.com/v1/astronomy");
+  url.searchParams.set("latitude", location.latitude.toString());
+  url.searchParams.set("longitude", location.longitude.toString());
+  url.searchParams.set("timezone", location.timezone);
+  url.searchParams.set("daily", [
+    "sunrise",
+    "sunset",
+    "moonrise",
+    "moonset",
+    "moon_phase"
+  ].join(","));
+  url.searchParams.set("forecast_days", days.toString());
 
   const res = await fetch(url.toString());
   if (!res.ok) {
-    throw new Error(`Tomorrow.io error: ${res.status} ${res.statusText}`);
+    throw new Error(`Open-Meteo error: ${res.status} ${res.statusText}`);
   }
 
   const json = await res.json();
 
-  const intervals: any[] = json?.data?.timelines?.[0]?.intervals ?? [];
+  const daysData: AstronomyDayInput[] = json.daily.time.map(
+    (dateStr: string, i: number) => {
+      const date = startOfDay(new Date(dateStr));
 
-  const daysData: AstronomyDayInput[] = intervals.map((interval) => {
-    const ts = interval.startTime;
-    const date = startOfDay(new Date(ts));
+      const sunrise = json.daily.sunrise[i]
+        ? new Date(json.daily.sunrise[i])
+        : null;
+      const sunset = json.daily.sunset[i]
+        ? new Date(json.daily.sunset[i])
+        : null;
 
-    const sunrise = interval.values.sunriseTime
-      ? new Date(interval.values.sunriseTime)
-      : null;
-    const sunset = interval.values.sunsetTime
-      ? new Date(interval.values.sunsetTime)
-      : null;
+      if (!sunrise || !sunset) {
+        throw new Error("Missing sunrise/sunset in Open-Meteo response");
+      }
 
-    if (!sunrise || !sunset) {
-      throw new Error("Missing sunrise/sunset in Tomorrow.io response");
+      const moonrise = json.daily.moonrise[i]
+        ? new Date(json.daily.moonrise[i])
+        : null;
+      const moonset = json.daily.moonset[i]
+        ? new Date(json.daily.moonset[i])
+        : null;
+
+      return {
+        date,
+        sunrise,
+        sunset,
+        moonrise,
+        moonset
+      };
     }
-
-    const moonrise = interval.values.moonriseTime
-      ? new Date(interval.values.moonriseTime)
-      : null;
-    const moonset = interval.values.moonsetTime
-      ? new Date(interval.values.moonsetTime)
-      : null;
-
-    return {
-      date,
-      sunrise,
-      sunset,
-      moonrise,
-      moonset,
-    };
-  });
+  );
 
   return daysData;
 }
+
 
 export async function refreshAstronomySnapshotsForLocation(
   location: Location,
