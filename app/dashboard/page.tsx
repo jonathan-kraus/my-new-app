@@ -44,7 +44,24 @@ export default function DashboardPage() {
 
   let astro = null;
   if (today) {
-    const { nextEvent, previousEvent, currentEvent, timeUntilNext, timeSincePrevious, events } = buildAstronomyEvents(today, tomorrow); astro = { nextEvent, previousEvent, currentEvent, timeUntilNext, timeSincePrevious, events, today, tomorrow, };
+    const {
+      nextEvent,
+      previousEvent,
+      currentEvent,
+      timeUntilNext,
+      timeSincePrevious,
+      events,
+    } = buildAstronomyEvents(today, tomorrow);
+    astro = {
+      nextEvent,
+      previousEvent,
+      currentEvent,
+      timeUntilNext,
+      timeSincePrevious,
+      events,
+      today,
+      tomorrow,
+    };
   }
 
   return (
@@ -161,9 +178,9 @@ export default function DashboardPage() {
                     Next Event: {astro.nextEvent.label}
                   </div>
                   <div className="text-gray-400 text-sm">
-{astro.timeUntilNext ? countdown(astro.timeUntilNext) : "No upcoming events"}
-
-
+                    {astro.timeUntilNext
+                      ? countdown(astro.timeUntilNext)
+                      : "No upcoming events"}
                   </div>
                   <LiveTimeline today={astro.today} tomorrow={astro.tomorrow} />
                 </div>
@@ -243,4 +260,3 @@ function countdown(target: Date | number | null) {
   if (hours > 0) return `${h}h ${m}m`;
   return `${m}m`;
 }
-
