@@ -1,4 +1,10 @@
-export async function fetchAstronomyMultiDay(lat, lon, days = 7) {
+import { addDays, format } from "date-fns";
+
+export async function fetchAstronomyMultiDay(
+  lat: number,
+  lon: number,
+  days: number = 7
+) {
   const start = new Date();
   const end = addDays(start, days - 1);
 
@@ -11,17 +17,27 @@ export async function fetchAstronomyMultiDay(lat, lon, days = 7) {
   url.searchParams.set("end_date", format(end, "yyyy-MM-dd"));
 
   const res = await fetch(url.toString());
-  const json = await res.json();
-  const daily = json.daily;
+  if (!res.ok) {
+    throw new Error(`Open-Meteo error: ${res.status}`);
+  }
 
-  // ⭐ THIS IS WHERE YOU PUT THEM ⭐
-  const enriched = daily.time.map((date, i) => ({
+  const json: {
+    daily: {
+      time: string[];
+      sunrise: string[];
+      sunset: string[];
+    };
+  } = await res.json();
+
+  const { daily } = json;
+
+  const enriched = daily.time.map((date: string, i: number) => ({
     date,
     sunrise: daily.sunrise[i],
     sunset: daily.sunset[i],
     moonrise: `${date}T16:00`,
     moonset: `${date}T22:00`,
-    moonPhase: 3
+    moonPhase: 3,
   }));
 
   return enriched;
