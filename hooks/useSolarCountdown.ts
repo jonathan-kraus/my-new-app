@@ -1,5 +1,6 @@
 "use client";
 
+import { logit } from "@/lib/log/server";
 import { useEffect, useState } from "react";
 
 export function useSolarCountdown(sunrise: Date, sunset: Date) {
@@ -23,7 +24,14 @@ export function useSolarCountdown(sunrise: Date, sunset: Date) {
 
   const sunriseCountdown = diff(sunrise);
   const sunsetCountdown = diff(sunset);
-
+logit({
+    level: "debug",
+    message: "useSolarCountdown",
+    file: "hooks/useSolarCountdown.ts",
+    line: 27,
+    page: "useSolarCountdown",
+    data: {sunrise: sunrise, sunset: sunset, now: now, sunriseCountdown, sunsetCountdown},
+  });
   const isDaytime = now >= sunrise && now <= sunset;
 
   const nextEventLabel =
