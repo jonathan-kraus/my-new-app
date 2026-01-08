@@ -1,3 +1,4 @@
+// lib/solar/parseLocalSolar.ts
 export function parseLocalSolar(dateString: string) {
   const [date, time] = dateString.split(" ");
   const [y, m, d] = date.split("-");
