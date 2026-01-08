@@ -12,10 +12,7 @@ export async function GET() {
   url.searchParams.set("latitude", latitude.toString());
   url.searchParams.set("longitude", longitude.toString());
   url.searchParams.set("timezone", timezone);
-  url.searchParams.set(
-    "daily",
-    "sunrise,sunset,moonrise,moonset,moon_phase"
-  );
+  url.searchParams.set("daily", "sunrise,sunset,moonrise,moonset,moon_phase");
 
   // ❌ REMOVE forecast_days — not supported on /v1/forecast
   // url.searchParams.set("forecast_days", "7");
