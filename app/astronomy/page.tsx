@@ -16,8 +16,13 @@ export default async function AstronomyPage() {
       </div>
     );
   }
-  const today = new Date();
-  const todayDateOnly = new Date(today.toISOString().split("T")[0]); // midnight UTC
+const now = new Date();
+const todayDateOnly = new Date(
+  now.getFullYear(),
+  now.getMonth(),
+  now.getDate()
+);
+
 
   // Fetch the astronomy snapshot for that location and current date
   const snapshot = await db.astronomySnapshot.findFirst({

@@ -2,6 +2,7 @@
 
 import { useSolarCountdown } from "@/hooks/useSolarCountdown";
 import ProgressBar from "@/components/ProgressBar";
+import { parseLocalSolar } from "@/lib/solar/parseLocalSolar";
 
 export function SolarCard({
   sunrise,
@@ -13,8 +14,8 @@ export function SolarCard({
   fetchedAt: string;
 }) {
   // Convert strings → Date objects
-  const sunriseDate = new Date(sunrise);
-  const sunsetDate = new Date(sunset);
+  const sunriseDate = parseLocalSolar(sunrise);
+  const sunsetDate = parseLocalSolar(sunset);
 
   // Use the new countdown hook
   const t = useSolarCountdown(sunriseDate, sunsetDate);

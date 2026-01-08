@@ -11,6 +11,7 @@ import {
   getMoonLightPhases,
 } from "@/lib/astronomy_old/lightPhases";
 import type { AstronomyCardProps } from "@/lib/types";
+import { parseLocalSolar } from "@/lib/solar/parseLocalSolar";
 
 export function AstronomyCard({ data, location }: AstronomyCardProps) {
   const now = useNow();
@@ -25,8 +26,8 @@ export function AstronomyCard({ data, location }: AstronomyCardProps) {
       : "—";
 
   // Normalize all ISO strings into Date objects
-  const sunriseDate = data.sunrise ? new Date(data.sunrise) : null;
-  const sunsetDate = data.sunset ? new Date(data.sunset) : null;
+  const sunriseDate = parseLocalSolar(data.sunrise);
+  const sunsetDate = parseLocalSolar(data.sunset);
   const moonriseDate = data.moonrise ? new Date(data.moonrise) : null;
   const moonsetDate = data.moonset ? new Date(data.moonset) : null;
 
