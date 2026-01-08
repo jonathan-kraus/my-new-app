@@ -98,7 +98,13 @@ export async function fetchUSNOAstronomy(lat: number, lon: number, date: Date) {
 
 export async function refreshAstronomySnapshotsForLocation(location: Location, days = 7) {
 	const fetchedAt = new Date();
-	const rawDays = await fetchUSNOMultiDay(location.latitude, location.longitude, days);
+	const now = new Date();
+	const localHour = now.getHours();
+
+	// USNO returns no sunrise if today's sunrise is already past in UTC
+	const startDate = localHour < 3 ? addDays(now, 1) : now;
+
+	const rawDays = await fetchUSNOMultiDay(location.latitude, location.longitude, days, startDate);
 
 	const computedDays = rawDays.map(computeGoldenBlueHours);
 
