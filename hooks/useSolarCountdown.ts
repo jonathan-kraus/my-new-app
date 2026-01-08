@@ -1,6 +1,6 @@
 "use client";
 
-import { logit } from "@/lib/log/server";
+import { logit } from "@/lib/log/client";
 import { useEffect, useState } from "react";
 
 export function useSolarCountdown(sunrise: Date, sunset: Date) {
