@@ -11,7 +11,7 @@ export async function fetchAstronomyMultiDay(
   const url = new URL("https://api.open-meteo.com/v1/astronomy");
   url.searchParams.set("latitude", lat.toString());
   url.searchParams.set("longitude", lon.toString());
-  url.searchParams.set("timezone", "auto");
+  url.searchParams.set("timezone", "America/New_York");
   url.searchParams.set("start_date", format(start, "yyyy-MM-dd"));
   url.searchParams.set("end_date", format(end, "yyyy-MM-dd"));
   console.log("Astronomy URL:", url.toString());
