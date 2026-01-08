@@ -64,18 +64,13 @@ function computeGoldenBlueHours(day: AstronomyDayInput): AstronomyDayComputed {
   };
 }
 
-async function fetchAstronomyFromTomorrow(location: Location, days = 7) {
+async function fetchAstronomyFromOpenMeteo(location: Location, days = 7) {
   const url = new URL("https://api.open-meteo.com/v1/astronomy");
+
   url.searchParams.set("latitude", location.latitude.toString());
   url.searchParams.set("longitude", location.longitude.toString());
-  url.searchParams.set("timezone", location.timezone);
-  url.searchParams.set("daily", [
-    "sunrise",
-    "sunset",
-    "moonrise",
-    "moonset",
-    "moon_phase"
-  ].join(","));
+  url.searchParams.set("timezone", location.timezone || "UTC");
+  url.searchParams.set("daily", "sunrise,sunset,moonrise,moonset,moon_phase");
   url.searchParams.set("forecast_days", days.toString());
 
   const res = await fetch(url.toString());
@@ -112,21 +107,20 @@ async function fetchAstronomyFromTomorrow(location: Location, days = 7) {
         sunrise,
         sunset,
         moonrise,
-        moonset
+        moonset,
       };
-    }
+    },
   );
 
   return daysData;
 }
-
 
 export async function refreshAstronomySnapshotsForLocation(
   location: Location,
   days = 7,
 ) {
   const fetchedAt = new Date();
-  const rawDays = await fetchAstronomyFromTomorrow(location, days);
+  const rawDays = await fetchAstronomyFromOpenMeteo(location, days);
 
   const computedDays = rawDays.map(computeGoldenBlueHours);
 
