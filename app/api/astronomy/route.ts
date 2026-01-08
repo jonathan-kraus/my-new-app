@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export const runtime = "nodejs";
 
 export async function GET() {
-  const latitude = 40.0893;     // KOP example
+  const latitude = 40.0893;
   const longitude = -75.3836;
   const timezone = "America/New_York";
 
@@ -16,9 +16,9 @@ export async function GET() {
     "daily",
     "sunrise,sunset,moonrise,moonset,moon_phase"
   );
-  url.searchParams.set("forecast_days", "7");
 
-  console.log("Fetching:", url.toString());
+  // ❌ REMOVE forecast_days — not supported on /v1/forecast
+  // url.searchParams.set("forecast_days", "7");
 
   const res = await fetch(url.toString());
 
