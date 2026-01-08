@@ -2,9 +2,6 @@
 import { addDays, startOfDay } from "date-fns";
 import { db } from "@/lib/db";
 
-const TOMORROWIO_APIKEY = process.env.TOMORROWIO_APIKEY!;
-const TOMORROW_TIMELINE_URL = "https://api.tomorrow.io/v4/timelines";
-
 type Location = {
   id: string;
   latitude: number;
@@ -72,7 +69,7 @@ async function fetchAstronomyFromOpenMeteo(location: Location, days = 7) {
   url.searchParams.set("timezone", location.timezone || "UTC");
   url.searchParams.set("daily", "sunrise,sunset,moonrise,moonset,moon_phase");
   url.searchParams.set("forecast_days", days.toString());
-
+console.log("Fetching astronomy data from Open-Meteo:", url.toString());
   const res = await fetch(url.toString());
   if (!res.ok) {
     throw new Error(`Open-Meteo error: ${res.status} ${res.statusText}`);
