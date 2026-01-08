@@ -5,7 +5,7 @@ export async function fetchUSNOMultiDay(
   lat: number,
   lon: number,
   days: number,
-  startDate: Date
+  startDate: Date,
 ) {
   const results = [];
 

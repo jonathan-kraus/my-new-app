@@ -117,6 +117,7 @@ model AstronomySnapshot {
 
   moonrise  DateTime?
   moonset   DateTime?
+  moonPhase Float?
 
   sunriseBlueStart    DateTime
   sunriseBlueEnd      DateTime
