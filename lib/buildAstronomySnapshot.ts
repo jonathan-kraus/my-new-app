@@ -1,14 +1,5 @@
 import type { AstronomySnapshot } from "@prisma/client";
-import { getUSNOMoonData } from "@/lib/lunar/usno";
-function formatLocal(date: Date): string {
-  const yyyy = date.getFullYear();
-  const mm = String(date.getMonth() + 1).padStart(2, "0");
-  const dd = String(date.getDate()).padStart(2, "0");
-  const hh = String(date.getHours()).padStart(2, "0");
-  const mi = String(date.getMinutes()).padStart(2, "0");
-  const ss = String(date.getSeconds()).padStart(2, "0");
-  return `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
-}
+import { getIPGeoAstronomy } from "@/lib/lunar/ipgeo";
 
 export async function buildAstronomySnapshot(
   lat: number,
@@ -29,7 +20,7 @@ export async function buildAstronomySnapshot(
   },
   locationId: string,
 ) {
-  const lunar = await getUSNOMoonData(lat, lon, localDate);
+  const astro = await getIPGeoAstronomy(lat, lon, localDate);
 
   const fmt = (d: Date | null): string =>
     d
@@ -46,9 +37,9 @@ export async function buildAstronomySnapshot(
     sunrise: fmt(solar.sunrise),
     sunset: fmt(solar.sunset),
 
-    moonrise: lunar.moonrise ?? undefined,
-    moonset: lunar.moonset ?? undefined,
-    moonPhase,
+    moonrise: astro.moonrise ?? undefined,
+    moonset: astro.moonset ?? undefined,
+    moonPhase: astro.moon_phase,
 
     sunriseBlueStart: fmt(solar.sunriseBlueStart),
     sunriseBlueEnd: fmt(solar.sunriseBlueEnd),

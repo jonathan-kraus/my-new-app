@@ -6,15 +6,14 @@ console.log("PING route loaded");
 //
 
 
- import { getUSNOMoonData } from "@/lib/lunar/usno";
+ import { getIPGeoAstronomy } from "@/lib/lunar/ipgeo";
 
 export async function GET() {
-  // Pick a known location (your default)
-  const lat = 40.101;      // King of Prussia-ish
+  const lat = 40.101;
   const lon = -75.383;
   const today = new Date();
 
-  const result = await getUSNOMoonData(lat, lon, today);
+  const result = await getIPGeoAstronomy(lat, lon, today);
 
   return Response.json({
     requestedAt: new Date().toISOString(),
@@ -24,6 +23,7 @@ export async function GET() {
     result,
   });
 }
+
 
 export function Log() {
   //fetch("/api/ping");
