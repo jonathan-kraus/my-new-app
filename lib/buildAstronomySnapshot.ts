@@ -1,5 +1,5 @@
 import type { AstronomySnapshot } from "@prisma/client";
-
+import { getUSNOMoonData } from "@/lib/lunar/usno";
 function formatLocal(date: Date): string {
   const yyyy = date.getFullYear();
   const mm = String(date.getMonth() + 1).padStart(2, "0");
@@ -10,44 +10,57 @@ function formatLocal(date: Date): string {
   return `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
 }
 
-export function buildAstronomySnapshot(
-  day: {
-    date: Date;
+export async function buildAstronomySnapshot(
+  lat: number,
+  lon: number,
+  localDate: Date,
+  moonPhase: number,
+  solar: {
     sunrise: Date;
     sunset: Date;
-    moonrise: Date | null;
-    moonset: Date | null;
-    moonPhase: number;
-    goldenMorningStart: Date;
-    goldenMorningEnd: Date;
-    goldenEveningStart: Date;
-    goldenEveningEnd: Date;
+    sunriseBlueStart: Date;
+    sunriseBlueEnd: Date;
+    sunriseGoldenStart: Date;
+    sunriseGoldenEnd: Date;
+    sunsetGoldenStart: Date;
+    sunsetGoldenEnd: Date;
+    sunsetBlueStart: Date;
+    sunsetBlueEnd: Date;
   },
   locationId: string,
-): Omit<AstronomySnapshot, "id"> {
+) {
+  const lunar = await getUSNOMoonData(lat, lon, localDate);
+
+  const fmt = (d: Date | null): string =>
+    d
+      ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+          d.getDate(),
+        ).padStart(2, "0")} ${String(d.getHours()).padStart(2, "0")}:${String(
+          d.getMinutes(),
+        ).padStart(2, "0")}:00`
+      : "";
+
   return {
-    locationId,
-    createdAt: new Date(),
+    date: localDate,
+
+    sunrise: fmt(solar.sunrise),
+    sunset: fmt(solar.sunset),
+
+    moonrise: lunar.moonrise ?? undefined,
+    moonset: lunar.moonset ?? undefined,
+    moonPhase,
+
+    sunriseBlueStart: fmt(solar.sunriseBlueStart),
+    sunriseBlueEnd: fmt(solar.sunriseBlueEnd),
+    sunriseGoldenStart: fmt(solar.sunriseGoldenStart),
+    sunriseGoldenEnd: fmt(solar.sunriseGoldenEnd),
+
+    sunsetGoldenStart: fmt(solar.sunsetGoldenStart),
+    sunsetGoldenEnd: fmt(solar.sunsetGoldenEnd),
+    sunsetBlueStart: fmt(solar.sunsetBlueStart),
+    sunsetBlueEnd: fmt(solar.sunsetBlueEnd),
+
     fetchedAt: new Date(),
-    date: day.date,
-
-    // Core timestamps as strings
-    sunrise: formatLocal(day.sunrise),
-    sunset: formatLocal(day.sunset),
-    moonrise: day.moonrise ? formatLocal(day.moonrise) : null,
-    moonset: day.moonset ? formatLocal(day.moonset) : null,
-    moonPhase: day.moonPhase,
-
-    // Golden hour
-    sunriseGoldenStart: formatLocal(day.goldenMorningStart),
-    sunriseGoldenEnd: formatLocal(day.goldenMorningEnd),
-    sunsetGoldenStart: formatLocal(day.goldenEveningStart),
-    sunsetGoldenEnd: formatLocal(day.goldenEveningEnd),
-
-    // Blue hour (placeholder)
-    sunriseBlueStart: formatLocal(day.sunrise),
-    sunriseBlueEnd: formatLocal(day.sunrise),
-    sunsetBlueStart: formatLocal(day.sunset),
-    sunsetBlueEnd: formatLocal(day.sunset),
+    locationId,
   };
 }

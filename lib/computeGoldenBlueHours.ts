@@ -8,17 +8,36 @@ export function computeGoldenBlueHours(day: {
 }) {
   const { sunrise, sunset } = day;
 
-  const goldenMorningStart = new Date(sunrise.getTime() - 10 * 60 * 1000);
-  const goldenMorningEnd = new Date(sunrise.getTime() + 30 * 60 * 1000);
+  //
+  // Golden hour calculations (your existing logic)
+  //
+  const sunriseGoldenStart = new Date(sunrise.getTime() - 10 * 60 * 1000);
+  const sunriseGoldenEnd = new Date(sunrise.getTime() + 30 * 60 * 1000);
 
-  const goldenEveningStart = new Date(sunset.getTime() - 30 * 60 * 1000);
-  const goldenEveningEnd = new Date(sunset.getTime() + 10 * 60 * 1000);
+  const sunsetGoldenStart = new Date(sunset.getTime() - 30 * 60 * 1000);
+  const sunsetGoldenEnd = new Date(sunset.getTime() + 10 * 60 * 1000);
+
+  //
+  // Blue hour placeholders (until you add real twilight math)
+  // For now: identical to sunrise/sunset times
+  //
+  const sunriseBlueStart = sunrise;
+  const sunriseBlueEnd = sunrise;
+
+  const sunsetBlueStart = sunset;
+  const sunsetBlueEnd = sunset;
 
   return {
     ...day,
-    goldenMorningStart,
-    goldenMorningEnd,
-    goldenEveningStart,
-    goldenEveningEnd,
+
+    sunriseBlueStart,
+    sunriseBlueEnd,
+    sunriseGoldenStart,
+    sunriseGoldenEnd,
+
+    sunsetGoldenStart,
+    sunsetGoldenEnd,
+    sunsetBlueStart,
+    sunsetBlueEnd,
   };
 }

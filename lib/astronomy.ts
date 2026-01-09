@@ -17,18 +17,38 @@ export async function refreshAstronomySnapshotsForLocation(
     const computedDays = rawDays.map(computeGoldenBlueHours);
 
     await Promise.all(
-      computedDays.map((day) =>
-        db.astronomySnapshot.upsert({
+      computedDays.map(async (day) => {
+        const snapshot = await buildAstronomySnapshot(
+          location.latitude,
+          location.longitude,
+          day.date,
+          day.moonPhase,
+          {
+            sunrise: day.sunrise,
+            sunset: day.sunset,
+            sunriseBlueStart: day.sunriseBlueStart,
+            sunriseBlueEnd: day.sunriseBlueEnd,
+            sunriseGoldenStart: day.sunriseGoldenStart,
+            sunriseGoldenEnd: day.sunriseGoldenEnd,
+            sunsetGoldenStart: day.sunsetGoldenStart,
+            sunsetGoldenEnd: day.sunsetGoldenEnd,
+            sunsetBlueStart: day.sunsetBlueStart,
+            sunsetBlueEnd: day.sunsetBlueEnd,
+          },
+          location.id,
+        );
+
+        return db.astronomySnapshot.upsert({
           where: {
             locationId_date: {
               locationId: location.id,
               date: day.date,
             },
           },
-          update: buildAstronomySnapshot(day, location.id),
-          create: buildAstronomySnapshot(day, location.id),
-        }),
-      ),
+          update: snapshot,
+          create: snapshot,
+        });
+      }),
     );
 
     return { locationId: location.id, ok: true };
@@ -38,7 +58,6 @@ export async function refreshAstronomySnapshotsForLocation(
 }
 
 export async function getAstronomyForDashboard(locationId: string) {
-  // Fetch all snapshots for this location, sorted by date
   const snapshots = await db.astronomySnapshot.findMany({
     where: { locationId },
     orderBy: { date: "asc" },
@@ -52,11 +71,9 @@ export async function getAstronomyForDashboard(locationId: string) {
     };
   }
 
-  // Determine today's local date (midnight)
   const now = new Date();
   const todayLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-  // Find today's snapshot
   const todaySnapshot =
     snapshots.find((snap) => {
       const d = snap.date;
@@ -67,7 +84,6 @@ export async function getAstronomyForDashboard(locationId: string) {
       );
     }) ?? null;
 
-  // Find tomorrow's snapshot
   const tomorrowLocal = new Date(
     todayLocal.getFullYear(),
     todayLocal.getMonth(),
