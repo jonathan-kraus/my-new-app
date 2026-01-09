@@ -5,11 +5,26 @@ import { NextResponse } from "next/server";
 console.log("PING route loaded");
 //
 
-export function GET() {
-  return NextResponse.json({
-    db: process.env.DATABASE_URL ?? "missing",
+
+ import { getUSNOMoonData } from "@/lib/lunar/usno";
+
+export async function GET() {
+  // Pick a known location (your default)
+  const lat = 40.101;      // King of Prussia-ish
+  const lon = -75.383;
+  const today = new Date();
+
+  const result = await getUSNOMoonData(lat, lon, today);
+
+  return Response.json({
+    requestedAt: new Date().toISOString(),
+    lat,
+    lon,
+    today: today.toISOString(),
+    result,
   });
 }
+
 export function Log() {
   //fetch("/api/ping");
   const level = 1;
