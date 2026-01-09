@@ -1,4 +1,4 @@
-// app/api/test-astronomy/route.ts
+// app/api/astronomy/route.ts
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
