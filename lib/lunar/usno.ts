@@ -47,7 +47,7 @@ export async function getUSNOMoonData(
     page: "USNO",
     data: {
       data: data,
-      dd: _isoTime,
+      dd: new Date().toISOString(),
     },
   });
   // USNO returns something like:
