@@ -7,23 +7,21 @@ console.log("PING route loaded");
 
 
  import { getIPGeoAstronomy } from "@/lib/lunar/ipgeo";
+  async function fetchIPGeoAstronomy(lat: number, lon: number, date: Date) {
+  const request = require('request');
+  const options = {
+    method: 'GET',
+    url: 'https://api.ipgeolocation.io/v2/astronomy?apiKey=API_KEY&location=New%20York%2C%20US&elevation=10',
+    headers: {
 
-export async function GET() {
-  const lat = 40.101;
-  const lon = -75.383;
-  const today = new Date();
-
-  const result = await getIPGeoAstronomy(lat, lon, today);
-
-  return Response.json({
-    requestedAt: new Date().toISOString(),
-    lat,
-    lon,
-    today: today.toISOString(),
-    result,
-  });
-}
-
+    }
+  };
+  request(options, function (error, response) {
+    if (error) throw new Error(error);
+    console.log(response.body);
+ return response.body
+})
+  }
 
 export function Log() {
   //fetch("/api/ping");
