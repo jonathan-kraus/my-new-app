@@ -1,5 +1,29 @@
 import type { AstronomySnapshot } from "@prisma/client";
 import { getIPGeoAstronomy } from "@/lib/lunar/ipgeo";
+export function calculateMoonPhase(date: Date): number {
+  // Convert to UTC midnight
+  const year = date.getUTCFullYear();
+  const month = date.getUTCMonth() + 1;
+  const day = date.getUTCDate();
+
+  // Astronomical algorithm (simple, accurate to ~1 hour)
+  let r = year % 100;
+  r %= 19;
+
+  if (r > 9) {
+    r -= 19;
+  }
+
+  r = ((r * 11) % 30) + month + day;
+
+  if (month < 3) {
+    r += 2;
+  }
+
+  const phase = (r < 0 ? r + 30 : r) / 30;
+
+  return Number(phase.toFixed(4));
+}
 
 export async function buildAstronomySnapshot(
   lat: number,
@@ -39,7 +63,7 @@ export async function buildAstronomySnapshot(
 
     moonrise: astro.moonrise ?? undefined,
     moonset: astro.moonset ?? undefined,
-    moonPhase: astro.moon_phase,
+    moonPhase: calculateMoonPhase(localDate),
 
     sunriseBlueStart: fmt(solar.sunriseBlueStart),
     sunriseBlueEnd: fmt(solar.sunriseBlueEnd),
