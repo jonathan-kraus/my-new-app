@@ -14,6 +14,6 @@ export function parseLocalSolar(dateString: unknown): Date {
     Number(d),
     Number(hh),
     Number(mm),
-    Number(ss)
+    Number(ss),
   );
 }

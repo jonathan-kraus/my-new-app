@@ -16,13 +16,12 @@ export default async function AstronomyPage() {
       </div>
     );
   }
-const now = new Date();
-const todayDateOnly = new Date(
-  now.getFullYear(),
-  now.getMonth(),
-  now.getDate()
-);
-
+  const now = new Date();
+  const todayDateOnly = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+  );
 
   // Fetch the astronomy snapshot for that location and current date
   const snapshot = await db.astronomySnapshot.findFirst({
@@ -56,26 +55,26 @@ const todayDateOnly = new Date(
         {/* Cards */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <SolarCard
-            sunrise={snapshot.sunrise.toISOString()}
-            sunset={snapshot.sunset.toISOString()}
+            sunrise={snapshot.sunrise}
+            sunset={snapshot.sunset}
             fetchedAt={snapshot.fetchedAt.toISOString()}
           />
 
           <LunarCard
-            moonrise={snapshot.moonrise?.toISOString() ?? null}
-            moonset={snapshot.moonset?.toISOString() ?? null}
+            moonrise={snapshot.moonrise ?? null}
+            moonset={snapshot.moonset ?? null}
             fetchedAt={snapshot.fetchedAt.toISOString()}
           />
 
           <GoldenHourCard
-            sunriseBlueStart={snapshot.sunriseBlueStart!.toISOString()}
-            sunriseBlueEnd={snapshot.sunriseBlueEnd!.toISOString()}
-            sunriseGoldenStart={snapshot.sunriseGoldenStart!.toISOString()}
-            sunriseGoldenEnd={snapshot.sunriseGoldenEnd!.toISOString()}
-            sunsetGoldenStart={snapshot.sunsetGoldenStart!.toISOString()}
-            sunsetGoldenEnd={snapshot.sunsetGoldenEnd!.toISOString()}
-            sunsetBlueStart={snapshot.sunsetBlueStart!.toISOString()}
-            sunsetBlueEnd={snapshot.sunsetBlueEnd!.toISOString()}
+            sunriseBlueStart={snapshot.sunriseBlueStart!}
+            sunriseBlueEnd={snapshot.sunriseBlueEnd!}
+            sunriseGoldenStart={snapshot.sunriseGoldenStart!}
+            sunriseGoldenEnd={snapshot.sunriseGoldenEnd!}
+            sunsetGoldenStart={snapshot.sunsetGoldenStart!}
+            sunsetGoldenEnd={snapshot.sunsetGoldenEnd!}
+            sunsetBlueStart={snapshot.sunsetBlueStart!}
+            sunsetBlueEnd={snapshot.sunsetBlueEnd!}
             fetchedAt={snapshot.fetchedAt.toISOString()}
           />
         </section>

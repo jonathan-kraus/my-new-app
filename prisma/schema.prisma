@@ -107,31 +107,33 @@ model WeatherSnapshot {
 }
 
 model AstronomySnapshot {
-  id        String   @id @default(cuid())
+  id         String   @id @default(cuid())
   locationId String
-  fetchedAt DateTime
-  createdAt DateTime @default(now())
-  date      DateTime
-  sunrise   DateTime
-  sunset    DateTime
+  fetchedAt  DateTime
+  createdAt  DateTime @default(now())
+  date       DateTime   // keep the day as a real date
 
-  moonrise  DateTime?
-  moonset   DateTime?
+  sunrise   String
+  sunset    String
+
+  moonrise  String?
+  moonset   String?
   moonPhase Float?
 
-  sunriseBlueStart    DateTime
-  sunriseBlueEnd      DateTime
-  sunriseGoldenStart  DateTime
-  sunriseGoldenEnd    DateTime
-  sunsetGoldenStart   DateTime
-  sunsetGoldenEnd     DateTime
-  sunsetBlueStart     DateTime
-  sunsetBlueEnd       DateTime
+  sunriseBlueStart    String
+  sunriseBlueEnd      String
+  sunriseGoldenStart  String
+  sunriseGoldenEnd    String
+  sunsetGoldenStart   String
+  sunsetGoldenEnd     String
+  sunsetBlueStart     String
+  sunsetBlueEnd       String
 
   location Location @relation(fields: [locationId], references: [id])
 
   @@unique([locationId, date])
 }
+
 
 
 model ForecastSnapshot {

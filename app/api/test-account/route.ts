@@ -1,5 +1,6 @@
 // app/api/test-session/route.ts
 import { db } from "@/lib/prisma";
+
 export async function GET() {
   const user = await db.user.create({
     data: { email: `test+${Date.now()}@example.com` },
