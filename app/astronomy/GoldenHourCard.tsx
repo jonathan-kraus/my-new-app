@@ -3,6 +3,7 @@
 
 import { useGoldenHourTimeline } from "@/hooks/useGoldenHourTimeline";
 import ProgressBar from "@/components/ProgressBar";
+import { logit } from "@/lib/log/client";
 type GoldenHourCardProps = {
   sunriseBlueStart: string;
   sunriseBlueEnd: string;
@@ -17,8 +18,16 @@ type GoldenHourCardProps = {
 
 export default function GoldenHourCard(props: GoldenHourCardProps) {
   const t = useGoldenHourTimeline(props);
-
-  const format = (d: Date) =>
+ logit({
+          level: "info",
+          message: `In Astronomy`,
+          file: "app/astronomy/GoldenHourCard.tsx",
+          line: 21,
+          page: "Astronomy",
+          data: {
+            anydata: "no",
+          },
+        });  const format = (d: Date) =>
     d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
 
   return (
