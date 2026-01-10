@@ -1,8 +1,6 @@
-// types/AstronomyTypes.ts
-
 export interface SolarTimes {
-  sunrise: Date;
-  sunset: Date;
+  sunrise: Date | null;
+  sunset: Date | null;
   nextSunrise: Date | null;
 
   sunriseBlueStart: Date | null;

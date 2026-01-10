@@ -4,7 +4,7 @@
 import { SolarTimes } from "@/types/AstronomyTypes";
 import { useSolarCountdown } from "@/hooks/useSolarCountdown";
 import ProgressBar from "@/components/ProgressBar";
-
+import fmt from "@/components/activity/fmt"
 export function SolarCard({
   sunrise,
   sunset,
@@ -19,28 +19,15 @@ export function SolarCard({
 
       <div className="space-y-1 text-sm">
         <p>
-          🌅 Sunrise:{" "}
-          {sunrise.toLocaleTimeString("en-US", {
-            hour: "numeric",
-            minute: "2-digit",
-            timeZone: "America/New_York",
-          })}
-        </p>
+          🌅 Sunrise: {fmt(sunrise)} </p>
         <p>
-          🌇 Sunset:{" "}
-          {sunset.toLocaleTimeString("en-US", {
-            hour: "numeric",
-            minute: "2-digit",
-            timeZone: "America/New_York",
-          })}
-        </p>
+          🌇 Sunset:{fmt(sunset)} </p>
         <p>🕒 Day Length: {t.dayLengthHours.toFixed(2)} hours</p>
       </div>
 
       <div>
         <p className="font-semibold text-sm">
-          {t.nextEventLabel} in {t.nextCountdown.hours}h{" "}
-          {t.nextCountdown.minutes}m {t.nextCountdown.seconds}s
+    {t.nextEventLabel} in {t.countdown}
         </p>
         <div className="w-full h-3 bg-white/30 rounded-full mt-2 overflow-hidden">
           <ProgressBar

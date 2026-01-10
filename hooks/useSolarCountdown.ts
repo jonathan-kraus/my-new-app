@@ -1,64 +1,52 @@
-// hooks/useSolarCountdown.ts
-"use client";
-
-import { useEffect, useState } from "react";
-
 export function useSolarCountdown(
-  sunrise: Date,
-  sunset: Date,
-  nextSunrise: Date | null,
+  sunrise: Date | null,
+  sunset: Date | null,
+  nextSunrise: Date | null
 ) {
-  const [now, setNow] = useState(new Date());
+  const now = new Date();
 
-  useEffect(() => {
-    const id = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(id);
-  }, []);
-
-  function diff(target: Date) {
-    const ms = target.getTime() - now.getTime();
-    if (ms <= 0) return { hours: 0, minutes: 0, seconds: 0 };
-
-    const hours = Math.floor(ms / 1000 / 60 / 60);
-    const minutes = Math.floor((ms / 1000 / 60) % 60);
-    const seconds = Math.floor((ms / 1000) % 60);
-
-    return { hours, minutes, seconds };
+  if (!sunrise || !sunset || !nextSunrise) {
+    return {
+      nextEventLabel: "No data",
+      countdown: "0h 0m 0s",
+      progressPercent: 0,
+      dayLengthHours: 0,
+    };
   }
 
+  let target: Date;
   let nextEventLabel: string;
-  let nextCountdown: { hours: number; minutes: number; seconds: number };
 
   if (now < sunrise) {
+    target = sunrise;
     nextEventLabel = "Sunrise";
-    nextCountdown = diff(sunrise);
-  } else if (now < sunset) {
+  } else if (now >= sunrise && now < sunset) {
+    target = sunset;
     nextEventLabel = "Sunset";
-    nextCountdown = diff(sunset);
   } else {
-    nextEventLabel = "Tomorrow's Sunrise";
-    nextCountdown = nextSunrise
-      ? diff(nextSunrise)
-      : { hours: 0, minutes: 0, seconds: 0 };
+    target = nextSunrise;
+    nextEventLabel = "Tomorrow’s Sunrise";
   }
 
-  const dayLengthMs = sunset.getTime() - sunrise.getTime();
-  const dayLengthHours = dayLengthMs / 1000 / 60 / 60;
+  const diffMs = target.getTime() - now.getTime();
+  const diffSec = Math.max(0, Math.floor(diffMs / 1000));
+  const hours = Math.floor(diffSec / 3600);
+  const minutes = Math.floor((diffSec % 3600) / 60);
+  const seconds = diffSec % 60;
+
+  const countdown = `${hours}h ${minutes}m ${seconds}s`;
 
   const isDaytime = now >= sunrise && now <= sunset;
+  const dayLengthMs = sunset.getTime() - sunrise.getTime();
   const elapsedMs = now.getTime() - sunrise.getTime();
   const progressPercent = isDaytime
     ? Math.min(100, Math.max(0, (elapsedMs / dayLengthMs) * 100))
     : 0;
 
   return {
-    now,
-    sunrise,
-    sunset,
-    nextSunrise,
     nextEventLabel,
-    nextCountdown,
-    dayLengthHours,
+    countdown,
     progressPercent,
+    dayLengthHours: dayLengthMs / 1000 / 60 / 60,
   };
 }
