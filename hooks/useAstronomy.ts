@@ -79,6 +79,12 @@ export function useAstronomy(snapshots: any[]): AstronomyHookResult {
 
       fetchedAt: new Date(today.fetchedAt),
     };
+console.log("ASTRONOMY DEBUG:");
+console.log("today.sunrise (raw):", today.sunrise);
+console.log("tomorrow.sunrise (raw):", tomorrow?.sunrise);
+console.log("solar.sunrise (parsed):", solar.sunrise.toString());
+console.log("solar.nextSunrise (parsed):", solar.nextSunrise?.toString());
+console.log("now:", now.toString());
 
     const lunar: LunarTimes = {
       moonrise: today.moonrise ? parseLocalSolar(today.moonrise) : null,
