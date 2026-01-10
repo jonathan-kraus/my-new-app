@@ -5,8 +5,8 @@ import { useMemo } from "react";
 import { addDays } from "date-fns";
 
 
-import { parseLocalSolar,
-  parseLocalSolarForTomorrow } from "@/lib/solar/parseLocalSolar";
+import { parseLocalSolar } from "@/lib/solar/parseLocalSolar";
+ 
 
 import {
   SolarTimes,
@@ -49,7 +49,7 @@ export function useAstronomy(snapshots: any[]): AstronomyHookResult {
     const solar: SolarTimes = {
       sunrise: parseLocalSolar(today.sunrise),
       sunset: parseLocalSolar(today.sunset),
-      nextSunrise: tomorrow ? parseLocalSolarForTomorrow(tomorrow.sunrise) : null,
+      nextSunrise: tomorrow ? parseLocalSolar(tomorrow.sunrise) : null,
 
       sunriseBlueStart: today.sunriseBlueStart
         ? parseLocalSolar(today.sunriseBlueStart)
