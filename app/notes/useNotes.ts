@@ -27,6 +27,8 @@ export function useNotes(): NotesState {
       level: "info",
       message: "Notes page mounted",
       page: "/notes",
+      file: "app/notes/useNotes.ts",
+      line: 26,
     });
 
     async function load() {
@@ -49,7 +51,14 @@ export function useNotes(): NotesState {
         setState({ status: "ready", notes });
       } catch {
         setState({ status: "error" });
-      }
+      
+        logit({
+      level: "info",
+      message: "Notes page mounted",
+      page: "/notes",
+      data: {status,bob: "BOB"}
+    });
+  }
     }
 
     load();
