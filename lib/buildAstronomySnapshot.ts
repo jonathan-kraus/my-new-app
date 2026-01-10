@@ -1,5 +1,6 @@
+// lib/buildAstronomySnapshot.ts
 import { format } from "date-fns";
-
+import { logit } from "@/lib/log/client"
 function normalizeMoonTime(value: string): string {
   return value === "-:-" ? "" : value;
 }
@@ -25,7 +26,14 @@ function combineDateTime(date: Date, timeStr: string): string {
   const yyyy = date.getFullYear();
   const mm = String(date.getMonth() + 1).padStart(2, "0");
   const dd = String(date.getDate()).padStart(2, "0");
-
+   logit({
+    level: "info",
+    message: "astronomy.cron.started",
+    file: "lib/buildAstronomySnapshot.ts",
+    line: 29,
+    page: "Build Astronomy",
+    data: {t: {yyyy, mm, dd, hour, minute}},
+  });
   return `${yyyy}-${mm}-${dd} ${hour}:${minute}:00`;
 }
 
@@ -52,12 +60,12 @@ export async function buildAstronomySnapshot(location: any, targetDate: Date) {
   const astro = await fetchIPGeoAstronomy(latitude, longitude, targetDate);
 
   return {
-date: new Date(
-  targetDate.getFullYear(),
-  targetDate.getMonth(),
-  targetDate.getDate()
-),
-
+    // Normalize to local midnight to avoid timezone drift
+    date: new Date(
+      targetDate.getFullYear(),
+      targetDate.getMonth(),
+      targetDate.getDate()
+    ),
 
     // Solar
     sunrise: combineDateTime(targetDate, astro.sunrise),
