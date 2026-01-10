@@ -52,7 +52,12 @@ export async function buildAstronomySnapshot(location: any, targetDate: Date) {
   const astro = await fetchIPGeoAstronomy(latitude, longitude, targetDate);
 
   return {
-    date: targetDate,
+date: new Date(
+  targetDate.getFullYear(),
+  targetDate.getMonth(),
+  targetDate.getDate()
+),
+
 
     // Solar
     sunrise: combineDateTime(targetDate, astro.sunrise),
