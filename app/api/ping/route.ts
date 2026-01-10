@@ -6,22 +6,24 @@ console.log("PING route loaded");
 //
 
 
- import { getIPGeoAstronomy } from "@/lib/lunar/ipgeo";
-  async function fetchIPGeoAstronomy(lat: number, lon: number, date: Date) {
-  const request = require('request');
-  const options = {
-    method: 'GET',
-    url: 'https://api.ipgeolocation.io/v2/astronomy?apiKey=API_KEY&location=New%20York%2C%20US&elevation=10',
-    headers: {
+ import { getUSNOMoonData } from "@/lib/lunar/usno";
 
-    }
-  };
-  request(options, function (error, response) {
-    if (error) throw new Error(error);
-    console.log(response.body);
- return response.body
-})
-  }
+export async function GET() {
+  // Pick a known location (your default)
+  const lat = 40.101;      // King of Prussia-ish
+  const lon = -75.383;
+  const today = new Date();
+
+  const result = await getUSNOMoonData(lat, lon, today);
+
+  return Response.json({
+    requestedAt: new Date().toISOString(),
+    lat,
+    lon,
+    today: today.toISOString(),
+    result,
+  });
+}
 
 export function Log() {
   //fetch("/api/ping");

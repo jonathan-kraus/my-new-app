@@ -1,10 +1,8 @@
+// app/astronomy/page.tsx
 import { db } from "@/lib/db";
-import { SolarCard } from "./SolarCard";
-import LunarCard from "./LunarCard";
-import GoldenHourCard from "./GoldenHourCard";
+import AstronomyClientPage from "./AstronomyClientPage";
 
 export default async function AstronomyPage() {
-  // Fetch the default location
   const location = await db.location.findFirst({
     where: { isDefault: true },
   });
@@ -16,22 +14,13 @@ export default async function AstronomyPage() {
       </div>
     );
   }
-  const now = new Date();
-  const todayDateOnly = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate(),
-  );
 
-  // Fetch the astronomy snapshot for that location and current date
-  const snapshot = await db.astronomySnapshot.findFirst({
-    where: {
-      locationId: location.id,
-      date: todayDateOnly,
-    },
+  const snapshots = await db.astronomySnapshot.findMany({
+    where: { locationId: location.id },
+    orderBy: { date: "asc" },
   });
 
-  if (!snapshot) {
+  if (!snapshots || snapshots.length === 0) {
     return (
       <div className="p-8 text-red-300">
         No astronomy data found for {location.name}.
@@ -40,45 +29,9 @@ export default async function AstronomyPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-700 to-sky-900 text-white p-8">
-      <div className="max-w-5xl mx-auto space-y-8">
-        {/* Header */}
-        <header>
-          <h1 className="text-4xl font-semibold mb-1">
-            Astronomy for {location.name}
-          </h1>
-          <p className="text-sky-200">
-            Updated {snapshot.fetchedAt.toLocaleTimeString()}
-          </p>
-        </header>
-
-        {/* Cards */}
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <SolarCard
-            sunrise={snapshot.sunrise}
-            sunset={snapshot.sunset}
-            fetchedAt={snapshot.fetchedAt.toISOString()}
-          />
-
-          <LunarCard
-            moonrise={snapshot.moonrise ?? null}
-            moonset={snapshot.moonset ?? null}
-            fetchedAt={snapshot.fetchedAt.toISOString()}
-          />
-
-          <GoldenHourCard
-            sunriseBlueStart={snapshot.sunriseBlueStart!}
-            sunriseBlueEnd={snapshot.sunriseBlueEnd!}
-            sunriseGoldenStart={snapshot.sunriseGoldenStart!}
-            sunriseGoldenEnd={snapshot.sunriseGoldenEnd!}
-            sunsetGoldenStart={snapshot.sunsetGoldenStart!}
-            sunsetGoldenEnd={snapshot.sunsetGoldenEnd!}
-            sunsetBlueStart={snapshot.sunsetBlueStart!}
-            sunsetBlueEnd={snapshot.sunsetBlueEnd!}
-            fetchedAt={snapshot.fetchedAt.toISOString()}
-          />
-        </section>
-      </div>
-    </div>
+    <AstronomyClientPage
+      locationName={location.name}
+      snapshots={snapshots}
+    />
   );
 }

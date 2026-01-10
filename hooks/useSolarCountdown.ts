@@ -1,8 +1,13 @@
+// hooks/useSolarCountdown.ts
 "use client";
 
 import { useEffect, useState } from "react";
 
-export function useSolarCountdown(sunrise: Date, sunset: Date) {
+export function useSolarCountdown(
+  sunrise: Date,
+  sunset: Date,
+  nextSunrise: Date | null,
+) {
   const [now, setNow] = useState(new Date());
 
   useEffect(() => {
@@ -21,8 +26,8 @@ export function useSolarCountdown(sunrise: Date, sunset: Date) {
     return { hours, minutes, seconds };
   }
 
-  let nextEventLabel;
-  let nextCountdown;
+  let nextEventLabel: string;
+  let nextCountdown: { hours: number; minutes: number; seconds: number };
 
   if (now < sunrise) {
     nextEventLabel = "Sunrise";
@@ -32,7 +37,7 @@ export function useSolarCountdown(sunrise: Date, sunset: Date) {
     nextCountdown = diff(sunset);
   } else {
     nextEventLabel = "Tomorrow's Sunrise";
-    nextCountdown = { hours: 0, minutes: 0, seconds: 0 };
+    nextCountdown = nextSunrise ? diff(nextSunrise) : { hours: 0, minutes: 0, seconds: 0 };
   }
 
   const dayLengthMs = sunset.getTime() - sunrise.getTime();
@@ -48,6 +53,7 @@ export function useSolarCountdown(sunrise: Date, sunset: Date) {
     now,
     sunrise,
     sunset,
+    nextSunrise,
     nextEventLabel,
     nextCountdown,
     dayLengthHours,

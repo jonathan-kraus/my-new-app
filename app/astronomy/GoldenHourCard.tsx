@@ -1,75 +1,67 @@
 // app/astronomy/GoldenHourCard.tsx
 "use client";
 
-import { useGoldenHourTimeline } from "@/hooks/useGoldenHourTimeline";
-import ProgressBar from "@/components/ProgressBar";
-import { logit } from "@/lib/log/client";
-type GoldenHourCardProps = {
-  sunriseBlueStart: string;
-  sunriseBlueEnd: string;
-  sunriseGoldenStart: string;
-  sunriseGoldenEnd: string;
-  sunsetGoldenStart: string;
-  sunsetGoldenEnd: string;
-  sunsetBlueStart: string;
-  sunsetBlueEnd: string;
-  fetchedAt: string;
-};
+import { SolarTimes } from "@/types/AstronomyTypes";
 
-export default function GoldenHourCard(props: GoldenHourCardProps) {
-  const t = useGoldenHourTimeline(props);
- logit({
-          level: "info",
-          message: `In Astronomy`,
-          file: "app/astronomy/GoldenHourCard.tsx",
-          line: 21,
-          page: "Astronomy",
-          data: {
-            anydata: "no",
-          },
-        });  const format = (d: Date) =>
-    d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+type GoldenHourProps = Pick<
+  SolarTimes,
+  | "sunriseBlueStart"
+  | "sunriseBlueEnd"
+  | "sunriseGoldenStart"
+  | "sunriseGoldenEnd"
+  | "sunsetGoldenStart"
+  | "sunsetGoldenEnd"
+  | "sunsetBlueStart"
+  | "sunsetBlueEnd"
+  | "fetchedAt"
+>;
+
+export default function GoldenHourCard(props: GoldenHourProps) {
+  const {
+    sunriseBlueStart,
+    sunriseBlueEnd,
+    sunriseGoldenStart,
+    sunriseGoldenEnd,
+    sunsetGoldenStart,
+    sunsetGoldenEnd,
+    sunsetBlueStart,
+    sunsetBlueEnd,
+    fetchedAt,
+  } = props;
+
+  const format = (d: Date | null) =>
+    d
+      ? d.toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "2-digit",
+          timeZone: "America/New_York",
+        })
+      : "—";
 
   return (
-    <div className="p-6 rounded-xl bg-gradient-to-br from-amber-600 via-orange-500 to-yellow-400 text-white shadow-lg">
-      <h2 className="text-2xl font-bold mb-4">Golden & Blue Hours</h2>
+    <div className="p-6 rounded-xl bg-gradient-to-br from-sky-500 via-sky-600 to-indigo-700 text-white shadow-lg space-y-4 md:col-span-2">
+      <h2 className="text-2xl font-bold">Golden & Blue Hours</h2>
 
-      {/* Active or next event */}
-      <div className="mb-4">
-        {t.active ? (
-          <p className="font-semibold">
-            Currently in {t.active.label} • Ends in {t.countdown}
-          </p>
-        ) : t.next ? (
-          <p className="font-semibold">
-            {t.nextEventLabel} in {t.countdown}
-          </p>
-        ) : (
-          <p className="opacity-80">No more events today</p>
-        )}
-
-        {/* Progress bar */}
-        <div className="w-full h-3 bg-white/30 rounded-full mt-2 overflow-hidden">
-          <ProgressBar
-            value={t.progressPercent}
-            barClassName="bg-yellow-300"
-            className="bg-yellow-900/30"
-          />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+        <div>
+          <h3 className="font-semibold mb-1">Morning</h3>
+          <p>Blue Hour: {format(sunriseBlueStart)} – {format(sunriseBlueEnd)}</p>
+          <p>Golden Hour: {format(sunriseGoldenStart)} – {format(sunriseGoldenEnd)}</p>
+        </div>
+        <div>
+          <h3 className="font-semibold mb-1">Evening</h3>
+          <p>Golden Hour: {format(sunsetGoldenStart)} – {format(sunsetGoldenEnd)}</p>
+          <p>Blue Hour: {format(sunsetBlueStart)} – {format(sunsetBlueEnd)}</p>
         </div>
       </div>
 
-      {/* Timeline list */}
-      <div className="space-y-2 text-sm">
-        {t.timeline.map((p) => (
-          <div key={p.label}>
-            <span className="font-semibold">{p.label}:</span> {format(p.start)}{" "}
-            – {format(p.end)}
-          </div>
-        ))}
-      </div>
-
-      <p className="text-sm opacity-80 mt-4">
-        Updated {new Date(props.fetchedAt).toLocaleTimeString()}
+      <p className="text-xs opacity-80">
+        Updated{" "}
+        {fetchedAt.toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "2-digit",
+          timeZone: "America/New_York",
+        })}
       </p>
     </div>
   );
