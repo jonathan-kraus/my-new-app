@@ -1,81 +1,84 @@
-import type { AstronomySnapshot } from "@prisma/client";
-import { getIPGeoAstronomy } from "@/lib/lunar/ipgeo";
-export function calculateMoonPhase(date: Date): number {
-  // Convert to UTC midnight
+import { format } from "date-fns";
+
+function normalizeMoonTime(value: string): string {
+  return value === "-:-" ? "" : value;
+}
+
+function calculateMoonPhase(date: Date): number {
   const year = date.getUTCFullYear();
   const month = date.getUTCMonth() + 1;
   const day = date.getUTCDate();
 
-  // Astronomical algorithm (simple, accurate to ~1 hour)
   let r = year % 100;
   r %= 19;
-
-  if (r > 9) {
-    r -= 19;
-  }
+  if (r > 9) r -= 19;
 
   r = ((r * 11) % 30) + month + day;
-
-  if (month < 3) {
-    r += 2;
-  }
+  if (month < 3) r += 2;
 
   const phase = (r < 0 ? r + 30 : r) / 30;
-
   return Number(phase.toFixed(4));
 }
 
-export async function buildAstronomySnapshot(
-  lat: number,
-  lon: number,
-  localDate: Date,
-  moonPhase: number,
-  solar: {
-    sunrise: Date;
-    sunset: Date;
-    sunriseBlueStart: Date;
-    sunriseBlueEnd: Date;
-    sunriseGoldenStart: Date;
-    sunriseGoldenEnd: Date;
-    sunsetGoldenStart: Date;
-    sunsetGoldenEnd: Date;
-    sunsetBlueStart: Date;
-    sunsetBlueEnd: Date;
-  },
-  locationId: string,
-) {
-  const astro = await getIPGeoAstronomy(lat, lon, localDate);
+function combineDateTime(date: Date, timeStr: string): string {
+  const [hour, minute] = timeStr.split(":");
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
 
-  const fmt = (d: Date | null): string =>
-    d
-      ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
-          d.getDate(),
-        ).padStart(2, "0")} ${String(d.getHours()).padStart(2, "0")}:${String(
-          d.getMinutes(),
-        ).padStart(2, "0")}:00`
-      : "";
+  return `${yyyy}-${mm}-${dd} ${hour}:${minute}:00`;
+}
+
+async function fetchIPGeoAstronomy(lat: number, lon: number, date: Date) {
+  const day = format(date, "yyyy-MM-dd");
+
+  const url = new URL("https://api.ipgeolocation.io/v2/astronomy");
+  url.searchParams.set("apiKey", process.env.IPGEO_API_KEY!);
+  url.searchParams.set("lat", lat.toString());
+  url.searchParams.set("long", lon.toString());
+  url.searchParams.set("date", day);
+
+  const res = await fetch(url.toString());
+  if (!res.ok) {
+    throw new Error(`IPGeolocation error: ${res.status}`);
+  }
+
+  const json = await res.json();
+  return json.astronomy;
+}
+
+export async function buildAstronomySnapshot(location: any, targetDate: Date) {
+  const { latitude, longitude } = location;
+  const astro = await fetchIPGeoAstronomy(latitude, longitude, targetDate);
 
   return {
-    date: localDate,
+    date: targetDate,
 
-    sunrise: fmt(solar.sunrise),
-    sunset: fmt(solar.sunset),
+    // Solar
+    sunrise: combineDateTime(targetDate, astro.sunrise),
+    sunset: combineDateTime(targetDate, astro.sunset),
 
-    moonrise: astro.moonrise ?? undefined,
-    moonset: astro.moonset ?? undefined,
-    moonPhase: calculateMoonPhase(localDate),
+    sunriseBlueStart: combineDateTime(targetDate, astro.morning.blue_hour_begin),
+    sunriseBlueEnd: combineDateTime(targetDate, astro.morning.blue_hour_end),
+    sunriseGoldenStart: combineDateTime(targetDate, astro.morning.golden_hour_begin),
+    sunriseGoldenEnd: combineDateTime(targetDate, astro.morning.golden_hour_end),
 
-    sunriseBlueStart: fmt(solar.sunriseBlueStart),
-    sunriseBlueEnd: fmt(solar.sunriseBlueEnd),
-    sunriseGoldenStart: fmt(solar.sunriseGoldenStart),
-    sunriseGoldenEnd: fmt(solar.sunriseGoldenEnd),
+    sunsetBlueStart: combineDateTime(targetDate, astro.evening.blue_hour_begin),
+    sunsetBlueEnd: combineDateTime(targetDate, astro.evening.blue_hour_end),
+    sunsetGoldenStart: combineDateTime(targetDate, astro.evening.golden_hour_begin),
+    sunsetGoldenEnd: combineDateTime(targetDate, astro.evening.golden_hour_end),
 
-    sunsetGoldenStart: fmt(solar.sunsetGoldenStart),
-    sunsetGoldenEnd: fmt(solar.sunsetGoldenEnd),
-    sunsetBlueStart: fmt(solar.sunsetBlueStart),
-    sunsetBlueEnd: fmt(solar.sunsetBlueEnd),
+    // Lunar
+    moonrise: normalizeMoonTime(astro.moonrise)
+      ? combineDateTime(targetDate, astro.moonrise)
+      : "",
+    moonset: normalizeMoonTime(astro.moonset)
+      ? combineDateTime(targetDate, astro.moonset)
+      : "",
+    moonPhase: calculateMoonPhase(targetDate),
 
+    // Metadata
     fetchedAt: new Date(),
-    locationId,
+    locationId: location.id,
   };
 }
