@@ -6,7 +6,7 @@ import { addDays } from "date-fns";
 
 
 import { parseLocalSolar } from "@/lib/solar/parseLocalSolar";
- 
+
 
 import {
   SolarTimes,
@@ -29,16 +29,31 @@ export function useAstronomy(snapshots: any[]): AstronomyHookResult {
     if (!snapshots || snapshots.length === 0) {
       return { today: null, tomorrow: null, solar: null, lunar: null };
     }
+console.log("SNAPSHOT DEBUG:", snapshots);
 
- const normalized = snapshots.map((s) => {
-  const [datePart] = s.date.split(" ");
+const normalized = snapshots.map((s) => {
+  const raw = s.date;
+
+  // If it's already a Date, keep it
+  if (raw instanceof Date) {
+    return { ...s, dateObj: raw };
+  }
+
+  // If it's missing or null, skip parsing
+  if (!raw || typeof raw !== "string") {
+    return { ...s, dateObj: new Date(NaN) };
+  }
+
+  // Expecting "YYYY-MM-DD HH:MM:SS"
+  const [datePart] = raw.split(" ");
   const [year, month, day] = datePart.split("-").map(Number);
 
   return {
     ...s,
-    dateObj: new Date(year, month - 1, day), // local date
+    dateObj: new Date(year, month - 1, day),
   };
 });
+
 
 
     normalized.sort((a, b) => a.dateObj.getTime() - b.dateObj.getTime());
