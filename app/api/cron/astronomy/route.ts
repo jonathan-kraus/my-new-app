@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { logit } from "@/lib/log/server";
 import { addDays, format } from "date-fns";
+import { buildAstronomySnapshot } from "@/lib/buildAstronomySnapshot";
+
 
 export const runtime = "nodejs";
 
@@ -52,43 +54,6 @@ async function fetchIPGeoAstronomy(lat: number, lon: number, date: Date) {
 }
 
 // -----------------------------
-// Snapshot Builder
-// -----------------------------
-
-async function buildAstronomySnapshot(location: any, targetDate: Date) {
-  const { latitude, longitude } = location;
-
-  const astro = await fetchIPGeoAstronomy(latitude, longitude, targetDate);
-
-  return {
-    date: targetDate,
-
-    // Solar
-    sunrise: astro.sunrise,
-    sunset: astro.sunset,
-
-    sunriseBlueStart: astro.morning.blue_hour_begin,
-    sunriseBlueEnd: astro.morning.blue_hour_end,
-    sunriseGoldenStart: astro.morning.golden_hour_begin,
-    sunriseGoldenEnd: astro.morning.golden_hour_end,
-
-    sunsetBlueStart: astro.evening.blue_hour_begin,
-    sunsetBlueEnd: astro.evening.blue_hour_end,
-    sunsetGoldenStart: astro.evening.golden_hour_begin,
-    sunsetGoldenEnd: astro.evening.golden_hour_end,
-
-    // Lunar
-    moonrise: normalizeMoonTime(astro.moonrise),
-    moonset: normalizeMoonTime(astro.moonset),
-    moonPhase: calculateMoonPhase(targetDate),
-
-    // Metadata
-    fetchedAt: new Date(),
-    locationId: location.id,
-  };
-}
-
-// -----------------------------
 // Cron Route
 // -----------------------------
 
@@ -111,7 +76,7 @@ export async function GET() {
       level: "info",
       message: "astronomy.cron.location.started",
       file: "app/api/cron/astronomy/route.ts",
-      line: 45,
+      line: 110,
       page: "Astronomy Cron Job",
       data: { locationId: location.id, name: location.name },
     });
@@ -136,7 +101,7 @@ export async function GET() {
         level: "info",
         message: "astronomy.cron.snapshot.saved",
         file: "app/api/cron/astronomy/route.ts",
-        line: 78,
+        line: 136,
         page: "Astronomy Cron Job",
         data: {
           locationId: location.id,
