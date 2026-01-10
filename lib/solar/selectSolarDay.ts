@@ -1,43 +1,44 @@
-import { parseLocalSolar } from "./parseLocalSolar";
-export function selectSolarDay(
-  days: { date: string; sunrise: string; sunset: string }[],
-) {
+import { parseLocalSolar } from "@/lib/solar/parseLocalSolar";
+
+export function selectSolarDay(days: {
+  date: string;
+  sunrise: string;
+  sunset: string;
+}[]) {
+  if (!days || days.length === 0) return null;
+
   const now = new Date();
 
-  // Convert to local dates
-  const localDays = days.map((d) => ({
+  // Parse all days into usable objects
+  const parsed = days.map((d) => ({
     date: new Date(d.date),
     sunrise: parseLocalSolar(d.sunrise),
     sunset: parseLocalSolar(d.sunset),
   }));
 
+  // Sort by date
+  parsed.sort((a, b) => a.date.getTime() - b.date.getTime());
+
   // Find today
-  const today = localDays.find(
-    (d) => d.date.toDateString() === now.toDateString(),
+  const today = parsed.find((d) =>
+    d.date.getFullYear() === now.getFullYear() &&
+    d.date.getMonth() === now.getMonth() &&
+    d.date.getDate() === now.getDate()
   );
 
   if (!today) return null;
 
-  // If before sunrise → next event is today's sunrise
-  if (now < today.sunrise) {
-    return { ...today, next: "sunrise" };
-  }
-
-  // If before sunset → next event is today's sunset
-  if (now < today.sunset) {
-    return { ...today, next: "sunset" };
-  }
-
-  // Otherwise → tomorrow's sunrise
-  const tomorrow = localDays.find(
-    (d) =>
-      d.date.toDateString() ===
-      new Date(today.date.getTime() + 86400000).toDateString(),
+  // Find tomorrow
+  const tomorrow = parsed.find((d) =>
+    d.date.getFullYear() === today.date.getFullYear() &&
+    d.date.getMonth() === today.date.getMonth() &&
+    d.date.getDate() === today.date.getDate() + 1
   );
 
-  if (tomorrow) {
-    return { ...tomorrow, next: "sunrise" };
-  }
-
-  return null;
+  return {
+    date: today.date,
+    sunrise: today.sunrise,
+    sunset: today.sunset,
+    nextSunrise: tomorrow ? tomorrow.sunrise : null,
+  };
 }
