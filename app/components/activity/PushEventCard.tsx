@@ -23,7 +23,7 @@ export default function PushEventCard({ item }: { item: ActivityItemData }) {
         )}
 
         <div className="text-xs text-muted-foreground mt-1">
-          {formatDate(item.created_at)}
+          {formatDate(item.createdAt)}
         </div>
       </div>
     </div>

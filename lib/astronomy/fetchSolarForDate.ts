@@ -1,10 +1,6 @@
 import { format } from "date-fns";
 
-export async function fetchSolarForDate(
-  lat: number,
-  lon: number,
-  date: Date
-) {
+export async function fetchSolarForDate(lat: number, lon: number, date: Date) {
   const day = format(date, "yyyy-MM-dd");
 
   const url = new URL("https://api.open-meteo.com/v1/forecast");

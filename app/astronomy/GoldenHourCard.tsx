@@ -45,13 +45,22 @@ export default function GoldenHourCard(props: GoldenHourProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
         <div>
           <h3 className="font-semibold mb-1">Morning</h3>
-          <p>Blue Hour: {format(sunriseBlueStart)} – {format(sunriseBlueEnd)}</p>
-          <p>Golden Hour: {format(sunriseGoldenStart)} – {format(sunriseGoldenEnd)}</p>
+          <p>
+            Blue Hour: {format(sunriseBlueStart)} – {format(sunriseBlueEnd)}
+          </p>
+          <p>
+            Golden Hour: {format(sunriseGoldenStart)} –{" "}
+            {format(sunriseGoldenEnd)}
+          </p>
         </div>
         <div>
           <h3 className="font-semibold mb-1">Evening</h3>
-          <p>Golden Hour: {format(sunsetGoldenStart)} – {format(sunsetGoldenEnd)}</p>
-          <p>Blue Hour: {format(sunsetBlueStart)} – {format(sunsetBlueEnd)}</p>
+          <p>
+            Golden Hour: {format(sunsetGoldenStart)} – {format(sunsetGoldenEnd)}
+          </p>
+          <p>
+            Blue Hour: {format(sunsetBlueStart)} – {format(sunsetBlueEnd)}
+          </p>
         </div>
       </div>
 

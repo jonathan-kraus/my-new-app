@@ -29,9 +29,6 @@ export default async function AstronomyPage() {
   }
 
   return (
-    <AstronomyClientPage
-      locationName={location.name}
-      snapshots={snapshots}
-    />
+    <AstronomyClientPage locationName={location.name} snapshots={snapshots} />
   );
 }

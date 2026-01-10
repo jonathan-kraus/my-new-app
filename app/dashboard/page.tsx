@@ -8,16 +8,16 @@ import { logit } from "@/lib/log/client";
 export default function DashboardPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
- logit({
-          level: "info",
-          message: `Dashboard`,
-          file: "app/dashboard/page.tsx",
-          line: 11,
-          page: "Dashboard page",
-          data: {
-          date:  new Date().toISOString(),
-          },
-        });
+  logit({
+    level: "info",
+    message: `Dashboard`,
+    file: "app/dashboard/page.tsx",
+    line: 11,
+    page: "Dashboard page",
+    data: {
+      date: new Date().toISOString(),
+    },
+  });
   useEffect(() => {
     async function load() {
       try {

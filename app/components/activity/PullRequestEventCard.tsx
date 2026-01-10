@@ -24,7 +24,7 @@ export default function PullRequestEventCard({
         )}
 
         <div className="text-xs text-muted-foreground mt-1">
-          {formatDate(item.created_at)}
+          {formatDate(item.createdAt)}
         </div>
       </div>
     </div>

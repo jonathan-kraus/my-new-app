@@ -17,9 +17,7 @@ export default function AstronomyClientPage({
 
   if (!solar || !lunar) {
     return (
-      <div className="p-8 text-red-300">
-        Unable to load astronomy data.
-      </div>
+      <div className="p-8 text-red-300">Unable to load astronomy data.</div>
     );
   }
 

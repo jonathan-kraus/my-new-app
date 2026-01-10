@@ -37,7 +37,9 @@ export function useSolarCountdown(
     nextCountdown = diff(sunset);
   } else {
     nextEventLabel = "Tomorrow's Sunrise";
-    nextCountdown = nextSunrise ? diff(nextSunrise) : { hours: 0, minutes: 0, seconds: 0 };
+    nextCountdown = nextSunrise
+      ? diff(nextSunrise)
+      : { hours: 0, minutes: 0, seconds: 0 };
   }
 
   const dayLengthMs = sunset.getTime() - sunrise.getTime();

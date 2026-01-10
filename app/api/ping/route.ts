@@ -5,12 +5,11 @@ import { NextResponse } from "next/server";
 console.log("PING route loaded");
 //
 
-
- import { getUSNOMoonData } from "@/lib/lunar/usno";
+import { getUSNOMoonData } from "@/lib/lunar/usno";
 
 export async function GET() {
   // Pick a known location (your default)
-  const lat = 40.101;      // King of Prussia-ish
+  const lat = 40.101; // King of Prussia-ish
   const lon = -75.383;
   const today = new Date();
 

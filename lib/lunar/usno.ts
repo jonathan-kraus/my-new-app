@@ -76,7 +76,8 @@ export async function getUSNOMoonData(
           data,
         },
         null,
-        2),
+        2,
+      ),
     );
 
     let moonrise: string | null = null;
