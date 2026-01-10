@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { selectSolarDay } from "@/lib/solar/selectSolarDay";
+import { parseLocalSolar } from "@/lib/solar/parseLocalSolar";
 import { logit } from "@/lib/log/client";
 
 export function useSolarTimeline(
@@ -26,7 +27,24 @@ export function useSolarTimeline(
     };
   }
 
-  const { sunrise, sunset, nextSunrise } = selected;
+  // Parse into Date objects safely
+  const sunrise = parseLocalSolar(selected.sunrise);
+  const sunset = parseLocalSolar(selected.sunset);
+  const nextSunrise = selected.nextSunrise
+    ? parseLocalSolar(selected.nextSunrise)
+    : null;
+
+  // If parsing failed, bail out safely
+  if (!sunrise || !sunset) {
+    return {
+      sunrise: null,
+      sunset: null,
+      nextEventLabel: "Invalid data",
+      countdown: "0h 0m 0s",
+      progressPercent: 0,
+      dayLengthHours: 0,
+    };
+  }
 
   logit({
     level: "debug",
@@ -37,20 +55,17 @@ export function useSolarTimeline(
     data: { sunrise, sunset, nextSunrise, now },
   });
 
-  // Determine which event is next
+  // Determine next event
   let target: Date;
   let nextEventLabel: string;
 
   if (now < sunrise) {
-    // Before sunrise → countdown to sunrise
     target = sunrise;
     nextEventLabel = "Sunrise";
   } else if (now >= sunrise && now < sunset) {
-    // After sunrise but before sunset → countdown to sunset
     target = sunset;
     nextEventLabel = "Sunset";
   } else {
-    // After sunset → countdown to tomorrow's sunrise
     target = nextSunrise!;
     nextEventLabel = "Tomorrow’s Sunrise";
   }
@@ -64,7 +79,7 @@ export function useSolarTimeline(
 
   const countdown = `${hours}h ${minutes}m ${seconds}s`;
 
-  // Progress bar (only during daytime)
+  // Progress bar
   const isDaytime = now >= sunrise && now <= sunset;
   const dayLengthMs = sunset.getTime() - sunrise.getTime();
   const elapsedMs = now.getTime() - sunrise.getTime();
