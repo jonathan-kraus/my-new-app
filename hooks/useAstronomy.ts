@@ -30,10 +30,16 @@ export function useAstronomy(snapshots: any[]): AstronomyHookResult {
       return { today: null, tomorrow: null, solar: null, lunar: null };
     }
 
-    const normalized = snapshots.map((s) => ({
-      ...s,
-      dateObj: new Date(s.date),
-    }));
+ const normalized = snapshots.map((s) => {
+  const [datePart] = s.date.split(" ");
+  const [year, month, day] = datePart.split("-").map(Number);
+
+  return {
+    ...s,
+    dateObj: new Date(year, month - 1, day), // local date
+  };
+});
+
 
     normalized.sort((a, b) => a.dateObj.getTime() - b.dateObj.getTime());
 
