@@ -18,25 +18,8 @@ export async function refreshAstronomySnapshotsForLocation(
 
     await Promise.all(
       computedDays.map(async (day) => {
-        const snapshot = await buildAstronomySnapshot(
-          location.latitude,
-          location.longitude,
-          day.date,
-          day.moonPhase,
-          {
-            sunrise: day.sunrise,
-            sunset: day.sunset,
-            sunriseBlueStart: day.sunriseBlueStart,
-            sunriseBlueEnd: day.sunriseBlueEnd,
-            sunriseGoldenStart: day.sunriseGoldenStart,
-            sunriseGoldenEnd: day.sunriseGoldenEnd,
-            sunsetGoldenStart: day.sunsetGoldenStart,
-            sunsetGoldenEnd: day.sunsetGoldenEnd,
-            sunsetBlueStart: day.sunsetBlueStart,
-            sunsetBlueEnd: day.sunsetBlueEnd,
-          },
-          location.id,
-        );
+        const snapshot = await buildAstronomySnapshot(location, day.date);
+
 
         return db.astronomySnapshot.upsert({
           where: {
