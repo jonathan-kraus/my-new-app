@@ -7,21 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id            String   @id @default(cuid())
-  email         String?  @unique
-  emailVerified Boolean  @default(false)
-  name          String?
-  image         String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  accounts Account[]
-  sessions Session[]
-
-  @@map("user")
-}
-
 model Account {
   id           String   @id @default(cuid())
   userId       String
@@ -38,72 +23,6 @@ model Account {
   @@unique([providerId, accountId])
   @@index([userId])
   @@map("account")
-}
-
-model Session {
-  id        String   @id @default(cuid())
-  userId    String
-  token     String   @unique
-  expiresAt DateTime
-  ipAddress String?
-  userAgent String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@map("session")
-}
-
-model Verification {
-  id         String   @id @default(cuid())
-  identifier String
-  value      String
-  expiresAt  DateTime
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  @@index([identifier])
-  @@map("verification")
-}
-
-model Location {
-  id        String @id @default(cuid())
-  key       String @unique
-  name      String
-  latitude  Float
-  longitude Float
-  timezone  String
-  isDefault Boolean @default(false)
-
-
-  weather   WeatherSnapshot[]
-  astronomy AstronomySnapshot[]
-  forecast  ForecastSnapshot[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model WeatherSnapshot {
-  id         String @id @default(cuid())
-  locationId String
-
-  temperature   Float
-  feelsLike     Float?
-  humidity      Float?
-  windSpeed     Float?
-  windDirection Float?
-  pressure      Float?
-  visibility    Float?
-  weatherCode   Int?
-
-  fetchedAt DateTime @default(now())
-
-  location Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
-
-  @@index([locationId, fetchedAt])
 }
 
 model AstronomySnapshot {
@@ -134,8 +53,6 @@ model AstronomySnapshot {
   @@unique([locationId, date])
 }
 
-
-
 model ForecastSnapshot {
   id         String   @id @default(cuid())
   locationId String
@@ -144,7 +61,23 @@ model ForecastSnapshot {
 
   location Location @relation(fields: [locationId], references: [id])
 }
+model Location {
+  id        String @id @default(cuid())
+  key       String @unique
+  name      String
+  latitude  Float
+  longitude Float
+  timezone  String
+  isDefault Boolean @default(false)
 
+
+  weather   WeatherSnapshot[]
+  astronomy AstronomySnapshot[]
+  forecast  ForecastSnapshot[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
 model Log {
   id           String   @id @default(cuid())
   level        String
@@ -173,7 +106,12 @@ model Note {
   content   String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  userEmail String?
+
+  // who owns this note
+  userEmail String
+
+  // whether it’s archived
+  archived  Boolean  @default(false)
 }
 
 model RuntimeConfig {
@@ -181,3 +119,73 @@ model RuntimeConfig {
   value     String
   updatedAt DateTime @updatedAt
 }
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("session")
+}
+
+model UserRole {
+  // maps to your auth user’s email
+  email String @id
+  role  String // e.g. "USER" | "VP"
+}
+
+model User {
+  id            String   @id @default(cuid())
+  email         String?  @unique
+  emailVerified Boolean  @default(false)
+  name          String?
+  image         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  accounts Account[]
+  sessions Session[]
+
+  @@map("user")
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+model WeatherSnapshot {
+  id         String @id @default(cuid())
+  locationId String
+
+  temperature   Float
+  feelsLike     Float?
+  humidity      Float?
+  windSpeed     Float?
+  windDirection Float?
+  pressure      Float?
+  visibility    Float?
+  weatherCode   Int?
+
+  fetchedAt DateTime @default(now())
+
+  location Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  @@index([locationId, fetchedAt])
+}
+

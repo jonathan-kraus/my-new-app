@@ -1,37 +1,46 @@
 // app/api/notes/route.ts
-import { NextResponse } from "next/server";
-import { headers } from "next/headers";
-import { db } from "@/lib/db";
-import { logit } from "@/lib/log/server";
+import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { getDbWithRls } from "@/lib/server/db-with-rls";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const session = await auth.api.getSession({
-    headers: await headers(),
+    headers: req.headers,
   });
 
-  if (!session?.user) {
-    await logit({
-      level: "warn",
-      message: "Unauthorized notes access attempt",
-      page: "app/api/notes/route.ts",
-      line: 14,
-    });
+  const email = session?.user?.email;
 
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!email) {
+    return NextResponse.json({ notes: [], isVp: false }, { status: 401 });
   }
 
-  const notes = await db.note.findMany({
-    where: { userEmail: session.user.email },
-    orderBy: { updatedAt: "desc" },
-  });
+  const dbRls = await getDbWithRls(email);
 
-  await logit({
-    level: "info",
-    message: `Retrieved ${notes.length} notes`,
-    page: "/notes",
-    data: { userId: session.user.id },
-  });
+  const searchParams = req.nextUrl.searchParams;
+  const view = searchParams.get("view") ?? "my-active";
 
-  return NextResponse.json(notes);
+  const userRole = await db.userRole.findUnique({
+    where: { email },
+  });
+  const isVp = userRole?.role === "VP";
+
+  let notes;
+
+  if (view === "all-users" && isVp) {
+    notes = await dbRls.note.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+  } else if (view === "my-all") {
+    notes = await dbRls.note.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+  } else {
+    notes = await dbRls.note.findMany({
+      where: { archived: false },
+      orderBy: { createdAt: "desc" },
+    });
+  }
+
+  return NextResponse.json({ notes, isVp });
 }
