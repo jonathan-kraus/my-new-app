@@ -1,5 +1,9 @@
 export function parseLocalSolar(timeStr: string): Date {
-  const [hour, minute, second = "0"] = timeStr.split(":").map(Number);
+  const [hourStr, minuteStr, secondStr] = timeStr.split(":");
+
+  const hour = Number(hourStr);
+  const minute = Number(minuteStr);
+  const second = secondStr ? Number(secondStr) : 0;
 
   const now = new Date();
   return new Date(
@@ -13,7 +17,11 @@ export function parseLocalSolar(timeStr: string): Date {
 }
 
 export function parseLocalSolarForTomorrow(timeStr: string): Date {
-  const [hour, minute, second = "0"] = timeStr.split(":").map(Number);
+  const [hourStr, minuteStr, secondStr] = timeStr.split(":");
+
+  const hour = Number(hourStr);
+  const minute = Number(minuteStr);
+  const second = secondStr ? Number(secondStr) : 0;
 
   const now = new Date();
   return new Date(
