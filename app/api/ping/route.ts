@@ -1,38 +1,30 @@
-// app/api/ping/route.ts - SIMPLE TEST
-import { logit } from "@/lib/log/client";
+// app/api/ping/route.ts
 import { NextResponse } from "next/server";
-
-console.log("PING route loaded");
-//
-
-import { getUSNOMoonData } from "@/lib/lunar/usno";
+import { logit } from "@/lib/log/server";
 
 export async function GET() {
-  // Pick a known location (your default)
-  const lat = 40.101; // King of Prussia-ish
-  const lon = -75.383;
-  const today = new Date();
+  const start = Date.now();
 
-  const result = await getUSNOMoonData(lat, lon, today);
+  const payload = {
+    ok: true,
+    timestamp: new Date().toISOString(),
+    server: process.env.NODE_ENV,
+    requestId: crypto.randomUUID(),
+  };
 
-  return Response.json({
-    requestedAt: new Date().toISOString(),
-    lat,
-    lon,
-    today: today.toISOString(),
-    result,
-  });
-}
-
-export function Log() {
-  //fetch("/api/ping");
-  const level = 1;
-  logit({
+  await logit({
     level: "info",
     message: "ping",
     page: "Ping API",
     file: "app/api/ping/route.ts",
-    line: 16,
+    line: 12,
+    data: payload,
   });
-  return level;
+
+  const durationMs = Date.now() - start;
+
+  return NextResponse.json({
+    ...payload,
+    durationMs,
+  });
 }

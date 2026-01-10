@@ -1,6 +1,6 @@
 // lib/buildAstronomySnapshot.ts
 import { format } from "date-fns";
-import { logit } from "@/lib/log/client"
+import { logit } from "@/lib/log/client";
 function normalizeMoonTime(value: string): string {
   return value === "-:-" ? "" : value;
 }
@@ -26,13 +26,13 @@ function combineDateTime(date: Date, timeStr: string): string {
   const yyyy = date.getFullYear();
   const mm = String(date.getMonth() + 1).padStart(2, "0");
   const dd = String(date.getDate()).padStart(2, "0");
-   logit({
+  logit({
     level: "info",
     message: "In BAS",
     file: "lib/buildAstronomySnapshot.ts",
     line: 29,
     page: "Build Astronomy",
-    data: {t: {yyyy, mm, dd, hour, minute}},
+    data: { t: { yyyy, mm, dd, hour, minute } },
   });
   return `${yyyy}-${mm}-${dd} ${hour}:${minute}:00`;
 }
@@ -64,21 +64,33 @@ export async function buildAstronomySnapshot(location: any, targetDate: Date) {
     date: new Date(
       targetDate.getFullYear(),
       targetDate.getMonth(),
-      targetDate.getDate()
+      targetDate.getDate(),
     ),
 
     // Solar
     sunrise: combineDateTime(targetDate, astro.sunrise),
     sunset: combineDateTime(targetDate, astro.sunset),
 
-    sunriseBlueStart: combineDateTime(targetDate, astro.morning.blue_hour_begin),
+    sunriseBlueStart: combineDateTime(
+      targetDate,
+      astro.morning.blue_hour_begin,
+    ),
     sunriseBlueEnd: combineDateTime(targetDate, astro.morning.blue_hour_end),
-    sunriseGoldenStart: combineDateTime(targetDate, astro.morning.golden_hour_begin),
-    sunriseGoldenEnd: combineDateTime(targetDate, astro.morning.golden_hour_end),
+    sunriseGoldenStart: combineDateTime(
+      targetDate,
+      astro.morning.golden_hour_begin,
+    ),
+    sunriseGoldenEnd: combineDateTime(
+      targetDate,
+      astro.morning.golden_hour_end,
+    ),
 
     sunsetBlueStart: combineDateTime(targetDate, astro.evening.blue_hour_begin),
     sunsetBlueEnd: combineDateTime(targetDate, astro.evening.blue_hour_end),
-    sunsetGoldenStart: combineDateTime(targetDate, astro.evening.golden_hour_begin),
+    sunsetGoldenStart: combineDateTime(
+      targetDate,
+      astro.evening.golden_hour_begin,
+    ),
     sunsetGoldenEnd: combineDateTime(targetDate, astro.evening.golden_hour_end),
 
     // Lunar

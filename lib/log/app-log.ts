@@ -24,7 +24,7 @@ export const logger = {
         data,
         ...globalContext,
         createdAt: new Date().toISOString(),
-      })
+      }),
     );
   },
 
@@ -37,7 +37,7 @@ export const logger = {
         data,
         ...globalContext,
         createdAt: new Date().toISOString(),
-      })
+      }),
     );
   },
 };

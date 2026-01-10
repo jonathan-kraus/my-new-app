@@ -20,7 +20,6 @@ export async function refreshAstronomySnapshotsForLocation(
       computedDays.map(async (day) => {
         const snapshot = await buildAstronomySnapshot(location, day.date);
 
-
         return db.astronomySnapshot.upsert({
           where: {
             locationId_date: {

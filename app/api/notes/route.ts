@@ -10,19 +10,18 @@ export async function GET(req: NextRequest) {
     headers: req.headers,
   });
   const email = session?.user?.email;
-     await logit({
-      level: "info",
-      message: `In Notes API`,
-      file: "app/api/notes/route.ts",
-      page: "Notes app",
-      data: {
-        email: email,
-        sessionUser: session?.user,
-        headers: req.headers || "Header???",
-        line: 12,
-      },
-    });
-  
+  await logit({
+    level: "info",
+    message: `In Notes API`,
+    file: "app/api/notes/route.ts",
+    page: "Notes app",
+    data: {
+      email: email,
+      sessionUser: session?.user,
+      headers: req.headers || "Header???",
+      line: 12,
+    },
+  });
 
   if (!email) {
     return NextResponse.json({ notes: [], isVp: false }, { status: 401 });

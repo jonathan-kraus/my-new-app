@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { addDays } from "date-fns";
 import { parseLocalSolar } from "@/lib/solar/parseLocalSolar";
+import { logit } from '../lib/log/client';
 import {
   SolarTimes,
   LunarTimes,
@@ -46,7 +47,6 @@ export function useAstronomy(snapshots: any[]): AstronomyHookResult {
       sunrise: parseLocalSolar(today.sunrise),
       sunset: parseLocalSolar(today.sunset),
       nextSunrise: tomorrow ? parseLocalSolar(tomorrow.sunrise) : null,
-
       sunriseBlueStart: today.sunriseBlueStart
         ? parseLocalSolar(today.sunriseBlueStart)
         : null,
@@ -75,7 +75,14 @@ export function useAstronomy(snapshots: any[]): AstronomyHookResult {
 
       fetchedAt: new Date(today.fetchedAt),
     };
-
+logit({
+    level: "info",
+    message: "In useastronomy",
+    file: "hooks/useastronomy.ts",
+    line: 78,
+    page: "Astronomy",
+    data: {pl: "parseLocalSolar"},
+  });
     const lunar: LunarTimes = {
       moonrise: today.moonrise ? parseLocalSolar(today.moonrise) : null,
       moonset: today.moonset ? parseLocalSolar(today.moonset) : null,

@@ -1,7 +1,7 @@
 export function useSolarCountdown(
   sunrise: Date | null,
   sunset: Date | null,
-  nextSunrise: Date | null
+  nextSunrise: Date | null,
 ) {
   const now = new Date();
 

@@ -51,14 +51,14 @@ export function useNotes(): NotesState {
         setState({ status: "ready", notes });
       } catch {
         setState({ status: "error" });
-      
+
         logit({
-      level: "info",
-      message: "Notes page mounted",
-      page: "/notes",
-      data: {status,bob: "BOB"}
-    });
-  }
+          level: "info",
+          message: "Notes page mounted",
+          page: "/notes",
+          data: { status, bob: "BOB" },
+        });
+      }
     }
 
     load();

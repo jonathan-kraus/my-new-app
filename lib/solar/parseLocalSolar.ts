@@ -1,29 +1,17 @@
-export function parseLocalSolar(dateTimeStr: string | null | undefined): Date | null {
-  if (!dateTimeStr || typeof dateTimeStr !== "string") return null;
+// lib/solar/parseLocalSolar.ts
 
-  const parts = dateTimeStr.trim().split(" ");
-  if (parts.length !== 2) return null;
+export function parseLocalSolar(value: string | null): Date | null {
+  if (!value || value.trim() === "") return null;
 
-  const [datePart, timePart] = parts;
-  if (!datePart || !timePart) return null;
+  // Normalize "YYYY-MM-DD HH:mm:ss" into a format JS can reliably parse
+  // Replace space with "T" to avoid UTC coercion
+  const normalized = value.replace(" ", "T");
 
-  const dateBits = datePart.split("-");
-  const timeBits = timePart.split(":");
+  const dt = new Date(normalized);
 
-  if (dateBits.length !== 3 || timeBits.length < 2) return null;
-
-  const [year, month, day] = dateBits.map(Number);
-  const [hour, minute, second = 0] = timeBits.map(Number);
-
-  if (
-    Number.isNaN(year) ||
-    Number.isNaN(month) ||
-    Number.isNaN(day) ||
-    Number.isNaN(hour) ||
-    Number.isNaN(minute)
-  ) {
+  if (isNaN(dt.getTime())) {
     return null;
   }
 
-  return new Date(year, month - 1, day, hour, minute, second);
+  return dt;
 }

@@ -6,7 +6,12 @@ import { parseLocalSolar } from "@/lib/solar/parseLocalSolar";
 import { logit } from "@/lib/log/client";
 
 export function useSolarTimeline(
-  days: { date: string; sunrise: string; sunset: string; nextSunrise?: string }[],
+  days: {
+    date: string;
+    sunrise: string;
+    sunset: string;
+    nextSunrise?: string;
+  }[],
 ) {
   const [now, setNow] = useState(new Date());
 

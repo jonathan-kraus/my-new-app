@@ -4,7 +4,6 @@ import { logit } from "@/lib/log/server";
 import { addDays, format } from "date-fns";
 import { buildAstronomySnapshot } from "@/lib/buildAstronomySnapshot";
 
-
 export const runtime = "nodejs";
 
 // -----------------------------
@@ -32,28 +31,6 @@ function calculateMoonPhase(date: Date): number {
 }
 
 // -----------------------------
-// IPGeolocation Fetcher
-// -----------------------------
-
-async function fetchIPGeoAstronomy(lat: number, lon: number, date: Date) {
-  const day = format(date, "yyyy-MM-dd");
-
-  const url = new URL("https://api.ipgeolocation.io/v2/astronomy");
-  url.searchParams.set("apiKey", process.env.IPGEO_API_KEY!);
-  url.searchParams.set("lat", lat.toString());
-  url.searchParams.set("long", lon.toString());
-  url.searchParams.set("date", day);
-
-  const res = await fetch(url.toString());
-  if (!res.ok) {
-    throw new Error(`IPGeolocation error: ${res.status}`);
-  }
-
-  const json = await res.json();
-  return json.astronomy;
-}
-
-// -----------------------------
 // Cron Route
 // -----------------------------
 
@@ -64,7 +41,7 @@ export async function GET() {
     level: "info",
     message: "astronomy.cron.started",
     file: "app/api/cron/astronomy/route.ts",
-    line: 20,
+    line: 63,
     page: "Astronomy Cron Job",
     data: {},
   });
@@ -76,7 +53,7 @@ export async function GET() {
       level: "info",
       message: "astronomy.cron.location.started",
       file: "app/api/cron/astronomy/route.ts",
-      line: 110,
+      line: 75,
       page: "Astronomy Cron Job",
       data: { locationId: location.id, name: location.name },
     });
@@ -101,7 +78,7 @@ export async function GET() {
         level: "info",
         message: "astronomy.cron.snapshot.saved",
         file: "app/api/cron/astronomy/route.ts",
-        line: 136,
+        line: 100,
         page: "Astronomy Cron Job",
         data: {
           locationId: location.id,
@@ -117,7 +94,7 @@ export async function GET() {
     level: "info",
     message: "astronomy.cron.completed",
     file: "app/api/cron/astronomy/route.ts",
-    line: 110,
+    line: 116,
     page: "Astronomy Cron Job",
     data: { durationMs: ms },
   });

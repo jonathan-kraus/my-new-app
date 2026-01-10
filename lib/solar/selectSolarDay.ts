@@ -1,15 +1,17 @@
-export function selectSolarDay(days: {
-  date: string;
-  sunrise: string;
-  sunset: string;
-}[]) {
+export function selectSolarDay(
+  days: {
+    date: string;
+    sunrise: string;
+    sunset: string;
+  }[],
+) {
   if (!days || days.length === 0) return null;
 
   const now = new Date();
 
   // Sort by date
   const sorted = [...days].sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
   );
 
   // Find today
@@ -36,8 +38,8 @@ export function selectSolarDay(days: {
 
   return {
     date: today.date,
-    sunrise: today.sunrise,       // string
-    sunset: today.sunset,         // string
+    sunrise: today.sunrise, // string
+    sunset: today.sunset, // string
     nextSunrise: tomorrow ? tomorrow.sunrise : null, // string | null
   };
 }
