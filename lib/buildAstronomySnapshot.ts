@@ -28,7 +28,7 @@ function combineDateTime(date: Date, timeStr: string): string {
   const dd = String(date.getDate()).padStart(2, "0");
    logit({
     level: "info",
-    message: "astronomy.cron.started",
+    message: "In BAS",
     file: "lib/buildAstronomySnapshot.ts",
     line: 29,
     page: "Build Astronomy",
