@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { logit } from "@/lib/log/client";
+import { logit } from "@/lib/log/server";
 import { addDays, format } from "date-fns";
 
 export const runtime = "nodejs";
