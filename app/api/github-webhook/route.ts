@@ -79,7 +79,7 @@ await axiom.ingest("github-events",
       });
 
       // 4. Filtered ingest to Axiom
-      await axiom.ingest("github_events", {
+      await axiom.ingest("github-events", {
         id: wr.id,
         name: wr.name,
         status: wr.status,
@@ -93,7 +93,7 @@ await axiom.ingest("github-events",
         message: "** GitHub event ingested **",
         data: { event },
       });
-    await axiom.ingest("github_events", [ { msg: "Hello" } ]);
+    await axiom.ingest("github-events", [ { msg: "Hello" } ]);
       return new Response("OK");
     }
 

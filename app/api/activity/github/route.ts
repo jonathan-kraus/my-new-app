@@ -9,7 +9,7 @@ export async function GET() {
 
   try {
     const result = await axiom.query(`
-      ['github_events']
+      ['github-events']
       | sort(desc: "updatedAt")
       | limit(10)
     `);
