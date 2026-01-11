@@ -49,11 +49,11 @@ export async function POST(req: NextRequest) {
   });
   await logit({ level: "info", 
     message: "111111111111111" });
-await axiom.ingest("github_events", 
+await axiom.ingest("github-events", 
   [ { msg: "test-ingest", ts: Date.now() } ]); 
   await logit({ level: "info", 
     message: "2222222222222222" });
-    const result = await axiom.query(` ['github_events'] | limit(5) `); 
+    const result = await axiom.query(` ['github-events'] | limit(5) `); 
       await logit({ level: "info", 
     message: "333333333333333333333" });
     console.log(result.matches);
