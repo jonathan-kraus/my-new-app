@@ -28,27 +28,7 @@ export async function GET() {
     token: process.env.AXIOM_TOKEN!,
   });
 
- // Query recent ping events
-let result;
-
-try {
-  result = await axiom.query(`
-    ['myapp_logs']
-    | where message == "ping"
-    | sort(desc: timestamp)
-    | limit(5)
-  `);
-} catch (err) {
-  await logit({
-    level: "error",
-    message: "Axiom query failed",
-    error: err instanceof Error ? err.message : String(err),
-    route: "ping",
-  });
-  throw err;
-}
-
-const recent = result?.matches ?? [];
+let result; try { result = await axiom.query(` ['myapp_logs'] | where message == "ping" | sort(desc: timestamp) | limit(5) `); } catch (err) { await logit({ level: "error", message: "Axiom query failed", page: "Ping API", file: "app/api/ping/route.ts", line: 45, data: { route: "ping", error: err instanceof Error ? err.message : String(err), }, }); throw err; } const recent = result?.matches ?? [];
 
 
   const durationMs = Date.now() - start;
