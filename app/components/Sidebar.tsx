@@ -9,7 +9,9 @@ export function Sidebar() {
   const items = [
     { name: "Dashboard", href: "/dashboard" },
     { name: "Logs", href: "/logs" },
-    { name: "Ping", href: "/ping" },
+    { name: "Notes", href: "/notes" },
+    { name: "Astronomy", href: "/astronomy" },
+    { name: "Ping", href: "/api/ping" },
   ];
 
   return (
