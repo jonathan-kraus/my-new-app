@@ -1,5 +1,6 @@
 import { getAuth } from "@/lib/auth";
 import NotesClient from "./NotesClient";
+export const dynamic = "force-dynamic";
 
 export default async function NotesPage() {
   const auth = getAuth();
