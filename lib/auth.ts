@@ -2,7 +2,6 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { db } from "./prisma";
 import { logit } from "@/lib/log/server";
-logit;
 
 type AuthType = ReturnType<typeof betterAuth>;
 
@@ -40,34 +39,35 @@ export const auth = betterAuth({
     : undefined,
 });
 
-export async function getAuth(): Promise<AuthType> {
+// ⭐ FIX: getAuth MUST NOT be async
+export function getAuth(): AuthType {
   if (_auth) return _auth;
-  await logit({
+
+  // optional logging — safe to keep
+  logit({
     level: "warn",
     message: "in getAuth - _auth is undefined",
     file: "lib/auth.ts",
     line: 45,
   });
-  // no-op: ensure runtime env checks are handled via `process.env.NODE_ENV`
 
   try {
     if (!_dbConnected) {
-      // Ensure Prisma is connected before adapter initialization
-      // eslint-disable-next-line no-await-in-loop
-      await db.$connect();
+      // Prisma connect is async, but we do NOT await it here.
+      // Better Auth does not require DB to be connected synchronously.
+      db.$connect();
       _dbConnected = true;
     }
 
     if (!Object.keys(socialProviders).length) {
-      // eslint-disable-next-line no-console
       console.warn(
         "GitHub OAuth not configured: missing GITHUB client id/secret env vars",
       );
     }
 
-    // Use the exported `auth` instance (so CLI can import this file and read `auth`).
     _auth = auth;
-    await logit({
+
+    logit({
       level: "info",
       message: "in getAuth - what is auth",
       file: "lib/auth.ts",
@@ -75,19 +75,14 @@ export async function getAuth(): Promise<AuthType> {
       data: { auth: JSON.stringify(_auth) },
     });
   } catch (err: any) {
-    // More detailed logs to help diagnose adapter init failures
-    // eslint-disable-next-line no-console
     console.error("BetterAuth initialization failed:", {
       name: err?.name,
       message: err?.message,
       stack: err?.stack,
       cause: err?.cause,
     });
-    // eslint-disable-next-line no-console
     console.error("ENV: DATABASE_URL set?", !!process.env.DATABASE_URL);
-    // eslint-disable-next-line no-console
     console.error("ENV: GITHUB_CLIENT_ID set?", !!process.env.GITHUB_CLIENT_ID);
-    // eslint-disable-next-line no-console
     console.error(
       "ENV: GITHUB_CLIENT_SECRET set?",
       !!process.env.GITHUB_CLIENT_SECRET,
