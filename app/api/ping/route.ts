@@ -13,7 +13,7 @@ export const GET = withAxiom(async (req, { axiom }) => {
     requestId: crypto.randomUUID(),
   };
 
-  // Write to your existing logs dataset (myapp_logs)
+  // Write to myapp_logs
   await logit({
     level: "info",
     message: "ping",
@@ -23,7 +23,7 @@ export const GET = withAxiom(async (req, { axiom }) => {
     data: payload,
   });
 
-  // Query the same dataset for recent ping events
+  // Query recent ping events
   const result = await axiom.query("myapp_logs", {
     filter: `message == "ping"`,
     limit: 5,
