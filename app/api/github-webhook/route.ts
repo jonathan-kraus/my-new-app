@@ -47,7 +47,14 @@ export async function POST(req: NextRequest) {
     message: "GitHub webhook received",
     data: { event },
   });
-
+await axiom.ingest("github_events", 
+  [ { msg: "test-ingest", ts: Date.now() } ]); 
+  await logit({ level: "info", 
+    message: "test-ingest fired" });
+    const result = await axiom.query(` ['github_events'] | limit(5) `); 
+    console.log(result.matches);
+    await logit({ level: "info", 
+    message: "test-query fired" });
   switch (event) {
     case "workflow_run": {
       const wr = payload.workflow_run;
