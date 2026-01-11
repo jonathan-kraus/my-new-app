@@ -22,13 +22,13 @@ useEffect(() => {
         ]);
 
       setData({
-        weather: weatherRes,
+        // weather: weatherRes,
         astronomy: astronomyRes,
-        recentActivity: [
-          ...githubRes,
-          ...vercelRes,
-          ...pingRes,
-        ],
+        // recentActivity: [
+        //   ...githubRes,
+        //   ...vercelRes,
+        //   ...pingRes,
+        // ],
       });
     } catch (err) {
       console.error("Dashboard load failed:", err);
