@@ -27,10 +27,7 @@ export function useAstronomy(snapshots: any[]): AstronomyHookResult {
     }
 
     // snapshots already contain correct Date objects from Prisma
-    const normalized = snapshots.map((s) => ({
-      ...s,
-      dateObj: new Date(s.date), // DO NOT TOUCH — just wrap it
-    }));
+   const normalized = snapshots.map((s) => ({ ...s, dateObj: new Date( s.date.getFullYear(), s.date.getMonth(), s.date.getDate() ), }));
 
     normalized.sort((a, b) => a.dateObj.getTime() - b.dateObj.getTime());
 

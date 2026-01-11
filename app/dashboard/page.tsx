@@ -8,30 +8,38 @@ import { logit } from "@/lib/log/client";
 export default function DashboardPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  logit({
-    level: "info",
-    message: `Dashboard`,
-    file: "app/dashboard/page.tsx",
-    line: 11,
-    page: "Dashboard page",
-    data: {
-      date: new Date().toISOString(),
-    },
-  });
-  useEffect(() => {
-    async function load() {
-      try {
-        const res = await fetch("/api/dashboard");
-        const json = await res.json();
-        setData(json);
-      } catch (err) {
-        console.error("Dashboard load failed:", err);
-      } finally {
-        setLoading(false);
-      }
+  useEffect(() => { logit({ level: "info", message: `Dashboard`, file: "app/dashboard/page.tsx", line: 11, page: "Dashboard page", data: { date: new Date().toISOString(), }, }); }, []);
+useEffect(() => {
+  async function load() {
+    try {
+      const [weatherRes, astronomyRes, githubRes, vercelRes, pingRes] =
+        await Promise.all([
+          fetch("/api/weather").then((r) => r.json()),
+          fetch("/api/astronomy").then((r) => r.json()),
+          fetch("/api/activity/github").then((r) => r.json()),
+          fetch("/api/activity/vercel").then((r) => r.json()),
+          fetch("/api/activity/ping").then((r) => r.json()),
+        ]);
+
+      setData({
+        weather: weatherRes,
+        astronomy: astronomyRes,
+        recentActivity: [
+          ...githubRes,
+          ...vercelRes,
+          ...pingRes,
+        ],
+      });
+    } catch (err) {
+      console.error("Dashboard load failed:", err);
+    } finally {
+      setLoading(false);
     }
-    load();
-  }, []);
+  }
+
+  load();
+}, []);
+
 
   if (loading) {
     return (
