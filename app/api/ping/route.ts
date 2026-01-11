@@ -30,7 +30,7 @@ export async function GET() {
 
 let result;
  try { result = await axiom.query(`
-   ['myapp_logs'] | where message == "ping" `);
+   ['myapp_logs'] | where message == "ping" | limit(7)`);
    } catch (err) {
      await logit({ level: "error",
        message: "Axiom query failed",
