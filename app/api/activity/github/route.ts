@@ -1,65 +1,34 @@
+// app/api/activity/github/route.ts
 import { NextResponse } from "next/server";
-import { transformWorkflowRunEvent } from "@/lib/github/transform";
+import { log } from "next-axiom";
+import { logit } from "@/lib/log/server";
 
 export async function GET() {
   try {
-    const AXIOM_TOKEN = process.env.AXIOM_TOKEN;
-    const AXIOM_DATASET = process.env.AXIOM_DATASET;
+    // Query your new filtered dataset
+    const result = await log.query("github_events", {
+      limit: 20,
+      order: "desc",
+      filter: "",
+    });
 
-    if (!AXIOM_TOKEN || !AXIOM_DATASET) {
-      return NextResponse.json(
-        { error: "Missing AXIOM_TOKEN or AXIOM_DATASET" },
-        { status: 500 },
-      );
-    }
+    const rows = result?.data ?? [];
 
-    // Axiom query to fetch your webhook logs.
-    const query = `
-      ['GitHub Webhook Handler']
-      | sort(desc: timestamp)
-      | limit(50)
-    `;
+    // Local log for debugging
+    await logit({
+      level: "info",
+      message: "Fetched GitHub activity",
+      data: { count: rows.length },
+    });
 
-    const response = await fetch(
-      `https://api.axiom.co/v1/datasets/${AXIOM_DATASET}/query`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${AXIOM_TOKEN}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ query }),
-      },
-    );
+    return NextResponse.json(rows);
+  } catch (err: any) {
+    await logit({
+      level: "error",
+      message: "GitHub activity fetch failed",
+      data: { error: err.message },
+    });
 
-    const json = await response.json();
-    const rows = json?.data ?? [];
-
-    // Extract the logged webhook bodies
-    const rawBodies = rows.map((row: any) => row.data?.body).filter(Boolean);
-
-    // Parse JSON safely
-    const parsed = rawBodies
-      .map((body: string) => {
-        try {
-          return JSON.parse(body);
-        } catch {
-          return null;
-        }
-      })
-      .filter(Boolean);
-
-    // Transform into normalized workflow events
-    const events = parsed
-      .map((p: any) => transformWorkflowRunEvent(p))
-      .filter((e: any) => e && e.timestamp);
-
-    return NextResponse.json(events);
-  } catch (err) {
-    console.error("GitHub Activity API Error:", err);
-    return NextResponse.json(
-      { error: "Failed to load GitHub activity" },
-      { status: 500 },
-    );
+    return NextResponse.json([], { status: 500 });
   }
 }

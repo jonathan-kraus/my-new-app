@@ -30,6 +30,8 @@ export function SidebarItem({
           ${active ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-2"}
         `}
       />
+      <span className="text-lg">{icon}</span>
+      <span className="text-sm">{label}</span>
     </Link>
   );
 }
