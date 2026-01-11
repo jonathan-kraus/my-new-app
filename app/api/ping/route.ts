@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { withAxiom } from "next-axiom";
+import { Axiom } from "@axiomhq/js";
 import { logit } from "@/lib/log/server";
 import crypto from "crypto";
 
-export const GET = withAxiom(async (req, { axiom }) => {
+export async function GET() {
   const start = Date.now();
 
   const payload = {
@@ -23,12 +23,18 @@ export const GET = withAxiom(async (req, { axiom }) => {
     data: payload,
   });
 
-  // Query recent ping events
-  const result = await axiom.query("myapp_logs", {
-    filter: `message == "ping"`,
-    limit: 5,
-    order: "desc",
+  // Create Axiom client manually (no Pro required)
+  const axiom = new Axiom({
+    token: process.env.AXIOM_TOKEN!,
   });
+
+  // Query recent ping events
+  const result = await axiom.query(`
+    ['myapp_logs']
+    | where message == "ping"
+    | sort(desc: timestamp)
+    | limit(5)
+  `);
 
   const recent = result?.matches ?? [];
 
@@ -39,4 +45,4 @@ export const GET = withAxiom(async (req, { axiom }) => {
     durationMs,
     recentPings: recent,
   });
-});
+}
