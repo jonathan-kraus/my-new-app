@@ -1,38 +1,48 @@
 import { NextResponse } from "next/server";
-import { logit } from "@/lib/log/server";
 import { Axiom } from "@axiomhq/js";
-
-const axiom = new Axiom({
-  token: process.env.AXIOM_TOKEN!,
-});
+import { logit } from "@/lib/log/server";
 
 export async function GET() {
+  const axiom = new Axiom({
+    token: process.env.AXIOM_TOKEN!,
+  });
+
   try {
-    const apl = `
+    const result = await axiom.query(`
       ['github_events']
-      | sort(desc: createdAt)
-      | limit(50)
-    `;
+      | sort(desc: "updatedAt")
+      | limit(10)
+    `);
 
-    const result = await axiom.query(apl);
-
-    // OLD CLIENT: results are in `matches`, not `data`
     const rows = result?.matches ?? [];
 
-    await logit({
-      level: "info",
-      message: "Fetched GitHub activity",
-      data: { count: rows.length },
+    const activity = rows.map((row) => {
+      const d = row.data;
+
+      return {
+        id: d.id,
+        name: d.name,
+        status: d.status,
+        conclusion: d.conclusion,
+        repo: d.repo,
+        createdAt: d.createdAt,
+        updatedAt: d.updatedAt,
+      };
     });
 
-    return NextResponse.json(rows);
-  } catch (err: any) {
+    return NextResponse.json({ ok: true, activity });
+  } catch (err) {
     await logit({
       level: "error",
       message: "GitHub activity fetch failed",
-      data: { error: err.message },
+      data: {
+        error: err instanceof Error ? err.message : String(err),
+      },
     });
 
-    return NextResponse.json([], { status: 500 });
+    return NextResponse.json(
+      { ok: false, error: "Failed to fetch GitHub activity" },
+      { status: 500 }
+    );
   }
 }
