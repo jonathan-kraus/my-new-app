@@ -77,7 +77,12 @@ export async function POST(req: NextRequest) {
         updatedAt: wr.updated_at,
         repo: payload.repository.full_name,
       });
-
+      await logit({
+        level: "info",
+        message: "** GitHub event ingested **",
+        data: { event },
+      });
+    await axiom.ingest("github_events", [ { msg: "Hello" } ]);
       return new Response("OK");
     }
 
