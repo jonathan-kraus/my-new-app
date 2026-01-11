@@ -1,20 +1,24 @@
-// app/api/activity/github/route.ts
 import { NextResponse } from "next/server";
-import { log } from "next-axiom";
 import { logit } from "@/lib/log/server";
+import { Axiom } from "@axiomhq/js";
+
+const axiom = new Axiom({
+  token: process.env.AXIOM_TOKEN!,
+});
 
 export async function GET() {
   try {
-    // Query your new filtered dataset
-    const result = await log.query("github_events", {
-      limit: 20,
-      order: "desc",
-      filter: "",
-    });
+    const apl = `
+      ['github_events']
+      | sort(desc: createdAt)
+      | limit(50)
+    `;
 
-    const rows = result?.data ?? [];
+    const result = await axiom.query(apl);
 
-    // Local log for debugging
+    // OLD CLIENT: results are in `matches`, not `data`
+    const rows = result?.matches ?? [];
+
     await logit({
       level: "info",
       message: "Fetched GitHub activity",

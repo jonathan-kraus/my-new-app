@@ -3,7 +3,11 @@ export const runtime = "nodejs";
 import { NextRequest } from "next/server";
 import crypto from "crypto";
 import { logit } from "@/lib/log/server";
-import { log } from "next-axiom";
+import { Axiom } from "@axiomhq/js";
+
+const axiom = new Axiom({
+  token: process.env.AXIOM_TOKEN!,
+});
 
 async function verifySignature(req: NextRequest, body: string) {
   const signature = req.headers.get("x-hub-signature-256");
@@ -37,7 +41,7 @@ export async function POST(req: NextRequest) {
   const payload = JSON.parse(raw);
   const event = req.headers.get("x-github-event");
 
-  // 2. Log the raw event type
+  // 2. Log the raw event
   await logit({
     level: "info",
     message: "GitHub webhook received",
@@ -63,8 +67,8 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      // 4. Send filtered data to Axiom
-      await log.ingest("github_events", {
+      // 4. Filtered ingest to Axiom
+      await axiom.ingest("github_events", {
         id: wr.id,
         name: wr.name,
         status: wr.status,
@@ -78,7 +82,6 @@ export async function POST(req: NextRequest) {
     }
 
     default:
-      // Log ignored events for visibility
       await logit({
         level: "info",
         message: "GitHub event ignored",

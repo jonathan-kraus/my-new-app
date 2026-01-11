@@ -1,5 +1,3 @@
-// app/components/activity/RecentActivity.tsx
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -13,10 +11,8 @@ export function RecentActivity() {
         const res = await fetch("/api/activity/github");
         const data = await res.json();
 
-        // Defensive guard: ensure array
         const safe = Array.isArray(data) ? data : [];
 
-        // Normalize into UI-friendly shape
         const normalized = safe.map((d: any) => ({
           id: d.id,
           type: "github",
@@ -48,9 +44,7 @@ export function RecentActivity() {
           <div className="text-sm text-gray-600">
             {item.status} → {item.conclusion}
           </div>
-          <div className="text-xs text-gray-400">
-            {item.repo}
-          </div>
+          <div className="text-xs text-gray-400">{item.repo}</div>
         </div>
       ))}
     </div>
