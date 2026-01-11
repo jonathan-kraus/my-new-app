@@ -1,5 +1,5 @@
 import "./globals.css";
-import Sidebar from "./components/Sidebar";
+import { Sidebar } from "./components/Sidebar";
 import { Toaster } from "react-hot-toast";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
