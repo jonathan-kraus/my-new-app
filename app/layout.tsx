@@ -3,7 +3,6 @@ import Sidebar from "./components/Sidebar";
 import { Toaster } from "react-hot-toast";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import toaster from "react-hot-toast";
 
 export default function RootLayout({
   children,
