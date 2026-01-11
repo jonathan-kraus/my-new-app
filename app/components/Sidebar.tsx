@@ -1,21 +1,38 @@
-"use client"
-// components/Sidebar.tsx
+import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { SidebarItem } from "./SidebarItem";
+import clsx from "clsx";
 
-export default function Sidebar() {
+export function Sidebar() {
   const pathname = usePathname();
-  const isActive = (path: string) => pathname.startsWith(path);
+
+  const items = [
+    { name: "Dashboard", href: "/dashboard" },
+    { name: "Logs", href: "/logs" },
+    { name: "Ping", href: "/ping" },
+  ];
 
   return (
-    <aside className="w-64 bg-white border-r border-gray-200 flex flex-col py-6">
-      <nav className="flex flex-col gap-1 px-3">
-        <SidebarItem href="/" label="Dashboard" icon="🏠" active={isActive("/")} />
-        <SidebarItem href="/astronomy" label="Astronomy" icon="🌅" active={isActive("/astronomy")} />
-        <SidebarItem href="/notes" label="Notes" icon="📝" active={isActive("/notes")} />
-        <SidebarItem href="/logs" label="Logs" icon="📜" active={isActive("/logs")} />
-        <SidebarItem href="/api/ping" label="Ping" icon="📜" active={isActive("/logs")} />
+    <div className="w-64 h-full bg-gradient-to-b from-blue-600 to-blue-700 text-white p-4">
+      <nav className="space-y-2">
+        {items.map((item) => {
+          const active = pathname === item.href;
+
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={clsx(
+                "block px-4 py-2 rounded-md transition-all",
+                active
+                  ? "bg-white text-blue-700 font-semibold shadow"
+                  : "hover:bg-blue-500/40"
+              )}
+            >
+              {item.name}
+            </Link>
+          );
+        })}
       </nav>
-    </aside>
+    </div>
   );
 }
