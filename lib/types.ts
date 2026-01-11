@@ -50,15 +50,11 @@ export interface ActivityItemData {
   createdAt?: string; // for Vercel
 }
 export type GitHubActivityEvent = {
-  type: "workflow_run";
-  workflowName: string;
-  runNumber: number;
-  conclusion: string;
-  branch: string;
-  commitMessage: string;
-  commitSha: string;
-  actor: string;
-  event: string;
-  url: string;
-  timestamp: string;
+  id: number;
+  name: string;
+  repo: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
 };
+
