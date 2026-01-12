@@ -1,5 +1,5 @@
 // components/layouts/BlueDashboardLayout.tsx
-import Sidebar from "@/components/sidebar";
+import { Sidebar } from "@/components/Sidebar";
 
 export default function BlueDashboardLayout({ children }: { children: React.ReactNode }) {
   return (
