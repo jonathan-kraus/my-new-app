@@ -10,8 +10,8 @@ export default async function NotesPage() {
   const h = await headers();
   await logit({
     level: "info",
-    message: "astronomy.cron.started",
-    page: "Astronomy Cron Job",
+    message: "In Notes page",
+    page: "Notes",
     file: "app/notes/page.tsx",
     line: 11,
     data: {

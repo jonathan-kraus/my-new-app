@@ -1,59 +1,64 @@
-// app/dashboard/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
 import { buildAstronomyEvents } from "@/lib/astronomy-ui";
 import LiveTimeline from "@/components/LiveTimeline";
 import { logit } from "@/lib/log/client";
+
 export default function DashboardPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  useEffect(() => { logit({ level: "info", message: `Dashboard`, file: "app/dashboard/page.tsx", line: 11, page: "Dashboard page", data: { date: new Date().toISOString(), }, }); }, []);
-useEffect(() => {
-  async function load() {
-    try {
-      const [weatherRes, astronomyRes, githubRes, vercelRes, pingRes] =
-        await Promise.all([
-          fetch("/api/weather").then((r) => r.json()),
-          fetch("/api/astronomy").then((r) => r.json()),
-          fetch("/api/activity/github").then((r) => r.json()),
-          fetch("/api/activity/vercel").then((r) => r.json()),
-          fetch("/api/activity/ping").then((r) => r.json()),
-        ]);
 
-      setData({
-        // weather: weatherRes,
-        astronomy: astronomyRes,
-        // recentActivity: [
-        //   ...githubRes,
-        //   ...vercelRes,
-        //   ...pingRes,
-        // ],
-      });
-    } catch (err) {
-      console.error("Dashboard load failed:", err);
-    } finally {
-      setLoading(false);
+  // Log page load
+  useEffect(() => {
+    logit({
+      level: "info",
+      message: "Dashboard",
+      file: "app/dashboard/page.tsx",
+      line: 11,
+      page: "Dashboard page",
+      data: { date: new Date().toISOString() },
+    });
+  }, []);
+
+  // Load astronomy + GitHub only
+  useEffect(() => {
+    async function load() {
+      try {
+        const astronomyRes = await fetch("/api/astronomy").then((r) => r.json());
+        const githubRes = await fetch("/api/activity/github").then((r) => r.json());
+
+        setData({
+          astronomy: astronomyRes,
+          recentActivity: githubRes.activity ?? [],
+        });
+      } catch (err) {
+        console.error("Dashboard load failed:", err);
+      } finally {
+        setLoading(false);
+      }
     }
-  }
 
-  load();
-}, []);
-
+    load();
+  }, []);
 
   if (loading) {
     return (
-      <div className="p-6 text-gray-300 text-lg">Loading your dashboard…</div>
+      <div className="p-6 text-gray-300 text-lg">
+        Loading your dashboard…
+      </div>
     );
   }
 
   if (!data) {
     return (
-      <div className="p-6 text-red-400 text-lg">Failed to load dashboard.</div>
+      <div className="p-6 text-red-400 text-lg">
+        Failed to load dashboard.
+      </div>
     );
   }
 
-  const { weather, astronomy, systemHealth, recentActivity } = data;
+  const { astronomy, recentActivity } = data;
 
   // Astronomy helpers
   const today = astronomy?.today ?? null;
@@ -69,6 +74,7 @@ useEffect(() => {
       timeSincePrevious,
       events,
     } = buildAstronomyEvents(today, tomorrow);
+
     astro = {
       nextEvent,
       previousEvent,
@@ -92,30 +98,7 @@ useEffect(() => {
       </p>
 
       {/* GRID */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* WEATHER CARD */}
-        <div className="rounded-xl bg-white/5 p-5 border border-white/10">
-          <h2 className="text-xl font-semibold text-white mb-3">
-            Current Weather
-          </h2>
-
-          {weather ? (
-            <div className="space-y-2 text-gray-300">
-              <div className="text-4xl font-bold text-white">
-                {weather.temperature}°
-              </div>
-              <div>Feels like: {weather.feelsLike}°</div>
-              <div>Humidity: {weather.humidity}%</div>
-              <div>Wind: {weather.windSpeed} mph</div>
-              <div className="text-xs text-gray-500">
-                Updated {weather.lastUpdated}
-              </div>
-            </div>
-          ) : (
-            <div className="text-gray-500">No weather data available.</div>
-          )}
-        </div>
-
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* ASTRONOMY CARD */}
         <div className="rounded-xl bg-white/5 p-5 border border-white/10">
           <h2 className="text-xl font-semibold text-white mb-3">Astronomy</h2>
@@ -152,42 +135,6 @@ useEffect(() => {
                 )}
               </div>
 
-              {/* Golden & Blue Hours */}
-              <div>
-                <h3 className="text-white font-medium mb-1">
-                  Golden & Blue Hours
-                </h3>
-
-                <div>
-                  Sunrise Blue Hour:{" "}
-                  {formatRange(
-                    astro.today.sunriseBlueStart,
-                    astro.today.sunriseBlueEnd,
-                  )}
-                </div>
-                <div>
-                  Sunrise Golden Hour:{" "}
-                  {formatRange(
-                    astro.today.sunriseGoldenStart,
-                    astro.today.sunriseGoldenEnd,
-                  )}
-                </div>
-                <div>
-                  Sunset Golden Hour:{" "}
-                  {formatRange(
-                    astro.today.sunsetGoldenStart,
-                    astro.today.sunsetGoldenEnd,
-                  )}
-                </div>
-                <div>
-                  Sunset Blue Hour:{" "}
-                  {formatRange(
-                    astro.today.sunsetBlueStart,
-                    astro.today.sunsetBlueEnd,
-                  )}
-                </div>
-              </div>
-
               {/* Next Event */}
               {astro.nextEvent && (
                 <div className="mt-4 p-3 rounded-lg bg-white/10 border border-white/10">
@@ -209,7 +156,7 @@ useEffect(() => {
         {/* RECENT ACTIVITY */}
         <div className="rounded-xl bg-white/5 p-5 border border-white/10">
           <h2 className="text-xl font-semibold text-white mb-3">
-            Recent Activity
+            Recent GitHub Activity
           </h2>
 
           {recentActivity?.length ? (
@@ -219,9 +166,10 @@ useEffect(() => {
                   key={item.id}
                   className="p-2 rounded bg-white/5 border border-white/10"
                 >
-                  {item.message}
+                  <div className="font-medium">{item.name}</div>
+                  <div className="text-sm text-gray-400">{item.repo}</div>
                   <div className="text-xs text-gray-500">
-                    {new Date(item.createdAt).toLocaleString()}
+                    {new Date(item.updatedAt).toLocaleString()}
                   </div>
                 </li>
               ))}
@@ -243,10 +191,6 @@ function formatTime(dateString: string) {
     hour: "numeric",
     minute: "2-digit",
   });
-}
-
-function formatRange(start: string, end: string) {
-  return `${formatTime(start)} – ${formatTime(end)}`;
 }
 
 function dayLength(sunrise: string, sunset: string) {
