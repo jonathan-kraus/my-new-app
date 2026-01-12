@@ -16,19 +16,23 @@ export async function GET() {
 
     const rows = result?.matches ?? [];
 
-    const activity = rows.map((row) => {
-      const d = row.data;
+const activity = rows
+.map((row) => row.data)
+.filter((d) => d)  // remove null/undefined rows
+ .map((d) => ({
+  id: d.id ?? null,
+  name: d.name ?? "Unknown",
+  status: d.status ?? "unknown",
+  conclusion: d.conclusion ?? null,
+  repo: d.repo ?? null,
+  createdAt: d.createdAt ?? null,
+  updatedAt: d.updatedAt ?? null, }));
 
-      return {
-        id: d.id,
-        name: d.name,
-        status: d.status,
-        conclusion: d.conclusion,
-        repo: d.repo,
-        createdAt: d.createdAt,
-        updatedAt: d.updatedAt,
-      };
-    });
+await logit({
+  level: "info",
+  message: "GitHub Axiom rows",
+  data: { sample: rows[0] },
+});
 
     return NextResponse.json({ ok: true, activity });
   } catch (err) {
