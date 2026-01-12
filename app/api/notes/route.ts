@@ -5,31 +5,26 @@ import { db } from "@/lib/db";
 import { getDbWithRls } from "@/lib/server/db-with-rls";
 import { logit } from "@/lib/log/server";
 
-// ----------------------
-// GET — fetch notes
-// ----------------------
+// ------------------------------------------------------------
+// GET — Fetch notes for the logged‑in user (with VP override)
+// ------------------------------------------------------------
 export async function GET(req: NextRequest) {
-  const session = await auth.api.getSession({
-    headers: req.headers,
-  });
-
+  const session = await auth.api.getSession({ headers: req.headers });
   const email = session?.user?.email;
 
   await logit({
     level: "info",
-    message: `In Notes API`,
+    message: "Notes API GET",
     file: "app/api/notes/route.ts",
-    page: "Notes app",
-    data: {
-      email,
-      sessionUser: session?.user,
-      headers: req.headers || "Header???",
-      line: 12,
-    },
+    page: "Notes",
+    data: { email, headers: req.headers },
   });
 
   if (!email) {
-    return NextResponse.json({ notes: [], isVp: false }, { status: 401 });
+    return NextResponse.json(
+      { notes: [], isVp: false },
+      { status: 401 }
+    );
   }
 
   const dbRls = await getDbWithRls(email);
@@ -37,40 +32,42 @@ export async function GET(req: NextRequest) {
   const searchParams = req.nextUrl.searchParams;
   const view = searchParams.get("view") ?? "my-active";
 
-  const userRole = await db.userRole.findUnique({
-    where: { email },
-  });
-  const isVp = userRole?.role === "VP";
+  // Check if user is VP
+  const roleResult = await db.query(
+    `SELECT role FROM "UserRole" WHERE email = $1 LIMIT 1`,
+    [email]
+  );
+  const isVp = roleResult.rows[0]?.role === "VP";
 
   let notes;
 
   if (view === "all-users" && isVp) {
-    notes = await dbRls.note.findMany({
-      orderBy: { createdAt: "desc" },
-    });
+    // VP sees everything
+    notes = await dbRls.query(
+      `SELECT * FROM "Note" ORDER BY "createdAt" DESC`
+    );
   } else if (view === "my-all") {
-    notes = await dbRls.note.findMany({
-      orderBy: { createdAt: "desc" },
-    });
+    notes = await dbRls.query(
+      `SELECT * FROM "Note" ORDER BY "createdAt" DESC`
+    );
   } else {
-    notes = await dbRls.note.findMany({
-      where: { archived: false },
-      orderBy: { createdAt: "desc" },
-    });
+    notes = await dbRls.query(
+      `SELECT * FROM "Note" WHERE archived = false ORDER BY "createdAt" DESC`
+    );
   }
 
-  return NextResponse.json({ notes, isVp });
+  return NextResponse.json({
+    notes: notes.rows,
+    isVp,
+  });
 }
 
-// ----------------------
-// POST — create a note
-// ----------------------
+// ------------------------------------------------------------
+// POST — Create a new note
+// ------------------------------------------------------------
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth.api.getSession({
-      headers: req.headers,
-    });
-
+    const session = await auth.api.getSession({ headers: req.headers });
     const email = session?.user?.email;
 
     if (!email) {
@@ -90,21 +87,35 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const note = await dbRls.note.create({
-      data: {
-        title: content.slice(0, 40) || "Untitled Note",
-        content,
-        userEmail: email,
-      },
+    // Auto‑generate a title from the first 40 chars
+    const title =
+      content.trim().slice(0, 40) || "Untitled Note";
+
+    const result = await dbRls.query(
+      `
+      INSERT INTO "Note" ("title", "content", "userEmail")
+      VALUES ($1, $2, $3)
+      RETURNING *
+      `,
+      [title, content, email]
+    );
+
+    const note = result.rows[0];
+
+    await logit({
+      level: "info",
+      message: "Note created",
+      file: "app/api/notes/route.ts",
+      data: { email, noteId: note.id },
     });
 
     return NextResponse.json({ ok: true, note });
-  } catch (err) {
+  } catch (err: any) {
     await logit({
       level: "error",
       message: "Failed to create note",
       file: "app/api/notes/route.ts",
-      data: { error: String(err) },
+      data: { error: err.message },
     });
 
     return NextResponse.json(
@@ -113,4 +124,3 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-
