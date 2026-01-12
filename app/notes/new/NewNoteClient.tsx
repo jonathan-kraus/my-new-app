@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-
+import { logit } from "@/lib/log/client";
 type Props = {
   authorized: boolean;
   userId: string | null;
@@ -33,8 +33,20 @@ export default function NewNoteClient({ authorized, userId }: Props) {
         setSuccess(true);
         setContent("");
       }
-    } catch (err: any) {
-      setError("Unexpected error");
+} catch (err: any) {
+  await logit({
+    level: "error",
+    message: "Failed to create note",
+    file: "app/api/notes/route.ts",
+    data: {
+      error: String(err),
+      full: err,
+    },
+  });
+
+  console.error("NOTES API ERROR", err);
+  setError("Unexpected error");
+
     } finally {
       setSaving(false);
     }
