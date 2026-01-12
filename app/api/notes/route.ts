@@ -92,6 +92,7 @@ export async function POST(req: NextRequest) {
 
     const note = await dbRls.note.create({
       data: {
+        title: content.slice(0, 40) || "Untitled Note",
         content,
         userEmail: email,
       },
@@ -112,3 +113,4 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
