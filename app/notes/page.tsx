@@ -1,13 +1,27 @@
+// app/notes/page.tsx
 import { getAuth } from "@/lib/auth";
 import NotesClient from "./NotesClient";
 import { headers } from "next/headers";
-
+import { logit } from "@/lib/log/server";
 export const dynamic = "force-dynamic";
 
 export default async function NotesPage() {
   const auth = getAuth();
+  const h = await headers();
+  await logit({
+    level: "info",
+    message: "astronomy.cron.started",
+    page: "Astronomy Cron Job",
+    file: "app/notes/page.tsx",
+    line: 11,
+    data: {
+      h: h,
+      auth: auth,
+
+    }
+  });
   const session = await auth.api.getSession({
-    headers: headers(),
+    headers: h,
   });
 
   return (
@@ -18,4 +32,3 @@ export default async function NotesPage() {
     />
   );
 }
-
