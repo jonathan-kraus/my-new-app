@@ -107,7 +107,7 @@ model Note {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // who owns this note
+  // who owns this note?
   userEmail String
 
   // whether it’s archived
