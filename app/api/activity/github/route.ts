@@ -13,7 +13,7 @@ export async function GET() {
     // ⭐ Correct APL syntax — no parentheses
     const result = await axiom.query(`
       ['github-events']
-      | where repo = "jonathan-kraus/my-new-app"
+      | where repo == "jonathan-kraus/my-new-app"
       | limit 10
     `);
 
