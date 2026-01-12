@@ -31,32 +31,32 @@ export async function GET(req: NextRequest) {
     const searchParams = req.nextUrl.searchParams;
     const locationId = searchParams.get("locationId") ?? "WIL";
 
-    // TODAY
     const today = await dbRls.query(
-      `
-      SELECT *
-      FROM "AstronomySnapshot"
-      WHERE DATE("date") = $1
-        AND "locationId" = $2
-      LIMIT 1
-      `,
-      [localDate, locationId]
-    );
+  `
+  SELECT *
+  FROM "AstronomySnapshot"
+  WHERE DATE("date") = $1
+    AND "locationId" = $2
+  LIMIT 1
+  `,
+  [localDate, locationId]
+);
 
-    // TOMORROW
-    const tomorrow = await dbRls.query(
-      `
-      SELECT *
-      FROM "AstronomySnapshot"
-      WHERE DATE("date") = $1
-        AND "locationId" = $2
-      LIMIT 1
-      `,
-      [tomorrowISO, locationId]
-    );
+const tomorrow = await dbRls.query(
+  `
+  SELECT *
+  FROM "AstronomySnapshot"
+  WHERE DATE("date") = $1
+    AND "locationId" = $2
+  LIMIT 1
+  `,
+  [tomorrowISO, locationId]
+);
 
-    const todayRow = today.rows[0] ?? null;
-    const tomorrowRow = tomorrow.rows[0] ?? null;
+// ✔️ Neon returns arrays, not { rows }
+const todayRow = today[0] ?? null;
+const tomorrowRow = tomorrow[0] ?? null;
+
 
     if (!todayRow) {
       return NextResponse.json(
