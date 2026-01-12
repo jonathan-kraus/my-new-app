@@ -13,7 +13,7 @@ export async function GET() {
     // ⭐ Correct APL syntax — no parentheses
     const result = await axiom.query(`
       ['github-events']
-      | sort desc: "updatedAt"
+      | where repo = "jonathan-kraus/my-new-app"
       | limit 10
     `);
 
