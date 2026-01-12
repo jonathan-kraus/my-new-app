@@ -1,21 +1,20 @@
+// app/notes/new/page.tsx
 import { getAuth } from "@/lib/auth";
-import { headers } from "next/headers";
+import BlueDashboardLayout from "@/components/layouts/BlueDashboardLayout";
 import NewNoteClient from "./NewNoteClient";
 
 export const dynamic = "force-dynamic";
 
 export default async function NewNotePage() {
   const auth = getAuth();
-  const h = await headers();
-
-  const session = await auth.api.getSession({
-    headers: h,
-  });
+  const session = await auth.api.getSession();
 
   return (
-    <NewNoteClient
-      authorized={!!session?.user}
-      userId={session?.user?.id ?? null}
-    />
+    <BlueDashboardLayout>
+      <NewNoteClient
+        authorized={!!session?.user}
+        userId={session?.user?.id ?? null}
+      />
+    </BlueDashboardLayout>
   );
 }
