@@ -11,10 +11,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="flex">
+      <body className="bg-blue-950 text-white min-h-screen">
         <Sidebar />
 
-        <main className="flex-1 p-6">
+        <main className="ml-64 p-6">
+
           {children}
 
           {/* Vercel Analytics */}
