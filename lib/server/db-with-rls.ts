@@ -8,17 +8,17 @@ export async function getDbWithRls(email: string) {
     message: "In getDbWithRls",
     file: "lib/server/db-with-rls.ts",
     page: "Notes app",
-    data: { email: email || "Guest" },
+    data: { email },
   });
 
-  // Create an RLS-enabled SQL client
   const sql = neon(process.env.DATABASE_URL!, {
     fetchOptions: {
       headers: {
-        "X-User-Email": email, // your RLS header
+        // ONLY this header is allowed
+        "X-User-Email": email,
       },
     },
   });
 
-  return sql; // ✔️ this has .query()
+  return sql;
 }

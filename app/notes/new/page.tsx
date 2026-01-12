@@ -1,13 +1,14 @@
-// app/notes/new/page.tsx
-import { getAuth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
 import BlueDashboardLayout from "@/components/layouts/BlueDashboardLayout";
 import NewNoteClient from "./NewNoteClient";
 
-export const dynamic = "force-dynamic";
-
 export default async function NewNotePage() {
-  const auth = getAuth();
-  const session = await auth.api.getSession();
+  const h = await headers(); // ← FIX: await it
+
+  const session = await auth.api.getSession({
+    headers: h, // now it's HeadersInit, not Promise<Headers>
+  });
 
   return (
     <BlueDashboardLayout>
