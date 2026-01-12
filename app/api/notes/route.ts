@@ -1,16 +1,15 @@
 // app/api/notes/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { headers } from "next/headers";
 import { getDbWithRls } from "@/lib/server/db-with-rls";
 import { logit } from "@/lib/log/server";
 
-// ------------------------------------------------------------
-// GET — Fetch notes for the logged‑in user (with VP override)
-// ------------------------------------------------------------
-export async function GET(req: NextRequest) {
-	const session = await auth.api.getSession({ headers: req.headers });
-	const email = session?.user?.email;
+// GET
+	export async function GET(req: NextRequest) {
+		const h = await headers(); // ← FIX
+		const session = await auth.api.getSession({ headers: h }); // ← FIX
+		const email = session?.user?.email;
 
 	await logit({
 		level: "info",
