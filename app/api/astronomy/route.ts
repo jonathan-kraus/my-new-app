@@ -4,10 +4,39 @@ import { auth } from "@/lib/auth";
 import { getDbWithRls } from "@/lib/server/db-with-rls";
 import { logit } from "@/lib/log/server";
 
+// -----------------------------
+// Sunrise correction helper
+// -----------------------------
+function pickCorrectSunrise(snapshot: {
+  sunrise: string;
+  todaySunrise?: string | null;
+}) {
+  const now = new Date();
+
+  const sunrise = new Date(snapshot.sunrise);
+  const todaySunrise = snapshot.todaySunrise
+    ? new Date(snapshot.todaySunrise)
+    : null;
+
+  const localDate = now.toISOString().slice(0, 10);
+  const sunriseDate = sunrise.toISOString().slice(0, 10);
+
+  // If snapshot is for tomorrow but today's sunrise hasn't happened yet,
+  // use today's sunrise instead.
+  if (sunriseDate > localDate && todaySunrise && todaySunrise > now) {
+    return todaySunrise;
+  }
+
+  return sunrise;
+}
+
+// -----------------------------
+// Types
+// -----------------------------
 type AstronomySnapshotRow = {
   id: string;
   locationId: string;
-  date: string; // timestamp from Postgres, comes through as ISO-ish string
+  date: string;
   sunrise: string;
   sunset: string;
   moonrise: string | null;
@@ -23,13 +52,14 @@ type AstronomySnapshotRow = {
   moonPhase: string | null;
 };
 
-type AstronomyResponse = {
-  today: AstronomySnapshotRow;
-  tomorrow: AstronomySnapshotRow | null;
-};
-
+// -----------------------------
+// GET handler
+// -----------------------------
 export async function GET(req: NextRequest) {
   try {
+    // -----------------------------
+    // Auth
+    // -----------------------------
     const session = await auth.api.getSession({ headers: req.headers });
     const email = session?.user?.email ?? null;
 
@@ -42,23 +72,21 @@ export async function GET(req: NextRequest) {
         data: { reason: "No email in session" },
       });
 
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 },
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const dbRls = await getDbWithRls(email);
 
-    // Derive local calendar date in America/New_York
+    // -----------------------------
+    // Local date (America/New_York)
+    // -----------------------------
     const now = new Date();
     const localISO = now.toLocaleString("sv-SE", {
       timeZone: "America/New_York",
     });
-    const localDate = localISO.slice(0, 10); // "YYYY-MM-DD"
+    const localDate = localISO.slice(0, 10);
 
-    const searchParams = req.nextUrl.searchParams;
-    const locationId = searchParams.get("locationId") ?? "WIL";
+    const locationId = req.nextUrl.searchParams.get("locationId") ?? "WIL";
 
     await logit({
       level: "info",
@@ -68,10 +96,9 @@ export async function GET(req: NextRequest) {
       data: { email, localDate, locationId },
     });
 
-    // Bulletproof: select snapshots using a local-time range,
-    // not DATE(date), to avoid UTC/local off-by-one errors.
-
-    // TODAY: [local midnight, local midnight + 1 day)
+    // -----------------------------
+    // Fetch TODAY snapshot
+    // -----------------------------
     const todayRows = (await dbRls.query(
       `
       SELECT *
@@ -82,26 +109,10 @@ export async function GET(req: NextRequest) {
       ORDER BY "date" ASC
       LIMIT 1
       `,
-      [localDate, locationId],
+      [localDate, locationId]
     )) as AstronomySnapshotRow[];
 
     const todayRow = todayRows[0] ?? null;
-
-    // TOMORROW: [local date + 1 day, +2 days)
-    const tomorrowRows = (await dbRls.query(
-      `
-      SELECT *
-      FROM "AstronomySnapshot"
-      WHERE "date" >= (($1::date + INTERVAL '1 day') AT TIME ZONE 'America/New_York')
-        AND "date" < (($1::date + INTERVAL '2 days') AT TIME ZONE 'America/New_York')
-        AND "locationId" = $2
-      ORDER BY "date" ASC
-      LIMIT 1
-      `,
-      [localDate, locationId],
-    )) as AstronomySnapshotRow[];
-
-    const tomorrowRow = tomorrowRows[0] ?? null;
 
     if (!todayRow) {
       await logit({
@@ -114,13 +125,58 @@ export async function GET(req: NextRequest) {
 
       return NextResponse.json(
         { error: "No astronomy data for today" },
-        { status: 404 },
+        { status: 404 }
       );
     }
 
-    const payload: AstronomyResponse = {
-      today: todayRow,
-      tomorrow: tomorrowRow,
+    // -----------------------------
+    // Fetch TOMORROW snapshot
+    // -----------------------------
+    const tomorrowRows = (await dbRls.query(
+      `
+      SELECT *
+      FROM "AstronomySnapshot"
+      WHERE "date" >= (($1::date + INTERVAL '1 day') AT TIME ZONE 'America/New_York')
+        AND "date" < (($1::date + INTERVAL '2 days') AT TIME ZONE 'America/New_York')
+        AND "locationId" = $2
+      ORDER BY "date" ASC
+      LIMIT 1
+      `,
+      [localDate, locationId]
+    )) as AstronomySnapshotRow[];
+
+    const tomorrowRow = tomorrowRows[0] ?? null;
+
+    // -----------------------------
+    // Apply sunrise correction
+    // -----------------------------
+    const correctedTodaySunrise = pickCorrectSunrise({
+      sunrise: todayRow.sunrise,
+      todaySunrise: todayRow.sunrise,
+    });
+
+    const correctedTomorrowSunrise = tomorrowRow
+      ? pickCorrectSunrise({
+          sunrise: tomorrowRow.sunrise,
+          todaySunrise: todayRow.sunrise,
+        })
+      : null;
+
+    // -----------------------------
+    // Build payload
+    // -----------------------------
+    const payload = {
+      today: {
+        ...todayRow,
+        correctedSunrise: correctedTodaySunrise.toISOString(),
+      },
+      tomorrow: tomorrowRow
+        ? {
+            ...tomorrowRow,
+            correctedSunrise:
+              correctedTomorrowSunrise?.toISOString() ?? null,
+          }
+        : null,
     };
 
     await logit({
@@ -149,7 +205,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
