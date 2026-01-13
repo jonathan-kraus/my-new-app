@@ -72,8 +72,6 @@ export async function GET() {
 					status: d.status,
 					conclusion: d.conclusion,
 					event: d.event,
-          event_no_d: event,
-          actor_no_d: actor,
 					actor: d.actor,
 					commitMessage: d.commitMessage,
 					commitSha: d.commitSha,
