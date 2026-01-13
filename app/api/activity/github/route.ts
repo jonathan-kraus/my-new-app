@@ -16,7 +16,7 @@ export async function GET() {
 
 		const query = `
   ['github-events']
-  | where id == 20890932519
+  | where id == 20943586148
 	| limit 10
 `;
 
@@ -29,22 +29,22 @@ export async function GET() {
 		const result = await axiom.query(query);
 		await logit({
 			level: "info",
-			message: "Running Axiom query",
+			message: "Running Axiom result",
 			data: { result },
 		});
 		await logit({
 			level: "info",
-			message: "AXIOM RAW ROW",
+			message: "AXIOM RAW ROW 0",
 			data: result.matches?.[0] ?? undefined,
 		});
 		await logit({
 			level: "info",
-			message: "AXIOM RAW ROW",
+			message: "AXIOM RAW ROW 2",
 			data: result.matches?.[2] ?? undefined,
 		});
 		await logit({
 			level: "info",
-			message: "AXIOM RAW ROW",
+			message: "AXIOM RAW ROW 4",
 			data: result.matches?.[4] ?? undefined,
 		});
 		await logit({
@@ -71,6 +71,8 @@ export async function GET() {
 					status: d.status,
 					conclusion: d.conclusion,
 					event: d.event,
+          event_no_d: event,
+          actor_no_d: actor,
 					actor: d.actor,
 					commitMessage: d.commitMessage,
 					commitSha: d.commitSha,
