@@ -26,7 +26,7 @@ export default async function NotesPage() {
     <BlueDashboardLayout>
       <NotesClient
         authorized={!!session?.user}
-        userId={session?.user?.id ?? null}
+        userId={session?.user?.id ?? "No notes user"}
         notes={null}
       />
     </BlueDashboardLayout>

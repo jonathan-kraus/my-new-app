@@ -48,6 +48,16 @@ export async function GET(req: NextRequest) {
     );
   }
 
+    await logit({
+      level: "info",
+      message: "Fetched notes /api/notes",
+      file: "app/api/notes/route.ts",
+      line: 52,
+      data: {
+        count: notes.length,
+        user: email,
+      },
+    });
   return NextResponse.json({
     notes: Array.isArray(notes) ? notes : [],
     isVp,
