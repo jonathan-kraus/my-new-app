@@ -14,12 +14,10 @@ export async function GET() {
       file: "api/activity/github",
     });
 
-    const query = `
-      ['github-events']
-      | where data.repo == "jonathan-kraus/my-new-app"
-      | sort desc: "data.updatedAt"
-      | limit 10
-    `;
+const query = ` ['github-events']
+| where data.repo == "jonathan-kraus/my-new-app"
+| sort data.updatedAt desc
+| limit 10`;
 
     await logit({
       level: "info",
