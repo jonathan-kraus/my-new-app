@@ -8,10 +8,11 @@ const axiom = new Axiom({
 export async function GET() {
   try {
     const result = await axiom.query(`
-      ['github-events']
-      | where repo == "jonathan-kraus/my-new-app"
-      | sort(desc: "updatedAt")
-      | limit(10)
+['github-events']
+| where data.repo == "jonathan-kraus/my-new-app"
+| sort(desc: "data.updatedAt")
+| limit(10)
+
     `);
 
     const rows = result?.matches ?? [];
