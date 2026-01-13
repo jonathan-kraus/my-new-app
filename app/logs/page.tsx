@@ -1,5 +1,5 @@
 "use client";
-
+import { logit } from "@/lib/log/client";
 import { useEffect, useMemo, useState } from "react";
 
 type LogRecord = {
@@ -75,7 +75,11 @@ export default function LogsPage() {
 
         const res = await fetch(`/api/logs?${params.toString()}`);
         const json = await res.json();
-
+    await logit({
+      level: "info",
+      message: "In log page",
+      data: { json: json },
+    });
         if (cancelled) return;
 
         if (page === 0) {
