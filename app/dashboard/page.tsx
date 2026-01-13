@@ -87,7 +87,7 @@ export default function DashboardPage() {
       tomorrow,
     };
   }
-
+const sorted = [...recentActivity].sort((a, b) => { return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(); });
   return (
     <div className="p-6 space-y-6">
       {/* Greeting */}
@@ -162,7 +162,7 @@ export default function DashboardPage() {
 
           {recentActivity?.length ? (
             <ul className="space-y-2 text-gray-300">
-              {recentActivity.map((item: any) => (
+              {sorted.map((item: any) => (
                 <li
                   key={item.id}
                   className="p-2 rounded bg-white/5 border border-white/10"

@@ -67,15 +67,24 @@ export async function GET(req: NextRequest) {
 // ------------------------------------------------------------
 // POST — Create a new note
 // ------------------------------------------------------------
+export const dynamic = "force-dynamic";
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth.api.getSession({ headers: req.headers });
+    const h = headers(); // ← REAL HEADERS
+    const session = await auth.api.getSession({ headers: h });
     const email = session?.user?.email;
+
+    await logit({
+      level: "info",
+      message: "Notes API POST hit",
+      file: "app/api/notes/route.ts",
+      data: { email },
+    });
 
     if (!email) {
       return NextResponse.json(
         { ok: false, error: "Unauthorized" },
-        { status: 401 },
+        { status: 401 }
       );
     }
 
@@ -85,11 +94,10 @@ export async function POST(req: NextRequest) {
     if (!content || content.trim().length === 0) {
       return NextResponse.json(
         { ok: false, error: "Content required" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
-    // Auto‑generate a title from the first 40 chars
     const title = content.trim().slice(0, 40) || "Untitled Note";
 
     const result = await dbRls.query(
@@ -98,7 +106,7 @@ export async function POST(req: NextRequest) {
       VALUES ($1, $2, $3)
       RETURNING *
       `,
-      [title, content, email],
+      [title, content, email]
     );
 
     const note = result[0];
@@ -121,7 +129,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       { ok: false, error: "Internal Server Error" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
