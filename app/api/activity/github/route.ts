@@ -14,12 +14,13 @@ export async function GET() {
 			file: "api/activity/github",
 		});
 
-		const query = `
+const query = `
   ['github-events']
-  | project actor=actor
-  | where id == 20943586148
-	| limit 10
+  | where repo == "jonathan-kraus/my-new-app"
+  | sort updatedAt desc
+  | limit 10
 `;
+
 
 		await logit({
 			level: "info",
