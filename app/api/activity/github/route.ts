@@ -16,7 +16,7 @@ export async function GET() {
 
 		const query = `
   ['github-events']
-  | where repo == "jonathan-kraus/my-new-app"
+  | where id == 20890932519
 	| limit 10
 `;
 
