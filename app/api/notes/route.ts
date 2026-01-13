@@ -17,6 +17,7 @@ export async function GET(req: NextRequest) {
   await logit({
     ...ctx,
     level: "info",
+    file: "app/api/notes/route.ts",
     message: "Notes GET started",
   });
 
@@ -27,6 +28,7 @@ export async function GET(req: NextRequest) {
     await logit({
       ...ctx,
       level: "info",
+      file: "app/api/notes/route.ts",
       message: "Session resolved",
       data: { email },
     });
@@ -35,6 +37,7 @@ export async function GET(req: NextRequest) {
       await logit({
         ...ctx,
         level: "warn",
+        file: "app/api/notes/route.ts",
         message: "Notes GET blocked: no session",
       });
 
@@ -52,6 +55,7 @@ export async function GET(req: NextRequest) {
     await logit({
       ...ctx,
       level: "info",
+      file: "app/api/notes/route.ts",
       message: "Notes GET success",
       data: { count: notes.length },
     });
@@ -61,6 +65,7 @@ export async function GET(req: NextRequest) {
     await logit({
       ...ctx,
       level: "error",
+      file: "app/api/notes/route.ts",
       message: "Notes GET failed",
       data: { error: err.message },
     });
@@ -80,6 +85,7 @@ export async function POST(req: NextRequest) {
   await logit({
     ...ctx,
     level: "info",
+    file: "app/api/notes/route.ts",
     message: "Notes POST started",
   });
 
@@ -90,6 +96,7 @@ export async function POST(req: NextRequest) {
     if (!email) {
       await logit({
         ...ctx,
+        file: "app/api/notes/route.ts",
         level: "warn",
         message: "Notes POST blocked: no session",
       });
@@ -111,6 +118,7 @@ export async function POST(req: NextRequest) {
     await logit({
       ...ctx,
       level: "info",
+      file: "app/api/notes/route.ts",
       message: "Note created",
       data: { id: inserted[0]?.id },
     });
@@ -120,6 +128,7 @@ export async function POST(req: NextRequest) {
     await logit({
       ...ctx,
       level: "error",
+      file: "app/api/notes/route.ts",
       message: "Failed to create note",
       data: { error: err.message },
     });
