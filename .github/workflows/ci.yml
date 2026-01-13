@@ -54,7 +54,7 @@ jobs:
           path: |
             .pnpm
             node_modules
-          key: ${{ runner.os }}-pnpm-project-${{ hashFiles('**/package.json','**/pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-pnpm2-project-${{ hashFiles('**/package.json','**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-project-
       # - name: Generate Prisma Client
