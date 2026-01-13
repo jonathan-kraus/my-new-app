@@ -1,6 +1,8 @@
 export interface SolarTimes {
   sunrise: Date | null;
   sunset: Date | null;
+
+  correctedSunrise: Date | null;
   nextSunrise: Date | null;
 
   sunriseBlueStart: Date | null;
@@ -15,7 +17,6 @@ export interface SolarTimes {
 
   fetchedAt: Date;
 }
-
 export interface LunarTimes {
   moonrise: Date | null;
   moonset: Date | null;

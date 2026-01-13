@@ -49,12 +49,34 @@ export interface ActivityItemData {
   created_at?: string;
   createdAt?: string; // for Vercel
 }
-export type GitHubActivityEvent = {
-  id: number;
-  name: string;
-  repo: string;
-  status: string;
+export interface GitHubActivityEvent {
+  id: string;
+
+  // Workflow metadata
+  name: string;            // workflow name
+  repo: string;            // owner/repo
+
+  // Status + result
+  status: string | null;       // queued, in_progress, completed
+  conclusion: string | null;   // success, failure, cancelled, null
+
+  // Event context
+  event: string | null;        // workflow_run, push, etc.
+  actor: string | null;        // who triggered it
+
+  // Commit info
+  commitMessage: string | null;
+  commitSha: string | null;
+
+  // Links
+  url: string | null;
+
+  // Timestamps
   createdAt: string;
   updatedAt: string;
-};
+
+  // Source discriminator (for future Vercel/Ping)
+  source: "github";
+}
+
 

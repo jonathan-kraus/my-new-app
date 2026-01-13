@@ -1,72 +1,85 @@
-export function useSolarCountdown(
-  sunrise: Date | null,
-  sunset: Date | null,
-  nextSunrise: Date | null,
-) {
-  const now = new Date();
+"use client";
 
-  console.group("🌞 useSolarCountdown");
-  console.log("now:", now);
-  console.log("sunrise:", sunrise);
-  console.log("sunset:", sunset);
-  console.log("nextSunrise:", nextSunrise);
+import { useEffect, useState } from "react";
 
-  if (!sunrise || !sunset || !nextSunrise) {
-    console.warn("Missing data → returning fallback");
-    console.groupEnd();
+export function useSolarCountdown({
+  today,
+  tomorrow,
+}: {
+  today: {
+    correctedSunrise: Date | null;
+    sunset: Date | null;
+  };
+  tomorrow: {
+    correctedSunrise: Date | null;
+  } | null;
+}) {
+  const [now, setNow] = useState(new Date());
+
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  // If we don't have sunrise/sunset, return a safe fallback
+  if (!today.correctedSunrise || !today.sunset) {
     return {
-      nextEventLabel: "No data",
-      countdown: "0h 0m 0s",
+      now,
+      sunrise: null,
+      sunset: null,
+      nextSunrise: tomorrow?.correctedSunrise ?? null,
+      nextEventLabel: "No solar data",
+      nextCountdown: { hours: 0, minutes: 0, seconds: 0 },
+      isDaytime: false,
       progressPercent: 0,
-      dayLengthHours: 0,
     };
   }
 
-  let target: Date;
-  let nextEventLabel: string;
+  const sunrise = today.correctedSunrise;
+  const sunset = today.sunset;
+  const nextSunrise = tomorrow?.correctedSunrise ?? null;
+
+  const diff = (target: Date) => {
+    const ms = target.getTime() - now.getTime();
+    const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+    return {
+      hours: Math.floor(totalSeconds / 3600),
+      minutes: Math.floor((totalSeconds % 3600) / 60),
+      seconds: totalSeconds % 60,
+    };
+  };
+
+  let nextEventLabel = "";
+  let nextCountdown = { hours: 0, minutes: 0, seconds: 0 };
 
   if (now < sunrise) {
-    console.log("Branch: BEFORE sunrise");
-    target = sunrise;
     nextEventLabel = "Sunrise";
-  } else if (now >= sunrise && now < sunset) {
-    console.log("Branch: BETWEEN sunrise and sunset");
-    target = sunset;
+    nextCountdown = diff(sunrise);
+  } else if (now < sunset) {
     nextEventLabel = "Sunset";
+    nextCountdown = diff(sunset);
   } else {
-    console.log("Branch: AFTER sunset");
-    target = nextSunrise;
-    nextEventLabel = "Tomorrow’s Sunrise";
+    nextEventLabel = "Tomorrow's Sunrise";
+    nextCountdown = nextSunrise ? diff(nextSunrise) : nextCountdown;
   }
 
-  console.log("Selected target:", target);
-  console.log("Event label:", nextEventLabel);
+  const isDaytime = now >= sunrise && now < sunset;
 
-  const diffMs = target.getTime() - now.getTime();
-  const diffSec = Math.max(0, Math.floor(diffMs / 1000));
-  const hours = Math.floor(diffSec / 3600);
-  const minutes = Math.floor((diffSec % 3600) / 60);
-  const seconds = diffSec % 60;
-
-  const countdown = `${hours}h ${minutes}m ${seconds}s`;
-  console.log("Countdown:", countdown);
-
-  const isDaytime = now >= sunrise && now <= sunset;
-  const dayLengthMs = sunset.getTime() - sunrise.getTime();
-  const elapsedMs = now.getTime() - sunrise.getTime();
-  const progressPercent = isDaytime
-    ? Math.min(100, Math.max(0, (elapsedMs / dayLengthMs) * 100))
-    : 0;
-
-  console.log("isDaytime:", isDaytime);
-  console.log("dayLengthHours:", dayLengthMs / 1000 / 60 / 60);
-  console.log("progressPercent:", progressPercent);
-  console.groupEnd();
+  let progressPercent = 0;
+  if (isDaytime) {
+    const total = sunset.getTime() - sunrise.getTime();
+    const elapsed = now.getTime() - sunrise.getTime();
+    progressPercent = Math.min(100, Math.max(0, (elapsed / total) * 100));
+  }
 
   return {
+    now,
+    sunrise,
+    sunset,
+    nextSunrise,
     nextEventLabel,
-    countdown,
+    nextCountdown,
+    isDaytime,
     progressPercent,
-    dayLengthHours: dayLengthMs / 1000 / 60 / 60,
   };
 }
