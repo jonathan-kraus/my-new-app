@@ -3,16 +3,23 @@
 
 import { log } from "next-axiom";
 import { db } from "@/lib/db";
-import type { CreateLogInput, LogLevel } from "@/lib/types";
 import { nextLogIndex } from "@/lib/log/state";
+import { getCallerInfo } from "@/lib/log/caller";
+import { getRequestDuration } from "@/lib/log/timing";
+import type { CreateLogInput, LogLevel } from "@/lib/types";
 
 function axiomFor(level: LogLevel) {
   switch (level) {
-    case "debug": return log.debug.bind(log);
-    case "info":  return log.info.bind(log);
-    case "warn":  return log.warn.bind(log);
-    case "error": return log.error.bind(log);
-    default:      return log.info.bind(log);
+    case "debug":
+      return log.debug.bind(log);
+    case "info":
+      return log.info.bind(log);
+    case "warn":
+      return log.warn.bind(log);
+    case "error":
+      return log.error.bind(log);
+    default:
+      return log.info.bind(log);
   }
 }
 
@@ -20,7 +27,7 @@ export async function logit(input: CreateLogInput) {
   const {
     level = "info",
     message,
-    file = null,
+    file: manualFile = null,
     page = null,
     requestId = null,
     sessionEmail = null,
@@ -29,30 +36,40 @@ export async function logit(input: CreateLogInput) {
     createdAt = new Date(),
   } = input;
 
+  // Auto-detect caller
+  const caller = getCallerInfo();
+  const file = manualFile ?? caller.file;
+  const line = caller.line;
+
   // Per-request log index
   const index = nextLogIndex(requestId);
-  const finalMessage =
-    index !== null ? `#${index} ${message}` : message;
+  const prefix = index !== null ? `#${index}` : "";
+  const finalMessage = prefix ? `${prefix} ${message}` : message;
+
+  // Duration
+  const durationMs = getRequestDuration(requestId);
 
   const payload = {
     level,
     message: finalMessage,
     file,
+    line,
     page,
     requestId,
     sessionEmail,
     userId,
+    durationMs,
     data,
     timestamp: createdAt.toISOString(),
   };
 
-  // 1. Axiom (non-blocking)
+  // 1. Axiom
   try {
     const ax = axiomFor(level);
     ax(finalMessage, payload);
   } catch {}
 
-  // 2. Neon via Prisma (structured)
+  // 2. Neon
   try {
     await db.log.create({
       data: {

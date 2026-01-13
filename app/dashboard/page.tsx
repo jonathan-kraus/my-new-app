@@ -15,9 +15,6 @@ export default function DashboardPage() {
     logit({
       level: "info",
       message: "Dashboard",
-      file: "app/dashboard/page.tsx",
-      line: 11,
-      page: "Dashboard page",
       data: { date: new Date().toISOString() },
     });
   }, []);
@@ -87,7 +84,9 @@ export default function DashboardPage() {
       tomorrow,
     };
   }
-const sorted = [...recentActivity].sort((a, b) => { return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(); });
+  const sorted = [...recentActivity].sort((a, b) => {
+    return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+  });
   return (
     <div className="p-6 space-y-6">
       {/* Greeting */}

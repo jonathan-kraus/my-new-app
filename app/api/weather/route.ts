@@ -96,7 +96,6 @@ export async function GET(req: Request) {
         cacheWindowMinutes: currentCacheMin,
         actualAgeMinutes: currentAge,
         locationId,
-        line: 95,
       },
     });
 
@@ -137,7 +136,7 @@ export async function GET(req: Request) {
       message: "Realtime weather fetch attempted",
       page: "/api/weather",
       file: "app/api/weather/route.ts",
-      line: 119,
+
       data: { status: res },
     });
     if (!res.ok) {
@@ -146,7 +145,7 @@ export async function GET(req: Request) {
         message: "Realtime weather fetch failed",
         page: "/api/weather",
         file: "app/api/weather/route.ts",
-        line: 128,
+
         data: { status: res.status },
       });
       return NextResponse.json(
@@ -221,7 +220,6 @@ export async function GET(req: Request) {
         forecastMinutes: forecastCacheMin,
       },
       file: "app/api/weather/route.ts",
-      line: 322,
     },
   });
 

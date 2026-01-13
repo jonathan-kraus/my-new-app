@@ -28,7 +28,6 @@ export function useNotes(): NotesState {
       message: "Notes page mounted",
       page: "/notes",
       file: "app/notes/useNotes.ts",
-      line: 26,
     });
 
     async function load() {

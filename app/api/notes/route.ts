@@ -5,28 +5,28 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { getDbWithRls } from "@/lib/server/db-with-rls";
 import { logit } from "@/lib/log/server";
+import { enrichContext } from "@/lib/log/context";
 
 export const dynamic = "force-dynamic";
 
 // GET /api/notes
 export async function GET(req: NextRequest) {
   const h = await headers();
-await logit({
-  level: "info",
-  message: "In Notes dp we have requestId",
-  requestId: req.headers.get("x-request-id"),
-  file: "app/api/test/route.ts",
-  line: 14,
-  data: {
-    dynamic: dynamic,
-  }
-});
+  const ctx = await enrichContext(req);
+  await logit({
+    ...ctx,
+    level: "info",
+    message: "Notes GET: requestId present",
+    file: "app/api/notes/route.ts",
+    data: { dynamic },
+  });
 
   try {
     const session = await auth.api.getSession({ headers: h });
     const email = session?.user?.email;
 
     await logit({
+      ...ctx,
       level: "info",
       message: "Notes API GET hit",
       file: "app/api/notes/route.ts",
@@ -35,10 +35,12 @@ await logit({
 
     if (!email) {
       await logit({
+        ...ctx,
         level: "warn",
         message: "Notes GET blocked: no session",
         file: "app/api/notes/route.ts",
       });
+
       return NextResponse.json({ notes: [] }, { status: 401 });
     }
 
@@ -51,6 +53,7 @@ await logit({
     `;
 
     await logit({
+      ...ctx,
       level: "info",
       message: "Notes GET success",
       file: "app/api/notes/route.ts",
@@ -60,6 +63,7 @@ await logit({
     return NextResponse.json({ notes });
   } catch (err: any) {
     await logit({
+      ...ctx,
       level: "error",
       message: "Notes GET failed",
       file: "app/api/notes/route.ts",
@@ -68,7 +72,7 @@ await logit({
 
     return NextResponse.json(
       { error: "Failed to fetch notes" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -80,8 +84,9 @@ export async function POST(req: NextRequest) {
   try {
     const session = await auth.api.getSession({ headers: h });
     const email = session?.user?.email;
-
+    const ctx = await enrichContext(req);
     await logit({
+      ...ctx,
       level: "info",
       message: "Notes API POST hit",
       file: "app/api/notes/route.ts",
@@ -90,10 +95,12 @@ export async function POST(req: NextRequest) {
 
     if (!email) {
       await logit({
+        ...ctx,
         level: "warn",
         message: "Notes POST blocked: no session",
         file: "app/api/notes/route.ts",
       });
+
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -109,6 +116,7 @@ export async function POST(req: NextRequest) {
     `;
 
     await logit({
+      ...ctx,
       level: "info",
       message: "Note created",
       file: "app/api/notes/route.ts",
@@ -117,7 +125,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ note: inserted[0] });
   } catch (err: any) {
+    const ctx = await enrichContext(req);
     await logit({
+      ...ctx,
       level: "error",
       message: "Failed to create note",
       file: "app/api/notes/route.ts",
@@ -126,7 +136,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       { error: "Failed to create note" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

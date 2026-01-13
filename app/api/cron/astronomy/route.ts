@@ -1,7 +1,8 @@
 // app/api/cron/astronomy/route.ts
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { logit } from "@/lib/log/server";
+import { enrichContext } from "@/lib/log/context";
 import { addDays } from "date-fns";
 import { buildAstronomySnapshot } from "@/lib/buildAstronomySnapshot";
 
@@ -12,26 +13,23 @@ function atLocalMidnight(d: Date) {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate());
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const start = Date.now();
-
+  const ctx = await enrichContext(req);
   await logit({
+    ...ctx,
     level: "info",
     message: "astronomy.cron.started",
-    page: "Astronomy Cron Job",
-    file: "app/api/cron/astronomy/route.ts",
-    line: 20,
   });
 
   const locations = await db.location.findMany();
 
   for (const location of locations) {
     await logit({
+      ...ctx,
       level: "info",
       message: "astronomy.cron.location.started",
-      page: "Astronomy Cron Job",
-      file: "app/api/cron/astronomy/route.ts",
-      line: 40,
+
       data: { locationId: location.id, name: location.name },
     });
 
@@ -42,11 +40,9 @@ export async function GET() {
       const targetDate = addDays(base, i);
 
       await logit({
+        ...ctx,
         level: "info",
         message: "astronomy.cron.fetching",
-        page: "Astronomy Cron Job",
-        file: "app/api/cron/astronomy/route.ts",
-        line: 55,
         data: { locationId: location.id, targetDate },
       });
 
@@ -64,11 +60,9 @@ export async function GET() {
       });
 
       await logit({
+        ...ctx,
         level: "info",
         message: "astronomy.cron.snapshot.saved",
-        page: "Astronomy Cron Job",
-        file: "app/api/cron/astronomy/route.ts",
-        line: 75,
         data: {
           locationId: location.id,
           date: targetDate.toISOString().slice(0, 10),
@@ -82,9 +76,6 @@ export async function GET() {
   await logit({
     level: "info",
     message: "astronomy.cron.completed",
-    page: "Astronomy Cron Job",
-    file: "app/api/cron/astronomy/route.ts",
-    line: 95,
     data: { durationMs },
   });
 

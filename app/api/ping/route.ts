@@ -1,11 +1,18 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { Axiom } from "@axiomhq/js";
-import { logit } from "@/lib/log/server";
 import crypto from "crypto";
+import { logit } from "@/lib/log/server";
+import { enrichContext } from "@/lib/log/context";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const start = Date.now();
+  const ctx = await enrichContext(req);
 
+  await logit({
+    ...ctx,
+    level: "info",
+    message: "in PING",
+  });
   const payload = {
     ok: true,
     timestamp: new Date().toISOString(),
@@ -15,11 +22,12 @@ export async function GET() {
 
   // Write to myapp_logs
   await logit({
+    ...ctx,
     level: "info",
     message: "ping",
     page: "Ping API",
     file: "app/api/ping/route.ts",
-    line: 12,
+
     data: payload,
   });
 
@@ -38,7 +46,7 @@ export async function GET() {
       message: "Axiom query failed",
       page: "Ping API",
       file: "app/api/ping/route.ts",
-      line: 45,
+
       data: {
         route: "ping",
         error: err instanceof Error ? err.message : String(err),

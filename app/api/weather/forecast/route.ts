@@ -51,7 +51,6 @@ export async function GET(req: Request) {
         userId: session?.user?.id ?? null,
         locationId,
         file: "app/api/weather/forecast/route.ts",
-        line: 43,
       },
     });
 
@@ -75,7 +74,7 @@ export async function GET(req: Request) {
     level: "info",
     message: "Forecast cache miss → fetching external API",
     file: "app/api/weather/forecast/route.ts",
-    data: { locationId, file: "app/api/weather/forecast/route.ts", line: 67 },
+    data: { locationId, file: "app/api/weather/forecast/route.ts" },
   });
 
   const weatherRes = await fetch(
@@ -96,7 +95,7 @@ export async function GET(req: Request) {
       level: "error",
       message: "Invalid forecast API response",
       file: "app/api/weather/forecast/route.ts",
-      line: 91,
+
       data: parsed.error.flatten(),
     });
 
@@ -125,7 +124,7 @@ export async function GET(req: Request) {
     level: "info",
     message: "Forecast snapshot stored",
     file: "app/api/weather/forecast/route.ts",
-    line: 120,
+
     data: { snapshotId: snapshot.id },
   });
 

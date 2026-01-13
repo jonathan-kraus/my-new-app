@@ -75,11 +75,11 @@ export default function LogsPage() {
 
         const res = await fetch(`/api/logs?${params.toString()}`);
         const json = await res.json();
-    await logit({
-      level: "info",
-      message: "In log page",
-      data: { json: json },
-    });
+        await logit({
+          level: "info",
+          message: "In log page",
+          data: { json: json },
+        });
         if (cancelled) return;
 
         if (page === 0) {

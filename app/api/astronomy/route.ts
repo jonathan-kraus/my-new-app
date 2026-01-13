@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { getDbWithRls } from "@/lib/server/db-with-rls";
 import { logit } from "@/lib/log/server";
-import { contextFromRequest } from "@/lib/log/context"
+import { enrichContext } from "@/lib/log/context";
 // ------------------------------------------------------------
 // Sunrise correction helper
 // ------------------------------------------------------------
@@ -144,8 +144,9 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(payload);
   } catch (err: any) {
+    const ctx = await enrichContext(req);
     await logit({
-      ...contextFromRequest(req),
+      ...ctx,
       level: "error",
       message: "Astronomy API failed",
       file: "app/api/astronomy/route.ts",

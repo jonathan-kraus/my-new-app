@@ -30,7 +30,7 @@ function combineDateTime(date: Date, timeStr: string): string {
     level: "info",
     message: "In BAS",
     file: "lib/buildAstronomySnapshot.ts",
-    line: 29,
+
     page: "Build Astronomy",
     data: { t: { yyyy, mm, dd, hour, minute } },
   });

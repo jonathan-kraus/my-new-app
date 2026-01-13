@@ -34,7 +34,7 @@ export default function CurrentWeatherCard({
       message: `Rendering CurrentWeatherCard with location: ${location?.name ?? "null"}`,
       data: { locationId: location?.id ?? "null" },
       file: "app/components/dashboard/current-weather-card.tsx",
-      line: 30,
+
       sessionUser: "jonathan-kraus",
     });
   }, [location]);
@@ -54,7 +54,6 @@ export default function CurrentWeatherCard({
           message: `Weather fetch → ${location!.name} | source: ${json.sources?.current ?? "unknown"}`,
           data: { locationId, json },
           file: "app/components/dashboard/current-weather-card.tsx",
-          line: 50,
         });
       } catch (error) {
         logit({
@@ -62,7 +61,7 @@ export default function CurrentWeatherCard({
           message: `Error fetching weather data: ${error}`,
           data: { locationId },
           file: "app/components/dashboard/current-weather-card.tsx",
-          line: 58,
+
           sessionUser: "jonathan-kraus",
         });
       } finally {
@@ -123,8 +122,6 @@ export default function CurrentWeatherCard({
     level: "info",
     message: `Weather summary for ${location?.name ?? "null"} | ${source} | ${temp}°`,
     data: { locationId: location?.id ?? "null", current, sources },
-    file: "app/components/dashboard/current-weather-card.tsx",
-    line: 120,
   });
 
   return (

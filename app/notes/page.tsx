@@ -16,7 +16,7 @@ export default async function NotesPage() {
     message: "In Notes page",
     page: "Notes",
     file: "app/notes/page.tsx",
-    line: 11,
+
     data: { h, auth },
   });
 

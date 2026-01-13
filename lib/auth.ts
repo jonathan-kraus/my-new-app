@@ -48,7 +48,6 @@ export function getAuth(): AuthType {
     level: "warn",
     message: "in getAuth - _auth is undefined",
     file: "lib/auth.ts",
-    line: 45,
   });
 
   try {
@@ -71,7 +70,7 @@ export function getAuth(): AuthType {
       level: "info",
       message: "in getAuth - what is auth",
       file: "lib/auth.ts",
-      line: 70,
+
       data: { auth: JSON.stringify(_auth) },
     });
   } catch (err: any) {
