@@ -36,14 +36,22 @@ export function GoldenHourCard({
 
       <div>
         <h3 className="font-semibold mb-1">Morning</h3>
-        <p>Blue Hour: {fmt(sunriseBlueStart)} – {fmt(sunriseBlueEnd)}</p>
-        <p>Golden Hour: {fmt(sunriseGoldenStart)} – {fmt(sunriseGoldenEnd)}</p>
+        <p>
+          Blue Hour: {fmt(sunriseBlueStart)} – {fmt(sunriseBlueEnd)}
+        </p>
+        <p>
+          Golden Hour: {fmt(sunriseGoldenStart)} – {fmt(sunriseGoldenEnd)}
+        </p>
       </div>
 
       <div>
         <h3 className="font-semibold mb-1">Evening</h3>
-        <p>Golden Hour: {fmt(sunsetGoldenStart)} – {fmt(sunsetGoldenEnd)}</p>
-        <p>Blue Hour: {fmt(sunsetBlueStart)} – {fmt(sunsetBlueEnd)}</p>
+        <p>
+          Golden Hour: {fmt(sunsetGoldenStart)} – {fmt(sunsetGoldenEnd)}
+        </p>
+        <p>
+          Blue Hour: {fmt(sunsetBlueStart)} – {fmt(sunsetBlueEnd)}
+        </p>
       </div>
     </div>
   );

@@ -27,9 +27,7 @@ export function LunarCard({ today, tomorrow }: any) {
       </div>
 
       <div className="mt-4">
-        <div className="text-xs opacity-70 mb-1">
-          Visibility Progress
-        </div>
+        <div className="text-xs opacity-70 mb-1">Visibility Progress</div>
 
         <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
           <div

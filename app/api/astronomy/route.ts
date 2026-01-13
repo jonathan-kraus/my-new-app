@@ -64,10 +64,7 @@ export async function GET(req: NextRequest) {
     const email = session?.user?.email;
 
     if (!email) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const dbRls = await getDbWithRls(email);
@@ -81,7 +78,7 @@ export async function GET(req: NextRequest) {
     });
     const localDate = localISO.slice(0, 10); // "YYYY-MM-DD"
     const tomorrowDate = new Date(
-      new Date(localDate).getTime() + 24 * 60 * 60 * 1000
+      new Date(localDate).getTime() + 24 * 60 * 60 * 1000,
     )
       .toISOString()
       .slice(0, 10);
@@ -98,23 +95,19 @@ export async function GET(req: NextRequest) {
       WHERE "locationId" = $1
       ORDER BY "date" ASC
       `,
-      [locationId]
+      [locationId],
     )) as AstronomySnapshotRow[];
 
     // -----------------------------
     // Select TODAY and TOMORROW by calendar date
     // -----------------------------
-    const todayRow = rows.find(
-      (r) => r.date.slice(0, 10) === localDate
-    );
-    const tomorrowRow = rows.find(
-      (r) => r.date.slice(0, 10) === tomorrowDate
-    );
+    const todayRow = rows.find((r) => r.date.slice(0, 10) === localDate);
+    const tomorrowRow = rows.find((r) => r.date.slice(0, 10) === tomorrowDate);
 
     if (!todayRow) {
       return NextResponse.json(
         { error: "No astronomy data for today" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -144,8 +137,7 @@ export async function GET(req: NextRequest) {
       tomorrow: tomorrowRow
         ? {
             ...tomorrowRow,
-            correctedSunrise:
-              correctedTomorrowSunrise?.toISOString() ?? null,
+            correctedSunrise: correctedTomorrowSunrise?.toISOString() ?? null,
           }
         : null,
     };
@@ -161,7 +153,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

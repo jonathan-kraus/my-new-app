@@ -17,9 +17,10 @@ export function SidebarItem({
       className={`
         relative flex items-center gap-3 px-4 py-2 rounded-md font-medium
         transition-all duration-300 ease-out
-        ${active
-          ? "text-blue-600 bg-blue-600/10 shadow-[inset_0_0_8px_rgba(37,99,235,0.25)]"
-          : "text-gray-600 hover:text-gray-900 hover:bg-gray-100 hover:-translate-y-[1px]"
+        ${
+          active
+            ? "text-blue-600 bg-blue-600/10 shadow-[inset_0_0_8px_rgba(37,99,235,0.25)]"
+            : "text-gray-600 hover:text-gray-900 hover:bg-gray-100 hover:-translate-y-[1px]"
         }
       `}
     >

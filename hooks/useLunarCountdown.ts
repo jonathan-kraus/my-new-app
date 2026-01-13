@@ -25,10 +25,8 @@ export function useLunarCountdown({
   const moonrise = today.moonrise ? new Date(today.moonrise) : null;
   const moonset = today.moonset ? new Date(today.moonset) : null;
 
-  const nextMoonrise =
-    tomorrow?.moonrise ? new Date(tomorrow.moonrise) : null;
-  const nextMoonset =
-    tomorrow?.moonset ? new Date(tomorrow.moonset) : null;
+  const nextMoonrise = tomorrow?.moonrise ? new Date(tomorrow.moonrise) : null;
+  const nextMoonset = tomorrow?.moonset ? new Date(tomorrow.moonset) : null;
 
   // Helper: diff between now and target
   const diff = (target: Date) => {

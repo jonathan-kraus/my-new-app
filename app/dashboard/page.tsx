@@ -25,8 +25,12 @@ export default function DashboardPage() {
   useEffect(() => {
     async function load() {
       try {
-        const astronomyRes = await fetch("/api/astronomy").then((r) => r.json());
-        const githubRes = await fetch("/api/activity/github").then((r) => r.json());
+        const astronomyRes = await fetch("/api/astronomy").then((r) =>
+          r.json(),
+        );
+        const githubRes = await fetch("/api/activity/github").then((r) =>
+          r.json(),
+        );
 
         setData({
           astronomy: astronomyRes,
@@ -44,17 +48,13 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="p-6 text-gray-300 text-lg">
-        Loading your dashboard…
-      </div>
+      <div className="p-6 text-gray-300 text-lg">Loading your dashboard…</div>
     );
   }
 
   if (!data) {
     return (
-      <div className="p-6 text-red-400 text-lg">
-        Failed to load dashboard.
-      </div>
+      <div className="p-6 text-red-400 text-lg">Failed to load dashboard.</div>
     );
   }
 

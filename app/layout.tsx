@@ -15,7 +15,6 @@ export default function RootLayout({
         <Sidebar />
 
         <main className="ml-64 p-6">
-
           {children}
 
           {/* Vercel Analytics */}

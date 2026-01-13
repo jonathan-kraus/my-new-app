@@ -6,102 +6,112 @@ import { getDbWithRls } from "@/lib/server/db-with-rls";
 import { logit } from "@/lib/log/server";
 
 // GET
-	export async function GET(req: NextRequest) {
-		const h = await headers(); // ← FIX
-		const session = await auth.api.getSession({ headers: h }); // ← FIX
-		const email = session?.user?.email;
+export async function GET(req: NextRequest) {
+  const h = await headers(); // ← FIX
+  const session = await auth.api.getSession({ headers: h }); // ← FIX
+  const email = session?.user?.email;
 
-	await logit({
-		level: "info",
-		message: "Notes API GET",
-		file: "app/api/notes/route.ts",
-		page: "Notes",
-		data: { email, headers: req.headers },
-	});
+  await logit({
+    level: "info",
+    message: "Notes API GET",
+    file: "app/api/notes/route.ts",
+    page: "Notes",
+    data: { email, headers: req.headers },
+  });
 
-	if (!email) {
-		return NextResponse.json({ notes: [], isVp: false }, { status: 401 });
-	}
+  if (!email) {
+    return NextResponse.json({ notes: [], isVp: false }, { status: 401 });
+  }
 
-	const dbRls = await getDbWithRls(email);
+  const dbRls = await getDbWithRls(email);
 
-	const searchParams = req.nextUrl.searchParams;
-	const view = searchParams.get("view") ?? "my-active";
+  const searchParams = req.nextUrl.searchParams;
+  const view = searchParams.get("view") ?? "my-active";
 
-	// Check if user is VP
-	const roleResult = await dbRls.query(`SELECT role FROM "UserRole" WHERE email = $1 LIMIT 1`, [
-		email,
-	]);
-	const isVp = roleResult[0]?.role === "VP";
+  // Check if user is VP
+  const roleResult = await dbRls.query(
+    `SELECT role FROM "UserRole" WHERE email = $1 LIMIT 1`,
+    [email],
+  );
+  const isVp = roleResult[0]?.role === "VP";
 
-	let notes;
+  let notes;
 
-	if (view === "all-users" && isVp) {
-		// VP sees everything
-		notes = await dbRls.query(`SELECT * FROM "Note" ORDER BY "createdAt" DESC`);
-	} else if (view === "my-all") {
-		notes = await dbRls.query(`SELECT * FROM "Note" ORDER BY "createdAt" DESC`);
-	} else {
-		notes = await dbRls.query(
-			`SELECT * FROM "Note" WHERE archived = false ORDER BY "createdAt" DESC`,
-		);
-	}
+  if (view === "all-users" && isVp) {
+    // VP sees everything
+    notes = await dbRls.query(`SELECT * FROM "Note" ORDER BY "createdAt" DESC`);
+  } else if (view === "my-all") {
+    notes = await dbRls.query(`SELECT * FROM "Note" ORDER BY "createdAt" DESC`);
+  } else {
+    notes = await dbRls.query(
+      `SELECT * FROM "Note" WHERE archived = false ORDER BY "createdAt" DESC`,
+    );
+  }
 
-	return NextResponse.json({
-		notes: Array.isArray(notes) ? notes : [],
-		isVp,
-	});
+  return NextResponse.json({
+    notes: Array.isArray(notes) ? notes : [],
+    isVp,
+  });
 }
 
 // ------------------------------------------------------------
 // POST — Create a new note
 // ------------------------------------------------------------
 export async function POST(req: NextRequest) {
-	try {
-		const session = await auth.api.getSession({ headers: req.headers });
-		const email = session?.user?.email;
+  try {
+    const session = await auth.api.getSession({ headers: req.headers });
+    const email = session?.user?.email;
 
-		if (!email) {
-			return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
-		}
+    if (!email) {
+      return NextResponse.json(
+        { ok: false, error: "Unauthorized" },
+        { status: 401 },
+      );
+    }
 
-		const dbRls = await getDbWithRls(email);
-		const { content } = await req.json();
+    const dbRls = await getDbWithRls(email);
+    const { content } = await req.json();
 
-		if (!content || content.trim().length === 0) {
-			return NextResponse.json({ ok: false, error: "Content required" }, { status: 400 });
-		}
+    if (!content || content.trim().length === 0) {
+      return NextResponse.json(
+        { ok: false, error: "Content required" },
+        { status: 400 },
+      );
+    }
 
-		// Auto‑generate a title from the first 40 chars
-		const title = content.trim().slice(0, 40) || "Untitled Note";
+    // Auto‑generate a title from the first 40 chars
+    const title = content.trim().slice(0, 40) || "Untitled Note";
 
-		const result = await dbRls.query(
-			`
+    const result = await dbRls.query(
+      `
       INSERT INTO "Note" ("title", "content", "userEmail")
       VALUES ($1, $2, $3)
       RETURNING *
       `,
-			[title, content, email],
-		);
+      [title, content, email],
+    );
 
-		const note = result[0];
+    const note = result[0];
 
-		await logit({
-			level: "info",
-			message: "Note created",
-			file: "app/api/notes/route.ts",
-			data: { email, noteId: note.id },
-		});
+    await logit({
+      level: "info",
+      message: "Note created",
+      file: "app/api/notes/route.ts",
+      data: { email, noteId: note.id },
+    });
 
-		return NextResponse.json({ ok: true, note });
-	} catch (err: any) {
-		await logit({
-			level: "error",
-			message: "Failed to create note",
-			file: "app/api/notes/route.ts",
-			data: { error: err.message },
-		});
+    return NextResponse.json({ ok: true, note });
+  } catch (err: any) {
+    await logit({
+      level: "error",
+      message: "Failed to create note",
+      file: "app/api/notes/route.ts",
+      data: { error: err.message },
+    });
 
-		return NextResponse.json({ ok: false, error: "Internal Server Error" }, { status: 500 });
-	}
+    return NextResponse.json(
+      { ok: false, error: "Internal Server Error" },
+      { status: 500 },
+    );
+  }
 }

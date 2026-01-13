@@ -36,10 +36,7 @@ export function RecentActivity() {
   return (
     <div className="space-y-3">
       {items.map((item) => (
-        <div
-          key={item.id}
-          className="rounded-md border p-3 bg-white shadow-sm"
-        >
+        <div key={item.id} className="rounded-md border p-3 bg-white shadow-sm">
           <div className="font-medium">{item.name}</div>
           <div className="text-sm text-gray-600">
             {item.status} → {item.conclusion}

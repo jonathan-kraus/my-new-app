@@ -15,8 +15,6 @@ export function useSolarTimeline({
       correctedSunrise: today.correctedSunrise,
       sunset: today.sunset,
     },
-    tomorrow: tomorrow
-      ? { correctedSunrise: tomorrow.correctedSunrise }
-      : null,
+    tomorrow: tomorrow ? { correctedSunrise: tomorrow.correctedSunrise } : null,
   });
 }

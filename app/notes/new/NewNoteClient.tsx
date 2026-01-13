@@ -33,20 +33,19 @@ export default function NewNoteClient({ authorized, userId }: Props) {
         setSuccess(true);
         setContent("");
       }
-} catch (err: any) {
-  await logit({
-    level: "error",
-    message: "Failed to create note",
-    file: "app/api/notes/route.ts",
-    data: {
-      error: String(err),
-      full: err,
-    },
-  });
+    } catch (err: any) {
+      await logit({
+        level: "error",
+        message: "Failed to create note",
+        file: "app/api/notes/route.ts",
+        data: {
+          error: String(err),
+          full: err,
+        },
+      });
 
-  console.error("NOTES API ERROR", err);
-  setError("Unexpected error");
-
+      console.error("NOTES API ERROR", err);
+      setError("Unexpected error");
     } finally {
       setSaving(false);
     }
@@ -55,7 +54,9 @@ export default function NewNoteClient({ authorized, userId }: Props) {
   if (!authorized) {
     return (
       <div className="bg-white/10 border border-white/20 rounded-xl p-6 max-w-xl mx-auto mt-12 text-center">
-        <p className="text-white/80 text-lg">You must be signed in to create notes.</p>
+        <p className="text-white/80 text-lg">
+          You must be signed in to create notes.
+        </p>
       </div>
     );
   }
@@ -71,13 +72,9 @@ export default function NewNoteClient({ authorized, userId }: Props) {
         className="w-full h-40 bg-white/5 border border-white/20 rounded-lg p-4 text-white placeholder-white/60 resize-none outline-none focus:ring-2 focus:ring-blue-300"
       />
 
-      {error && (
-        <p className="text-red-300 mt-3 text-sm">{error}</p>
-      )}
+      {error && <p className="text-red-300 mt-3 text-sm">{error}</p>}
 
-      {success && (
-        <p className="text-green-300 mt-3 text-sm">Note saved!</p>
-      )}
+      {success && <p className="text-green-300 mt-3 text-sm">Note saved!</p>}
 
       <button
         onClick={handleSave}

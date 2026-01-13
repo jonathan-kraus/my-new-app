@@ -3,13 +3,8 @@
 import { useLunarCountdown } from "@/hooks/useLunarCountdown";
 
 export function LunarEventsCard({ today, tomorrow }: any) {
-  const {
-    nextEventLabel,
-    nextCountdown,
-    isVisible,
-    moonrise,
-    moonset,
-  } = useLunarCountdown({ today, tomorrow });
+  const { nextEventLabel, nextCountdown, isVisible, moonrise, moonset } =
+    useLunarCountdown({ today, tomorrow });
 
   return (
     <div className="rounded-xl border bg-black/20 p-4 text-white shadow-lg backdrop-blur">

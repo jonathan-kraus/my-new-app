@@ -32,7 +32,8 @@ export function UnifiedNextAstronomicalEventCard({
   const lunarTarget = (() => {
     if (lunar.nextEventLabel === "Moonrise") return lunar.moonrise;
     if (lunar.nextEventLabel === "Moonset") return lunar.moonset;
-    if (lunar.nextEventLabel === "Tomorrow's Moonrise") return lunar.nextMoonrise;
+    if (lunar.nextEventLabel === "Tomorrow's Moonrise")
+      return lunar.nextMoonrise;
     return null;
   })();
 
@@ -67,15 +68,12 @@ export function UnifiedNextAstronomicalEventCard({
       </div>
 
       <div className="text-2xl font-bold mb-3">
-        {unifiedCountdown.hours}h {unifiedCountdown.minutes}m {unifiedCountdown.seconds}s
+        {unifiedCountdown.hours}h {unifiedCountdown.minutes}m{" "}
+        {unifiedCountdown.seconds}s
       </div>
 
-      <div className="text-xs opacity-60">
-        Solar: {solar.nextEventLabel}
-      </div>
-      <div className="text-xs opacity-60">
-        Lunar: {lunar.nextEventLabel}
-      </div>
+      <div className="text-xs opacity-60">Solar: {solar.nextEventLabel}</div>
+      <div className="text-xs opacity-60">Lunar: {lunar.nextEventLabel}</div>
     </div>
   );
 }

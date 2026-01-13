@@ -17,7 +17,7 @@ export default async function NotesPage() {
     page: "Notes",
     file: "app/notes/page.tsx",
     line: 11,
-    data: { h, auth }
+    data: { h, auth },
   });
 
   const session = await auth.api.getSession({ headers: h });

@@ -4,7 +4,7 @@ import { useMemo } from "react";
 export function useLunarTimeline(
   moonriseStr: string | null,
   moonsetStr: string | null,
-  nextMoonriseStr: string | null
+  nextMoonriseStr: string | null,
 ) {
   const now = useNow();
 
@@ -18,7 +18,7 @@ export function useLunarTimeline(
     if (moonrise && moonset) {
       visibilityHours = Math.max(
         0,
-        (moonset.getTime() - moonrise.getTime()) / 3600000
+        (moonset.getTime() - moonrise.getTime()) / 3600000,
       );
     }
 
