@@ -16,8 +16,8 @@ export async function GET() {
 
     const query = `
   ['github-events']
-  | project id=data.id, repo=data.repo, commitSha=data.commitSha, name=data.name
   | where repo == "jonathan-kraus/my-new-app"
+	| project id=data.id, repo=data.repo, commitSha=data.commitSha, name=data.name
   | limit 10
 `;
 
