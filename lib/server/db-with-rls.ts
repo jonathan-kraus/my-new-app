@@ -1,12 +1,14 @@
 // lib/server/db-with-rls.ts
-import { neon } from "@neondatabase/serverless";
+import { createClient } from "@neondatabase/serverless";
 
 export function getDbWithRls(email: string) {
-  return neon(process.env.DATABASE_URL!, {
+  const client = createClient({
     fetchOptions: {
       headers: {
         "app.current_user_email": email,
       },
     },
   });
+
+  return client(process.env.DATABASE_URL!);
 }
