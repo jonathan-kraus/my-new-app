@@ -1,34 +1,13 @@
 // app/notes/page.tsx
-import { getAuth } from "@/lib/auth";
-import NotesClient from "./NotesClient";
-import { headers } from "next/headers";
-import { logit } from "@/lib/log/server";
 import BlueDashboardLayout from "@/components/layouts/BlueDashboardLayout";
+import NotesClient from "./NotesClient";
 
 export const dynamic = "force-dynamic";
 
-export default async function NotesPage() {
-  const auth = getAuth();
-  const h = await headers();
-
-  await logit({
-    level: "info",
-    message: "In Notes page",
-    page: "Notes",
-    file: "app/notes/page.tsx",
-
-    data: { h, auth },
-  });
-
-  const session = await auth.api.getSession({ headers: h });
-
+export default function NotesPage() {
   return (
     <BlueDashboardLayout>
-      <NotesClient
-        authorized={!!session?.user}
-        userId={session?.user?.id ?? "No notes user"}
-        notes={null}
-      />
+      <NotesClient />
     </BlueDashboardLayout>
   );
 }
