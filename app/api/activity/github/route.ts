@@ -15,10 +15,11 @@ export async function GET() {
     });
 
     const query = `
-  ['github-events']
-  | where repo == "jonathan-kraus/my-new-app"
-  | limit 100
-`;
+      ['github-events']
+      | where repo == "jonathan-kraus/my-new-app"
+      | sort _time desc
+      | limit 100
+    `;
 
     await logit({
       level: "info",
