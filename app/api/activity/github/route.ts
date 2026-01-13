@@ -16,7 +16,7 @@ export async function GET() {
 
 		const query = `
   ['github-events']
-  | project actor=data.actor
+  | project actor=actor
   | where id == 20943586148
 	| limit 10
 `;
