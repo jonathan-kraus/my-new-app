@@ -1,4 +1,5 @@
 // lib/server/db-with-rls.ts
+
 import { createClient } from "@neondatabase/serverless";
 
 export function getDbWithRls(email: string) {

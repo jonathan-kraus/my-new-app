@@ -1,76 +1,73 @@
 // app/api/notes/route.ts
+
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
 import { getDbWithRls } from "@/lib/server/db-with-rls";
 import { logit } from "@/lib/log/server";
 
-// GET
+export const dynamic = "force-dynamic";
+
+// GET /api/notes
 export async function GET(req: NextRequest) {
-  const h = await headers(); // ← FIX
-  const session = await auth.api.getSession({ headers: h }); // ← FIX
-  const email = session?.user?.email;
+  const h = await headers();
 
-  await logit({
-    level: "info",
-    message: "Notes API GET",
-    file: "app/api/notes/route.ts",
-    page: "Notes",
-    data: { email, headers: req.headers },
-  });
-
-  if (!email) {
-    return NextResponse.json({ notes: [], isVp: false }, { status: 401 });
-  }
-
-  const dbRls = await getDbWithRls(email);
-
-  const searchParams = req.nextUrl.searchParams;
-  const view = searchParams.get("view") ?? "my-active";
-
-  // Check if user is VP
-  const roleResult = await dbRls.query(
-    `SELECT role FROM "UserRole" WHERE email = $1 LIMIT 1`,
-    [email],
-  );
-  const isVp = roleResult[0]?.role === "VP";
-
-  let notes;
-
-  if (view === "all-users" && isVp) {
-    // VP sees everything
-    notes = await dbRls.query(`SELECT * FROM "Note" ORDER BY "createdAt" DESC`);
-  } else if (view === "my-all") {
-    notes = await dbRls.query(`SELECT * FROM "Note" ORDER BY "createdAt" DESC`);
-  } else {
-    notes = await dbRls.query(
-      `SELECT * FROM "Note" WHERE archived = false ORDER BY "createdAt" DESC`,
-    );
-  }
+  try {
+    const session = await auth.api.getSession({ headers: h });
+    const email = session?.user?.email;
 
     await logit({
       level: "info",
-      message: "Fetched notes /api/notes",
+      message: "Notes API GET hit",
       file: "app/api/notes/route.ts",
-      line: 52,
-      data: {
-        count: notes.length,
-        user: email,
-      },
+      data: { email },
     });
-  return NextResponse.json({
-    notes: Array.isArray(notes) ? notes : [],
-    isVp,
-  });
+
+    if (!email) {
+      await logit({
+        level: "warn",
+        message: "Notes GET blocked: no session",
+        file: "app/api/notes/route.ts",
+      });
+      return NextResponse.json({ notes: [] }, { status: 401 });
+    }
+
+    const db = getDbWithRls(email);
+
+    const notes = await db`
+      SELECT id, title, content, created_at
+      FROM notes
+      ORDER BY created_at DESC
+    `;
+
+    await logit({
+      level: "info",
+      message: "Notes GET success",
+      file: "app/api/notes/route.ts",
+      data: { count: notes.length },
+    });
+
+    return NextResponse.json({ notes });
+  } catch (err: any) {
+    await logit({
+      level: "error",
+      message: "Notes GET failed",
+      file: "app/api/notes/route.ts",
+      data: { error: err.message },
+    });
+
+    return NextResponse.json(
+      { error: "Failed to fetch notes" },
+      { status: 500 }
+    );
+  }
 }
 
-// ------------------------------------------------------------
-// POST — Create a new note
-// ------------------------------------------------------------
-export const dynamic = "force-dynamic";
+// POST /api/notes
 export async function POST(req: NextRequest) {
+  const h = await headers();
+
   try {
-    const h = await headers(); // ← REAL HEADERS
     const session = await auth.api.getSession({ headers: h });
     const email = session?.user?.email;
 
@@ -82,43 +79,33 @@ export async function POST(req: NextRequest) {
     });
 
     if (!email) {
-      return NextResponse.json(
-        { ok: false, error: "Unauthorized" },
-        { status: 401 }
-      );
+      await logit({
+        level: "warn",
+        message: "Notes POST blocked: no session",
+        file: "app/api/notes/route.ts",
+      });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const dbRls = await getDbWithRls(email);
-    const { content } = await req.json();
+    const body = await req.json();
+    const { title, content } = body;
 
-    if (!content || content.trim().length === 0) {
-      return NextResponse.json(
-        { ok: false, error: "Content required" },
-        { status: 400 }
-      );
-    }
+    const db = getDbWithRls(email);
 
-    const title = content.trim().slice(0, 40) || "Untitled Note";
-
-    const result = await dbRls.query(
-      `
-      INSERT INTO "Note" ("title", "content", "userEmail")
-      VALUES ($1, $2, $3)
-      RETURNING *
-      `,
-      [title, content, email]
-    );
-
-    const note = result[0];
+    const inserted = await db`
+      INSERT INTO notes (title, content)
+      VALUES (${title}, ${content})
+      RETURNING id, title, content, created_at
+    `;
 
     await logit({
       level: "info",
       message: "Note created",
       file: "app/api/notes/route.ts",
-      data: { email, noteId: note.id },
+      data: { id: inserted[0]?.id },
     });
 
-    return NextResponse.json({ ok: true, note });
+    return NextResponse.json({ note: inserted[0] });
   } catch (err: any) {
     await logit({
       level: "error",
@@ -128,7 +115,7 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json(
-      { ok: false, error: "Internal Server Error" },
+      { error: "Failed to create note" },
       { status: 500 }
     );
   }

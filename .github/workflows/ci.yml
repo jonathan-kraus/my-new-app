@@ -13,16 +13,18 @@ jobs:
     env:
       CI: true
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - name: Clean workspace
         run: git clean -fdx
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: '24'
 
@@ -30,6 +32,7 @@ jobs:
         run: |
           corepack enable
           corepack prepare pnpm@latest --activate
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -41,47 +44,18 @@ jobs:
         run: echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
 
       - name: Cache pnpm store
-        uses: actions/cache@v5
+        uses: actions/cache@v4
         with:
           path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/package.json','**/pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-pnpm-store-v3-${{ hashFiles('**/package.json','**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-pnpm-store-
+            ${{ runner.os }}-pnpm-store-v3-
 
-      - name: Cache project pnpm files
-        uses: actions/cache@v5
-        with:
-          path: |
-            .pnpm
-            node_modules
-          key: ${{ runner.os }}-pnpm2-project-${{ hashFiles('**/package.json','**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-project-
-      # - name: Generate Prisma Client
-      #   env:
-      #     DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      #   run: pnpm prisma generate
-
-      # - name: Run Prisma Migrations
-      #   env:
-      #     DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      #   run: pnpm prisma db push
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      # - name: Add Prisma adapter for Neon
-      #   run: pnpm add @neon/prisma-adapter
-
-      # - name: Generate Prisma client
-      #   run: npx prisma generate
 
       - name: Check for outdated dependencies
         run: pnpm outdated | grep -v -E '(prisma|@prisma)' || true
-
-      - name: Show .prettierignore contents
-        run: |
-          echo ".prettierignore exists?"; test -f .prettierignore && echo "yes" || echo "no"
-          echo "Contents of .prettierignore:"
-          sed -n '1,200p' .prettierignore || true
 
       - name: Fix Prettier
         run: pnpm prettier --write .
