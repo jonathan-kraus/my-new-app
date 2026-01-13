@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { buildAstronomyEvents } from "@/lib/astronomy-ui";
+import { GitHubActivityCard } from "@/components/github/GitHubActivityCard";
 import LiveTimeline from "@/components/LiveTimeline";
 import { logit } from "@/lib/log/client";
 
@@ -166,11 +167,7 @@ export default function DashboardPage() {
                   key={item.id}
                   className="p-2 rounded bg-white/5 border border-white/10"
                 >
-                  <div className="font-medium">{item.name}</div>
-                  <div className="text-sm text-gray-400">{item.repo}</div>
-                  <div className="text-xs text-gray-500">
-                    {new Date(item.updatedAt).toLocaleString()}
-                  </div>
+                  <GitHubActivityCard event={item} />
                 </li>
               ))}
             </ul>
