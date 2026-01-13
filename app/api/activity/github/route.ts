@@ -17,7 +17,7 @@ export async function GET() {
     const query = `
       ['github-events']
       | where data.repo == "jonathan-kraus/my-new-app"
-      | sort(desc: "data.updatedAt")
+      | sort desc: "data.updatedAt"
       | limit 10
     `;
 
