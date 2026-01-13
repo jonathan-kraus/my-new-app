@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { Axiom } from "@axiomhq/js";
+import { logit } from "@/lib/log/server";
 
 const axiom = new Axiom({
   token: process.env.AXIOM_TOKEN!,
@@ -7,13 +8,35 @@ const axiom = new Axiom({
 
 export async function GET() {
   try {
-    const result = await axiom.query(`
-['github-events']
-| where data.repo == "jonathan-kraus/my-new-app"
-| sort(desc: "data.updatedAt")
-| limit(10)
+    await logit({
+      level: "info",
+      message: "GitHub activity API hit",
+      file: "api/activity/github",
+    });
 
-    `);
+    const query = `
+      ['github-events']
+      | where data.repo == "jonathan-kraus/my-new-app"
+      | sort(desc: "data.updatedAt")
+      | limit(10)
+    `;
+
+    await logit({
+      level: "info",
+      message: "Running Axiom query",
+      data: { query },
+    });
+
+    const result = await axiom.query(query);
+
+    await logit({
+      level: "info",
+      message: "Axiom query result",
+      data: {
+        matchesCount: result?.matches?.length ?? 0,
+        hasMatches: !!result?.matches,
+      },
+    });
 
     const rows = result?.matches ?? [];
 
@@ -37,8 +60,21 @@ export async function GET() {
       };
     });
 
+    await logit({
+      level: "info",
+      message: "Mapped GitHub activity",
+      data: { count: activity.length },
+    });
+
     return NextResponse.json({ ok: true, activity });
-  } catch (err) {
+  } catch (err: any) {
+    await logit({
+      level: "error",
+      message: "GitHub activity API failed",
+      file: "api/activity/github",
+      data: { error: err?.message, stack: err?.stack },
+    });
+
     return NextResponse.json(
       { ok: false, error: "Failed to fetch GitHub activity" },
       { status: 500 }
