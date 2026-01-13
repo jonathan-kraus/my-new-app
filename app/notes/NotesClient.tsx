@@ -1,46 +1,51 @@
-type NotesClientProps = {
-  notes: Array<{ id: string; title: string }> | null; // adjust fields as needed
-  authorized: boolean;
-  userId?: string | null; // optional if you pass it
-};
+// app/notes/NotesClient.tsx
+"use client";
 
-export default function NotesClient({ notes, authorized }: NotesClientProps) {
+import { useEffect, useState } from "react";
+
+export default function NotesClient() {
+  const [authorized, setAuthorized] = useState<boolean | null>(null);
+  const [notes, setNotes] = useState<any[] | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function load() {
+      const res = await fetch("/api/notes");
+      const data = await res.json();
+
+      if (res.status === 401) {
+        setAuthorized(false);
+        return;
+      }
+
+      setAuthorized(true);
+      setNotes(data.notes ?? []);
+      setUserId(data.userId ?? null);
+    }
+
+    load();
+  }, []);
+
+  if (authorized === null) {
+    return <div className="p-6">Loading…</div>;
+  }
+
   if (!authorized) {
-    return (
-      <div className="p-6">
-        <p className="text-gray-500">You must be signed in to view notes.</p>
-      </div>
-    );
+    return <div className="p-6">You must be signed in to view notes.</div>;
   }
 
   return (
-    <div className="p-6 space-y-4">
-      <div className="flex justify-between items-center">
-        <h1 className="text-xl font-semibold">Your Notes</h1>
+    <div className="p-6">
+      <h1 className="text-xl font-bold mb-4">Your Notes</h1>
 
-        <a
-          href="/notes/new"
-          className="px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-        >
-          Add Note
-        </a>
-      </div>
+      {notes?.length === 0 && <p>No notes yet.</p>}
 
-      {notes?.length === 0 && (
-        <div className="text-gray-500">You don’t have any notes yet.</div>
-      )}
-
-      {notes && notes.length > 0 && (
-        <ul className="space-y-2">
-          {notes.map((note) => (
-            <li key={note.id} className="p-4 border rounded-md">
-              <a href={`/notes/${note.id}`} className="font-medium">
-                {note.title}
-              </a>
-            </li>
-          ))}
-        </ul>
-      )}
+      {notes?.map((note) => (
+        <div key={note.id} className="mb-4 p-4 border rounded">
+          <h2 className="font-semibold">{note.title}</h2>
+          <p>{note.content}</p>
+        </div>
+      ))}
     </div>
   );
 }
