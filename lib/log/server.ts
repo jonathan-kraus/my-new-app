@@ -1,31 +1,78 @@
-import { headers } from "next/headers";
-import { log } from "next-axiom"; // ✅ Official SDK
-import { CreateLogInput } from "@/lib/types";
+// lib/log/server.ts
+"use server";
+
+import { log } from "next-axiom";
+import { db } from "@/lib/db";
+import type { CreateLogInput, LogLevel } from "@/lib/types";
+import { nextLogIndex } from "@/lib/log/state";
+
+function axiomFor(level: LogLevel) {
+  switch (level) {
+    case "debug": return log.debug.bind(log);
+    case "info":  return log.info.bind(log);
+    case "warn":  return log.warn.bind(log);
+    case "error": return log.error.bind(log);
+    default:      return log.info.bind(log);
+  }
+}
 
 export async function logit(input: CreateLogInput) {
-  const h = await headers();
-  const requestId = h.get("x-request-id") ?? undefined;
+  const {
+    level = "info",
+    message,
+    file = null,
+    page = null,
+    requestId = null,
+    sessionEmail = null,
+    userId = null,
+    data = null,
+    createdAt = new Date(),
+  } = input;
 
-  // 👈 Extract statusCode from response header if set
-  const statusCode = Number(h.get("x-status-code") ?? "200");
+  // Per-request log index
+  const index = nextLogIndex(requestId);
+  const finalMessage =
+    index !== null ? `#${index} ${message}` : message;
 
-  // 1. Your DB log
-  fetch(`${process.env.SITE_URL}/api/log`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ ...input, requestId }),
-  }).catch(console.error);
+  const payload = {
+    level,
+    message: finalMessage,
+    file,
+    page,
+    requestId,
+    sessionEmail,
+    userId,
+    data,
+    timestamp: createdAt.toISOString(),
+  };
 
-  // 2. Axiom (official, Turbopack-safe)
-  // 👈 Axiom with statusCode ALWAYS
-  log
-    .with({
-      requestId,
-      page: input.page,
-      statusCode, // 👈 Now every log has this!
-    })
-    .info(input.message, {
-      level: input.level,
-      data: input.data,
+  // 1. Axiom (non-blocking)
+  try {
+    const ax = axiomFor(level);
+    ax(finalMessage, payload);
+  } catch {}
+
+  // 2. Neon via Prisma (structured)
+  try {
+    await db.log.create({
+      data: {
+        level,
+        message: finalMessage,
+        file,
+        page,
+        requestId,
+        sessionEmail,
+        userId,
+        data: data as any,
+        createdAt,
+      },
     });
+  } catch (err) {
+    try {
+      log.error("Failed to write log to Neon", {
+        error: (err as Error).message,
+        original: payload,
+      });
+    } catch {}
+  }
 }

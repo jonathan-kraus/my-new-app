@@ -11,6 +11,16 @@ export const dynamic = "force-dynamic";
 // GET /api/notes
 export async function GET(req: NextRequest) {
   const h = await headers();
+await logit({
+  level: "info",
+  message: "In Notes dp we have requestId",
+  requestId: req.headers.get("x-request-id"),
+  file: "app/api/test/route.ts",
+  line: 14,
+  data: {
+    dynamic: dynamic,
+  }
+});
 
   try {
     const session = await auth.api.getSession({ headers: h });
