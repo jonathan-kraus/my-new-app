@@ -17,10 +17,11 @@ export async function GET() {
     const query = `
   ['github-events']
   | where repo == "jonathan-kraus/my-new-app"
-	| project id=data.id, repo=data.repo, commitSha=data.commitSha, name=data.name
-  | limit 10
+	| limit 10
 `;
-
+await logit({ level: "info", message: "AXIOM RAW ROW", data: result.matches?.[0] ?? null, });
+await logit({ level: "info", message: "AXIOM RAW ROW", data: result.matches?.[2] ?? null, });
+await logit({ level: "info", message: "AXIOM RAW ROW", data: result.matches?.[4] ?? null, });
     await logit({
       level: "info",
       message: "Running Axiom query",
