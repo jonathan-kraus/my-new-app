@@ -8,7 +8,49 @@ import { Axiom } from "@axiomhq/js";
 const axiom = new Axiom({
   token: process.env.AXIOM_TOKEN!,
 });
-function normalizeGitHubEvent(event: any, payload: any) {
+
+// -----------------------------
+// Transform workflow_run payload
+// -----------------------------
+function transformWorkflowRun(payload: any) {
+  const wr = payload.workflow_run;
+  if (!wr) return null;
+
+  return {
+    id: wr.id,
+
+    // Workflow metadata
+    name: wr.name,
+    repo: payload.repository?.full_name ?? null,
+
+    // Status + result
+    status: wr.status ?? null,
+    conclusion: wr.conclusion ?? null,
+
+    // Event context
+    event: payload.action ?? "workflow_run",
+    actor: wr.actor?.login ?? payload.sender?.login ?? null,
+
+    // Commit info
+    commitMessage: wr.head_commit?.message ?? null,
+    commitSha: wr.head_sha ?? null,
+
+    // Link
+    url: wr.html_url ?? null,
+
+    // Timestamps
+    createdAt: wr.created_at,
+    updatedAt: wr.updated_at,
+
+    // Source discriminator
+    source: "github",
+  };
+}
+
+// -----------------------------
+// Normalize all GitHub events
+// -----------------------------
+function normalizeGitHubEvent(event: string | null, payload: any) {
   const repo = payload.repository?.full_name ?? null;
   const actor = payload.sender?.login ?? null;
 
@@ -38,17 +80,7 @@ function normalizeGitHubEvent(event: any, payload: any) {
       };
 
     case "workflow_run":
-      return {
-        type: "workflow_run",
-        repo,
-        actor,
-        workflowName: payload.workflow_run?.name,
-        status: payload.workflow_run?.status,
-        conclusion: payload.workflow_run?.conclusion,
-        url: payload.workflow_run?.html_url,
-        sha: payload.workflow_run?.head_sha,
-        branch: payload.workflow_run?.head_branch,
-      };
+      return transformWorkflowRun(payload);
 
     case "deployment_status":
       return {
@@ -81,6 +113,9 @@ function normalizeGitHubEvent(event: any, payload: any) {
   }
 }
 
+// -----------------------------
+// Signature verification
+// -----------------------------
 async function verifySignature(req: NextRequest, body: string) {
   const signature = req.headers.get("x-hub-signature-256");
   const secret = process.env.GITHUB_WEBHOOK_SECRET;
@@ -97,6 +132,9 @@ async function verifySignature(req: NextRequest, body: string) {
   }
 }
 
+// -----------------------------
+// POST handler
+// -----------------------------
 export async function POST(req: NextRequest) {
   const raw = await req.text();
 
@@ -112,66 +150,54 @@ export async function POST(req: NextRequest) {
 
   const payload = JSON.parse(raw);
   const event = req.headers.get("x-github-event");
-  const normalized = normalizeGitHubEvent(event, payload);
-  // 2. Log the raw event
+
+  // 2. Log raw event type
   await logit({
     level: "info",
     message: "GitHub webhook received",
     data: { event },
   });
-//   await logit({ level: "info",
-//     message: "111111111111111" });
-// await axiom.ingest("github-events",
-//   [ { msg: "test-ingest", ts: Date.now() } ]);
-//   await logit({ level: "info",
-//     message: "2222222222222222" });
-//     const result = await axiom.query(` ['github-events'] | limit(5) `);
-//       await logit({ level: "info",
-//     message: "333333333333333333333" });
-//     console.log(result.matches);
-//     await logit({ level: "info",
-//     message: "test-query fired" });
-  switch (event) {
-    case "workflow_run": {
-      const wr = payload.workflow_run;
 
-      // 3. Local log of filtered data
-      await logit({
-        level: "info",
-        message: "workflow_run processed",
-        data: {
-          id: wr.id,
-          name: wr.name,
-          status: wr.status,
-          conclusion: wr.conclusion,
-          createdAt: wr.created_at,
-          updatedAt: wr.updated_at,
-          repo: payload.repository.full_name,
-        },
-      });
+  // 3. Normalize event
+  const normalized = normalizeGitHubEvent(event, payload);
 
-      // 4. Filtered ingest to Axiom
-axiom.ingest("github_events", {
-  id: payload?.workflow_run?.id ?? payload?.after ?? crypto.randomUUID(),
-  event,
-  ...normalized, raw: payload, // optional
-  timestamp: new Date().toISOString(),
-});
+  // If workflow_run, ingest full event
+  if (event === "workflow_run") {
+    const wr = transformWorkflowRun(payload);
+
+    if (!wr) {
       await logit({
-        level: "info",
-        message: "** GitHub event ingested **",
-        data: { event },
+        level: "warn",
+        message: "workflow_run missing payload",
       });
-    await axiom.ingest("github-events", [ { msg: "Hello" } ]);
       return new Response("OK");
     }
 
-    default:
-      await logit({
-        level: "info",
-        message: "GitHub event ignored",
-        data: { event },
-      });
-      return new Response("Ignored", { status: 200 });
+    // Local log
+    await logit({
+      level: "info",
+      message: "workflow_run processed",
+      data: wr,
+    });
+
+    // Ingest into Axiom
+    await axiom.ingest("github-events", wr);
+
+    await logit({
+      level: "info",
+      message: "** GitHub workflow_run ingested **",
+      data: { id: wr.id },
+    });
+
+    return new Response("OK");
   }
+
+  // 4. Other events → optional ingest or ignore
+  await logit({
+    level: "info",
+    message: "GitHub event ignored",
+    data: { event },
+  });
+
+  return new Response("Ignored", { status: 200 });
 }

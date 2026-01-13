@@ -1,31 +1,32 @@
-export function transformGitHubRun(run: any) {
-  if (!run) return null;
+export function transformGitHubRun(payload: any) {
+  const wr = payload.workflow_run;
+  if (!wr) return null;
 
   return {
-    id: run.id,
+    id: wr.id,
 
     // Workflow metadata
-    name: run.name,
-    repo: run.repo,
+    name: wr.name,
+    repo: payload.repository?.full_name ?? null,
 
     // Status + result
-    status: run.status ?? null,
-    conclusion: run.conclusion ?? null,
+    status: wr.status ?? null,
+    conclusion: wr.conclusion ?? null,
 
     // Event context
-    event: run.event ?? null,
-    actor: run.actor ?? null,
+    event: payload.action ?? "workflow_run",
+    actor: wr.actor?.login ?? payload.sender?.login ?? null,
 
     // Commit info
-    commitMessage: run.commitMessage ?? null,
-    commitSha: run.commitSha ?? null,
+    commitMessage: wr.head_commit?.message ?? null,
+    commitSha: wr.head_sha ?? null,
 
     // Link
-    url: run.url ?? null,
+    url: wr.html_url ?? null,
 
     // Timestamps
-    createdAt: run.createdAt,
-    updatedAt: run.updatedAt,
+    createdAt: wr.created_at,
+    updatedAt: wr.updated_at,
 
     // Source discriminator
     source: "github",
