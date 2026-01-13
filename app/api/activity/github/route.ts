@@ -14,9 +14,14 @@ export async function GET() {
       file: "api/activity/github",
     });
 
-const query = ` ['github-events']
-| where data.repo == "jonathan-kraus/my-new-app"
-| limit 10`;
+const query = `
+  ['github-events']
+  | project id=data.id, repo=data.repo, updatedAt=data.updatedAt, name=data.name, status=data.status, conclusion=data.conclusion, event=data.event, actor=data.actor, commitMessage=data.commitMessage, commitSha=data.commitSha, url=data.url, source=data.source
+  | where repo == "jonathan-kraus/my-new-app"
+  | sort updatedAt desc
+  | limit 10
+`;
+
 
     await logit({
       level: "info",
