@@ -18,7 +18,7 @@ export async function GET() {
       ['github-events']
       | where data.repo == "jonathan-kraus/my-new-app"
       | sort(desc: "data.updatedAt")
-      | limit(10)
+      | limit 10
     `;
 
     await logit({
