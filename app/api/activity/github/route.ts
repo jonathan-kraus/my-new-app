@@ -14,12 +14,11 @@ export async function GET() {
 			file: "api/activity/github",
 		});
 
-const query = `
+		const query = `
   ['github-events']
   | where repo == "jonathan-kraus/my-new-app"
-  | limit 10
+  | limit 100
 `;
-
 
 		await logit({
 			level: "info",
