@@ -70,7 +70,7 @@ export async function GET(req: NextRequest) {
 export const dynamic = "force-dynamic";
 export async function POST(req: NextRequest) {
   try {
-    const h = headers(); // ← REAL HEADERS
+    const h = await headers(); // ← REAL HEADERS
     const session = await auth.api.getSession({ headers: h });
     const email = session?.user?.email;
 
