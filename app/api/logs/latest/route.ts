@@ -1,6 +1,6 @@
 // app/api/logs/latest/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/db"; // or your prisma import
+import { db } from "@/lib/db"; // or your prisma import
 import { logit } from "@/lib/log/server";
 
 export const dynamic = "force-dynamic";
@@ -25,10 +25,10 @@ export async function GET(req: NextRequest) {
       ];
     }
 
-    const logs = await prisma.log.findMany({
+    const logs = await db.log.findMany({
       where,
       orderBy: { createdAt: "desc" },
-      take: 50,
+      take: 75,
     });
 
     return NextResponse.json({ logs });
