@@ -62,6 +62,7 @@ export async function logit(input: CreateLogInput) {
     data,
     timestamp: createdAt.toISOString(),
   };
+console.log("~~~AXIOM TEST&&&", finalMessage, payload);
 
   // 1. Axiom
   try {
