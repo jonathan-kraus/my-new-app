@@ -88,15 +88,12 @@ export async function GET(req: NextRequest) {
     // -----------------------------
     // Fetch ALL snapshots for location
     // -----------------------------
-    const rows = (await dbRls.query(
-      `
-      SELECT *
-      FROM "AstronomySnapshot"
-      WHERE "locationId" = $1
-      ORDER BY "date" ASC
-      `,
-      [locationId],
-    )) as AstronomySnapshotRow[];
+   const rows = await dbRls`
+  SELECT *
+  FROM "AstronomySnapshot"
+  WHERE "locationId" = ${locationId}
+  ORDER BY "date" ASC
+`;
 
     // -----------------------------
     // Select TODAY and TOMORROW by calendar date
