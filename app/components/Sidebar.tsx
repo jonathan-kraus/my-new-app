@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import UserPanel from "@/components/UserPanel"
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
 
@@ -16,6 +17,11 @@ export function Sidebar() {
   ];
 
   return (
+        <aside className="fixed left-0 top-0 h-screen w-64 bg-blue-600 text-white">
+      <div className="p-4">
+        {/* Profile card */}
+        <UserPanel />
+      </div>
     <div className="fixed top-0 left-0 h-screen w-64 bg-gradient-to-b from-blue-600 to-blue-700 text-white p-4 shadow-lg">
       <nav className="space-y-2">
         {items.map((item) => {
@@ -37,6 +43,6 @@ export function Sidebar() {
           );
         })}
       </nav>
-    </div>
+    </div> </aside>
   );
 }
