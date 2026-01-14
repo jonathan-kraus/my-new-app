@@ -14,7 +14,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-blue-950 text-white min-h-screen">
-        <ClientLayout/>
+        {/* <ClientLayout/> */}
+
         <Sidebar />
 
         <main className="ml-64 p-6">
