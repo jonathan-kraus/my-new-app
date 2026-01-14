@@ -1,7 +1,5 @@
 import "./globals.css";
 import { Sidebar } from "@/components/Sidebar";
-import ClientLayout from "@/app/client-layout";
-
 import { Toaster } from "react-hot-toast";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -14,10 +12,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-blue-950 text-white min-h-screen">
-        <ClientLayout>
-{children}
+
         <Sidebar />
-</ClientLayout>
+
         <main className="ml-64 p-6">
           {children}
 
