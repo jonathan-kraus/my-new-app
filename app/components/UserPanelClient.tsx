@@ -2,7 +2,13 @@
 
 import { authClient } from "@/lib/auth-client";
 
-export default function UserPanelClient({ user }) {
+type User = {
+  id: string;
+  email: string;
+  name: string | null;
+} | null;
+
+export default function UserPanelClient({ user }: { user: User }) {
   if (!user) {
     return (
       <div className="mb-4 rounded-lg bg-blue-500/40 p-3 text-xs text-white">
