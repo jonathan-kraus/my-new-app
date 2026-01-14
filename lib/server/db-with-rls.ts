@@ -3,15 +3,22 @@
 import { neon } from "@neondatabase/serverless";
 
 export function getDbWithRls(email: string) {
-	const sql = neon(process.env.DATABASE_URL!, {
-		fetchOptions: {
-			headers: {
-				"app.current_user_email": email,
-			},
-		},
-	});
+  // Create client WITHOUT connection string
+  const client = neon();
 
-	return (strings: TemplateStringsArray, ...values: any[]) => {
-		return sql(strings, ...values);
-	};
+  // Return a tagged-template wrapper that injects RLS headers
+  return (strings: TemplateStringsArray, ...values: any[]) => {
+    return client(
+      process.env.DATABASE_URL!,
+      {
+        fetchOptions: {
+          headers: {
+            "app.current_user_email": email,
+          },
+        },
+      },
+      strings,
+      ...values
+    );
+  };
 }
