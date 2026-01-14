@@ -29,12 +29,8 @@ export async function GET(req: NextRequest) {
     message: "Session resolved",
     page: "/api/notes",
     file: "app/api/notes/route.ts",
-    data: {
-    rawSession: session,                // full object (for now)
-    userId: session?.user?.id ?? null,
-    email: session?.user?.email ?? null,
-    name: session?.user?.name ?? null,
-  },
+data: { userId: session?.user?.id ?? null, email: session?.user?.email ?? null, name: session?.user?.name ?? null, sessionId: session?.session?.id ?? null, },
+  
 });
 
 

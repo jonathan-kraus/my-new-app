@@ -1,7 +1,7 @@
 // app/api/astronomy/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { sql } from "@/lib/server/db";
+import { getDbWithRls } from "@/lib/server/db-with-rls";
 import { logit } from "@/lib/log/server";
 import { enrichContext } from "@/lib/log/context";
 // ------------------------------------------------------------
@@ -83,6 +83,7 @@ export async function GET(req: NextRequest) {
 			date: string;
 			[key: string]: any;
 		};
+		const sql = getDbWithRls(session.user.email);
 		const rows: AstronomyRow[] = await sql`
   SELECT *
   FROM astronomy_snapshots

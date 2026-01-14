@@ -30,7 +30,7 @@ export async function GET() {
     await logit({
       level: "info",
       message: "Running Axiom result",
-      data: { result },
+      data: { dataset: result.datasetNames, matchCount: result.matches?.length ?? 0, }
     });
     await logit({
       level: "info",
