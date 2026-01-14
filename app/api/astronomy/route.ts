@@ -88,7 +88,7 @@ export async function GET(req: NextRequest) {
     // -----------------------------
     // Fetch ALL snapshots for location
     // -----------------------------
-   const rows = await dbRls`
+    const rows = await dbRls`
   SELECT *
   FROM "AstronomySnapshot"
   WHERE "locationId" = ${locationId}

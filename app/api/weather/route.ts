@@ -88,7 +88,7 @@ export async function GET(req: NextRequest) {
     : null;
 
   if (currentCached) {
-        const ctx = await enrichContext(req);
+    const ctx = await enrichContext(req);
 
     await logit({
       ...ctx,
