@@ -29,10 +29,16 @@ export async function GET(req: NextRequest) {
     message: "Session resolved",
     page: "/api/notes",
     file: "app/api/notes/route.ts",
-    data: { email: session?.user?.email },
-  });
+    data: {
+    rawSession: session,                // full object (for now)
+    userId: session?.user?.id ?? null,
+    email: session?.user?.email ?? null,
+    name: session?.user?.name ?? null,
+  },
+});
 
-  if (!session?.user?.email) {
+
+  if (!session?.user?.id) {
     const durationMs = getRequestDuration(durationStartId);
 
     await logit({
