@@ -3,7 +3,7 @@
 
 import { log } from "next-axiom";
 import { db } from "@/lib/db";
-import { nextLogIndex } from "@/lib/log/state";
+import { nextLogIndex } from "@/lib/log/index";
 import { getCallerInfo } from "@/lib/log/caller";
 import { getRequestDuration } from "@/lib/log/timing";
 import type { CreateLogInput, LogLevel } from "@/lib/types";
@@ -45,6 +45,7 @@ export async function logit(input: CreateLogInput) {
   const index = nextLogIndex(requestId);
   const prefix = index !== null ? `#${index}` : "";
   const finalMessage = prefix ? `${prefix} ${message}` : message;
+
 
   // Duration
   const durationMs = getRequestDuration(requestId);
