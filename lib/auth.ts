@@ -31,7 +31,24 @@ if (githubClientId && githubClientSecret) {
 export const auth = betterAuth({
   baseURL: "https://www.kraus.my.id",
   trustedOrigins: ["https://www.kraus.my.id", "https://kraus.my.id"],
-
+callbacks: {
+  session: async ({
+    session,
+    user,
+  }: {
+    session: any; // or Better Auth’s Session type
+    user: { id: string; email: string; name: string | null };
+  }) => {
+    return {
+      ...session,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+      },
+    };
+  },
+},
   socialProviders: Object.keys(socialProviders).length
     ? socialProviders
     : undefined,
