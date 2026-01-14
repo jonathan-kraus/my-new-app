@@ -79,18 +79,20 @@ model Location {
   updatedAt DateTime @updatedAt
 }
 model Log {
-  id           String   @id @default(cuid())
-  level        String
-  message      String
-  data         Json?
-  page         String?
-  userId       String?
-  sessionEmail String?
-  sessionUser  String?
-  requestId    String?
-  file         String?
-  line         Int?
-  createdAt    DateTime @default(now())
+  id            String   @id @default(cuid())
+  level         String
+  message       String
+  data          Json?
+  page          String?
+  durationMs    Int?
+  eventIndex    Int?
+  userId        String?
+  sessionEmail  String?
+  sessionUser   String?
+  requestId     String?
+  file          String?
+  line          Int?
+  createdAt     DateTime @default(now())
 }
 
 enum LogLevel {

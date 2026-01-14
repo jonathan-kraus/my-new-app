@@ -32,7 +32,7 @@ export async function logToDatabase(
     return { success: true };
   } catch (error) {
     console.error("Database log failed:", {
-      error: error?.message,
+      error: error,
       original: input,
     });
     return { success: false };
