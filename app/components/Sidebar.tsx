@@ -9,6 +9,7 @@ export function Sidebar() {
   const items = [
     { name: "Dashboard", href: "/dashboard" },
     { name: "Logs", href: "/logs" },
+    { name: "Forecast", href: "/forecast" },
     { name: "Notes", href: "/notes" },
     { name: "Astronomy", href: "/astronomy" },
     { name: "Ping", href: "/api/ping" },
