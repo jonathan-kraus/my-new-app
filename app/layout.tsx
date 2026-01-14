@@ -14,10 +14,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="bg-blue-950 text-white min-h-screen">
-        {/* <ClientLayout/> */}
-
+        <ClientLayout>
+{children}
         <Sidebar />
-
+</ClientLayout>
         <main className="ml-64 p-6">
           {children}
 
