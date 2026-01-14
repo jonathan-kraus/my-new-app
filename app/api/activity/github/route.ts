@@ -17,9 +17,8 @@ export async function GET() {
     const query = `
 ['github-events']
 | where repo == "jonathan-kraus/my-new-app"
-| sort updatedAt desc
+| sort todatetime(updatedAt) desc
 | limit 100
-
     `;
 
     await logit({
