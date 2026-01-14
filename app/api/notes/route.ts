@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
   await logit({
     ...ctx,
     level: "info",
-    message: "#1 Notes POST started",
+    message: "Notes POST started",
     page: "/api/notes",
     file: "app/api/notes/route.ts",
   });
@@ -112,7 +112,7 @@ export async function POST(req: NextRequest) {
     await logit({
       ...ctx,
       level: "warn",
-      message: "#1 Notes POST unauthorized",
+      message: "Notes POST unauthorized",
       durationMs,
       page: "/api/notes",
       file: "app/api/notes/route.ts",
@@ -140,7 +140,7 @@ export async function POST(req: NextRequest) {
     await logit({
       ...ctx,
       level: "info",
-      message: "#1 Note created",
+      message: "Note created",
       durationMs,
       page: "/api/notes",
       file: "app/api/notes/route.ts",
@@ -154,7 +154,7 @@ export async function POST(req: NextRequest) {
     await logit({
       ...ctx,
       level: "error",
-      message: "#1 Notes POST failed",
+      message: "Notes POST failed",
       durationMs,
       page: "/api/notes",
       file: "app/api/notes/route.ts",
