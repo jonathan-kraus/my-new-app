@@ -10,6 +10,7 @@ export interface CreateLogInput {
   sessionEmail?: string | null;
   sessionUser?: string | null;
   durationMs?: number | null;
+  eventIndex?: number | null;
   requestId?: string | null;
   file?: string | null;
   line?: number | null;

@@ -89,6 +89,10 @@ export async function GET(req: NextRequest) {
 
   if (currentCached) {
     const ctx = await enrichContext(req);
+    const start = performance.now();
+    let eventIndex = 0;
+    const nextEvent = () => eventIndex++;
+
 
 await logit({
   ...ctx,
