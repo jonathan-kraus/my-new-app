@@ -5,6 +5,8 @@ import { z } from "zod";
 import { logit } from "@/lib/log/server";
 import { auth } from "@/lib/auth";
 import { getRuntimeNumber } from "@/lib/runtimeConfig";
+import { enrichContext } from "@/lib/log/context";
+import { NextRequest } from "next/server";
 
 const API_KEY = process.env.TOMORROWIO_APIKEY!;
 // Zod schemas
@@ -45,7 +47,7 @@ const TomorrowTimelineSchema = z.object({
 const DEFAULT_CURRENT_MIN = Number(process.env.WEATHER_CACHE_MINUTES ?? 10);
 const DEFAULT_FORECAST_MIN = Number(process.env.FORECAST_CACHE_MINUTES ?? 30);
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   const session = await auth.api.getSession({
     headers: req.headers,
   });
@@ -86,7 +88,10 @@ export async function GET(req: Request) {
     : null;
 
   if (currentCached) {
+        const ctx = await enrichContext(req);
+
     await logit({
+      ...ctx,
       level: "info",
       message: `Using cached current weather data ${currentAge}/${currentCacheMin}`,
       file: "app/api/weather/route.ts",
@@ -131,16 +136,18 @@ export async function GET(req: Request) {
     const res = await fetch(
       `https://api.tomorrow.io/v4/weather/realtime?location=${location.latitude},${location.longitude}&units=imperial&apikey=${API_KEY}`,
     );
+    const ctx = await enrichContext(req);
     await logit({
+      ...ctx,
       level: "info",
       message: "Realtime weather fetch attempted",
       page: "/api/weather",
       file: "app/api/weather/route.ts",
-
       data: { status: res },
     });
     if (!res.ok) {
       await logit({
+        ...ctx,
         level: "error",
         message: "Realtime weather fetch failed",
         page: "/api/weather",
@@ -159,6 +166,7 @@ export async function GET(req: Request) {
 
     if (!validated.success) {
       await logit({
+        ...ctx,
         level: "error",
         message: "Realtime weather validation failed",
         page: "/api/weather",
