@@ -4,19 +4,19 @@ import { logit } from "@/lib/log/server";
 type AuthType = ReturnType<typeof betterAuth>;
 
 let _auth: AuthType | undefined;
-let _dbConnected = false;
 
-// Build social providers from environment at module load so the CLI can read `auth`
+// Build social providers from environment at module load
 const githubClientId =
   process.env.GITHUB_CLIENT_ID ??
   process.env.GITHUB_ID ??
   process.env.AUTH_GITHUB_ID;
+
 const githubClientSecret =
   process.env.GITHUB_CLIENT_SECRET ??
   process.env.GITHUB_SECRET ??
   process.env.AUTH_GITHUB_SECRET;
 
-const socialProviders: any = {};
+const socialProviders: Record<string, any> = {};
 
 if (githubClientId && githubClientSecret) {
   socialProviders.github = {
@@ -31,12 +31,13 @@ if (githubClientId && githubClientSecret) {
 export const auth = betterAuth({
   baseURL: "https://www.kraus.my.id",
   trustedOrigins: ["https://www.kraus.my.id", "https://kraus.my.id"],
-callbacks: {
+
+  callbacks: {
   session: async ({
     session,
     user,
   }: {
-    session: any; // or Better Auth’s Session type
+    session: Record<string, any>;
     user: { id: string; email: string; name: string | null };
   }) => {
     return {
@@ -49,28 +50,23 @@ callbacks: {
     };
   },
 },
-  socialProviders: Object.keys(socialProviders).length
-    ? socialProviders
-    : undefined,
+
+
+  socialProviders:
+    Object.keys(socialProviders).length > 0 ? socialProviders : undefined,
 });
 
-// ⭐ FIX: getAuth MUST NOT be async
+// ⭐ MUST remain sync — Better Auth requires this
 export function getAuth(): AuthType {
   if (_auth) return _auth;
 
-  // optional logging — safe to keep
   logit({
     level: "warn",
-    message: "in getAuth - _auth is undefined",
+    message: "getAuth() called before auth initialized",
     file: "lib/auth.ts",
   });
 
   try {
-    if (!_dbConnected) {
-
-      _dbConnected = true;
-    }
-
     if (!Object.keys(socialProviders).length) {
       console.warn(
         "GitHub OAuth not configured: missing GITHUB client id/secret env vars",
@@ -81,10 +77,8 @@ export function getAuth(): AuthType {
 
     logit({
       level: "info",
-      message: "in getAuth - what is auth",
+      message: "Better Auth initialized",
       file: "lib/auth.ts",
-
-      data: { auth: JSON.stringify(_auth) },
     });
   } catch (err: any) {
     console.error("BetterAuth initialization failed:", {
@@ -93,12 +87,14 @@ export function getAuth(): AuthType {
       stack: err?.stack,
       cause: err?.cause,
     });
+
     console.error("ENV: DATABASE_URL set?", !!process.env.DATABASE_URL);
     console.error("ENV: GITHUB_CLIENT_ID set?", !!process.env.GITHUB_CLIENT_ID);
     console.error(
       "ENV: GITHUB_CLIENT_SECRET set?",
       !!process.env.GITHUB_CLIENT_SECRET,
     );
+
     throw err;
   }
 

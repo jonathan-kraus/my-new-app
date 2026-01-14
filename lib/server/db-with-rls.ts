@@ -1,4 +1,3 @@
-// lib/server/db-with-rls.ts
 import { neon } from "@neondatabase/serverless";
 
 export function getDbWithRls(email: string) {
@@ -10,4 +9,3 @@ export function getDbWithRls(email: string) {
     },
   });
 }
-
