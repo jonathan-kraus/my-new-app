@@ -17,7 +17,8 @@ export async function GET() {
     const query = `
 ['github-events']
 | where repo == "jonathan-kraus/my-new-app"
-| sort todatetime(updatedAt) desc
+| sort _time desc
+| project *, _time
 | limit 100
     `;
 
