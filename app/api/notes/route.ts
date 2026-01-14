@@ -2,10 +2,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { getDbWithRls } from "@/lib/server/db-with-rls";
+import { enrichContext } from "@/lib/log/context";
 import { logit } from "@/lib/log/server";
+import { getRequestDuration } from "@/lib/log/timing";
 
+// -------------------------
+// GET /api/notes
+// -------------------------
 export async function GET(req: NextRequest) {
+  const ctx = await enrichContext(req);
+  const durationStartId = ctx.requestId;
+
   await logit({
+    ...ctx,
     level: "info",
     message: "#1 Notes GET started",
     page: "/api/notes",
@@ -15,6 +24,7 @@ export async function GET(req: NextRequest) {
   const session = await auth.api.getSession({ headers: req.headers });
 
   await logit({
+    ...ctx,
     level: "info",
     message: "#1 Session resolved",
     page: "/api/notes",
@@ -23,6 +33,17 @@ export async function GET(req: NextRequest) {
   });
 
   if (!session?.user?.email) {
+    const durationMs = getRequestDuration(durationStartId);
+
+    await logit({
+      ...ctx,
+      level: "info",
+      message: "#1 Notes GET completed (unauthorized)",
+      durationMs,
+      page: "/api/notes",
+      file: "app/api/notes/route.ts",
+    });
+
     return NextResponse.json({ notes: [] });
   }
 
@@ -35,16 +56,114 @@ export async function GET(req: NextRequest) {
       ORDER BY created_at DESC
     `;
 
+    const durationMs = getRequestDuration(durationStartId);
+
+    await logit({
+      ...ctx,
+      level: "info",
+      message: "#1 Notes GET completed",
+      durationMs,
+      page: "/api/notes",
+      file: "app/api/notes/route.ts",
+      data: { count: rows.length },
+    });
+
     return NextResponse.json({ notes: rows });
   } catch (err: any) {
+    const durationMs = getRequestDuration(durationStartId);
+
     await logit({
+      ...ctx,
       level: "error",
       message: "#1 Notes GET failed",
+      durationMs,
       page: "/api/notes",
       file: "app/api/notes/route.ts",
       data: { error: err.message },
     });
 
-    return NextResponse.json({ error: "Failed to fetch notes" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to fetch notes" },
+      { status: 500 }
+    );
+  }
+}
+
+// -------------------------
+// POST /api/notes
+// -------------------------
+export async function POST(req: NextRequest) {
+  const ctx = await enrichContext(req);
+  const durationStartId = ctx.requestId;
+
+  await logit({
+    ...ctx,
+    level: "info",
+    message: "#1 Notes POST started",
+    page: "/api/notes",
+    file: "app/api/notes/route.ts",
+  });
+
+  const session = await auth.api.getSession({ headers: req.headers });
+
+  if (!session?.user?.email) {
+    const durationMs = getRequestDuration(durationStartId);
+
+    await logit({
+      ...ctx,
+      level: "warn",
+      message: "#1 Notes POST unauthorized",
+      durationMs,
+      page: "/api/notes",
+      file: "app/api/notes/route.ts",
+    });
+
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const email = session.user.email;
+  const db = getDbWithRls(email);
+
+  const body = await req.json();
+  const { title, content } = body;
+
+  try {
+    const rows = await db`
+      INSERT INTO notes (title, content)
+      VALUES (${title}, ${content})
+      RETURNING id, title, content, created_at
+    `;
+
+    const note = rows[0];
+    const durationMs = getRequestDuration(durationStartId);
+
+    await logit({
+      ...ctx,
+      level: "info",
+      message: "#1 Note created",
+      durationMs,
+      page: "/api/notes",
+      file: "app/api/notes/route.ts",
+      data: { noteId: note.id },
+    });
+
+    return NextResponse.json({ note });
+  } catch (err: any) {
+    const durationMs = getRequestDuration(durationStartId);
+
+    await logit({
+      ...ctx,
+      level: "error",
+      message: "#1 Notes POST failed",
+      durationMs,
+      page: "/api/notes",
+      file: "app/api/notes/route.ts",
+      data: { error: err.message },
+    });
+
+    return NextResponse.json(
+      { error: "Failed to create note" },
+      { status: 500 }
+    );
   }
 }
