@@ -1,48 +1,14 @@
-"use client";
-import Link from "next/link";
-import UserPanel from "@/components/UserPanel"
-import { usePathname } from "next/navigation";
-import clsx from "clsx";
+// app/components/Sidebar.tsx  (SERVER)
+import UserPanel from "@/components/UserPanel";
+import SidebarClient from "@/components/SidebarClient";
 
 export function Sidebar() {
-  const pathname = usePathname();
-
-  const items = [
-    { name: "Dashboard", href: "/dashboard" },
-    { name: "Logs", href: "/logs" },
-    { name: "Forecast", href: "/forecast" },
-    { name: "Notes", href: "/notes" },
-    { name: "Astronomy", href: "/astronomy" },
-    { name: "Ping", href: "/api/ping" },
-  ];
-
   return (
-        <aside className="fixed left-0 top-0 h-screen w-64 bg-blue-600 text-white">
+    <aside className="fixed left-0 top-0 h-screen w-64 bg-blue-600 text-white">
       <div className="p-4">
-        {/* Profile card */}
-        <UserPanel />
+        <UserPanel /> {/* server-only auth + headers OK */}
       </div>
-    <div className="fixed top-0 left-0 h-screen w-64 bg-gradient-to-b from-blue-600 to-blue-700 text-white p-4 shadow-lg">
-      <nav className="space-y-2">
-        {items.map((item) => {
-          const active = pathname === item.href;
-
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={clsx(
-                "block px-4 py-2 rounded-md transition-all",
-                active
-                  ? "bg-white text-blue-700 font-semibold shadow"
-                  : "hover:bg-blue-500/40",
-              )}
-            >
-              {item.name}
-            </Link>
-          );
-        })}
-      </nav>
-    </div> </aside>
+      <SidebarClient /> {/* client nav with usePathname */}
+    </aside>
   );
 }
