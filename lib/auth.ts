@@ -52,6 +52,7 @@ export const auth = betterAuth({
 },
 
 
+
   socialProviders:
     Object.keys(socialProviders).length > 0 ? socialProviders : undefined,
 });
