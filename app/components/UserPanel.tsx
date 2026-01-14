@@ -1,7 +1,7 @@
 // app/components/UserPanel.tsx
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import Link from "next/link";
+import { authClient } from "@/lib/auth-client";
 
 export default async function UserPanel() {
   const session = await auth.api.getSession({
@@ -9,20 +9,21 @@ export default async function UserPanel() {
   });
 
   const user = session?.user;
+if (!user) {
+  return (
+    <div className="mb-4 rounded-lg bg-blue-500/40 p-3 text-xs text-white">
+      <p className="mb-2">Not signed in</p>
 
-  if (!user) {
-    return (
-      <div className="mb-4 rounded-lg bg-blue-500/40 p-3 text-xs text-white">
-        <p className="mb-2">Not signed in</p>
-        <Link
-          href="/api/auth/github" // your Better Auth GitHub route
-          className="inline-flex items-center rounded bg-black px-3 py-1 text-[11px] font-medium"
-        >
-          Sign in with GitHub
-        </Link>
-      </div>
-    );
-  }
+      <button
+        onClick={() => authClient.signIn.social({ provider: "github" })}
+        className="inline-flex items-center rounded bg-black px-3 py-1 text-[11px] font-medium"
+      >
+        Sign in with GitHub
+      </button>
+    </div>
+  );
+}
+
 
   return (
     <div className="mb-4 rounded-lg bg-blue-500/40 p-3 text-xs text-white">
