@@ -35,7 +35,8 @@ export async function GET(req: NextRequest) {
   const axiom = new Axiom({
     token: process.env.AXIOM_TOKEN!,
   });
-
+const wr = "this is data";
+   await axiom.ingest("myapp_logs", wr);
   let result;
   try {
     result = await axiom.query(`
