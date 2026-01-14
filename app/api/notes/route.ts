@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
   await logit({
     ...ctx,
     level: "info",
-    message: "#1 Notes GET started",
+    message: "Notes GET started",
     page: "/api/notes",
     file: "app/api/notes/route.ts",
   });
@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
   await logit({
     ...ctx,
     level: "info",
-    message: "#1 Session resolved",
+    message: "Session resolved",
     page: "/api/notes",
     file: "app/api/notes/route.ts",
     data: { email: session?.user?.email },
@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
     await logit({
       ...ctx,
       level: "info",
-      message: "#1 Notes GET completed (unauthorized)",
+      message: "Notes GET completed (unauthorized)",
       durationMs,
       page: "/api/notes",
       file: "app/api/notes/route.ts",
@@ -61,7 +61,7 @@ export async function GET(req: NextRequest) {
     await logit({
       ...ctx,
       level: "info",
-      message: "#1 Notes GET completed",
+      message: "Notes GET completed",
       durationMs,
       page: "/api/notes",
       file: "app/api/notes/route.ts",
@@ -75,7 +75,7 @@ export async function GET(req: NextRequest) {
     await logit({
       ...ctx,
       level: "error",
-      message: "#1 Notes GET failed",
+      message: "Notes GET failed",
       durationMs,
       page: "/api/notes",
       file: "app/api/notes/route.ts",
