@@ -179,11 +179,7 @@ export async function POST(req: NextRequest) {
       message: "workflow_run processed",
       data: wr,
     });
-    await logit({
-      level: "info",
-      message: "RAW PAYLOAD",
-      data: payload,
-    });
+    
     // Ingest into Axiom
     await axiom.ingest("github-events", wr);
 

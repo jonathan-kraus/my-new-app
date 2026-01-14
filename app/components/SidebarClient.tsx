@@ -30,7 +30,7 @@ export default function SidebarClient() {
       {link("/forecast", "Forecast")}
       {link("/notes", "Notes")}
       {link("/astronomy", "Astronomy")}
-      {link("/ping", "Ping")}
+      {link("/api/ping", "Ping")}
     </nav>
   );
 }
