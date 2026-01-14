@@ -1,6 +1,4 @@
 import { betterAuth } from "better-auth";
-import { prismaAdapter } from "better-auth/adapters/prisma";
-import { db } from "./prisma";
 import { logit } from "@/lib/log/server";
 
 type AuthType = ReturnType<typeof betterAuth>;
@@ -33,7 +31,7 @@ if (githubClientId && githubClientSecret) {
 export const auth = betterAuth({
   baseURL: "https://www.kraus.my.id",
   trustedOrigins: ["https://www.kraus.my.id", "https://kraus.my.id"],
-  database: prismaAdapter(db, { provider: "postgresql" }),
+
   socialProviders: Object.keys(socialProviders).length
     ? socialProviders
     : undefined,
@@ -52,9 +50,7 @@ export function getAuth(): AuthType {
 
   try {
     if (!_dbConnected) {
-      // Prisma connect is async, but we do NOT await it here.
-      // Better Auth does not require DB to be connected synchronously.
-      db.$connect();
+
       _dbConnected = true;
     }
 
