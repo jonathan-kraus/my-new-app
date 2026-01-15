@@ -8,7 +8,7 @@ export default function BlueDashboardLayout({
 }) {
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-blue-600 to-blue-700 text-white">
-      <Sidebar />
+      {/* <Sidebar /> */}
       <main className="flex-1 p-6">{children}</main>
     </div>
   );
