@@ -48,7 +48,9 @@ export async function logit(input: CreateLogInput) {
 
 
   // Duration
-  const durationMs = getRequestDuration(requestId);
+  const durationMs =
+  input.durationMs ?? getRequestDuration(requestId);
+
 
   const payload = {
     level,
