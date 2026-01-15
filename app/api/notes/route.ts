@@ -19,7 +19,9 @@ export async function GET(req: NextRequest) {
     message: "init -- Notes GET started -- init",
     page: "/api/notes",
     file: "app/api/notes/route.ts",
+    data: {requestId: req.headers.get("x-request-id")}
   });
+console.log("API NOTES ROUTE requestId:", req.headers.get("x-request-id"));
 
   const session = await auth.api.getSession({ headers: req.headers });
 
