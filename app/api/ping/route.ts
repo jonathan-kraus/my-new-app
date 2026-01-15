@@ -13,24 +13,15 @@ export async function GET(req: NextRequest) {
     level: "info",
     message: "in PING",
   });
+
   const payload = {
     ok: true,
     timestamp: new Date().toISOString(),
     server: process.env.NODE_ENV,
     requestId: crypto.randomUUID(),
   };
-  const durationMs = Date.now() - start;
-// Write to myapp_logs
-await logit({
-  ...ctx,
-  level: "info",
-  message: "ping",
-  page: "Ping API",
-  file: "app/api/ping/route.ts",
-  durationMs, // ⭐ now included
-  data: payload, });
 
-  // Create Axiom client manually (no Pro required)
+  // Create Axiom client
   const axiom = new Axiom({
     token: process.env.AXIOM_TOKEN!,
   });
@@ -40,16 +31,16 @@ await logit({
     result = await axiom.query(`
 ['myapp_logs']
 | where message == "ping"
-| order by _time desc   // sort first
-| limit(7)              // then take top 7
-`)
+| order by _time desc
+| limit(7)
+`);
   } catch (err) {
     await logit({
+      ...ctx,
       level: "error",
       message: "Axiom query failed",
       page: "Ping API",
       file: "app/api/ping/route.ts",
-
       data: {
         route: "ping",
         error: err instanceof Error ? err.message : String(err),
@@ -57,7 +48,20 @@ await logit({
     });
     throw err;
   }
+
   const recent = result?.matches ?? [];
+  const durationMs = Date.now() - start;
+
+  // Final log with correct duration
+  await logit({
+    ...ctx,
+    level: "info",
+    message: "ping completed",
+    page: "Ping API",
+    file: "app/api/ping/route.ts",
+    durationMs,
+    data: payload,
+  });
 
   return NextResponse.json({
     ...payload,
