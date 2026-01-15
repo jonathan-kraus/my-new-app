@@ -11,6 +11,7 @@ export function proxy(req: NextRequest) {
 
   // Start timing
   markRequestStart(requestId);
+console.log("MIDDLEWARE FIRED", requestId);
 
   return NextResponse.next({
     request: { headers: requestHeaders },
