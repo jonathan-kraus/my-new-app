@@ -42,7 +42,7 @@ await logit({
 | where message == "ping"
 | order by _time desc   // sort first
 | limit(7)              // then take top 7
-
+`)
   } catch (err) {
     await logit({
       level: "error",
