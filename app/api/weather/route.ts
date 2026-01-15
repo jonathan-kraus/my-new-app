@@ -93,23 +93,21 @@ export async function GET(req: NextRequest) {
     let eventIndex = 0;
     const nextEvent = () => eventIndex++;
 
-
-await logit({
-  ...ctx,
-  level: "info",
-  message: `Using cached current weather data ${currentAge}/${currentCacheMin}`,
-  file: "app/api/weather/route.ts",
-  page: "/api/weather",
-  eventIndex: nextEvent(),
-  durationMs: performance.now() - start,
-  data: {
-    user: session?.user?.name || "Guest",
-    cacheWindowMinutes: currentCacheMin,
-    actualAgeMinutes: currentAge,
-    locationId,
-  },
-});
-
+    await logit({
+      ...ctx,
+      level: "info",
+      message: `Using cached current weather data ${currentAge}/${currentCacheMin}`,
+      file: "app/api/weather/route.ts",
+      page: "/api/weather",
+      eventIndex: nextEvent(),
+      durationMs: performance.now() - start,
+      data: {
+        user: session?.user?.name || "Guest",
+        cacheWindowMinutes: currentCacheMin,
+        actualAgeMinutes: currentAge,
+        locationId,
+      },
+    });
 
     return NextResponse.json({
       location,

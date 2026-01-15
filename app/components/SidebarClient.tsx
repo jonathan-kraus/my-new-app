@@ -16,7 +16,7 @@ export default function SidebarClient() {
         "block rounded px-3 py-2 text-sm",
         pathname === href
           ? "bg-blue-500/60 font-semibold"
-          : "hover:bg-blue-500/40"
+          : "hover:bg-blue-500/40",
       )}
     >
       {label}

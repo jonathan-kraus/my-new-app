@@ -46,11 +46,8 @@ export async function logit(input: CreateLogInput) {
   const prefix = index !== null ? `#${index}` : "";
   const finalMessage = prefix ? `${prefix} ${message}` : message;
 
-
   // Duration
-  const durationMs =
-  input.durationMs ?? getRequestDuration(requestId);
-
+  const durationMs = input.durationMs ?? getRequestDuration(requestId);
 
   const payload = {
     level,

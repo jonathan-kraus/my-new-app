@@ -5,10 +5,9 @@ import NewNoteClient from "./NewNoteClient";
 
 export default async function NewNotePage() {
   const h = await headers(); // ✅ await the Promise
-const session = await auth.api.getSession({
-  headers: Object.fromEntries(h.entries()),
-});
-
+  const session = await auth.api.getSession({
+    headers: Object.fromEntries(h.entries()),
+  });
 
   return (
     <BlueDashboardLayout>

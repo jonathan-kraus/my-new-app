@@ -26,36 +26,35 @@ export const auth = betterAuth({
   trustedOrigins: ["https://www.kraus.my.id", "https://kraus.my.id"],
 
   callbacks: {
-session: async ({
-  session,
-  user,
-}: {
-  session: {
-    id: string;
-    createdAt: Date;
-    updatedAt: Date;
-    userId: string;
-    expiresAt: Date;
-    token: string;
-    ipAddress?: string | null;
-    userAgent?: string | null;
-  };
-  user: {
-    id: string;
-    email: string;
-    name: string | null;
-  };
-}) => ({
-  ...session,
-  user: {
-    id: user.id,
-    email: user.email,
-    name: user.name,
-  },
-  }),
+    session: async ({
+      session,
+      user,
+    }: {
+      session: {
+        id: string;
+        createdAt: Date;
+        updatedAt: Date;
+        userId: string;
+        expiresAt: Date;
+        token: string;
+        ipAddress?: string | null;
+        userAgent?: string | null;
+      };
+      user: {
+        id: string;
+        email: string;
+        name: string | null;
+      };
+    }) => ({
+      ...session,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+      },
+    }),
   },
 
   socialProviders:
     Object.keys(socialProviders).length > 0 ? socialProviders : undefined,
 });
-

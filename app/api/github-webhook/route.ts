@@ -179,7 +179,7 @@ export async function POST(req: NextRequest) {
       message: "workflow_run processed",
       data: wr,
     });
-    
+
     // Ingest into Axiom
     await axiom.ingest("github-events", wr);
 

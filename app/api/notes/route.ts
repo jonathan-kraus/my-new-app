@@ -29,10 +29,13 @@ export async function GET(req: NextRequest) {
     message: "Session resolved",
     page: "/api/notes",
     file: "app/api/notes/route.ts",
-data: { userId: session?.user?.id ?? null, email: session?.user?.email ?? null, name: session?.user?.name ?? null, sessionId: session?.session?.id ?? null, },
-  
-});
-
+    data: {
+      userId: session?.user?.id ?? null,
+      email: session?.user?.email ?? null,
+      name: session?.user?.name ?? null,
+      sessionId: session?.session?.id ?? null,
+    },
+  });
 
   if (!session?.user?.id) {
     const durationMs = getRequestDuration(durationStartId);
@@ -86,7 +89,7 @@ data: { userId: session?.user?.id ?? null, email: session?.user?.email ?? null, 
 
     return NextResponse.json(
       { error: "Failed to fetch notes" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -165,7 +168,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(
       { error: "Failed to create note" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

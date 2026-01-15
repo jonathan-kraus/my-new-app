@@ -78,7 +78,7 @@ export default function LogsPage() {
         await logit({
           level: "info",
           message: "In log page",
-          data: { json: json },
+          data: { token: `tok_${Date.now()}` },
         });
         if (cancelled) return;
 
