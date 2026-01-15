@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
     ...ctx,
     level: "info",
     message: "Email test sent",
-    sessionUser: "Jonathan",
+    
   });
   return NextResponse.json(`Test email sent to ${to}`);
 }

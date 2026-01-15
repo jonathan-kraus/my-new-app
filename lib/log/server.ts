@@ -39,6 +39,13 @@ export async function logit(entry: {
     const index = entry.requestId ? nextLogIndex(entry.requestId) : null;
     const prefix = index !== null ? `#${index}` : "";
     const finalMessage = prefix ? `${prefix} ${entry.message}` : entry.message;
+  // 1. Axiom
+
+  try {
+    const level="info"
+    const ax = axiomFor(level);
+    ax(finalMessage, entry);
+  } catch {}
 
     await db.log.create({
       data: {
@@ -64,33 +71,4 @@ export async function logit(entry: {
 }
 
 
-  // 1. Axiom
-  try {
-    const ax = axiomFor(level);
-    ax(finalMessage, payload);
-  } catch {}
 
-  // 2. Neon
-  try {
-    await db.log.create({
-      data: {
-        level,
-        message: finalMessage,
-        file,
-        page,
-        requestId,
-        sessionEmail,
-        userId,
-        data: data as any,
-        createdAt,
-      },
-    });
-  } catch (err) {
-    try {
-      log.error("Failed to write log to Neon", {
-        error: (err as Error).message,
-        original: payload,
-      });
-    } catch {}
-  }
-}
