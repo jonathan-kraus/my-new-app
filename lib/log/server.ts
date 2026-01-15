@@ -4,9 +4,7 @@
 import { log } from "next-axiom";
 import { db } from "@/lib/db";
 import { nextLogIndex } from "@/lib/log/index";
-import { getCallerInfo } from "@/lib/log/caller";
-import { getRequestDuration } from "@/lib/log/timing";
-import type { CreateLogInput, LogLevel } from "@/lib/types";
+import type { LogLevel } from "@/lib/types";
 
 function axiomFor(level: LogLevel) {
   switch (level) {
@@ -23,45 +21,48 @@ function axiomFor(level: LogLevel) {
   }
 }
 
-export async function logit(input: CreateLogInput) {
-  const {
-    level = "info",
-    message,
-    file: manualFile = null,
-    page = null,
-    requestId = null,
-    sessionEmail = null,
-    userId = null,
-    data = null,
-    createdAt = new Date(),
-  } = input;
+export async function logit(entry: {
+  level: string;
+  message: string;
+  page?: string | null;
+  file?: string | null;
+  line?: number | null;
+  requestId?: string | null;
+  sessionEmail?: string | null;
+  userId?: string | null;
+  durationMs?: number | null;
+  eventIndex?: number | null;
+  data?: any;
+}) {
+  try {
+    // Generate per-request log index prefix (#1, #2, #3…)
+    const index = entry.requestId ? nextLogIndex(entry.requestId) : null;
+    const prefix = index !== null ? `#${index}` : "";
+    const finalMessage = prefix ? `${prefix} ${entry.message}` : entry.message;
 
-  // Auto-detect caller
-  const caller = getCallerInfo();
-  const file = manualFile ?? caller.file;
-  const line = caller.line;
+    await db.log.create({
+      data: {
+        level: entry.level,
+        message: finalMessage,
+        page: entry.page ?? null,
+        file: entry.file ?? null,
+        line: entry.line ?? null,
+        requestId: entry.requestId ?? null,
+        sessionEmail: entry.sessionEmail ?? null,
+        userId: entry.userId ?? null,
 
-  // Per-request log index
-  const index = nextLogIndex(requestId);
-  const prefix = index !== null ? `#${index}` : "";
-  const finalMessage = prefix ? `${prefix} ${message}` : message;
+        // ⭐ These two fields MUST be forwarded or they will always be null
+        durationMs: entry.durationMs ?? null,
+        eventIndex: entry.eventIndex ?? null,
 
-  // Duration
-  const durationMs = input.durationMs ?? getRequestDuration(requestId);
+        data: entry.data ?? null,
+      },
+    });
+  } catch (err) {
+    console.error("LOGGING ERROR:", err);
+  }
+}
 
-  const payload = {
-    level,
-    message: finalMessage,
-    file,
-    line,
-    page,
-    requestId,
-    sessionEmail,
-    userId,
-    durationMs,
-    data,
-    timestamp: createdAt.toISOString(),
-  };
 
   // 1. Axiom
   try {
