@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
   await logit({
     ...ctx,
     level: "info",
-    message: "Notes GET started",
+    message: "Notes GET started -- init",
     page: "/api/notes",
     file: "app/api/notes/route.ts",
   });
