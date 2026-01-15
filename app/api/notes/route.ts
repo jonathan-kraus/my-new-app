@@ -40,15 +40,17 @@ console.log("CTX requestId:", ctx.requestId);
     });
 console.log("Duration lookup:", getRequestDuration(ctx.requestId));
 
-    const durationMs = getRequestDuration(ctx.requestId);
+const durationMs = getRequestDuration(ctx.requestId);
 
-    await logit({
-      ...ctx,
-      level: "info",
-      message: "Notes GET completed",
-      durationMs,
-      data: { count: notes.length },
-    });
+await logit({
+  ...ctx,
+  level: "info",
+  message: "Notes GET completed",
+  durationMs,                 // explicitly included
+  eventIndex: ctx.eventIndex, // explicitly included
+  data: { count: notes.length },
+});
+
 
     return NextResponse.json({ notes });
   } catch (err: any) {
