@@ -1,5 +1,5 @@
 // lib/serverLogger.ts
-import { db } from "./prisma";
+import { db } from "@/lib/db";
 import { Prisma } from "@prisma/client";
 import type { CreateLogInput } from "./types";
 

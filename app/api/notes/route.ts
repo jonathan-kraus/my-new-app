@@ -1,7 +1,7 @@
 // app/api/notes/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { getDbWithRls } from "@/lib/server/db-with-rls";
+import { db } from "@/lib/db";
 import { enrichContext } from "@/lib/log/context";
 import { logit } from "@/lib/log/server";
 import { getRequestDuration } from "@/lib/log/timing";
@@ -52,14 +52,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ notes: [] });
   }
 
-  const db = getDbWithRls(session.user.email);
-
   try {
-    const rows = await db`
-      SELECT id, title, content, created_at
-      FROM notes
-      ORDER BY created_at DESC
-    `;
+    const rows = await db.note.findMany({
+      orderBy: { createdAt: "desc" },
+    });
 
     const durationMs = getRequestDuration(durationStartId);
 
@@ -127,19 +123,19 @@ export async function POST(req: NextRequest) {
   }
 
   const email = session.user.email;
-  const db = getDbWithRls(email);
 
   const body = await req.json();
   const { title, content } = body;
 
   try {
-    const rows = await db`
-      INSERT INTO notes (title, content)
-      VALUES (${title}, ${content})
-      RETURNING id, title, content, created_at
-    `;
+    const note = await db.note.create({
+      data: {
+        title,
+        content,
+        userEmail: email,
+      },
+    });
 
-    const note = rows[0];
     const durationMs = getRequestDuration(durationStartId);
 
     await logit({

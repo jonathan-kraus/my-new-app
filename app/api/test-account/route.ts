@@ -1,5 +1,5 @@
-// app/api/test-session/route.ts
-import { db } from "@/lib/prisma";
+// app/api/test-account/route.ts
+import { db } from "@/lib/db";
 
 export async function GET() {
   const user = await db.user.create({

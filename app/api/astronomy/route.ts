@@ -1,7 +1,7 @@
 // app/api/astronomy/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
-import { getDbWithRls } from "@/lib/server/db-with-rls";
+import { db } from "@/lib/db";
 import { logit } from "@/lib/log/server";
 import { enrichContext } from "@/lib/log/context";
 // ------------------------------------------------------------
@@ -87,22 +87,29 @@ export async function GET(req: NextRequest) {
     // Fetch ALL snapshots for location
     // -----------------------------
     type AstronomyRow = {
-      date: string;
+      date: Date;
       [key: string]: any;
     };
-    const sql = getDbWithRls(session.user.email);
-    const rows: AstronomyRow[] = (await sql`
-  SELECT *
-  FROM astronomy_snapshots
-    WHERE "locationId" = ${locationId}
-  ORDER BY "date" ASC
-`) as AstronomyRow[];
+
+
+const rows = await db.astronomySnapshot.findMany({
+  where: { locationId },
+  orderBy: { date: "asc" },
+});
+
 
     // -----------------------------
     // Select TODAY and TOMORROW by calendar date
     // -----------------------------
-    const todayRow = rows.find((r) => r.date.slice(0, 10) === localDate);
-    const tomorrowRow = rows.find((r) => r.date.slice(0, 10) === tomorrowDate);
+const todayRow = rows.find(
+  (r) => r.date.toISOString().slice(0, 10) === localDate
+);
+
+const tomorrowRow = rows.find(
+  (r) => r.date.toISOString().slice(0, 10) === tomorrowDate
+);
+
+
 
     if (!todayRow) {
       return NextResponse.json(
