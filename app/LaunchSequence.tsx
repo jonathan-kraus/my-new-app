@@ -18,9 +18,10 @@ export default function LaunchSequence() {
   if (!active) return null;
 
   return (
-    <div className="fixed inset-0 z-[999] flex items-center justify-center
-      bg-black/80 backdrop-blur-xl animate-fadeIn">
-
+    <div
+      className="fixed inset-0 z-[999] flex items-center justify-center
+      bg-black/80 backdrop-blur-xl animate-fadeIn"
+    >
       <div className="text-center space-y-4 animate-scaleUp">
         <div className="text-5xl font-bold text-white tracking-widest">
           LAUNCH SEQUENCE

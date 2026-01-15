@@ -29,10 +29,10 @@ export async function GET(req: Request) {
     console.info("Auth handler failed:", err);
     console.info("ENV: DATABASE_URL set?", !!process.env.DATABASE_URL);
     console.info("ENV: GITHUB_CLIENT_ID set?", !!process.env.GITHUB_CLIENT_ID);
-    console.inset-ring-muted-foreground(
-      "ENV: GITHUB_CLIENT_SECRET set?",
-      !!process.env.GITHUB_CLIENT_SECRET,
-    );
+    console.info(
+        "ENV: GITHUB_CLIENT_SECRET set?",
+        !!process.env.GITHUB_CLIENT_SECRET,
+      );
     throw err;
   }
 }
