@@ -11,6 +11,7 @@ import { getRequestDuration } from "@/lib/log/timing";
 // -------------------------
 export async function GET(req: NextRequest) {
   const ctx = await enrichContext(req);
+console.log("CTX requestId:", ctx.requestId);
 
   await logit({
     ...ctx,
@@ -18,6 +19,7 @@ export async function GET(req: NextRequest) {
     message: "Notes GET started",
     page: "/api/notes",
     file: "app/api/notes/route.ts",
+    data: {requestId: ctx.requestId}
   });
 
   try {
@@ -36,6 +38,7 @@ export async function GET(req: NextRequest) {
       where: { userEmail: session.user.email },
       orderBy: { createdAt: "desc" },
     });
+console.log("Duration lookup:", getRequestDuration(ctx.requestId));
 
     const durationMs = getRequestDuration(ctx.requestId);
 

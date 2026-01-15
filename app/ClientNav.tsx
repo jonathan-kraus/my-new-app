@@ -59,6 +59,20 @@ export default function ClientNav() {
         >
           🚀 Astronomy
         </Link>
+        <Link
+  href="/forecast"
+  onClick={() => {
+    window.dispatchEvent(new Event("launch-sequence"));
+  }}
+  className={`block px-4 py-2 rounded-md transition-colors ${
+    pathname === "/forecast"
+      ? "bg-blue-700 text-white font-semibold"
+      : "hover:bg-blue-800 text-blue-100"
+  }`}
+>
+  ☀️ Forecast
+</Link>
+
         <Link href="/weather-maps" className="nav-link">
           🗺️ Weather Maps
         </Link>

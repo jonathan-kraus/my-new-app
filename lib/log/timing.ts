@@ -3,6 +3,8 @@
 const requestStartTimes = new Map<string, number>();
 
 export function markRequestStart(requestId: string | null) {
+  console.log("TIMER STARTED FOR:", requestId);
+
   if (!requestId) return;
   requestStartTimes.set(requestId, Date.now());
 }
