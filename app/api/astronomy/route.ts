@@ -91,25 +91,21 @@ export async function GET(req: NextRequest) {
       [key: string]: any;
     };
 
-
-const rows = await db.astronomySnapshot.findMany({
-  where: { locationId },
-  orderBy: { date: "asc" },
-});
-
+    const rows = await db.astronomySnapshot.findMany({
+      where: { locationId },
+      orderBy: { date: "asc" },
+    });
 
     // -----------------------------
     // Select TODAY and TOMORROW by calendar date
     // -----------------------------
-const todayRow = rows.find(
-  (r) => r.date.toISOString().slice(0, 10) === localDate
-);
+    const todayRow = rows.find(
+      (r) => r.date.toISOString().slice(0, 10) === localDate,
+    );
 
-const tomorrowRow = rows.find(
-  (r) => r.date.toISOString().slice(0, 10) === tomorrowDate
-);
-
-
+    const tomorrowRow = rows.find(
+      (r) => r.date.toISOString().slice(0, 10) === tomorrowDate,
+    );
 
     if (!todayRow) {
       return NextResponse.json(

@@ -63,26 +63,26 @@ export async function GET() {
 
     const activity = rows.map((row: any) => {
       const d = row.data;
-      logit({
-        level: "info",
-        message: "Ran Axiom query multi",
-        data: {
-          query,
-          id: d.id,
-          name: d.name,
-          repo: d.repo,
-          status: d.status,
-          conclusion: d.conclusion,
-          event: d.event,
-          actor: d.actor,
-          commitMessage: d.commitMessage,
-          commitSha: d.commitSha,
-          url: d.url,
-          createdAt: d.createdAt,
-          updatedAt: d.updatedAt,
-          source: d.source,
-        },
-      });
+      // logit({
+      //   level: "info",
+      //   message: "Ran Axiom query multi",
+      //   data: {
+      //     query,
+      //     id: d.id,
+      //     name: d.name,
+      //     repo: d.repo,
+      //     status: d.status,
+      //     conclusion: d.conclusion,
+      //     event: d.event,
+      //     actor: d.actor,
+      //     commitMessage: d.commitMessage,
+      //     commitSha: d.commitSha,
+      //     url: d.url,
+      //     createdAt: d.createdAt,
+      //     updatedAt: d.updatedAt,
+      //     source: d.source,
+      //   },
+      // });
       return {
         id: d.id,
         name: d.name,

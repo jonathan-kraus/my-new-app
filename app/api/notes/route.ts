@@ -128,16 +128,20 @@ export async function POST(req: NextRequest) {
   const { title, content } = body;
 
   try {
+    const titleToUse =
+      typeof title === "string" && title.trim().length > 0
+        ? title
+        : (typeof content === "string" && content.trim().slice(0, 40)) ||
+          "Untitled Note";
+
     const note = await db.note.create({
       data: {
-        title,
+        title: titleToUse,
         content,
         userEmail: email,
       },
     });
-
     const durationMs = getRequestDuration(durationStartId);
-
     await logit({
       ...ctx,
       level: "info",
@@ -147,7 +151,6 @@ export async function POST(req: NextRequest) {
       file: "app/api/notes/route.ts",
       data: { noteId: note.id },
     });
-
     return NextResponse.json({ note });
   } catch (err: any) {
     const durationMs = getRequestDuration(durationStartId);
@@ -161,7 +164,6 @@ export async function POST(req: NextRequest) {
       file: "app/api/notes/route.ts",
       data: { error: err.message },
     });
-
     return NextResponse.json(
       { error: "Failed to create note" },
       { status: 500 },
