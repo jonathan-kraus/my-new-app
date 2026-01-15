@@ -19,17 +19,16 @@ export async function GET(req: NextRequest) {
     server: process.env.NODE_ENV,
     requestId: crypto.randomUUID(),
   };
-
-  // Write to myapp_logs
-  await logit({
-    ...ctx,
-    level: "info",
-    message: "ping",
-    page: "Ping API",
-    file: "app/api/ping/route.ts",
-
-    data: payload,
-  });
+  const durationMs = Date.now() - start;
+// Write to myapp_logs
+await logit({
+  ...ctx,
+  level: "info",
+  message: "ping",
+  page: "Ping API",
+  file: "app/api/ping/route.ts",
+  durationMs, // ⭐ now included
+  data: payload, });
 
   // Create Axiom client manually (no Pro required)
   const axiom = new Axiom({
@@ -57,8 +56,6 @@ export async function GET(req: NextRequest) {
     throw err;
   }
   const recent = result?.matches ?? [];
-
-  const durationMs = Date.now() - start;
 
   return NextResponse.json({
     ...payload,

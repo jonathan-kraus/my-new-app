@@ -1,14 +1,14 @@
 // app/page.tsx
-
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { logit } from "@/lib/log/server";
 import { Button } from "@/components/ui/button";
 import CurrentWeatherCard from "@/app/components/dashboard/current-weather-card";
 import { AstronomyCard } from "@/app/astronomy/AstronomyCard";
 import Link from "next/link";
 import { db } from "@/lib/db";
-import { auth } from "@/lib/auth";
 import { RecentActivity } from "@/components/activity/RecentActivity";
-import { headers } from "next/dist/server/request/headers";
+
 
 {
   /* <div>🌙 Moonrise: {format(data.moonrise)}</div> */
@@ -23,9 +23,10 @@ function getGreeting(): string {
 }
 
 export default async function HomePage() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+const h = await headers(); // ✅ await the Promise
+const session = await auth.api.getSession({
+  headers: Object.fromEntries(h.entries()),
+});
   await logit({
     level: "info",
     message: "Visited dashboard",

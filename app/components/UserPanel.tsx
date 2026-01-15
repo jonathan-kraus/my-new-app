@@ -1,11 +1,12 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import UserPanelClient from "./UserPanelClient";
 
 export default async function UserPanel() {
+  const h = await headers();
+
   const session = await auth.api.getSession({
-    headers: await headers(),
+    headers: Object.fromEntries(h.entries()),
   });
 
-  return <UserPanelClient user={session?.user ?? null} />;
+  return <div>{session?.user?.email}</div>;
 }
