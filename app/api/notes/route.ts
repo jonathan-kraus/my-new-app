@@ -11,84 +11,55 @@ import { getRequestDuration } from "@/lib/log/timing";
 // -------------------------
 export async function GET(req: NextRequest) {
   const ctx = await enrichContext(req);
-  const durationStartId = ctx.requestId;
 
   await logit({
     ...ctx,
     level: "info",
-    message: "init -- Notes GET started -- init",
+    message: "Notes GET started",
     page: "/api/notes",
     file: "app/api/notes/route.ts",
-    data: {requestId: req.headers.get("x-request-id")}
   });
-console.log("API NOTES ROUTE requestId:", req.headers.get("x-request-id"));
-
-  const session = await auth.api.getSession({ headers: req.headers });
-
-  await logit({
-    ...ctx,
-    level: "info",
-    message: "Session resolved",
-    page: "/api/notes",
-    file: "app/api/notes/route.ts",
-    data: {
-      userId: session?.user?.id ?? null,
-      email: session?.user?.email ?? null,
-      name: session?.user?.name ?? null,
-      sessionId: session?.session?.id ?? null,
-    },
-  });
-
-  if (!session?.user?.id) {
-    const durationMs = getRequestDuration(durationStartId);
-
-    await logit({
-      ...ctx,
-      level: "info",
-      message: "Notes GET completed (unauthorized)",
-      durationMs,
-      page: "/api/notes",
-      file: "app/api/notes/route.ts",
-    });
-
-    return NextResponse.json({ notes: [] });
-  }
 
   try {
-    const rows = await db.note.findMany({
+    const session = await auth.api.getSession({ headers: req.headers });
+    if (!session?.user) {
+      await logit({
+        ...ctx,
+        level: "warn",
+        message: "Unauthorized Notes GET",
+      });
+
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const notes = await db.note.findMany({
+      where: { userEmail: session.user.email },
       orderBy: { createdAt: "desc" },
     });
 
-    const durationMs = getRequestDuration(durationStartId);
+    const durationMs = getRequestDuration(ctx.requestId);
 
     await logit({
       ...ctx,
       level: "info",
       message: "Notes GET completed",
       durationMs,
-      page: "/api/notes",
-      file: "app/api/notes/route.ts",
-      data: { count: rows.length },
+      data: { count: notes.length },
     });
 
-    return NextResponse.json({ notes: rows });
+    return NextResponse.json({ notes });
   } catch (err: any) {
-    const durationMs = getRequestDuration(durationStartId);
+    const durationMs = getRequestDuration(ctx.requestId);
 
     await logit({
       ...ctx,
       level: "error",
       message: "Notes GET failed",
       durationMs,
-      page: "/api/notes",
-      file: "app/api/notes/route.ts",
       data: { error: err.message },
     });
 
-    return NextResponse.json(
-      { error: "Failed to fetch notes" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "Failed to load notes" }, { status: 500 });
   }
 }
 
@@ -97,7 +68,6 @@ console.log("API NOTES ROUTE requestId:", req.headers.get("x-request-id"));
 // -------------------------
 export async function POST(req: NextRequest) {
   const ctx = await enrichContext(req);
-  const durationStartId = ctx.requestId;
 
   await logit({
     ...ctx,
@@ -107,68 +77,49 @@ export async function POST(req: NextRequest) {
     file: "app/api/notes/route.ts",
   });
 
-  const session = await auth.api.getSession({ headers: req.headers });
-
-  if (!session?.user?.email) {
-    const durationMs = getRequestDuration(durationStartId);
-
-    await logit({
-      ...ctx,
-      level: "warn",
-      message: "Notes POST unauthorized",
-      durationMs,
-      page: "/api/notes",
-      file: "app/api/notes/route.ts",
-    });
-
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  const email = session.user.email;
-
-  const body = await req.json();
-  const { title, content } = body;
-
   try {
-    const titleToUse =
-      typeof title === "string" && title.trim().length > 0
-        ? title
-        : (typeof content === "string" && content.trim().slice(0, 40)) ||
-          "Untitled Note";
+    const session = await auth.api.getSession({ headers: req.headers });
+    if (!session?.user) {
+      await logit({
+        ...ctx,
+        level: "warn",
+        message: "Unauthorized Notes POST",
+      });
 
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = await req.json();
     const note = await db.note.create({
       data: {
-        title: titleToUse,
-        content,
-        userEmail: email,
+        userEmail: session.user.email,
+        title: body.title ?? "",
+        content: body.content ?? "",
       },
     });
-    const durationMs = getRequestDuration(durationStartId);
+
+    const durationMs = getRequestDuration(ctx.requestId);
+
     await logit({
       ...ctx,
       level: "info",
-      message: "Note created",
+      message: "Notes POST completed",
       durationMs,
-      page: "/api/notes",
-      file: "app/api/notes/route.ts",
       data: { noteId: note.id },
     });
+
     return NextResponse.json({ note });
   } catch (err: any) {
-    const durationMs = getRequestDuration(durationStartId);
+    const durationMs = getRequestDuration(ctx.requestId);
 
     await logit({
       ...ctx,
       level: "error",
       message: "Notes POST failed",
       durationMs,
-      page: "/api/notes",
-      file: "app/api/notes/route.ts",
       data: { error: err.message },
     });
-    return NextResponse.json(
-      { error: "Failed to create note" },
-      { status: 500 },
-    );
+
+    return NextResponse.json({ error: "Failed to create note" }, { status: 500 });
   }
 }
