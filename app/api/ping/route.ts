@@ -38,9 +38,11 @@ await logit({
   let result;
   try {
     result = await axiom.query(`
-   ['myapp_logs']
-   | where message == "ping"
-   | limit(7) `);
+['myapp_logs']
+| where message == "ping"
+| order by _time desc   // sort first
+| limit(7)              // then take top 7
+
   } catch (err) {
     await logit({
       level: "error",
