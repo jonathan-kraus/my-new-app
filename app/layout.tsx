@@ -15,10 +15,9 @@ export default function RootLayout({
       <body className="bg-blue-950 text-white min-h-screen">
 
         {/* <Sidebar /> */}
-          <ClientLayout>
+
           <main className="ml-64 p-6">
-          {children}
-          </ClientLayout>
+          <ClientLayout>{children}</ClientLayout>
           {/* Vercel Analytics */}
           <Analytics />
           <Toaster position="top-right" reverseOrder={false} />
@@ -27,5 +26,6 @@ export default function RootLayout({
         </main>
       </body>
     </html>
+
   );
 }
