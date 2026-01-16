@@ -1,5 +1,5 @@
 "use server";
-
+// app/admin/runtime/actions.ts
 import { db } from "@/lib/db";
 
 export async function updateConfig(key: string, value: string) {

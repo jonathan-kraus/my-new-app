@@ -25,6 +25,8 @@ export const auth = betterAuth({
   baseURL: "https://www.kraus.my.id",
   trustedOrigins: ["https://www.kraus.my.id", "https://kraus.my.id"],
 
+  session: { expiresIn: 2592000, rolling: true, }, // 30 days
+
   callbacks: {
     session: async ({
       session,
