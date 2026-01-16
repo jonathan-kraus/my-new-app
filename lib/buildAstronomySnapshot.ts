@@ -58,7 +58,14 @@ async function fetchIPGeoAstronomy(lat: number, lon: number, date: Date) {
 export async function buildAstronomySnapshot(location: any, targetDate: Date) {
   const { latitude, longitude } = location;
   const astro = await fetchIPGeoAstronomy(latitude, longitude, targetDate);
+  await logit({
+    level: "info",
+    message: "In BAS",
+    file: "lib/buildAstronomySnapshot.ts",
 
+    page: "Build Astronomy",
+    data: { astro } },
+  )
   return {
     // Normalize to local midnight to avoid timezone drift
     date: new Date(
