@@ -1,6 +1,6 @@
-// lib/buildAstronomySnapshot.ts
 import { format } from "date-fns";
-import { logit } from "@/lib/log/client";
+import { logit } from "@/lib/log/server"; // FIXED
+
 function normalizeMoonTime(value: string): string {
   return value === "-:-" ? "" : value;
 }
@@ -26,14 +26,7 @@ function combineDateTime(date: Date, timeStr: string): string {
   const yyyy = date.getFullYear();
   const mm = String(date.getMonth() + 1).padStart(2, "0");
   const dd = String(date.getDate()).padStart(2, "0");
-  logit({
-    level: "info",
-    message: "In BAS",
-    file: "lib/buildAstronomySnapshot.ts",
 
-    page: "Build Astronomy",
-    data: { t: { yyyy, mm, dd, hour, minute } },
-  });
   return `${yyyy}-${mm}-${dd} ${hour}:${minute}:00`;
 }
 
@@ -58,49 +51,35 @@ async function fetchIPGeoAstronomy(lat: number, lon: number, date: Date) {
 export async function buildAstronomySnapshot(location: any, targetDate: Date) {
   const { latitude, longitude } = location;
   const astro = await fetchIPGeoAstronomy(latitude, longitude, targetDate);
+
   await logit({
     level: "info",
-    message: "In BAS",
+    message: "Fetched IPGeo astronomy",
     file: "lib/buildAstronomySnapshot.ts",
-
     page: "Build Astronomy",
-    data: { astro } },
-  )
+    data: { astro },
+  });
+
   return {
-    // Normalize to local midnight to avoid timezone drift
     date: new Date(
       targetDate.getFullYear(),
       targetDate.getMonth(),
       targetDate.getDate(),
     ),
 
-    // Solar
     sunrise: combineDateTime(targetDate, astro.sunrise),
     sunset: combineDateTime(targetDate, astro.sunset),
 
-    sunriseBlueStart: combineDateTime(
-      targetDate,
-      astro.morning.blue_hour_begin,
-    ),
+    sunriseBlueStart: combineDateTime(targetDate, astro.morning.blue_hour_begin),
     sunriseBlueEnd: combineDateTime(targetDate, astro.morning.blue_hour_end),
-    sunriseGoldenStart: combineDateTime(
-      targetDate,
-      astro.morning.golden_hour_begin,
-    ),
-    sunriseGoldenEnd: combineDateTime(
-      targetDate,
-      astro.morning.golden_hour_end,
-    ),
+    sunriseGoldenStart: combineDateTime(targetDate, astro.morning.golden_hour_begin),
+    sunriseGoldenEnd: combineDateTime(targetDate, astro.morning.golden_hour_end),
 
     sunsetBlueStart: combineDateTime(targetDate, astro.evening.blue_hour_begin),
     sunsetBlueEnd: combineDateTime(targetDate, astro.evening.blue_hour_end),
-    sunsetGoldenStart: combineDateTime(
-      targetDate,
-      astro.evening.golden_hour_begin,
-    ),
+    sunsetGoldenStart: combineDateTime(targetDate, astro.evening.golden_hour_begin),
     sunsetGoldenEnd: combineDateTime(targetDate, astro.evening.golden_hour_end),
 
-    // Lunar
     moonrise: normalizeMoonTime(astro.moonrise)
       ? combineDateTime(targetDate, astro.moonrise)
       : "",
@@ -109,7 +88,6 @@ export async function buildAstronomySnapshot(location: any, targetDate: Date) {
       : "",
     moonPhase: calculateMoonPhase(targetDate),
 
-    // Metadata
     fetchedAt: new Date(),
     locationId: location.id,
   };
