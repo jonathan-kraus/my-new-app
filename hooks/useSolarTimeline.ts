@@ -12,9 +12,9 @@ export function useSolarTimeline({
 }) {
   return useSolarCountdown({
     today: {
-      correctedSunrise: today.correctedSunrise,
+      sunrise: today.sunrise,
       sunset: today.sunset,
     },
-    tomorrow: tomorrow ? { correctedSunrise: tomorrow.correctedSunrise } : null,
+    tomorrow: tomorrow ? { sunrise: tomorrow.sunrise } : null,
   });
 }

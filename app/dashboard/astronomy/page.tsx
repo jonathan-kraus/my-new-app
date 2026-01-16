@@ -1,5 +1,5 @@
 import { getAstronomyDashboard } from "@/lib/astronomy-dashboard";
-
+import { formatTime } from "@/lib/astronomy/formatTime";
 export default async function AstronomyPage() {
   const { todaySnapshot } = await getAstronomyDashboard("KOP");
 
@@ -7,29 +7,13 @@ export default async function AstronomyPage() {
     return <div className="p-6">No astronomy data available.</div>;
   }
 
-  const sunrise = new Date(todaySnapshot.sunrise).toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const sunrise = formatTime(todaySnapshot.sunrise);
 
-  const sunset = new Date(todaySnapshot.sunset).toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const sunset = formatTime(todaySnapshot.sunset);
 
-  const moonrise = todaySnapshot.moonrise
-    ? new Date(todaySnapshot.moonrise).toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-    : "—";
+  const moonrise = formatTime(todaySnapshot.moonrise);
 
-  const moonset = todaySnapshot.moonset
-    ? new Date(todaySnapshot.moonset).toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-    : "—";
+  const moonset = formatTime(todaySnapshot.moonset);
 
   return (
     <div className="p-6">

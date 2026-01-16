@@ -3,7 +3,7 @@
 import { SolarTimes, LunarTimes } from "@/types/AstronomyTypes";
 import { SolarProgress } from "./components/SolarProgress";
 import { LunarIllumination } from "./components/LunarIllumination";
-
+import { formatTime } from "@/lib/astronomy/formatTime";
 export function CombinedSolarLunarTimeline({
   solarToday,
   solarTomorrow,
@@ -15,14 +15,6 @@ export function CombinedSolarLunarTimeline({
   lunarToday: LunarTimes;
   lunarTomorrow: LunarTimes | null;
 }) {
-  const fmt = (d: Date | null) =>
-    d
-      ? d.toLocaleTimeString("en-US", {
-          hour: "2-digit",
-          minute: "2-digit",
-        })
-      : "—";
-
   return (
     <div className="rounded-xl border bg-black/20 p-4 text-white shadow-lg backdrop-blur space-y-6">
       <h2 className="text-lg font-semibold">Solar & Lunar Timeline</h2>
@@ -33,12 +25,12 @@ export function CombinedSolarLunarTimeline({
 
         <div className="flex justify-between text-sm opacity-80 mb-1">
           <span>🌅 Sunrise</span>
-          <span>{fmt(solarToday.sunrise)}</span>
+          <span>{formatTime(solarToday.sunrise)}</span>
         </div>
 
         <div className="flex justify-between text-sm opacity-80 mb-1">
           <span>🌇 Sunset</span>
-          <span>{fmt(solarToday.sunset)}</span>
+          <span>{formatTime(solarToday.sunset)}</span>
         </div>
 
         <SolarProgress
@@ -48,7 +40,7 @@ export function CombinedSolarLunarTimeline({
 
         <div className="flex justify-between text-sm opacity-80 mt-1">
           <span>Tomorrow</span>
-          <span>{fmt(solarTomorrow?.sunrise ?? null)}</span>
+          <span>{formatTime(solarTomorrow?.sunrise ?? null)}</span>
         </div>
       </div>
 
@@ -58,19 +50,19 @@ export function CombinedSolarLunarTimeline({
 
         <div className="flex justify-between text-sm opacity-80 mb-1">
           <span>🌔 Moonrise</span>
-          <span>{fmt(lunarToday.moonrise)}</span>
+          <span>{formatTime(lunarToday.moonrise)}</span>
         </div>
 
         <div className="flex justify-between text-sm opacity-80 mb-1">
           <span>🌘 Moonset</span>
-          <span>{fmt(lunarToday.moonset)}</span>
+          <span>{formatTime(lunarToday.moonset)}</span>
         </div>
 
         <LunarIllumination phase={lunarToday.moonPhase} />
 
         <div className="flex justify-between text-sm opacity-80 mt-1">
           <span>Tomorrow</span>
-          <span>{fmt(lunarTomorrow?.moonrise ?? null)}</span>
+          <span>{formatTime(lunarTomorrow?.moonrise ?? null)}</span>
         </div>
       </div>
     </div>

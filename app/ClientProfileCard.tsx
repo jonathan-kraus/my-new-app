@@ -8,14 +8,17 @@ export default function ClientProfileCard() {
   const isLoggedIn = !!session?.user;
 
   return (
-    <div className="fixed top-4 left-4 z-[60] w-56 rounded-xl
+    <div
+      className="fixed top-4 left-4 z-[60] w-56 rounded-xl
       bg-gradient-to-br from-indigo-700/70 to-purple-900/70
       backdrop-blur-xl shadow-xl border border-white/10
-      animate-[float_6s_ease-in-out_infinite]">
-
+      animate-[float_6s_ease-in-out_infinite]"
+    >
       <div className="p-4 flex items-center gap-3">
-        <div className="h-12 w-12 rounded-full bg-gradient-to-br
-          from-purple-300 to-indigo-400 shadow-md" />
+        <div
+          className="h-12 w-12 rounded-full bg-gradient-to-br
+          from-purple-300 to-indigo-400 shadow-md"
+        />
 
         <div className="flex flex-col">
           <span className="text-sm font-semibold text-white">
@@ -28,7 +31,9 @@ export default function ClientProfileCard() {
       </div>
 
       <div className="px-4 pb-4 text-xs text-blue-200">
-        {isLoggedIn ? "🛰️ Mission Status: Online" : "🛰️ Mission Status: Offline"}
+        {isLoggedIn
+          ? "🛰️ Mission Status: Online"
+          : "🛰️ Mission Status: Offline"}
       </div>
 
       <div className="px-4 pb-4">

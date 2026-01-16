@@ -30,9 +30,9 @@ export async function GET(req: Request) {
     console.info("ENV: DATABASE_URL set?", !!process.env.DATABASE_URL);
     console.info("ENV: GITHUB_CLIENT_ID set?", !!process.env.GITHUB_CLIENT_ID);
     console.info(
-        "ENV: GITHUB_CLIENT_SECRET set?",
-        !!process.env.GITHUB_CLIENT_SECRET,
-      );
+      "ENV: GITHUB_CLIENT_SECRET set?",
+      !!process.env.GITHUB_CLIENT_SECRET,
+    );
     throw err;
   }
 }

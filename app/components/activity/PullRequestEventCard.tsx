@@ -1,6 +1,6 @@
 import { GitPullRequest } from "lucide-react";
 import { ActivityItemData } from "@/types/activity";
-import { formatDate } from "@/lib/astronomy_old/formatters";
+import { formatTime } from "@/lib/astronomy/formatTime";
 export default function PullRequestEventCard({
   item,
 }: {
@@ -24,7 +24,7 @@ export default function PullRequestEventCard({
         )}
 
         <div className="text-xs text-muted-foreground mt-1">
-          {formatDate(item.createdAt)}
+          {formatTime(item.createdAt)}
         </div>
       </div>
     </div>

@@ -46,11 +46,12 @@ export async function refreshAstronomySnapshotsForLocation(
     };
   }
 }
-export async function getLatestLocation(){
-  const jloc = "KOP"
+export async function getLatestLocation() {
+  const jloc = "KOP";
   return {
-    jloc
-}};
+    jloc,
+  };
+}
 
 export async function getAstronomyForDashboard(locationId: string) {
   const snapshots = await db.astronomySnapshot.findMany({
@@ -72,14 +73,12 @@ export async function getAstronomyForDashboard(locationId: string) {
     .slice(0, 10);
 
   const todaySnapshot =
-    snapshots.find((snap) =>
-      snap.date.toISOString().startsWith(todayISO),
-    ) ?? null;
+    snapshots.find((snap) => snap.date.toISOString().startsWith(todayISO)) ??
+    null;
 
   const tomorrowSnapshot =
-    snapshots.find((snap) =>
-      snap.date.toISOString().startsWith(tomorrowISO),
-    ) ?? null;
+    snapshots.find((snap) => snap.date.toISOString().startsWith(tomorrowISO)) ??
+    null;
 
   return {
     todaySnapshot,
@@ -87,4 +86,3 @@ export async function getAstronomyForDashboard(locationId: string) {
     allSnapshots: snapshots,
   };
 }
-

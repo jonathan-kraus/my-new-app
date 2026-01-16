@@ -1,6 +1,7 @@
 "use client";
 
 import { SunriseCountdown, SunsetCountdown } from "@/app/astronomy/countdown";
+import { formatTime } from "@/lib/astronomy/formatTime";
 import {
   getMoonPhaseIcon,
   getMoonPhaseName,
@@ -11,23 +12,15 @@ import {
   getMoonLightPhases,
 } from "@/lib/astronomy_old/lightPhases";
 import type { AstronomyCardProps } from "@/lib/types";
-import { parseLocalSolar } from "@/lib/solar/parseLocalSolar";
 
 export function AstronomyCard({ data, location }: AstronomyCardProps) {
   const now = useNow();
   if (!data) return null;
 
-  const format = (iso: string | null | undefined) =>
-    iso
-      ? new Date(iso).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        })
-      : "—";
+  // Normalize ISO strings into Date objects
+  const sunriseDate = data.sunrise ? new Date(data.sunrise) : null;
+  const sunsetDate = data.sunset ? new Date(data.sunset) : null;
 
-  // Normalize all ISO strings into Date objects
-  const sunriseDate = parseLocalSolar(data.sunrise);
-  const sunsetDate = parseLocalSolar(data.sunset);
   const moonriseDate = data.moonrise ? new Date(data.moonrise) : null;
   const moonsetDate = data.moonset ? new Date(data.moonset) : null;
 
@@ -39,7 +32,7 @@ export function AstronomyCard({ data, location }: AstronomyCardProps) {
         ? { type: "sunset", time: sunsetDate }
         : null;
 
-  // Light phases (now correctly typed)
+  // Light phases
   const solarPhases =
     sunriseDate && sunsetDate ? getLightPhases(sunriseDate, sunsetDate) : null;
 
@@ -58,8 +51,8 @@ export function AstronomyCard({ data, location }: AstronomyCardProps) {
 
       {/* Rise/Set Grid */}
       <div className="grid grid-cols-2 gap-3 text-sm text-white">
-        <div>🌅 Sunrise: {format(data.sunrise)}</div>
-        <div>🌇 Sunset: {format(data.sunset)}</div>
+        <div>🌅 Sunrise: {formatTime(data.sunrise)}</div>
+        <div>🌇 Sunset: {formatTime(data.sunset)}</div>
       </div>
 
       {/* Countdown */}
@@ -80,54 +73,25 @@ export function AstronomyCard({ data, location }: AstronomyCardProps) {
         <div className="mt-4 text-xs text-sky-300 space-y-1">
           <div>
             🌄 Sunrise Golden Hour:{" "}
-            {solarPhases.sunriseGoldenHour.start.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}{" "}
-            –{" "}
-            {solarPhases.sunriseGoldenHour.end.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
+            {formatTime(solarPhases.sunriseGoldenHour.start)} –{" "}
+            {formatTime(solarPhases.sunriseGoldenHour.end)}
           </div>
 
           <div>
             🌆 Sunset Golden Hour:{" "}
-            {solarPhases.sunsetGoldenHour.start.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}{" "}
-            –{" "}
-            {solarPhases.sunsetGoldenHour.end.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
+            {formatTime(solarPhases.sunsetGoldenHour.start)} –{" "}
+            {formatTime(solarPhases.sunsetGoldenHour.end)}
           </div>
 
           <div>
             🌌 Sunrise Blue Hour:{" "}
-            {solarPhases.sunriseBlueHour.start.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}{" "}
-            –{" "}
-            {solarPhases.sunriseBlueHour.end.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
+            {formatTime(solarPhases.sunriseBlueHour.start)} –{" "}
+            {formatTime(solarPhases.sunriseBlueHour.end)}
           </div>
 
           <div>
-            🌙 Sunset Blue Hour:{" "}
-            {solarPhases.sunsetBlueHour.start.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}{" "}
-            –{" "}
-            {solarPhases.sunsetBlueHour.end.toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
+            🌙 Sunset Blue Hour: {formatTime(solarPhases.sunsetBlueHour.start)}{" "}
+            – {formatTime(solarPhases.sunsetBlueHour.end)}
           </div>
         </div>
       )}

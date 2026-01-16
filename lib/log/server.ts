@@ -39,13 +39,13 @@ export async function logit(entry: {
     const index = entry.requestId ? nextLogIndex(entry.requestId) : null;
     const prefix = index !== null ? `#${index}` : "";
     const finalMessage = prefix ? `${prefix} ${entry.message}` : entry.message;
-  // 1. Axiom
+    // 1. Axiom
 
-  try {
-    const level="info"
-    const ax = axiomFor(level);
-    ax(finalMessage, entry);
-  } catch {}
+    try {
+      const level = "info";
+      const ax = axiomFor(level);
+      ax(finalMessage, entry);
+    } catch {}
 
     await db.log.create({
       data: {
@@ -69,6 +69,3 @@ export async function logit(entry: {
     console.error("LOGGING ERROR:", err);
   }
 }
-
-
-

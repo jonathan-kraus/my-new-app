@@ -1,3 +1,4 @@
+"use client";
 // Returns a number 0–7 representing the moon phase
 export function getMoonPhaseIndex(date: Date): number {
   // Algorithm: Conway / Simple Lunation

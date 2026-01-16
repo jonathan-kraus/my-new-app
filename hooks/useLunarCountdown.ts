@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-
+import { normalizeTimestamp } from "@/app/astronomy/normalize";
 export function useLunarCountdown({
   today,
   tomorrow,
@@ -22,11 +22,11 @@ export function useLunarCountdown({
   }, []);
 
   // Parse lunar times
-  const moonrise = today.moonrise ? new Date(today.moonrise) : null;
-  const moonset = today.moonset ? new Date(today.moonset) : null;
+  const moonrise = normalizeTimestamp(today.moonrise);
+  const moonset = normalizeTimestamp(today.moonset);
 
-  const nextMoonrise = tomorrow?.moonrise ? new Date(tomorrow.moonrise) : null;
-  const nextMoonset = tomorrow?.moonset ? new Date(tomorrow.moonset) : null;
+  const nextMoonrise = normalizeTimestamp(tomorrow?.moonrise ?? null);
+  const nextMoonset = normalizeTimestamp(tomorrow?.moonset ?? null);
 
   // Helper: diff between now and target
   const diff = (target: Date) => {

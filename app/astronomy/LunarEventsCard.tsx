@@ -1,7 +1,7 @@
 "use client";
 
 import { useLunarCountdown } from "@/hooks/useLunarCountdown";
-
+import { formatTime } from "@/lib/astronomy/formatTime";
 export function LunarEventsCard({ today, tomorrow }: any) {
   const { nextEventLabel, nextCountdown, isVisible, moonrise, moonset } =
     useLunarCountdown({ today, tomorrow });
@@ -25,8 +25,8 @@ export function LunarEventsCard({ today, tomorrow }: any) {
       </div>
 
       <div className="mt-3 text-xs opacity-60">
-        <div>Moonrise: {moonrise ? moonrise.toLocaleTimeString() : "—"}</div>
-        <div>Moonset: {moonset ? moonset.toLocaleTimeString() : "—"}</div>
+        <div>Moonrise: {formatTime(moonrise)}</div>
+        <div>Moonset: {formatTime(moonset)}</div>
       </div>
     </div>
   );

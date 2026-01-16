@@ -1,3 +1,4 @@
+"use client";
 // lib/astronomy-ui.ts
 import { msUntil, msSince, isNow, isFuture } from "@/lib/time";
 

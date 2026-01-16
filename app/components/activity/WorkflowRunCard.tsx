@@ -1,6 +1,6 @@
 import { Workflow, CheckCircle, XCircle, Loader2 } from "lucide-react";
 import { ActivityItemData } from "@/types/activity";
-import { formatDate } from "@/lib/astronomy_old/formatters";
+import { formatTime } from "@/lib/astronomy/formatTime";
 export default function WorkflowRunCard({ item }: { item: ActivityItemData }) {
   const icon =
     item.state === "success" ? (
@@ -29,7 +29,7 @@ export default function WorkflowRunCard({ item }: { item: ActivityItemData }) {
         )}
 
         <div className="text-xs text-muted-foreground mt-1">
-          {formatDate(item.createdAt)}
+          {formatTime(item.createdAt)}
         </div>
       </div>
     </div>

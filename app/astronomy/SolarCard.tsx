@@ -2,7 +2,7 @@
 
 import { useSolarCountdown } from "@/hooks/useSolarCountdown";
 import { SolarTimes } from "@/types/AstronomyTypes";
-
+import { formatTime } from "@/lib/astronomy/formatTime";
 export function SolarCard({
   today,
   tomorrow,
@@ -11,7 +11,7 @@ export function SolarCard({
   tomorrow: SolarTimes | null;
 }) {
   // Guard: if sunrise or sunset is missing, show fallback
-  if (!today.correctedSunrise || !today.sunset) {
+  if (!today.sunrise || !today.sunset) {
     return (
       <div className="rounded-xl border bg-black/20 p-4 text-white shadow-lg backdrop-blur">
         <h2 className="text-lg font-semibold mb-2">Solar</h2>
@@ -22,31 +22,23 @@ export function SolarCard({
 
   const t = useSolarCountdown({
     today: {
-      correctedSunrise: today.correctedSunrise,
+      sunrise: today.sunrise,
       sunset: today.sunset,
     },
     tomorrow: tomorrow
       ? {
-          correctedSunrise: tomorrow.correctedSunrise ?? null,
+          sunrise: tomorrow.sunrise ?? null,
         }
       : null,
   });
-
-  const fmt = (d: Date | null) =>
-    d
-      ? d.toLocaleTimeString("en-US", {
-          hour: "2-digit",
-          minute: "2-digit",
-        })
-      : "—";
 
   return (
     <div className="rounded-xl border bg-black/20 p-4 text-white shadow-lg backdrop-blur space-y-4">
       <h2 className="text-lg font-semibold">Solar</h2>
 
       <div>
-        <p>Sunrise: {fmt(today.correctedSunrise)}</p>
-        <p>Sunset: {fmt(today.sunset)}</p>
+        <p>Sunrise: {formatTime(today.sunrise)}</p>
+        <p>Sunset: {formatTime(today.sunset)}</p>
       </div>
 
       <div>

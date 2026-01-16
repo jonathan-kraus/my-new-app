@@ -1,3 +1,4 @@
+"use client";
 export function getLightPhases(sunrise: Date, sunset: Date) {
   const preSunriseBlueStart = new Date(sunrise.getTime() - 30 * 60_000);
   const postSunriseGoldenEnd = new Date(sunrise.getTime() + 60 * 60_000);

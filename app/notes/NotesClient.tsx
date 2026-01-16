@@ -15,7 +15,9 @@ export default function NotesClient() {
       const data = await res.json();
 
       if (res.status === 401) {
-        toast.error("🛑 Access denied — authentication required for this mission.");
+        toast.error(
+          "🛑 Access denied — authentication required for this mission.",
+        );
         setAuthorized(false);
         return;
       }

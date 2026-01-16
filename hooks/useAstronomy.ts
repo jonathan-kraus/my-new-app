@@ -2,7 +2,6 @@
 
 import { useMemo } from "react";
 import { addDays } from "date-fns";
-import { parseLocalSolar } from "@/lib/solar/parseLocalSolar";
 import { logit } from "@/lib/log/client";
 import {
   SolarTimes,
@@ -51,38 +50,20 @@ export function useAstronomy(snapshots: any[]): AstronomyHookResult {
     // SOLAR
     // -----------------------------
     const solar: SolarTimes = {
-      sunrise: parseLocalSolar(today.sunrise),
-      sunset: parseLocalSolar(today.sunset),
+      sunrise: today.sunrise,
+      sunset: today.sunset,
+      nextSunrise: tomorrow ? tomorrow.sunrise : null,
+      nextSunset: tomorrow ? tomorrow.sunset : null,
+      sunriseBlueStart: today.sunriseBlueStart,
+      sunriseBlueEnd: today.sunriseBlueEnd,
+      sunriseGoldenStart: today.sunriseGoldenStart,
 
-      correctedSunrise: parseLocalSolar(today.correctedSunrise),
+      sunriseGoldenEnd: today.sunriseGoldenEnd,
 
-      nextSunrise: tomorrow ? parseLocalSolar(tomorrow.correctedSunrise) : null,
-
-      sunriseBlueStart: today.sunriseBlueStart
-        ? parseLocalSolar(today.sunriseBlueStart)
-        : null,
-      sunriseBlueEnd: today.sunriseBlueEnd
-        ? parseLocalSolar(today.sunriseBlueEnd)
-        : null,
-      sunriseGoldenStart: today.sunriseGoldenStart
-        ? parseLocalSolar(today.sunriseGoldenStart)
-        : null,
-      sunriseGoldenEnd: today.sunriseGoldenEnd
-        ? parseLocalSolar(today.sunriseGoldenEnd)
-        : null,
-
-      sunsetBlueStart: today.sunsetBlueStart
-        ? parseLocalSolar(today.sunsetBlueStart)
-        : null,
-      sunsetBlueEnd: today.sunsetBlueEnd
-        ? parseLocalSolar(today.sunsetBlueEnd)
-        : null,
-      sunsetGoldenStart: today.sunsetGoldenStart
-        ? parseLocalSolar(today.sunsetGoldenStart)
-        : null,
-      sunsetGoldenEnd: today.sunsetGoldenEnd
-        ? parseLocalSolar(today.sunsetGoldenEnd)
-        : null,
+      sunsetBlueStart: today.sunsetBlueStart,
+      sunsetBlueEnd: today.sunsetBlueEnd,
+      sunsetGoldenStart: today.sunsetGoldenStart,
+      sunsetGoldenEnd: today.sunsetGoldenEnd,
 
       fetchedAt: new Date(today.fetchedAt),
     };
@@ -93,26 +74,18 @@ export function useAstronomy(snapshots: any[]): AstronomyHookResult {
       file: "hooks/useAstronomy.ts",
 
       page: "Astronomy",
-      data: { correctedSunrise: today.correctedSunrise,
-        solar: solar
-       },
+      data: { sunrise: today.sunrise, solar: solar },
     });
 
     // -----------------------------
     // LUNAR
     // -----------------------------
     const lunar: LunarTimes = {
-      moonrise: today.moonrise ? parseLocalSolar(today.moonrise) : null,
-      moonset: today.moonset ? parseLocalSolar(today.moonset) : null,
+      moonrise: today.moonrise,
+      moonset: today.moonset,
 
-      nextMoonrise:
-        tomorrow?.moonrise && tomorrow.moonrise !== ""
-          ? parseLocalSolar(tomorrow.moonrise)
-          : null,
-      nextMoonset:
-        tomorrow?.moonset && tomorrow.moonset !== ""
-          ? parseLocalSolar(tomorrow.moonset)
-          : null,
+      nextMoonrise: tomorrow?.moonrise && tomorrow.moonrise,
+      nextMoonset: tomorrow?.moonset && tomorrow.moonset,
 
       moonPhase: today.moonPhase,
       fetchedAt: new Date(today.fetchedAt),

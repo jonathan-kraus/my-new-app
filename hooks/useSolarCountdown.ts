@@ -7,11 +7,11 @@ export function useSolarCountdown({
   tomorrow,
 }: {
   today: {
-    correctedSunrise: Date | null;
+    sunrise: Date | null;
     sunset: Date | null;
   };
   tomorrow: {
-    correctedSunrise: Date | null;
+    sunrise: Date | null;
   } | null;
 }) {
   const [now, setNow] = useState(new Date());
@@ -22,12 +22,12 @@ export function useSolarCountdown({
   }, []);
 
   // If we don't have sunrise/sunset, return a safe fallback
-  if (!today.correctedSunrise || !today.sunset) {
+  if (!today.sunrise || !today.sunset) {
     return {
       now,
       sunrise: null,
       sunset: null,
-      nextSunrise: tomorrow?.correctedSunrise ?? null,
+      nextSunrise: tomorrow?.sunrise ?? null,
       nextEventLabel: "No solar data",
       nextCountdown: { hours: 0, minutes: 0, seconds: 0 },
       isDaytime: false,
@@ -35,9 +35,9 @@ export function useSolarCountdown({
     };
   }
 
-  const sunrise = today.correctedSunrise;
+  const sunrise = today.sunrise;
   const sunset = today.sunset;
-  const nextSunrise = tomorrow?.correctedSunrise ?? null;
+  const nextSunrise = tomorrow?.sunrise ?? null;
 
   const diff = (target: Date) => {
     const ms = target.getTime() - now.getTime();

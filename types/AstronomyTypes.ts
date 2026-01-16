@@ -1,10 +1,8 @@
 export interface SolarTimes {
   sunrise: Date | null;
   sunset: Date | null;
-
-  correctedSunrise: Date | null;
   nextSunrise: Date | null;
-
+  nextSunset: Date | null;
   sunriseBlueStart: Date | null;
   sunriseBlueEnd: Date | null;
   sunriseGoldenStart: Date | null;

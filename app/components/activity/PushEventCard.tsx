@@ -1,5 +1,5 @@
 import { ActivityItemData } from "@/types/activity";
-import { formatDate } from "@/lib/astronomy_old/formatters";
+import { formatTime } from "@/lib/astronomy/formatTime";
 import { GitCommit } from "lucide-react";
 
 export default function PushEventCard({ item }: { item: ActivityItemData }) {
@@ -23,7 +23,7 @@ export default function PushEventCard({ item }: { item: ActivityItemData }) {
         )}
 
         <div className="text-xs text-muted-foreground mt-1">
-          {formatDate(item.createdAt)}
+          {formatTime(item.createdAt)}
         </div>
       </div>
     </div>

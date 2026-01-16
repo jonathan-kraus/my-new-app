@@ -11,7 +11,7 @@ import { getRequestDuration } from "@/lib/log/timing";
 // -------------------------
 export async function GET(req: NextRequest) {
   const ctx = await enrichContext(req);
-console.log("CTX requestId:", ctx.requestId);
+  console.log("CTX requestId:", ctx.requestId);
 
   await logit({
     ...ctx,
@@ -19,7 +19,7 @@ console.log("CTX requestId:", ctx.requestId);
     message: "Notes GET started",
     page: "/api/notes",
     file: "app/api/notes/route.ts",
-    data: {requestId: ctx.requestId}
+    data: { requestId: ctx.requestId },
   });
 
   try {
@@ -38,19 +38,18 @@ console.log("CTX requestId:", ctx.requestId);
       where: { userEmail: session.user.email },
       orderBy: { createdAt: "desc" },
     });
-console.log("Duration lookup:", getRequestDuration(ctx.requestId));
+    console.log("Duration lookup:", getRequestDuration(ctx.requestId));
 
-const durationMs = getRequestDuration(ctx.requestId);
+    const durationMs = getRequestDuration(ctx.requestId);
 
-await logit({
-  ...ctx,
-  level: "info",
-  message: "Notes GET completed",
-  durationMs,                 // explicitly included
-  eventIndex: ctx.eventIndex, // explicitly included
-  data: { count: notes.length },
-});
-
+    await logit({
+      ...ctx,
+      level: "info",
+      message: "Notes GET completed",
+      durationMs, // explicitly included
+      eventIndex: ctx.eventIndex, // explicitly included
+      data: { count: notes.length },
+    });
 
     return NextResponse.json({ notes });
   } catch (err: any) {
@@ -64,7 +63,10 @@ await logit({
       data: { error: err.message },
     });
 
-    return NextResponse.json({ error: "Failed to load notes" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to load notes" },
+      { status: 500 },
+    );
   }
 }
 
@@ -125,6 +127,9 @@ export async function POST(req: NextRequest) {
       data: { error: err.message },
     });
 
-    return NextResponse.json({ error: "Failed to create note" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to create note" },
+      { status: 500 },
+    );
   }
 }

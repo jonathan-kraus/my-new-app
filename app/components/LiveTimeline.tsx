@@ -3,16 +3,12 @@
 import { useEffect, useState } from "react";
 import { buildAstronomyEvents } from "@/lib/astronomy-ui";
 import { formatCountdown } from "@/lib/time";
-
+import { formatTime } from "@/lib/astronomy/formatTime";
 interface LiveTimelineProps {
   today: any; // we can tighten this later
   tomorrow: any; // optional or required depending on your data
 }
-function formatEventTime(date: Date | null) {
-  return date
-    ? date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
-    : "—";
-}
+
 export default function LiveTimeline({ today, tomorrow }: LiveTimelineProps) {
   const [now, setNow] = useState(new Date());
 
@@ -84,9 +80,7 @@ export default function LiveTimeline({ today, tomorrow }: LiveTimelineProps) {
               }`}
             >
               <div className="text-white">{e.label}</div>
-              <div className="text-gray-400 text-sm">
-                {formatEventTime(e.at)}
-              </div>
+              <div className="text-gray-400 text-sm">{formatTime(e.at)}</div>
             </div>
           );
         })}

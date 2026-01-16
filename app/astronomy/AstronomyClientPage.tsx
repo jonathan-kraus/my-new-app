@@ -1,3 +1,4 @@
+"use client";
 import { UnifiedNextAstronomicalEventCard } from "./UnifiedNextAstronomicalEventCard";
 import { CombinedSolarLunarTimeline } from "./CombinedSolarLunarTimeline";
 import { SolarCard } from "./SolarCard";
