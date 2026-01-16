@@ -86,3 +86,24 @@ export async function buildAstronomySnapshot(location: any, targetDate: Date) {
     nextSunrise: null,
     correctedSunrise: null,
 
+    fetchedAt: new Date(),
+  };
+
+  // Build lunar object
+  const lunar = {
+    moonrise: normalizeMoonTime(astro.moonrise)
+      ? combineDateTime(date, astro.moonrise)
+      : "",
+    moonset: normalizeMoonTime(astro.moonset)
+      ? combineDateTime(date, astro.moonset)
+      : "",
+    moonPhase: calculateMoonPhase(date),
+  };
+
+  return {
+    date,
+    solar,
+    lunar,
+    locationId: location.id,
+  };
+}
