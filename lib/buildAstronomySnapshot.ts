@@ -1,5 +1,6 @@
+// lib/buildAstronomySnapshot.ts
 import { format } from "date-fns";
-import { logit } from "@/lib/log/server"; // FIXED
+import { logit } from "@/lib/log/server";
 
 function normalizeMoonTime(value: string): string {
   return value === "-:-" ? "" : value;
@@ -60,35 +61,28 @@ export async function buildAstronomySnapshot(location: any, targetDate: Date) {
     data: { astro },
   });
 
-  return {
-    date: new Date(
-      targetDate.getFullYear(),
-      targetDate.getMonth(),
-      targetDate.getDate(),
-    ),
+  const date = new Date(
+    targetDate.getFullYear(),
+    targetDate.getMonth(),
+    targetDate.getDate(),
+  );
 
-    sunrise: combineDateTime(targetDate, astro.sunrise),
-    sunset: combineDateTime(targetDate, astro.sunset),
+  // Build solar object
+  const solar = {
+    sunrise: combineDateTime(date, astro.sunrise),
+    sunset: combineDateTime(date, astro.sunset),
 
-    sunriseBlueStart: combineDateTime(targetDate, astro.morning.blue_hour_begin),
-    sunriseBlueEnd: combineDateTime(targetDate, astro.morning.blue_hour_end),
-    sunriseGoldenStart: combineDateTime(targetDate, astro.morning.golden_hour_begin),
-    sunriseGoldenEnd: combineDateTime(targetDate, astro.morning.golden_hour_end),
+    sunriseBlueStart: combineDateTime(date, astro.morning.blue_hour_begin),
+    sunriseBlueEnd: combineDateTime(date, astro.morning.blue_hour_end),
+    sunriseGoldenStart: combineDateTime(date, astro.morning.golden_hour_begin),
+    sunriseGoldenEnd: combineDateTime(date, astro.morning.golden_hour_end),
 
-    sunsetBlueStart: combineDateTime(targetDate, astro.evening.blue_hour_begin),
-    sunsetBlueEnd: combineDateTime(targetDate, astro.evening.blue_hour_end),
-    sunsetGoldenStart: combineDateTime(targetDate, astro.evening.golden_hour_begin),
-    sunsetGoldenEnd: combineDateTime(targetDate, astro.evening.golden_hour_end),
+    sunsetBlueStart: combineDateTime(date, astro.evening.blue_hour_begin),
+    sunsetBlueEnd: combineDateTime(date, astro.evening.blue_hour_end),
+    sunsetGoldenStart: combineDateTime(date, astro.evening.golden_hour_begin),
+    sunsetGoldenEnd: combineDateTime(date, astro.evening.golden_hour_end),
 
-    moonrise: normalizeMoonTime(astro.moonrise)
-      ? combineDateTime(targetDate, astro.moonrise)
-      : "",
-    moonset: normalizeMoonTime(astro.moonset)
-      ? combineDateTime(targetDate, astro.moonset)
-      : "",
-    moonPhase: calculateMoonPhase(targetDate),
+    // Legacy fields your UI expects but you don't compute
+    nextSunrise: null,
+    correctedSunrise: null,
 
-    fetchedAt: new Date(),
-    locationId: location.id,
-  };
-}
