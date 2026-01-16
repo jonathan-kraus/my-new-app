@@ -93,7 +93,9 @@ export function useAstronomy(snapshots: any[]): AstronomyHookResult {
       file: "hooks/useAstronomy.ts",
 
       page: "Astronomy",
-      data: { correctedSunrise: today.correctedSunrise },
+      data: { correctedSunrise: today.correctedSunrise,
+        solar: solar
+       },
     });
 
     // -----------------------------
