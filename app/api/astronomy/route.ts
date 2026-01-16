@@ -12,6 +12,7 @@ export async function GET(req: NextRequest) {
     ...ctx,
     level: "info",
     message: "Astronomy GET started",
+    eventIndex: ctx.eventIndex,
     page: "/api/astronomy",
     file: "app/api/astronomy/route.ts",
   });
@@ -26,6 +27,7 @@ export async function GET(req: NextRequest) {
       level: "info",
       message: "Astronomy GET completed",
       durationMs,
+      eventIndex: ctx.eventIndex,
       data: { date: snapshot.date },
     });
 
@@ -38,6 +40,7 @@ export async function GET(req: NextRequest) {
       level: "error",
       message: "Astronomy GET failed",
       durationMs,
+      eventIndex: ctx.eventIndex,
       data: { error: err.message },
     });
 

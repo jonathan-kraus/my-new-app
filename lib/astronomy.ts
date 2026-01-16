@@ -16,7 +16,7 @@ export async function refreshAstronomySnapshotsForLocation(
 
     const computedDays = rawDays.map(computeGoldenBlueHours);
 
-    await Promise.all(
+    const results = await Promise.all(
       computedDays.map(async (day) => {
         const snapshot = await buildAstronomySnapshot(location, day.date);
 
@@ -33,11 +33,20 @@ export async function refreshAstronomySnapshotsForLocation(
       }),
     );
 
-    return { locationId: location.id, ok: true };
+    return {
+      locationId: location.id,
+      ok: true,
+      daysProcessed: results.length,
+    };
   } catch (err) {
-    return { locationId: location.id, error: String(err) };
+    return {
+      locationId: location.id,
+      ok: false,
+      error: String(err),
+    };
   }
 }
+
 
 export async function getAstronomyForDashboard(locationId: string) {
   const snapshots = await db.astronomySnapshot.findMany({
@@ -53,34 +62,20 @@ export async function getAstronomyForDashboard(locationId: string) {
     };
   }
 
-  const now = new Date();
-  const todayLocal = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const todayISO = new Date().toISOString().slice(0, 10);
+  const tomorrowISO = new Date(Date.now() + 86400000)
+    .toISOString()
+    .slice(0, 10);
 
   const todaySnapshot =
-    snapshots.find((snap) => {
-      const d = snap.date;
-      return (
-        d.getFullYear() === todayLocal.getFullYear() &&
-        d.getMonth() === todayLocal.getMonth() &&
-        d.getDate() === todayLocal.getDate()
-      );
-    }) ?? null;
-
-  const tomorrowLocal = new Date(
-    todayLocal.getFullYear(),
-    todayLocal.getMonth(),
-    todayLocal.getDate() + 1,
-  );
+    snapshots.find((snap) =>
+      snap.date.toISOString().startsWith(todayISO),
+    ) ?? null;
 
   const tomorrowSnapshot =
-    snapshots.find((snap) => {
-      const d = snap.date;
-      return (
-        d.getFullYear() === tomorrowLocal.getFullYear() &&
-        d.getMonth() === tomorrowLocal.getMonth() &&
-        d.getDate() === tomorrowLocal.getDate()
-      );
-    }) ?? null;
+    snapshots.find((snap) =>
+      snap.date.toISOString().startsWith(tomorrowISO),
+    ) ?? null;
 
   return {
     todaySnapshot,
@@ -88,3 +83,4 @@ export async function getAstronomyForDashboard(locationId: string) {
     allSnapshots: snapshots,
   };
 }
+
