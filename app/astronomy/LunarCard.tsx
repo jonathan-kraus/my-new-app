@@ -1,55 +1,28 @@
-"use client";
+// app/astronomy/LunarCard.tsx
 
-import { useLunarCountdown } from "@/hooks/useLunarCountdown";
-import { formatTime } from "@/lib/astronomy/formatTime";
-export function LunarCard({ today, tomorrow }: any) {
-  const {
-    moonrise,
-    moonset,
-    nextEventLabel,
-    nextCountdown,
-    isVisible,
-    progressPercent,
-  } = useLunarCountdown({ today, tomorrow });
+import { formatCountdown } from "@/lib/time";
+
+export function LunarCard({ today, tomorrow, lunar }: any) {
+  const { moonrise, moonset, moonPhase } = today;
+  console.log("🌙 LUNAR DEBUG:");
+  console.log(moonrise, moonset);
+  const nextEvent = lunar?.nextEvent ?? null;
+  const nextTime = lunar?.nextTime ?? null;
+  const nextCountdown = lunar ? formatCountdown(lunar.ms) : "—";
 
   return (
-    <div className="rounded-xl border bg-black/20 p-4 text-white shadow-lg backdrop-blur">
-      <h2 className="text-lg font-semibold mb-3">Lunar Timeline</h2>
+    <div className="p-4 rounded-lg bg-blue-900/20 border border-blue-700/30">
+      <h2 className="text-lg font-semibold">Lunar</h2>
 
-      <div className="flex justify-between text-sm opacity-80 mb-2">
-        <span>Moonrise</span>
-        <span>{formatTime(moonrise)}</span>
-      </div>
+      <p>🌙 Moonrise: {moonrise ? moonrise.toLocaleTimeString() : "—"}</p>
+      <p>🌘 Moonset: {moonset ? moonset.toLocaleTimeString() : "—"}</p>
+      <p>🌗 Phase: {moonPhase}</p>
 
-      <div className="flex justify-between text-sm opacity-80 mb-2">
-        <span>Moonset</span>
-        <span>{formatTime(moonset)}</span>
-      </div>
-
-      <div className="mt-4">
-        <div className="text-xs opacity-70 mb-1">Visibility Progress</div>
-
-        <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-blue-400 transition-all"
-            style={{ width: `${progressPercent}%` }}
-          />
-        </div>
-
-        <div className="text-xs opacity-60 mt-2">
-          {isVisible
-            ? "The Moon is currently above the horizon"
-            : "The Moon is below the horizon"}
-        </div>
-      </div>
-
-      <div className="mt-4 text-sm opacity-80">
-        Next Event: <span className="font-medium">{nextEventLabel}</span>
-      </div>
-
-      <div className="text-xl font-bold mt-1">
-        {nextCountdown.hours}h {nextCountdown.minutes}m {nextCountdown.seconds}s
-      </div>
+      {nextEvent && nextTime && (
+        <p className="mt-2">
+          Next: {nextEvent} in {nextCountdown}
+        </p>
+      )}
     </div>
   );
 }

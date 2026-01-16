@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { toast } from "react-hot-toast";
 import { logit } from "@/lib/log/client";
-
+import { parseLocalTimestamp } from "@/lib/time";
 type CurrentWeatherCardProps = {
   location: {
     id: string;
@@ -115,7 +115,8 @@ export default function CurrentWeatherCard({
   const humidity = current.humidity;
   const wind = current.windSpeed;
   const source = sources.current?.toUpperCase() ?? "UNKNOWN";
-  const formattedTime = new Date(current.fetchedAt).toLocaleTimeString();
+  const fetched = parseLocalTimestamp(current.fetchedAt);
+  const formattedTime = fetched ? fetched.toLocaleTimeString() : "—";
 
   // Final log
   logit({

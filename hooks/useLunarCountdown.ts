@@ -1,80 +1,59 @@
-import { useEffect, useState } from "react";
-import { normalizeTimestamp } from "@/app/astronomy/normalize";
-export function useLunarCountdown({
-  today,
-  tomorrow,
-}: {
-  today: {
-    moonrise: string | null;
-    moonset: string | null;
-  };
-  tomorrow: {
-    moonrise: string | null;
-    moonset: string | null;
-  } | null;
-}) {
-  const [now, setNow] = useState(new Date());
+// hooks/useLunarCountdown.ts
 
-  // Live ticking clock
-  useEffect(() => {
-    const id = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(id);
-  }, []);
+import {
+  msUntil,
+  isPast,
+  parseLocalTimestamp,
+  parseLocalTimestampTomorrow,
+} from "@/lib/time";
 
-  // Parse lunar times
-  const moonrise = normalizeTimestamp(today.moonrise);
-  const moonset = normalizeTimestamp(today.moonset);
+export function useLunarCountdown(today: any, tomorrow: any) {
+  // Parse today's events as LOCAL times
+  console.log("🌙 LUNAR DEBUG: 44");
 
-  const nextMoonrise = normalizeTimestamp(tomorrow?.moonrise ?? null);
-  const nextMoonset = normalizeTimestamp(tomorrow?.moonset ?? null);
+  const moonriseDate = parseLocalTimestamp(today.moonrise);
+  const moonsetDate = parseLocalTimestamp(today.moonset);
+  const moonrise = today.moonrise ? parseLocalTimestamp(today.moonrise) : null;
 
-  // Helper: diff between now and target
-  const diff = (target: Date) => {
-    const ms = target.getTime() - now.getTime();
-    const totalSeconds = Math.max(0, Math.floor(ms / 1000));
-    return {
-      hours: Math.floor(totalSeconds / 3600),
-      minutes: Math.floor((totalSeconds % 3600) / 60),
-      seconds: totalSeconds % 60,
-    };
-  };
+  const moonset = today.moonset ? parseLocalTimestamp(today.moonset) : null;
 
-  // Determine next lunar event
-  let nextEventLabel = "No upcoming lunar events";
-  let nextCountdown = { hours: 0, minutes: 0, seconds: 0 };
+  const nextMoonrise = tomorrow?.moonrise
+    ? parseLocalTimestamp(tomorrow.moonrise)
+    : null;
 
-  if (moonrise && now < moonrise) {
-    nextEventLabel = "Moonrise";
-    nextCountdown = diff(moonrise);
-  } else if (moonset && now < moonset) {
-    nextEventLabel = "Moonset";
-    nextCountdown = diff(moonset);
-  } else if (nextMoonrise) {
-    nextEventLabel = "Tomorrow's Moonrise";
-    nextCountdown = diff(nextMoonrise);
+  console.log(moonriseDate, moonsetDate);
+  // Parse tomorrow's moonrise as LOCAL and force it into tomorrow
+  const tomorrowMoonrise = tomorrow?.moonrise
+    ? parseLocalTimestampTomorrow(tomorrow.moonrise)
+    : null;
+
+  // Determine the next lunar event
+  let nextEvent: "moonrise" | "moonset" | "tomorrowMoonrise" | null = null;
+  let nextTime: Date | null = null;
+
+  const now = Date.now();
+
+  // Case 1: moonrise exists and is in the future → next event is moonrise
+  if (moonrise && moonrise.getTime() > now) {
+    nextEvent = "moonrise";
+    nextTime = moonrise;
+  }
+  // Case 2: moonrise already happened but moonset is still ahead
+  else if (moonset && moonset.getTime() > now) {
+    nextEvent = "moonset";
+    nextTime = moonset;
+  }
+  // Case 3: both moonrise and moonset have passed → tomorrow's moonrise
+  else if (tomorrowMoonrise) {
+    nextEvent = "tomorrowMoonrise";
+    nextTime = tomorrowMoonrise;
   }
 
-  // Visibility window
-  const isVisible =
-    moonrise && moonset ? now >= moonrise && now <= moonset : false;
-
-  // Progress through lunar visibility
-  let progressPercent = 0;
-  if (moonrise && moonset && now >= moonrise && now <= moonset) {
-    const total = moonset.getTime() - moonrise.getTime();
-    const elapsed = now.getTime() - moonrise.getTime();
-    progressPercent = Math.min(100, Math.max(0, (elapsed / total) * 100));
-  }
+  const ms = nextTime ? msUntil(nextTime) : 0;
 
   return {
-    now,
-    moonrise,
-    moonset,
-    nextMoonrise,
-    nextMoonset,
-    nextEventLabel,
-    nextCountdown,
-    isVisible,
-    progressPercent,
+    nextEvent,
+    nextTime,
+    ms,
   };
 }

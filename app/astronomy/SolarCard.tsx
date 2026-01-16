@@ -20,17 +20,17 @@ export function SolarCard({
     );
   }
 
-  const t = useSolarCountdown({
-    today: {
+  const t = useSolarCountdown(
+    {
       sunrise: today.sunrise,
       sunset: today.sunset,
     },
-    tomorrow: tomorrow
+    tomorrow
       ? {
           sunrise: tomorrow.sunrise ?? null,
         }
       : null,
-  });
+  );
 
   return (
     <div className="rounded-xl border bg-black/20 p-4 text-white shadow-lg backdrop-blur space-y-4">

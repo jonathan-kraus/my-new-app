@@ -6,7 +6,8 @@ import { LunarCard } from "./LunarCard";
 import { GoldenHourCard } from "./GoldenHourCard";
 import { CombinedSolarLunarTimeline } from "./CombinedSolarLunarTimeline";
 import { SkyStateCard } from "./SkyStateCard";
-
+import { parseLocalTimestamp, parseLocalTimestampTomorrow } from "@/lib/time";
+import { useLunarCountdown } from "@/hooks/useLunarCountdown";
 export default function AstronomyPage({ snapshots }: { snapshots: any[] }) {
   const { today, tomorrow, solar, lunar } = useAstronomy(snapshots);
   console.log("ASTRONOMY PAGE LOADED");
@@ -19,16 +20,27 @@ export default function AstronomyPage({ snapshots }: { snapshots: any[] }) {
       </div>
     );
   }
-
+  const lunarCountdown = useLunarCountdown(today, tomorrow);
   return (
     <div className="rounded-xl bg-[#1f2937] p-4 shadow-lg border border-white/10">
       <h1 className="text-2xl font-bold">Astronomy Dashboard</h1>
 
       {/* Solar */}
       <SolarCard today={solar} tomorrow={tomorrow?.solar ?? null} />
-
       {/* Lunar */}
-      <LunarCard today={lunar} tomorrow={tomorrow?.lunar ?? null} />
+
+      <LunarCard
+        today={{
+          moonrise: parseLocalTimestamp(today.moonrise),
+          moonset: parseLocalTimestamp(today.moonset),
+          moonPhase: today.moonPhase,
+        }}
+        tomorrow={{
+          moonrise: parseLocalTimestampTomorrow(tomorrow.moonrise),
+          moonset: parseLocalTimestampTomorrow(tomorrow.moonset),
+        }}
+        lunar={lunarCountdown}
+      />
 
       {/* Golden Hour */}
       <GoldenHourCard

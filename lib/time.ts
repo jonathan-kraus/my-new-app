@@ -1,5 +1,39 @@
 // lib/time.ts
 
+// Parse "2026-01-10 07:21:00" as a LOCAL time (no timezone shifting)
+export function parseLocalTimestamp(ts: string | null | undefined) {
+  if (!ts || typeof ts !== "string") return null;
+
+  const trimmed = ts.trim();
+  const parts = trimmed.split(" ");
+
+  if (parts.length !== 2) return null;
+
+  const [date, time] = parts;
+
+  const dateParts = date.split("-");
+  const timeParts = time.split(":");
+
+  if (dateParts.length !== 3 || timeParts.length < 2) return null;
+
+  const [year, month, day] = dateParts.map(Number);
+  const [hour, minute, second = 0] = timeParts.map(Number);
+
+  return new Date(year, month - 1, day, hour, minute, second);
+}
+
+// Parse tomorrow's timestamp as LOCAL time and ensure it's actually tomorrow
+export function parseLocalTimestampTomorrow(ts: string | null | undefined) {
+  const d = parseLocalTimestamp(ts);
+  if (!d) return null;
+  d.setDate(d.getDate() + 1);
+  return d;
+}
+
+export function formatLocal(d: Date | null | undefined) {
+  return d ? d.toLocaleTimeString() : "—";
+}
+
 export function msUntil(date: Date) {
   return date.getTime() - Date.now();
 }

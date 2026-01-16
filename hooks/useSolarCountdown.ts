@@ -1,19 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-export function useSolarCountdown({
-  today,
-  tomorrow,
-}: {
+export function useSolarCountdown(
   today: {
     sunrise: Date | null;
     sunset: Date | null;
-  };
+  },
   tomorrow: {
     sunrise: Date | null;
-  } | null;
-}) {
+  } | null,
+) {
   const [now, setNow] = useState(new Date());
 
   useEffect(() => {

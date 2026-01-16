@@ -1,33 +1,31 @@
-"use client";
+// app/astronomy/LunarEventsCard.tsx
 
+import { formatCountdown } from "@/lib/time";
 import { useLunarCountdown } from "@/hooks/useLunarCountdown";
 import { formatTime } from "@/lib/astronomy/formatTime";
+
 export function LunarEventsCard({ today, tomorrow }: any) {
-  const { nextEventLabel, nextCountdown, isVisible, moonrise, moonset } =
-    useLunarCountdown({ today, tomorrow });
+  const lunar = useLunarCountdown(today, tomorrow);
+
+  const { moonrise, moonset, moonPhase } = today;
+
+  const nextEvent = lunar?.nextEvent ?? null;
+  const nextTime = lunar?.nextTime ?? null;
+  const nextCountdown = lunar ? formatCountdown(lunar.ms) : "—";
 
   return (
-    <div className="rounded-xl border bg-black/20 p-4 text-white shadow-lg backdrop-blur">
-      <h2 className="text-lg font-semibold mb-2">Lunar Events</h2>
+    <div className="p-4 rounded-lg bg-blue-900/20 border border-blue-700/30">
+      <h2 className="text-lg font-semibold">Lunar Events</h2>
 
-      <div className="text-sm opacity-80 mb-1">
-        Next Event: <span className="font-medium">{nextEventLabel}</span>
-      </div>
+      <p>🌙 Moonrise: {moonrise ? formatTime(moonrise) : "—"}</p>
+      <p>🌘 Moonset: {moonset ? formatTime(moonset) : "—"}</p>
+      <p>🌗 Phase: {moonPhase}</p>
 
-      <div className="text-2xl font-bold mb-3">
-        {nextCountdown.hours}h {nextCountdown.minutes}m {nextCountdown.seconds}s
-      </div>
-
-      <div className="text-xs opacity-70">
-        {isVisible
-          ? "🌕 The Moon is currently visible"
-          : "🌑 The Moon is below the horizon"}
-      </div>
-
-      <div className="mt-3 text-xs opacity-60">
-        <div>Moonrise: {formatTime(moonrise)}</div>
-        <div>Moonset: {formatTime(moonset)}</div>
-      </div>
+      {nextEvent && nextTime && (
+        <p className="mt-2">
+          Next: {nextEvent} in {nextCountdown}
+        </p>
+      )}
     </div>
   );
 }
