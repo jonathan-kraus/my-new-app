@@ -53,22 +53,16 @@ export async function buildAstronomySnapshot(location: any, targetDate: Date) {
   const { latitude, longitude } = location;
   const astro = await fetchIPGeoAstronomy(latitude, longitude, targetDate);
 
-  await logit({
-    level: "info",
-    message: "Fetched IPGeo astronomy",
-    file: "lib/buildAstronomySnapshot.ts",
-    page: "Build Astronomy",
-    data: { astro },
-  });
-
   const date = new Date(
     targetDate.getFullYear(),
     targetDate.getMonth(),
     targetDate.getDate(),
   );
 
-  // Build solar object
-  const solar = {
+  return {
+    date,
+
+    // Solar (flat for Prisma)
     sunrise: combineDateTime(date, astro.sunrise),
     sunset: combineDateTime(date, astro.sunset),
 
@@ -82,15 +76,7 @@ export async function buildAstronomySnapshot(location: any, targetDate: Date) {
     sunsetGoldenStart: combineDateTime(date, astro.evening.golden_hour_begin),
     sunsetGoldenEnd: combineDateTime(date, astro.evening.golden_hour_end),
 
-    // Legacy fields your UI expects but you don't compute
-    nextSunrise: null,
-    correctedSunrise: null,
-
-    fetchedAt: new Date(),
-  };
-
-  // Build lunar object
-  const lunar = {
+    // Lunar (flat for Prisma)
     moonrise: normalizeMoonTime(astro.moonrise)
       ? combineDateTime(date, astro.moonrise)
       : "",
@@ -98,12 +84,9 @@ export async function buildAstronomySnapshot(location: any, targetDate: Date) {
       ? combineDateTime(date, astro.moonset)
       : "",
     moonPhase: calculateMoonPhase(date),
-  };
 
-  return {
-    date,
-    solar,
-    lunar,
+    // Metadata
+    fetchedAt: new Date(),
     locationId: location.id,
   };
 }
