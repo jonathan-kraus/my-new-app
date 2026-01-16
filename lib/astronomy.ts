@@ -46,7 +46,11 @@ export async function refreshAstronomySnapshotsForLocation(
     };
   }
 }
-
+export async function getLatestLocation(){
+  const jloc = "KOP"
+  return {
+    jloc
+}};
 
 export async function getAstronomyForDashboard(locationId: string) {
   const snapshots = await db.astronomySnapshot.findMany({
