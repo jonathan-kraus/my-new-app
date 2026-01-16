@@ -1,13 +1,40 @@
-import AstronomyClientPage from "./AstronomyClientPage";
+import { AstronomyClientPage } from "./AstronomyClientPage";
 import { db } from "@/lib/db";
+import { startOfDay, endOfDay, addDays } from "date-fns";
 
 export default async function AstronomyPage() {
-  const snapshots = await db.astronomySnapshot.findMany({
-    orderBy: { date: "desc" },
-    take: 2,
+  const now = new Date();
+
+  const todayStart = startOfDay(now);
+  const todayEnd = endOfDay(now);
+
+  const tomorrowStart = startOfDay(addDays(now, 1));
+  const tomorrowEnd = endOfDay(addDays(now, 1));
+
+  const todaySnapshot = await db.astronomySnapshot.findFirst({
+    where: {
+      date: {
+        gte: todayStart,
+        lte: todayEnd,
+      },
+    },
   });
 
-  const [today, tomorrow] = snapshots;
+  const tomorrowSnapshot = await db.astronomySnapshot.findFirst({
+    where: {
+      date: {
+        gte: tomorrowStart,
+        lte: tomorrowEnd,
+      },
+    },
+  });
 
-  return <AstronomyClientPage data={{ today, tomorrow }} />;
+  return (
+    <AstronomyClientPage
+      data={{
+        today: todaySnapshot,
+        tomorrow: tomorrowSnapshot,
+      }}
+    />
+  );
 }

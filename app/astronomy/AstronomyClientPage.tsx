@@ -10,7 +10,7 @@ import { useLunarCountdown } from "@/hooks/useLunarCountdown";
 
 import { parseLocalTimestamp, parseLocalTimestampTomorrow } from "@/lib/time";
 
-export default function AstronomyClientPage({ data }: { data: any }) {
+export function AstronomyClientPage({ data }: { data: any }) {
   // Parse solar timestamps
   const solarToday = {
     sunrise: parseLocalTimestamp(data.today.sunrise),
