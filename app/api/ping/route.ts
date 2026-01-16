@@ -50,11 +50,11 @@ export async function GET(req: NextRequest) {
     throw err;
   }
   log.info("astronomy", {
-    data: {
-      sunrise: "2026-01-10 07:21:00",
-      sunset: "2026-01-10 16:56:00",
-      moonrise: "2026-01-10 00:01:00",
-      moonset: "2026-01-10 11:14:00",
+    dataj: {
+      sunrise: "2026-01-12 07:21:00",
+      sunset: "2026-01-12 16:56:00",
+      moonrise: "2026-01-12 00:01:00",
+      moonset: "2026-01-12 11:14:00",
       moonPhase: 1.0,
       locationId: "KOP",
       fetchedAt: new Date().toISOString(),
