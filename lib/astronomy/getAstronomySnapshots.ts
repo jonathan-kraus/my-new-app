@@ -1,7 +1,6 @@
-import AstronomyClientPage from "./AstronomyClientPage";
 import { db } from "@/lib/db";
 
-export default async function AstronomyPage() {
+export async function getAstronomySnapshots() {
   const snapshots = await db.astronomySnapshot.findMany({
     orderBy: { date: "desc" },
     take: 2,
@@ -9,5 +8,5 @@ export default async function AstronomyPage() {
 
   const [today, tomorrow] = snapshots;
 
-  return <AstronomyClientPage data={{ today, tomorrow }} />;
+  return { today, tomorrow };
 }

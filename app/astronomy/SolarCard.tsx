@@ -7,8 +7,13 @@ export function SolarCard({
   today,
   tomorrow,
 }: {
-  today: SolarTimes;
-  tomorrow: SolarTimes | null;
+  today: {
+    sunrise: Date | null;
+    sunset: Date | null;
+  };
+  tomorrow: {
+    sunrise: Date | null;
+  } | null;
 }) {
   // Guard: if sunrise or sunset is missing, show fallback
   if (!today.sunrise || !today.sunset) {

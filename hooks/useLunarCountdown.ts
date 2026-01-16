@@ -9,12 +9,10 @@ import {
 
 export function useLunarCountdown(today: any, tomorrow: any) {
   // Parse today's events as LOCAL times
-  console.log("🌙 LUNAR DEBUG: 44");
 
   const moonriseDate = parseLocalTimestamp(today.moonrise);
   const moonsetDate = parseLocalTimestamp(today.moonset);
   const moonrise = today.moonrise ? parseLocalTimestamp(today.moonrise) : null;
-
   const moonset = today.moonset ? parseLocalTimestamp(today.moonset) : null;
 
   const nextMoonrise = tomorrow?.moonrise

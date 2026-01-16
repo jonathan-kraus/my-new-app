@@ -4,8 +4,6 @@ import { formatCountdown } from "@/lib/time";
 
 export function LunarCard({ today, tomorrow, lunar }: any) {
   const { moonrise, moonset, moonPhase } = today;
-  console.log("🌙 LUNAR DEBUG:");
-  console.log(moonrise, moonset);
   const nextEvent = lunar?.nextEvent ?? null;
   const nextTime = lunar?.nextTime ?? null;
   const nextCountdown = lunar ? formatCountdown(lunar.ms) : "—";
