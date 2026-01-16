@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { updateConfig, deleteConfig, createConfig } from "./actions";
+import { updateConfig, deleteConfig, createConfig } from "@/app/admin/runtime/action";
 import { useToast } from "@/components/Toast";
 
 export function RuntimeConfigClient({ configs }) {
