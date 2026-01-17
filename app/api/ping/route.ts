@@ -32,8 +32,10 @@ export async function GET(req: NextRequest) {
 
 result = await axiom.query(`
 ['myapp_logs']
-| filter fields.message == "astronomy"
-| limit 5
+| keep dataj.sunrise, dataj.sunset, dataj.moonPhase, dataj.locationId
+| sort by timestamp desc
+| limit 10
+
 `);
   } catch (err) {
     await logit({
