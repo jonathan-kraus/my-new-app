@@ -1,3 +1,4 @@
+// app\astronomy\components\SolarProgress.tsx
 export function SolarProgress({
   sunrise,
   sunset,
