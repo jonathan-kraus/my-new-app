@@ -29,9 +29,10 @@ export async function GET(req: NextRequest) {
 
   let result;
   try {
-    result = await axiom.query(`
+
+result = await axiom.query(`
 ['myapp_logs']
-| filter fields.dataj.sunrise != null
+| filter fields.dataj.sunrise is not null
 | keep fields.dataj.sunrise, fields.dataj.sunset, fields.dataj.moonPhase, fields.dataj.locationId
 | sort by timestamp desc
 | limit 10
