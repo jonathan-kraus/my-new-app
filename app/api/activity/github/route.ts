@@ -15,6 +15,12 @@ export async function GET() {
       file: "api/activity/github",
     });
 
+  return NextResponse.json(
+    { ok: false, disabled: true },
+    { status: 503 }
+  );
+
+
     const query = `
 ['github-events']
 | where repo == "jonathan-kraus/my-new-app"
