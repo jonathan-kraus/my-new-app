@@ -58,7 +58,7 @@ result = await axiom.query(`
   const sunrisee = 'E'
   const sunrisef = 'F'
   const sunriseg = 'G'
-await axiom.ingest("myapp_logs", {
+const t = axiom.ingest("myapp_logs", {
   message: "astronomy",
   dataj: {
     sunrisea,
@@ -84,12 +84,12 @@ await axiom.ingest("myapp_logs", {
     page: "Ping API",
     file: "app/api/ping/route.ts",
     durationMs,
-    data: payload,
+    data: t,
   });
 
   return NextResponse.json({
     ...payload,
-    durationMs,
+    t: t,
     recentPings: recent,
   });
 }
