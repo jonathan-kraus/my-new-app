@@ -4,37 +4,48 @@ import { useState } from "react";
 import { updateConfig, deleteConfig, createConfig } from "@/app/admin/runtime/action";
 import { useToast } from "@/components/Toast";
 
-export function RuntimeConfigClient({ configs }) {
+type RuntimeConfig = {
+  key: string;
+  value: string;
+};
+
+type RuntimeConfigClientProps = {
+  configs: RuntimeConfig[];
+};
+
+export function RuntimeConfigClient({ configs }: RuntimeConfigClientProps) {
+
   const [items, setItems] = useState(configs);
   const [newKey, setNewKey] = useState("");
   const [newValue, setNewValue] = useState("");
   const toast = useToast();
 
-  async function handleUpdate(key, value) {
-    const prev = [...items];
-    setItems((i) => i.map((c) => (c.key === key ? { ...c, value } : c)));
+  async function handleUpdate(key: string, value: string) {
+  const prev = [...items];
+  setItems((i) => i.map((c) => (c.key === key ? { ...c, value } : c)));
 
-    try {
-      await updateConfig(key, value);
-      toast.show("Updated!", "info");
-    } catch (err) {
-      setItems(prev);
-      toast.show("Update failed", "error");
-    }
+  try {
+    await updateConfig(key, value);
+    toast.show("Updated!", "info");
+  } catch (err) {
+    setItems(prev);
+    toast.show("Update failed", "error");
   }
+}
 
-  async function handleDelete(key) {
-    const prev = [...items];
-    setItems((i) => i.filter((c) => c.key !== key));
+async function handleDelete(key: string) {
+  const prev = [...items];
+  setItems((i) => i.filter((c) => c.key !== key));
 
-    try {
-      await deleteConfig(key);
-      toast.show("Deleted!", "info");
-    } catch (err) {
-      setItems(prev);
-      toast.show("Delete failed", "error");
-    }
+  try {
+    await deleteConfig(key);
+    toast.show("Deleted!", "info");
+  } catch (err) {
+    setItems(prev);
+    toast.show("Delete failed", "error");
   }
+}
+
 
   async function handleCreate() {
     if (!newKey.trim()) return;

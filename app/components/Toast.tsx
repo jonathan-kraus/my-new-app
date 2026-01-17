@@ -1,15 +1,29 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
 
-const ToastContext = createContext(null);
+const ToastContext = createContext({
+  show: (message: string, type: string = "info") => {},
+});
 
-export function ToastProvider({ children }) {
-  const [toasts, setToasts] = useState([]);
+type ToastItem = {
+  id: string;
+  message: string;
+  type: string;
+};
 
-  function show(message, type = "info") {
+type ToastProviderProps = {
+  children: ReactNode;
+};
+
+export function ToastProvider({ children }: ToastProviderProps) {
+  const [toasts, setToasts] = useState<ToastItem[]>([]);
+
+  function show(message: string, type: string = "info") {
     const id = Math.random().toString(36);
+
     setToasts((t) => [...t, { id, message, type }]);
+
     setTimeout(() => {
       setToasts((t) => t.filter((toast) => toast.id !== id));
     }, 3000);

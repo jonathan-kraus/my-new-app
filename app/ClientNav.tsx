@@ -8,18 +8,19 @@ export default function ClientNav() {
   const pathname = usePathname();
   const { data: session } = authClient.useSession();
 
-  const link = (href, label, icon) => (
-    <Link
-      href={href}
-      className={`block px-4 py-2 rounded-md transition-colors ${
-        pathname === href
-          ? "bg-blue-700 text-white font-semibold"
-          : "hover:bg-blue-800 text-blue-100"
-      }`}
-    >
-      {icon} {label}
-    </Link>
-  );
+  const link = (href: string, label: string, icon: string) => (
+  <Link
+    href={href}
+    className={`block px-4 py-2 rounded-md transition-colors ${
+      pathname === href
+        ? "bg-blue-700 text-white font-semibold"
+        : "hover:bg-blue-800 text-blue-100"
+    }`}
+  >
+    {icon} {label}
+  </Link>
+);
+
 
   return (
     <div className="fixed top-0 left-0 h-screen w-64 bg-blue-900 text-white shadow-lg z-50">

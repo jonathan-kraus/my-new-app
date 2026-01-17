@@ -1,7 +1,7 @@
 import "./globals.css";
 import ClientNav from "@/app/ClientNav";
 import ClientProfileCard from "@/app/ClientProfileCard";
-import { Toaster } from "react-hot-toast";
+import { ToastProvider } from "@/components/Toast";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -19,11 +19,13 @@ export default function RootLayout({
 
         {/* Main Content Area */}
         <main className="ml-64 p-6 min-h-screen">
-          {children}
 
+          <ToastProvider>
+          {children}
+          </ToastProvider>
           <Analytics />
           <SpeedInsights />
-          <Toaster position="top-right" reverseOrder={false} />
+
         </main>
       </body>
     </html>

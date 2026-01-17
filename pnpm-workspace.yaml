@@ -1,5 +1,6 @@
 onlyBuiltDependencies:
-  - "@prisma/engines"
+  - '@prisma/client'
+  - '@prisma/engines'
   - core-js
   - prisma
   - sharp
