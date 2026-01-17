@@ -32,7 +32,6 @@ export async function GET(req: NextRequest) {
 
 result = await axiom.query(`
 ['myapp_logs']
-| keep dataj.sunrise, dataj.sunset, dataj.moonPhase, dataj.locationId
 | sort by timestamp desc
 | limit 10
 
