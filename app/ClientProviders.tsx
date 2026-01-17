@@ -1,7 +1,7 @@
 // app/ClientProviders.tsx - CONDITIONAL SessionProvider
 "use client";
 
-import ClientNav from "./ClientNav";
+
 import { ToasterClient } from "./components/ToasterClient";
 
 export default function ClientProviders({
@@ -11,7 +11,7 @@ export default function ClientProviders({
 }) {
   return (
     <>
-      <ClientNav />
+
       <main style={{ flex: 1, padding: "2rem" }}>
         {children}
         <ToasterClient />

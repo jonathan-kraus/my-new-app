@@ -1,5 +1,5 @@
 import SideNav from '@/app/components/SideNav';
-// import ClientNav from '@/app/ClientNav';
+import ClientLayout from '@/app/ClientLayout';
 import './globals.css';
 import { Toaster } from 'react-hot-toast';
 
@@ -10,9 +10,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
           <div className="flex shrink-0 min-h-screen">
             <SideNav />
-            <main className="flex-1">{children}</main>
+              <ClientLayout>
+                <main className="flex-1">{children}</main>
+              </ClientLayout>
           </div>
-          {/* <ClientNav /> */}
+
           <Toaster position="top-right" />
 
       </body>
