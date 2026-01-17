@@ -30,8 +30,13 @@ export async function GET(req: NextRequest) {
   let result;
   try {
 
-result = await axiom.query(`['myapp_logs'] | keep dataj.sunrise | limit 1`);
+result = await axiom.query(`
 
+['myapp_logs']
+| project dataj.sunrise, dataj.sunset, dataj.moonPhase, dataj.locationId
+| sort by timestamp desc
+| limit 10
+  `);
 
 
   } catch (err) {
