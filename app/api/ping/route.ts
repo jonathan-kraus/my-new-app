@@ -54,7 +54,7 @@ result = await axiom.query(`
     throw err;
   }
   log.info("astronomy", {
-    dataj: {
+    bunny: {
       sunrise: "2026-01-12 07:21:00",
       sunset: "2026-01-12 16:56:00",
       moonrise: "2026-01-12 00:01:00",
