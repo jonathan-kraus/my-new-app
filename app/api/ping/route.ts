@@ -33,8 +33,6 @@ export async function GET(req: NextRequest) {
 result = await axiom.query(`
 
 ['myapp_logs']
-| project data.sunrise, data.sunset, data.moonPhase, data.locationId
-| sort by timestamp desc
 | limit 10
   `);
 
@@ -53,17 +51,27 @@ result = await axiom.query(`
     });
     throw err;
   }
-  log.info("astronomy", {
-    bunny: {
-      sunrise: "2026-01-12 07:21:00",
-      sunset: "2026-01-12 16:56:00",
-      moonrise: "2026-01-12 00:01:00",
-      moonset: "2026-01-12 11:14:00",
-      moonPhase: 1.0,
-      locationId: "KOP",
-      fetchedAt: new Date().toISOString(),
-    },
-  });
+  const sunrisea = 'A'
+  const sunriseb = 'B'
+  const sunrisec = 'C'
+  const sunrised = 'D'
+  const sunrisee = 'E'
+  const sunrisef = 'F'
+  const sunriseg = 'G'
+await axiom.ingest("myapp_logs", {
+  message: "astronomy",
+  dataj: {
+    sunrisea,
+    sunriseb,
+    sunrisec,
+    sunrised,
+    sunrisee,
+    sunrisef,
+    sunriseg,
+    fetchedAt: new Date().toISOString(),
+  },
+});
+
 
   const recent = result?.matches ?? [];
   const durationMs = Date.now() - start;
