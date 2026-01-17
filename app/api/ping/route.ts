@@ -30,12 +30,10 @@ export async function GET(req: NextRequest) {
   let result;
   try {
 
-result = await axiom.query(`
-['myapp_logs']
-| sort by timestamp desc
-| limit 10
+result = await axiom.query(`['myapp_logs'] | keep dataj.sunrise | limit 1`);
 
-`);
+
+
   } catch (err) {
     await logit({
       ...ctx,

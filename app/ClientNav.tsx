@@ -66,7 +66,7 @@ export default function ClientNav() {
         {link("/forecast", "Forecast", "🌤️")}
         {link("/notes", "Notes", "📝")}
         {link("/logs", "Logs", "📄")}
-        {link("/api/ping", "Ping", "📡")}
+        {link("/ping", "Ping", "📡")}
 
         {astronomyLink}
 
