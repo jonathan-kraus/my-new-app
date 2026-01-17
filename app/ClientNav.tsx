@@ -1,5 +1,5 @@
 "use client";
-
+// app\ClientNav.tsx
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
