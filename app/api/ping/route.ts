@@ -27,56 +27,52 @@ export async function GET(req: NextRequest) {
     token: process.env.AXIOM_TOKEN!,
   });
 
-  let result;
-  try {
+//   let result;
+//   try {
 
-result = await axiom.query(`
+// result = await axiom.query(`
 
-['myapp_logs']
-| limit 1
-  `);
-
-
-  } catch (err) {
-    await logit({
-      ...ctx,
-      level: "error",
-      message: "Axiom query failed",
-      page: "Ping API",
-      file: "app/api/ping/route.ts",
-      data: {
-        route: "ping",
-        error: err instanceof Error ? err.message : String(err),
-      },
-    });
-    throw err;
-  }
-  const sunrisea = 'A'
-  const sunriseb = 'B'
-  const sunrisec = 'C'
-  const sunrised = 'D'
-  const sunrisee = 'E'
-  const sunrisef = 'F'
-  const sunriseg = 'G'
-  let tf1
-tf1 =  axiom.ingest("myapp_logs", {
-  message: "astronomy",
-  dataj: {
-    sunrisea,
-    sunriseb,
-    sunrisec,
-    sunrised,
-    sunrisee,
-    sunrisef,
-    sunriseg,
-    fetchedAt: new Date().toISOString(),
-  },
-});
+// ['myapp_logs']
+// | limit 1
+//   `);
 
 
-  const recent = result?.matches ?? [];
-  const durationMs = Date.now() - start;
+//   } catch (err) {
+//     await logit({
+//       ...ctx,
+//       level: "error",
+//       message: "Axiom query failed",
+//       page: "Ping API",
+//       file: "app/api/ping/route.ts",
+//       data: {
+//         route: "ping",
+//         error: err instanceof Error ? err.message : String(err),
+//       },
+//     });
+//     throw err;
+//   }
 
+
+
+  const query = `
+    ['myapp_logs']
+    | where message == "astronomy"
+    | sort by timestamp desc
+    | project
+        timestamp,
+        dataj.sunrisea,
+        dataj.sunriseb,
+        dataj.sunrisec,
+        dataj.sunrised,
+        dataj.sunrisee,
+        dataj.sunrisef,
+        dataj.sunriseg,
+        dataj.fetchedAt
+    | limit 50
+  `;
+
+  const result = await axiom.query(query);
+  const rows = result?.matches ?? [];
   // Final log with correct duration
   await logit({
     ...ctx,
@@ -84,14 +80,11 @@ tf1 =  axiom.ingest("myapp_logs", {
     message: "ping completed",
     page: "Ping API",
     file: "app/api/ping/route.ts",
-    durationMs,
-    data: tf1,
+
+    data: rows,
   });
-
-  return NextResponse.json({
-
-    tf1,
-
-  });
+  return Response.json({ rows });
 }
+
+
 
