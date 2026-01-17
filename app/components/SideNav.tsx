@@ -132,6 +132,11 @@ export default function ServerSidebar() {
 					<span>Forecast</span>
 				</Link>
 
+				<Link href="/logs" className="nav-link">
+					<span style={{ fontSize: "1.5rem", marginRight: "1rem" }}>🌤️</span>
+					<span>Logs</span>
+				</Link>
+
 				<Link href="/notes" className="nav-link">
 					<span style={{ fontSize: "1.5rem", marginRight: "1rem" }}>📝</span>
 					<span>Notes</span>

@@ -1,32 +1,48 @@
-// lib/astronomy/nextAstronomicalEvent.ts
-
-import { msUntil } from "@/lib/time";
-
 export function getUnifiedNextEvent(solar: any, lunar: any) {
-  const candidates = [];
+  const now = new Date();
 
-  if (solar?.nextEvent && solar?.nextTime) {
-    candidates.push({
+  const events = [
+    {
       type: "solar",
-      event: solar.nextEvent,
-      time: solar.nextTime,
-      ms: msUntil(solar.nextTime),
-    });
-  }
-
-  if (lunar?.nextEvent && lunar?.nextTime) {
-    candidates.push({
+      event: "Sunrise",
+      time: solar.sunrise,
+      ms: solar.sunriseMs,
+    },
+    {
+      type: "solar",
+      event: "Sunset",
+      time: solar.sunset,
+      ms: solar.sunsetMs,
+    },
+    {
       type: "lunar",
-      event: lunar.nextEvent,
-      time: lunar.nextTime,
-      ms: msUntil(lunar.nextTime),
-    });
-  }
+      event: "Moonrise",
+      time: lunar.moonrise,
+      ms: lunar.moonriseMs,
+    },
+    {
+      type: "lunar",
+      event: "Moonset",
+      time: lunar.moonset,
+      ms: lunar.moonsetMs,
+    },
+    {
+      type: "solar",
+      event: "Tomorrow’s Sunrise",
+      time: solar.nextSunrise,
+      ms: solar.nextSunriseMs,
+    },
+    {
+      type: "lunar",
+      event: "Tomorrow’s Moonrise",
+      time: lunar.nextMoonrise,
+      ms: lunar.nextMoonriseMs,
+    },
+  ];
 
-  if (candidates.length === 0) return null;
+  const upcoming = events
+    .filter(e => e.time && e.time > now)
+    .sort((a, b) => a.time.getTime() - b.time.getTime());
 
-  // Pick the earliest upcoming event
-  candidates.sort((a, b) => a.time.getTime() - b.time.getTime());
-
-  return candidates[0];
+  return upcoming[0] ?? null;
 }
