@@ -30,7 +30,11 @@ export async function GET(req: NextRequest) {
   let result;
   try {
 
-result = await axiom.query(` ['myapp_logs'] | limit 1 `);
+result = await axiom.query(`
+['myapp_logs']
+| filter fields.message == "astronomy"
+| limit 5
+`);
   } catch (err) {
     await logit({
       ...ctx,
@@ -77,3 +81,4 @@ result = await axiom.query(` ['myapp_logs'] | limit 1 `);
     recentPings: recent,
   });
 }
+
