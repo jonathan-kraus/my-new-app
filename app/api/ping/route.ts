@@ -31,9 +31,11 @@ export async function GET(req: NextRequest) {
   try {
     result = await axiom.query(`
 ['myapp_logs']
-| where message == "ping"
-| order by _time desc
-| limit(7)
+| filter fields.dataj.sunrise != null
+| keep fields.dataj.sunrise, fields.dataj.sunset, fields.dataj.moonPhase, fields.dataj.locationId
+| sort by timestamp desc
+| limit 10
+
 `);
   } catch (err) {
     await logit({
