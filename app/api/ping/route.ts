@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
 result = await axiom.query(`
 
 ['myapp_logs']
-| limit 10
+| limit 1
   `);
 
 
@@ -58,7 +58,8 @@ result = await axiom.query(`
   const sunrisee = 'E'
   const sunrisef = 'F'
   const sunriseg = 'G'
-const t = axiom.ingest("myapp_logs", {
+  let tf1
+tf1 =  axiom.ingest("myapp_logs", {
   message: "astronomy",
   dataj: {
     sunrisea,
@@ -84,13 +85,13 @@ const t = axiom.ingest("myapp_logs", {
     page: "Ping API",
     file: "app/api/ping/route.ts",
     durationMs,
-    data: t,
+    data: tf1,
   });
 
   return NextResponse.json({
-    ...payload,
-    t: t,
-    recentPings: recent,
+
+    tf1,
+
   });
 }
 
