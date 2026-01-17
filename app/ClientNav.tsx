@@ -4,6 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
+import ClientProfileCard from "@/app/ClientProfileCard";
 
 export default function ClientNav() {
   const pathname = usePathname();
@@ -57,6 +58,10 @@ export default function ClientNav() {
   return (
     <div className="fixed top-0 left-0 h-screen w-64 bg-blue-900 text-white shadow-lg z-50">
       <nav className="flex flex-col gap-2 p-4">
+        {/* Profile */}
+        <div className="p-4 border-b border-white/10">
+        <ClientProfileCard />
+        </div>
         <div className="text-xs uppercase tracking-wide text-white/60 mb-2">
           Apps
         </div>

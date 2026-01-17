@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
 result = await axiom.query(`
 
 ['myapp_logs']
-| project dataj.sunrise, dataj.sunset, dataj.moonPhase, dataj.locationId
+| project data.sunrise, data.sunset, data.moonPhase, data.locationId
 | sort by timestamp desc
 | limit 10
   `);
