@@ -57,11 +57,11 @@ export default function ClientNav() {
 
   return (
     <div className="fixed top-0 left-0 h-screen w-64 bg-blue-900 text-white shadow-lg z-50">
-      <nav className="flex flex-col gap-2 p-4">
+
         {/* Profile */}
-        <div className="p-4 border-b border-white/10">
-        <ClientProfileCard />
-        </div>
+   <nav className="flex flex-col h-full p-4 gap-2">
+
+
         <div className="text-xs uppercase tracking-wide text-white/60 mb-2">
           Apps
         </div>
@@ -82,8 +82,10 @@ export default function ClientNav() {
         </div>
 
         {link("/admin/runtime", "Runtime Config", "⚙️")}
-      </nav>
 
+      <div className="mt-auto pt-4 border-t border-white/10">
+        <ClientProfileCard /></div>
+</nav>
       {session && (
         <div className="p-4 border-t border-white/10">
           <button
@@ -91,9 +93,5 @@ export default function ClientNav() {
             className="logout-btn w-full text-left"
           >
             🚪 Logout
-          </button>
-        </div>
-      )}
-    </div>
-  );
-}
+          </button></div>)}
+</div>)}
