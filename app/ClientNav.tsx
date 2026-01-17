@@ -29,7 +29,8 @@ export default function ClientNav() {
           Apps
         </div>
 
-        {link("/", "Dashboard", "🏠")}
+        {link("/", "Home", "🏠")}
+        {link("/dashboard", "Dashboard", "🏠")}
         {link("/forecast", "Forecast", "🌤️")}
         {link("/notes", "Notes", "📝")}
         {link("/logs", "Logs", "📄")}
