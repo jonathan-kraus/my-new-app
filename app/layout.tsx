@@ -15,8 +15,8 @@ export default function RootLayout({
 
 
 
-            {/* Content area is shifted to the right */}
-            <main style={{ marginLeft: '220px', padding: '20px', flexGrow: 1 }}>
+            
+            <main className="ml-64 p-6">
                   <ClientLayout>
                     {children}
                   </ClientLayout>
