@@ -57,9 +57,9 @@ export async function GET(req: NextRequest) {
   const query = `
     ['myapp_logs']
     | where message == "astronomy"
-    | sort by timestamp desc
+    | sort by _time desc
     | project
-        timestamp,
+        _time,
         dataj.sunrisea,
         dataj.sunriseb,
         dataj.sunrisec,
