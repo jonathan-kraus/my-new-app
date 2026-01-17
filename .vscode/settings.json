@@ -1,4 +1,13 @@
-{
+
+  "Magic Comment": { "prefix": "//magic", "body": [ "// ✨ ${FILENAME} — updated ${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE} at ${CURRENT_HOUR}:${CURRENT_MINUTE}" ], "description": "Insert a whimsical timestamped comment" }
+  "fileheader.customMade": {
+  "comment": "// ${RELATIVE_FILEPATH}\n// Created: ${CURRENT_YEAR}-${CURRENT_MONTH}-${CURRENT_DATE} ${CURRENT_HOUR}:${CURRENT_MINUTE}:${CURRENT_SECOND}"
+},
+"fileheader.configObj": {
+  "autoAdd": true,
+  "autoAlready": true
+}
+
   "WillLuke.nextjs.addTypesOnSave": true,
   "WillLuke.nextjs.hasPrompted": true
 }

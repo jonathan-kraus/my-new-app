@@ -1,5 +1,4 @@
-// types/activity.ts
-
+// types\activity.ts
 export type ActivityItemType =
   | "PushEvent"
   | "PullRequestEvent"
