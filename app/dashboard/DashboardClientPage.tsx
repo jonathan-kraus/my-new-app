@@ -7,7 +7,16 @@ import { CombinedSolarLunarTimeline } from "@/app/astronomy/CombinedSolarLunarTi
 
 import { parseLocalTimestamp, parseLocalTimestampTomorrow } from "@/lib/time";
 
-export function DashboardClientPage({ data }: { data: any }) {
+export async function DashboardClientPage({ data }: { data: any }) {
+  // -----------------------------
+  // Fetch GitHub activity
+const githubRes = await fetch("https://www.kraus.my.id/api/activity/github", {
+  cache: "no-store",
+});
+const githubData = await githubRes.json();
+const recentActivity = githubData.activity ?? [];
+  // -----------------------------
+
   // -----------------------------
   // SOLAR (parsed snapshots)
   // -----------------------------
@@ -62,7 +71,29 @@ export function DashboardClientPage({ data }: { data: any }) {
       {/* Placeholder section */}
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <PlaceholderCard title="Weather" />
-        <PlaceholderCard title="GitHub Activity" />
+<h2 className="text-xl font-semibold text-white mb-3">
+  Recent GitHub Activity
+</h2>
+
+{recentActivity?.length ? (
+  <ul className="space-y-2 text-gray-300">
+    {recentActivity.map((item: any) => (
+      <li
+        key={item.id}
+        className="p-2 rounded bg-white/5 border border-white/10"
+      >
+        <div className="font-medium">{item.name}</div>
+        <div className="text-sm text-gray-400">{item.repo}</div>
+        <div className="text-xs text-gray-500">
+          {new Date(item.updatedAt).toLocaleString()}
+        </div>
+      </li>
+    ))}
+  </ul>
+) : (
+  <div className="text-gray-400">No recent activity</div>
+)}
+
         <PlaceholderCard title="Vercel Deployments" />
         <PlaceholderCard title="Recent Logs" />
         <PlaceholderCard title="System Health" />
