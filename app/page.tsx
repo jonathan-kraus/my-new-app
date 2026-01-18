@@ -21,13 +21,16 @@ function getGreeting(): string {
   if (hour < 17) return "Good afternoon";
   return "Good evening";
 }
-const { today, tomorrow } = await loadAstronomySnapshots();
+
 
 export default async function HomePage() {
   const h = await headers(); // ✅ await the Promise
   const session = await auth.api.getSession({
     headers: Object.fromEntries(h.entries()),
   });
+  const { today, tomorrow } = await loadAstronomySnapshots();
+
+
   await logit({
     level: "info",
     message: "Visited dashboard",
@@ -50,6 +53,16 @@ export default async function HomePage() {
     { cache: "no-store" },
   );
   const weatherData = await weatherRes.json();
+    await logit({
+    level: "info",
+    message: "Visited dashboard",
+    data: {
+      weatherData: weatherData,
+      sessionEmail: session?.user?.email ?? null,
+      userId: session?.user?.id ?? null,
+      session: session ?? null,
+    },
+  });
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-600 to-sky-900 text-white p-8">
       <div className="max-w-5xl mx-auto bg-sky-800/60 backdrop-blur-md rounded-2xl p-8 shadow-xl border border-white/10">

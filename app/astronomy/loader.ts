@@ -15,7 +15,7 @@ interface RawAstronomyRow {
 }
 
 export async function loadAstronomySnapshots() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/astronomy`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/astronomy`, {
     cache: "no-store",
   });
 
