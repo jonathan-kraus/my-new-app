@@ -4,36 +4,32 @@ import { AstronomyCardProps } from "@/lib/astronomy/types";
 import { useNow } from "@/hooks/useNow";
 
 export function AstronomyCard({ today, tomorrow }: AstronomyCardProps) {
-  const nextEvent = useUnifiedAstronomyCountdown(today, tomorrow);
-  const now = useNow(); // ticks every second
-  console.log("AstronomyCard props:", { today, tomorrow });
-
-  function formatDuration(ms: number) {
-    if (ms <= 0) return "Now";
-
-    const totalSeconds = Math.floor(ms / 1000);
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-
-    return `${hours}h ${minutes}m ${seconds}s`;
-  }
+  const { nextEvent, allEvents } = useUnifiedAstronomyCountdown(
+    today,
+    tomorrow,
+  );
 
   if (!nextEvent) return null;
-  if (!nextEvent?.time) {
-    return (
-      <div>
-        {" "}
-        <p>{nextEvent?.label}</p> <p>—</p>{" "}
-      </div>
-    );
-  }
-  const remainingMs = nextEvent.time.getTime() - now.getTime();
 
+  if (!nextEvent.time) {
+    return <div>No upcoming events</div>;
+  }
+
+  // now you can safely use nextEvent.time
   return (
     <div>
-      <div>{nextEvent.label}</div>
-      <div>{formatDuration(remainingMs)}</div>
+      <p>{nextEvent.label}</p>
+      <p>{nextEvent.time.toLocaleTimeString()}</p>
+      <div>
+        {" "}
+        {allEvents.map((e) => (
+          <div key={e.label + e.time.toISOString()}>
+            {" "}
+            {e.label}: {e.time.toLocaleTimeString()}{" "}
+          </div>
+        ))}{" "}
+      </div>{" "}
+      ;
     </div>
   );
 }

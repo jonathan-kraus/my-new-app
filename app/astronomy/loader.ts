@@ -17,7 +17,7 @@ export async function loadAstronomySnapshots() {
   const today =
     rawToday !== null
       ? NormalizedAstronomySnapshotSchema.parse(
-          normalizeAstronomySnapshot(rawToday, rawTomorrow)
+          normalizeAstronomySnapshot(rawToday, rawTomorrow),
         )
       : null;
 
@@ -25,7 +25,7 @@ export async function loadAstronomySnapshots() {
   const tomorrow =
     rawTomorrow !== null
       ? NormalizedAstronomySnapshotSchema.parse(
-          normalizeAstronomySnapshot(rawTomorrow, null)
+          normalizeAstronomySnapshot(rawTomorrow, null),
         )
       : null;
 
