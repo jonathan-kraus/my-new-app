@@ -28,5 +28,9 @@ export async function getAstronomySnapshot(locationId: string, now = new Date())
     },
   });
 
-  return { todaySnapshot, tomorrowSnapshot };
+  return {
+  today: todaySnapshot,
+  tomorrow: tomorrowSnapshot,
+};
+
 }

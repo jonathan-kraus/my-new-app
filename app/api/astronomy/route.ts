@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
   });
 
   try {
-    const { todaySnapshot, tomorrowSnapshot } = await getAstronomySnapshot("KOP");
+    const { today, tomorrow } = await getAstronomySnapshot("KOP");
 
     const durationMs = getRequestDuration(ctx.requestId);
 
@@ -26,8 +26,8 @@ export async function GET(req: NextRequest) {
       level: "info",
       message: "Astronomy snapshot date check",
       data: {
-        todayDate: todaySnapshot?.date ?? null,
-        tomorrowDate: tomorrowSnapshot?.date ?? null,
+        todayDate: today?.date ?? null,
+        tomorrowDate: tomorrow?.date ?? null,
         now: new Date().toISOString(),
       },
     });
@@ -39,14 +39,14 @@ export async function GET(req: NextRequest) {
       durationMs,
       eventIndex: ctx.eventIndex,
       data: {
-        todayDate: todaySnapshot?.date ?? null,
-        tomorrowDate: tomorrowSnapshot?.date ?? null,
+        todayDate: today?.date ?? null,
+        tomorrowDate: tomorrow?.date ?? null,
       },
     });
 
     return NextResponse.json({
-      today: todaySnapshot,
-      tomorrow: tomorrowSnapshot,
+      today: today,
+      tomorrow: tomorrow,
     });
   } catch (err: any) {
     const durationMs = getRequestDuration(ctx.requestId);
