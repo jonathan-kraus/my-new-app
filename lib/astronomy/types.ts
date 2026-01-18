@@ -43,7 +43,7 @@ export const NormalizedAstronomySnapshotSchema = z.object({
   moonsetDate: z.date().nullable(),
   nextMoonrise: z.date().nullable(),
   nextMoonset: z.date().nullable(),
-
+  moonPhase: z.number().nullable(),
   // Metadata
   type: z.enum(["solar", "lunar"]).optional(),
 });

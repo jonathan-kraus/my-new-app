@@ -7,23 +7,25 @@ export async function loadAstronomySnapshots() {
     cache: "no-store",
   });
 
+  // API returns: { today, tomorrow }
   const data = await res.json();
 
-  // API returns: { today, tomorrow }
   const rawToday = data.today ?? null;
   const rawTomorrow = data.tomorrow ?? null;
 
+  // Normalize + validate TODAY
   const today =
     rawToday !== null
       ? NormalizedAstronomySnapshotSchema.parse(
-          normalizeAstronomySnapshot(rawToday)
+          normalizeAstronomySnapshot(rawToday, rawTomorrow)
         )
       : null;
 
+  // Normalize + validate TOMORROW
   const tomorrow =
     rawTomorrow !== null
       ? NormalizedAstronomySnapshotSchema.parse(
-          normalizeAstronomySnapshot(rawTomorrow)
+          normalizeAstronomySnapshot(rawTomorrow, null)
         )
       : null;
 
