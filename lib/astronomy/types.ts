@@ -27,3 +27,23 @@ export interface DashboardAstronomyClientProps {
   today: NormalizedAstronomySnapshot | null;
   tomorrow: NormalizedAstronomySnapshot | null;
 }
+import { z } from "zod";
+
+export const NormalizedAstronomySnapshotSchema = z.object({
+  date: z.date(),
+
+  // Solar
+  sunriseDate: z.date().nullable(),
+  sunsetDate: z.date().nullable(),
+  nextSunrise: z.date().nullable(),
+  nextSunset: z.date().nullable(),
+
+  // Lunar
+  moonriseDate: z.date().nullable(),
+  moonsetDate: z.date().nullable(),
+  nextMoonrise: z.date().nullable(),
+  nextMoonset: z.date().nullable(),
+
+  // Metadata
+  type: z.enum(["solar", "lunar"]).optional(),
+});
