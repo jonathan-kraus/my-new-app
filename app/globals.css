@@ -151,7 +151,6 @@ body {
   animation: rocket-launch 0.7s ease-out forwards;
 }
 
-
 .rocket-container {
   height: 200px;
   overflow: hidden;

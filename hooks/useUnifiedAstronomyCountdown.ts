@@ -1,60 +1,49 @@
-// hooks\useUnifiedAstronomyCountdown.ts  Creation Date: 2026-01-17 13:39:34
+// hooks\useUnifiedAstronomyCountdown.ts
+import { useMemo } from "react";
+import { NormalizedAstronomySnapshot } from "@/lib/astronomy/types";
 
-import { SolarDay, LunarDay } from "@/lib/astronomy/types";
-
-export function useUnifiedAstronomyCountdown(
-  solarToday: SolarDay,
-  solarTomorrow: SolarDay,
-  lunarToday: LunarDay,
-  lunarTomorrow: LunarDay
-) {
-  const now = new Date();
-
-  const events = [
-    {
-      type: "solar",
-      label: "Sunrise",
-      time: solarToday.sunrise ? new Date(solarToday.sunrise) : null,
-    },
-    {
-      type: "solar",
-      label: "Sunset",
-      time: solarToday.sunset ? new Date(solarToday.sunset) : null,
-    },
-    {
-      type: "solar",
-      label: "Tomorrow’s Sunrise",
-      time: solarTomorrow.sunrise ? new Date(solarTomorrow.sunrise) : null,
-    },
-    {
-      type: "lunar",
-      label: "Moonrise",
-      time: lunarToday.moonrise ? new Date(lunarToday.moonrise) : null,
-    },
-    {
-      type: "lunar",
-      label: "Moonset",
-      time: lunarToday.moonset ? new Date(lunarToday.moonset) : null,
-    },
-    {
-      type: "lunar",
-      label: "Tomorrow’s Moonrise",
-      time: lunarTomorrow.moonrise ? new Date(lunarTomorrow.moonrise) : null,
-    },
-  ];
-
-  const upcoming = events
-    .filter((e): e is { type: string; label: string; time: Date } => {
-      return e.time !== null && e.time > now;
-    })
-    .map(e => ({
-      ...e,
-      ms: e.time.getTime() - now.getTime(),
-    }))
-    .sort((a, b) => a.time.getTime() - b.time.getTime());
-
-  return upcoming[0] ?? null;
+export interface AstronomyEvent {
+  type: "solar" | "lunar";
+  label: string;
+  time: Date;
+  ms: number;
 }
 
+export function useUnifiedAstronomyCountdown(
+  today: NormalizedAstronomySnapshot | null,
+  tomorrow: NormalizedAstronomySnapshot | null,
+) {
+  const nextEvent = useMemo(() => {
+    if (!today || !tomorrow) return null;
+    const now = new Date();
+    const events = [
+      { type: "solar" as const, label: "Sunrise", time: today?.sunriseDate },
+      { type: "solar" as const, label: "Sunset", time: today?.sunsetDate },
+      {
+        type: "solar" as const,
+        label: "Tomorrow’s Sunrise",
+        time: tomorrow?.sunriseDate,
+      },
+      { type: "lunar" as const, label: "Moonrise", time: today?.moonriseDate },
+      { type: "lunar" as const, label: "Moonset", time: today?.moonsetDate },
+      {
+        type: "lunar" as const,
+        label: "Tomorrow’s Moonrise",
+        time: tomorrow?.moonriseDate,
+      },
+    ];
 
+    const upcoming = events
+      .filter((e) => e.time !== null && e.time > now)
 
+      .map((e) => ({
+        ...e,
+        ms: e.time!.getTime() - now.getTime(),
+      }))
+      .sort((a, b) => a.time!.getTime() - b.time!.getTime());
+
+    return upcoming[0] ?? null;
+  }, [today, tomorrow]);
+
+  return nextEvent;
+}

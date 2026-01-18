@@ -14,7 +14,6 @@ export default function ClientLayout({
     <div className="flex min-h-screen bg-blue-950 text-white">
       {/* Sidebar */}
 
-
       {/* Main content */}
       <main className="ml-64 p-6 w-full min-h-screen">
         <ToastProvider>{children}</ToastProvider>

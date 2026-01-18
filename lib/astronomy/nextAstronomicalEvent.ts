@@ -33,8 +33,8 @@ export function getUnifiedNextEvent(solar: any, lunar: any) {
       time: lunar.nextMoonrise,
     },
   ]
-    .filter(e => e.time && e.time > now)
-    .map(e => ({
+    .filter((e) => e.time && e.time > now)
+    .map((e) => ({
       ...e,
       ms: e.time.getTime() - now.getTime(),
     }))

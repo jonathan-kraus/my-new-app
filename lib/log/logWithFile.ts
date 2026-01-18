@@ -2,6 +2,5 @@
 import { withFile } from "./withFile";
 import { logit } from "./server";
 export function logWithFile(file: string, data: any) {
-	return logit({ ...data,
-    file: withFile(file) });
+  return logit({ ...data, file: withFile(file) });
 }

@@ -21,7 +21,11 @@ export async function GET(req: NextRequest) {
     const snapshot = await getAstronomySnapshot("KOP");
 
     const durationMs = getRequestDuration(ctx.requestId);
-await logit({ level: "info", message: "Astronomy snapshot date check", data: { todayDate: snapshot.date, now: new Date().toISOString(), }, })
+    await logit({
+      level: "info",
+      message: "Astronomy snapshot date check",
+      data: { todayDate: snapshot.date, now: new Date().toISOString() },
+    });
     await logit({
       ...ctx,
       level: "info",

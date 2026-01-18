@@ -8,6 +8,7 @@ import { AstronomyCard } from "@/app/astronomy/AstronomyCard";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { RecentActivity } from "@/components/activity/RecentActivity";
+import { loadAstronomySnapshots } from "./astronomy/loader";
 
 {
   /* <div>🌙 Moonrise: {format(data.moonrise)}</div> */
@@ -20,6 +21,7 @@ function getGreeting(): string {
   if (hour < 17) return "Good afternoon";
   return "Good evening";
 }
+const { today, tomorrow } = await loadAstronomySnapshots();
 
 export default async function HomePage() {
   const h = await headers(); // ✅ await the Promise
@@ -64,7 +66,7 @@ export default async function HomePage() {
         {/* Current Weather */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <CurrentWeatherCard location={location} />
-          <AstronomyCard data={weatherData.astronomy} location={location} />
+          <AstronomyCard today={today} tomorrow={tomorrow} />
         </section>
 
         {/* System Health */}

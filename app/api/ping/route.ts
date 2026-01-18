@@ -1,5 +1,3 @@
-
-
 import { NextResponse, NextRequest } from "next/server";
 import { Axiom } from "@axiomhq/js";
 import { log } from "next-axiom";
@@ -29,32 +27,29 @@ export async function GET(req: NextRequest) {
     token: process.env.AXIOM_TOKEN!,
   });
 
-//   let result;
-//   try {
+  //   let result;
+  //   try {
 
-// result = await axiom.query(`
+  // result = await axiom.query(`
 
-// ['myapp_logs']
-// | limit 1
-//   `);
+  // ['myapp_logs']
+  // | limit 1
+  //   `);
 
-
-//   } catch (err) {
-//     await logit({
-//       ...ctx,
-//       level: "error",
-//       message: "Axiom query failed",
-//       page: "Ping API",
-//       file: "app/api/ping/route.ts",
-//       data: {
-//         route: "ping",
-//         error: err instanceof Error ? err.message : String(err),
-//       },
-//     });
-//     throw err;
-//   }
-
-
+  //   } catch (err) {
+  //     await logit({
+  //       ...ctx,
+  //       level: "error",
+  //       message: "Axiom query failed",
+  //       page: "Ping API",
+  //       file: "app/api/ping/route.ts",
+  //       data: {
+  //         route: "ping",
+  //         error: err instanceof Error ? err.message : String(err),
+  //       },
+  //     });
+  //     throw err;
+  //   }
 
   const query = `
     ['myapp_logs']
@@ -87,6 +82,3 @@ export async function GET(req: NextRequest) {
   });
   return Response.json({ rows });
 }
-
-
-

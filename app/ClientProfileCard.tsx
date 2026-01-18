@@ -8,7 +8,7 @@ export default function ClientProfileCard() {
   const isLoggedIn = !!session?.user;
 
   return (
-<div className="w-full rounded-xl bg-gradient-to-br from-indigo-700/70 to-purple-900/70 backdrop-blur-xl shadow-xl border border-white/10 animate-[float_6s_ease-in-out_infinite]" >
+    <div className="w-full rounded-xl bg-gradient-to-br from-indigo-700/70 to-purple-900/70 backdrop-blur-xl shadow-xl border border-white/10 animate-[float_6s_ease-in-out_infinite]">
       <div className="p-4 flex items-center gap-3">
         <div
           className="h-12 w-12 rounded-full bg-gradient-to-br

@@ -19,7 +19,6 @@ export function useLunarCountdown(today: any, tomorrow: any) {
     ? parseLocalTimestamp(tomorrow.moonrise)
     : null;
 
-
   // Parse tomorrow's moonrise as LOCAL and force it into tomorrow
   const tomorrowMoonrise = tomorrow?.moonrise
     ? parseLocalTimestampTomorrow(tomorrow.moonrise)

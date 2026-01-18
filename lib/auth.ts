@@ -25,7 +25,6 @@ export const auth = betterAuth({
   baseURL: "https://www.kraus.my.id",
   trustedOrigins: ["https://www.kraus.my.id", "https://kraus.my.id"],
 
-
   callbacks: {
     session: async ({
       session,
@@ -59,25 +58,28 @@ export const auth = betterAuth({
   socialProviders:
     Object.keys(socialProviders).length > 0 ? socialProviders : undefined,
 
-    cookies:
-    { sessionToken: {
-       name: "__Secure-better-auth.session_token",
-       expires: 60 * 60 * 24 * 30, // 30 days
-       secure: true, sameSite: "lax",
-      },
-      sessionData: {
-        name: "__Secure-better-auth.session_data",
-        expires: 60 * 60 * 24 * 30, // match sessionToken
-        secure: true, sameSite: "lax",
-      },
-      accountData: {
-        name: "__Secure-better-auth.account_data",
-        expires: 60 * 60 * 24 * 30, // match sessionToken
-        secure: true, sameSite: "lax",
-      },
+  cookies: {
+    sessionToken: {
+      name: "__Secure-better-auth.session_token",
+      expires: 60 * 60 * 24 * 30, // 30 days
+      secure: true,
+      sameSite: "lax",
     },
-    session: {
-      expiresIn: 60 * 60 * 24 * 30, // 30 days
-      updateAge: 60 * 60 * 24, // refresh every 1 day }
-       }
-      });
+    sessionData: {
+      name: "__Secure-better-auth.session_data",
+      expires: 60 * 60 * 24 * 30, // match sessionToken
+      secure: true,
+      sameSite: "lax",
+    },
+    accountData: {
+      name: "__Secure-better-auth.account_data",
+      expires: 60 * 60 * 24 * 30, // match sessionToken
+      secure: true,
+      sameSite: "lax",
+    },
+  },
+  session: {
+    expiresIn: 60 * 60 * 24 * 30, // 30 days
+    updateAge: 60 * 60 * 24, // refresh every 1 day }
+  },
+});

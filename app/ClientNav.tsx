@@ -39,9 +39,10 @@ export default function ClientNav() {
         }, 700);
       }}
       className={`block px-4 py-2 rounded-md transition-all relative overflow-hidden
-        ${pathname === "/astronomy"
-          ? "bg-blue-700 text-white font-semibold"
-          : "hover:bg-blue-800 text-blue-100"
+        ${
+          pathname === "/astronomy"
+            ? "bg-blue-700 text-white font-semibold"
+            : "hover:bg-blue-800 text-blue-100"
         }`}
     >
       <span
@@ -57,11 +58,8 @@ export default function ClientNav() {
 
   return (
     <div className="fixed top-0 left-0 h-screen w-64 bg-blue-900 text-white shadow-lg z-50">
-
-        {/* Profile */}
-   <nav className="flex flex-col h-full p-4 gap-2">
-
-
+      {/* Profile */}
+      <nav className="flex flex-col h-full p-4 gap-2">
         <div className="text-xs uppercase tracking-wide text-white/60 mb-2">
           Apps
         </div>
@@ -83,9 +81,10 @@ export default function ClientNav() {
 
         {link("/admin/runtime", "Runtime Config", "⚙️")}
 
-      <div className="mt-auto pt-4 border-t border-white/10">
-        <ClientProfileCard /></div>
-</nav>
+        <div className="mt-auto pt-4 border-t border-white/10">
+          <ClientProfileCard />
+        </div>
+      </nav>
       {session && (
         <div className="p-4 border-t border-white/10">
           <button
@@ -93,5 +92,9 @@ export default function ClientNav() {
             className="logout-btn w-full text-left"
           >
             🚪 Logout
-          </button></div>)}
-</div>)}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
