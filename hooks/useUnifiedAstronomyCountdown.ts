@@ -33,16 +33,20 @@ export function useUnifiedAstronomyCountdown(
       },
     ];
 
-    const upcoming = events
-      .filter((e) => e.time !== null && e.time > now)
+const upcoming = (events ?? [])
+  .filter(
+    (e): e is { type: "solar" | "lunar"; label: string; time: Date } =>
+      e != null && e.time instanceof Date && e.time > now
+  )
+  .map((e) => ({
+    ...e,
+    ms: e.time.getTime() - now.getTime(),
+  }))
+  .sort((a, b) => a.time.getTime() - b.time.getTime());
 
-      .map((e) => ({
-        ...e,
-        ms: e.time!.getTime() - now.getTime(),
-      }))
-      .sort((a, b) => a.time!.getTime() - b.time!.getTime());
 
-    return upcoming[0] ?? null;
+return upcoming[0] ?? null;
+
   }, [today, tomorrow]);
 
   return nextEvent;

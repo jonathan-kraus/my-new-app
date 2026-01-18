@@ -11,6 +11,7 @@ export function DashboardAstronomyClient({
   const nextEvent = useUnifiedAstronomyCountdown(today, tomorrow);
   const now = useNow();
 
+
   if (!nextEvent) return null;
   if (!nextEvent?.time) {
     return (

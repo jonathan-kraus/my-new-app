@@ -5,6 +5,8 @@ import { useNow } from "@/hooks/useNow";
 export function AstronomyCard({ today, tomorrow }: AstronomyCardProps) {
   const nextEvent = useUnifiedAstronomyCountdown(today, tomorrow);
   const now = useNow(); // ticks every second
+  console.log("AstronomyCard props:", { today, tomorrow });
+
   function formatDuration(ms: number) {
     if (ms <= 0) return "Now";
 
