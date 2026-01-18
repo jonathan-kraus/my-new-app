@@ -30,6 +30,8 @@ export default async function HomePage() {
   });
   const { today, tomorrow } = await loadAstronomySnapshots();
 
+console.log("HOMEPAGE TODAY:", today);
+console.log("HOMEPAGE TOMORROW:", tomorrow);
 
   await logit({
     level: "info",

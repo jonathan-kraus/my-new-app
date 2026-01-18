@@ -16,6 +16,8 @@ export function useUnifiedAstronomyCountdown(
   const nextEvent = useMemo(() => {
     if (!today || !tomorrow) return null;
     const now = new Date();
+    console.log("COUNTDOWN INPUT:", { today, tomorrow });
+
     const events = [
       { type: "solar" as const, label: "Sunrise", time: today?.sunriseDate },
       { type: "solar" as const, label: "Sunset", time: today?.sunsetDate },
@@ -32,6 +34,7 @@ export function useUnifiedAstronomyCountdown(
         time: tomorrow?.moonriseDate,
       },
     ];
+console.log("nextAstronomicalEvent INPUT:", events);
 
 const upcoming = (events ?? [])
   .filter(
