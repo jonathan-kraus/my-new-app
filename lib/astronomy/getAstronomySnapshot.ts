@@ -1,12 +1,13 @@
 import { startOfDay, addDays } from "date-fns";
 import { db } from "@/lib/db";
 
-export async function getAstronomySnapshot(locationId: string, now = new Date()) {
+export async function getAstronomySnapshot(
+  locationId: string,
+  now = new Date(),
+) {
   // Compute local midnight for today
   const todayLocalMidnight = startOfDay(
-    new Date(
-      now.toLocaleString("en-US", { timeZone: "America/New_York" })
-    )
+    new Date(now.toLocaleString("en-US", { timeZone: "America/New_York" })),
   );
 
   // Compute local midnight for tomorrow
@@ -29,8 +30,7 @@ export async function getAstronomySnapshot(locationId: string, now = new Date())
   });
 
   return {
-  today: todaySnapshot,
-  tomorrow: tomorrowSnapshot,
-};
-
+    today: todaySnapshot,
+    tomorrow: tomorrowSnapshot,
+  };
 }

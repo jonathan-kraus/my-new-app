@@ -22,7 +22,6 @@ function getGreeting(): string {
   return "Good evening";
 }
 
-
 export default async function HomePage() {
   const h = await headers(); // ✅ await the Promise
   const session = await auth.api.getSession({
@@ -30,8 +29,8 @@ export default async function HomePage() {
   });
   const { today, tomorrow } = await loadAstronomySnapshots();
 
-console.log("HOMEPAGE TODAY:", today);
-console.log("HOMEPAGE TOMORROW:", tomorrow);
+  console.log("HOMEPAGE TODAY:", today);
+  console.log("HOMEPAGE TOMORROW:", tomorrow);
 
   await logit({
     level: "info",
@@ -55,7 +54,7 @@ console.log("HOMEPAGE TOMORROW:", tomorrow);
     { cache: "no-store" },
   );
   const weatherData = await weatherRes.json();
-    await logit({
+  await logit({
     level: "info",
     message: "Visited dashboard",
     data: {
