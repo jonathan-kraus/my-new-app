@@ -1,4 +1,3 @@
-// app/api/astronomy/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { enrichContext } from "@/lib/log/context";
 import { logit } from "@/lib/log/server";
@@ -18,24 +17,37 @@ export async function GET(req: NextRequest) {
   });
 
   try {
-    const snapshot = await getAstronomySnapshot("KOP");
+    const { todaySnapshot, tomorrowSnapshot } = await getAstronomySnapshot("KOP");
 
     const durationMs = getRequestDuration(ctx.requestId);
+
     await logit({
+      ...ctx,
       level: "info",
       message: "Astronomy snapshot date check",
-      data: { todayDate: snapshot.date, now: new Date().toISOString() },
+      data: {
+        todayDate: todaySnapshot?.date ?? null,
+        tomorrowDate: tomorrowSnapshot?.date ?? null,
+        now: new Date().toISOString(),
+      },
     });
+
     await logit({
       ...ctx,
       level: "info",
       message: "Astronomy GET completed",
       durationMs,
       eventIndex: ctx.eventIndex,
-      data: { date: snapshot.date },
+      data: {
+        todayDate: todaySnapshot?.date ?? null,
+        tomorrowDate: tomorrowSnapshot?.date ?? null,
+      },
     });
 
-    return NextResponse.json({ snapshot });
+    return NextResponse.json({
+      today: todaySnapshot,
+      tomorrow: tomorrowSnapshot,
+    });
   } catch (err: any) {
     const durationMs = getRequestDuration(ctx.requestId);
 
