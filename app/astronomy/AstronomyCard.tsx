@@ -1,3 +1,4 @@
+"use client";
 import { useUnifiedAstronomyCountdown } from "@/hooks/useUnifiedAstronomyCountdown";
 import { AstronomyCardProps } from "@/lib/astronomy/types";
 import { useNow } from "@/hooks/useNow";
