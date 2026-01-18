@@ -1,62 +1,32 @@
+import { startOfDay, addDays } from "date-fns";
 import { db } from "@/lib/db";
-import { startOfDay, endOfDay } from "date-fns";
 
-export async function getAstronomySnapshot(locationId: string = "KOP") {
-  const now = new Date();
+export async function getAstronomySnapshot(locationId: string, now = new Date()) {
+  // Compute local midnight for today
+  const todayLocalMidnight = startOfDay(
+    new Date(
+      now.toLocaleString("en-US", { timeZone: "America/New_York" })
+    )
+  );
 
-  // Try to get today's snapshot
+  // Compute local midnight for tomorrow
+  const tomorrowLocalMidnight = addDays(todayLocalMidnight, 1);
+
+  // Fetch today's snapshot by astronomy date (NOT fetchedAt)
   const todaySnapshot = await db.astronomySnapshot.findFirst({
     where: {
       locationId,
-      fetchedAt: {
-        gte: startOfDay(now),
-        lte: endOfDay(now),
-      },
+      date: todayLocalMidnight,
     },
-    orderBy: { fetchedAt: "desc" },
   });
 
-  if (todaySnapshot) {
-    return {
-      date: todaySnapshot.fetchedAt,
-      sunrise: todaySnapshot.sunrise,
-      sunset: todaySnapshot.sunset,
-      moonrise: todaySnapshot.moonrise,
-      moonset: todaySnapshot.moonset,
-      sunriseBlueStart: todaySnapshot.sunriseBlueStart,
-      sunriseBlueEnd: todaySnapshot.sunriseBlueEnd,
-      sunriseGoldenStart: todaySnapshot.sunriseGoldenStart,
-      sunriseGoldenEnd: todaySnapshot.sunriseGoldenEnd,
-      sunsetGoldenStart: todaySnapshot.sunsetGoldenStart,
-      sunsetGoldenEnd: todaySnapshot.sunsetGoldenEnd,
-      sunsetBlueStart: todaySnapshot.sunsetBlueStart,
-      sunsetBlueEnd: todaySnapshot.sunsetBlueEnd,
-    };
-  }
-
-  // Fallback: most recent snapshot
-  const latest = await db.astronomySnapshot.findFirst({
-    where: { locationId },
-    orderBy: { fetchedAt: "desc" },
+  // Fetch tomorrow's snapshot
+  const tomorrowSnapshot = await db.astronomySnapshot.findFirst({
+    where: {
+      locationId,
+      date: tomorrowLocalMidnight,
+    },
   });
 
-  if (!latest) {
-    throw new Error("No astronomy snapshots found");
-  }
-
-  return {
-    date: latest.fetchedAt,
-    sunrise: latest.sunrise,
-    sunset: latest.sunset,
-    moonrise: latest.moonrise,
-    moonset: latest.moonset,
-    sunriseBlueStart: latest.sunriseBlueStart,
-    sunriseBlueEnd: latest.sunriseBlueEnd,
-    sunriseGoldenStart: latest.sunriseGoldenStart,
-    sunriseGoldenEnd: latest.sunriseGoldenEnd,
-    sunsetGoldenStart: latest.sunsetGoldenStart,
-    sunsetGoldenEnd: latest.sunsetGoldenEnd,
-    sunsetBlueStart: latest.sunsetBlueStart,
-    sunsetBlueEnd: latest.sunsetBlueEnd,
-  };
+  return { todaySnapshot, tomorrowSnapshot };
 }
