@@ -14,7 +14,7 @@ export const logger = {
   setGlobalContext(ctx: GlobalContext) {
     globalContext = {
       ...globalContext,
-      meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+      requestId: ctx.requestId,
     };
   },
 

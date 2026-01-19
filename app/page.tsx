@@ -1,7 +1,7 @@
 // app/page.tsx
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { logit } from "@/lib/log/server";
+import { logit } from "@/lib/log/logit";
 import { Button } from "@/components/ui/button";
 import CurrentWeatherCard from "@/app/components/dashboard/current-weather-card";
 import { AstronomyCard } from "@/app/astronomy/AstronomyCard";
@@ -31,16 +31,21 @@ export default async function HomePage() {
 
   console.log("HOMEPAGE TODAY:", today);
   console.log("HOMEPAGE TOMORROW:", tomorrow);
-
+  const ctx = {
+    requestId: crypto.randomUUID(),
+    page: "Home Page",
+    userId: "JK",
+  };
   await logit({
     level: "info",
     message: "Visited dashboard",
-    data: {
+    jonathan: {
       sessionUser: session?.user?.name ?? null,
       sessionEmail: session?.user?.email ?? null,
       userId: session?.user?.id ?? null,
       session: session ?? null,
     },
+    meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
   });
 
   const location = await db.location.findFirst({
@@ -57,12 +62,13 @@ export default async function HomePage() {
   await logit({
     level: "info",
     message: "Visited dashboard",
-    data: {
+    jonathan: {
       weatherData: weatherData,
       sessionEmail: session?.user?.email ?? null,
       userId: session?.user?.id ?? null,
       session: session ?? null,
     },
+    meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
   });
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-600 to-sky-900 text-white p-8">

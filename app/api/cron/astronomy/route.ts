@@ -1,7 +1,7 @@
 // app/api/cron/astronomy/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { logit } from "@/lib/log/server";
+import { logit } from "@/lib/log/logit";
 import { enrichContext } from "@/lib/log/context";
 import { addDays } from "date-fns";
 import { buildAstronomySnapshot } from "@/lib/buildAstronomySnapshot";
@@ -20,17 +20,17 @@ export async function GET(req: NextRequest) {
     meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
     level: "info",
     message: "astronomy.cron.started",
+    ephemeris: { route: "cron" },
   });
 
   const locations = await db.location.findMany();
 
   for (const location of locations) {
     await logit({
-      meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
       level: "info",
       message: "astronomy.cron.location.started",
-
-      data: { locationId: location.id, name: location.name },
+      ephemeris: { locationId: location.id, name: location.name },
+      meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
     });
 
     // Always start from local midnight to avoid “tomorrow’s data”
@@ -43,7 +43,7 @@ export async function GET(req: NextRequest) {
         meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
         level: "info",
         message: "astronomy.cron.fetching",
-        data: { locationId: location.id, targetDate },
+        ephemeris: { locationId: location.id, targetDate },
       });
 
       const snapshot = await buildAstronomySnapshot(location, targetDate);
@@ -63,7 +63,7 @@ export async function GET(req: NextRequest) {
         meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
         level: "info",
         message: "astronomy.cron.snapshot.saved",
-        data: {
+        ephemeris: {
           locationId: location.id,
           date: targetDate.toISOString().slice(0, 10),
         },
@@ -76,7 +76,8 @@ export async function GET(req: NextRequest) {
   await logit({
     level: "info",
     message: "astronomy.cron.completed",
-    data: { durationMs },
+    ephemeris: { durationMs },
+    meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
   });
 
   return NextResponse.json({ ok: true, durationMs });

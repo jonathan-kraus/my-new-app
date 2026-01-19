@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { toast } from "react-hot-toast";
-import { logit } from "@/lib/log/client";
+import { logit } from "@/lib/log/logit";
 import { parseLocalTimestamp } from "@/lib/time";
 type CurrentWeatherCardProps = {
   location: {
@@ -17,7 +17,11 @@ type CurrentWeatherCardProps = {
     updatedAt: Date;
   } | null;
 };
-
+const ctx = {
+  requestId: crypto.randomUUID(),
+  page: "cron:astronomy",
+  userId: null,
+};
 export default function CurrentWeatherCard({
   location,
 }: CurrentWeatherCardProps) {
@@ -32,10 +36,8 @@ export default function CurrentWeatherCard({
     logit({
       level: "info",
       message: `Rendering CurrentWeatherCard with location: ${location?.name ?? "null"}`,
-      data: { locationId: location?.id ?? "null" },
-      file: "app/components/dashboard/current-weather-card.tsx",
-
-      sessionUser: "jonathan-kraus",
+      weather: { locationId: location?.id ?? "null" },
+      meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
     });
   }, [location]);
 
@@ -52,17 +54,23 @@ export default function CurrentWeatherCard({
         logit({
           level: "info",
           message: `Weather fetch → ${location!.name} | source: ${json.sources?.current ?? "unknown"}`,
-          data: { locationId, json },
-          file: "app/components/dashboard/current-weather-card.tsx",
+          weather: { locationId, json },
+          meta: {
+            requestId: ctx.requestId,
+            route: ctx.page,
+            userId: ctx.userId,
+          },
         });
       } catch (error) {
         logit({
           level: "error",
           message: `Error fetching weather data: ${error}`,
-          data: { locationId },
-          file: "app/components/dashboard/current-weather-card.tsx",
-
-          sessionUser: "jonathan-kraus",
+          weather: { locationId },
+          meta: {
+            requestId: ctx.requestId,
+            route: ctx.page,
+            userId: ctx.userId,
+          },
         });
       } finally {
         setLoading(false);
@@ -122,7 +130,8 @@ export default function CurrentWeatherCard({
   logit({
     level: "info",
     message: `Weather summary for ${location?.name ?? "null"} | ${source} | ${temp}°`,
-    data: { locationId: location?.id ?? "null", current, sources },
+    meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+    weather: { locationId: location?.id ?? "null", current, sources },
   });
 
   return (

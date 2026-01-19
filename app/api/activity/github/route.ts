@@ -1,91 +1,66 @@
-// app\api\activity\github\route.ts
 import { NextResponse } from "next/server";
 import { Axiom } from "@axiomhq/js";
-import { logit } from "@/lib/log/server";
+import { logit } from "@/lib/log/logit";
+import { enrichContext } from "@/lib/log/context";
 
 const axiom = new Axiom({
   token: process.env.AXIOM_TOKEN!,
 });
 
-export async function GET() {
+export async function GET(req: Request) {
+  const ctx = await enrichContext(req as any);
+
   try {
     await logit({
       level: "info",
       message: "GitHub activity API hit",
-      file: "api/activity/github",
+      github: { route: "activity" },
+      meta: {
+        requestId: ctx.requestId,
+        route: ctx.page,
+        userId: ctx.userId,
+      },
     });
-
-    return NextResponse.json({ ok: false, disabled: true }, { status: 503 });
 
     const query = `
 ['github-events']
 | where repo == "jonathan-kraus/my-new-app"
-| limit 100
+| sort(desc: "updatedAt")
+| limit(200)
     `;
 
     await logit({
       level: "info",
       message: "Running Axiom query",
-      data: { query },
+      github: { query },
+      meta: {
+        requestId: ctx.requestId,
+        route: ctx.page,
+        userId: ctx.userId,
+      },
     });
 
     const result = await axiom.query(query);
-    await logit({
-      level: "info",
-      message: "Running Axiom result",
-      data: {
-        dataset: result.datasetNames,
-        matchCount: result.matches?.length ?? 0,
-      },
-    });
-    await logit({
-      level: "info",
-      message: "AXIOM RAW ROW 0",
-      data: result.matches?.[0] ?? undefined,
-    });
-    await logit({
-      level: "info",
-      message: "AXIOM RAW ROW 2",
-      data: result.matches?.[2] ?? undefined,
-    });
-    await logit({
-      level: "info",
-      message: "AXIOM RAW ROW 4",
-      data: result.matches?.[4] ?? undefined,
-    });
+
     await logit({
       level: "info",
       message: "Axiom query result",
-      data: {
-        matchesCount: result?.matches?.length ?? 0,
-        hasMatches: !!result?.matches,
+      github: {
+        dataset: result.datasetNames,
+        matchCount: result.matches?.length ?? 0,
+      },
+      meta: {
+        requestId: ctx.requestId,
+        route: ctx.page,
+        userId: ctx.userId,
       },
     });
 
     const rows = result?.matches ?? [];
 
-    const activity = rows.map((row: any) => {
+    // Normalize rows
+    const normalized = rows.map((row: any) => {
       const d = row.data;
-      // logit({
-      //   level: "info",
-      //   message: "Ran Axiom query multi",
-      //   data: {
-      //     query,
-      //     id: d.id,
-      //     name: d.name,
-      //     repo: d.repo,
-      //     status: d.status,
-      //     conclusion: d.conclusion,
-      //     event: d.event,
-      //     actor: d.actor,
-      //     commitMessage: d.commitMessage,
-      //     commitSha: d.commitSha,
-      //     url: d.url,
-      //     createdAt: d.createdAt,
-      //     updatedAt: d.updatedAt,
-      //     source: d.source,
-      //   },
-      // });
       return {
         id: d.id,
         name: d.name,
@@ -103,10 +78,44 @@ export async function GET() {
       };
     });
 
+    // Deduplicate by commitSha
+    const bySha = new Map<string, any>();
+
+    for (const item of normalized) {
+      const sha = item.commitSha ?? "unknown";
+
+      if (!bySha.has(sha)) {
+        bySha.set(sha, item);
+        continue;
+      }
+
+      const existing = bySha.get(sha);
+
+      // Prefer success
+      const isSuccess = (x: any) => x.conclusion === "success";
+
+      if (isSuccess(item) && !isSuccess(existing)) {
+        bySha.set(sha, item);
+        continue;
+      }
+
+      // Otherwise prefer newest
+      if (new Date(item.updatedAt) > new Date(existing.updatedAt)) {
+        bySha.set(sha, item);
+      }
+    }
+
+    const activity = Array.from(bySha.values());
+
     await logit({
       level: "info",
       message: "Mapped GitHub activity",
-      data: { count: activity.length },
+      github: { count: activity.length },
+      meta: {
+        requestId: ctx.requestId,
+        route: ctx.page,
+        userId: ctx.userId,
+      },
     });
 
     return NextResponse.json({ ok: true, activity });
@@ -114,8 +123,12 @@ export async function GET() {
     await logit({
       level: "error",
       message: "GitHub activity API failed",
-      file: "api/activity/github",
-      data: { error: err?.message, stack: err?.stack },
+      github: { error: err?.message },
+      meta: {
+        requestId: ctx.requestId,
+        route: ctx.page,
+        userId: ctx.userId,
+      },
     });
 
     return NextResponse.json(

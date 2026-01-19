@@ -1,6 +1,5 @@
 // lib/buildAstronomySnapshot.ts
 import { format } from "date-fns";
-import { logit } from "@/lib/log/server";
 
 function normalizeMoonTime(value: string): string {
   return value === "-:-" ? "" : value;

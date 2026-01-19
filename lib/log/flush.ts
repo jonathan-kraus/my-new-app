@@ -4,15 +4,14 @@ import type { InternalEvent } from "./types";
 let isFlushing = false;
 
 async function sendToAxiom(batch: InternalEvent[]) {
-  // await fetch("https://api.axiom.co/v1/datasets/your-dataset/ingest", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Authorization: `Bearer ${process.env.AXIOM_TOKEN}`,
-  //     },
-  //     body: JSON.stringify(batch),
-  //   });
-  console.log("[email.weather.enabled=0] Skipping test email");
+  await fetch("https://api.axiom.co/v1/datasets/your-dataset/ingest", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.AXIOM_TOKEN}`,
+    },
+    body: JSON.stringify(batch),
+  });
 }
 
 export async function flush() {

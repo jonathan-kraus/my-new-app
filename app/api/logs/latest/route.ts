@@ -1,7 +1,8 @@
 // app/api/logs/latest/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db"; // or your prisma import
-import { logit } from "@/lib/log/server";
+import { logit } from "@/lib/log/logit";
+import { enrichContext } from "@/lib/log/context";
 
 export const dynamic = "force-dynamic";
 
@@ -33,12 +34,12 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ logs });
   } catch (err: any) {
-    await logit({
-      level: "error",
-      message: "Failed to fetch latest logs",
-      file: "app/api/logs/latest/route.ts",
-      data: { error: err.message },
-    });
+    // await logit({
+    //   level: "error",
+    //   message: "Failed to fetch latest logs",
+    //   file: "app/api/logs/latest/route.ts",
+    //   data: { error: err.message },
+    // });
 
     return NextResponse.json(
       { logs: [], error: "Internal Server Error" },

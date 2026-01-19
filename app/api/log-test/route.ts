@@ -1,4 +1,4 @@
-import { logit } from "@/logging";
+import { logit } from "@/lib/log/logit";
 import { enrichContext } from "@/lib/log/context";
 import { NextRequest } from "next/server";
 export async function GET(req: NextRequest) {

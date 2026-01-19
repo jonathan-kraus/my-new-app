@@ -2,10 +2,10 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { z } from "zod";
-import { logit } from "@/lib/log/server";
+import { logit } from "@/lib/log/logit";
+import { enrichContext } from "@/lib/log/context";
 import { auth } from "@/lib/auth";
 import { getRuntimeNumber } from "@/lib/runtimeConfig";
-import { enrichContext } from "@/lib/log/context";
 import { NextRequest } from "next/server";
 
 const API_KEY = process.env.TOMORROWIO_APIKEY!;
@@ -97,11 +97,10 @@ export async function GET(req: NextRequest) {
       meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
       level: "info",
       message: `Using cached current weather data ${currentAge}/${currentCacheMin}`,
-      file: "app/api/weather/route.ts",
-      page: "/api/weather",
-      eventIndex: nextEvent(),
-      durationMs: performance.now() - start,
-      data: {
+      weather: {
+        file: "/api/weather",
+        eventIndex: nextEvent(),
+        durationMs: performance.now() - start,
         user: session?.user?.name || "Guest",
         cacheWindowMinutes: currentCacheMin,
         actualAgeMinutes: currentAge,
@@ -146,19 +145,14 @@ export async function GET(req: NextRequest) {
       meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
       level: "info",
       message: "Realtime weather fetch attempted",
-      page: "/api/weather",
-      file: "app/api/weather/route.ts",
-      data: { status: res },
+      weather: { file: "/api/weather", status: res },
     });
     if (!res.ok) {
       await logit({
         meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
         level: "error",
         message: "Realtime weather fetch failed",
-        page: "/api/weather",
-        file: "app/api/weather/route.ts",
-
-        data: { status: res.status },
+        weather: { status: res.status },
       });
       return NextResponse.json(
         { error: "Weather fetch failed" },
@@ -174,8 +168,7 @@ export async function GET(req: NextRequest) {
         meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
         level: "error",
         message: "Realtime weather validation failed",
-        page: "/api/weather",
-        data: { issues: validated.error.issues.slice(0, 3) }, // ✅ Fixed
+        weather: { issues: validated.error.issues.slice(0, 3) }, // ✅ Fixed
       });
       return NextResponse.json(
         { error: "Invalid weather data" },
@@ -212,11 +205,12 @@ export async function GET(req: NextRequest) {
   // ----------------------------------------
   // LOG EVERYTHING
   // ----------------------------------------
+  const ctx = await enrichContext(req);
   await logit({
     level: "info",
     message: "Unified weather request",
-    page: "/api/weather",
-    data: {
+    meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+    weather: {
       locationId,
       sources: {
         current: currentSource,

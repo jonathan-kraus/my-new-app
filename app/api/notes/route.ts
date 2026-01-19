@@ -2,10 +2,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { logit } from "@/lib/log/logit";
 import { enrichContext } from "@/lib/log/context";
-import { logit } from "@/lib/log/server";
 import { getRequestDuration } from "@/lib/log/timing";
-import { logWithFile } from "@/lib/log/logWithFile";
+
 // -------------------------
 // GET /api/notes
 // -------------------------
@@ -17,9 +17,7 @@ export async function GET(req: NextRequest) {
     meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
     level: "info",
     message: "Notes GET started",
-    page: "/api/notes",
-    file: "app/api/notes/route.ts",
-    data: { requestId: ctx.requestId },
+    notes: { requestId: ctx.requestId },
   });
 
   try {
@@ -29,29 +27,25 @@ export async function GET(req: NextRequest) {
         meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
         level: "warn",
         message: "Unauthorized Notes GET",
+        notes: { requestId: ctx.requestId },
       });
 
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const notes = await db.note.findMany({
-      where: { userEmail: session.user.email },
+      where: { userId: session.user.id },
       orderBy: { createdAt: "desc" },
     });
     console.log("Duration lookup:", getRequestDuration(ctx.requestId));
 
     const durationMs = getRequestDuration(ctx.requestId);
-    await logWithFile(__filename, {
-      level: "info",
-      message: "Notes done with file",
-    });
+
     await logit({
       meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
       level: "info",
       message: "Notes GET completed",
-      durationMs, // explicitly included
-      eventIndex: ctx.eventIndex, // explicitly included
-      data: { count: notes.length },
+      notes: { durationMs, eventIndex: ctx.eventIndex, count: notes.length },
     });
 
     return NextResponse.json({ notes });
@@ -62,8 +56,7 @@ export async function GET(req: NextRequest) {
       meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
       level: "error",
       message: "Notes GET failed",
-      durationMs,
-      data: { error: err.message },
+      notes: { durationMs: durationMs, error: err.message },
     });
 
     return NextResponse.json(
@@ -83,8 +76,7 @@ export async function POST(req: NextRequest) {
     meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
     level: "info",
     message: "Notes POST started",
-    page: "/api/notes",
-    file: "app/api/notes/route.ts",
+    notes: {},
   });
 
   try {
@@ -94,6 +86,7 @@ export async function POST(req: NextRequest) {
         meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
         level: "warn",
         message: "Unauthorized Notes POST",
+        notes: {},
       });
 
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -102,7 +95,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const note = await db.note.create({
       data: {
-        userEmail: session.user.email,
+        userId: session.user.id,
         title: body.title ?? "",
         content: body.content ?? "",
       },
@@ -115,12 +108,10 @@ export async function POST(req: NextRequest) {
         requestId: ctx.requestId,
         route: ctx.page,
         userId: ctx.userId,
-        durationMs,
       },
+      notes: { durationMs, noteId: note.id },
       level: "info",
       message: "Notes POST completed",
-
-      data: { noteId: note.id },
     });
 
     return NextResponse.json({ note });
@@ -131,8 +122,7 @@ export async function POST(req: NextRequest) {
       meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
       level: "error",
       message: "Notes POST failed",
-      durationMs,
-      data: { error: err.message },
+      notes: { durationMs, error: err.message },
     });
 
     return NextResponse.json(

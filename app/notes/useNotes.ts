@@ -2,7 +2,7 @@
 // app/notes/useNotes.ts
 
 import { useEffect, useState } from "react";
-import { logit } from "@/lib/log/client";
+import { logit } from "@/lib/log/logit";
 
 export type Note = {
   id: string;
@@ -18,7 +18,11 @@ type NotesState =
   | { status: "unauthorized" }
   | { status: "error" }
   | { status: "ready"; notes: Note[] };
-
+const ctx = {
+  requestId: crypto.randomUUID(),
+  page: "useNotes",
+  userId: null,
+};
 export function useNotes(): NotesState {
   const [state, setState] = useState<NotesState>({ status: "loading" });
 
@@ -26,8 +30,8 @@ export function useNotes(): NotesState {
     logit({
       level: "info",
       message: "Notes page mounted",
-      page: "/notes",
-      file: "app/notes/useNotes.ts",
+      notes: { loc: "/notes" },
+      meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
     });
 
     async function load() {
@@ -54,8 +58,12 @@ export function useNotes(): NotesState {
         logit({
           level: "info",
           message: "Notes page mounted",
-          page: "/notes",
-          data: { status, bob: "BOB" },
+          notes: { loc: "/notes" },
+          meta: {
+            requestId: ctx.requestId,
+            route: ctx.page,
+            userId: ctx.userId,
+          },
         });
       }
     }

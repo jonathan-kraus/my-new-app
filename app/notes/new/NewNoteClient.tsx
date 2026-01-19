@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { logit } from "@/lib/log/client";
+import { logit } from "@/lib/log/logit";
+
 type Props = {
   authorized: boolean;
   userId: string | null;
@@ -12,7 +13,11 @@ export default function NewNoteClient({ authorized, userId }: Props) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-
+  const ctx = {
+    requestId: crypto.randomUUID(),
+    page: "note",
+    userId: null,
+  };
   async function handleSave() {
     setSaving(true);
     setError(null);
@@ -37,8 +42,8 @@ export default function NewNoteClient({ authorized, userId }: Props) {
       await logit({
         level: "error",
         message: "Failed to create note",
-        file: "app/api/notes/route.ts",
-        data: {
+        meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+        notes: {
           error: String(err),
           full: err,
         },

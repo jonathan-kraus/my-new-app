@@ -2,7 +2,8 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/lib/auth";
-import { logit } from "@/lib/log/server";
+import { logit } from "@/lib/log/logit";
+import { enrichContext } from "@/lib/log/context";
 import { ForecastResponseSchema } from "@/lib/weather/zodschema";
 
 const FORECAST_CACHE_MINUTES = Number(process.env.FORECAST_CACHE_MINUTES ?? 60);
@@ -11,6 +12,7 @@ export async function GET(req: Request) {
   const session = await auth.api.getSession({
     headers: req.headers,
   });
+  const ctx = await enrichContext(req as any);
   const { searchParams } = new URL(req.url);
   const locationId = searchParams.get("locationId");
 
@@ -42,8 +44,8 @@ export async function GET(req: Request) {
     await logit({
       level: "info",
       message: `Forecast cache hit ${age}/${FORECAST_CACHE_MINUTES}`,
-      file: "app/api/weather/forecast/route.ts",
-      data: {
+      meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+      weather: {
         cacheWindowMinutes: FORECAST_CACHE_MINUTES,
         actualAgeMinutes: age,
         sessionUser: session?.user?.name ?? null,
@@ -73,8 +75,8 @@ export async function GET(req: Request) {
   await logit({
     level: "info",
     message: "Forecast cache miss → fetching external API",
-    file: "app/api/weather/forecast/route.ts",
-    data: { locationId, file: "app/api/weather/forecast/route.ts" },
+    meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+    weather: { locationId, file: "app/api/weather/forecast/route.ts" },
   });
 
   const weatherRes = await fetch(
@@ -94,9 +96,8 @@ export async function GET(req: Request) {
     await logit({
       level: "error",
       message: "Invalid forecast API response",
-      file: "app/api/weather/forecast/route.ts",
-
-      data: parsed.error.flatten(),
+      meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+      weather: parsed.error.flatten(),
     });
 
     return NextResponse.json(
@@ -123,9 +124,8 @@ export async function GET(req: Request) {
   await logit({
     level: "info",
     message: "Forecast snapshot stored",
-    file: "app/api/weather/forecast/route.ts",
-
-    data: { snapshotId: snapshot.id },
+    meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+    weather: { snapshotId: snapshot.id },
   });
 
   // ----------------------------------------

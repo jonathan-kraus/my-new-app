@@ -2,7 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import { Axiom } from "@axiomhq/js";
 import { log } from "next-axiom";
 import crypto from "crypto";
-import { logit } from "@/lib/log/server";
+import { logit } from "@/lib/log/logit";
 import { enrichContext } from "@/lib/log/context";
 
 export async function GET(req: NextRequest) {
@@ -12,6 +12,7 @@ export async function GET(req: NextRequest) {
   logit({
     level: "info",
     message: "Ping route hit",
+    jonathan: { som: crypto.randomUUID(), start: start },
     meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
   });
 
@@ -76,10 +77,7 @@ export async function GET(req: NextRequest) {
     meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
     level: "info",
     message: "ping completed",
-    page: "Ping API",
-    file: "app/api/ping/route.ts",
-
-    data: rows,
+    jonathan: rows,
   });
   return Response.json({ rows });
 }

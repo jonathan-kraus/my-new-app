@@ -1,5 +1,5 @@
 "use client";
-import { logit } from "@/lib/log/client";
+import { logit } from "@/lib/log/logit";
 import { useEffect, useMemo, useState } from "react";
 
 type LogRecord = {
@@ -16,7 +16,11 @@ type LogRecord = {
   sessionUser: string | null;
   data: any | null;
 };
-
+const ctx = {
+  requestId: crypto.randomUUID(),
+  page: "log",
+  userId: null,
+};
 const levelStyles: Record<
   string,
   {
@@ -78,7 +82,12 @@ export default function LogsPage() {
         await logit({
           level: "info",
           message: "In log page",
-          data: { token: `tok_${Date.now()}` },
+          meta: {
+            requestId: ctx.requestId,
+            route: ctx.page,
+            userId: ctx.userId,
+          },
+          jonathan: { token: `tok_${Date.now()}` },
         });
         if (cancelled) return;
 

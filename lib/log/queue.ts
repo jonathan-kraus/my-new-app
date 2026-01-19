@@ -2,7 +2,7 @@ import type { InternalEvent } from "./types";
 
 let queue: InternalEvent[] = [];
 
-export function enqueue(event: InternalEvent) {
+export function queueEvent(event: InternalEvent) {
   queue.push(event);
   return queue.length;
 }
