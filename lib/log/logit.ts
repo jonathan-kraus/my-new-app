@@ -8,7 +8,8 @@ import { logToDatabase } from "@/lib/serverLogger";
 import type { InternalEvent, Domain, Meta } from "./types";
 
 startScheduler(); // starts once per server instance
-
+const lastErrorByMessage = new Map<string, number>();
+const ERROR_COOLDOWN = 10_000; // 10 seconds
 export async function logit(
   domain: Domain,
   payload: Record<string, any>,
@@ -20,7 +21,14 @@ export async function logit(
     meta,
     timestamp: Date.now(),
   };
-
+if (payload.level === "error") {
+  const key = payload.message;
+  const now = Date.now();
+  const last = lastErrorByMessage.get(key) ?? 0;
+  if (now - last < ERROR_COOLDOWN) { return; // skip duplicate error }
+  }
+  lastErrorByMessage.set(key, now);
+  }
   // 1. Axiom ingestion
   queueEvent(event);
 
