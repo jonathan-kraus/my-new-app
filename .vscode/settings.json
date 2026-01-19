@@ -7,6 +7,13 @@
   },
   "fileheader.configObj": {
     "autoAdd": true,
-    "autoAlready": true
+    "autoAlready": true,
+    "language": {
+      "typescript": {
+        "head": "//",
+        "middle": "//",
+        "end": ""
+      }
+    }
   }
 }

@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
   console.log("CTX requestId:", ctx.requestId);
 
   await logit({
-    ...ctx,
+    meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
     level: "info",
     message: "Notes GET started",
     page: "/api/notes",
@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
     const session = await auth.api.getSession({ headers: req.headers });
     if (!session?.user) {
       await logit({
-        ...ctx,
+        meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
         level: "warn",
         message: "Unauthorized Notes GET",
       });
@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
       message: "Notes done with file",
     });
     await logit({
-      ...ctx,
+      meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
       level: "info",
       message: "Notes GET completed",
       durationMs, // explicitly included
@@ -59,7 +59,7 @@ export async function GET(req: NextRequest) {
     const durationMs = getRequestDuration(ctx.requestId);
 
     await logit({
-      ...ctx,
+      meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
       level: "error",
       message: "Notes GET failed",
       durationMs,
@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
   const ctx = await enrichContext(req);
 
   await logit({
-    ...ctx,
+    meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
     level: "info",
     message: "Notes POST started",
     page: "/api/notes",
@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
     const session = await auth.api.getSession({ headers: req.headers });
     if (!session?.user) {
       await logit({
-        ...ctx,
+        meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
         level: "warn",
         message: "Unauthorized Notes POST",
       });
@@ -111,10 +111,15 @@ export async function POST(req: NextRequest) {
     const durationMs = getRequestDuration(ctx.requestId);
 
     await logit({
-      ...ctx,
+      meta: {
+        requestId: ctx.requestId,
+        route: ctx.page,
+        userId: ctx.userId,
+        durationMs,
+      },
       level: "info",
       message: "Notes POST completed",
-      durationMs,
+
       data: { noteId: note.id },
     });
 
@@ -123,7 +128,7 @@ export async function POST(req: NextRequest) {
     const durationMs = getRequestDuration(ctx.requestId);
 
     await logit({
-      ...ctx,
+      meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
       level: "error",
       message: "Notes POST failed",
       durationMs,

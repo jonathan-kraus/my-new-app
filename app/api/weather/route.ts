@@ -94,7 +94,7 @@ export async function GET(req: NextRequest) {
     const nextEvent = () => eventIndex++;
 
     await logit({
-      ...ctx,
+      meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
       level: "info",
       message: `Using cached current weather data ${currentAge}/${currentCacheMin}`,
       file: "app/api/weather/route.ts",
@@ -143,7 +143,7 @@ export async function GET(req: NextRequest) {
     );
     const ctx = await enrichContext(req);
     await logit({
-      ...ctx,
+      meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
       level: "info",
       message: "Realtime weather fetch attempted",
       page: "/api/weather",
@@ -152,7 +152,7 @@ export async function GET(req: NextRequest) {
     });
     if (!res.ok) {
       await logit({
-        ...ctx,
+        meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
         level: "error",
         message: "Realtime weather fetch failed",
         page: "/api/weather",
@@ -171,7 +171,7 @@ export async function GET(req: NextRequest) {
 
     if (!validated.success) {
       await logit({
-        ...ctx,
+        meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
         level: "error",
         message: "Realtime weather validation failed",
         page: "/api/weather",

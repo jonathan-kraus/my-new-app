@@ -9,10 +9,10 @@ export async function GET(req: NextRequest) {
   const start = Date.now();
   const ctx = await enrichContext(req);
 
-  await logit({
-    ...ctx,
+  logit({
     level: "info",
-    message: "in PING",
+    message: "Ping route hit",
+    meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
   });
 
   const payload = {
@@ -38,7 +38,8 @@ export async function GET(req: NextRequest) {
 
   //   } catch (err) {
   //     await logit({
-  //       ...ctx,
+  //       meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId }
+  //,
   //       level: "error",
   //       message: "Axiom query failed",
   //       page: "Ping API",
@@ -72,7 +73,7 @@ export async function GET(req: NextRequest) {
   const rows = result?.matches ?? [];
   // Final log with correct duration
   await logit({
-    ...ctx,
+    meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
     level: "info",
     message: "ping completed",
     page: "Ping API",

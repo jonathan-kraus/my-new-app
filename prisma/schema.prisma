@@ -103,18 +103,31 @@ enum LogLevel {
 }
 
 model Note {
-  id        String   @id @default(cuid())
-  title     String
-  content   String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(cuid())
+  userId      String
+  title       String?
+  content     String    @db.Text
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-  // who owns this note?
-  userEmail String
+  // Follow‑up / reminders
+  followUpAt  DateTime?
+  isCompleted Boolean   @default(false)
 
-  // whether it’s archived
-  archived  Boolean  @default(false)
+  // Organization
+  isArchived  Boolean   @default(false)
+  pinned      Boolean   @default(false)
+  tags        String[]  @default([])
+
+  // UI customization
+  color       String?
+
+  @@index([userId])
+  @@index([followUpAt])
+  @@index([isCompleted])
+  @@index([isArchived])
 }
+
 
 model RuntimeConfig {
   key       String   @id

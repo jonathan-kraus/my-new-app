@@ -1,3 +1,4 @@
+// app\api\email\test\route.ts
 import { sendTestEmail } from "@/lib/server/email/sendTestEmail";
 import { NextRequest, NextResponse } from "next/server";
 import { logit } from "@/lib/log/server";
@@ -7,7 +8,7 @@ export async function GET(req: NextRequest) {
   const ctx = await enrichContext(req);
   await sendTestEmail(to);
   await logit({
-    ...ctx,
+    meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
     level: "info",
     message: "Email test sent",
   });

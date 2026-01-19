@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
   const start = Date.now();
   const ctx = await enrichContext(req);
   await logit({
-    ...ctx,
+    meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
     level: "info",
     message: "astronomy.cron.started",
   });
@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
 
   for (const location of locations) {
     await logit({
-      ...ctx,
+      meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
       level: "info",
       message: "astronomy.cron.location.started",
 
@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
       const targetDate = addDays(base, i);
 
       await logit({
-        ...ctx,
+        meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
         level: "info",
         message: "astronomy.cron.fetching",
         data: { locationId: location.id, targetDate },
@@ -60,7 +60,7 @@ export async function GET(req: NextRequest) {
       });
 
       await logit({
-        ...ctx,
+        meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
         level: "info",
         message: "astronomy.cron.snapshot.saved",
         data: {

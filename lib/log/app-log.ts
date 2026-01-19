@@ -12,7 +12,10 @@ let globalContext: GlobalContext = {};
 
 export const logger = {
   setGlobalContext(ctx: GlobalContext) {
-    globalContext = { ...globalContext, ...ctx };
+    globalContext = {
+      ...globalContext,
+      meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+    };
   },
 
   info(message: string, data: Record<string, any> = {}) {
