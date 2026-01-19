@@ -6,7 +6,7 @@ export async function GET(req: NextRequest) {
   logit({
     level: "info",
     message: "log-test route hit",
-    notes: { action: "test" },
+    jonathan: { action: "test" },
     meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
   });
 
