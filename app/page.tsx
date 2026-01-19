@@ -36,17 +36,21 @@ export default async function HomePage() {
     page: "Home Page",
     userId: "JK",
   };
-  await logit("jonathan", {
-    level: "info",
-    message: "Visited dashboard",
+  await logit(
+    "jonathan",
+    {
+      level: "info",
+      message: "Visited dashboard",
 
-    payload: {
-      sessionUser: session?.user?.name ?? null,
-      sessionEmail: session?.user?.email ?? null,
-      userId: session?.user?.id ?? null,
-      session: session ?? null,
-    }
-  }, { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId });
+      payload: {
+        sessionUser: session?.user?.name ?? null,
+        sessionEmail: session?.user?.email ?? null,
+        userId: session?.user?.id ?? null,
+        session: session ?? null,
+      },
+    },
+    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+  );
 
   const location = await db.location.findFirst({
     where: { isDefault: true },
@@ -59,17 +63,21 @@ export default async function HomePage() {
     { cache: "no-store" },
   );
   const weatherData = await weatherRes.json();
-  await logit("jonathan", {
-    level: "info",
-    message: "Visited dashboard",
+  await logit(
+    "jonathan",
+    {
+      level: "info",
+      message: "Visited dashboard",
 
-    payload: {
-      weatherData: weatherData,
-      sessionEmail: session?.user?.email ?? null,
-      userId: session?.user?.id ?? null,
-      session: session ?? null,
-    }
-  }, { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId });
+      payload: {
+        weatherData: weatherData,
+        sessionEmail: session?.user?.email ?? null,
+        userId: session?.user?.id ?? null,
+        session: session ?? null,
+      },
+    },
+    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+  );
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-600 to-sky-900 text-white p-8">
       <div className="max-w-5xl mx-auto bg-sky-800/60 backdrop-blur-md rounded-2xl p-8 shadow-xl border border-white/10">

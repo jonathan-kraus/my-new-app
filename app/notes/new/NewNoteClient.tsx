@@ -40,9 +40,9 @@ export default function NewNoteClient({ authorized, userId }: Props) {
       }
     } catch (err: any) {
       await logFromClient("notes", {
-  level: "error",
-  message: "Failed to create note",
-});
+        level: "error",
+        message: "Failed to create note",
+      });
 
       console.error("NOTES API ERROR", err);
       setError("Unexpected error");
@@ -84,4 +84,5 @@ export default function NewNoteClient({ authorized, userId }: Props) {
         {saving ? "Saving..." : "Save Note"}
       </button>
     </div>
-  )}
+  );
+}

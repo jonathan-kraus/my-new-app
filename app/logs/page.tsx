@@ -80,10 +80,10 @@ export default function LogsPage() {
 
         const res = await fetch(`/api/logs?${params.toString()}`);
         const json = await res.json();
-await logFromClient("jonathan", {
-  level: "info",
-  message: "in log page",
-});
+        await logFromClient("jonathan", {
+          level: "info",
+          message: "in log page",
+        });
 
         if (cancelled) return;
 

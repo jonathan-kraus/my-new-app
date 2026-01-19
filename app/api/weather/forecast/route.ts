@@ -41,20 +41,24 @@ export async function GET(req: Request) {
   if (cached) {
     const age = Math.round((Date.now() - cached.fetchedAt.getTime()) / 60000);
 
-    await logit("weather", {
-      level: "info",
-      message: `Forecast cache hit ${age}/${FORECAST_CACHE_MINUTES}`,
+    await logit(
+      "weather",
+      {
+        level: "info",
+        message: `Forecast cache hit ${age}/${FORECAST_CACHE_MINUTES}`,
 
-      payload: {
-        cacheWindowMinutes: FORECAST_CACHE_MINUTES,
-        actualAgeMinutes: age,
-        sessionUser: session?.user?.name ?? null,
-        sessionEmail: session?.user?.email ?? null,
-        userId: session?.user?.id ?? null,
-        locationId,
-        file: "app/api/weather/forecast/route.ts",
-      }
-    }, { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId });
+        payload: {
+          cacheWindowMinutes: FORECAST_CACHE_MINUTES,
+          actualAgeMinutes: age,
+          sessionUser: session?.user?.name ?? null,
+          sessionEmail: session?.user?.email ?? null,
+          userId: session?.user?.id ?? null,
+          locationId,
+          file: "app/api/weather/forecast/route.ts",
+        },
+      },
+      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+    );
 
     const payload = cached.payload as {
       current: any;
@@ -72,11 +76,15 @@ export async function GET(req: Request) {
   // ----------------------------------------
   // CACHE MISS → FETCH EXTERNAL API
   // ----------------------------------------
-  await logit("weather", {
-    level: "info",
-    message: "Forecast cache miss → fetching external API",
-    payload: { locationId, file: "app/api/weather/forecast/route.ts" }
-  }, { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId });
+  await logit(
+    "weather",
+    {
+      level: "info",
+      message: "Forecast cache miss → fetching external API",
+      payload: { locationId, file: "app/api/weather/forecast/route.ts" },
+    },
+    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+  );
 
   const weatherRes = await fetch(
     `https://api.open-meteo.com/v1/forecast` +
@@ -92,11 +100,15 @@ export async function GET(req: Request) {
   const parsed = ForecastResponseSchema.safeParse(raw);
 
   if (!parsed.success) {
-    await logit("weather", {
-      level: "error",
-      message: "Invalid forecast API response",
-      payload: parsed.error.flatten()
-    }, { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId });
+    await logit(
+      "weather",
+      {
+        level: "error",
+        message: "Invalid forecast API response",
+        payload: parsed.error.flatten(),
+      },
+      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+    );
 
     return NextResponse.json(
       { error: "Forecast unavailable" },
@@ -119,11 +131,15 @@ export async function GET(req: Request) {
     },
   });
 
-  await logit("weather", {
-    level: "info",
-    message: "Forecast snapshot stored",
-    payload: { snapshotId: snapshot.id }
-  }, { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId });
+  await logit(
+    "weather",
+    {
+      level: "info",
+      message: "Forecast snapshot stored",
+      payload: { snapshotId: snapshot.id },
+    },
+    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+  );
 
   // ----------------------------------------
   // RETURN FRESH DATA

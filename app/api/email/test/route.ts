@@ -7,10 +7,14 @@ export async function GET(req: NextRequest) {
   const to = "jonathan.c.kraus@gmail.com";
   const ctx = await enrichContext(req);
   await sendTestEmail(to);
-  await logit("jonathan", {
-    level: "info",
-    message: "Email test sent",
-    payload: { to: to }
-  }, { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId });
+  await logit(
+    "jonathan",
+    {
+      level: "info",
+      message: "Email test sent",
+      payload: { to: to },
+    },
+    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+  );
   return NextResponse.json(`Test email sent to ${to}`);
 }

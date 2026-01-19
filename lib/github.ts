@@ -6,12 +6,13 @@
 export function getSha(payload: any): string | undefined {
   return (
     // status/deployment events
-    (// check_run events
+    // check_run events
     payload.after || // push events
     payload.pull_request?.head?.sha || // PR events
     payload.workflow_run?.head_sha || // workflow_run events
     payload.check_suite?.head_sha || // check_suite events
-    payload.check_run?.head_sha || payload.sha)
+    payload.check_run?.head_sha ||
+    payload.sha
   );
 }
 

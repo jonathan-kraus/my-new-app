@@ -32,15 +32,26 @@ export default function CurrentWeatherCard({
 
   // Initial render log
   useEffect(() => {
-  console.log(`Rendering CurrentWeatherCard with location: ${location?.name ?? "null"}`,)
-
+    console.log(
+      `Rendering CurrentWeatherCard with location: ${location?.name ?? "null"}`,
+    );
   }, [location]);
 
   // Fetch weather data
   useEffect(() => {
     if (!location) return;
 
-async function load(locationId: string) { try { const res = await fetch(`/api/weather?locationId=${locationId}`); const json = await res.json(); setData(json); } catch (error) { console.log(`Error fetching weather data: ${error}`); } finally { setLoading(false); } }
+    async function load(locationId: string) {
+      try {
+        const res = await fetch(`/api/weather?locationId=${locationId}`);
+        const json = await res.json();
+        setData(json);
+      } catch (error) {
+        console.log(`Error fetching weather data: ${error}`);
+      } finally {
+        setLoading(false);
+      }
+    }
 
     setLoading(true);
     hasToasted.current = false;
@@ -92,7 +103,7 @@ async function load(locationId: string) { try { const res = await fetch(`/api/we
   const formattedTime = fetched ? fetched.toLocaleTimeString() : "—";
 
   // Final log
-  console.log('Weather summary for ${location?.name ?? "null"')
+  console.log('Weather summary for ${location?.name ?? "null"');
   return (
     <>
       <div className="p-4 rounded-xl bg-linear-to-br from-indigo-700 to-sky-800 border border-white/10 shadow-md">

@@ -9,11 +9,15 @@ export async function GET(req: NextRequest) {
   const start = Date.now();
   const ctx = await enrichContext(req);
 
-  logit("jonathan", {
-    level: "info",
-    message: "Ping route hit",
-    payload: { som: crypto.randomUUID(), start: start }
-  }, { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId });
+  logit(
+    "jonathan",
+    {
+      level: "info",
+      message: "Ping route hit",
+      payload: { som: crypto.randomUUID(), start: start },
+    },
+    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+  );
 
   const payload = {
     ok: true,
@@ -72,10 +76,14 @@ export async function GET(req: NextRequest) {
   const result = await axiom.query(query);
   const rows = result?.matches ?? [];
   // Final log with correct duration
-  await logit("jonathan", {
-    level: "info",
-    message: "ping completed",
-    payload: rows
-  }, { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId });
+  await logit(
+    "jonathan",
+    {
+      level: "info",
+      message: "ping completed",
+      payload: rows,
+    },
+    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+  );
   return Response.json({ rows });
 }

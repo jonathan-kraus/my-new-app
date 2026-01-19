@@ -6,11 +6,15 @@ export async function GET(req: NextRequest) {
   const ctx = await enrichContext(req);
   console.log("QUEUE LENGTH: before", getLength());
 
-  logit("jonathan", {
-    level: "info",
-    message: "log-test route hit",
-    payload: { action: "test" }
-  }, { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId });
+  logit(
+    "jonathan",
+    {
+      level: "info",
+      message: "log-test route hit",
+      payload: { action: "test" },
+    },
+    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+  );
   console.log("QUEUE LENGTH: after", getLength());
   return Response.json({ ok: true });
 }

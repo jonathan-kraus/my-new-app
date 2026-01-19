@@ -9,7 +9,6 @@ export interface CreateLogInput {
   meta?: Record<string, any> | null;
 }
 
-
 export type Location = {
   id: string;
   name: string;
