@@ -25,12 +25,12 @@ export async function GET(req: Request) {
       },
     );
 
-    const query = `
+const query = `
 ['github-events']
 | where repo == "jonathan-kraus/my-new-app"
-| sort(desc: "updatedAt")
-| limit(200)
-    `;
+| sort(desc: "data.updatedAt")
+| limit 200
+`;
 
     await logit(
       "github",
