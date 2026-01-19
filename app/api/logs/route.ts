@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
 
   const logs = await db.log.findMany({
     where,
-    orderBy: { createdAt: "desc" },
+    orderBy: { created_at: "desc" },
     skip,
     take: limit,
   });

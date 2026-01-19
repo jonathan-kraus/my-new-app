@@ -13,7 +13,7 @@ export default async function NewNotePage() {
     <BlueDashboardLayout>
       <NewNoteClient
         authorized={!!session?.user}
-        userId={session?.user?.id ?? null}
+        userId={session?.user?.id ?? "JK"}
       />
     </BlueDashboardLayout>
   );

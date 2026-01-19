@@ -3,7 +3,7 @@
 // Stores per-request log counters
 const logIndexes = new Map<string, number>();
 
-export function nextLogIndex(requestId: string | null) {
+export function nextLogIndex(requestId: string) {
   if (!requestId) return null;
 
   const current = logIndexes.get(requestId) ?? 0;
@@ -14,7 +14,7 @@ export function nextLogIndex(requestId: string | null) {
 }
 
 // Optional: prevent memory growth in long-lived environments
-export function clearLogIndex(requestId: string | null) {
+export function clearLogIndex(requestId: string) {
   if (!requestId) return;
   logIndexes.delete(requestId);
 }

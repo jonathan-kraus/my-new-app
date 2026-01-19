@@ -13,22 +13,20 @@ export async function GET(req: NextRequest) {
   const ctx = await enrichContext(req);
   console.log("CTX requestId:", ctx.requestId);
 
-  await logit({
-    meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+  await logit("notes", {
     level: "info",
     message: "Notes GET started",
-    notes: { requestId: ctx.requestId },
-  });
+    payload: { requestId: ctx.requestId }
+  }, { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId });
 
   try {
     const session = await auth.api.getSession({ headers: req.headers });
     if (!session?.user) {
-      await logit({
-        meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+      await logit("notes", {
         level: "warn",
         message: "Unauthorized Notes GET",
-        notes: { requestId: ctx.requestId },
-      });
+        payload: { requestId: ctx.requestId }
+      }, { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId });
 
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -41,23 +39,21 @@ export async function GET(req: NextRequest) {
 
     const durationMs = getRequestDuration(ctx.requestId);
 
-    await logit({
-      meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+    await logit("notes", {
       level: "info",
       message: "Notes GET completed",
-      notes: { durationMs, eventIndex: ctx.eventIndex, count: notes.length },
-    });
+      payload: { durationMs, eventIndex: ctx.eventIndex, count: notes.length }
+    }, { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId });
 
     return NextResponse.json({ notes });
   } catch (err: any) {
     const durationMs = getRequestDuration(ctx.requestId);
 
-    await logit({
-      meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+    await logit("notes", {
       level: "error",
       message: "Notes GET failed",
-      notes: { durationMs: durationMs, error: err.message },
-    });
+      payload: { durationMs: durationMs, error: err.message }
+    }, { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId });
 
     return NextResponse.json(
       { error: "Failed to load notes" },
@@ -72,22 +68,20 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const ctx = await enrichContext(req);
 
-  await logit({
-    meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+  await logit("notes", {
     level: "info",
     message: "Notes POST started",
-    notes: {},
-  });
+    payload: {}
+  }, { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId });
 
   try {
     const session = await auth.api.getSession({ headers: req.headers });
     if (!session?.user) {
-      await logit({
-        meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+      await logit("notes", {
         level: "warn",
         message: "Unauthorized Notes POST",
-        notes: {},
-      });
+        payload: {}
+      }, { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId });
 
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -103,27 +97,25 @@ export async function POST(req: NextRequest) {
 
     const durationMs = getRequestDuration(ctx.requestId);
 
-    await logit({
-      meta: {
-        requestId: ctx.requestId,
-        route: ctx.page,
-        userId: ctx.userId,
-      },
-      notes: { durationMs, noteId: note.id },
+    await logit("notes", {
+      payload: { durationMs, noteId: note.id },
       level: "info",
-      message: "Notes POST completed",
+      message: "Notes POST completed"
+    }, {
+      requestId: ctx.requestId,
+      route: ctx.page,
+      userId: ctx.userId,
     });
 
     return NextResponse.json({ note });
   } catch (err: any) {
     const durationMs = getRequestDuration(ctx.requestId);
 
-    await logit({
-      meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+    await logit("notes", {
       level: "error",
       message: "Notes POST failed",
-      notes: { durationMs, error: err.message },
-    });
+      payload: { durationMs, error: err.message }
+    }, { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId });
 
     return NextResponse.json(
       { error: "Failed to create note" },

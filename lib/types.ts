@@ -2,20 +2,13 @@
 export type LogLevel = "debug" | "info" | "warn" | "error";
 
 export interface CreateLogInput {
-  level: LogLevel;
+  level: string;
   message: string;
-  data?: Record<string, any>;
-  page?: string | null;
-  userId?: string | null;
-  sessionEmail?: string | null;
-  sessionUser?: string | null;
-  durationMs?: number | null;
-  eventIndex?: number | null;
-  requestId?: string | null;
-  file?: string | null;
-  line?: number | null;
-  createdAt?: Date;
+  domain: string;
+  payload: Record<string, any>;
+  meta?: Record<string, any> | null;
 }
+
 
 export type Location = {
   id: string;

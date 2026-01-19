@@ -1,37 +1,34 @@
-// lib/log/types.ts
+// All valid logging domains in your system.
+// Add new domains here and your entire pipeline stays consistent.
+export type Domain =
+  | "weather"
+  | "github"
+  | "ephemeris"
+  | "system"
+  | "notes"
+  | "activity"
+  | "jonathan";
 
-export type GithubPayload = { [key: string]: any };
-export type NotesPayload = { [key: string]: any };
-export type WeatherPayload = { [key: string]: any };
-export type EphemerisPayload = { [key: string]: any };
-
-// NEW
-export type JonathanPayload = { [key: string]: any };
-
-export type DomainPayload =
-  | { github: GithubPayload }
-  | { notes: NotesPayload }
-  | { weather: WeatherPayload }
-  | { ephemeris: EphemerisPayload }
-  | { jonathan: JonathanPayload }; // NEW
-
-export interface LogMeta {
-  requestId: string | null;
-  route: string | null;
-  userId: string | null;
-}
-
-export type LogitInput = DomainPayload & {
-  level: "info" | "error" | "warn";
-  message: string;
-  meta: LogMeta;
+// Metadata attached to every log event.
+// All fields are optional and use `undefined` instead of `null`
+// to prevent schema drift in Axiom.
+export type Meta = {
+  requestId?: string;
+  route?: string;
+  userId?: string;
+  eventIndex?: number;
+  ip?: string;
+  userAgent?: string;
 };
 
-export interface InternalEvent {
+// Arbitrary payload for any log event.
+// You can refine this later if you want domain‑specific payload types.
+export type LogPayload = Record<string, any>;
+
+// The internal event shape that flows through queue → scheduler → flush.
+export type InternalEvent = {
+  domain: Domain;
+  payload: LogPayload;
+  meta: Meta;
   timestamp: number;
-  level: "info" | "error" | "warn";
-  message: string;
-  domain: string;
-  payload: Record<string, any>;
-  meta: LogMeta;
-}
+};

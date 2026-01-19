@@ -3,6 +3,7 @@ import { Axiom } from "@axiomhq/js";
 import { logit } from "@/lib/log/logit";
 import { enrichContext } from "@/lib/log/context";
 
+
 const axiom = new Axiom({
   token: process.env.AXIOM_TOKEN!,
 });
@@ -11,15 +12,14 @@ export async function GET(req: Request) {
   const ctx = await enrichContext(req as any);
 
   try {
-    await logit({
+    await logit("github", {
       level: "info",
       message: "GitHub activity API hit",
-      github: { route: "activity" },
-      meta: {
-        requestId: ctx.requestId,
-        route: ctx.page,
-        userId: ctx.userId,
-      },
+      payload: { route: "activity" }
+    }, {
+      requestId: ctx.requestId,
+      route: ctx.page,
+      userId: ctx.userId,
     });
 
     const query = `
@@ -29,31 +29,30 @@ export async function GET(req: Request) {
 | limit(200)
     `;
 
-    await logit({
+    await logit("github", {
       level: "info",
       message: "Running Axiom query",
-      github: { query },
-      meta: {
-        requestId: ctx.requestId,
-        route: ctx.page,
-        userId: ctx.userId,
-      },
+      payload: { query }
+    }, {
+      requestId: ctx.requestId,
+      route: ctx.page,
+      userId: ctx.userId,
     });
 
     const result = await axiom.query(query);
 
-    await logit({
+    await logit("github", {
       level: "info",
       message: "Axiom query result",
-      github: {
+
+      payload: {
         dataset: result.datasetNames,
         matchCount: result.matches?.length ?? 0,
-      },
-      meta: {
-        requestId: ctx.requestId,
-        route: ctx.page,
-        userId: ctx.userId,
-      },
+      }
+    }, {
+      requestId: ctx.requestId,
+      route: ctx.page,
+      userId: ctx.userId,
     });
 
     const rows = result?.matches ?? [];
@@ -107,28 +106,26 @@ export async function GET(req: Request) {
 
     const activity = Array.from(bySha.values());
 
-    await logit({
+    await logit("github", {
       level: "info",
       message: "Mapped GitHub activity",
-      github: { count: activity.length },
-      meta: {
-        requestId: ctx.requestId,
-        route: ctx.page,
-        userId: ctx.userId,
-      },
+      payload: { count: activity.length }
+    }, {
+      requestId: ctx.requestId,
+      route: ctx.page,
+      userId: ctx.userId,
     });
 
     return NextResponse.json({ ok: true, activity });
   } catch (err: any) {
-    await logit({
+    await logit("github", {
       level: "error",
       message: "GitHub activity API failed",
-      github: { error: err?.message },
-      meta: {
-        requestId: ctx.requestId,
-        route: ctx.page,
-        userId: ctx.userId,
-      },
+      payload: { error: err?.message }
+    }, {
+      requestId: ctx.requestId,
+      route: ctx.page,
+      userId: ctx.userId,
     });
 
     return NextResponse.json(

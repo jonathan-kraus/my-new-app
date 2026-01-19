@@ -1,21 +1,15 @@
+// lib/log/scheduler.ts
+// Creation Date: 2026-01-19
+
 import { flush } from "./flush";
 
-const MAX_BATCH_AGE_MS = 5000;
+let started = false;
 
-let flushTimer: NodeJS.Timeout | null = null;
+export function startScheduler() {
+  if (started) return;
+  started = true;
 
-export function scheduleFlush() {
-  if (flushTimer) return;
-
-  flushTimer = setTimeout(async () => {
-    flushTimer = null;
-    await flush();
-  }, MAX_BATCH_AGE_MS);
-}
-
-export function clearFlushTimer() {
-  if (flushTimer) {
-    clearTimeout(flushTimer);
-    flushTimer = null;
-  }
+  setInterval(() => {
+    flush();
+  }, 5000);
 }

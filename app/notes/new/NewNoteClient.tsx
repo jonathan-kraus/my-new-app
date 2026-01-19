@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { logit } from "@/lib/log/logit";
+import { logFromClient } from "@/app/actions/log";
 
 type Props = {
   authorized: boolean;
-  userId: string | null;
+  userId: string;
 };
 
 export default function NewNoteClient({ authorized, userId }: Props) {
@@ -16,7 +16,7 @@ export default function NewNoteClient({ authorized, userId }: Props) {
   const ctx = {
     requestId: crypto.randomUUID(),
     page: "note",
-    userId: null,
+    userId: "JK",
   };
   async function handleSave() {
     setSaving(true);
@@ -39,15 +39,10 @@ export default function NewNoteClient({ authorized, userId }: Props) {
         setContent("");
       }
     } catch (err: any) {
-      await logit({
-        level: "error",
-        message: "Failed to create note",
-        meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-        notes: {
-          error: String(err),
-          full: err,
-        },
-      });
+      await logFromClient("notes", {
+  level: "error",
+  message: "Failed to create note",
+});
 
       console.error("NOTES API ERROR", err);
       setError("Unexpected error");
@@ -89,5 +84,4 @@ export default function NewNoteClient({ authorized, userId }: Props) {
         {saving ? "Saving..." : "Save Note"}
       </button>
     </div>
-  );
-}
+  )}

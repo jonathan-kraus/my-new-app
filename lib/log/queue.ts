@@ -1,3 +1,6 @@
+// lib/log/queue.ts
+// Creation Date: 2026-01-19
+
 import type { InternalEvent } from "./types";
 
 let queue: InternalEvent[] = [];

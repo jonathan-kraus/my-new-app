@@ -1,5 +1,5 @@
 "use client";
-import { logit } from "@/lib/log/logit";
+import { logFromClient } from "@/app/actions/log";
 import { useEffect, useMemo, useState } from "react";
 
 type LogRecord = {
@@ -9,9 +9,9 @@ type LogRecord = {
   createdAt: string;
   file: string | null;
   line: number | null;
-  requestId: string | null;
-  page: string | null;
-  userId: string | null;
+  requestId: string;
+  page: string;
+  userId: string;
   sessionEmail: string | null;
   sessionUser: string | null;
   data: any | null;
@@ -21,6 +21,7 @@ const ctx = {
   page: "log",
   userId: null,
 };
+
 const levelStyles: Record<
   string,
   {
@@ -79,16 +80,11 @@ export default function LogsPage() {
 
         const res = await fetch(`/api/logs?${params.toString()}`);
         const json = await res.json();
-        await logit({
-          level: "info",
-          message: "In log page",
-          meta: {
-            requestId: ctx.requestId,
-            route: ctx.page,
-            userId: ctx.userId,
-          },
-          jonathan: { token: `tok_${Date.now()}` },
-        });
+await logFromClient("jonathan", {
+  level: "info",
+  message: "in log page",
+});
+
         if (cancelled) return;
 
         if (page === 0) {

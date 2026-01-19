@@ -5,35 +5,27 @@ import { markRequestStart } from "@/lib/log/timing";
 let eventCounter = 0;
 
 export async function enrichContext(req: NextRequest) {
-  // Use the forwarded requestId from middleware
-  const requestId = req.headers.get("x-request-id") ?? null;
+  const requestId = req.headers.get("x-request-id") ?? crypto.randomUUID();
 
-  // Start timing *inside* the API route execution context
-  if (requestId) {
-    markRequestStart(requestId);
-  }
+  markRequestStart(requestId);
 
-  // Basic request metadata
-  const page = req.nextUrl.pathname;
+  const page = req.nextUrl.pathname ?? undefined;
   const method = req.method;
   const url = req.url;
-  const ip = req.headers.get("x-forwarded-for") ?? null;
-  const userAgent = req.headers.get("user-agent") ?? null;
 
-  // Increment per-request event index
+  const ip = req.headers.get("x-forwarded-for") ?? undefined;
+  const userAgent = req.headers.get("user-agent") ?? undefined;
+
   const eventIndex = eventCounter++;
 
-  // Session info
-  let sessionEmail: string | null = null;
-  let userId: string | null = null;
+  let sessionEmail: string | undefined = undefined;
+  let userId: string | undefined = undefined;
 
   try {
     const session = await auth.api.getSession({ headers: req.headers });
-    sessionEmail = session?.user?.email ?? null;
-    userId = session?.user?.id ?? null;
-  } catch {
-    // session is optional
-  }
+    sessionEmail = session?.user?.email ?? undefined;
+    userId = session?.user?.id ?? undefined;
+  } catch {}
 
   return {
     requestId,

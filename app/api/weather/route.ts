@@ -93,11 +93,11 @@ export async function GET(req: NextRequest) {
     let eventIndex = 0;
     const nextEvent = () => eventIndex++;
 
-    await logit({
-      meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+    await logit("weather", {
       level: "info",
       message: `Using cached current weather data ${currentAge}/${currentCacheMin}`,
-      weather: {
+
+      payload: {
         file: "/api/weather",
         eventIndex: nextEvent(),
         durationMs: performance.now() - start,
@@ -105,8 +105,8 @@ export async function GET(req: NextRequest) {
         cacheWindowMinutes: currentCacheMin,
         actualAgeMinutes: currentAge,
         locationId,
-      },
-    });
+      }
+    }, { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId });
 
     return NextResponse.json({
       location,
@@ -141,19 +141,17 @@ export async function GET(req: NextRequest) {
       `https://api.tomorrow.io/v4/weather/realtime?location=${location.latitude},${location.longitude}&units=imperial&apikey=${API_KEY}`,
     );
     const ctx = await enrichContext(req);
-    await logit({
-      meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+    await logit("weather", {
       level: "info",
       message: "Realtime weather fetch attempted",
-      weather: { file: "/api/weather", status: res },
-    });
+      payload: { file: "/api/weather", status: res }
+    }, { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId });
     if (!res.ok) {
-      await logit({
-        meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+      await logit("weather", {
         level: "error",
         message: "Realtime weather fetch failed",
-        weather: { status: res.status },
-      });
+        payload: { status: res.status }
+      }, { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId });
       return NextResponse.json(
         { error: "Weather fetch failed" },
         { status: 500 },
@@ -164,12 +162,13 @@ export async function GET(req: NextRequest) {
     const validated = TomorrowRealtimeSchema.safeParse(json);
 
     if (!validated.success) {
-      await logit({
-        meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+      await logit("weather", {
         level: "error",
         message: "Realtime weather validation failed",
-        weather: { issues: validated.error.issues.slice(0, 3) }, // ✅ Fixed
-      });
+
+        // ✅ Fixed
+        payload: { issues: validated.error.issues.slice(0, 3) }
+      }, { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId });
       return NextResponse.json(
         { error: "Invalid weather data" },
         { status: 500 },
@@ -206,11 +205,11 @@ export async function GET(req: NextRequest) {
   // LOG EVERYTHING
   // ----------------------------------------
   const ctx = await enrichContext(req);
-  await logit({
+  await logit("weather", {
     level: "info",
     message: "Unified weather request",
-    meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-    weather: {
+
+    payload: {
       locationId,
       sources: {
         current: currentSource,
@@ -227,8 +226,8 @@ export async function GET(req: NextRequest) {
         forecastMinutes: forecastCacheMin,
       },
       file: "app/api/weather/route.ts",
-    },
-  });
+    }
+  }, { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId });
 
   // ----------------------------------------
   // RETURN EVERYTHING

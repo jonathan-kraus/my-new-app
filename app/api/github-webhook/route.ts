@@ -146,15 +146,14 @@ export async function POST(req: NextRequest) {
   // 1. Verify signature
   if (!(await verifySignature(req, raw))) {
     const myact = 1417;
-    await logit({
+    await logit("github", {
       level: "warn",
       message: "Invalid GitHub signature",
-      github: { actor: myact },
-      meta: {
-        requestId: ctx.requestId,
-        route: ctx.page,
-        userId: ctx.userId,
-      },
+      payload: { actor: myact }
+    }, {
+      requestId: ctx.requestId,
+      route: ctx.page,
+      userId: ctx.userId,
     });
     return new Response("Unauthorized", { status: 401 });
   }
@@ -163,15 +162,14 @@ export async function POST(req: NextRequest) {
   const event = req.headers.get("x-github-event");
 
   // 2. Log raw event type
-  await logit({
+  await logit("github", {
     level: "info",
     message: "GitHub webhook received",
-    github: { event: event },
-    meta: {
-      requestId: ctx.requestId,
-      route: ctx.page,
-      userId: ctx.userId,
-    },
+    payload: { event: event }
+  }, {
+    requestId: ctx.requestId,
+    route: ctx.page,
+    userId: ctx.userId,
   });
 
   // 3. Normalize event
@@ -182,15 +180,14 @@ export async function POST(req: NextRequest) {
     const wr = transformWorkflowRun(payload);
 
     if (!wr) {
-      await logit({
+      await logit("github", {
         level: "warn",
         message: "workflow_run missing payload",
-        github: { event: event },
-        meta: {
-          requestId: ctx.requestId,
-          route: ctx.page,
-          userId: ctx.userId,
-        },
+        payload: { event: event }
+      }, {
+        requestId: ctx.requestId,
+        route: ctx.page,
+        userId: ctx.userId,
       });
       return new Response("OK");
     }
@@ -198,30 +195,28 @@ export async function POST(req: NextRequest) {
     // Ingest into Axiom
     await axiom.ingest("github-events", wr);
 
-    await logit({
+    await logit("github", {
       level: "info",
       message: "** GitHub workflow_run ingested **",
-      github: { id: wr.id },
-      meta: {
-        requestId: ctx.requestId,
-        route: ctx.page,
-        userId: ctx.userId,
-      },
+      payload: { id: wr.id }
+    }, {
+      requestId: ctx.requestId,
+      route: ctx.page,
+      userId: ctx.userId,
     });
 
     return new Response("OK");
   }
 
   // 4. Other events → optional ingest or ignore
-  await logit({
+  await logit("github", {
     level: "info",
     message: "GitHub event ignored",
-    github: { event },
-    meta: {
-      requestId: ctx.requestId,
-      route: ctx.page,
-      userId: ctx.userId,
-    },
+    payload: { event }
+  }, {
+    requestId: ctx.requestId,
+    route: ctx.page,
+    userId: ctx.userId,
   });
 
   return new Response("Ignored", { status: 200 });

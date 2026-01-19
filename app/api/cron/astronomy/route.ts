@@ -16,22 +16,20 @@ function atLocalMidnight(d: Date) {
 export async function GET(req: NextRequest) {
   const start = Date.now();
   const ctx = await enrichContext(req);
-  await logit({
-    meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+  await logit("ephemeris", {
     level: "info",
     message: "astronomy.cron.started",
-    ephemeris: { route: "cron" },
-  });
+    payload: { route: "cron" }
+  }, { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId });
 
   const locations = await db.location.findMany();
 
   for (const location of locations) {
-    await logit({
+    await logit("ephemeris", {
       level: "info",
       message: "astronomy.cron.location.started",
-      ephemeris: { locationId: location.id, name: location.name },
-      meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-    });
+      payload: { locationId: location.id, name: location.name }
+    }, { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId });
 
     // Always start from local midnight to avoid “tomorrow’s data”
     const base = atLocalMidnight(new Date());
@@ -39,12 +37,11 @@ export async function GET(req: NextRequest) {
     for (let i = 0; i < 7; i++) {
       const targetDate = addDays(base, i);
 
-      await logit({
-        meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+      await logit("ephemeris", {
         level: "info",
         message: "astronomy.cron.fetching",
-        ephemeris: { locationId: location.id, targetDate },
-      });
+        payload: { locationId: location.id, targetDate }
+      }, { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId });
 
       const snapshot = await buildAstronomySnapshot(location, targetDate);
 
@@ -59,26 +56,25 @@ export async function GET(req: NextRequest) {
         create: snapshot,
       });
 
-      await logit({
-        meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+      await logit("ephemeris", {
         level: "info",
         message: "astronomy.cron.snapshot.saved",
-        ephemeris: {
+
+        payload: {
           locationId: location.id,
           date: targetDate.toISOString().slice(0, 10),
-        },
-      });
+        }
+      }, { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId });
     }
   }
 
   const durationMs = Date.now() - start;
 
-  await logit({
+  await logit("ephemeris", {
     level: "info",
     message: "astronomy.cron.completed",
-    ephemeris: { durationMs },
-    meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-  });
+    payload: { durationMs }
+  }, { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId });
 
   return NextResponse.json({ ok: true, durationMs });
 }

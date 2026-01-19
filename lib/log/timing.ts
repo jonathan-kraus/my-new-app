@@ -1,6 +1,6 @@
 // lib/log/timing.ts
 
-export function getRequestDuration(requestId: string | null) {
+export function getRequestDuration(requestId: string) {
   if (!requestId) return null;
   const start = requestStartTimes.get(requestId);
   if (!start) return null;

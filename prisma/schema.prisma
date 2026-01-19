@@ -79,28 +79,25 @@ model Location {
   updatedAt DateTime @updatedAt
 }
 model Log {
-  id            String   @id @default(cuid())
-  level         String
-  message       String
-  data          Json?
-  page          String?
-  durationMs    Int?
-  eventIndex    Int?
-  userId        String?
-  sessionEmail  String?
-  sessionUser   String?
-  requestId     String?
-  file          String?
-  line          Int?
-  createdAt     DateTime @default(now())
+  id         BigInt   @id @default(autoincrement())
+  timestamp  BigInt
+  level      String
+  message    String
+  domain     String
+  payload    Json
+  meta       Json?
+  env        String?
+  host       String?
+  created_at DateTime @default(now())
+
+  @@index([timestamp])
+  @@index([domain])
+  @@index([level])
+  @@index([created_at])
+  @@index([payload], type: Gin)
+  @@index([meta], type: Gin)
 }
 
-enum LogLevel {
-  debug
-  info
-  warn
-  error
-}
 
 model Note {
   id          String   @id @default(cuid())

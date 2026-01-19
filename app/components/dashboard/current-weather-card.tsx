@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useRef } from "react";
 import { toast } from "react-hot-toast";
-import { logit } from "@/lib/log/logit";
 import { parseLocalTimestamp } from "@/lib/time";
 type CurrentWeatherCardProps = {
   location: {
@@ -33,49 +32,15 @@ export default function CurrentWeatherCard({
 
   // Initial render log
   useEffect(() => {
-    logit({
-      level: "info",
-      message: `Rendering CurrentWeatherCard with location: ${location?.name ?? "null"}`,
-      weather: { locationId: location?.id ?? "null" },
-      meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-    });
+  console.log(`Rendering CurrentWeatherCard with location: ${location?.name ?? "null"}`,)
+
   }, [location]);
 
   // Fetch weather data
   useEffect(() => {
     if (!location) return;
 
-    async function load(locationId: string) {
-      try {
-        const res = await fetch(`/api/weather?locationId=${locationId}`);
-        const json = await res.json();
-        setData(json);
-
-        logit({
-          level: "info",
-          message: `Weather fetch → ${location!.name} | source: ${json.sources?.current ?? "unknown"}`,
-          weather: { locationId, json },
-          meta: {
-            requestId: ctx.requestId,
-            route: ctx.page,
-            userId: ctx.userId,
-          },
-        });
-      } catch (error) {
-        logit({
-          level: "error",
-          message: `Error fetching weather data: ${error}`,
-          weather: { locationId },
-          meta: {
-            requestId: ctx.requestId,
-            route: ctx.page,
-            userId: ctx.userId,
-          },
-        });
-      } finally {
-        setLoading(false);
-      }
-    }
+async function load(locationId: string) { try { const res = await fetch(`/api/weather?locationId=${locationId}`); const json = await res.json(); setData(json); } catch (error) { console.log(`Error fetching weather data: ${error}`); } finally { setLoading(false); } }
 
     setLoading(true);
     hasToasted.current = false;
@@ -127,13 +92,7 @@ export default function CurrentWeatherCard({
   const formattedTime = fetched ? fetched.toLocaleTimeString() : "—";
 
   // Final log
-  logit({
-    level: "info",
-    message: `Weather summary for ${location?.name ?? "null"} | ${source} | ${temp}°`,
-    meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-    weather: { locationId: location?.id ?? "null", current, sources },
-  });
-
+  console.log('Weather summary for ${location?.name ?? "null"')
   return (
     <>
       <div className="p-4 rounded-xl bg-linear-to-br from-indigo-700 to-sky-800 border border-white/10 shadow-md">

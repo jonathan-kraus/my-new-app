@@ -27,12 +27,15 @@ export function useNotes(): NotesState {
   const [state, setState] = useState<NotesState>({ status: "loading" });
 
   useEffect(() => {
-    logit({
+    logit("notes", {
       level: "info",
       message: "Notes page mounted",
-      notes: { loc: "/notes" },
-      meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-    });
+      payload: { loc: "/notes" }
+    }, {
+    requestId: ctx.requestId ?? undefined,
+    route: ctx.page ?? undefined,
+    userId: ctx.userId ?? undefined,
+  });
 
     async function load() {
       try {
@@ -55,16 +58,15 @@ export function useNotes(): NotesState {
       } catch {
         setState({ status: "error" });
 
-        logit({
+        logit("notes", {
           level: "info",
           message: "Notes page mounted",
-          notes: { loc: "/notes" },
-          meta: {
-            requestId: ctx.requestId,
-            route: ctx.page,
-            userId: ctx.userId,
-          },
-        });
+          payload: { loc: "/notes" }
+        }, {
+        requestId: ctx.requestId ?? undefined,
+        route: ctx.page ?? undefined,
+        userId: ctx.userId ?? undefined,
+      });
       }
     }
 

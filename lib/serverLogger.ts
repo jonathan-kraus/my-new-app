@@ -7,28 +7,20 @@ export async function logToDatabase(
   input: CreateLogInput,
 ): Promise<{ success: boolean }> {
   try {
-    const safeData =
-      input.data !== undefined
-        ? JSON.parse(JSON.stringify(input.data))
-        : Prisma.JsonNull;
 
-    await db.log.create({
-      data: {
-        level: input.level,
-        message: input.message,
-        data: safeData,
-        userId: input.userId,
-        page: input.page ?? "server logger",
-        sessionUser: input.sessionUser ?? "Jonathan",
-        sessionEmail: input.sessionEmail ?? null,
-        durationMs: input.durationMs ?? null,
-        eventIndex: input.eventIndex ?? null,
-        requestId: input.requestId ?? null,
-        file: input.file,
-        line: input.line,
-        createdAt: input.createdAt ?? new Date(),
-      },
-    });
+await db.log.create({
+  data: {
+    timestamp: BigInt(Date.now()),
+    level: input.level,
+    message: input.message,
+    domain: input.domain,
+    payload: input.payload ?? {},
+    meta: input.meta ?? Prisma.JsonNull,
+    env: process.env.NODE_ENV,
+    host: process.env.VERCEL_URL ?? "local",
+  },
+});
+
 
     return { success: true };
   } catch (error) {
