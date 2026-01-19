@@ -133,9 +133,12 @@ export default function ServerSidebar() {
 
         <Link href="/" className="nav-active">
           <span style={{ fontSize: "1.5rem", marginRight: "1rem" }}>🏠</span>
+          <span>Home</span>
+        </Link>
+        <Link href="/dashboard" className="nav-active">
+          <span style={{ fontSize: "1.5rem", marginRight: "1rem" }}>🏠</span>
           <span>Dashboard</span>
         </Link>
-
         <Link href="/astronomy" className="nav-link">
           <span style={{ fontSize: "1.5rem", marginRight: "1rem" }}>🌤️</span>
           <span>Astronomy</span>
