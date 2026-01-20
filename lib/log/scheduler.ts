@@ -1,17 +1,21 @@
 // lib/log/scheduler.ts
-// Creation Date: 2026-01-19
 
+import { dequeueBatch } from "./queue";
 import { flush } from "./flush";
 
 let started = false;
-console.log("AXIOM FLUSH", batch.length);
-console.log("AXIOM FLUSHING", JSON.stringify(batch, null, 2));
 
 export function startScheduler() {
   if (started) return;
   started = true;
 
-  setInterval(() => {
-    flush();
-  }, 5000);
+  setInterval(async () => {
+    const batch = dequeueBatch();
+    if (batch.length === 0) return;
+
+    console.log("AXIOM FLUSH", batch.length);
+    console.log("AXIOM FLUSHING", JSON.stringify(batch, null, 2));
+
+    await flush(batch);
+  }, 2000);
 }

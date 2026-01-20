@@ -1,39 +1,13 @@
-import { snapshotAndClear } from "./queue";
-import type { InternalEvent } from "./types";
+// lib/log/flush.ts
 
-let isFlushing = false;
+import { client } from "@/lib/axiom";
 
-async function sendToAxiom(batch: InternalEvent[]) {
-  await fetch("https://api.axiom.co/v1/datasets/your-dataset/ingest", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.AXIOM_TOKEN}`,
-    },
-    body: JSON.stringify(batch),
-  });
-}
-
-export async function flush() {
-  if (isFlushing) return;
-  isFlushing = true;
-
-  const batch = snapshotAndClear();
-  if (batch.length === 0) {
-    isFlushing = false;
-    return;
-  }
+export async function flush(batch: any[]) {
+  if (!batch || batch.length === 0) return;
 
   try {
-    await sendToAxiom(batch);
+    await client.ingest(process.env.AXIOM_DATASET!, batch);
   } catch (err) {
-    console.error("Axiom ingestion failed:", err);
-    try {
-      await sendToAxiom(batch);
-    } catch (err2) {
-      console.error("Axiom retry failed, dropping batch:", err2);
-    }
+    console.error("AXIOM INGEST ERROR", err);
   }
-
-  isFlushing = false;
 }
