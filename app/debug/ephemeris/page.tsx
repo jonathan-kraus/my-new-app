@@ -1,108 +1,158 @@
 import { db } from "@/lib/db";
+import { startOfDay, addDays } from "date-fns";
 
 export const dynamic = "force-dynamic";
 
-export default async function DebugEphemerisPage() {
-  const events = await db.ephemerisDebug.findMany({
+export default async function DebugEPage() {
+  // Find the default location
+  const location = await db.location.findFirst({
+    where: { isDefault: true },
+  });
+
+  // Compute today + tomorrow
+  const today = startOfDay(new Date());
+  const tomorrow = addDays(today, 1);
+
+  // Fetch snapshots for the default location
+  const [todaySnap, tomorrowSnap] = location
+    ? await Promise.all([
+        db.astronomySnapshot.findFirst({
+          where: { locationId: location.id, date: today },
+        }),
+        db.astronomySnapshot.findFirst({
+          where: { locationId: location.id, date: tomorrow },
+        }),
+      ])
+    : [null, null];
+
+  // Fetch debug entries (raw ephemeris logs)
+  const debugEntries = await db.ephemerisDebug.findMany({
     orderBy: { receivedAt: "desc" },
     take: 50,
   });
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold text-white">Ephemeris Debug Events</h1>
+    <div className="p-6 space-y-10">
+      <h1 className="text-2xl font-bold text-white">Ephemeris Debug</h1>
 
-      {events.length === 0 && (
-        <p className="text-gray-400">No ephemeris debug events recorded.</p>
-      )}
-
-      <div className="space-y-4">
-        {events.map((e) => (
-          <div
-            key={e.id}
-            className="bg-gray-800 border border-gray-700 rounded-lg p-4 shadow"
-          >
+      {/* DEFAULT LOCATION */}
+      <section>
+        <h2 className="text-xl font-semibold text-blue-300">Default Location</h2>
+        {location ? (
+          <div className="bg-gray-800 border border-gray-700 rounded-lg p-4">
             <p className="text-sm text-gray-300">
-              <span className="font-semibold">Date:</span> {e.date}
+              <span className="font-semibold">Name:</span> {location.name}
             </p>
             <p className="text-sm text-gray-300">
-              <span className="font-semibold">Location:</span> {e.locationId}
+              <span className="font-semibold">Latitude:</span> {location.latitude}
             </p>
-
-            <div className="grid grid-cols-2 gap-2 mt-2">
-              <p className="text-sm text-gray-300">
-                <span className="font-semibold">Sunrise:</span> {e.sunrise}
-              </p>
-              <p className="text-sm text-gray-300">
-                <span className="font-semibold">Sunset:</span> {e.sunset}
-              </p>
-
-              <p className="text-sm text-gray-300">
-                <span className="font-semibold">Moonrise:</span> {e.moonrise}
-              </p>
-              <p className="text-sm text-gray-300">
-                <span className="font-semibold">Moonset:</span> {e.moonset}
-              </p>
-
-              <p className="text-sm text-gray-300">
-                <span className="font-semibold">Moon Phase:</span> {e.moonPhase}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2 mt-2">
-              <p className="text-sm text-gray-300">
-                <span className="font-semibold">Blue Start (AM):</span>{" "}
-                {e.sunriseBlueStart}
-              </p>
-              <p className="text-sm text-gray-300">
-                <span className="font-semibold">Blue End (AM):</span>{" "}
-                {e.sunriseBlueEnd}
-              </p>
-
-              <p className="text-sm text-gray-300">
-                <span className="font-semibold">Golden Start (AM):</span>{" "}
-                {e.sunriseGoldenStart}
-              </p>
-              <p className="text-sm text-gray-300">
-                <span className="font-semibold">Golden End (AM):</span>{" "}
-                {e.sunriseGoldenEnd}
-              </p>
-
-              <p className="text-sm text-gray-300">
-                <span className="font-semibold">Golden Start (PM):</span>{" "}
-                {e.sunsetGoldenStart}
-              </p>
-              <p className="text-sm text-gray-300">
-                <span className="font-semibold">Golden End (PM):</span>{" "}
-                {e.sunsetGoldenEnd}
-              </p>
-
-              <p className="text-sm text-gray-300">
-                <span className="font-semibold">Blue Start (PM):</span>{" "}
-                {e.sunsetBlueStart}
-              </p>
-              <p className="text-sm text-gray-300">
-                <span className="font-semibold">Blue End (PM):</span>{" "}
-                {e.sunsetBlueEnd}
-              </p>
-            </div>
-
-            <p className="text-sm text-gray-300 mt-2">
-              <span className="font-semibold">Received:</span>{" "}
-              {new Date(e.receivedAt).toLocaleString()}
+            <p className="text-sm text-gray-300">
+              <span className="font-semibold">Longitude:</span> {location.longitude}
             </p>
-
-            <details className="mt-3">
-              <summary className="cursor-pointer text-blue-400">
-                Raw Payload
-              </summary>
-              <pre className="mt-2 text-xs text-gray-300 bg-gray-900 p-3 rounded overflow-x-auto">
-                {JSON.stringify(e.raw, null, 2)}
-              </pre>
-            </details>
+            <p className="text-sm text-gray-300">
+              <span className="font-semibold">Timezone:</span> {location.timezone}
+            </p>
           </div>
-        ))}
-      </div>
+        ) : (
+          <p className="text-gray-400">No default location found.</p>
+        )}
+      </section>
+
+      {/* TODAY */}
+      <section>
+        <h2 className="text-xl font-semibold text-blue-300">Today</h2>
+        {todaySnap ? (
+          <SnapshotCard snapshot={todaySnap} />
+        ) : (
+          <p className="text-gray-400">No snapshot for today.</p>
+        )}
+      </section>
+
+      {/* TOMORROW */}
+      <section>
+        <h2 className="text-xl font-semibold text-blue-300">Tomorrow</h2>
+        {tomorrowSnap ? (
+          <SnapshotCard snapshot={tomorrowSnap} />
+        ) : (
+          <p className="text-gray-400">No snapshot for tomorrow.</p>
+        )}
+      </section>
+
+      {/* RAW DEBUG ENTRIES */}
+      <section>
+        <h2 className="text-xl font-semibold text-blue-300">Raw Ephemeris Debug Entries</h2>
+
+        {debugEntries.length === 0 && (
+          <p className="text-gray-400">No debug entries recorded.</p>
+        )}
+
+        <div className="space-y-4">
+          {debugEntries.map((e) => (
+            <div
+              key={e.id}
+              className="bg-gray-800 border border-gray-700 rounded-lg p-4"
+            >
+              <p className="text-sm text-gray-300">
+                <span className="font-semibold">Date:</span> {e.date}
+              </p>
+              <p className="text-sm text-gray-300">
+                <span className="font-semibold">Location:</span> {e.locationId}
+              </p>
+              <p className="text-sm text-gray-300">
+                <span className="font-semibold">Received:</span>{" "}
+                {new Date(e.receivedAt).toLocaleString()}
+              </p>
+
+              <details className="mt-3">
+                <summary className="cursor-pointer text-blue-400">
+                  Raw Payload
+                </summary>
+                <pre className="mt-2 text-xs text-gray-300 bg-gray-900 p-3 rounded overflow-x-auto">
+                  {JSON.stringify(e.raw, null, 2)}
+                </pre>
+              </details>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
+  );
+}
+
+function SnapshotCard({ snapshot }: { snapshot: any }) {
+  return (
+    <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 space-y-2">
+      <Field label="Date" value={snapshot.date.toISOString()} />
+      <Field label="Sunrise" value={snapshot.sunrise} />
+      <Field label="Sunset" value={snapshot.sunset} />
+      <Field label="Moonrise" value={snapshot.moonrise} />
+      <Field label="Moonset" value={snapshot.moonset} />
+      <Field label="Moon Phase" value={snapshot.moonPhase?.toString()} />
+
+      <Field label="Blue Start (AM)" value={snapshot.sunriseBlueStart} />
+      <Field label="Blue End (AM)" value={snapshot.sunriseBlueEnd} />
+      <Field label="Golden Start (AM)" value={snapshot.sunriseGoldenStart} />
+      <Field label="Golden End (AM)" value={snapshot.sunriseGoldenEnd} />
+
+      <Field label="Golden Start (PM)" value={snapshot.sunsetGoldenStart} />
+      <Field label="Golden End (PM)" value={snapshot.sunsetGoldenEnd} />
+      <Field label="Blue Start (PM)" value={snapshot.sunsetBlueStart} />
+      <Field label="Blue End (PM)" value={snapshot.sunsetBlueEnd} />
+
+      <details className="mt-3">
+        <summary className="cursor-pointer text-blue-400">Raw Snapshot</summary>
+        <pre className="mt-2 text-xs text-gray-300 bg-gray-900 p-3 rounded overflow-x-auto">
+          {JSON.stringify(snapshot, null, 2)}
+        </pre>
+      </details>
+    </div>
+  );
+}
+
+function Field({ label, value }: { label: string; value: any }) {
+  return (
+    <p className="text-sm text-gray-300">
+      <span className="font-semibold">{label}:</span> {value ?? "—"}
+    </p>
   );
 }
