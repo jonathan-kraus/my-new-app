@@ -5,7 +5,6 @@ import { z } from "zod";
 import { logit } from "@/lib/log/logit";
 import { enrichContext } from "@/lib/log/context";
 import { auth } from "@/lib/auth";
-import { getRuntimeNumber } from "@/lib/runtimeConfig";
 import { NextRequest } from "next/server";
 
 const API_KEY = process.env.TOMORROWIO_APIKEY!;
@@ -64,14 +63,8 @@ export async function GET(req: NextRequest) {
   }
 
   // Runtime overrides
-  const currentCacheMin = await getRuntimeNumber(
-    "WEATHER_CACHE_MINUTES",
-    DEFAULT_CURRENT_MIN,
-  );
-  const forecastCacheMin = await getRuntimeNumber(
-    "FORECAST_CACHE_MINUTES",
-    DEFAULT_FORECAST_MIN,
-  );
+  const currentCacheMin = 30;
+  const forecastCacheMin = 30;
 
   // ----------------------------------------
   // CURRENT WEATHER (working)

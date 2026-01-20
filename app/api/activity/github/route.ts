@@ -24,8 +24,14 @@ export async function GET(req: Request) {
         userId: ctx.userId,
       },
     );
-
-const query = `
+    if (!process.env.FLAG_GITHUB_ACTIVITY) {
+      return NextResponse.json({ activity: [] });
+    }
+    console.log("skipped flag");
+    {
+      return NextResponse.json({ activity: [] });
+    }
+    const query = `
 ['github-events']
 | where repo == "jonathan-kraus/my-new-app"
 | sort(desc: "data.updatedAt")

@@ -128,7 +128,6 @@ Stores AstronomySnapshot
 
 Returns ISO strings
 
-/api/admin/runtime-config
 Reads/writes config
 
 Validates with Zod

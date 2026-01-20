@@ -1,5 +1,5 @@
 import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
-import { getRuntimeBoolean } from "@/lib/runtimeConfig";
+
 import { buildWeatherEmail } from "./buildWeatherEmail";
 export async function sendWeatherEmail({
   to,
@@ -11,12 +11,6 @@ export async function sendWeatherEmail({
   const mailerSend = new MailerSend({
     apiKey: process.env.MAILERSEND_API_KEY!,
   });
-
-  const enabled = await getRuntimeBoolean("email.weather.enabled", true);
-  if (!enabled) {
-    console.log("Weather email disabled via RuntimeConfig");
-    return;
-  }
 
   const sentFrom = new Sender("weather@www.kraus.my.id", "Weather Bot");
   const recipients = [new Recipient(to)];

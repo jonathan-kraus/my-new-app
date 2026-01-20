@@ -129,9 +129,6 @@ export default async function HomePage() {
           <Button asChild>
             <Link href="/api/prisma-test">Prisma Test</Link>
           </Button>
-          <Button asChild>
-            <Link href="/admin/runtime">Runtime Settings</Link>
-          </Button>
         </section>
       </div>
     </div>

@@ -159,9 +159,9 @@ export default function ServerSidebar() {
           <span>Notes</span>
         </Link>
 
-        <Link href="/maps" className="nav-link">
+        <Link href="/api/log-test" className="nav-link">
           <span style={{ fontSize: "1.5rem", marginRight: "1rem" }}>🗺️</span>
-          <span>Weather Maps</span>
+          <span>log-test</span>
         </Link>
       </nav>
 

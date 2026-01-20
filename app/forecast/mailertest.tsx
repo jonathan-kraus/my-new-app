@@ -1,16 +1,9 @@
 // app/forecast/mailersend.ts
 import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
-import { getRuntimeBoolean } from "@/lib/runtimeConfig";
+
 import { buildTestEmail } from "@/lib/buildTestEmail";
 
 export async function sendTestEmail(to: string) {
-  const enabled = await getRuntimeBoolean("email.weather.enabled", true);
-
-  if (!enabled) {
-    console.log("[email.weather.enabled=0] Skipping test email");
-    return;
-  }
-
   const testEmail = buildTestEmail();
 
   const mailerSend = new MailerSend({

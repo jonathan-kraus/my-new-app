@@ -129,8 +129,10 @@ model Note {
 model RuntimeConfig {
   key       String   @id
   value     String
+  type      String   // "string" | "number" | "boolean" | "json"
   updatedAt DateTime @updatedAt
 }
+
 
 model Session {
   id        String   @id @default(cuid())

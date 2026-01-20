@@ -79,8 +79,6 @@ export default function ClientNav() {
           Admin
         </div>
 
-        {link("/admin/runtime", "Runtime Config", "⚙️")}
-
         <div className="mt-auto pt-4 border-t border-white/10">
           <ClientProfileCard />
         </div>
