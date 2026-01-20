@@ -1,10 +1,39 @@
-// app\components\sidenav.tsx
 "use client";
+
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function ServerSidebar() {
   const { data: session } = authClient.useSession();
+  const pathname = usePathname();
+
+  const navItems = [
+    { href: "/", label: "Home", icon: "🏠" },
+    { href: "/dashboard", label: "Dashboard", icon: "📊" },
+    { href: "/astronomy", label: "Astronomy", icon: "🚀" },
+    { href: "/forecast", label: "Forecast", icon: "🌤️" },
+    { href: "/logs", label: "Logs", icon: "📘" },
+    { href: "/notes", label: "Notes", icon: "📝" },
+    { href: "/activity/github", label: "GitHub", icon: "🐙" },
+  ];
+
+  const isActive = (href: string) => pathname === href;
+
+  const baseLinkStyle: React.CSSProperties = {
+    display: "flex",
+    alignItems: "center",
+    padding: "0.75rem 1rem",
+    borderRadius: "10px",
+    fontWeight: 500,
+    transition: "all 0.2s ease",
+  };
+
+  const activeStyle: React.CSSProperties = {
+    background: "rgba(255,255,255,0.18)",
+    boxShadow: "0 0 12px rgba(255,255,255,0.35)",
+    transform: "translateX(4px)",
+  };
 
   return (
     <aside
@@ -131,41 +160,24 @@ export default function ServerSidebar() {
           Apps
         </div>
 
-        <Link href="/" className="nav-active">
-          <span style={{ fontSize: "1.5rem", marginRight: "1rem" }}>🏠</span>
-          <span>Home</span>
-        </Link>
-        <Link href="/dashboard" className="nav-active">
-          <span style={{ fontSize: "1.5rem", marginRight: "1rem" }}>🏠</span>
-          <span>Dashboard</span>
-        </Link>
-        <Link href="/astronomy" className="nav-link">
-          <span style={{ fontSize: "1.5rem", marginRight: "1rem" }}>🌤️</span>
-          <span>Astronomy</span>
-        </Link>
-
-        <Link href="/forecast" className="nav-link">
-          <span style={{ fontSize: "1.5rem", marginRight: "1rem" }}>🌤️</span>
-          <span>Forecast</span>
-        </Link>
-
-        <Link href="/logs" className="nav-link">
-          <span style={{ fontSize: "1.5rem", marginRight: "1rem" }}>🌤️</span>
-          <span>Logs</span>
-        </Link>
-
-        <Link href="/notes" className="nav-link">
-          <span style={{ fontSize: "1.5rem", marginRight: "1rem" }}>📝</span>
-          <span>Notes</span>
-        </Link>
-
-        <Link href="/api/log-test" className="nav-link">
-          <span style={{ fontSize: "1.5rem", marginRight: "1rem" }}>🗺️</span>
-          <span>log-test</span>
-        </Link>
+        {navItems.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            style={{
+              ...baseLinkStyle,
+              ...(isActive(item.href) ? activeStyle : {}),
+            }}
+          >
+            <span style={{ fontSize: "1.5rem", marginRight: "1rem" }}>
+              {item.icon}
+            </span>
+            <span>{item.label}</span>
+          </Link>
+        ))}
       </nav>
 
-      {/* ✅ LOGOUT BUTTON */}
+      {/* Logout */}
       {session?.user && (
         <div
           style={{

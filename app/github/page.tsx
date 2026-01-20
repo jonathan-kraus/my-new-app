@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 async function fetchGitHubEvents(): Promise<GitHubActivityEvent[]> {
   const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/github-events`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/activity/github`,
     {
       cache: "no-store",
     },
