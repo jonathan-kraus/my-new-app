@@ -1,13 +1,16 @@
 // app/github/page.tsx
-import { GitHubActivityCard } from "@/app/components/github/GitHubActivityCard"
+import { GitHubActivityCard } from "@/app/components/github/GitHubActivityCard";
 import { GitHubActivityEvent } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
 async function fetchGitHubEvents(): Promise<GitHubActivityEvent[]> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/github-events`, {
-    cache: "no-store",
-  });
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/github-events`,
+    {
+      cache: "no-store",
+    },
+  );
 
   if (!res.ok) return [];
   const data = await res.json();

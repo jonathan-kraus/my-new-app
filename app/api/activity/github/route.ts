@@ -25,7 +25,7 @@ export async function GET(req: Request) {
       },
     );
 
-const query = `
+    const query = `
 ['github-events']
 | where repo == "jonathan-kraus/my-new-app"
 | limit 40
