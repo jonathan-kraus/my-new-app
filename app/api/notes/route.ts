@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
     }
 
     const notes = await db.note.findMany({
-      where: { userId: session.user.id },
+      where: { userEmail: session.user.email },
       orderBy: { createdAt: "desc" },
     });
     console.log("Duration lookup:", getRequestDuration(ctx.requestId));

@@ -116,30 +116,27 @@ model Log {
 model Note {
   id          String   @id @default(cuid())
   userId      String
+  userEmail   String   // ⭐ add this
   title       String?
   content     String    @db.Text
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
-  // Follow‑up / reminders
   followUpAt  DateTime?
   isCompleted Boolean   @default(false)
 
-  // Organization
   isArchived  Boolean   @default(false)
   pinned      Boolean   @default(false)
   tags        String[]  @default([])
 
-  // UI customization
   color       String?
 
   @@index([userId])
+  @@index([userEmail])   // ⭐ add this
   @@index([followUpAt])
   @@index([isCompleted])
   @@index([isArchived])
 }
-
-
 model RuntimeConfig {
   key       String   @id
   value     String
