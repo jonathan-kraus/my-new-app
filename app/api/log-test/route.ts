@@ -5,9 +5,8 @@ import { logit } from "@/lib/log/logit";
 
 export async function GET() {
   try {
-    const apl = ` ['github-events']
-    | sort by _time desc
-    | limit 7 `;
+    const apl = "['github-events'] | where repo == \"jonathan-kraus/my-new-app\" | sort by _time desc | limit 3";
+
     const result = await client.query(apl);
     const legacy = result as any;
     const rows = legacy?.result?.matches ?? [];
