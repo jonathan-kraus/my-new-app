@@ -33,21 +33,28 @@ export async function logit(domain: string, payload: any, meta: any = {}) {
 
   // Write to Neon immediately (no batching)
   try {
-    await db.log.create({
-      data: {
-        domain,
-        level: payload.level ?? "info",
-        message: payload.message ?? "",
-        requestId,
-        page: meta.page ?? null,
-        userId: meta.userId ?? null,
-        sessionEmail: payload.sessionEmail ?? null,
-        sessionUser: payload.sessionUser ?? null,
-        file: payload.file ?? null,
-        line: payload.line ?? null,
-        data: payload ?? null,
-      },
-    });
+await db.log.create({
+  data: {
+    domain,
+    level: payload.level ?? "info",
+    message: payload.message ?? "",
+    requestId,
+
+    // required by Prisma
+    timestamp: BigInt(Date.now()),
+    payload: payload ?? {},
+
+    // optional metadata
+    page: meta.page ?? null,
+    userId: meta.userId ?? null,
+    sessionEmail: payload.sessionEmail ?? null,
+    sessionUser: payload.sessionUser ?? null,
+    file: payload.file ?? null,
+    line: payload.line ?? null,
+    data: payload ?? null,
+  },
+});
+
   } catch (err) {
     const now = Date.now();
     if (now - lastErrorTime > ERROR_COOLDOWN_MS) {

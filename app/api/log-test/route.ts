@@ -1,73 +1,42 @@
 // app/api/log-test/route.ts
-"use server";
-
-import { NextResponse } from "next/server";
-import { logit } from "@/lib/log/logit";
-import { randomUUID } from "crypto";
 import { client } from "@/lib/axiom";
+import { NextResponse } from "next/server";
+import { logit } from '@/lib/log/logit';
 
-const axiom = new Axiom({
-  token: process.env.AXIOM_TOKEN!,
-});
 export async function GET() {
-  const requestId = randomUUID();
-
-  // #1
-  await logit(
-    "jonathan",
-    { level: "info", message: "GitHub test route started" },
-    { requestId },
-  );
-
-  // Safe APL query (no parentheses, no functions, no syntax errors)
-const apl = `
+  const apl = `
 ['github-events']
 | where repo == "jonathan-kraus/my-new-app"
-| limit 20 `;
-
-
+| limit 20
+`;
 
   try {
-    // #2
-    await logit(
-      "jonathan",
-      { level: "info", message: "Running GitHub APL query" },
-      { requestId },
-    );
-
-    try { const result = await client.query(apl); console.log("AXIOM RESULT", result); } catch (err) { console.error("AXIOM QUERY ERROR", err); }
-
-    // #3
-    await logit(
-      "jonathan",
-      { level: "info", message: "GitHub APL query completed" },
-      { requestId },
-    );
-  } catch (err: any) {
-    // #X (error)
-    await logit(
-      "jonathan",
-      {
-        level: "error",
-        message: "GitHub APL query failed",
-        error: err?.message ?? String(err),
-      },
-      { requestId },
-    );
-
-    return NextResponse.json(
-      { ok: false, error: "GitHub query failed", details: err?.message },
-      { status: 500 },
-    );
-  }
-
+    const result = await client.query(apl);
+    const rows = (result as any)?.data ?? [];
   // #4
   await logit(
     "jonathan",
     { level: "info", message: "GitHub test route completed" },
-    { requestId },
+    { result },
   );
+    console.log("AXIOM QUERY RESULT", rows);
 
-  const rows = (result as any)?.data ?? [];
-  return NextResponse.json({ ok: true, count: rows.length, events: rows });
+    return NextResponse.json({
+      ok: true,
+      count: rows.length,
+      events: rows,
+    });
+  } catch (err) {
+    console.error("AXIOM QUERY ERROR", err);
+
+    return NextResponse.json({
+      ok: false,
+      error: "Axiom query failed",
+      details: String(err),
+    });
+  }
 }
+
+
+
+
