@@ -6,7 +6,7 @@ type LogRecord = {
   id: string;
   level: string;
   message: string;
-  createdAt: string;
+  created_at: string;
   file: string | null;
   line: number | null;
   requestId: string;
@@ -256,7 +256,7 @@ export default function LogsPage() {
                       </div>
 
                       <div className="text-xs text-gray-400 whitespace-nowrap">
-                        {new Date(log.createdAt).toLocaleString()}
+                        {new Date(log.created_at).toLocaleString()}
                       </div>
                     </div>
 
