@@ -15,7 +15,7 @@ export async function GET() {
       { level: "info", message: "GitHub test route completed" },
       { count: rows.length },
     );
-
+, rows: rows
     return NextResponse.json({
       ok: true,
       count: rows.length,

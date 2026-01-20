@@ -61,7 +61,7 @@ export async function logit(domain: string, payload: any, meta: any = {}) {
         // Required by Prisma
         timestamp: BigInt(Date.now()),
         payload: safeForNeon(payload),
-
+        meta: safeForNeon(event.meta), // ⭐ THIS LINE FIXES IT
         // Optional metadata
         page: meta.page ?? null,
         userId: meta.userId ?? null,
