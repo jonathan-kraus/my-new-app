@@ -1,3 +1,4 @@
+// app\api\activity\github\route.ts
 import { NextResponse } from "next/server";
 import { Axiom } from "@axiomhq/js";
 import { logit } from "@/lib/log/logit";

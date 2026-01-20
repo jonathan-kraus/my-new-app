@@ -14,7 +14,7 @@ async function fetchGitHubEvents(): Promise<GitHubActivityEvent[]> {
 
   if (!res.ok) return [];
   const data = await res.json();
-  return data.events ?? [];
+  return data.actiity ?? [];
 }
 
 export default async function GitHubPage() {
