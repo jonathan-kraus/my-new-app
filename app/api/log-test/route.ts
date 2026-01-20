@@ -8,36 +8,31 @@ export async function GET() {
 ['github-events']
 | where repo == "jonathan-kraus/my-new-app"
 | sort by _time desc
-| limit 2
+| limit 3
 `;
 
   try {
     const result = await client.query(apl);
-    const rows = (result as any)?.data ?? [];
+    console.log("AXIOM RAW RESULT", result);
+const legacy = result as any;
+const rows = legacy?.result?.matches ?? [];
+
+
   // #4
   await logit(
     "jonathan",
     { level: "info", message: "GitHub test route completed" },
-    { result },
+    { legacy: legacy },
   );
     console.log("AXIOM QUERY RESULT", rows);
 
     return NextResponse.json({
-      ok: true,
-      count: rows.length,
-      events: rows,
-    });
-  } catch (err) {
-    console.error("AXIOM QUERY ERROR", err);
-
-    return NextResponse.json({
-      ok: false,
-      error: "Axiom query failed",
-      details: String(err),
-    });
-  }
+    ok: true,
+    count: rows.length,
+    events: rows,
+  });
+} catch (err) {
+  console.error("AXIOM QUERY ERROR", err);
+  return NextResponse.json({ ok: false, error: "Axiom query failed" });
 }
-
-
-
-
+}
