@@ -118,6 +118,7 @@ export async function POST(req: NextRequest) {
     const note = await db.note.create({
       data: {
         userId: session.user.id,
+        userEmail: session.user.email,
         title: body.title ?? "",
         content: body.content ?? "",
       },
