@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "vercel-build-id": "4",
   "private": true,
-  "packageManager": "pnpm@10.28.0",
+  "packageManager": "pnpm@10.28.1",
   "scripts": {
     "postinstall": "prisma generate",
     "prettier:check": "prettier --check . --ignore-path .prettierignore",
