@@ -4,9 +4,9 @@ import { NextResponse } from "next/server";
 import { logit } from '@/lib/log/logit';
 
 export async function GET() {
-  const apl = `
+const apl = `
 ['github-events']
-| where repo == "jonathan-kraus/my-new-app"
+| where data.repo == "jonathan-kraus/my-new-app"
 | sort by _time desc
 | limit 3
 `;
