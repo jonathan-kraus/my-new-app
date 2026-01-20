@@ -13,9 +13,9 @@ export async function GET() {
     await logit(
       "jonathan",
       { level: "info", message: "GitHub test route completed" },
-      { count: rows.length },
+      { count: rows.length, rows: rows },
     );
-, rows: rows
+
     return NextResponse.json({
       ok: true,
       count: rows.length,
