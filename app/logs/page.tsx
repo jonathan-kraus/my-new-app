@@ -116,7 +116,7 @@ export default function LogsPage() {
     const interval = setInterval(async () => {
       try {
         const newest = logs[0];
-        const since = newest?.createdAt ?? new Date(0).toISOString();
+        const since = newest?.created_at ?? new Date(0).toISOString();
 
         const params = new URLSearchParams();
         params.set("since", since);
