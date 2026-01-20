@@ -6,7 +6,7 @@ export async function GET() {
   const apl = `
 ['github-events']
 | where repo == "jonathan-kraus/my-new-app"
-| sort desc _time
+| sort by _time desc
 | limit 30
 `;
 
