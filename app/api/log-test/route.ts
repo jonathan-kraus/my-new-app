@@ -4,31 +4,25 @@ import { NextResponse } from "next/server";
 import { logit } from "@/lib/log/logit";
 
 export async function GET() {
-  try {
-    const result = await client.query({
-      dataset: "github-events",
-      filter: {
-        repo: "jonathan-kraus/my-new-app",
-      },
-      sort: [{ field: "_time", desc: true }],
-      limit: 3,
-    });
+	try {
+		const apl = ` ['github-events'] | where data.repo == "jonathan-kraus/my-new-app" | sort by _time desc | limit 3 `;
+		const result = await client.query(apl);
+		const legacy = result as any;
+		const rows = legacy?.result?.matches ?? [];
 
-    const rows = result.data ?? [];
+		await logit(
+			"jonathan",
+			{ level: "info", message: "GitHub test route completed" },
+			{ count: rows.length },
+		);
 
-    await logit(
-      "jonathan",
-      { level: "info", message: "GitHub test route completed" },
-      { count: rows.length }
-    );
-
-    return NextResponse.json({
-      ok: true,
-      count: rows.length,
-      events: rows,
-    });
-  } catch (err) {
-    console.error("AXIOM QUERY ERROR", err);
-    return NextResponse.json({ ok: false, error: "Axiom query failed" });
-  }
+		return NextResponse.json({
+			ok: true,
+			count: rows.length,
+			events: rows,
+		});
+	} catch (err) {
+		console.error("AXIOM QUERY ERROR", err);
+		return NextResponse.json({ ok: false, error: "Axiom query failed" });
+	}
 }
