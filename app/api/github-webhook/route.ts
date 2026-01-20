@@ -10,8 +10,8 @@ const axiom = new Axiom({
 });
 const ctx = {
   requestId: crypto.randomUUID(),
-  route: "cron:astronomy",
-  page: "cron",
+  route: "Github Webhook",
+  page: "workflow",
   userId: "JK",
 };
 // -----------------------------
@@ -58,7 +58,16 @@ function transformWorkflowRun(payload: any) {
 function normalizeGitHubEvent(event: string | null, payload: any) {
   const repo = payload.repository?.full_name ?? null;
   const actor = payload.sender?.login ?? null;
-
+// ⭐ Direct-to-DB debug write (safe, no recursion)
+writeGithubDebugEvent({
+  event,
+  repo,
+  actor,
+  status: payload.workflow_run?.status,
+  action: payload.action,
+  commit: payload.workflow_run?.head_commit?.message,
+  sha: payload.workflow_run?.head_sha,
+  raw: payload, });
   switch (event) {
     case "push":
       return {
@@ -115,6 +124,23 @@ function normalizeGitHubEvent(event: string | null, payload: any) {
         repo,
         actor,
       };
+  }
+}
+import { db } from "@/lib/db";
+
+export async function writeGithubDebugEvent(payload: any) {
+  try {
+    await db.githubDebug.create({
+      data: {
+        raw: payload,
+        status: payload.workflow_run?.status,
+        action: payload.action,
+        commit: payload.workflow_run?.head_commit?.message,
+        sha: payload.workflow_run?.head_sha,
+      },
+    });
+  } catch (err) {
+    console.error("Failed to write GitHub debug event", err);
   }
 }
 

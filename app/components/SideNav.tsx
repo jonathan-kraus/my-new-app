@@ -16,6 +16,7 @@ export default function ServerSidebar() {
     { href: "/logs", label: "Logs", icon: "📘" },
     { href: "/notes", label: "Notes", icon: "📝" },
     { href: "/github", label: "GitHub", icon: "🐙" },
+    { href: "/debug/github", label: "GitHub", icon: "🐙" },
   ];
 
   const isActive = (href: string) => pathname === href;

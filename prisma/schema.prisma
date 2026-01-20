@@ -61,6 +61,16 @@ model ForecastSnapshot {
 
   location Location @relation(fields: [locationId], references: [id])
 }
+model GithubDebug {
+  id         String   @id @default(cuid())
+  raw        Json
+  status     String?
+  action     String?
+  commit     String?
+  sha        String?
+  receivedAt DateTime @default(now())
+}
+
 model Location {
   id        String @id @default(cuid())
   key       String @unique
