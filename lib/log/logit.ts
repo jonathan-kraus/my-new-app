@@ -51,6 +51,8 @@ export async function logit(domain: string, payload: any, meta: any = {}) {
 
   // Write to Neon (safe, truncated if needed)
   try {
+    console.log("FINAL EVENT BEFORE WRITE", event);
+
     await db.log.create({
       data: {
         domain,
