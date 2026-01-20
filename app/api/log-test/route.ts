@@ -4,7 +4,7 @@
 import { NextResponse } from "next/server";
 import { logit } from "@/lib/log/logit";
 import { randomUUID } from "crypto";
-import { Axiom } from "@axiomhq/js";
+import { client } from "@/lib/axiom";
 
 const axiom = new Axiom({
   token: process.env.AXIOM_TOKEN!,
@@ -25,7 +25,7 @@ const apl = `
 | where repo == "jonathan-kraus/my-new-app"
 | limit 20 `;
 
-  let result = null;
+
 
   try {
     // #2
@@ -35,7 +35,7 @@ const apl = `
       { requestId },
     );
 
-    result = await axiom.query(apl);
+    try { const result = await client.query(apl); console.log("AXIOM RESULT", result); } catch (err) { console.error("AXIOM QUERY ERROR", err); }
 
     // #3
     await logit(
