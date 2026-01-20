@@ -52,7 +52,32 @@ model AstronomySnapshot {
 
   @@unique([locationId, date])
 }
+model EphemerisDebug {
+  id         String   @id @default(cuid())
+  locationId String?
+  fetchedAt  String?
+  createdAt  String?
+  date       String?
 
+  sunrise   String?
+  sunset    String?
+
+  moonrise  String?
+  moonset   String?
+  moonPhase Float?
+
+  sunriseBlueStart    String?
+  sunriseBlueEnd      String?
+  sunriseGoldenStart  String?
+  sunriseGoldenEnd    String?
+  sunsetGoldenStart   String?
+  sunsetGoldenEnd     String?
+  sunsetBlueStart     String?
+  sunsetBlueEnd       String?
+
+  raw        Json
+  receivedAt DateTime @default(now())
+}
 model ForecastSnapshot {
   id         String   @id @default(cuid())
   locationId String
