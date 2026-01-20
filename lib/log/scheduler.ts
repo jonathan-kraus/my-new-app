@@ -4,6 +4,8 @@
 import { flush } from "./flush";
 
 let started = false;
+console.log("AXIOM FLUSH", batch.length);
+console.log("AXIOM FLUSHING", JSON.stringify(batch, null, 2));
 
 export function startScheduler() {
   if (started) return;

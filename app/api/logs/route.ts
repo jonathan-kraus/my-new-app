@@ -26,5 +26,8 @@ export async function GET(req: NextRequest) {
     take: limit,
   });
 
-  return NextResponse.json({ logs });
-}
+return NextResponse.json({
+  logs: logs.map((l) => ({
+    ...l,
+    created_at: l.created_at.toISOString(), // ← FIX
+     })), })}

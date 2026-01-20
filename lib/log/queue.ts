@@ -7,6 +7,8 @@ let queue: InternalEvent[] = [];
 
 export function queueEvent(event: InternalEvent) {
   queue.push(event);
+  console.log("AXIOM QUEUE PUSH", event);
+
   return queue.length;
 }
 

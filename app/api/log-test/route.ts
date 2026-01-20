@@ -23,7 +23,6 @@ export async function GET() {
 const apl = `
 ['github-events']
 | where repo == "jonathan-kraus/my-new-app"
-| sort desc "data.updatedAt"
 | limit 20 `;
 
   let result = null;
