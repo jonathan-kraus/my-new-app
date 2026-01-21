@@ -51,8 +51,16 @@ export async function buildAstronomySnapshot(location: any, targetDate: Date) {
   targetDate.getMonth(),
   targetDate.getDate() );
   return {
-    // Store YYYY-MM-DD (safe for Prisma)
-    date: date.toISOString().slice(0, 10),
+    
+    date: new Date(
+  Date.UTC(
+    targetDate.getFullYear(),
+    targetDate.getMonth(),
+    targetDate.getDate(),
+    0, 0, 0, 0
+  )
+),
+
 
     // Solar
     sunrise: combineDateTime(date, astro.sunrise),
