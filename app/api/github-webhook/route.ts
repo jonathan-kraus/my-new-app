@@ -4,7 +4,7 @@ import { NextRequest } from "next/server";
 import crypto from "crypto";
 import { logit } from "@/lib/log/logit";
 import { Axiom } from "@axiomhq/js";
-
+import { getSha, getCommitMessage } from "@/lib/github/parse";
 const axiom = new Axiom({
   token: process.env.AXIOM_TOKEN!,
 });
@@ -65,8 +65,8 @@ writeGithubDebugEvent({
   actor,
   status: payload.workflow_run?.status,
   action: payload.action,
-  commit: payload.workflow_run?.head_commit?.message,
-  sha: payload.workflow_run?.head_sha,
+  commit: getCommitMessage(payload),
+  sha: getSha(payload),
   raw: payload, });
   switch (event) {
     case "push":

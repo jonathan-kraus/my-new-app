@@ -65,7 +65,7 @@ export function SolarCard({ today, nextSolar }: SolarCardProps) {
           <span className="font-semibold text-blue-200">Next solar event</span>
           {nextSolar && (
             <span className="text-xs text-gray-400">
-              {nextSolar.date.toLocaleTimeString()}
+              {nextSolar.date.toLocaleString("en-US", { timeZone: "America/New_York" })}
             </span>
           )}
         </div>
