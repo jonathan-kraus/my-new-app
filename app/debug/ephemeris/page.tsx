@@ -5,6 +5,7 @@ import { getNextEvent } from "@/lib/ephemeris/events";
 import { startOfDay, addDays } from "date-fns";
 import { getNextSolarEvent } from "@/lib/ephemeris/events";
 import { SolarCard } from "@/components/ephemeris/solarCard";
+import { formatEastern } from "@/lib/ephemeris/formatEastern";
 export const dynamic = "force-dynamic";
 
 export default async function DebugEPage() {
@@ -137,7 +138,7 @@ export default async function DebugEPage() {
                     </p>
                     <p className="text-sm text-gray-300">
                       <span className="font-semibold">Time:</span>{" "}
-                   formatEastern(next.date)
+                   {formatEastern(next.date)}
 
                     </p>
                   </div>
