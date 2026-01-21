@@ -1,4 +1,6 @@
 import { db } from "@/lib/db";
+import { writeEphemerisDebugEvent } from "@/lib/ephemeris/debugEvent";
+import { getNextEvent } from "@/lib/ephemeris/events";
 import { startOfDay, addDays } from "date-fns";
 
 export const dynamic = "force-dynamic";
@@ -24,6 +26,9 @@ export default async function DebugEPage() {
         }),
       ])
     : [null, null];
+
+const next = getNextEvent(todaySnap, tomorrowSnap);
+
 
   // Fetch debug entries (raw ephemeris logs)
   const debugEntries = await db.ephemerisDebug.findMany({
@@ -111,6 +116,33 @@ export default async function DebugEPage() {
                   {JSON.stringify(e.raw, null, 2)}
                 </pre>
               </details>
+              <section className="mt-10">
+  <h2 className="text-xl font-semibold text-blue-300">Next Event</h2>
+
+  {next ? (
+    <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 mt-2">
+      <p className="text-sm text-gray-300">
+        <span className="font-semibold">Type:</span> {next.type}
+      </p>
+      <p className="text-sm text-gray-300">
+        <span className="font-semibold">Time:</span>{" "}
+        {next.date.toLocaleString()}
+      </p>
+    </div>
+  ) : (
+    <p className="text-gray-400">No upcoming events.</p>
+  )}
+
+  <form action="" method="GET" className="mt-4">
+    <button
+      type="submit"
+      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded"
+    >
+      Refresh
+    </button>
+  </form>
+</section>
+
             </div>
           ))}
         </div>
