@@ -4,7 +4,8 @@ import { NextRequest } from "next/server";
 import crypto from "crypto";
 import { logit } from "@/lib/log/logit";
 import { Axiom } from "@axiomhq/js";
-import { getSha, getCommitMessage } from "@/lib/github/parse";
+import { getSha } from "@/lib/github/parse";
+import { getCommitMessage } from "@/lib/github";
 const axiom = new Axiom({
   token: process.env.AXIOM_TOKEN!,
 });
@@ -58,16 +59,17 @@ function transformWorkflowRun(payload: any) {
 function normalizeGitHubEvent(event: string | null, payload: any) {
   const repo = payload.repository?.full_name ?? null;
   const actor = payload.sender?.login ?? null;
-// ⭐ Direct-to-DB debug write (safe, no recursion)
-writeGithubDebugEvent({
-  event,
-  repo,
-  actor,
-  status: payload.workflow_run?.status,
-  action: payload.action,
-  commit: getCommitMessage(payload),
-  sha: getSha(payload),
-  raw: payload, });
+  // ⭐ Direct-to-DB debug write (safe, no recursion)
+  writeGithubDebugEvent({
+    event,
+    repo,
+    actor,
+    status: payload.workflow_run?.status,
+    action: payload.action,
+    commit: getCommitMessage(payload),
+    sha: getSha(payload),
+    raw: payload,
+  });
   switch (event) {
     case "push":
       return {

@@ -19,12 +19,12 @@ export function buildEventList(snapshot: any) {
     { type: "sunsetGoldenEnd", time: snapshot.sunsetGoldenEnd },
     { type: "sunsetBlueStart", time: snapshot.sunsetBlueStart },
     { type: "sunsetBlueEnd", time: snapshot.sunsetBlueEnd },
-  ].filter(e => e.time);
+  ].filter((e) => e.time);
 }
 
 // 2. Convert ISO strings to real Date objects
 export function normalizeEvents(events: any[]) {
-  return events.map(e => ({
+  return events.map((e) => ({
     ...e,
     date: new Date(e.time),
   }));
@@ -32,7 +32,7 @@ export function normalizeEvents(events: any[]) {
 
 // 3. Filter out events that already happened
 export function filterFutureEvents(events: any[], now: Date) {
-  return events.filter(e => e.date > now);
+  return events.filter((e) => e.date > now);
 }
 
 // 4. Pick the earliest upcoming event
@@ -73,7 +73,7 @@ export function getNextSolarEvent(todaySnap: any, tomorrowSnap: any) {
   const all = [
     ...normalizeEvents(buildEventList(todaySnap)),
     ...normalizeEvents(buildEventList(tomorrowSnap)),
-  ].filter(e => e.type.startsWith("sun"));
+  ].filter((e) => e.type.startsWith("sun"));
 
   const future = filterFutureEvents(all, now);
   return pickNextEvent(future);

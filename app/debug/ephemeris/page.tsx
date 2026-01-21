@@ -29,9 +29,8 @@ export default async function DebugEPage() {
       ])
     : [null, null];
 
-const next = getNextEvent(todaySnap, tomorrowSnap);
-const nextSolar = getNextSolarEvent(todaySnap, tomorrowSnap);
-
+  const next = getNextEvent(todaySnap, tomorrowSnap);
+  const nextSolar = getNextSolarEvent(todaySnap, tomorrowSnap);
 
   // Fetch debug entries (raw ephemeris logs)
   const debugEntries = await db.ephemerisDebug.findMany({
@@ -45,20 +44,25 @@ const nextSolar = getNextSolarEvent(todaySnap, tomorrowSnap);
 
       {/* DEFAULT LOCATION */}
       <section>
-        <h2 className="text-xl font-semibold text-blue-300">Default Location</h2>
+        <h2 className="text-xl font-semibold text-blue-300">
+          Default Location
+        </h2>
         {location ? (
           <div className="bg-gray-800 border border-gray-700 rounded-lg p-4">
             <p className="text-sm text-gray-300">
               <span className="font-semibold">Name:</span> {location.name}
             </p>
             <p className="text-sm text-gray-300">
-              <span className="font-semibold">Latitude:</span> {location.latitude}
+              <span className="font-semibold">Latitude:</span>{" "}
+              {location.latitude}
             </p>
             <p className="text-sm text-gray-300">
-              <span className="font-semibold">Longitude:</span> {location.longitude}
+              <span className="font-semibold">Longitude:</span>{" "}
+              {location.longitude}
             </p>
             <p className="text-sm text-gray-300">
-              <span className="font-semibold">Timezone:</span> {location.timezone}
+              <span className="font-semibold">Timezone:</span>{" "}
+              {location.timezone}
             </p>
           </div>
         ) : (
@@ -88,7 +92,9 @@ const nextSolar = getNextSolarEvent(todaySnap, tomorrowSnap);
 
       {/* RAW DEBUG ENTRIES */}
       <section>
-        <h2 className="text-xl font-semibold text-blue-300">Raw Ephemeris Debug Entries</h2>
+        <h2 className="text-xl font-semibold text-blue-300">
+          Raw Ephemeris Debug Entries
+        </h2>
 
         {debugEntries.length === 0 && (
           <p className="text-gray-400">No debug entries recorded.</p>
@@ -120,32 +126,34 @@ const nextSolar = getNextSolarEvent(todaySnap, tomorrowSnap);
                 </pre>
               </details>
               <section className="mt-10">
-  <h2 className="text-xl font-semibold text-blue-300">Next Event</h2>
+                <h2 className="text-xl font-semibold text-blue-300">
+                  Next Event
+                </h2>
 
-  {next ? (
-    <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 mt-2">
-      <p className="text-sm text-gray-300">
-        <span className="font-semibold">Type:</span> {next.type}
-      </p>
-      <p className="text-sm text-gray-300">
-        <span className="font-semibold">Time:</span>{" "}
-        {next.date.toLocaleString()}
-      </p>
-    </div>
-  ) : (
-    <p className="text-gray-400">No upcoming events.</p>
-  )}
+                {next ? (
+                  <div className="bg-gray-800 border border-gray-700 rounded-lg p-4 mt-2">
+                    <p className="text-sm text-gray-300">
+                      <span className="font-semibold">Type:</span> {next.type}
+                    </p>
+                    <p className="text-sm text-gray-300">
+                      <span className="font-semibold">Time:</span>{" "}
+                      {next.date.toLocaleString()}
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-gray-400">No upcoming events.</p>
+                )}
 
-  <form action="" method="GET" className="mt-4">
-    <button
-      type="submit"
-      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded"
-    >
-      Refresh
-    </button>
-  </form>
-</section>
-    <SolarCard today={todaySnap} nextSolar={nextSolar} />
+                <form action="" method="GET" className="mt-4">
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded"
+                  >
+                    Refresh
+                  </button>
+                </form>
+              </section>
+              <SolarCard today={todaySnap} nextSolar={nextSolar} />
             </div>
           ))}
         </div>

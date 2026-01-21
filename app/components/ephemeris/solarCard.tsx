@@ -65,14 +65,18 @@ export function SolarCard({ today, nextSolar }: SolarCardProps) {
           <span className="font-semibold text-blue-200">Next solar event</span>
           {nextSolar && (
             <span className="text-xs text-gray-400">
-              {nextSolar.date.toLocaleString("en-US", { timeZone: "America/New_York" })}
+              {nextSolar.date.toLocaleString("en-US", {
+                timeZone: "America/New_York",
+              })}
             </span>
           )}
         </div>
 
         {nextSolar ? (
           <>
-            <div className="mt-1 capitalize">{prettyEventLabel(nextSolar.type)}</div>
+            <div className="mt-1 capitalize">
+              {prettyEventLabel(nextSolar.type)}
+            </div>
             {countdown && (
               <div className="text-xs text-gray-400 mt-1">
                 {countdown} remaining
@@ -80,14 +84,20 @@ export function SolarCard({ today, nextSolar }: SolarCardProps) {
             )}
           </>
         ) : (
-          <div className="mt-1 text-gray-500 text-xs">No upcoming solar events.</div>
+          <div className="mt-1 text-gray-500 text-xs">
+            No upcoming solar events.
+          </div>
         )}
       </div>
     </div>
   );
 }
 
-function computeDayProgress(now: Date, sunrise: Date | null, sunset: Date | null) {
+function computeDayProgress(
+  now: Date,
+  sunrise: Date | null,
+  sunset: Date | null,
+) {
   if (!sunrise || !sunset) return NaN;
   if (now <= sunrise) return 0;
   if (now >= sunset) return 100;
