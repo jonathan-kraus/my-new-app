@@ -1,9 +1,11 @@
 "use client";
 
-import { authClient } from "@/lib/auth-client";
+import { useSession, signIn, signOut } from "next-auth/react";
 
 export default function ClientProfileCard() {
-  const { data: session } = authClient.useSession();
+  export default function ClientProfileCard() {
+    const { data: session, status } = useSession();
+  }
 
   const isLoggedIn = !!session?.user;
 

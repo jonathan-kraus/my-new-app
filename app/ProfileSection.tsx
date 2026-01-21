@@ -1,9 +1,11 @@
 "use client";
 export const dynamic = "force-dynamic";
 
-import { authClient } from "@/lib/auth-client";
+import { useSession, signIn, signOut } from "next-auth/react";
 export default function ProfileSection() {
-  const { data: session, isPending } = authClient.useSession();
+  export default function ClientProfileCard() {
+    const { data: session, status } = useSession();
+  }
 
   if (isPending) {
     return (

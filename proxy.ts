@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { markRequestStart } from "@/lib/log/timing";
 
+export { default } from "next-auth/middleware";
+export const config = { matcher: ["/notes/:path*", "/api/private/:path*"] };
 export function proxy(req: NextRequest) {
   const requestId = crypto.randomUUID();
 

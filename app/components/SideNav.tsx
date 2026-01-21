@@ -1,11 +1,12 @@
 "use client";
-
-import { authClient } from "@/lib/auth-client";
+import { useSession, signIn, signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 export default function ServerSidebar() {
-  const { data: session } = authClient.useSession();
+  export default function ClientProfileCard() {
+    const { data: session, status } = useSession();
+  }
   const pathname = usePathname();
 
   const navItems = [

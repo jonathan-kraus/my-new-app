@@ -138,8 +138,7 @@ export default async function DebugEPage() {
                     </p>
                     <p className="text-sm text-gray-300">
                       <span className="font-semibold">Time:</span>{" "}
-                   {formatEastern(next.date)}
-
+                      {formatEastern(next.date)}
                     </p>
                   </div>
                 ) : (
