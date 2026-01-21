@@ -76,7 +76,15 @@ export async function GET(req: NextRequest) {
 
           payload: {
             locationId: location.id,
-            date: targetDate.toISOString().slice(0, 10),
+            date: new Date(
+  Date.UTC(
+    targetDate.getFullYear(),
+    targetDate.getMonth(),
+    targetDate.getDate(),
+    0, 0, 0, 0
+  )
+),
+
           },
         },
         { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
