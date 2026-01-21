@@ -53,3 +53,28 @@ export function getNextEvent(todaySnap: any, tomorrowSnap: any) {
 
   return pickNextEvent(future);
 }
+export type EphemerisEventType =
+  | "sunrise"
+  | "sunset"
+  | "sunriseBlueStart"
+  | "sunriseBlueEnd"
+  | "sunriseGoldenStart"
+  | "sunriseGoldenEnd"
+  | "sunsetGoldenStart"
+  | "sunsetGoldenEnd"
+  | "sunsetBlueStart"
+  | "sunsetBlueEnd"
+  | "moonrise"
+  | "moonset";
+
+export function getNextSolarEvent(todaySnap: any, tomorrowSnap: any) {
+  const now = new Date();
+
+  const all = [
+    ...normalizeEvents(buildEventList(todaySnap)),
+    ...normalizeEvents(buildEventList(tomorrowSnap)),
+  ].filter(e => e.type.startsWith("sun"));
+
+  const future = filterFutureEvents(all, now);
+  return pickNextEvent(future);
+}

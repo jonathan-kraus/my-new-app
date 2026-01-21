@@ -1,8 +1,10 @@
+// app\debug\ephemeris\page.tsx
 import { db } from "@/lib/db";
 import { writeEphemerisDebugEvent } from "@/lib/ephemeris/debugEvent";
 import { getNextEvent } from "@/lib/ephemeris/events";
 import { startOfDay, addDays } from "date-fns";
-
+import { getNextSolarEvent } from "@/lib/ephemeris/events";
+import { SolarCard } from "@/components/ephemeris/solarCard";
 export const dynamic = "force-dynamic";
 
 export default async function DebugEPage() {
@@ -28,6 +30,7 @@ export default async function DebugEPage() {
     : [null, null];
 
 const next = getNextEvent(todaySnap, tomorrowSnap);
+const nextSolar = getNextSolarEvent(todaySnap, tomorrowSnap);
 
 
   // Fetch debug entries (raw ephemeris logs)
@@ -142,7 +145,7 @@ const next = getNextEvent(todaySnap, tomorrowSnap);
     </button>
   </form>
 </section>
-
+    <SolarCard today={todaySnap} nextSolar={nextSolar} />
             </div>
           ))}
         </div>
