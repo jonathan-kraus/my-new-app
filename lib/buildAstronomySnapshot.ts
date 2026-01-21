@@ -21,15 +21,6 @@ function calculateMoonPhase(date: Date): number {
   return Number(phase.toFixed(4));
 }
 
-function combineDateTime(date: Date, timeStr: string): string {
-  const [hour, minute] = timeStr.split(":");
-  const yyyy = date.getFullYear();
-  const mm = String(date.getMonth() + 1).padStart(2, "0");
-  const dd = String(date.getDate()).padStart(2, "0");
-
-  return `${yyyy}-${mm}-${dd} ${hour}:${minute}:00`;
-}
-
 async function fetchIPGeoAstronomy(lat: number, lon: number, date: Date) {
   const day = format(date, "yyyy-MM-dd");
 
@@ -48,44 +39,61 @@ async function fetchIPGeoAstronomy(lat: number, lon: number, date: Date) {
   return json.astronomy;
 }
 
+
+
 export async function buildAstronomySnapshot(location: any, targetDate: Date) {
   const { latitude, longitude } = location;
+  // Fetch astronomy data for this location/date
   const astro = await fetchIPGeoAstronomy(latitude, longitude, targetDate);
 
-  const date = new Date(
-    targetDate.getFullYear(),
-    targetDate.getMonth(),
-    targetDate.getDate(),
-  );
-
+  // Force targetDate to local midnight (Eastern)
+  const date = new Date( targetDate.getFullYear(),
+  targetDate.getMonth(),
+  targetDate.getDate() );
   return {
-    date,
+    // Store YYYY-MM-DD (safe for Prisma)
+    date: date.toISOString().slice(0, 10),
 
-    // Solar (flat for Prisma)
+    // Solar
     sunrise: combineDateTime(date, astro.sunrise),
     sunset: combineDateTime(date, astro.sunset),
-
     sunriseBlueStart: combineDateTime(date, astro.morning.blue_hour_begin),
     sunriseBlueEnd: combineDateTime(date, astro.morning.blue_hour_end),
     sunriseGoldenStart: combineDateTime(date, astro.morning.golden_hour_begin),
     sunriseGoldenEnd: combineDateTime(date, astro.morning.golden_hour_end),
-
     sunsetBlueStart: combineDateTime(date, astro.evening.blue_hour_begin),
     sunsetBlueEnd: combineDateTime(date, astro.evening.blue_hour_end),
     sunsetGoldenStart: combineDateTime(date, astro.evening.golden_hour_begin),
     sunsetGoldenEnd: combineDateTime(date, astro.evening.golden_hour_end),
 
-    // Lunar (flat for Prisma)
-    moonrise: normalizeMoonTime(astro.moonrise)
-      ? combineDateTime(date, astro.moonrise)
-      : "",
-    moonset: normalizeMoonTime(astro.moonset)
-      ? combineDateTime(date, astro.moonset)
-      : "",
-    moonPhase: calculateMoonPhase(date),
-
+    // Lunar
+    moonrise: normalizeMoonTime(astro.moonrise) ? combineDateTime(date, astro.moonrise) : null, moonset: normalizeMoonTime(astro.moonset) ? combineDateTime(date, astro.moonset) : null, moonPhase: calculateMoonPhase(date),
     // Metadata
     fetchedAt: new Date(),
-    locationId: location.id,
-  };
+    locationId: location.id, }; }
+
+function combineDateTime(date: Date, timeStr: string): string {
+  const [hour, minute] = timeStr.split(":").map(Number);
+
+  // Build a local Eastern Time date using Intl
+  const eastern = new Date(
+    Date.UTC(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      hour + 5, // convert ET → UTC (ET = UTC-5)
+      minute,
+      0,
+      0
+    )
+  );
+
+  // Format as ISO with offset -05:00
+  const iso = eastern.toLocaleString("sv-SE", {
+    timeZone: "America/New_York",
+    hour12: false,
+  });
+
+  // Convert "2026-01-21 07:59:00" → "2026-01-21T07:59:00-05:00"
+  return iso.replace(" ", "T") + "-05:00";
 }
