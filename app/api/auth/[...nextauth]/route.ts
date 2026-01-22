@@ -14,9 +14,9 @@ const handler = NextAuth({
   },
 
   callbacks: {
-    async jwt({ token, account, profile }) {
-      if (account) {
-        token.githubId = profile?.id;
+    async jwt({ token, account }) {
+      if (account?.provider === "github") {
+        token.githubId = account.providerAccountId;
       }
       return token;
     },

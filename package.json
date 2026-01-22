@@ -7,7 +7,7 @@
   "scripts": {
     "postinstall": "prisma generate",
     "prettier:check": "prettier --check . --ignore-path .prettierignore",
-    "prettier:fix": "prettier --write . --ignore-path .prettierignore",
+    "pfix": "prettier --write . --ignore-path .prettierignore",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

@@ -3,10 +3,9 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export default function ServerSidebar() {
-  export default function ClientProfileCard() {
-    const { data: session, status } = useSession();
-  }
+export default function SideNav() {
+  //const { data: session, status } = useSession();
+
   const pathname = usePathname();
 
   const navItems = [
@@ -81,64 +80,6 @@ export default function ServerSidebar() {
         </p>
       </div>
 
-      {/* User */}
-      <div
-        style={{
-          padding: "1.5rem",
-          borderBottom: "1px solid rgba(255,255,255,0.1)",
-        }}
-      >
-        {session?.user ? (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "1rem",
-              padding: "1rem",
-              background: "rgba(255,255,255,0.15)",
-              borderRadius: "12px",
-              border: "1px solid rgba(255,255,255,0.2)",
-            }}
-          >
-            <div
-              style={{
-                width: "48px",
-                height: "48px",
-                borderRadius: "50%",
-                background: "rgba(255,255,255,0.3)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: "1.25rem",
-              }}
-            >
-              👤
-            </div>
-            <div>
-              <p
-                style={{
-                  fontWeight: "600",
-                  margin: "0 0 0.25rem 0",
-                  fontSize: "0.95rem",
-                }}
-              >
-                {session.user.name || "User"}
-              </p>
-              <p style={{ margin: 0, fontSize: "0.8rem", opacity: 0.8 }}>
-                {session.user.email}
-              </p>
-            </div>
-          </div>
-        ) : (
-          <button
-            onClick={() => authClient.signIn.social({ provider: "github" })}
-            className="w-full px-3 py-2 rounded-md bg-green-600 hover:bg-green-700 transition-colors"
-          >
-            🔐 Sign In
-          </button>
-        )}
-      </div>
-
       {/* Navigation */}
       <nav
         style={{
@@ -178,69 +119,6 @@ export default function ServerSidebar() {
           </Link>
         ))}
       </nav>
-
-      {/* Logout */}
-      {session?.user && (
-        <div
-          style={{
-            padding: "1rem 1.5rem",
-            borderTop: "1px solid rgba(255,255,255,0.1)",
-            marginTop: "auto",
-          }}
-        >
-          <button
-            onClick={() => authClient.signOut()}
-            style={{
-              width: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "0.75rem",
-              padding: "0.875rem 1.25rem",
-              background: "rgba(239,68,68,0.2)",
-              color: "white",
-              border: "1px solid rgba(239,68,68,0.4)",
-              borderRadius: "12px",
-              fontWeight: "600",
-              fontSize: "0.95rem",
-              cursor: "pointer",
-              transition: "all 0.2s ease",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "rgba(239,68,68,0.3)";
-              e.currentTarget.style.transform = "scale(1.02)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "rgba(239,68,68,0.2)";
-              e.currentTarget.style.transform = "scale(1)";
-            }}
-          >
-            <span>🚪</span>
-            <span>Logout</span>
-          </button>
-        </div>
-      )}
-
-      {/* Footer */}
-      {!session?.user && (
-        <div
-          style={{
-            padding: "1.5rem",
-            borderTop: "1px solid rgba(255,255,255,0.1)",
-          }}
-        >
-          <p
-            style={{
-              fontSize: "0.75rem",
-              color: "rgba(255,255,255,0.6)",
-              textAlign: "center",
-              margin: 0,
-            }}
-          >
-            Powered by Neon & Next.js
-          </p>
-        </div>
-      )}
     </aside>
   );
 }

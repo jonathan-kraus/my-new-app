@@ -40,8 +40,12 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const email = session?.user?.email;
+    if (!email) {
+      return new Response("Unauthorized", { status: 401 });
+    }
     const notes = await db.note.findMany({
-      where: { userEmail: session.user.email },
+      where: { userEmail: email },
       orderBy: { createdAt: "desc" },
     });
     console.log("Duration lookup:", getRequestDuration(ctx.requestId));
@@ -117,10 +121,17 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
+    const userId = session?.user?.id;
+    const email = session?.user?.email;
+
+    if (!userId || !email) {
+      return new Response("Unauthorized", { status: 401 });
+    }
+
     const note = await db.note.create({
       data: {
-        userId: session.user.id,
-        userEmail: session.user.email,
+        userId,
+        userEmail: email,
         title: body.title ?? "",
         content: body.content ?? "",
       },
