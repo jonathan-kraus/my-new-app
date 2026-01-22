@@ -1,6 +1,6 @@
 // app/api/notes/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
+import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { logit } from "@/lib/log/logit";
 import { enrichContext } from "@/lib/log/context";
@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
   );
 
   try {
-    const session = await getServerSession();
+    const session = await auth();
 
     if (!session?.user) {
       await logit(
@@ -104,7 +104,7 @@ export async function POST(req: NextRequest) {
   );
 
   try {
-    const session = await getServerSession();
+    const session = await auth();
 
     if (!session?.user) {
       await logit(

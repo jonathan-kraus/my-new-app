@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { z } from "zod";
 import { logit } from "@/lib/log/logit";
 import { enrichContext } from "@/lib/log/context";
-import { getServerSession } from "next-auth";
+import { auth } from "@/auth";
 import { NextRequest } from "next/server";
 
 const API_KEY = process.env.TOMORROWIO_APIKEY!;
@@ -47,7 +47,7 @@ const DEFAULT_CURRENT_MIN = Number(process.env.WEATHER_CACHE_MINUTES ?? 10);
 const DEFAULT_FORECAST_MIN = Number(process.env.FORECAST_CACHE_MINUTES ?? 30);
 
 export async function GET(req: NextRequest) {
-  const session = await getServerSession();
+  const session = await auth();
 
   const { searchParams } = new URL(req.url);
   const locationId = searchParams.get("locationId");

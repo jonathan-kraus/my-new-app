@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server";
-import { getServerSession } from "next-auth";
+import { auth } from "@/auth";
 import { markRequestStart } from "@/lib/log/timing";
 
 let eventCounter = 0;
@@ -22,7 +22,7 @@ export async function enrichContext(req: NextRequest) {
   let userId: string | undefined = undefined;
 
   try {
-    const session = await getServerSession();
+    const session = await auth();
     sessionEmail = session?.user?.email ?? undefined;
     userId = session?.user?.id ?? undefined;
   } catch {}

@@ -1,5 +1,5 @@
 // app/page.tsx
-import { getServerSession } from "next-auth";
+import { auth } from "@/auth";
 import { headers } from "next/headers";
 import { logit } from "@/lib/log/logit";
 import { Button } from "@/components/ui/button";
@@ -24,7 +24,7 @@ function getGreeting(): string {
 
 export default async function HomePage() {
   const h = await headers(); // ✅ await the Promise
-  const session = await getServerSession();
+  const session = await auth();
 
   const { today, tomorrow } = await loadAstronomySnapshots();
 

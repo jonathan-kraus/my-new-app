@@ -1,11 +1,11 @@
-import { getServerSession } from "next-auth";
+import { auth } from "@/auth";
 import { headers } from "next/headers";
 import BlueDashboardLayout from "@/components/layouts/BlueDashboardLayout";
 import NewNoteClient from "./NewNoteClient";
 
 export default async function NewNotePage() {
   const h = await headers(); // ✅ await the Promise
-  const session = await getServerSession();
+  const session = await auth();
 
   return (
     <BlueDashboardLayout>

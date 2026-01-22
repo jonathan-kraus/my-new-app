@@ -1,20 +1,21 @@
-// proxy.ts
+// proxy.ts (NextAuth v5 middleware)
+import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { markRequestStart } from "@/lib/log/timing";
 
-export { default } from "next-auth/middleware";
-export const config = { matcher: ["/notes/:path*", "/api/private/:path*"] };
-export function proxy(req: NextRequest) {
-  const requestId = crypto.randomUUID();
+export async function proxy(req: NextRequest) {
+  markRequestStart(req.url);
 
-  const requestHeaders = new Headers(req.headers);
-  requestHeaders.set("x-request-id", requestId);
+  const session = await auth();
 
-  // Start timing
-  markRequestStart(requestId);
+  if (!session) {
+    return NextResponse.redirect(new URL("/api/auth/signin", req.url));
+  }
 
-  return NextResponse.next({
-    request: { headers: requestHeaders },
-  });
+  return NextResponse.next();
 }
+
+export const config = {
+  matcher: ["/notes/:path*", "/api/private/:path*"],
+};
