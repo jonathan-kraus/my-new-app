@@ -134,7 +134,8 @@ export async function GET(req: Request) {
     "weather",
     {
       level: "info",
-      message: "Forecast snapshot stored",
+      message: `Forecast snapshot stored, ${Math.round(weather.current_weather.temperature)}°F`,
+
       payload: { snapshotId: snapshot.id },
     },
     { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
