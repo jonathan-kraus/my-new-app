@@ -97,7 +97,15 @@ export async function GET(req: Request) {
 
   const raw = await weatherRes.json();
   const parsed = ForecastResponseSchema.safeParse(raw);
-
+  await logit(
+    "weather",
+    {
+      level: "info",
+      message: "Forecast API response",
+      payload: parsed,
+    },
+    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+  );
   if (!parsed.success) {
     await logit(
       "weather",

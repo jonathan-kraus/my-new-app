@@ -56,7 +56,7 @@ export async function GET(req: NextRequest) {
       "notes",
       {
         level: "info",
-        message: "Notes GET completed",
+        message: `Notes GET completed ${notes.length}`,
         payload: {
           durationMs,
           eventIndex: ctx.eventIndex,

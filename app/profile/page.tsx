@@ -25,13 +25,20 @@ export default async function ProfilePage() {
 
       {session && (
         <div className="space-y-4">
-<div className="space-y-2">
-  <p><strong>Name:</strong> {session.user?.name}</p>
-  <p><strong>User ID:</strong> {session.user?.id}</p>
-  <p><strong>Email:</strong> {session.user?.email}</p>
-  <p><strong>Session Expires:</strong> {session.expires}</p>
-</div>
-
+          <div className="space-y-2">
+            <p>
+              <strong>Name:</strong> {session.user?.name}
+            </p>
+            <p>
+              <strong>User ID:</strong> {session.user?.id}
+            </p>
+            <p>
+              <strong>Email:</strong> {session.user?.email}
+            </p>
+            <p>
+              <strong>Session Expires:</strong> {session.expires}
+            </p>
+          </div>
 
           <form
             action={async () => {

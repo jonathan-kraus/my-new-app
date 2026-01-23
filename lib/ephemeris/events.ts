@@ -67,14 +67,29 @@ export type EphemerisEventType =
   | "moonrise"
   | "moonset";
 
-export function getNextSolarEvent(todaySnap: any, tomorrowSnap: any) {
+export type SolarSnapshot = {
+  date: string;
+  sunrise: string;
+  sunset: string;
+  daylightPercent: number;
+  nextEvent: {
+    name: string;
+    time: string;
+    countdown: string;
+  };
+  fetchedAt: string;
+};
+
+function calculateDaylightProgress(snapshot: any): number {
   const now = new Date();
+  const sunrise = new Date(snapshot.sunrise);
+  const sunset = new Date(snapshot.sunset);
 
-  const all = [
-    ...normalizeEvents(buildEventList(todaySnap)),
-    ...normalizeEvents(buildEventList(tomorrowSnap)),
-  ].filter((e) => e.type.startsWith("sun"));
+  if (now < sunrise) return 0;
+  if (now > sunset) return 100;
 
-  const future = filterFutureEvents(all, now);
-  return pickNextEvent(future);
+  const total = sunset.getTime() - sunrise.getTime();
+  const elapsed = now.getTime() - sunrise.getTime();
+
+  return Math.round((elapsed / total) * 100);
 }

@@ -3,10 +3,13 @@ import { db } from "@/lib/db";
 import { writeEphemerisDebugEvent } from "@/lib/ephemeris/debugEvent";
 import { getNextEvent } from "@/lib/ephemeris/events";
 import { startOfDay, addDays } from "date-fns";
-import { getNextSolarEvent } from "@/lib/ephemeris/events";
-import { SolarCard } from "@/components/ephemeris/solarCard";
+import { getNextSolarEvent } from "@/lib/ephemeris/getNextSolarEvent";
+import SolarCard from "@/app/components/ephemeris/SolarCard";
 import { formatEastern } from "@/lib/ephemeris/formatEastern";
 export const dynamic = "force-dynamic";
+import { getEphemerisSnapshot } from "@/lib/ephemeris/getEphemerisSnapshot";
+
+const ephemeris = await getEphemerisSnapshot("KOP");
 
 export default async function DebugEPage() {
   // Find the default location
@@ -154,7 +157,8 @@ export default async function DebugEPage() {
                   </button>
                 </form>
               </section>
-              <SolarCard today={todaySnap} nextSolar={nextSolar} />
+
+              <SolarCard snapshot={ephemeris.solar} />
             </div>
           ))}
         </div>
