@@ -13,6 +13,18 @@ export default function NotesClient() {
   const [editContent, setEditContent] = useState("");
   const [editNeedsFollowUp, setEditNeedsFollowUp] = useState(false);
   const [editFollowUpDate, setEditFollowUpDate] = useState("");
+  const [editColor, setEditColor] = useState("");
+
+  const colorOptions = [
+    { value: "", label: "None", className: "bg-gray-500" },
+    { value: "red", label: "Red", className: "bg-red-500" },
+    { value: "blue", label: "Blue", className: "bg-blue-500" },
+    { value: "green", label: "Green", className: "bg-green-500" },
+    { value: "yellow", label: "Yellow", className: "bg-yellow-500" },
+    { value: "purple", label: "Purple", className: "bg-purple-500" },
+    { value: "pink", label: "Pink", className: "bg-pink-500" },
+    { value: "orange", label: "Orange", className: "bg-orange-500" },
+  ];
   const [notes, setNotes] = useState<any[] | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
 
@@ -79,6 +91,7 @@ export default function NotesClient() {
     setEditContent(note.content || "");
     setEditNeedsFollowUp(!!note.followUpAt);
     setEditFollowUpDate(note.followUpAt ? new Date(note.followUpAt).toISOString().slice(0, 16) : "");
+    setEditColor(note.color || "");
   };
 
   const handleArchive = async (id: string) => {
@@ -113,6 +126,7 @@ export default function NotesClient() {
           title: editTitle,
           content: editContent,
           followUpAt: editNeedsFollowUp && editFollowUpDate ? new Date(editFollowUpDate).toISOString() : null,
+          color: editColor || null,
         }),
       });
 
@@ -126,6 +140,7 @@ export default function NotesClient() {
         setEditContent("");
         setEditNeedsFollowUp(false);
         setEditFollowUpDate("");
+        setEditColor("");
         toast.success("Note updated successfully");
       } else {
         toast.error("Failed to update note");
@@ -141,6 +156,7 @@ export default function NotesClient() {
     setEditContent("");
     setEditNeedsFollowUp(false);
     setEditFollowUpDate("");
+    setEditColor("");
   };
 
   if (authorized === null) {
@@ -177,7 +193,9 @@ export default function NotesClient() {
       )}
 
       {filteredNotes?.map((note) => (
-        <div key={note.id} className="mb-4 p-4 border rounded bg-white/10 backdrop-blur-md">
+        <div key={note.id} className={`mb-4 p-4 border rounded backdrop-blur-md ${
+          note.color ? `bg-${note.color}-500/20 border-${note.color}-500/30` : 'bg-white/10'
+        }`}>
           {editingId === note.id ? (
             <div>
               <input
@@ -218,6 +236,25 @@ export default function NotesClient() {
                 )}
               </div>
               
+              <div className="mt-3">
+                <label className="block text-white text-sm mb-2">Color:</label>
+                <div className="flex gap-2 flex-wrap">
+                  {colorOptions.map((colorOption) => (
+                    <button
+                      key={colorOption.value}
+                      type="button"
+                      onClick={() => setEditColor(colorOption.value)}
+                      className={`w-6 h-6 rounded-full border-2 ${colorOption.className} ${
+                        editColor === colorOption.value 
+                          ? 'border-white ring-2 ring-white/50' 
+                          : 'border-white/30 hover:border-white/60'
+                      }`}
+                      title={colorOption.label}
+                    />
+                  ))}
+                </div>
+              </div>
+              
               <div className="mt-2 flex gap-2">
                 <button
                   onClick={handleSaveEdit}
@@ -236,7 +273,12 @@ export default function NotesClient() {
           ) : (
             <div>
               <div className="flex justify-between items-start mb-2">
-                <h2 className="font-semibold text-lg">{note.title || "Untitled"}</h2>
+                <div className="flex items-center gap-2">
+                  {note.color && (
+                    <div className={`w-4 h-4 rounded-full bg-${note.color}-500`} />
+                  )}
+                  <h2 className="font-semibold text-lg">{note.title || "Untitled"}</h2>
+                </div>
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleEdit(note)}

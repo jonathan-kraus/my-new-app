@@ -13,9 +13,21 @@ export default function NewNoteClient({ authorized, userId }: Props) {
   const [content, setContent] = useState("");
   const [needsFollowUp, setNeedsFollowUp] = useState(false);
   const [followUpDate, setFollowUpDate] = useState("");
+  const [color, setColor] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+
+  const colorOptions = [
+    { value: "", label: "None", className: "bg-gray-500" },
+    { value: "red", label: "Red", className: "bg-red-500" },
+    { value: "blue", label: "Blue", className: "bg-blue-500" },
+    { value: "green", label: "Green", className: "bg-green-500" },
+    { value: "yellow", label: "Yellow", className: "bg-yellow-500" },
+    { value: "purple", label: "Purple", className: "bg-purple-500" },
+    { value: "pink", label: "Pink", className: "bg-pink-500" },
+    { value: "orange", label: "Orange", className: "bg-orange-500" },
+  ];
   const ctx = {
     requestId: crypto.randomUUID(),
     page: "note",
@@ -34,7 +46,8 @@ export default function NewNoteClient({ authorized, userId }: Props) {
         body: JSON.stringify({ 
           title, 
           content,
-          followUpAt: needsFollowUp && followUpDate ? new Date(followUpDate).toISOString() : null
+          followUpAt: needsFollowUp && followUpDate ? new Date(followUpDate).toISOString() : null,
+          color: color || null
         }),
       });
 
@@ -48,6 +61,7 @@ export default function NewNoteClient({ authorized, userId }: Props) {
         setContent("");
         setNeedsFollowUp(false);
         setFollowUpDate("");
+        setColor("");
         setTimeout(() => {
           window.location.href = "/notes";
         }, 1500);
@@ -122,6 +136,25 @@ export default function NewNoteClient({ authorized, userId }: Props) {
             />
           </div>
         )}
+      </div>
+
+      <div className="mt-4">
+        <label className="block text-white text-sm mb-2">Color:</label>
+        <div className="flex gap-2 flex-wrap">
+          {colorOptions.map((colorOption) => (
+            <button
+              key={colorOption.value}
+              type="button"
+              onClick={() => setColor(colorOption.value)}
+              className={`w-8 h-8 rounded-full border-2 ${colorOption.className} ${
+                color === colorOption.value 
+                  ? 'border-white ring-2 ring-white/50' 
+                  : 'border-white/30 hover:border-white/60'
+              }`}
+              title={colorOption.label}
+            />
+          ))}
+        </div>
       </div>
 
       {error && <p className="text-red-300 mt-3 text-sm">{error}</p>}

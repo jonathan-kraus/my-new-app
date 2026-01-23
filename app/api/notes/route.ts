@@ -138,8 +138,24 @@ export async function POST(req: NextRequest) {
         title: body.title ?? "",
         content: body.content ?? "",
         followUpAt: body.followUpAt ? new Date(body.followUpAt) : null,
+        color: body.color ?? null,
       },
     });
+
+    await logit(
+      "notes",
+      {
+        level: "info",
+        message: `Note created: ${note.title || 'Untitled'} by ${email}`,
+        payload: { 
+          noteId: note.id, 
+          title: note.title,
+          action: "created",
+          userEmail: email
+        },
+      },
+      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+    );
 
     const durationMs = getRequestDuration(ctx.requestId);
 
@@ -187,11 +203,16 @@ export async function PUT(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { id, title, content, followUpAt, isArchived } = body;
+    const { id, title, content, followUpAt, isArchived, color } = body;
 
     if (!id) {
       return NextResponse.json({ error: "Note ID required" }, { status: 400 });
     }
+
+    // Get the original note for logging changes
+    const originalNote = await db.note.findUnique({
+      where: { id },
+    });
 
     const note = await db.note.updateMany({
       where: { 
@@ -203,6 +224,7 @@ export async function PUT(req: NextRequest) {
         ...(content !== undefined && { content }),
         ...(followUpAt !== undefined && { followUpAt: followUpAt ? new Date(followUpAt) : null }),
         ...(isArchived !== undefined && { isArchived }),
+        ...(color !== undefined && { color }),
       },
     });
 
@@ -213,6 +235,52 @@ export async function PUT(req: NextRequest) {
     const updatedNote = await db.note.findUnique({
       where: { id },
     });
+
+    // Log the specific action taken
+    let actionMessage = "";
+    if (isArchived) {
+      actionMessage = `Note archived: ${originalNote?.title || 'Untitled'} by ${email}`;
+    } else {
+      const changes = [];
+      if (title !== undefined && title !== originalNote?.title) {
+        changes.push(`title: "${originalNote?.title}" → "${title}"`);
+      }
+      if (content !== undefined && content !== originalNote?.content) {
+        changes.push(`content updated`);
+      }
+      if (followUpAt !== undefined) {
+        const oldFollowUp = originalNote?.followUpAt ? new Date(originalNote.followUpAt).toLocaleString() : 'none';
+        const newFollowUp = followUpAt ? new Date(followUpAt).toLocaleString() : 'none';
+        changes.push(`followUp: ${oldFollowUp} → ${newFollowUp}`);
+      }
+      if (color !== undefined && color !== originalNote?.color) {
+        changes.push(`color: ${originalNote?.color || 'none'} → ${color || 'none'}`);
+      }
+      
+      actionMessage = `Note edited: ${originalNote?.title || 'Untitled'} by ${email} - ${changes.join(', ')}`;
+    }
+
+    await logit(
+      "notes",
+      {
+        level: "info",
+        message: actionMessage,
+        payload: { 
+          noteId: id,
+          title: originalNote?.title,
+          action: isArchived ? "archived" : "edited",
+          userEmail: email,
+          changes: {
+            title: title !== originalNote?.title,
+            content: content !== originalNote?.content,
+            followUpAt: followUpAt !== originalNote?.followUpAt,
+            color: color !== originalNote?.color,
+            isArchived
+          }
+        },
+      },
+      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+    );
 
     return NextResponse.json({ note: updatedNote });
   } catch (err: any) {
@@ -258,6 +326,11 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: "Note ID required" }, { status: 400 });
     }
 
+    // Get the note before deletion for logging
+    const noteToDelete = await db.note.findUnique({
+      where: { id },
+    });
+
     const note = await db.note.deleteMany({
       where: { 
         id,
@@ -268,6 +341,21 @@ export async function DELETE(req: NextRequest) {
     if (note.count === 0) {
       return NextResponse.json({ error: "Note not found" }, { status: 404 });
     }
+
+    await logit(
+      "notes",
+      {
+        level: "info",
+        message: `Note deleted: ${noteToDelete?.title || 'Untitled'} by ${email}`,
+        payload: { 
+          noteId: id,
+          title: noteToDelete?.title,
+          action: "deleted",
+          userEmail: email
+        },
+      },
+      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+    );
 
     return NextResponse.json({ success: true });
   } catch (err: any) {
