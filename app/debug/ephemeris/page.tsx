@@ -5,6 +5,7 @@ import { getNextEvent } from "@/lib/ephemeris/events";
 import { startOfDay, addDays } from "date-fns";
 import { getNextSolarEvent } from "@/lib/ephemeris/getNextSolarEvent";
 import SolarCard from "@/app/components/ephemeris/solarCard";
+import LunarCard from "@/app/components/ephemeris/lunarCard";
 import { formatEastern } from "@/lib/ephemeris/formatEastern";
 export const dynamic = "force-dynamic";
 import { getEphemerisSnapshot } from "@/lib/ephemeris/getEphemerisSnapshot";

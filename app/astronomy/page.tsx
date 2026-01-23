@@ -1,8 +1,6 @@
 // app/astronomy/page.tsx
 
-import { getEphemerisSnapshot } from "@/lib/ephemeris/getEphemerisSnapshot";
-import SolarCard from "@/app/components/ephemeris/solarCard";
-import LunarCard from "@/app/components/ephemeris/lunarCard";
+
 
 export default async function AstronomyPage() {
   const ephemeris = await getEphemerisSnapshot("KOP");
