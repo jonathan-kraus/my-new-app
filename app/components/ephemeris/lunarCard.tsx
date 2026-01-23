@@ -1,34 +1,28 @@
+// app/components/ephemeris/LunarCard.tsx
+
 "use client";
 
-import { LunarSnapshot } from "@/lib/ephemeris/getLunarSnapshot";
+import { useLiveCountdown } from "@/app/hooks/useLiveCountdown";
 
-export type LunarCardProps = {
-  snapshot: LunarSnapshot;
-};
+export default function LunarCard({ snapshot }) {
+  const countdown = useLiveCountdown(snapshot.nextEvent.timeAbsolute);
 
-export default function LunarCard({ snapshot }: LunarCardProps) {
   return (
-    <div className="bg-purple-900 text-white p-6 rounded-xl space-y-4 shadow-lg">
-      <h2 className="text-xl font-semibold">Lunar Overview</h2>
+    <div className="p-6 rounded-xl bg-purple-600 text-white shadow-lg space-y-3">
+      <h2 className="text-2xl font-semibold">Lunar</h2>
 
-      <p>
-        <strong>Moonrise:</strong> {snapshot.moonrise ?? "—"}
-      </p>
-      <p>
-        <strong>Moonset:</strong> {snapshot.moonset ?? "—"}
-      </p>
-      <p>
-        <strong>Illumination:</strong> {snapshot.illumination}%
-      </p>
+      <p>Moonrise: {snapshot.moonrise}</p>
+      <p>Moonset: {snapshot.moonset}</p>
+      <p>Illumination: {snapshot.illumination.toFixed(2)}%</p>
 
-      <div className="pt-2">
-        <p className="font-semibold">Next Lunar Event</p>
-        <p>{snapshot.nextEvent.name}</p>
+      <div className="mt-4 p-3 bg-purple-800 rounded-lg">
+        <p className="font-semibold">{snapshot.nextEvent.name}</p>
         <p>{snapshot.nextEvent.time}</p>
+        <p className="text-lg font-bold mt-1">{countdown}</p>
       </div>
 
       <p className="text-xs opacity-70">
-        Updated {new Date(snapshot.fetchedAt).toLocaleTimeString()}
+        Updated: {snapshot.fetchedAt}
       </p>
     </div>
   );

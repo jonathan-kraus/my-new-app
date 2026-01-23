@@ -1,32 +1,28 @@
+// app/components/ephemeris/solarCard.tsx
+
 "use client";
 
-import { SolarSnapshot } from "@/lib/ephemeris/getSolarSnapshot";
+import { useLiveCountdown } from "@/app/hooks/useLiveCountdown";
 
-export type SolarCardProps = {
-  snapshot: SolarSnapshot;
-};
+export default function SolarCard({ snapshot }) {
+  const countdown = useLiveCountdown(snapshot.nextEvent.timeAbsolute);
 
-export default function SolarCard({ snapshot }: SolarCardProps) {
   return (
-    <div className="bg-blue-900 text-white p-6 rounded-xl space-y-4 shadow-lg">
-      <p>
-        <strong>Sunrise:</strong> {snapshot.sunrise}
-      </p>
-      <p>
-        <strong>Sunset:</strong> {snapshot.sunset}
-      </p>
-      <p>
-        <strong>Daylight:</strong> {snapshot.daylightPercent}%
-      </p>
+    <div className="p-6 rounded-xl bg-blue-600 text-white shadow-lg space-y-3">
+      <h2 className="text-2xl font-semibold">Solar</h2>
 
-      <div className="pt-2">
-        <p className="font-semibold">Next Solar Event</p>
-        <p>{snapshot.nextEvent.name}</p>
+      <p>Sunrise: {snapshot.sunrise}</p>
+      <p>Sunset: {snapshot.sunset}</p>
+      <p>Daylight: {snapshot.daylightPercent.toFixed(1)}%</p>
+
+      <div className="mt-4 p-3 bg-blue-800 rounded-lg">
+        <p className="font-semibold">{snapshot.nextEvent.name}</p>
         <p>{snapshot.nextEvent.time}</p>
+        <p className="text-lg font-bold mt-1">{countdown}</p>
       </div>
 
       <p className="text-xs opacity-70">
-        Updated {new Date(snapshot.fetchedAt).toLocaleTimeString()}
+        Updated: {snapshot.fetchedAt}
       </p>
     </div>
   );
