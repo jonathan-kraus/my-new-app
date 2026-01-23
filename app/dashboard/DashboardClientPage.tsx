@@ -1,16 +1,22 @@
 "use client";
 
 import { parseLocalTimestamp, parseLocalTimestampTomorrow } from "@/lib/time";
+import GitHubActivityFeed from "@/app/components/github/GitHubActivityFeed";
 
 export async function DashboardClientPage({ data }: { data: any }) {
   // -----------------------------
 
   return (
     <div className="space-y-10 w-full">
-      {/* Placeholder section */}
+      {/* GitHub Activity Section */}
+      <section>
+        <h2 className="text-2xl font-bold text-white mb-6">GitHub Activity</h2>
+        <GitHubActivityFeed />
+      </section>
+
+      {/* Other dashboard sections */}
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <PlaceholderCard title="Weather" />
-        h
         <PlaceholderCard title="Vercel Deployments" />
         <PlaceholderCard title="Recent Logs" />
         <PlaceholderCard title="System Health" />

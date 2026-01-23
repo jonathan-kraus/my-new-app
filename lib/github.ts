@@ -115,3 +115,134 @@ export async function getCommitDetails(
     throw error;
   }
 }
+
+/**
+ * Get recent commits for a repository
+ */
+export async function getRecentCommits(
+  owner: string,
+  repo: string,
+  limit: number = 10,
+): Promise<any[]> {
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}/commits?per_page=${limit}&sort=created&direction=desc`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+          Accept: "application/vnd.github+json",
+        },
+      },
+    );
+
+    if (!res.ok) {
+      throw new Error(`GitHub API error: ${res.status} ${await res.text()}`);
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error("Failed to get recent commits:", error);
+    throw error;
+  }
+}
+
+/**
+ * Get recent activity across all repositories for a user/organization
+ */
+export async function getRecentActivity(
+  username: string,
+  limit: number = 20,
+): Promise<any[]> {
+  try {
+    const res = await fetch(
+      `https://api.github.com/users/${username}/events?per_page=${limit}`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+          Accept: "application/vnd.github+json",
+        },
+      },
+    );
+
+    if (!res.ok) {
+      throw new Error(`GitHub API error: ${res.status} ${await res.text()}`);
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error("Failed to get recent activity:", error);
+    throw error;
+  }
+}
+
+/**
+ * Get recent activity for specific repositories
+ */
+export async function getRepositoryActivity(
+  repositories: { owner: string; repo: string }[],
+  limit: number = 10,
+): Promise<any[]> {
+  try {
+    const activities = await Promise.all(
+      repositories.map(async ({ owner, repo }) => {
+        try {
+          const commits = await getRecentCommits(owner, repo, limit);
+          return commits.map((commit) => ({
+            type: "commit",
+            owner,
+            repo,
+            sha: commit.sha,
+            message: commit.commit.message,
+            author: commit.commit.author.name,
+            date: commit.commit.author.date,
+            url: commit.html_url,
+            avatar: commit.author?.avatar_url,
+          }));
+        } catch (error) {
+          console.error(`Failed to get activity for ${owner}/${repo}:`, error);
+          return [];
+        }
+      }),
+    );
+
+    // Flatten and sort by date
+    return activities
+      .flat()
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+      .slice(0, limit);
+  } catch (error) {
+    console.error("Failed to get repository activity:", error);
+    throw error;
+  }
+}
+
+/**
+ * Get workflow runs for a repository
+ */
+export async function getRecentWorkflowRuns(
+  owner: string,
+  repo: string,
+  limit: number = 10,
+): Promise<any[]> {
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}/actions/runs?per_page=${limit}`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+          Accept: "application/vnd.github+json",
+        },
+      },
+    );
+
+    if (!res.ok) {
+      throw new Error(`GitHub API error: ${res.status} ${await res.text()}`);
+    }
+
+    const data = await res.json();
+    return data.workflow_runs || [];
+  } catch (error) {
+    console.error("Failed to get workflow runs:", error);
+    throw error;
+  }
+}

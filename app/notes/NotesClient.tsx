@@ -59,9 +59,10 @@ export default function NotesClient() {
     }
 
     const query = searchQuery.toLowerCase();
-    const filtered = notes.filter(note => 
-      (note.title && note.title.toLowerCase().includes(query)) ||
-      (note.content && note.content.toLowerCase().includes(query))
+    const filtered = notes.filter(
+      (note) =>
+        (note.title && note.title.toLowerCase().includes(query)) ||
+        (note.content && note.content.toLowerCase().includes(query)),
     );
     setFilteredNotes(filtered);
   }, [searchQuery, notes]);
@@ -75,7 +76,7 @@ export default function NotesClient() {
       });
 
       if (res.ok) {
-        setNotes(notes?.filter(note => note.id !== id) ?? []);
+        setNotes(notes?.filter((note) => note.id !== id) ?? []);
         toast.success("Note deleted successfully");
       } else {
         toast.error("Failed to delete note");
@@ -90,7 +91,11 @@ export default function NotesClient() {
     setEditTitle(note.title || "");
     setEditContent(note.content || "");
     setEditNeedsFollowUp(!!note.followUpAt);
-    setEditFollowUpDate(note.followUpAt ? new Date(note.followUpAt).toISOString().slice(0, 16) : "");
+    setEditFollowUpDate(
+      note.followUpAt
+        ? new Date(note.followUpAt).toISOString().slice(0, 16)
+        : "",
+    );
     setEditColor(note.color || "");
   };
 
@@ -101,12 +106,12 @@ export default function NotesClient() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           id,
-          isArchived: true
+          isArchived: true,
         }),
       });
 
       if (res.ok) {
-        setNotes(notes?.filter(note => note.id !== id) ?? []);
+        setNotes(notes?.filter((note) => note.id !== id) ?? []);
         toast.success("Note archived successfully");
       } else {
         toast.error("Failed to archive note");
@@ -125,16 +130,20 @@ export default function NotesClient() {
           id: editingId,
           title: editTitle,
           content: editContent,
-          followUpAt: editNeedsFollowUp && editFollowUpDate ? new Date(editFollowUpDate).toISOString() : null,
+          followUpAt:
+            editNeedsFollowUp && editFollowUpDate
+              ? new Date(editFollowUpDate).toISOString()
+              : null,
           color: editColor || null,
         }),
       });
 
       if (res.ok) {
         const data = await res.json();
-        setNotes(notes?.map(note => 
-          note.id === editingId ? data.note : note
-        ) ?? []);
+        setNotes(
+          notes?.map((note) => (note.id === editingId ? data.note : note)) ??
+            [],
+        );
         setEditingId(null);
         setEditTitle("");
         setEditContent("");
@@ -170,7 +179,7 @@ export default function NotesClient() {
   return (
     <div className="p-6">
       <h1 className="text-xl font-bold mb-4">Your Notes</h1>
-      
+
       <div className="flex gap-2 mb-4">
         <button
           onClick={() => (window.location.href = "/notes/new")}
@@ -178,7 +187,7 @@ export default function NotesClient() {
         >
           New Note
         </button>
-        
+
         <input
           type="text"
           value={searchQuery}
@@ -189,13 +198,22 @@ export default function NotesClient() {
       </div>
 
       {filteredNotes?.length === 0 && (
-        <p>{searchQuery ? "No notes found matching your search." : "No notes yet."}</p>
+        <p>
+          {searchQuery
+            ? "No notes found matching your search."
+            : "No notes yet."}
+        </p>
       )}
 
       {filteredNotes?.map((note) => (
-        <div key={note.id} className={`mb-4 p-4 border rounded backdrop-blur-md ${
-          note.color ? `bg-${note.color}-500/20 border-${note.color}-500/30` : 'bg-white/10'
-        }`}>
+        <div
+          key={note.id}
+          className={`mb-4 p-4 border rounded backdrop-blur-md ${
+            note.color
+              ? `bg-${note.color}-500/20 border-${note.color}-500/30`
+              : "bg-white/10"
+          }`}
+        >
           {editingId === note.id ? (
             <div>
               <input
@@ -211,7 +229,7 @@ export default function NotesClient() {
                 className="w-full h-32 p-2 rounded bg-white/20 border border-white/30 text-white placeholder-white/60 resize-none"
                 placeholder="Note content..."
               />
-              
+
               <div className="mt-3 space-y-2">
                 <div className="flex items-center gap-2">
                   <input
@@ -225,7 +243,7 @@ export default function NotesClient() {
                     Needs follow-up
                   </label>
                 </div>
-                
+
                 {editNeedsFollowUp && (
                   <input
                     type="datetime-local"
@@ -235,7 +253,7 @@ export default function NotesClient() {
                   />
                 )}
               </div>
-              
+
               <div className="mt-3">
                 <label className="block text-white text-sm mb-2">Color:</label>
                 <div className="flex gap-2 flex-wrap">
@@ -245,16 +263,16 @@ export default function NotesClient() {
                       type="button"
                       onClick={() => setEditColor(colorOption.value)}
                       className={`w-6 h-6 rounded-full border-2 ${colorOption.className} ${
-                        editColor === colorOption.value 
-                          ? 'border-white ring-2 ring-white/50' 
-                          : 'border-white/30 hover:border-white/60'
+                        editColor === colorOption.value
+                          ? "border-white ring-2 ring-white/50"
+                          : "border-white/30 hover:border-white/60"
                       }`}
                       title={colorOption.label}
                     />
                   ))}
                 </div>
               </div>
-              
+
               <div className="mt-2 flex gap-2">
                 <button
                   onClick={handleSaveEdit}
@@ -275,9 +293,13 @@ export default function NotesClient() {
               <div className="flex justify-between items-start mb-2">
                 <div className="flex items-center gap-2">
                   {note.color && (
-                    <div className={`w-4 h-4 rounded-full bg-${note.color}-500`} />
+                    <div
+                      className={`w-4 h-4 rounded-full bg-${note.color}-500`}
+                    />
                   )}
-                  <h2 className="font-semibold text-lg">{note.title || "Untitled"}</h2>
+                  <h2 className="font-semibold text-lg">
+                    {note.title || "Untitled"}
+                  </h2>
                 </div>
                 <div className="flex gap-2">
                   <button
@@ -300,9 +322,11 @@ export default function NotesClient() {
                   </button>
                 </div>
               </div>
-              
-              <p className="text-white/80 whitespace-pre-wrap">{note.content}</p>
-              
+
+              <p className="text-white/80 whitespace-pre-wrap">
+                {note.content}
+              </p>
+
               {note.followUpAt && (
                 <div className="mt-2 p-2 bg-yellow-500/20 border border-yellow-500/30 rounded">
                   <p className="text-yellow-300 text-sm">
@@ -310,7 +334,7 @@ export default function NotesClient() {
                   </p>
                 </div>
               )}
-              
+
               <p className="text-xs text-white/60 mt-2">
                 Created: {new Date(note.createdAt).toLocaleDateString()}
               </p>

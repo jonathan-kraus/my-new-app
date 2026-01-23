@@ -45,9 +45,9 @@ export async function GET(req: NextRequest) {
       return new Response("Unauthorized", { status: 401 });
     }
     const notes = await db.note.findMany({
-      where: { 
+      where: {
         userEmail: email,
-        isArchived: false 
+        isArchived: false,
       },
       orderBy: { createdAt: "desc" },
     });
@@ -146,12 +146,12 @@ export async function POST(req: NextRequest) {
       "notes",
       {
         level: "info",
-        message: `Note created: ${note.title || 'Untitled'} by ${email}`,
-        payload: { 
-          noteId: note.id, 
+        message: `Note created: ${note.title || "Untitled"} by ${email}`,
+        payload: {
+          noteId: note.id,
           title: note.title,
           action: "created",
-          userEmail: email
+          userEmail: email,
         },
       },
       { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
@@ -215,14 +215,16 @@ export async function PUT(req: NextRequest) {
     });
 
     const note = await db.note.updateMany({
-      where: { 
+      where: {
         id,
-        userEmail: email 
+        userEmail: email,
       },
       data: {
         ...(title !== undefined && { title }),
         ...(content !== undefined && { content }),
-        ...(followUpAt !== undefined && { followUpAt: followUpAt ? new Date(followUpAt) : null }),
+        ...(followUpAt !== undefined && {
+          followUpAt: followUpAt ? new Date(followUpAt) : null,
+        }),
         ...(isArchived !== undefined && { isArchived }),
         ...(color !== undefined && { color }),
       },
@@ -239,7 +241,7 @@ export async function PUT(req: NextRequest) {
     // Log the specific action taken
     let actionMessage = "";
     if (isArchived) {
-      actionMessage = `Note archived: ${originalNote?.title || 'Untitled'} by ${email}`;
+      actionMessage = `Note archived: ${originalNote?.title || "Untitled"} by ${email}`;
     } else {
       const changes = [];
       if (title !== undefined && title !== originalNote?.title) {
@@ -249,15 +251,21 @@ export async function PUT(req: NextRequest) {
         changes.push(`content updated`);
       }
       if (followUpAt !== undefined) {
-        const oldFollowUp = originalNote?.followUpAt ? new Date(originalNote.followUpAt).toLocaleString() : 'none';
-        const newFollowUp = followUpAt ? new Date(followUpAt).toLocaleString() : 'none';
+        const oldFollowUp = originalNote?.followUpAt
+          ? new Date(originalNote.followUpAt).toLocaleString()
+          : "none";
+        const newFollowUp = followUpAt
+          ? new Date(followUpAt).toLocaleString()
+          : "none";
         changes.push(`followUp: ${oldFollowUp} → ${newFollowUp}`);
       }
       if (color !== undefined && color !== originalNote?.color) {
-        changes.push(`color: ${originalNote?.color || 'none'} → ${color || 'none'}`);
+        changes.push(
+          `color: ${originalNote?.color || "none"} → ${color || "none"}`,
+        );
       }
-      
-      actionMessage = `Note edited: ${originalNote?.title || 'Untitled'} by ${email} - ${changes.join(', ')}`;
+
+      actionMessage = `Note edited: ${originalNote?.title || "Untitled"} by ${email} - ${changes.join(", ")}`;
     }
 
     await logit(
@@ -265,7 +273,7 @@ export async function PUT(req: NextRequest) {
       {
         level: "info",
         message: actionMessage,
-        payload: { 
+        payload: {
           noteId: id,
           title: originalNote?.title,
           action: isArchived ? "archived" : "edited",
@@ -275,8 +283,8 @@ export async function PUT(req: NextRequest) {
             content: content !== originalNote?.content,
             followUpAt: followUpAt !== originalNote?.followUpAt,
             color: color !== originalNote?.color,
-            isArchived
-          }
+            isArchived,
+          },
         },
       },
       { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
@@ -320,7 +328,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     const url = new URL(req.url);
-    const id = url.searchParams.get('id');
+    const id = url.searchParams.get("id");
 
     if (!id) {
       return NextResponse.json({ error: "Note ID required" }, { status: 400 });
@@ -332,9 +340,9 @@ export async function DELETE(req: NextRequest) {
     });
 
     const note = await db.note.deleteMany({
-      where: { 
+      where: {
         id,
-        userEmail: email 
+        userEmail: email,
       },
     });
 
@@ -346,12 +354,12 @@ export async function DELETE(req: NextRequest) {
       "notes",
       {
         level: "info",
-        message: `Note deleted: ${noteToDelete?.title || 'Untitled'} by ${email}`,
-        payload: { 
+        message: `Note deleted: ${noteToDelete?.title || "Untitled"} by ${email}`,
+        payload: {
           noteId: id,
           title: noteToDelete?.title,
           action: "deleted",
-          userEmail: email
+          userEmail: email,
         },
       },
       { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },

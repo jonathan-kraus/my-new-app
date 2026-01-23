@@ -33,7 +33,7 @@ export default function NewNoteClient({ authorized, userId }: Props) {
     page: "note",
     userId: "JK",
   };
-  
+
   async function handleSave() {
     setSaving(true);
     setError(null);
@@ -43,11 +43,14 @@ export default function NewNoteClient({ authorized, userId }: Props) {
       const res = await fetch("/api/notes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          title, 
+        body: JSON.stringify({
+          title,
           content,
-          followUpAt: needsFollowUp && followUpDate ? new Date(followUpDate).toISOString() : null,
-          color: color || null
+          followUpAt:
+            needsFollowUp && followUpDate
+              ? new Date(followUpDate).toISOString()
+              : null,
+          color: color || null,
         }),
       });
 
@@ -124,7 +127,10 @@ export default function NewNoteClient({ authorized, userId }: Props) {
 
         {needsFollowUp && (
           <div>
-            <label htmlFor="followUpDate" className="block text-white text-sm mb-1">
+            <label
+              htmlFor="followUpDate"
+              className="block text-white text-sm mb-1"
+            >
               Follow-up date:
             </label>
             <input
@@ -147,9 +153,9 @@ export default function NewNoteClient({ authorized, userId }: Props) {
               type="button"
               onClick={() => setColor(colorOption.value)}
               className={`w-8 h-8 rounded-full border-2 ${colorOption.className} ${
-                color === colorOption.value 
-                  ? 'border-white ring-2 ring-white/50' 
-                  : 'border-white/30 hover:border-white/60'
+                color === colorOption.value
+                  ? "border-white ring-2 ring-white/50"
+                  : "border-white/30 hover:border-white/60"
               }`}
               title={colorOption.label}
             />
@@ -159,7 +165,11 @@ export default function NewNoteClient({ authorized, userId }: Props) {
 
       {error && <p className="text-red-300 mt-3 text-sm">{error}</p>}
 
-      {success && <p className="text-green-300 mt-3 text-sm">Note saved! Redirecting...</p>}
+      {success && (
+        <p className="text-green-300 mt-3 text-sm">
+          Note saved! Redirecting...
+        </p>
+      )}
 
       <button
         onClick={handleSave}
@@ -168,9 +178,9 @@ export default function NewNoteClient({ authorized, userId }: Props) {
       >
         {saving ? "Saving..." : "Save Note"}
       </button>
-      
+
       <button
-        onClick={() => window.location.href = "/notes"}
+        onClick={() => (window.location.href = "/notes")}
         className="mt-4 ml-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold px-5 py-2 rounded-lg transition-colors"
       >
         Cancel

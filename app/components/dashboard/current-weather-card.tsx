@@ -106,9 +106,7 @@ export default function CurrentWeatherCard({
   console.log(`Weather summary for ${location?.name ?? "null"}`);
   return (
     <div className="p-4 rounded-xl bg-gradient-to-br from-indigo-700 to-sky-800 border border-white/10 shadow-md">
-      <h3 className="text-lg font-semibold mb-2 text-white">
-        Current Weather
-      </h3>
+      <h3 className="text-lg font-semibold mb-2 text-white">Current Weather</h3>
 
       <p className="text-sm text-sky-200 mb-4">
         {location?.name} • {source}
