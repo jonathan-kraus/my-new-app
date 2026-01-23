@@ -75,8 +75,8 @@ export default function GitHubActivityFeed() {
             commitMessage: item.head_commit?.message || "Workflow run",
             commitSha: item.head_sha?.substring(0, 7),
             url: item.html_url,
-            createdAt: item.created_at,
-            updatedAt: item.updated_at,
+            createdAt: item.created_at || new Date().toISOString(),
+            updatedAt: item.updated_at || new Date().toISOString(),
             source: "github" as const,
           };
         }

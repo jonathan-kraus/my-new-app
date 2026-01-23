@@ -2,8 +2,22 @@
 
 import { parseLocalTimestamp, parseLocalTimestampTomorrow } from "@/lib/time";
 import GitHubActivityFeed from "@/app/components/github/GitHubActivityFeed";
+import CurrentWeatherCard from "@/app/components/dashboard/current-weather-card";
 
 export async function DashboardClientPage({ data }: { data: any }) {
+  // Default location for weather (you can make this dynamic later)
+  const defaultLocation = {
+    id: "default-location",
+    key: "kop",
+    name: "King of Prussia, PA",
+    latitude: 40.0956,
+    longitude: -75.3516,
+    timezone: "America/New_York",
+    isDefault: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+
   // -----------------------------
 
   return (
@@ -16,7 +30,7 @@ export async function DashboardClientPage({ data }: { data: any }) {
 
       {/* Other dashboard sections */}
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <PlaceholderCard title="Weather" />
+        <CurrentWeatherCard location={defaultLocation} />
         <PlaceholderCard title="Vercel Deployments" />
         <PlaceholderCard title="Recent Logs" />
         <PlaceholderCard title="System Health" />
