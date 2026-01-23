@@ -30,6 +30,11 @@
       "matchUpdateTypes": ["major"],
       "enabled": false,
       "matchPackageNames": ["/prisma/", "/@prisma/client/"]
+    },
+    {
+      "env": {
+        "PRISMA_GENERATE_SKIP_ENV_CHECK": "true"
+      }
     }
   ]
 }

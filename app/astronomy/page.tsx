@@ -1,12 +1,18 @@
-import { loadAstronomySnapshots } from "@/app/astronomy/loader";
-import { AstronomyCard } from "@/app/astronomy/AstronomyCard";
+import { getEphemerisSnapshot } from "@/lib/ephemeris/getEphemerisSnapshot";
+import SolarCard from "@/app/components/ephemeris/solarCard";
+import LunarCard from "@/app/components/ephemeris/lunarCard";
 
-export default async function Page() {
-  const { today, tomorrow } = await loadAstronomySnapshots();
+export default async function AstronomyPage() {
+  const ephemeris = await getEphemerisSnapshot("KOP");
 
   return (
-    <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <AstronomyCard today={today} tomorrow={tomorrow} />
-    </section>
+    <div className="p-8 space-y-10">
+      <h1 className="text-4xl font-bold tracking-tight">Solar Overview</h1>
+
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <SolarCard snapshot={ephemeris.solar} />
+        <LunarCard snapshot={ephemeris.lunar} />
+      </section>
+    </div>
   );
 }

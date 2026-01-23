@@ -103,27 +103,25 @@ export default function CurrentWeatherCard({
   const formattedTime = fetched ? fetched.toLocaleTimeString() : "—";
 
   // Final log
-  console.log('Weather summary for ${location?.name ?? "null"');
+  console.log(`Weather summary for ${location?.name ?? "null"}`);
   return (
-    <>
-      <div className="p-4 rounded-xl bg-linear-to-br from-indigo-700 to-sky-800 border border-white/10 shadow-md">
-        <h3 className="text-lg font-semibold mb-2 text-white">
-          Current Weather
-        </h3>
+    <div className="p-4 rounded-xl bg-gradient-to-br from-indigo-700 to-sky-800 border border-white/10 shadow-md">
+      <h3 className="text-lg font-semibold mb-2 text-white">
+        Current Weather
+      </h3>
 
-        <p className="text-sm text-sky-200 mb-4">
-          {location?.name} • {source} • Updated {formattedTime}
-        </p>
+      <p className="text-sm text-sky-200 mb-4">
+        {location?.name} • {source}
+      </p>
 
-        <div className="grid grid-cols-2 gap-3 text-sm text-white">
-          <div>🌡️ Temp: {temp}°</div>
-          <div>🥶 Feels like: {feelsLike}°</div>
-          <div>💧 Humidity: {humidity}%</div>
-          <div>💨 Wind: {wind} mph</div>
-        </div>
+      <div className="grid grid-cols-2 gap-3 text-sm text-white">
+        <div>🌡️ Temp: {temp}°</div>
+        <div>🥶 Feels like: {feelsLike}°</div>
+        <div>💧 Humidity: {humidity}%</div>
+        <div>💨 Wind: {wind} mph</div>
       </div>
 
       <div className="mt-4 text-sm text-sky-200">Updated {formattedTime}</div>
-    </>
+    </div>
   );
 }

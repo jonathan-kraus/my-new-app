@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export async function GET() {
   const env = {
     nodeEnv: process.env.NODE_ENV ?? null,
-    betterAuthUrl: process.env.BETTER_AUTH_URL ?? null,
+
     nextPublicAppUrl: process.env.NEXT_PUBLIC_APP_URL ?? null,
     vercel: !!process.env.VERCEL,
     databaseUrlPresent: !!process.env.DATABASE_URL,
@@ -27,7 +27,7 @@ export async function GET() {
       process.env.GITHUB_SECRET ||
       process.env.AUTH_GITHUB_SECRET
     ),
-    betterAuthSecretPresent: !!process.env.BETTER_AUTH_SECRET,
+
     nextAuthPresent: !!(
       process.env.NEXTAUTH_URL || process.env.NEXTAUTH_SECRET
     ),
