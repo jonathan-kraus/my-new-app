@@ -11,10 +11,10 @@ export default function GitHubActivityFeed() {
   const [type, setType] = useState<"repositories" | "user" | "workflows">(
     "repositories",
   );
-  const [username, setUsername] = useState("");
-  const [repos, setRepos] = useState("owner1/repo1,owner2/repo2"); // Default repos
-  const [workflowOwner, setWorkflowOwner] = useState("");
-  const [workflowRepo, setWorkflowRepo] = useState("");
+  const [username, setUsername] = useState("jonathan-kraus");
+  const [repos, setRepos] = useState("jonathan-kraus/my-new-app"); // Default repos
+  const [workflowOwner, setWorkflowOwner] = useState("jonathan-kraus");
+  const [workflowRepo, setWorkflowRepo] = useState("my-new-app");
 
   useEffect(() => {
     fetchActivity();
@@ -23,6 +23,19 @@ export default function GitHubActivityFeed() {
   const fetchActivity = async () => {
     setLoading(true);
     setError(null);
+
+    // Validate required fields based on type
+    if (type === "user" && !username) {
+      setError("Username is required for user activity");
+      setLoading(false);
+      return;
+    }
+    
+    if (type === "workflows" && (!workflowOwner || !workflowRepo)) {
+      setError("Both owner and repository name are required for workflows");
+      setLoading(false);
+      return;
+    }
 
     try {
       const params = new URLSearchParams({
