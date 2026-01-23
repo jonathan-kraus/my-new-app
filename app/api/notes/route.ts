@@ -157,18 +157,126 @@ export async function POST(req: NextRequest) {
   } catch (err: any) {
     const durationMs = getRequestDuration(ctx.requestId);
 
+    return NextResponse.json(
+      { error: "Failed to create note" },
+      { status: 500 },
+    );
+  }
+}
+
+// -------------------------
+// PUT /api/notes/[id]
+// -------------------------
+export async function PUT(req: NextRequest) {
+  const ctx = await enrichContext(req);
+
+  try {
+    const session = await auth();
+
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const email = session?.user?.email;
+    if (!email) {
+      return new Response("Unauthorized", { status: 401 });
+    }
+
+    const body = await req.json();
+    const { id, title, content } = body;
+
+    if (!id) {
+      return NextResponse.json({ error: "Note ID required" }, { status: 400 });
+    }
+
+    const note = await db.note.updateMany({
+      where: { 
+        id,
+        userEmail: email 
+      },
+      data: {
+        ...(title !== undefined && { title }),
+        ...(content !== undefined && { content }),
+      },
+    });
+
+    if (note.count === 0) {
+      return NextResponse.json({ error: "Note not found" }, { status: 404 });
+    }
+
+    const updatedNote = await db.note.findUnique({
+      where: { id },
+    });
+
+    return NextResponse.json({ note: updatedNote });
+  } catch (err: any) {
     await logit(
       "notes",
       {
         level: "error",
-        message: "Notes POST failed",
-        payload: { durationMs, error: err.message },
+        message: "Notes PUT failed",
+        payload: { error: err.message },
       },
       { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
     );
 
     return NextResponse.json(
-      { error: "Failed to create note" },
+      { error: "Failed to update note" },
+      { status: 500 },
+    );
+  }
+}
+
+// -------------------------
+// DELETE /api/notes/[id]
+// -------------------------
+export async function DELETE(req: NextRequest) {
+  const ctx = await enrichContext(req);
+
+  try {
+    const session = await auth();
+
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const email = session?.user?.email;
+    if (!email) {
+      return new Response("Unauthorized", { status: 401 });
+    }
+
+    const url = new URL(req.url);
+    const id = url.searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json({ error: "Note ID required" }, { status: 400 });
+    }
+
+    const note = await db.note.deleteMany({
+      where: { 
+        id,
+        userEmail: email 
+      },
+    });
+
+    if (note.count === 0) {
+      return NextResponse.json({ error: "Note not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (err: any) {
+    await logit(
+      "notes",
+      {
+        level: "error",
+        message: "Notes DELETE failed",
+        payload: { error: err.message },
+      },
+      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+    );
+
+    return NextResponse.json(
+      { error: "Failed to delete note" },
       { status: 500 },
     );
   }
