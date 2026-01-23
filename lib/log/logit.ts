@@ -36,11 +36,11 @@ export async function logit(domain: string, payload: any, meta: any = {}) {
   const event = {
     domain,
     payload: {
-      ...payload,
+
       eventIndex,
     },
     meta: {
-      ...meta,
+      
       requestId,
     },
     timestamp: new Date().toISOString(),
