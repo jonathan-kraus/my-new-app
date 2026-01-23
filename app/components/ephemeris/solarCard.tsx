@@ -1,10 +1,10 @@
+"use client";
 // app/components/ephemeris/solarCard.tsx
 
-"use client";
+import { useLiveCountdown } from "@/hooks/useLiveCountdown";
+import type {SolarSnapshot } from "@/lib/ephemeris/getSolarSnapshot";
 
-import { useLiveCountdown } from "@/app/hooks/useLiveCountdown";
-
-export default function SolarCard({ snapshot }) {
+export default function SolarCard({ snapshot }: { snapshot: SolarSnapshot }) {
   const countdown = useLiveCountdown(snapshot.nextEvent.timeAbsolute);
 
   return (

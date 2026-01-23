@@ -2,9 +2,10 @@
 
 "use client";
 
-import { useLiveCountdown } from "@/app/hooks/useLiveCountdown";
+import { useLiveCountdown } from "@/hooks/useLiveCountdown";
+import type { LunarSnapshot } from "@/lib/ephemeris/getLunarSnapshot";
 
-export default function LunarCard({ snapshot }) {
+export default function LunarCard({ snapshot }: { snapshot: LunarSnapshot }) {
   const countdown = useLiveCountdown(snapshot.nextEvent.timeAbsolute);
 
   return (
