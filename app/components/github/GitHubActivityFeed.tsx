@@ -13,10 +13,12 @@ export default function GitHubActivityFeed() {
   );
   const [username, setUsername] = useState("");
   const [repos, setRepos] = useState("owner1/repo1,owner2/repo2"); // Default repos
+  const [workflowOwner, setWorkflowOwner] = useState("");
+  const [workflowRepo, setWorkflowRepo] = useState("");
 
   useEffect(() => {
     fetchActivity();
-  }, [type, username, repos]);
+  }, [type, username, repos, workflowOwner, workflowRepo]);
 
   const fetchActivity = async () => {
     setLoading(true);
@@ -32,6 +34,9 @@ export default function GitHubActivityFeed() {
         params.append("username", username);
       } else if (type === "repositories" && repos) {
         params.append("repos", repos);
+      } else if (type === "workflows" && workflowOwner && workflowRepo) {
+        params.append("owner", workflowOwner);
+        params.append("repo", workflowRepo);
       }
 
       const response = await fetch(`/api/github/activity?${params}`);
@@ -155,6 +160,25 @@ export default function GitHubActivityFeed() {
             placeholder="owner1/repo1,owner2/repo2"
             className="w-full px-3 py-2 bg-black/30 border border-gray-600 rounded text-white placeholder-gray-400"
           />
+        )}
+
+        {type === "workflows" && (
+          <div className="space-y-2">
+            <input
+              type="text"
+              value={workflowOwner}
+              onChange={(e) => setWorkflowOwner(e.target.value)}
+              placeholder="Repository owner (e.g., facebook)"
+              className="w-full px-3 py-2 bg-black/30 border border-gray-600 rounded text-white placeholder-gray-400"
+            />
+            <input
+              type="text"
+              value={workflowRepo}
+              onChange={(e) => setWorkflowRepo(e.target.value)}
+              placeholder="Repository name (e.g., react)"
+              className="w-full px-3 py-2 bg-black/30 border border-gray-600 rounded text-white placeholder-gray-400"
+            />
+          </div>
         )}
 
         <button
