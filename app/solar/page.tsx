@@ -1,6 +1,6 @@
 // app/solar/page.tsx
 import { getSolarSnapshot } from "@/lib/ephemeris/getSolarSnapshot";
-import { SolarCard } from "@/app/components/ephemeris/SolarCard";
+import SolarCard from "@/app/components/ephemeris/solarCard";
 
 export default async function SolarPage() {
   const snapshot = await getSolarSnapshot();

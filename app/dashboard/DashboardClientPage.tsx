@@ -2,17 +2,15 @@
 
 import { parseLocalTimestamp, parseLocalTimestampTomorrow } from "@/lib/time";
 
-
 export async function DashboardClientPage({ data }: { data: any }) {
   // -----------------------------
-
 
   return (
     <div className="space-y-10 w-full">
       {/* Placeholder section */}
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <PlaceholderCard title="Weather" />
-       h
+        h
         <PlaceholderCard title="Vercel Deployments" />
         <PlaceholderCard title="Recent Logs" />
         <PlaceholderCard title="System Health" />
