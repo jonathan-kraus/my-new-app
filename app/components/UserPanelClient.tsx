@@ -1,6 +1,6 @@
 "use client";
 
-import { authClient } from "@/lib/auth-client";
+import { signIn } from "next-auth/react";
 
 type User = {
   id: string;
@@ -15,7 +15,7 @@ export default function UserPanelClient({ user }: { user: User }) {
         <p className="mb-2">Not signed in</p>
 
         <button
-          onClick={() => authClient.signIn.social({ provider: "github" })}
+          onClick={() => signIn("github")}
           className="inline-flex items-center rounded bg-black px-3 py-1 text-[11px] font-medium"
         >
           Sign in with GitHub

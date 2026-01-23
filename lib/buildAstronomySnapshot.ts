@@ -39,28 +39,29 @@ async function fetchIPGeoAstronomy(lat: number, lon: number, date: Date) {
   return json.astronomy;
 }
 
-
-
 export async function buildAstronomySnapshot(location: any, targetDate: Date) {
   const { latitude, longitude } = location;
   // Fetch astronomy data for this location/date
   const astro = await fetchIPGeoAstronomy(latitude, longitude, targetDate);
 
   // Force targetDate to local midnight (Eastern)
-  const date = new Date( targetDate.getFullYear(),
-  targetDate.getMonth(),
-  targetDate.getDate() );
-  return {
-    
-    date: new Date(
-  Date.UTC(
+  const date = new Date(
     targetDate.getFullYear(),
     targetDate.getMonth(),
     targetDate.getDate(),
-    0, 0, 0, 0
-  )
-),
-
+  );
+  return {
+    date: new Date(
+      Date.UTC(
+        targetDate.getFullYear(),
+        targetDate.getMonth(),
+        targetDate.getDate(),
+        0,
+        0,
+        0,
+        0,
+      ),
+    ),
 
     // Solar
     sunrise: combineDateTime(date, astro.sunrise),
@@ -75,10 +76,18 @@ export async function buildAstronomySnapshot(location: any, targetDate: Date) {
     sunsetGoldenEnd: combineDateTime(date, astro.evening.golden_hour_end),
 
     // Lunar
-    moonrise: normalizeMoonTime(astro.moonrise) ? combineDateTime(date, astro.moonrise) : null, moonset: normalizeMoonTime(astro.moonset) ? combineDateTime(date, astro.moonset) : null, moonPhase: calculateMoonPhase(date),
+    moonrise: normalizeMoonTime(astro.moonrise)
+      ? combineDateTime(date, astro.moonrise)
+      : null,
+    moonset: normalizeMoonTime(astro.moonset)
+      ? combineDateTime(date, astro.moonset)
+      : null,
+    moonPhase: calculateMoonPhase(date),
     // Metadata
     fetchedAt: new Date(),
-    locationId: location.id, }; }
+    locationId: location.id,
+  };
+}
 
 function combineDateTime(date: Date, timeStr: string): string {
   const [hour, minute] = timeStr.split(":").map(Number);
@@ -92,8 +101,8 @@ function combineDateTime(date: Date, timeStr: string): string {
       hour + 5, // convert ET → UTC (ET = UTC-5)
       minute,
       0,
-      0
-    )
+      0,
+    ),
   );
 
   // Format as ISO with offset -05:00

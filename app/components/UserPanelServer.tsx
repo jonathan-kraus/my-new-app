@@ -1,12 +1,10 @@
-import { auth } from "@/lib/auth";
+import { auth } from "@/auth";
 import { headers } from "next/headers";
 
 export default async function UserPanelServer() {
   const h = await headers(); // ✅ await the Promise
 
-  const session = await auth.api.getSession({
-    headers: Object.fromEntries(h.entries()), // ✅ convert to Record<string, string>
-  });
+  const session = await auth();
 
   return session;
 }

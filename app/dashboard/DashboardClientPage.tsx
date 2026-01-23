@@ -1,78 +1,22 @@
 "use client";
 
-import { SolarCard } from "@/app/astronomy/SolarCard";
-import { LunarCard } from "@/app/astronomy/LunarCard";
-import { UnifiedNextAstronomicalEventCard } from "@/app/astronomy/UnifiedNextAstronomicalEventCard";
-import { CombinedSolarLunarTimeline } from "@/app/astronomy/CombinedSolarLunarTimeline";
-
 import { parseLocalTimestamp, parseLocalTimestampTomorrow } from "@/lib/time";
-import { GitHubActivityCard } from "../components/github/GitHubActivityCard";
+import GitHubActivityFeed from "@/app/components/github/GitHubActivityFeed";
 
 export async function DashboardClientPage({ data }: { data: any }) {
   // -----------------------------
-  // Fetch GitHub activity
-  const githubRes = await fetch("https://www.kraus.my.id/api/activity/github", {
-    cache: "no-store",
-  });
-  const githubData = await githubRes.json();
-  const recentActivity = githubData.activity ?? [];
-  // -----------------------------
-
-  // -----------------------------
-  // SOLAR (parsed snapshots)
-  // -----------------------------
-  const solarToday = {
-    sunrise: parseLocalTimestamp(data.today.sunrise),
-    sunset: parseLocalTimestamp(data.today.sunset),
-  };
-
-  const solarTomorrow = {
-    sunrise: parseLocalTimestampTomorrow(data.tomorrow.sunrise),
-    sunset: parseLocalTimestampTomorrow(data.tomorrow.sunset),
-  };
-
-  // -----------------------------
-  // LUNAR (parsed snapshots)
-  // -----------------------------
-  const lunarToday = {
-    moonrise: parseLocalTimestamp(data.today.moonrise),
-    moonset: parseLocalTimestamp(data.today.moonset),
-    moonPhase: data.today.moonPhase,
-  };
-
-  const lunarTomorrow = {
-    moonrise: parseLocalTimestampTomorrow(data.tomorrow.moonrise),
-    moonset: parseLocalTimestampTomorrow(data.tomorrow.moonset),
-  };
 
   return (
     <div className="space-y-10 w-full">
-      {/* Full-width unified next event */}
-      <UnifiedNextAstronomicalEventCard
-        solarToday={solarToday}
-        solarTomorrow={solarTomorrow}
-        lunarToday={lunarToday}
-        lunarTomorrow={lunarTomorrow}
-      />
-
-      {/* Full-width combined timeline */}
-      <CombinedSolarLunarTimeline
-        solarToday={data.today} // raw snapshots (timeline expects full shape)
-        solarTomorrow={data.tomorrow}
-        lunarToday={data.today}
-        lunarTomorrow={data.tomorrow}
-      />
-
-      {/* Two-column astronomy cards */}
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <SolarCard today={solarToday} tomorrow={solarTomorrow} />
-        <LunarCard today={lunarToday} tomorrow={lunarTomorrow} />
+      {/* GitHub Activity Section */}
+      <section>
+        <h2 className="text-2xl font-bold text-white mb-6">GitHub Activity</h2>
+        <GitHubActivityFeed />
       </section>
 
-      {/* Placeholder section */}
+      {/* Other dashboard sections */}
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <PlaceholderCard title="Weather" />
-
         <PlaceholderCard title="Vercel Deployments" />
         <PlaceholderCard title="Recent Logs" />
         <PlaceholderCard title="System Health" />

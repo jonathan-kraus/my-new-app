@@ -1,5 +1,5 @@
 // app/page.tsx
-import { auth } from "@/lib/auth";
+import { auth } from "@/auth";
 import { headers } from "next/headers";
 import { logit } from "@/lib/log/logit";
 import { Button } from "@/components/ui/button";
@@ -24,9 +24,8 @@ function getGreeting(): string {
 
 export default async function HomePage() {
   const h = await headers(); // ✅ await the Promise
-  const session = await auth.api.getSession({
-    headers: Object.fromEntries(h.entries()),
-  });
+  const session = await auth();
+
   const { today, tomorrow } = await loadAstronomySnapshots();
 
   console.log("HOMEPAGE TODAY:", today);
