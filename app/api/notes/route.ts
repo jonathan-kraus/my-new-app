@@ -45,7 +45,10 @@ export async function GET(req: NextRequest) {
       return new Response("Unauthorized", { status: 401 });
     }
     const notes = await db.note.findMany({
-      where: { userEmail: email },
+      where: { 
+        userEmail: email,
+        isArchived: false 
+      },
       orderBy: { createdAt: "desc" },
     });
     console.log("Duration lookup:", getRequestDuration(ctx.requestId));
@@ -134,6 +137,7 @@ export async function POST(req: NextRequest) {
         userEmail: email,
         title: body.title ?? "",
         content: body.content ?? "",
+        followUpAt: body.followUpAt ? new Date(body.followUpAt) : null,
       },
     });
 
@@ -183,7 +187,7 @@ export async function PUT(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { id, title, content } = body;
+    const { id, title, content, followUpAt, isArchived } = body;
 
     if (!id) {
       return NextResponse.json({ error: "Note ID required" }, { status: 400 });
@@ -197,6 +201,8 @@ export async function PUT(req: NextRequest) {
       data: {
         ...(title !== undefined && { title }),
         ...(content !== undefined && { content }),
+        ...(followUpAt !== undefined && { followUpAt: followUpAt ? new Date(followUpAt) : null }),
+        ...(isArchived !== undefined && { isArchived }),
       },
     });
 

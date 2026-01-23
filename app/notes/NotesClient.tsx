@@ -6,13 +6,15 @@ import toast from "react-hot-toast";
 
 export default function NotesClient() {
   const [authorized, setAuthorized] = useState<boolean | null>(null);
-  const [notes, setNotes] = useState<any[] | null>(null);
-  const [userId, setUserId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredNotes, setFilteredNotes] = useState<any[] | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filteredNotes, setFilteredNotes] = useState<any[] | null>(null);
+  const [editNeedsFollowUp, setEditNeedsFollowUp] = useState(false);
+  const [editFollowUpDate, setEditFollowUpDate] = useState("");
+  const [notes, setNotes] = useState<any[] | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -75,6 +77,30 @@ export default function NotesClient() {
     setEditingId(note.id);
     setEditTitle(note.title || "");
     setEditContent(note.content || "");
+    setEditNeedsFollowUp(!!note.followUpAt);
+    setEditFollowUpDate(note.followUpAt ? new Date(note.followUpAt).toISOString().slice(0, 16) : "");
+  };
+
+  const handleArchive = async (id: string) => {
+    try {
+      const res = await fetch("/api/notes", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id,
+          isArchived: true
+        }),
+      });
+
+      if (res.ok) {
+        setNotes(notes?.filter(note => note.id !== id) ?? []);
+        toast.success("Note archived successfully");
+      } else {
+        toast.error("Failed to archive note");
+      }
+    } catch (error) {
+      toast.error("Error archiving note");
+    }
   };
 
   const handleSaveEdit = async () => {
@@ -86,6 +112,7 @@ export default function NotesClient() {
           id: editingId,
           title: editTitle,
           content: editContent,
+          followUpAt: editNeedsFollowUp && editFollowUpDate ? new Date(editFollowUpDate).toISOString() : null,
         }),
       });
 
@@ -97,6 +124,8 @@ export default function NotesClient() {
         setEditingId(null);
         setEditTitle("");
         setEditContent("");
+        setEditNeedsFollowUp(false);
+        setEditFollowUpDate("");
         toast.success("Note updated successfully");
       } else {
         toast.error("Failed to update note");
@@ -110,6 +139,8 @@ export default function NotesClient() {
     setEditingId(null);
     setEditTitle("");
     setEditContent("");
+    setEditNeedsFollowUp(false);
+    setEditFollowUpDate("");
   };
 
   if (authorized === null) {
@@ -162,6 +193,31 @@ export default function NotesClient() {
                 className="w-full h-32 p-2 rounded bg-white/20 border border-white/30 text-white placeholder-white/60 resize-none"
                 placeholder="Note content..."
               />
+              
+              <div className="mt-3 space-y-2">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="editFollowUp"
+                    checked={editNeedsFollowUp}
+                    onChange={(e) => setEditNeedsFollowUp(e.target.checked)}
+                    className="w-4 h-4 rounded border-white/30 bg-white/10 text-blue-600"
+                  />
+                  <label htmlFor="editFollowUp" className="text-white text-sm">
+                    Needs follow-up
+                  </label>
+                </div>
+                
+                {editNeedsFollowUp && (
+                  <input
+                    type="datetime-local"
+                    value={editFollowUpDate}
+                    onChange={(e) => setEditFollowUpDate(e.target.value)}
+                    className="w-full bg-white/20 border border-white/30 rounded p-2 text-white text-sm"
+                  />
+                )}
+              </div>
+              
               <div className="mt-2 flex gap-2">
                 <button
                   onClick={handleSaveEdit}
@@ -189,6 +245,12 @@ export default function NotesClient() {
                     Edit
                   </button>
                   <button
+                    onClick={() => handleArchive(note.id)}
+                    className="px-2 py-1 text-sm rounded bg-yellow-600 text-white hover:bg-yellow-700 transition"
+                  >
+                    Archive
+                  </button>
+                  <button
                     onClick={() => handleDelete(note.id)}
                     className="px-2 py-1 text-sm rounded bg-red-600 text-white hover:bg-red-700 transition"
                   >
@@ -196,7 +258,17 @@ export default function NotesClient() {
                   </button>
                 </div>
               </div>
+              
               <p className="text-white/80 whitespace-pre-wrap">{note.content}</p>
+              
+              {note.followUpAt && (
+                <div className="mt-2 p-2 bg-yellow-500/20 border border-yellow-500/30 rounded">
+                  <p className="text-yellow-300 text-sm">
+                    📅 Follow-up: {new Date(note.followUpAt).toLocaleString()}
+                  </p>
+                </div>
+              )}
+              
               <p className="text-xs text-white/60 mt-2">
                 Created: {new Date(note.createdAt).toLocaleDateString()}
               </p>

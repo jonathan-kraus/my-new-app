@@ -11,6 +11,8 @@ type Props = {
 export default function NewNoteClient({ authorized, userId }: Props) {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [needsFollowUp, setNeedsFollowUp] = useState(false);
+  const [followUpDate, setFollowUpDate] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -29,7 +31,11 @@ export default function NewNoteClient({ authorized, userId }: Props) {
       const res = await fetch("/api/notes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, content }),
+        body: JSON.stringify({ 
+          title, 
+          content,
+          followUpAt: needsFollowUp && followUpDate ? new Date(followUpDate).toISOString() : null
+        }),
       });
 
       const data = await res.json();
@@ -40,6 +46,8 @@ export default function NewNoteClient({ authorized, userId }: Props) {
         setSuccess(true);
         setTitle("");
         setContent("");
+        setNeedsFollowUp(false);
+        setFollowUpDate("");
         setTimeout(() => {
           window.location.href = "/notes";
         }, 1500);
@@ -85,6 +93,36 @@ export default function NewNoteClient({ authorized, userId }: Props) {
         placeholder="Write your note..."
         className="w-full h-40 bg-white/5 border border-white/20 rounded-lg p-4 text-white placeholder-white/60 resize-none outline-none focus:ring-2 focus:ring-blue-300"
       />
+
+      <div className="mt-4 space-y-3">
+        <div className="flex items-center gap-3">
+          <input
+            type="checkbox"
+            id="followUp"
+            checked={needsFollowUp}
+            onChange={(e) => setNeedsFollowUp(e.target.checked)}
+            className="w-4 h-4 rounded border-white/30 bg-white/10 text-blue-600 focus:ring-blue-500"
+          />
+          <label htmlFor="followUp" className="text-white text-sm">
+            Needs follow-up
+          </label>
+        </div>
+
+        {needsFollowUp && (
+          <div>
+            <label htmlFor="followUpDate" className="block text-white text-sm mb-1">
+              Follow-up date:
+            </label>
+            <input
+              type="datetime-local"
+              id="followUpDate"
+              value={followUpDate}
+              onChange={(e) => setFollowUpDate(e.target.value)}
+              className="w-full bg-white/5 border border-white/20 rounded-lg p-3 text-white outline-none focus:ring-2 focus:ring-blue-300"
+            />
+          </div>
+        )}
+      </div>
 
       {error && <p className="text-red-300 mt-3 text-sm">{error}</p>}
 
