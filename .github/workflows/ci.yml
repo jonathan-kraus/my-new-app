@@ -26,8 +26,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '24'
-
+          node-version: '25.4.0'
       - name: Enable Corepack and pnpm
         run: |
           corepack enable
@@ -59,6 +58,13 @@ jobs:
 
       - name: Fix Prettier
         run: pnpm prettier --write .
+      - name: Run tests with coverage
+        run: pnpm vitest run --coverage
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
 
       - name: Type check
         run: pnpm run type-check
