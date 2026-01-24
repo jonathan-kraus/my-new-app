@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { GET } from "../route";
+import type { Mock } from "vitest";
 
 // ---------------------------------------------------------------------------
 // MODULE MOCKS
@@ -43,7 +44,7 @@ const { logit } = await import("@/lib/log/logit");
 // ---------------------------------------------------------------------------
 
 const mockedDb = vi.mocked(db, true);
-const mockedFetch = global.fetch as vi.Mock;
+const mockedFetch = global.fetch as Mock;
 const mockedLog = vi.mocked(logit, true);
 
 // ---------------------------------------------------------------------------
