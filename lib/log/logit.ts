@@ -41,7 +41,7 @@ export async function logit(domain: string, payload: any, meta: any = {}) {
     timestamp: new Date().toISOString(),
 
     payload: {
-      ...payload.payload,
+      ...payload,
       eventIndex,
     },
 
