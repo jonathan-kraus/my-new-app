@@ -6,7 +6,7 @@ export async function getVercelData() {
   if (!res.ok) throw new Error("Failed to fetch Vercel data");
 
   const json = await res.json();
-
+console.log("[VERCEL RAW USAGE]", JSON.stringify(json, null, 2));
   return {
     usage: json.usage as VercelUsage,
     deployments: json.deployments.deployments as VercelDeployment[],
