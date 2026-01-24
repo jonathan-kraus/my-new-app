@@ -1,15 +1,23 @@
-// lib\vercel.ts
-import type { VercelUsage, VercelDeployment, VercelProject } from "@/types/vercel";
+// lib/vercel.ts
+export async function vercelRequest<T>(path: string, params?: Record<string, string>) {
+  const url = new URL(`https://api.vercel.com${path}`);
 
-export async function getVercelData() {
-  const res = await fetch("/api/vercel", { cache: "no-store" });
-  if (!res.ok) throw new Error("Failed to fetch Vercel data");
+  if (params) {
+    for (const [k, v] of Object.entries(params)) {
+      url.searchParams.set(k, v);
+    }
+  }
+
+  const res = await fetch(url.toString(), {
+    headers: {
+      Authorization: `Bearer ${process.env.VERCEL_API_TOKEN}`,
+    },
+    cache: "no-store",
+  });
 
   const json = await res.json();
-console.log("[VERCEL RAW USAGE]", JSON.stringify(json, null, 2));
-  return {
-    usage: json.usage as VercelUsage,
-    deployments: json.deployments.deployments as VercelDeployment[],
-    project: json.project as VercelProject,
-  };
+
+  console.log(`[VERCEL RAW] ${path}`, JSON.stringify(json, null, 2));
+
+  return json as T;
 }
