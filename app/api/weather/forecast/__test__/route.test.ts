@@ -1,7 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { GET } from "../route";
 
-// --- Module Mocks -----------------------------------------------------
+// ---------------------------------------------------------------------------
+// MODULE MOCKS
+// ---------------------------------------------------------------------------
 
 vi.mock("@/lib/db", () => ({
   db: {
@@ -17,6 +19,7 @@ vi.mock("@/auth", () => ({
 }));
 
 vi.mock("@/lib/log/logit", () => ({ logit: vi.fn() }));
+
 vi.mock("@/lib/log/context", () => ({
   enrichContext: vi.fn().mockResolvedValue({
     requestId: "req-123",
@@ -28,26 +31,41 @@ vi.mock("@/lib/log/context", () => ({
 // Mock fetch globally
 global.fetch = vi.fn();
 
-// --- Imports AFTER mocks ---------------------------------------------
+// ---------------------------------------------------------------------------
+// IMPORTS AFTER MOCKS
+// ---------------------------------------------------------------------------
+
 const { db } = await import("@/lib/db");
 const { logit } = await import("@/lib/log/logit");
 
-// --- Helpers ----------------------------------------------------------
+// ---------------------------------------------------------------------------
+// TYPED MOCK HELPERS
+// ---------------------------------------------------------------------------
 
 const mockedDb = vi.mocked(db, true);
 const mockedFetch = global.fetch as vi.Mock;
 const mockedLog = vi.mocked(logit, true);
 
-const makeRequest = (url: string) => new Request(url);
+// ---------------------------------------------------------------------------
+// FACTORY HELPERS (MATCH REAL PRISMA TYPES)
+// ---------------------------------------------------------------------------
 
-const mockLocation = (overrides = {}) => ({
+const makeLocation = (overrides = {}) => ({
   id: "KOP",
+  name: "King of Prussia",
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  key: "KOP",
+  timezone: "America/New_York",
+  isDefault: false,
   latitude: 40.1,
   longitude: -75.3,
   ...overrides,
 });
 
-const mockSnapshot = (overrides = {}) => ({
+const makeSnapshot = (overrides = {}) => ({
+  id: "snap-1",
+  locationId: "KOP",
   fetchedAt: new Date(),
   payload: {
     current: { temp: 30 },
@@ -73,13 +91,19 @@ const mockApiResponse = (overrides = {}) => ({
   ...overrides,
 });
 
-// --- Reset before each test ------------------------------------------
+const makeRequest = (url: string) => new Request(url);
+
+// ---------------------------------------------------------------------------
+// RESET BEFORE EACH TEST
+// ---------------------------------------------------------------------------
 
 beforeEach(() => {
   vi.clearAllMocks();
 });
 
-// --- Tests ------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// TESTS
+// ---------------------------------------------------------------------------
 
 describe("GET /api/weather/forecast", () => {
   it("returns 400 when locationId is missing", async () => {
@@ -103,8 +127,8 @@ describe("GET /api/weather/forecast", () => {
   });
 
   it("returns cached forecast when snapshot exists", async () => {
-    mockedDb.location.findUnique.mockResolvedValue(mockLocation());
-    mockedDb.forecastSnapshot.findFirst.mockResolvedValue(mockSnapshot());
+    mockedDb.location.findUnique.mockResolvedValue(makeLocation());
+    mockedDb.forecastSnapshot.findFirst.mockResolvedValue(makeSnapshot());
 
     const res = await GET(
       makeRequest("http://localhost/api/weather/forecast?locationId=KOP")
@@ -119,17 +143,16 @@ describe("GET /api/weather/forecast", () => {
   });
 
   it("fetches external API and stores snapshot on cache miss", async () => {
-    mockedDb.location.findUnique.mockResolvedValue(mockLocation());
+    mockedDb.location.findUnique.mockResolvedValue(makeLocation());
     mockedDb.forecastSnapshot.findFirst.mockResolvedValue(null);
 
     mockedFetch.mockResolvedValue({
       json: () => Promise.resolve(mockApiResponse()),
     });
 
-    mockedDb.forecastSnapshot.create.mockResolvedValue({
-      id: "snap-1",
-      fetchedAt: new Date(),
-    });
+    mockedDb.forecastSnapshot.create.mockResolvedValue(
+      makeSnapshot({ id: "snap-1" })
+    );
 
     const res = await GET(
       makeRequest("http://localhost/api/weather/forecast?locationId=KOP")
@@ -145,7 +168,7 @@ describe("GET /api/weather/forecast", () => {
   });
 
   it("returns 502 when external API response is invalid", async () => {
-    mockedDb.location.findUnique.mockResolvedValue(mockLocation());
+    mockedDb.location.findUnique.mockResolvedValue(makeLocation());
     mockedDb.forecastSnapshot.findFirst.mockResolvedValue(null);
 
     mockedFetch.mockResolvedValue({
