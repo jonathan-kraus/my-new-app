@@ -98,9 +98,12 @@ export default function CurrentWeatherCard({
   const feelsLike = Math.round(current.feelsLike);
   const humidity = current.humidity;
   const wind = current.windSpeed;
-  const source = sources.current?.toUpperCase() ?? "UNKNOWN";
-  const fetched = parseLocalTimestamp(current.fetchedAt);
-  const formattedTime = fetched ? fetched.toLocaleTimeString() : "—";
+
+ const source = sources.current?.toUpperCase() ?? "UNKNOWN";
+
+
+const formattedTime = new Date().toLocaleTimeString();
+
 
   // Final log
   console.log(`Weather summary for ${location?.name ?? "null"}`);
