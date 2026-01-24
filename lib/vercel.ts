@@ -57,8 +57,15 @@ export async function getVercelDeployments(projectId: string) {
   return vercelRequest("/v6/deployments", { projectId });
 }
 export async function getVercelUsage() {
-  return vercelRequest("/v1/usage");
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  return vercelRequest("/v1/usage", {
+    from: startOfMonth.toISOString(),
+    to: now.toISOString()
+  });
 }
+
 export async function getVercelProject(projectName: string) {
   return vercelRequest(`/v9/projects/${projectName}`);
 }
