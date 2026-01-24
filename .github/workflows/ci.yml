@@ -57,14 +57,20 @@ jobs:
         run: pnpm outdated | grep -v -E '(prisma|@prisma)' || true
 
       - name: Fix Prettier
-        run: pnpm prettier --write .
+        run: pnpm pfix
       - name: Run tests with coverage
-        run: pnpm vitest run --coverage
+        run: pnpm coverage
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
           name: coverage
           path: coverage/
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/coverage-final.json
+          fail_ci_if_error: true
 
       - name: Type check
         run: pnpm run type-check

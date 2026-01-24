@@ -1,23 +1,38 @@
 import { defineConfig } from "vitest/config";
-import tsconfigPaths from "vite-tsconfig-paths";
+import path from "path";
 
 export default defineConfig({
-  plugins: [tsconfigPaths()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./"),
+      "@/app": path.resolve(__dirname, "./app"),
+      "@/components": path.resolve(__dirname, "./app/components"),
+      "@/hooks": path.resolve(__dirname, "./hooks"),
+      "@/lib": path.resolve(__dirname, "./lib"),
+      "@/types": path.resolve(__dirname, "./types")
+    }
+  },
 
   test: {
     globals: true,
     environment: "node",
 
-    include: ["**/__tests__/**/*.test.ts", "**/*.test.ts"],
+    include: [
+      "app/**/*.test.{ts,tsx}",
+      "app/**/__test__/**/*.{ts,tsx}",
+      "tests/**/*.{ts,tsx}"
+    ],
 
-    // Silence noisy Next.js warnings
-    onConsoleLog(log) {
-      if (
-        log.includes("ExperimentalWarning") ||
-        log.includes("fetch is not defined")
-      ) {
-        return false;
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "html", "json"],
+
+      thresholds: {
+        lines: 80,
+        functions: 80,
+        branches: 70,
+        statements: 80
       }
-    },
-  },
+    }
+  }
 });

@@ -12,6 +12,7 @@
     "postinstall": "prisma generate",
     "pchk": "prettier --check . --ignore-path .prettierignore",
     "start": "next start",
+    "coverage": "vitest run --coverage",
     "test": "vitest run",
     "test:ui": "vitest --ui",
     "type-check": "tsc --noEmit"
