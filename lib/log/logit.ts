@@ -3,7 +3,7 @@ import { queueEvent } from "./queue";
 import { nextLogIndex } from "./state";
 import { startScheduler } from "./scheduler";
 import { db } from "@/lib/db"; // Neon (Prisma)
-
+import { client } from "@/lib/axiom"; // Axiom
 
 startScheduler();
 
@@ -33,55 +33,48 @@ export async function logit(domain: string, payload: any, meta: any = {}) {
   const requestId = meta.requestId ?? crypto.randomUUID();
   const eventIndex = nextLogIndex(requestId);
 
-  // The canonical event object for your app
   const event = {
     domain,
-    level: payload.level ?? "info",
-    message: payload.message ?? "",
-    timestamp: new Date().toISOString(),
-
     payload: {
-      ...payload.payload,
+
       eventIndex,
     },
-
     meta: {
+
       requestId,
-      page: meta.page ?? null,
-      userId: meta.userId ?? null,
     },
+    timestamp: new Date().toISOString(),
   };
 
-  // ⭐ Axiom receives ONE FIELD: dataj
-  queueEvent({
+  // Queue for Axiom (full fidelity)
+   queueEvent({
     domain,
     dataj: event,   // ← everything wrapped here
   });
 
-  // Neon still gets structured fields
+  // Write to Neon (safe, truncated if needed)
   try {
+    console.log("FINAL EVENT BEFORE WRITE", event);
+
     await db.log.create({
       data: {
         domain,
-        level: event.level,
-        message: event.message,
+        level: payload.level ?? "info",
+        message: payload.message ?? "",
         requestId,
+
+        // Required by Prisma
         timestamp: BigInt(Date.now()),
-
-        payload: safeForNeon(event.payload),
-        meta: safeForNeon(event.meta),
-
-        page: event.meta.page,
-        userId: event.meta.userId,
-
-        // Optional session fields
+        payload: safeForNeon(payload),
+        meta: safeForNeon(event.meta), // ⭐ THIS LINE FIXES IT
+        // Optional metadata
+        page: meta.page ?? null,
+        userId: meta.userId ?? null,
         sessionEmail: payload.sessionEmail ?? null,
         sessionUser: payload.sessionUser ?? null,
         file: payload.file ?? null,
         line: payload.line ?? null,
-
-        // Legacy compatibility
-        data: safeForNeon(event.payload),
+        data: safeForNeon(payload),
       },
     });
   } catch (err) {
