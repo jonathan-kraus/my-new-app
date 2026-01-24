@@ -53,10 +53,10 @@ export async function logit(domain: string, payload: any, meta: any = {}) {
   };
 
   // ⭐ Axiom receives ONE FIELD: dataj
-  queueEvent({
-    domain,
-    dataj: event,   // ← everything wrapped here
-  });
+  // queueEvent({
+  //   domain,
+  //   dataj: event,   // ← everything wrapped here
+  // });
 
   // Neon still gets structured fields
   try {
