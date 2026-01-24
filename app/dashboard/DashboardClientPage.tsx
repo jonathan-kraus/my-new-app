@@ -1,6 +1,6 @@
 "use client";
 
-import { parseLocalTimestamp, parseLocalTimestampTomorrow } from "@/lib/time";
+import VercelCard from "@/app/components/dashboard/vercel-card";
 import GitHubActivityFeed from "@/app/components/github/GitHubActivityFeed";
 import CurrentWeatherCard from "@/app/components/dashboard/current-weather-card";
 
@@ -31,7 +31,7 @@ export async function DashboardClientPage({ data }: { data: any }) {
       {/* Other dashboard sections */}
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <CurrentWeatherCard location={defaultLocation} />
-        <PlaceholderCard title="Vercel Deployments" />
+        <VercelCard   />
         <PlaceholderCard title="Recent Logs" />
         <PlaceholderCard title="System Health" />
         <PlaceholderCard title="Custom Metrics" />
