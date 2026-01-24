@@ -31,6 +31,5 @@
       "enabled": false,
       "matchPackageNames": ["/prisma/", "/@prisma/client/"]
     }
-   
   ]
 }

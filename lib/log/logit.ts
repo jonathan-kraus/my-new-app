@@ -3,7 +3,6 @@ import { queueEvent } from "./queue";
 import { nextLogIndex } from "./state";
 import { startScheduler } from "./scheduler";
 import { db } from "@/lib/db"; // Neon (Prisma)
-import { client } from "@/lib/axiom"; // Axiom
 
 startScheduler();
 
@@ -33,48 +32,69 @@ export async function logit(domain: string, payload: any, meta: any = {}) {
   const requestId = meta.requestId ?? crypto.randomUUID();
   const eventIndex = nextLogIndex(requestId);
 
-  const event = {
-    domain,
-    payload: {
-
-      eventIndex,
-    },
-    meta: {
-
-      requestId,
-    },
-    timestamp: new Date().toISOString(),
+  //
+  // 1. Flatten the user payload
+  //
+  const flatPayload = {
+    eventIndex,
+    ...(payload?.payload ?? {}), // actual event data
   };
 
-  // Queue for Axiom (full fidelity)
-   queueEvent({
+  //
+  // 2. Flatten meta
+  //
+  const flatMeta = {
+    requestId,
+    page: meta.page ?? null,
+    userId: meta.userId ?? null,
+  };
+
+  //
+  // 3. Build the canonical event object
+  //
+  const event = {
     domain,
-    dataj: event,   // ← everything wrapped here
+    level: payload.level ?? "info",
+    message: payload.message ?? "",
+    timestamp: new Date().toISOString(),
+    payload: flatPayload,
+    meta: flatMeta,
+  };
+
+  //
+  // 4. Axiom: send ONE FIELD ONLY
+  //
+  queueEvent({
+    domain,
+    dataj: event,
   });
 
-  // Write to Neon (safe, truncated if needed)
+  //
+  // 5. Neon: structured fields
+  //
   try {
-    console.log("FINAL EVENT BEFORE WRITE", event);
-
     await db.log.create({
       data: {
         domain,
-        level: payload.level ?? "info",
-        message: payload.message ?? "",
+        level: event.level,
+        message: event.message,
         requestId,
-
-        // Required by Prisma
         timestamp: BigInt(Date.now()),
-        payload: safeForNeon(payload),
-        meta: safeForNeon(event.meta), // ⭐ THIS LINE FIXES IT
-        // Optional metadata
-        page: meta.page ?? null,
-        userId: meta.userId ?? null,
+
+        payload: safeForNeon(flatPayload),
+        meta: safeForNeon(flatMeta),
+
+        page: flatMeta.page,
+        userId: flatMeta.userId,
+
+        // Optional session fields
         sessionEmail: payload.sessionEmail ?? null,
         sessionUser: payload.sessionUser ?? null,
         file: payload.file ?? null,
         line: payload.line ?? null,
-        data: safeForNeon(payload),
+
+        // Legacy compatibility
+        data: safeForNeon(flatPayload),
       },
     });
   } catch (err) {

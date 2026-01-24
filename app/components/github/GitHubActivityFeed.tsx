@@ -30,7 +30,7 @@ export default function GitHubActivityFeed() {
       setLoading(false);
       return;
     }
-    
+
     if (type === "workflows" && (!workflowOwner || !workflowRepo)) {
       setError("Both owner and repository name are required for workflows");
       setLoading(false);
@@ -61,43 +61,45 @@ export default function GitHubActivityFeed() {
       const data = await response.json();
 
       // Transform the data to match the expected format for GitHubActivityCard
-      const transformedActivities: GitHubActivityEvent[] = data.data.map((item: any, index: number) => {
-        // Handle workflow runs differently from commits
-        if (type === "workflows") {
+      const transformedActivities: GitHubActivityEvent[] = data.data.map(
+        (item: any, index: number) => {
+          // Handle workflow runs differently from commits
+          if (type === "workflows") {
+            return {
+              id: item.id || `workflow-${index}`,
+              name: item.name || "CI/CD Workflow",
+              repo: `${item.repository?.owner?.login || workflowOwner}/${item.repository?.name || workflowRepo}`,
+              status: item.status || "completed",
+              conclusion: item.conclusion || "success",
+              event: "workflow_run",
+              actor: item.actor?.login || "Unknown",
+              commitMessage: item.head_commit?.message || "Workflow run",
+              commitSha: item.head_sha?.substring(0, 7),
+              url: item.html_url,
+              createdAt: item.created_at || new Date().toISOString(),
+              updatedAt: item.updated_at || new Date().toISOString(),
+              source: "github" as const,
+            };
+          }
+
+          // Handle commits (repositories and user activity)
           return {
-            id: item.id || `workflow-${index}`,
-            name: item.name || "CI/CD Workflow",
-            repo: `${item.repository?.owner?.login || workflowOwner}/${item.repository?.name || workflowRepo}`,
+            id: item.sha || `${item.repo}-${index}`,
+            name: item.name || `${item.owner}/${item.repo}`,
+            repo: `${item.owner}/${item.repo}`,
             status: item.status || "completed",
             conclusion: item.conclusion || "success",
-            event: "workflow_run",
-            actor: item.actor?.login || "Unknown",
-            commitMessage: item.head_commit?.message || "Workflow run",
-            commitSha: item.head_sha?.substring(0, 7),
-            url: item.html_url,
-            createdAt: item.created_at || new Date().toISOString(),
-            updatedAt: item.updated_at || new Date().toISOString(),
+            event: item.type,
+            actor: item.author,
+            commitMessage: item.message,
+            commitSha: item.sha?.substring(0, 7),
+            url: item.url,
+            createdAt: item.date,
+            updatedAt: item.date,
             source: "github" as const,
           };
-        }
-        
-        // Handle commits (repositories and user activity)
-        return {
-          id: item.sha || `${item.repo}-${index}`,
-          name: item.name || `${item.owner}/${item.repo}`,
-          repo: `${item.owner}/${item.repo}`,
-          status: item.status || "completed",
-          conclusion: item.conclusion || "success",
-          event: item.type,
-          actor: item.author,
-          commitMessage: item.message,
-          commitSha: item.sha?.substring(0, 7),
-          url: item.url,
-          createdAt: item.date,
-          updatedAt: item.date,
-          source: "github" as const,
-        };
-      });
+        },
+      );
 
       setActivities(transformedActivities);
     } catch (err: any) {
