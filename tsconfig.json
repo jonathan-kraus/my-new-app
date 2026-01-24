@@ -9,6 +9,7 @@
       "@/lib/*": ["./lib/*"],
       "@/types/*": ["./types/*"]
     },
+    "types": ["vitest/globals"],
     "strict": true,
     "jsx": "react-jsx",
     "allowJs": false,
