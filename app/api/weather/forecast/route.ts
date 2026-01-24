@@ -46,7 +46,7 @@ export async function GET(req: Request) {
         level: "info",
         message: `Forecast cache hit ${age}/${FORECAST_CACHE_MINUTES}`,
 
-        payload: {
+        weather: {
           cacheWindowMinutes: FORECAST_CACHE_MINUTES,
           actualAgeMinutes: age,
           sessionUser: session?.user?.name ?? null,
@@ -59,7 +59,7 @@ export async function GET(req: Request) {
       { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
     );
 
-    const payload = cached.payload as {
+    const weather = cached.payload as {
       current: any;
       forecast: any;
     };
@@ -67,7 +67,7 @@ export async function GET(req: Request) {
     return NextResponse.json({
       source: "cache",
       location,
-      ...payload,
+      ...weather,
       fetchedAt: cached.fetchedAt.toISOString(),
     });
   }
