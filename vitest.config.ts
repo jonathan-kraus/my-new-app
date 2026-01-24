@@ -9,8 +9,8 @@ export default defineConfig({
       "@/components": path.resolve(__dirname, "./app/components"),
       "@/hooks": path.resolve(__dirname, "./hooks"),
       "@/lib": path.resolve(__dirname, "./lib"),
-      "@/types": path.resolve(__dirname, "./types")
-    }
+      "@/types": path.resolve(__dirname, "./types"),
+    },
   },
 
   test: {
@@ -20,7 +20,7 @@ export default defineConfig({
     include: [
       "app/**/*.test.{ts,tsx}",
       "app/**/__test__/**/*.{ts,tsx}",
-      "tests/**/*.{ts,tsx}"
+      "tests/**/*.{ts,tsx}",
     ],
 
     coverage: {
@@ -31,8 +31,8 @@ export default defineConfig({
         lines: 80,
         functions: 80,
         branches: 70,
-        statements: 80
-      }
-    }
-  }
+        statements: 80,
+      },
+    },
+  },
 });

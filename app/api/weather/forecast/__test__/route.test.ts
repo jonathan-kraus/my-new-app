@@ -119,7 +119,7 @@ describe("GET /api/weather/forecast", () => {
     mockedDb.location.findUnique.mockResolvedValue(null);
 
     const res = await GET(
-      makeRequest("http://localhost/api/weather/forecast?locationId=KOP")
+      makeRequest("http://localhost/api/weather/forecast?locationId=KOP"),
     );
     const json = await res.json();
 
@@ -132,7 +132,7 @@ describe("GET /api/weather/forecast", () => {
     mockedDb.forecastSnapshot.findFirst.mockResolvedValue(makeSnapshot());
 
     const res = await GET(
-      makeRequest("http://localhost/api/weather/forecast?locationId=KOP")
+      makeRequest("http://localhost/api/weather/forecast?locationId=KOP"),
     );
     const json = await res.json();
 
@@ -152,11 +152,11 @@ describe("GET /api/weather/forecast", () => {
     });
 
     mockedDb.forecastSnapshot.create.mockResolvedValue(
-      makeSnapshot({ id: "snap-1" })
+      makeSnapshot({ id: "snap-1" }),
     );
 
     const res = await GET(
-      makeRequest("http://localhost/api/weather/forecast?locationId=KOP")
+      makeRequest("http://localhost/api/weather/forecast?locationId=KOP"),
     );
     const json = await res.json();
 
@@ -177,7 +177,7 @@ describe("GET /api/weather/forecast", () => {
     });
 
     const res = await GET(
-      makeRequest("http://localhost/api/weather/forecast?locationId=KOP")
+      makeRequest("http://localhost/api/weather/forecast?locationId=KOP"),
     );
     const json = await res.json();
 

@@ -1,47 +1,29 @@
-"use client";
+import { getFormattedVercelUsage } from "@/lib/vercel";
 
-import { useEffect, useState } from "react";
-import { getVercelData } from "@/lib/vercel";
+// app/components/dashboard/vercel-card.tsx
+type Props = {
+  data: Awaited<ReturnType<typeof getFormattedVercelUsage>>;
+};
 
-export default function VercelCard() {
-  const [data, setData] = useState<any>(null);
+export function VercelCard({ data }: Props) {
+  if (!data.ok || !data.usage) {
+    return (
+      <div className="p-4 bg-red-900/20 text-red-300 rounded">
+        Vercel API error: {data.error}
+      </div>
+    );
+  }
 
-  useEffect(() => {
-    getVercelData().then(setData).catch(console.error);
-  }, []);
-
-  if (!data) return <div className="card">Loading Vercel data…</div>;
-
-  const { usage, deployments, project } = data;
+  const u = data.usage;
 
   return (
-    <div className="card p-4 space-y-4">
-      <h2 className="text-xl font-semibold">Vercel Overview</h2>
-
-      <div>
-        <h3 className="font-medium">Usage</h3>
-        <p>Bandwidth: {usage.bandwidth} MB</p>
-        <p>Serverless Invocations: {usage.serverlessExecutionCount}</p>
-        <p>Edge Invocations: {usage.edgeExecutionCount}</p>
-        <p>Builds: {usage.builds}</p>
-      </div>
-
-      <div>
-        <h3 className="font-medium">Latest Deployments</h3>
-        {deployments.slice(0, 3).map((d: any) => (
-          <div key={d.uid} className="text-sm">
-            <p>{d.meta.githubCommitMessage ?? "No commit message"}</p>
-            <p>Status: {d.state}</p>
-            <p>URL: {d.url}</p>
-          </div>
-        ))}
-      </div>
-
-      <div>
-        <h3 className="font-medium">Project</h3>
-        <p>Name: {project.name}</p>
-        <p>Framework: {project.framework}</p>
-      </div>
+    <div className="p-4 bg-zinc-900 rounded">
+      <h2 className="font-semibold mb-2">Vercel Usage</h2>
+      <p>Bandwidth: {u.bandwidth} MB</p>
+      <p>Serverless Invocations: {u.serverlessInvocations}</p>
+      <p>
+        Period: {u.periodStart} → {u.periodEnd}
+      </p>
     </div>
   );
 }

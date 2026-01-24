@@ -25,4 +25,3 @@ export interface VercelProject {
   framework: string;
   environment: Array<{ key: string; value: string }>;
 }
-

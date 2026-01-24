@@ -10,7 +10,7 @@ export async function GET() {
   if (!token || !projectId) {
     return NextResponse.json(
       { error: "Missing Vercel API credentials" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -23,21 +23,21 @@ export async function GET() {
   // Fetch usage
   const usageRes = await fetch(
     `${VERCEL_API}/v6/usage?projectId=${projectId}${teamParam}`,
-    { headers }
+    { headers },
   );
   const usage = await usageRes.json();
 
   // Fetch deployments
   const deployRes = await fetch(
     `${VERCEL_API}/v13/deployments?projectId=${projectId}${teamParam}&limit=5`,
-    { headers }
+    { headers },
   );
   const deployments = await deployRes.json();
 
   // Fetch project config
   const projectRes = await fetch(
     `${VERCEL_API}/v9/projects/${projectId}${teamParam}`,
-    { headers }
+    { headers },
   );
   const project = await projectRes.json();
 
