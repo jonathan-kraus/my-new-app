@@ -7,7 +7,7 @@ import CurrentWeatherCard from "@/app/components/dashboard/current-weather-card"
 export async function DashboardClientPage({ data }: { data: any }) {
   // Default location for weather (you can make this dynamic later)
   const defaultLocation = {
-    id: "default-location",
+    id: "KOP",
     key: "kop",
     name: "King of Prussia, PA",
     latitude: 40.0956,
