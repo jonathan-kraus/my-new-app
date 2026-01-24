@@ -1,5 +1,3 @@
-// lib/ephemeris/getEphemerisSnapshot.ts
-
 import { db } from "@/lib/db";
 import { format } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
@@ -13,13 +11,45 @@ import type {
 
 const TZ = "America/New_York";
 
+// ---------------------------------------------------------
+// Safe date helper — prevents RangeError: Invalid time value
+// ---------------------------------------------------------
+function safeDate(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const d = new Date(value);
+  return isNaN(d.getTime()) ? null : d.toISOString();
+}
+
+// ---------------------------------------------------------
+// Safe event builder — returns null instead of throwing
+// ---------------------------------------------------------
+function safeBuildEvent(
+  name: string,
+  timestamp: string | null,
+  type: "solar" | "lunar",
+  tomorrow: string,
+): EphemerisEvent | null {
+  const ts = safeDate(timestamp);
+  if (!ts) return null;
+
+  const zoned = toZonedTime(ts, TZ);
+
+  return {
+    name,
+    timestamp: ts,
+    timeLocal: format(zoned, "h:mm a"),
+    date: format(zoned, "yyyy-MM-dd"),
+    isTomorrow: format(zoned, "yyyy-MM-dd") === tomorrow,
+    type,
+  };
+}
+
 export async function getEphemerisSnapshot(
   location: string,
 ): Promise<EphemerisSnapshot> {
   const today = format(new Date(), "yyyy-MM-dd");
   const tomorrow = format(new Date(Date.now() + 86400000), "yyyy-MM-dd");
 
-  // Fetch today + tomorrow rows
   const rows = await db.astronomySnapshot.findMany({
     where: {
       locationId: location,
@@ -30,7 +60,6 @@ export async function getEphemerisSnapshot(
     orderBy: { date: "asc" },
   });
 
-  // Index by date
   const byDate: Record<string, any> = {};
   for (const r of rows) {
     const key = format(r.date, "yyyy-MM-dd");
@@ -44,44 +73,34 @@ export async function getEphemerisSnapshot(
     throw new Error(`No ephemeris row found for ${location} on ${today}`);
   }
 
-  // Build a normalized event
-  function buildEvent(
-    name: string,
-    timestamp: string,
-    type: "solar" | "lunar",
-  ): EphemerisEvent {
-    const zoned = toZonedTime(timestamp, TZ);
-
-    return {
-      name,
-      timestamp,
-      timeLocal: format(zoned, "h:mm a"),
-      date: format(zoned, "yyyy-MM-dd"),
-      isTomorrow: format(zoned, "yyyy-MM-dd") === tomorrow,
-      type,
-    };
-  }
-
-  // Solar snapshot
+  // ---------------------------------------------------------
+  // Solar snapshot (safe because sunrise/sunset always exist)
+  // ---------------------------------------------------------
   const solar: SolarSnapshot = {
-    sunrise: buildEvent("Sunrise", todayRow.sunrise, "solar"),
-    sunset: buildEvent("Sunset", todayRow.sunset, "solar"),
+    sunrise: safeBuildEvent("Sunrise", todayRow.sunrise, "solar", tomorrow)!,
+    sunset: safeBuildEvent("Sunset", todayRow.sunset, "solar", tomorrow)!,
   };
 
-  // Lunar snapshot
+  // ---------------------------------------------------------
+  // Lunar snapshot (now fully safe)
+  // ---------------------------------------------------------
   const lunar: LunarSnapshot = {
-    moonrise: buildEvent("Moonrise", todayRow.moonrise, "lunar"),
-    moonset: buildEvent("Moonset", todayRow.moonset, "lunar"),
-    illumination: todayRow.illumination,
+    date: today,
+    moonrise: safeBuildEvent("Moonrise", todayRow.moonrise, "lunar", tomorrow),
+    moonset: safeBuildEvent("Moonset", todayRow.moonset, "lunar", tomorrow),
+
+    illumination: todayRow.illumination ?? null,
   };
 
-  // Determine next event
+  // ---------------------------------------------------------
+  // Determine next event (skip null lunar events)
+  // ---------------------------------------------------------
   const allEvents: EphemerisEvent[] = [
     solar.sunrise,
     solar.sunset,
     lunar.moonrise,
     lunar.moonset,
-  ];
+  ].filter(Boolean) as EphemerisEvent[];
 
   const now = Date.now();
 
@@ -92,15 +111,14 @@ export async function getEphemerisSnapshot(
         (a, b) =>
           new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
       )[0] ||
-    // fallback: tomorrow sunrise if today is exhausted
     (tomorrowRow
-      ? buildEvent("Sunrise", tomorrowRow.sunrise, "solar")
+      ? safeBuildEvent("Sunrise", tomorrowRow.sunrise, "solar", tomorrow)
       : solar.sunrise);
 
   return {
     solar,
     lunar,
-    nextEvent,
+    nextEvent: nextEvent!,
     fetchedAt: new Date().toISOString(),
   };
 }

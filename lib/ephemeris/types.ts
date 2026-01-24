@@ -15,9 +15,10 @@ export type SolarSnapshot = {
 };
 
 export type LunarSnapshot = {
-  moonrise: EphemerisEvent;
-  moonset: EphemerisEvent;
-  illumination: number;
+  date: string;
+  moonrise: EphemerisEvent | null;
+  moonset: EphemerisEvent | null;
+  illumination: number | null;
 };
 
 export type EphemerisSnapshot = {

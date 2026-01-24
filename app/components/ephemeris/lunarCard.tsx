@@ -1,35 +1,40 @@
-"use client";
-
 import type { LunarSnapshot } from "@/lib/ephemeris/types";
-import { useLiveCountdown } from "@/hooks/useLiveCountdown";
 
 export default function LunarCard({ snapshot }: { snapshot: LunarSnapshot }) {
-  const next =
-    new Date(snapshot.moonrise.timestamp).getTime() > Date.now()
-      ? snapshot.moonrise
-      : snapshot.moonset;
+  const { moonrise, moonset } = snapshot;
 
-  const countdown = useLiveCountdown(next.timestamp);
+  // Collect only valid events
+  const events = [moonrise, moonset].filter(
+    (e): e is NonNullable<typeof e> => !!e,
+  );
+
+  // No lunar events at all
+  if (events.length === 0) {
+    return (
+      <div className="rounded-lg border p-4">
+        <h3 className="font-semibold mb-1">Lunar</h3>
+        <p>No lunar events today</p>
+      </div>
+    );
+  }
+
+  // Pick the next upcoming event
+  const now = Date.now();
+  const upcoming = events
+    .filter((e) => new Date(e.timestamp).getTime() > now)
+    .sort(
+      (a, b) =>
+        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+    )[0];
+
+  // If none are upcoming, fall back to the last event of the day
+  const next = upcoming ?? events[events.length - 1];
 
   return (
-    <div className="p-6 rounded-xl bg-purple-600 text-white shadow-lg space-y-3">
-      <h2 className="text-2xl font-semibold">Lunar</h2>
-
-      <p>Moonrise: {snapshot.moonrise.timeLocal}</p>
-      <p>Moonset: {snapshot.moonset.timeLocal}</p>
-      <p>
-        Illumination:{" "}
-        {snapshot.illumination != null
-          ? snapshot.illumination.toFixed(2)
-          : "N/A"}
-        %
-      </p>
-
-      <div className="mt-4 p-3 bg-purple-800 rounded-lg">
-        <p className="font-semibold">{next.name}</p>
-        <p>{next.timeLocal}</p>
-        <p className="text-lg font-bold mt-1">{countdown}</p>
-      </div>
+    <div className="rounded-lg border p-4 space-y-1">
+      <h3 className="font-semibold">Next Lunar Event</h3>
+      <p className="text-sm opacity-80">{next.name}</p>
+      <p className="text-lg font-bold">{next.timeLocal}</p>
     </div>
   );
 }

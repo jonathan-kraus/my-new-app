@@ -4,6 +4,7 @@ import LunarCard from "@/app/components/ephemeris/lunarCard";
 
 export default async function AstronomyPage() {
   const ephemeris = await getEphemerisSnapshot("KOP");
+  console.log("ASTRO SNAPSHOT", ephemeris);
 
   return (
     <div className="p-8 space-y-10">
