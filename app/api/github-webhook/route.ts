@@ -214,7 +214,17 @@ export async function POST(req: NextRequest) {
   // If workflow_run, ingest full event
   if (event === "workflow_run") {
     const wr = transformWorkflowRun(payload);
-
+  writeGithubDebugEvent({
+    event,
+    repo : payload.repository?.full_name ?? null,
+    actor : payload.sender?.login ?? null,
+    status: payload.workflow_run?.status,
+    action: payload.action,
+    commit: getCommitMessage(payload),
+    sha: getSha(payload),
+    raw: payload,
+  });
+  console.log("workflow_run", wr);
     if (!wr) {
       await logit(
         "github",
