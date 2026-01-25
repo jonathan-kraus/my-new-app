@@ -9,7 +9,6 @@ import Link from "next/link";
 import { db } from "@/lib/db";
 import { RecentActivity } from "@/components/activity/RecentActivity";
 
-
 {
   /* <div>🌙 Moonrise: {format(data.moonrise)}</div> */
 }
@@ -25,9 +24,6 @@ function getGreeting(): string {
 export default async function HomePage() {
   const h = await headers(); // ✅ await the Promise
   const session = await auth();
-
-
-
 
   const ctx = {
     requestId: crypto.randomUUID(),

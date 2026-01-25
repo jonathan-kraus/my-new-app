@@ -104,13 +104,12 @@ export function AstronomyCard({ data }: AstronomyCardProps) {
           Moonset: {safeTime(lunar?.moonset?.timestamp)}
         </p>
         <p className="text-sm text-gray-300">
-          Illumination: {lunar?.illumination !== null
+          Illumination:{" "}
+          {lunar?.illumination !== null
             ? `${Math.round(lunar.illumination * 100)}%`
             : "—"}
         </p>
-        <p className="text-2xl mt-1">
-          {moonPhaseIcon(lunar?.illumination)}
-        </p>
+        <p className="text-2xl mt-1">{moonPhaseIcon(lunar?.illumination)}</p>
       </div>
 
       {/* Timeline */}

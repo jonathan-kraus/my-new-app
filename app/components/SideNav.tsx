@@ -34,7 +34,6 @@ export default function SideNav() {
   return (
     <aside className="w-64 h-screen flex flex-col bg-gradient-to-b from-blue-600 to-blue-900 text-white shadow-xl">
       <nav className="flex-1 p-4 space-y-2">
-
         <div className="flex items-center justify-between text-xs uppercase tracking-wide text-white/60 mb-2">
           <span>Apps</span>
           {nextLabel && countdown && (

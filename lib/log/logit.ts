@@ -1,5 +1,6 @@
 // lib/log/logit.ts
-import { queueEvent } from "./queue";
+import { CreateLogInput, LogitContext } from "./types";
+import { queueEvent } from "./queueEvent";
 import { nextLogIndex } from "./state";
 import { startScheduler } from "./scheduler";
 import { db } from "@/lib/db"; // Neon (Prisma)
@@ -28,46 +29,45 @@ function safeForNeon(obj: any) {
   }
 }
 
-export async function logit(domain: string, payload: any, meta: any = {}) {
-  const requestId = meta.requestId ?? crypto.randomUUID();
-  const eventIndex = nextLogIndex(requestId);
+export async function logit(
+  domain: string,
+  input: CreateLogInput,
+  context: LogitContext = {},
+) {
+  const timestamp = new Date().toISOString();
 
-  //
-  // 1. Flatten the user payload
-  //
-  const flatPayload = {
-    eventIndex,
-    ...(payload?.payload ?? {}), // actual event data
-  };
-
-  //
-  // 2. Flatten meta
-  //
-  const flatMeta = {
-    requestId,
-    page: meta.page ?? null,
-    userId: meta.userId ?? null,
-  };
-
-  //
-  // 3. Build the canonical event object
-  //
   const event = {
     domain,
-    level: payload.level ?? "info",
-    message: payload.message ?? "",
-    timestamp: new Date().toISOString(),
-    payload: flatPayload,
-    meta: flatMeta,
+    level: input.level,
+    message: input.message,
+    payload: input.payload ?? {},
+    meta: {
+      requestId: context.requestId ?? input.meta?.requestId ?? null,
+      userId: context.userId ?? input.meta?.userId ?? null,
+      page: context.route ?? input.meta?.page ?? null,
+      file: input.meta?.file ?? null,
+      line: input.meta?.line ?? null,
+    },
+    timestamp,
   };
 
+  queueEvent({ domain, dataj: event });
+
+  const requestId = event.meta.requestId ?? null;
+  const payload = event.payload;
+  const meta = event.meta;
+
   //
-  // 4. Axiom: send ONE FIELD ONLY
+  // 1. Axiom: flat fields
   //
-  queueEvent({
-    domain,
-    dataj: event,
-  });
+  const flatPayload = {
+    ...payload,
+    timestamp,
+  };
+  const flatMeta = {
+    ...meta,
+    eventIndex: nextLogIndex(domain),
+  };
 
   //
   // 5. Neon: structured fields
