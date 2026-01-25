@@ -36,6 +36,9 @@ export async function logit(
 ) {
   const timestamp = new Date().toISOString();
 
+  //
+  // 1. Build the base event (this is what Axiom receives)
+  //
   const event = {
     domain,
     level: input.level,
@@ -51,23 +54,31 @@ export async function logit(
     timestamp,
   };
 
-  queueEvent({ domain, dataj: event });
+  // Extract early so it's in scope
+const payload = event.payload;
+const meta = event.meta;
 
-  const requestId = event.meta.requestId ?? null;
-  const payload = event.payload;
-  const meta = event.meta;
+// 2. Compute flat fields
+const flatPayload: Record<string, any> = {
+  ...payload,
+  timestamp,
+};
 
-  //
-  // 1. Axiom: flat fields
-  //
-  const flatPayload = {
-    ...payload,
-    timestamp,
-  };
-  const flatMeta = {
-    ...meta,
-    eventIndex: nextLogIndex(domain),
-  };
+const flatMeta = {
+  ...meta,
+  eventIndex: nextLogIndex(domain),
+};
+
+// Update event BEFORE sending to Axiom
+event.payload = flatPayload;
+event.meta = flatMeta;
+
+// 4. Axiom: send ONE FIELD ONLY
+queueEvent({
+  domain,
+  dataj: event,
+});
+
 
   //
   // 5. Neon: structured fields
@@ -78,7 +89,7 @@ export async function logit(
         domain,
         level: event.level,
         message: event.message,
-        requestId,
+        requestId: flatMeta.requestId ?? null,
         payload: safeForNeon(flatPayload),
         meta: safeForNeon(flatMeta),
 
@@ -86,10 +97,10 @@ export async function logit(
         userId: flatMeta.userId,
 
         // Optional session fields
-        sessionEmail: payload.sessionEmail ?? null,
-        sessionUser: payload.sessionUser ?? null,
-        file: payload.file ?? null,
-        line: payload.line ?? null,
+        sessionEmail: flatPayload.sessionEmail ?? null,
+        sessionUser: flatPayload.sessionUser ?? null,
+        file: flatPayload.file ?? null,
+        line: flatPayload.line ?? null,
 
         // Legacy compatibility
         data: safeForNeon(flatPayload),
