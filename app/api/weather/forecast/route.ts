@@ -39,26 +39,25 @@ export async function GET(req: Request) {
 
   if (cached) {
     const age = Math.round((Date.now() - cached.fetchedAt.getTime()) / 60000);
-
-    await logit(
+console.log("age", age);
+await logit(
       "weather",
-      {
-        level: "info",
-        message: `Forecast cache hit ${age}/${FORECAST_CACHE_MINUTES}`,
+    {
+      level: "debug",
+      message: `Forecast cache hit ${age}/${FORECAST_CACHE_MINUTES}`,
+      payload: { locationId: locationId,
 
-        weather: {
-          cacheWindowMinutes: FORECAST_CACHE_MINUTES,
+         cacheWindowMinutes: FORECAST_CACHE_MINUTES,
           actualAgeMinutes: age,
           sessionUser: session?.user?.name ?? null,
           sessionEmail: session?.user?.email ?? null,
           userId: session?.user?.id ?? null,
-          locationId,
-          file: "app/api/weather/forecast/route.ts",
-        },
-      },
-      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-    );
 
+      file: "app/api/weather/forecast/route.ts",
+      page: "/api/weather/forecast",},
+    },
+    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+  );
     const weather = cached.payload as {
       current: any;
       forecast: any;
