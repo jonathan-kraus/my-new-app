@@ -9,15 +9,55 @@ export async function GET(req: NextRequest) {
   const start = Date.now();
   const ctx = await enrichContext(req);
 
-  logit(
-    "jonathan",
-    {
-      level: "info",
-      message: "Ping route hit",
-      payload: { som: crypto.randomUUID(), start: start },
+await logit(
+  "jonathan",
+  {
+    level: "info",
+    message: "Ping route hit (axiom test)",
+    payload: {
+      uuid: crypto.randomUUID(),
+      start,
+      route: "/api/ping",
     },
-    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-  );
+  },
+  {
+    requestId: ctx.requestId,
+    route: ctx.page,
+    userId: ctx.userId,
+  },
+);
+try {
+  const ax = new Axiom({ token: process.env.AXIOM_TOKEN! });
+
+  await ax.ingest("myapp_logs", [
+    {
+      // top-level fields (Axiom will flatten these)
+      directTest: true,
+      route: "/api/ping",
+      timestamp: new Date().toISOString(),
+
+      // nested JSON (Axiom will store this as JSON)
+      dataj: {
+        domain: "jonathan",
+        level: "info",
+        message: "Direct Axiom ingest test",
+        payload: {
+          uuid: crypto.randomUUID(),
+          start,
+        },
+        meta: {
+          requestId: ctx.requestId,
+          userId: ctx.userId,
+          page: ctx.page,
+        },
+        timestamp: new Date().toISOString(),
+      },
+    },
+  ]);
+} catch (err) {
+  console.error("Direct Axiom ingest failed:", err);
+}
+
 
   const projectId = process.env.VERCEL_PROJECT_ID;
 
