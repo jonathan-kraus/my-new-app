@@ -15,37 +15,45 @@ export function AstronomyCard({ data }: AstronomyCardProps) {
 
   const { solar, lunar, nextEvent } = data;
 
+  const safeTime = (ts: string | null | undefined) =>
+    ts ? new Date(ts).toLocaleTimeString() : "—";
+
   return (
     <div className="p-4 rounded-lg bg-purple-900/20 border border-purple-700/30">
       <h2 className="text-lg font-semibold mb-2">Astronomy</h2>
 
-      {nextEvent && (
+      {/* Next Event */}
+      {nextEvent ? (
         <div className="mb-4">
           <p className="font-medium">Next Event</p>
           <p className="text-sm text-gray-300">{nextEvent.name}</p>
           <p className="text-sm text-gray-300">
-            {new Date(nextEvent.timestamp).toLocaleTimeString()}
+            {safeTime(nextEvent.timestamp)}
           </p>
         </div>
+      ) : (
+        <p>No upcoming events</p>
       )}
 
+      {/* Solar */}
       <div className="mb-4">
         <p className="font-medium">Solar</p>
         <p className="text-sm text-gray-300">
-          Sunrise: {new Date(solar.sunrise.timestamp).toLocaleTimeString()}
+          Sunrise: {safeTime(solar?.sunrise?.timestamp)}
         </p>
         <p className="text-sm text-gray-300">
-          Sunset: {new Date(solar.sunset.timestamp).toLocaleTimeString()}
+          Sunset: {safeTime(solar?.sunset?.timestamp)}
         </p>
       </div>
 
+      {/* Lunar */}
       <div className="mb-2">
         <p className="font-medium">Lunar</p>
         <p className="text-sm text-gray-300">
-          Moonrise: {new Date(lunar.moonrise.timestamp).toLocaleTimeString()}
+          Moonrise: {safeTime(lunar?.moonrise?.timestamp)}
         </p>
         <p className="text-sm text-gray-300">
-          Moonset: {new Date(lunar.moonset.timestamp).toLocaleTimeString()}
+          Moonset: {safeTime(lunar?.moonset?.timestamp)}
         </p>
       </div>
     </div>
