@@ -19,14 +19,14 @@ export async function GET(req: NextRequest) {
     { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
   );
 
-const res = await fetch(
-  `https://api.vercel.com/v1/usage?teamId=${process.env.VERCEL_TEAM_ID}&from=${from}&to=${to}`,
-  {
-    headers: {
-      Authorization: `Bearer ${process.env.VERCEL_TOKEN}`
-    }
-  }
-);
+  const res = await fetch(
+    `https://api.vercel.com/v1/usage?teamId=${process.env.VERCEL_TEAM_ID}&from=${from}&to=${to}`,
+    {
+      headers: {
+        Authorization: `Bearer ${process.env.VERCEL_TOKEN}`,
+      },
+    },
+  );
 
   // Final log with correct duration
   await logit(

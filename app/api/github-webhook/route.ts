@@ -211,33 +211,28 @@ export async function POST(req: NextRequest) {
   // 3. Normalize event
   const normalized = normalizeGitHubEvent(event, payload);
 
-  // If workflow_run, ingest full event
   if (event === "workflow_run") {
     const wr = transformWorkflowRun(payload);
-  writeGithubDebugEvent({
-    event,
-    repo : payload.repository?.full_name ?? null,
-    actor : payload.sender?.login ?? null,
-    status: payload.workflow_run?.status,
-    action: payload.action,
-    commit: getCommitMessage(payload),
-    sha: getSha(payload),
-    raw: payload,
-  });
-  console.log("workflow_run", wr);
+    await writeGithubDebugEvent({
+      event,
+      repo: payload.repository?.full_name ?? null,
+      actor: payload.sender?.login ?? null,
+      status: payload.workflow_run?.status,
+      action: payload.action,
+      commit: getCommitMessage(payload),
+      sha: getSha(payload),
+      raw: payload,
+    });
+    console.log("workflow_run", wr);
     if (!wr) {
       await logit(
         "github",
         {
           level: "warn",
           message: "workflow_run missing payload",
-          payload: { event: event },
+          payload: { event },
         },
-        {
-          requestId: ctx.requestId,
-          route: ctx.page,
-          userId: ctx.userId,
-        },
+        { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
       );
       return new Response("OK");
     }

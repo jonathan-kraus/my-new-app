@@ -62,7 +62,7 @@ export async function getVercelUsage() {
 
   return vercelRequest("/v1/usage", {
     from: startOfMonth.toISOString(),
-    to: now.toISOString()
+    to: now.toISOString(),
   });
 }
 
