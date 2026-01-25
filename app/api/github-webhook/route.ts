@@ -129,9 +129,9 @@ function normalizeGitHubEvent(event: string | null, payload: any) {
   }
 }
 import { db } from "@/lib/db";
-import { json } from "zod";
 
 export async function writeGithubDebugEvent(payload: any) {
+  console.log("Writing GitHub debug event", payload);
   try {
     await db.githubDebug.create({
       data: {
@@ -223,7 +223,7 @@ export async function POST(req: NextRequest) {
       sha: getSha(payload),
 
     });
-    console.log("workflow_run", wr);
+    console.log("~~ workflow_run", wr);
     if (!wr) {
       await logit(
         "github",
