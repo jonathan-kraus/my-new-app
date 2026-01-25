@@ -1,13 +1,3 @@
-export interface VercelUsage {
-  bandwidth: number;
-  serverlessExecutionCount: number;
-  edgeExecutionCount: number;
-  storage: number;
-  builds: number;
-  periodStart: string;
-  periodEnd: string;
-}
-
 export interface VercelDeployment {
   uid: string;
   url: string;

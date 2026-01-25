@@ -31,7 +31,9 @@ export async function GET(req: NextRequest) {
   );
   const raw = await res.text(); // Try to parse JSON safely
   let json = null;
-  try { json = JSON.parse(raw); } catch {  }
+  try {
+    json = JSON.parse(raw);
+  } catch {}
   // Final log with correct duration
   await logit(
     "jonathan",
@@ -42,6 +44,6 @@ export async function GET(req: NextRequest) {
     },
     { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
   );
-  
+
   return Response.json(json);
 }

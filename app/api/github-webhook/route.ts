@@ -221,7 +221,6 @@ export async function POST(req: NextRequest) {
       action: payload.action,
       commit: getCommitMessage(payload),
       sha: getSha(payload),
-
     });
     console.log("~~ workflow_run", wr);
     if (!wr) {
