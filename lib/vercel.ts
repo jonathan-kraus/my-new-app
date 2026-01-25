@@ -4,7 +4,7 @@ export async function vercelRequest<T>(
   params?: Record<string, string>,
 ) {
   const url = new URL(`https://api.vercel.com${path}`);
-const projectId = process.env.VERCEL_PROJECT_ID;
+
   if (params) {
     for (const [k, v] of Object.entries(params)) {
       url.searchParams.set(k, v);
@@ -24,8 +24,8 @@ const projectId = process.env.VERCEL_PROJECT_ID;
 
   return json as T;
 }
-export async function getFormattedVercelUsage() {
-  const raw = await getVercelProject(${projectId});
+export async function getFormattedVercelUsage(projectId: string) {
+  const raw = await getVercelProject(projectId);
   const formatted = normalizeUsage(raw);
 
   console.log("[VERCEL FORMATTED]", formatted);

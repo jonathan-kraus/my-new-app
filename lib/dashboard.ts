@@ -7,7 +7,7 @@ import { getRecentActivity } from "./github";
 
 export async function getDashboardData() {
   const [vercel, github] = await Promise.all([
-    getFormattedVercelUsage(),
+    getFormattedVercelUsage(process.env.VERCEL_PROJECT_ID!),
     getRecentActivity("jonathan-kraus"),
   ]);
 
