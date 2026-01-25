@@ -1,68 +1,27 @@
-import { useMemo } from "react";
-import { NormalizedAstronomySnapshot } from "@/lib/astronomy/types";
+// hooks\useUnifiedAstronomyCountdown.ts
+"use client";
 
-export interface AstronomyEvent {
-  type: "solar" | "lunar";
-  label: string;
-  time: Date;
-  ms: number;
-}
-function hasValidTime(e: {
-  type: "solar" | "lunar";
-  label: string;
-  time: Date | null;
-}): e is { type: "solar" | "lunar"; label: string; time: Date } {
-  return e.time instanceof Date;
-}
+import { useNow } from "@/hooks/useNow";
 
-export interface AstronomyEvent {
-  type: "solar" | "lunar";
-  label: string;
-  time: Date; // <-- NOT nullable
-  ms: number;
-}
-interface CountdownResult {
-  allEvents: AstronomyEvent[];
-  nextEvent: AstronomyEvent | null;
-}
-export function useUnifiedAstronomyCountdown(
-  today: NormalizedAstronomySnapshot | null,
-  tomorrow: NormalizedAstronomySnapshot | null,
-): CountdownResult {
-  const { allEvents, nextEvent } = useMemo(() => {
-    if (!today || !tomorrow) {
-      return { allEvents: [], nextEvent: null };
-    }
+export function useUnifiedAstronomyCountdown(snapshot: any | null) {
+  const now = useNow();
 
-    const now = new Date();
+  if (!snapshot || !snapshot.nextEvent) {
+    return { label: null, countdown: null };
+  }
 
-    const raw: { type: "solar" | "lunar"; label: string; time: Date | null }[] =
-      [
-        { type: "solar", label: "Sunrise", time: today.sunriseDate },
-        { type: "solar", label: "Sunset", time: today.sunsetDate },
-        {
-          type: "solar",
-          label: "Tomorrow’s Sunrise",
-          time: tomorrow.sunriseDate,
-        },
-        { type: "lunar", label: "Moonrise", time: today.moonriseDate },
-        { type: "lunar", label: "Moonset", time: today.moonsetDate },
-        {
-          type: "lunar",
-          label: "Tomorrow’s Moonrise",
-          time: tomorrow.moonriseDate,
-        },
-      ];
+  const { name, timestamp } = snapshot.nextEvent;
+  if (!timestamp) return { label: name, countdown: null };
 
-    const allEvents = raw
-      .filter(hasValidTime)
-      .map((e) => ({ ...e, ms: e.time.getTime() - now.getTime() }))
-      .sort((a, b) => a.time.getTime() - b.time.getTime());
+  const target = new Date(timestamp).getTime();
+  const diff = target - now.getTime();
+  if (diff <= 0) return { label: name, countdown: "—" };
 
-    const nextEvent = allEvents.find((e) => e.time > now) ?? null;
+  const hours = Math.floor(diff / 1000 / 60 / 60);
+  const minutes = Math.floor((diff / 1000 / 60) % 60);
 
-    return { allEvents, nextEvent };
-  }, [today, tomorrow]);
-
-  return { allEvents, nextEvent };
+  return {
+    label: name,
+    countdown: `${hours}h ${minutes}m`,
+  };
 }
