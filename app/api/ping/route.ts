@@ -39,9 +39,10 @@ const to = now.toISOString();
     {
       level: "info",
       message: "ping completed",
-      payload: res,
+      payload:  { status: res.status, ok: res.ok, body: text }
     },
     { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
   );
-  return Response.json({ res });
+  const json = await res.json();
+  return Response.json(json);
 }
