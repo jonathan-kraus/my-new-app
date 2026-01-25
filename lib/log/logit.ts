@@ -1,6 +1,5 @@
 // lib/log/logit.ts
-import { CreateLogInput, LogitContext } from "./types";
-import { queueEvent } from "./queueEvent";
+import { queueEvent } from "./queue";
 import { nextLogIndex } from "./state";
 import { startScheduler } from "./scheduler";
 import { db } from "@/lib/db"; // Neon (Prisma)
@@ -29,56 +28,46 @@ function safeForNeon(obj: any) {
   }
 }
 
-export async function logit(
-  domain: string,
-  input: CreateLogInput,
-  context: LogitContext = {},
-) {
-  const timestamp = new Date().toISOString();
+export async function logit(domain: string, payload: any, meta: any = {}) {
+  const requestId = meta.requestId ?? crypto.randomUUID();
+  const eventIndex = nextLogIndex(requestId);
 
   //
-  // 1. Build the base event (this is what Axiom receives)
+  // 1. Flatten the user payload
+  //
+  const flatPayload = {
+    eventIndex,
+    ...(payload?.payload ?? {}), // actual event data
+  };
+
+  //
+  // 2. Flatten meta
+  //
+  const flatMeta = {
+    requestId,
+    page: meta.page ?? null,
+    userId: meta.userId ?? null,
+  };
+
+  //
+  // 3. Build the canonical event object
   //
   const event = {
     domain,
-    level: input.level,
-    message: input.message,
-    payload: input.payload ?? {},
-    meta: {
-      requestId: context.requestId ?? input.meta?.requestId ?? null,
-      userId: context.userId ?? input.meta?.userId ?? null,
-      page: context.route ?? input.meta?.page ?? null,
-      file: input.meta?.file ?? null,
-      line: input.meta?.line ?? null,
-    },
-    timestamp,
+    level: payload.level ?? "info",
+    message: payload.message ?? "",
+    timestamp: new Date().toISOString(),
+    payload: flatPayload,
+    meta: flatMeta,
   };
 
-  // Extract early so it's in scope
-const payload = event.payload;
-const meta = event.meta;
-
-// 2. Compute flat fields
-const flatPayload: Record<string, any> = {
-  ...payload,
-  timestamp,
-};
-
-const flatMeta = {
-  ...meta,
-  eventIndex: nextLogIndex(domain),
-};
-
-// Update event BEFORE sending to Axiom
-event.payload = flatPayload;
-event.meta = flatMeta;
-
-// 4. Axiom: send ONE FIELD ONLY
-queueEvent({
-  domain,
-  dataj: event,
-});
-
+  //
+  // 4. Axiom: send ONE FIELD ONLY
+  //
+  queueEvent({
+    domain,
+    dataj: event,
+  });
 
   //
   // 5. Neon: structured fields
@@ -89,7 +78,7 @@ queueEvent({
         domain,
         level: event.level,
         message: event.message,
-        requestId: flatMeta.requestId ?? null,
+        requestId,
         payload: safeForNeon(flatPayload),
         meta: safeForNeon(flatMeta),
 
@@ -97,10 +86,10 @@ queueEvent({
         userId: flatMeta.userId,
 
         // Optional session fields
-        sessionEmail: flatPayload.sessionEmail ?? null,
-        sessionUser: flatPayload.sessionUser ?? null,
-        file: flatPayload.file ?? null,
-        line: flatPayload.line ?? null,
+        sessionEmail: payload.sessionEmail ?? null,
+        sessionUser: payload.sessionUser ?? null,
+        file: payload.file ?? null,
+        line: payload.line ?? null,
 
         // Legacy compatibility
         data: safeForNeon(flatPayload),
