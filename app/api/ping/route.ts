@@ -29,17 +29,19 @@ export async function GET(req: NextRequest) {
       },
     },
   );
-  const body = await res.text();
+  const raw = await res.text(); // Try to parse JSON safely
+  let json = null;
+  try { json = JSON.parse(raw); } catch {  }
   // Final log with correct duration
   await logit(
     "jonathan",
     {
       level: "info",
       message: "ping completed",
-      payload: { status: res.status, ok: res.ok, body: body },
+      payload: { status: res.status, ok: res.ok, body: raw },
     },
     { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
   );
-  const json = await res.json();
+  
   return Response.json(json);
 }
