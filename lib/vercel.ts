@@ -4,7 +4,7 @@ export async function vercelRequest<T>(
   params?: Record<string, string>,
 ) {
   const url = new URL(`https://api.vercel.com${path}`);
-
+const projectId = process.env.VERCEL_PROJECT_ID;
   if (params) {
     for (const [k, v] of Object.entries(params)) {
       url.searchParams.set(k, v);
@@ -13,7 +13,7 @@ export async function vercelRequest<T>(
 
   const res = await fetch(url.toString(), {
     headers: {
-      Authorization: `Bearer ${process.env.VERCEL_API_TOKEN}`,
+      Authorization: `Bearer ${process.env.VERCEL_TOKEN}`,
     },
     cache: "no-store",
   });
@@ -25,7 +25,7 @@ export async function vercelRequest<T>(
   return json as T;
 }
 export async function getFormattedVercelUsage() {
-  const raw = await getVercelUsage();
+  const raw = await getVercelProject(${projectId});
   const formatted = normalizeUsage(raw);
 
   console.log("[VERCEL FORMATTED]", formatted);
@@ -56,15 +56,7 @@ export function normalizeUsage(raw: any) {
 export async function getVercelDeployments(projectId: string) {
   return vercelRequest("/v6/deployments", { projectId });
 }
-export async function getVercelUsage() {
-  const now = new Date();
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-  return vercelRequest("/v1/usage", {
-    from: startOfMonth.toISOString(),
-    to: now.toISOString(),
-  });
-}
 
 export async function getVercelProject(projectName: string) {
   return vercelRequest(`/v9/projects/${projectName}`);
