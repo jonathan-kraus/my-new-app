@@ -134,11 +134,11 @@ export async function writeGithubDebugEvent(payload: any) {
   try {
     await db.githubDebug.create({
       data: {
-        raw: payload,
-        status: payload.workflow_run?.status,
-        action: payload.action,
-        commit: payload.workflow_run?.head_commit?.message,
-        sha: payload.workflow_run?.head_sha,
+        raw: JSON.parse(JSON.stringify(payload)),
+        status: payload.workflow_run?.status ?? null,
+        action: payload.action ?? null,
+        commit: payload.workflow_run?.head_commit?.message ?? null,
+        sha: payload.workflow_run?.head_sha ?? null,
       },
     });
   } catch (err) {
