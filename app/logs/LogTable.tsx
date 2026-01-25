@@ -1,4 +1,4 @@
-// app/logs/LogTable.tsx
+// app/logs\LogTable.tsx
 "use client";
 
 import { useState } from "react";
