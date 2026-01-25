@@ -19,71 +19,24 @@ export async function GET(req: NextRequest) {
     { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
   );
 
-  const payload = {
-    ok: true,
-    timestamp: new Date().toISOString(),
-    server: process.env.NODE_ENV,
-    requestId: crypto.randomUUID(),
-  };
+const res = await fetch(
+  `https://api.vercel.com/v1/usage?teamId=${process.env.VERCEL_TEAM_ID}&from=${from}&to=${to}`,
+  {
+    headers: {
+      Authorization: `Bearer ${process.env.VERCEL_TOKEN}`
+    }
+  }
+);
 
-  // Create Axiom client
-  const axiom = new Axiom({
-    token: process.env.AXIOM_TOKEN!,
-  });
-
-  //   let result;
-  //   try {
-
-  // result = await axiom.query(`
-
-  // ['myapp_logs']
-  // | limit 1
-  //   `);
-
-  //   } catch (err) {
-  //     await logit({
-  //       meta: { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId }
-  //,
-  //       level: "error",
-  //       message: "Axiom query failed",
-  //       page: "Ping API",
-  //       file: "app/api/ping/route.ts",
-  //       data: {
-  //         route: "ping",
-  //         error: err instanceof Error ? err.message : String(err),
-  //       },
-  //     });
-  //     throw err;
-  //   }
-
-  const query = `
-    ['myapp_logs']
-    | where message == "astronomy"
-    | sort by _time desc
-    | project
-        _time,
-        dataj.sunrisea,
-        dataj.sunriseb,
-        dataj.sunrisec,
-        dataj.sunrised,
-        dataj.sunrisee,
-        dataj.sunrisef,
-        dataj.sunriseg,
-        dataj.fetchedAt
-    | limit 50
-  `;
-
-  const result = await axiom.query(query);
-  const rows = result?.matches ?? [];
   // Final log with correct duration
   await logit(
     "jonathan",
     {
       level: "info",
       message: "ping completed",
-      payload: rows,
+      payload: res,
     },
     { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
   );
-  return Response.json({ rows });
+  return Response.json({ res });
 }
