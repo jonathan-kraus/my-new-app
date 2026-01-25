@@ -18,6 +18,11 @@ export async function GET(req: NextRequest) {
     },
     { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
   );
+const now = new Date();
+const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+const from = startOfMonth.toISOString();
+const to = now.toISOString();
 
   const res = await fetch(
     `https://api.vercel.com/v1/usage?teamId=${process.env.VERCEL_TEAM_ID}&from=${from}&to=${to}`,
