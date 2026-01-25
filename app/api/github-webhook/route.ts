@@ -135,7 +135,7 @@ export async function writeGithubDebugEvent(payload: any) {
   try {
     await db.githubDebug.create({
       data: {
-        //raw: JSON.parse(JSON.stringify(payload)),
+        raw: JSON.parse(JSON.stringify(payload)),
         status: payload.workflow_run?.status ?? null,
         action: payload.action ?? null,
         commit: payload.workflow_run?.head_commit?.message ?? null,
@@ -216,7 +216,7 @@ export async function POST(req: NextRequest) {
     const wr = transformWorkflowRun(payload);
     await writeGithubDebugEvent({
       event,
-      json: JSON.parse(JSON.stringify(payload)),
+      raw: JSON.parse(JSON.stringify(payload)),
       status: payload.workflow_run?.status,
       action: payload.action,
       commit: getCommitMessage(payload),
