@@ -8,7 +8,7 @@ import { AstronomyCard } from "@/app/astronomy/AstronomyCard";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { RecentActivity } from "@/components/activity/RecentActivity";
-import { loadAstronomySnapshots } from "./astronomy/loader";
+
 
 {
   /* <div>🌙 Moonrise: {format(data.moonrise)}</div> */
@@ -26,10 +26,9 @@ export default async function HomePage() {
   const h = await headers(); // ✅ await the Promise
   const session = await auth();
 
-  const { today, tomorrow } = await loadAstronomySnapshots();
 
-  console.log("HOMEPAGE TODAY:", today);
-  console.log("HOMEPAGE TOMORROW:", tomorrow);
+
+
   const ctx = {
     requestId: crypto.randomUUID(),
     page: "Home Page",
@@ -66,7 +65,7 @@ export default async function HomePage() {
     "jonathan",
     {
       level: "info",
-      message: "Visited dashboard",
+      message: "Visited dashboard 2",
 
       payload: {
         weatherData: weatherData,
