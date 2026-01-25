@@ -32,14 +32,14 @@ const to = now.toISOString();
       },
     },
   );
-
+const body = await res.text();
   // Final log with correct duration
   await logit(
     "jonathan",
     {
       level: "info",
       message: "ping completed",
-      payload:  { status: res.status, ok: res.ok, body: text }
+      payload:  { status: res.status, ok: res.ok, body: body }
     },
     { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
   );
