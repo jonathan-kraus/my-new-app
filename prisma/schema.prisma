@@ -115,8 +115,7 @@ model Location {
   updatedAt DateTime @updatedAt
 }
 model Log {
-  id           BigInt   @id @default(autoincrement())
-  timestamp    BigInt
+  id           Int   @id @default(autoincrement())
   level        String
   message      String
   requestId    String?
@@ -134,7 +133,6 @@ model Log {
   data         Json?
   created_at   DateTime @default(now())
 
-  @@index([timestamp])
   @@index([domain])
   @@index([level])
   @@index([created_at])
