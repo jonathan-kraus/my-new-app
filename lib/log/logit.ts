@@ -1,26 +1,21 @@
 // lib/log/logit.ts
+import crypto from "crypto";
 import { queueEvent } from "./queue";
 import { nextLogIndex } from "./state";
 import { startScheduler } from "./scheduler";
-import { db } from "@/lib/db"; // Neon (Prisma)
+import { db } from "@/lib/db";
 
 startScheduler();
 
-// Cooldown to prevent log spam if Neon/Axiom fail
 let lastErrorTime = 0;
 const ERROR_COOLDOWN_MS = 5000;
-
-// Max size Neon can safely handle (200 KB JSON)
 const NEON_MAX_JSON = 200_000;
 
 function safeForNeon(obj: any) {
   try {
     const json = JSON.stringify(obj);
     if (json.length > NEON_MAX_JSON) {
-      return {
-        truncated: true,
-        originalSize: json.length,
-      };
+      return { truncated: true, originalSize: json.length };
     }
     return obj;
   } catch {
@@ -29,20 +24,27 @@ function safeForNeon(obj: any) {
 }
 
 export async function logit(domain: string, payload: any, meta: any = {}) {
+  //
+  // 1. Determine requestId and eventIndex
+  //
   const requestId = meta.requestId ?? crypto.randomUUID();
+
+  // Per-request sequencing (the behavior you want)
   const eventIndex = nextLogIndex(requestId);
 
+  // Human-friendly numbering (#1, #2, #3…)
+  const humanIndex = eventIndex + 1;
+  const originalMessage = payload.message ?? "";
+  const message = `#${humanIndex} ${originalMessage}`;
+
   //
-  // 1. Flatten the user payload
+  // 2. Flatten payload and meta
   //
   const flatPayload = {
     eventIndex,
-    ...(payload?.payload ?? {}), // actual event data
+    ...(payload?.payload ?? {}),
   };
 
-  //
-  // 2. Flatten meta
-  //
   const flatMeta = {
     requestId,
     page: meta.page ?? null,
@@ -50,19 +52,19 @@ export async function logit(domain: string, payload: any, meta: any = {}) {
   };
 
   //
-  // 3. Build the canonical event object
+  // 3. Build canonical event (Axiom receives this)
   //
   const event = {
     domain,
     level: payload.level ?? "info",
-    message: payload.message ?? "",
+    message,
     timestamp: new Date().toISOString(),
     payload: flatPayload,
     meta: flatMeta,
   };
 
   //
-  // 4. Axiom: send ONE FIELD ONLY
+  // 4. Queue for Axiom ingestion
   //
   queueEvent({
     domain,
@@ -70,7 +72,7 @@ export async function logit(domain: string, payload: any, meta: any = {}) {
   });
 
   //
-  // 5. Neon: structured fields
+  // 5. Neon structured write
   //
   try {
     await db.log.create({
@@ -85,13 +87,11 @@ export async function logit(domain: string, payload: any, meta: any = {}) {
         page: flatMeta.page,
         userId: flatMeta.userId,
 
-        // Optional session fields
         sessionEmail: payload.sessionEmail ?? null,
         sessionUser: payload.sessionUser ?? null,
         file: payload.file ?? null,
         line: payload.line ?? null,
 
-        // Legacy compatibility
         data: safeForNeon(flatPayload),
       },
     });
