@@ -22,7 +22,7 @@ export default function SideNav() {
   const navItems = [
     { href: "/", label: "Home", icon: "🏠" },
     { href: "/dashboard", label: "Dashboard", icon: "📊" },
-    { href: "/astronomy", label: "Astronomy", icon: "🚀" },
+    { href: "/dashboard/astronomy", label: "Astronomy", icon: "🚀" },
     { href: "/forecast", label: "Forecast", icon: "🌤️" },
     { href: "/logs", label: "Logs", icon: "📘" },
     { href: "/notes", label: "Notes", icon: "📝" },

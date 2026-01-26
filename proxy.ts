@@ -36,7 +36,7 @@ export async function proxy(req: NextRequest) {
     {
       requestId: getRequestId(req.url),
       eventIndex: nextEventIndex(req.url),
-    }
+    },
   );
 
   // --- 3) Skip internal assets -----------------------------------
@@ -52,7 +52,10 @@ export async function proxy(req: NextRequest) {
   // --- 5) Auth check ---------------------------------------------
   const session = await auth();
   if (!session) {
-    return end(req, NextResponse.redirect(new URL("/api/auth/signin", req.url)));
+    return end(
+      req,
+      NextResponse.redirect(new URL("/api/auth/signin", req.url)),
+    );
   }
 
   // --- 6) Continue request ---------------------------------------
@@ -79,7 +82,7 @@ async function end(req: NextRequest, res: NextResponse) {
     {
       requestId: getRequestId(req.url),
       eventIndex: nextEventIndex(req.url),
-    }
+    },
   );
 
   clearRequest(req.url);

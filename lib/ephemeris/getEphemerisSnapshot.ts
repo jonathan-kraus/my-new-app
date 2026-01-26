@@ -1,101 +1,61 @@
 import { db } from "@/lib/db";
-import { format } from "date-fns";
-import { toZonedTime } from "date-fns-tz";
+import { EphemerisEvent } from "@/lib/ephemeris/types";
+import { buildEvent } from "@/lib/astronomy/buildEvent";
+import { getPhaseName } from "@/lib/astronomy/getPhaseName";
 
-import type {
-  EphemerisEvent,
-  SolarSnapshot,
-  LunarSnapshot,
-  EphemerisSnapshot,
-} from "./types";
-
-const TZ = "America/New_York";
-
-// ---------------------------------------------------------
-// Safe date helper — prevents RangeError: Invalid time value
-// ---------------------------------------------------------
-function safeDate(value: string | null | undefined): string | null {
-  if (!value) return null;
-  const d = new Date(value);
-  return isNaN(d.getTime()) ? null : d.toISOString();
-}
-
-// ---------------------------------------------------------
-// Safe event builder — returns null instead of throwing
-// ---------------------------------------------------------
-function safeBuildEvent(
-  name: string,
-  timestamp: string | null,
-  type: "solar" | "lunar",
-  tomorrow: string,
-): EphemerisEvent | null {
-  const ts = safeDate(timestamp);
-  if (!ts) return null;
-
-  const zoned = toZonedTime(ts, TZ);
-
-  return {
-    name,
-    timestamp: ts,
-    timeLocal: format(zoned, "h:mm a"),
-    date: format(zoned, "yyyy-MM-dd"),
-    isTomorrow: format(zoned, "yyyy-MM-dd") === tomorrow,
-    type,
-  };
-}
-
-export async function getEphemerisSnapshot(
-  location: string,
-): Promise<EphemerisSnapshot> {
-  const today = format(new Date(), "yyyy-MM-dd");
-  const tomorrow = format(new Date(Date.now() + 86400000), "yyyy-MM-dd");
-
-  const rows = await db.astronomySnapshot.findMany({
-    where: {
-      locationId: location,
-      date: {
-        in: [new Date(today), new Date(tomorrow)],
-      },
-    },
-    orderBy: { date: "asc" },
+export async function getEphemerisSnapshot(locationId: string) {
+  const row = await db.astronomySnapshot.findFirst({
+    where: { locationId },
+    orderBy: { date: "desc" },
   });
 
-  const byDate: Record<string, any> = {};
-  for (const r of rows) {
-    const key = format(r.date, "yyyy-MM-dd");
-    byDate[key] = r;
-  }
+  if (!row) throw new Error("No ephemeris data found");
 
-  const todayRow = byDate[today];
-  const tomorrowRow = byDate[tomorrow];
+  const solar = {
+    sunrise: buildEvent("Sunrise", row.sunrise, "solar")!,
+    sunset: buildEvent("Sunset", row.sunset, "solar")!,
 
-  if (!todayRow) {
-    throw new Error(`No ephemeris row found for ${location} on ${today}`);
-  }
+    blueHour: {
+      sunrise: {
+        start: buildEvent("Sunrise Blue Start", row.sunriseBlueStart, "solar"),
+        end: buildEvent("Sunrise Blue End", row.sunriseBlueEnd, "solar"),
+      },
+      sunset: {
+        start: buildEvent("Sunset Blue Start", row.sunsetBlueStart, "solar"),
+        end: buildEvent("Sunset Blue End", row.sunsetBlueEnd, "solar"),
+      },
+    },
 
-  // ---------------------------------------------------------
-  // Solar snapshot (safe because sunrise/sunset always exist)
-  // ---------------------------------------------------------
-  const solar: SolarSnapshot = {
-    sunrise: safeBuildEvent("Sunrise", todayRow.sunrise, "solar", tomorrow)!,
-    sunset: safeBuildEvent("Sunset", todayRow.sunset, "solar", tomorrow)!,
+    goldenHour: {
+      sunrise: {
+        start: buildEvent(
+          "Sunrise Golden Start",
+          row.sunriseGoldenStart,
+          "solar",
+        ),
+        end: buildEvent("Sunrise Golden End", row.sunriseGoldenEnd, "solar"),
+      },
+      sunset: {
+        start: buildEvent(
+          "Sunset Golden Start",
+          row.sunsetGoldenStart,
+          "solar",
+        ),
+        end: buildEvent("Sunset Golden End", row.sunsetGoldenEnd, "solar"),
+      },
+    },
   };
 
-  // ---------------------------------------------------------
-  // Lunar snapshot (now fully safe)
-  // ---------------------------------------------------------
-  const lunar: LunarSnapshot = {
-    date: today,
-    moonrise: safeBuildEvent("Moonrise", todayRow.moonrise, "lunar", tomorrow),
-    moonset: safeBuildEvent("Moonset", todayRow.moonset, "lunar", tomorrow),
-
-    illumination: todayRow.illumination ?? null,
+  const lunar = {
+    date: row.date.toISOString(),
+    moonrise: buildEvent("Moonrise", row.moonrise, "lunar"),
+    moonset: buildEvent("Moonset", row.moonset, "lunar"),
+    illumination: row.moonPhase,
+    phaseName: getPhaseName(row.moonPhase),
   };
 
-  // ---------------------------------------------------------
-  // Determine next event (skip null lunar events)
-  // ---------------------------------------------------------
-  const allEvents: EphemerisEvent[] = [
+  // Determine next event (simple example)
+  const events = [
     solar.sunrise,
     solar.sunset,
     lunar.moonrise,
@@ -103,22 +63,17 @@ export async function getEphemerisSnapshot(
   ].filter(Boolean) as EphemerisEvent[];
 
   const now = Date.now();
-
-  const nextEvent =
-    allEvents
-      .filter((e) => new Date(e.timestamp).getTime() > now)
-      .sort(
-        (a, b) =>
-          new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
-      )[0] ||
-    (tomorrowRow
-      ? safeBuildEvent("Sunrise", tomorrowRow.sunrise, "solar", tomorrow)
-      : solar.sunrise);
+  const nextEvent = events
+    .filter((e) => new Date(e.timestamp).getTime() > now)
+    .sort(
+      (a, b) =>
+        new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+    )[0];
 
   return {
     solar,
     lunar,
-    nextEvent: nextEvent!,
+    nextEvent,
     fetchedAt: new Date().toISOString(),
   };
 }

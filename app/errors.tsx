@@ -28,7 +28,9 @@ export default function ErrorPage({
 
   return (
     <div className="p-8">
-      <h1 className="text-xl font-semibold mb-4">Oops! Something went wrong.</h1>
+      <h1 className="text-xl font-semibold mb-4">
+        Oops! Something went wrong.
+      </h1>
       <p className="text-red-400 px-8 py-2 text-lg">{error.message}</p>
 
       <button

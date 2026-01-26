@@ -1,17 +1,30 @@
-// lib/ephemeris/types.ts
-
 export type EphemerisEvent = {
   name: string;
-  timestamp: string; // full ISO timestamp from DB
-  timeLocal: string; // "7:16 AM"
-  date: string; // "2026-01-23"
+  timestamp: string; // ISO string from DB
+  timeLocal: string; // "6:22 AM"
+  date: string; // "2026-01-25"
   isTomorrow: boolean;
   type: "solar" | "lunar";
+};
+
+export type SolarWindow = {
+  start: EphemerisEvent | null;
+  end: EphemerisEvent | null;
 };
 
 export type SolarSnapshot = {
   sunrise: EphemerisEvent;
   sunset: EphemerisEvent;
+
+  blueHour: {
+    sunrise: SolarWindow;
+    sunset: SolarWindow;
+  };
+
+  goldenHour: {
+    sunrise: SolarWindow;
+    sunset: SolarWindow;
+  };
 };
 
 export type LunarSnapshot = {
@@ -19,6 +32,7 @@ export type LunarSnapshot = {
   moonrise: EphemerisEvent | null;
   moonset: EphemerisEvent | null;
   illumination: number | null;
+  phaseName: string;
 };
 
 export type EphemerisSnapshot = {
