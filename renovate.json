@@ -19,12 +19,13 @@
     },
     {
       "automerge": true,
+      "schedule": ["* 21-23 * * 0"],
       "matchPackageNames": ["/next/", "/neon/"]
     },
     {
       "matchUpdateTypes": ["minor", "patch"],
       "automerge": true,
-      "matchPackageNames": ["/prisma/", "/@prisma/client/"]
+      "matchPackageNames": ["*"]
     },
     {
       "matchUpdateTypes": ["major"],
