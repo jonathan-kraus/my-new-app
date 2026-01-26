@@ -19,7 +19,7 @@
     },
     {
       "automerge": true,
-      "schedule": ["* 21-23 * * 0"],
+      "schedule": ["* 01-23 * * 0"],
       "matchPackageNames": ["/next/", "/neon/"]
     },
     {
