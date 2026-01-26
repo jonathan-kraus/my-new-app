@@ -1,23 +1,11 @@
-"use client";
-
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useUnifiedAstronomyCountdown } from "@/hooks/useUnifiedAstronomyCountdown";
+import { getEphemerisSnapshot } from "@/lib/ephemeris/getEphemerisSnapshot";
+import { SideNavClient } from "./SideNavClient";
 
-export default function SideNav() {
-  const pathname = usePathname();
-
-  const [astro, setAstro] = useState<any | null>(null);
-
-  useEffect(() => {
-    fetch("/api/astronomy")
-      .then((res) => res.json())
-      .then((data) => setAstro(data))
-      .catch(() => setAstro(null));
-  }, []);
-
-  const { label: nextLabel, countdown } = useUnifiedAstronomyCountdown(astro);
+export default async function SideNav() {
+  // Fetch astronomy snapshot on the server
+  const snapshot = await getEphemerisSnapshot("KOP");
+  const event = snapshot.nextEvent;
 
   const navItems = [
     { href: "/", label: "Home", icon: "🏠" },
@@ -32,34 +20,9 @@ export default function SideNav() {
   ];
 
   return (
-    <aside className="w-64 h-screen flex flex-col bg-gradient-to-b from-blue-600 to-blue-900 text-white shadow-xl">
-      <nav className="flex-1 p-4 space-y-2">
-        <div className="flex items-center justify-between text-xs uppercase tracking-wide text-white/60 mb-2">
-          <span>Apps</span>
-          {nextLabel && countdown && (
-            <span className="text-[10px] lowercase text-white/70">
-              {nextLabel}: {countdown}
-            </span>
-          )}
-        </div>
-
-        {navItems.map((item) => {
-          const active = pathname === item.href;
-
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-all
-                ${active ? "bg-white/20 shadow-md translate-x-1" : "hover:bg-white/10"}
-              `}
-            >
-              <span className="text-xl">{item.icon}</span>
-              <span>{item.label}</span>
-            </Link>
-          );
-        })}
-      </nav>
-    </aside>
+    <SideNavClient
+      event={event}
+      navItems={navItems}
+    />
   );
 }

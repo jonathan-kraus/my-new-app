@@ -2,7 +2,7 @@
 
 import { msUntil } from "@/lib/time";
 
-export function nextEvent(events: Record<string, Date | null>) {
+export function nextEvent(events: Record<string, Date>) {
   const now = Date.now();
   let best: { name: string; time: Date } | null = null;
 

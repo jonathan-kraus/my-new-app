@@ -33,9 +33,9 @@ export async function logit(domain: string, payload: any, meta: any = {}) {
   const eventIndex = nextLogIndex(requestId);
 
   // Human-friendly numbering (#1, #2, #3…)
-  const humanIndex = eventIndex + 1;
+  //const humanIndex = eventIndex + 1;
   const originalMessage = payload.message ?? "";
-  const message = `#${humanIndex} ${originalMessage}`;
+  const message = `#${eventIndex} ${originalMessage}`;
 
   //
   // 2. Flatten payload and meta

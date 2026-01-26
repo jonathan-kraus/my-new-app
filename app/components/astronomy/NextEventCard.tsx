@@ -8,7 +8,7 @@ export function NextEventCard({
   nextEventTime,
 }: {
   nextEvent: string;
-  nextEventTime: Date | null;
+  nextEventTime: Date;
 }) {
   const [now, setNow] = useState(new Date());
 

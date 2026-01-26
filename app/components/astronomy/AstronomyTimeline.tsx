@@ -2,17 +2,31 @@
 
 import { useEffect, useState } from "react";
 
-type EventPoint = {
-  label: string;
-  time: Date | null;
-  color?: string;
+type Props = {
+  sunrise: Date | null;
+  sunset: Date | null;
+
+  moonrise: Date | null;
+  moonset: Date | null;
+
+  sunriseBlueStart: Date | null;
+  sunriseBlueEnd: Date | null;
+
+  sunriseGoldenStart: Date | null;
+  sunriseGoldenEnd: Date | null;
+
+  sunsetBlueStart: Date | null;
+  sunsetBlueEnd: Date | null;
+
+  sunsetGoldenStart: Date | null;
+  sunsetGoldenEnd: Date | null;
 };
 
 type Range = {
   start: Date | null;
   end: Date | null;
   color: string;
-  opacity?: number;
+  opacity: number;
 };
 
 export function AstronomyTimeline({
@@ -20,50 +34,44 @@ export function AstronomyTimeline({
   sunset,
   moonrise,
   moonset,
+
   sunriseBlueStart,
   sunriseBlueEnd,
   sunriseGoldenStart,
   sunriseGoldenEnd,
+
   sunsetBlueStart,
   sunsetBlueEnd,
   sunsetGoldenStart,
   sunsetGoldenEnd,
-}: {
-  sunrise: Date | null;
-  sunset: Date | null;
-  moonrise: Date | null;
-  moonset: Date | null;
-  sunriseBlueStart: Date | null;
-  sunriseBlueEnd: Date | null;
-  sunriseGoldenStart: Date | null;
-  sunriseGoldenEnd: Date | null;
-  sunsetBlueStart: Date | null;
-  sunsetBlueEnd: Date | null;
-  sunsetGoldenStart: Date | null;
-  sunsetGoldenEnd: Date | null;
-}) {
+}: Props) {
   const [now, setNow] = useState(new Date());
 
+  // Live update every minute
   useEffect(() => {
     const id = setInterval(() => setNow(new Date()), 60_000);
     return () => clearInterval(id);
   }, []);
 
-  const percentOfDay = (d: Date | null) => {
-    if (!d) return 0;
-    const start = new Date(d);
-    start.setHours(0, 0, 0, 0);
-    const diff = d.getTime() - start.getTime();
-    return (diff / (24 * 60 * 60 * 1000)) * 100;
+  // Normalize day boundaries
+  const startOfDay = new Date(now);
+  startOfDay.setHours(0, 0, 0, 0);
+
+  const endOfDay = new Date(now);
+  endOfDay.setHours(23, 59, 59, 999);
+
+  const pct = (d: Date | null) => {
+    if (!d) return null;
+    return (
+      ((d.getTime() - startOfDay.getTime()) /
+        (endOfDay.getTime() - startOfDay.getTime())) *
+      100
+    );
   };
 
-  const events: EventPoint[] = [
-    { label: "Sunrise", time: sunrise, color: "#f59e0b" },
-    { label: "Sunset", time: sunset, color: "#f97316" },
-    { label: "Moonrise", time: moonrise, color: "#6366f1" },
-    { label: "Moonset", time: moonset, color: "#4f46e5" },
-  ];
+  const nowPct = pct(now);
 
+  // All golden/blue hour windows
   const ranges: Range[] = [
     // Sunrise Golden Hour
     {
@@ -72,7 +80,6 @@ export function AstronomyTimeline({
       color: "#fbbf24",
       opacity: 0.25,
     },
-
     // Sunrise Blue Hour
     {
       start: sunriseBlueStart,
@@ -80,7 +87,6 @@ export function AstronomyTimeline({
       color: "#93c5fd",
       opacity: 0.25,
     },
-
     // Sunset Golden Hour
     {
       start: sunsetGoldenStart,
@@ -88,7 +94,6 @@ export function AstronomyTimeline({
       color: "#fbbf24",
       opacity: 0.25,
     },
-
     // Sunset Blue Hour
     {
       start: sunsetBlueStart,
@@ -99,53 +104,112 @@ export function AstronomyTimeline({
   ];
 
   return (
-    <div className="w-full p-6 bg-white/5 rounded-xl border border-white/10 backdrop-blur">
-      <h2 className="text-lg font-semibold mb-4">Astronomy Timeline</h2>
+    <div className="relative w-full h-24 bg-white/5 rounded-xl border border-white/10 backdrop-blur overflow-hidden">
+<div className="relative w-full h-24 bg-white/5 rounded-xl border border-white/10 backdrop-blur overflow-hidden">
 
-      <div className="relative w-full h-28 bg-gradient-to-r from-slate-900 to-slate-800 rounded-lg overflow-hidden">
-        {/* Ranges */}
-        {ranges.map((r, i) => {
-          if (!r.start || !r.end) return null;
-          const left = percentOfDay(r.start);
-          const width = percentOfDay(r.end) - left;
-          return (
-            <div
-              key={i}
-              className="absolute top-0 h-full"
-              style={{
-                left: `${left}%`,
-                width: `${width}%`,
-                backgroundColor: r.color,
-                opacity: r.opacity ?? 0.2,
-              }}
-            />
-          );
-        })}
+  {/* Twilight Gradient Background */}
+  <div
+    className="absolute inset-0 pointer-events-none"
+    style={{
+      background: `
+        linear-gradient(
+          to right,
+          #0b1b3a 0%,
+          #0b1b3a 10%,
+          #1e3a8a 15%,
+          #1e3a8a 20%,
+          #f59e0b 25%,
+          #f59e0b 30%,
+          #fef3c7 40%,
+          #fef3c7 60%,
+          #f59e0b 70%,
+          #f59e0b 75%,
+          #1e3a8a 80%,
+          #1e3a8a 85%,
+          #0b1b3a 100%
+        )
+      `,
+      opacity: 0.35,
+    }}
+  />
 
-        {/* Event ticks */}
-        {events.map((e, i) => {
-          if (!e.time) return null;
-          return (
-            <div
-              key={i}
-              className="absolute top-0 h-full flex flex-col items-center"
-              style={{ left: `${percentOfDay(e.time)}%` }}
-            >
-              <div
-                className="w-0.5 h-full"
-                style={{ backgroundColor: e.color ?? "white" }}
-              />
-              <span className="text-xs mt-1 opacity-80">{e.label}</span>
-            </div>
-          );
-        })}
+  {/* Mini Solar Arc */}
+  <svg
+    className="absolute -top-10 left-0 right-0 h-10 w-full pointer-events-none"
+    viewBox="0 0 100 20"
+    preserveAspectRatio="none"
+  >
+    <path
+      d="M0 20 Q50 0 100 20"
+      stroke="#fbbf24"
+      strokeWidth="2"
+      fill="none"
+      opacity="0.8"
+    />
+  </svg>
 
-        {/* Current time marker */}
+  {/* ...your existing ranges + markers + now line... */}
+
+      {/* Golden + Blue Hour Ranges */}
+      {ranges.map((r, i) => {
+        const left = pct(r.start);
+        const right = pct(r.end);
+        if (left === null || right === null) return null;
+
+        return (
+          <div
+            key={i}
+            className="absolute top-0 bottom-0"
+            style={{
+              left: `${left}%`,
+              width: `${right - left}%`,
+              backgroundColor: r.color,
+              opacity: r.opacity,
+            }}
+          />
+        );
+      })}
+
+      {/* Sunrise */}
+      {sunrise && (
         <div
-          className="absolute top-0 h-full w-0.5 bg-red-500 shadow-[0_0_8px_rgba(255,0,0,0.8)]"
-          style={{ left: `${percentOfDay(now)}%` }}
+          className="absolute top-0 bottom-0 w-1 bg-orange-400"
+          style={{ left: `${pct(sunrise)}%` }}
         />
-      </div>
+      )}
+
+      {/* Sunset */}
+      {sunset && (
+        <div
+          className="absolute top-0 bottom-0 w-1 bg-orange-400"
+          style={{ left: `${pct(sunset)}%` }}
+        />
+      )}
+
+      {/* Moonrise */}
+      {moonrise && (
+        <div
+          className="absolute top-0 bottom-0 w-1 bg-indigo-300"
+          style={{ left: `${pct(moonrise)}%` }}
+        />
+      )}
+
+      {/* Moonset */}
+      {moonset && (
+        <div
+          className="absolute top-0 bottom-0 w-1 bg-indigo-300"
+          style={{ left: `${pct(moonset)}%` }}
+        />
+      )}
+
+      {/* Now Marker */}
+      {nowPct !== null && (
+        <div
+          className="absolute top-0 bottom-0 w-0.5 bg-red-400"
+          style={{ left: `${nowPct}%` }}
+        />
+      )}
     </div>
+  </div>
   );
 }
