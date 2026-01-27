@@ -1,6 +1,7 @@
 // hooks\useLiveCountdown.ts
+
 import { useEffect, useState } from "react";
-export function useLiveCountdown(target: Date | null | undefined) {
+export function useLiveCountdown(target: Date | null) {
   const [now, setNow] = useState(new Date());
 
   useEffect(() => {
@@ -11,7 +12,12 @@ export function useLiveCountdown(target: Date | null | undefined) {
   if (!target) return null;
 
   const diff = target.getTime() - now.getTime();
-  if (diff <= 0) return "Now";
+
+  // Grace window for "Now"
+  if (diff <= 0 && diff > -5000) return "Now";
+
+  // Event passed
+  if (diff <= 0) return null;
 
   const hours = Math.floor(diff / 3600000);
   const minutes = Math.floor((diff % 3600000) / 60000);
