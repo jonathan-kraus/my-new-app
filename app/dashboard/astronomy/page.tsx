@@ -4,12 +4,25 @@ import { getEphemerisSnapshot } from "@/lib/ephemeris/getEphemerisSnapshot";
 import { AstronomyTimeline } from "@/components/astronomy/AstronomyTimeline";
 import { NextEventCard } from "@/components/astronomy/NextEventCard";
 import { format } from "date-fns";
-
-export default async function DashboardAstronomyPage() {
+import { SolarArcBar } from "@/app/components/SolarArcBar";
+  export default async function DashboardAstronomyPage() {
   const snapshot = await getEphemerisSnapshot("KOP");
 console.log("Astronomy Snapshot", snapshot);
   const solar = snapshot.solar;
   const lunar = snapshot.lunar;
+
+
+<SolarArcBar
+  events={{
+    sunriseStart: new Date(snapshot.solar.goldenHour.sunrise.start!.timestamp), //new Date(snapshot.solar.goldenHourStart.timestamp),
+    sunriseEnd: new Date(snapshot.solar.goldenHour.sunrise.end!.timestamp),
+     solarNoon: new Date(snapshot.solar.sunrise.timestamp),
+    sunsetStart: new Date(snapshot.solar.goldenHour.sunset.start!.timestamp),
+    sunsetEnd: new Date(snapshot.solar.goldenHour.sunset.end!.dateObj),
+    sunset: new Date(snapshot.solar.sunset.timestamp),
+  }}
+  currentTime={new Date()}
+/>
 
   return (
     <div className="p-6 space-y-10">
