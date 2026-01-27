@@ -17,7 +17,9 @@ export default async function DashboardAstronomyPage() {
       <div>
         <h1 className="text-3xl font-semibold tracking-tight">Astronomy</h1>
         <p className="text-white/60 mt-1">
-          Solar & lunar events for {format(new Date(), "MMMM d, yyyy")}
+        Solar & lunar events for {format(new Date(snapshot.solar.sunrise.date), "MMMM d, yyyy")}
+
+
         </p>
       </div>
 
