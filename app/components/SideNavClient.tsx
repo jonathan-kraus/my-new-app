@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { formatDistanceToNowStrict } from "date-fns";
+import { useLiveCountdown } from "@/hooks/useLiveCountdown";
 
 export function SideNavClient({
   event,
@@ -24,9 +24,7 @@ export function SideNavClient({
     return () => clearInterval(id);
   }, []);
 
-  const countdown = formatDistanceToNowStrict(new Date(event.timestamp), {
-    roundingMethod: "floor",
-  });
+  const countdown = useLiveCountdown(new Date(event.timestamp));
 
   return (
     <aside className="w-64 h-screen flex flex-col bg-gradient-to-b from-blue-600 to-blue-900 text-white shadow-xl">
