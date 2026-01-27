@@ -24,7 +24,7 @@ export async function proxy(req: NextRequest) {
   logger.middleware(req);
   // --- 2) Log START ----------------------------------------------
   await logit(
-    "middleware",
+    "jonathan",
     {
       level: "info",
       message: "REQUEST START",
