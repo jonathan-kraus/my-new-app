@@ -2,7 +2,8 @@
 // lib\ephemeris\getEphemerisSnapshot.ts
 import { db } from "@/lib/db";
 import { buildEphemerisSnapshot } from "./buildEphemerisSnapshot";
-
+import  { logit } from '@/lib/log/logit';
+import { enrichContext } from "@/lib/log/context";
 // Returns YYYY-MM-DD in Eastern time
 function getEasternDateString(offsetDays = 0) {
   const now = new Date();
@@ -20,7 +21,16 @@ function getEasternDateString(offsetDays = 0) {
 export async function getEphemerisSnapshot(locationId: string) {
   const todayStr = getEasternDateString(0);
   const tomorrowStr = getEasternDateString(1);
+  const ctx = await enrichContext(req);
+  await logit(
+    "ephemeris",
+    {
+      level: "info",
+      message: "ephemeris.getEphemerisSnapshot.started",
 
+    },
+    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+  );
   // Fetch all rows for this location
   const rows = await db.astronomySnapshot.findMany({
     where: { locationId },
