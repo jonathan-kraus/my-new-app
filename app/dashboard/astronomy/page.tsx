@@ -5,7 +5,7 @@ import { AstronomyTimeline } from "@/components/astronomy/AstronomyTimeline";
 import { NextEventCard } from "@/components/astronomy/NextEventCard";
 import { format } from "date-fns";
 import { SolarArcBar } from "@/app/components/SolarArcBar";
-import { useLogger } from "next-axiom";
+
 
 export default async function DashboardAstronomyPage() {
   const snapshot = await getEphemerisSnapshot("KOP");
@@ -13,27 +13,15 @@ export default async function DashboardAstronomyPage() {
   const solar = snapshot.solar;
   const lunar = snapshot.lunar;
 
-  const solarNoon = computeSolarNoon(
-    new Date(snapshot.solar.sunrise.timestamp),
-    new Date(snapshot.solar.sunset.timestamp),
-  );
+const solarNoon = computeSolarNoon(
+  snapshot.solar.sunrise.dateObj,
+  snapshot.solar.sunset.dateObj, );
   console.log("sunrise raw", snapshot.solar.sunrise.timestamp);
 console.log("sunrise date", new Date(snapshot.solar.sunrise.timestamp));
 console.log("sunset raw", snapshot.solar.sunset.timestamp);
 console.log("sunset date", new Date(snapshot.solar.sunset.timestamp));
 console.log("solarNoon", solarNoon);
- function Jonathan() {
-const log = useLogger({ source: "dashboard astronomy" });
-  log.info("Debug data", {
-    message: "computeSolarNoon",
-    sunrise: snapshot.solar.sunrise.timestamp,
-    sunrisedate: snapshot.solar.sunrise.timestamp,
-    solarNoon: solarNoon,
-    sunset: snapshot.solar.sunset.timestamp,
-    sunsetdate: new Date(snapshot.solar.sunset.timestamp),
-  });
- }
- Jonathan()
+
   return (
     <div className="p-6 space-y-10">
       {/* Header */}
@@ -163,5 +151,4 @@ const log = useLogger({ source: "dashboard astronomy" });
       />
     </div>
   );
-}
 }
