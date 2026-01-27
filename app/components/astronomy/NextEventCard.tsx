@@ -1,25 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { formatDistanceToNowStrict, format } from "date-fns";
+import { format } from "date-fns";
+import { useLiveCountdown } from "@/hooks/useLiveCountdown";
 
 export function NextEventCard({
   nextEvent,
   nextEventTime,
 }: {
   nextEvent: string;
-  nextEventTime: Date;
+  nextEventTime: Date | null;
 }) {
-  const [now, setNow] = useState(new Date());
-
-  useEffect(() => {
-    const id = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(id);
-  }, []);
-
-  const countdown =
-    nextEventTime &&
-    formatDistanceToNowStrict(nextEventTime, { roundingMethod: "floor" });
+  const countdown = useLiveCountdown(nextEventTime);
 
   return (
     <div className="p-6 bg-white/5 rounded-xl border border-white/10 backdrop-blur">

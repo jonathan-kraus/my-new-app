@@ -10,7 +10,8 @@ export default function SolarCard({ snapshot }: { snapshot: SolarSnapshot }) {
       ? snapshot.sunrise
       : snapshot.sunset;
 
-  const countdown = useLiveCountdown(next.timestamp);
+  const countdown = useLiveCountdown(next.dateObj);
+
 
   return (
     <div className="p-6 rounded-xl bg-blue-600 text-white shadow-lg space-y-3">

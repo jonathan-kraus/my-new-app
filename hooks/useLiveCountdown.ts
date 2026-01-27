@@ -1,26 +1,21 @@
-// app/hooks/useLiveCountdown.ts
-
-"use client";
-
+// hooks\useLiveCountdown.ts
 import { useEffect, useState } from "react";
-
-export function useLiveCountdown(targetISO: string) {
-  const [now, setNow] = useState(() => Date.now());
+export function useLiveCountdown(target: Date | null | undefined) {
+  const [now, setNow] = useState(new Date());
 
   useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 1000);
+    const id = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(id);
   }, []);
 
-  const target = new Date(targetISO).getTime();
-  const diff = target - now;
+  if (!target) return null;
 
+  const diff = target.getTime() - now.getTime();
   if (diff <= 0) return "Now";
 
-  const s = Math.floor(diff / 1000);
-  const h = Math.floor(s / 3600);
-  const m = Math.floor((s % 3600) / 60);
-  const sec = s % 60;
+  const hours = Math.floor(diff / 3600000);
+  const minutes = Math.floor((diff % 3600000) / 60000);
+  const seconds = Math.floor((diff % 60000) / 1000);
 
-  return `${h}h ${m}m ${sec}s`;
+  return `${hours}h ${minutes}m ${seconds}s`;
 }
