@@ -40,5 +40,5 @@ export async function GET(req: NextRequest) {
     },
   );
 
-return NextResponse.json({ ok: false, time: Date.now() }, { status: 500 });
+  return NextResponse.json({ ok: false, time: Date.now() }, { status: 500 });
 }

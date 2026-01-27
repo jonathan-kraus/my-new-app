@@ -12,7 +12,6 @@ export default function SolarCard({ snapshot }: { snapshot: SolarSnapshot }) {
 
   const countdown = useLiveCountdown(next.dateObj);
 
-
   return (
     <div className="p-6 rounded-xl bg-blue-600 text-white shadow-lg space-y-3">
       <h2 className="text-2xl font-semibold">Solar</h2>

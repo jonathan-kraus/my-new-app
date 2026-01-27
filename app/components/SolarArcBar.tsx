@@ -17,13 +17,10 @@ export function SolarArcBar({
   };
   currentTime: Date;
 }) {
-  const totalSpan =
-    events.sunset.getTime() - events.sunriseStart.getTime();
+  const totalSpan = events.sunset.getTime() - events.sunriseStart.getTime();
 
   const position =
-    ((currentTime.getTime() - events.sunriseStart.getTime()) /
-      totalSpan) *
-    100;
+    ((currentTime.getTime() - events.sunriseStart.getTime()) / totalSpan) * 100;
 
   return (
     <div className="relative h-24 w-full rounded-xl bg-gradient-to-r from-blue-900 via-gray-400 to-blue-900 shadow-inner">
@@ -51,9 +48,7 @@ export function SolarArcBar({
       {/* Markers */}
       {Object.entries(events).map(([label, time]) => {
         const left =
-          ((time.getTime() - events.sunriseStart.getTime()) /
-            totalSpan) *
-          100;
+          ((time.getTime() - events.sunriseStart.getTime()) / totalSpan) * 100;
         return (
           <div
             key={label}

@@ -2,7 +2,7 @@
 // lib\ephemeris\getEphemerisSnapshot.ts
 import { db } from "@/lib/db";
 import { buildEphemerisSnapshot } from "./buildEphemerisSnapshot";
-import  { logit } from '@/lib/log/logit';
+import { logit } from "@/lib/log/logit";
 
 // Returns YYYY-MM-DD in Eastern time
 function getEasternDateString(offsetDays = 0) {
@@ -27,7 +27,6 @@ export async function getEphemerisSnapshot(locationId: string) {
     {
       level: "info",
       message: "ephemeris.getEphemerisSnapshot.started",
-
     },
     { second1: 1, second2: "2" },
   );

@@ -1,6 +1,6 @@
 // proxy.ts
 
-import { Logger } from 'next-axiom'
+import { Logger } from "next-axiom";
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
@@ -20,8 +20,8 @@ export async function proxy(req: NextRequest) {
 
   // --- 1) Start tracking -----------------------------------------
   markRequestStart(req.url);
-    const logger = new Logger({ source: 'middleware' }); // traffic, request
-    logger.middleware(req)
+  const logger = new Logger({ source: "middleware" }); // traffic, request
+  logger.middleware(req);
   // --- 2) Log START ----------------------------------------------
   await logit(
     "middleware",
@@ -29,12 +29,12 @@ export async function proxy(req: NextRequest) {
       level: "info",
       message: "REQUEST START",
       payload: {
-      page: pathname,
-      file: "proxy.ts",
-      method: req.method,
-      url: req.url,
-      requestId: getRequestId(req.url),
-      eventIndex: nextEventIndex(req.url),
+        page: pathname,
+        file: "proxy.ts",
+        method: req.method,
+        url: req.url,
+        requestId: getRequestId(req.url),
+        eventIndex: nextEventIndex(req.url),
       },
     },
     {
@@ -42,8 +42,7 @@ export async function proxy(req: NextRequest) {
       route: pathname,
       userId: undefined,
     },
-  )
-
+  );
 
   // --- 3) Skip internal assets -----------------------------------
   if (pathname.startsWith("/_next") || pathname.startsWith("/favicon")) {
@@ -78,15 +77,15 @@ async function end(req: NextRequest, res: NextResponse) {
       level: "info",
       message: "REQUEST END",
       payload: {
-      page: req.nextUrl.pathname,
-      file: "proxy.ts",
-      durationMs,
-      method: req.method,
-      url: req.url,
-      status: res.status,
-      requestId: getRequestId(req.url),
-      eventIndex: nextEventIndex(req.url),
-    },
+        page: req.nextUrl.pathname,
+        file: "proxy.ts",
+        durationMs,
+        method: req.method,
+        url: req.url,
+        status: res.status,
+        requestId: getRequestId(req.url),
+        eventIndex: nextEventIndex(req.url),
+      },
     },
     {
       requestId: getRequestId(req.url),
