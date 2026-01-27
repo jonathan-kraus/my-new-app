@@ -132,7 +132,7 @@ export default async function DashboardAstronomyPage() {
           sunriseEnd: new Date(
             snapshot.solar.goldenHour.sunrise.end!.timestamp,
           ),
-          solarNoon: new Date(solarNoon),
+          solarNoon: solarNoon
           sunsetStart: new Date(
             snapshot.solar.goldenHour.sunset.start!.timestamp,
           ),
