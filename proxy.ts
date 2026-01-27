@@ -26,18 +26,22 @@ export async function proxy(req: NextRequest) {
     {
       level: "info",
       message: "REQUEST START",
+      payload: {
       page: pathname,
       file: "proxy.ts",
-      data: {
-        method: req.method,
-        url: req.url,
+      method: req.method,
+      url: req.url,
+      requestId: getRequestId(req.url),
+      eventIndex: nextEventIndex(req.url),
       },
     },
     {
       requestId: getRequestId(req.url),
-      eventIndex: nextEventIndex(req.url),
+      route: pathname,
+      userId: undefined,
     },
-  );
+  )
+
 
   // --- 3) Skip internal assets -----------------------------------
   if (pathname.startsWith("/_next") || pathname.startsWith("/favicon")) {
@@ -71,17 +75,21 @@ async function end(req: NextRequest, res: NextResponse) {
     {
       level: "info",
       message: "REQUEST END",
+      payload: {
       page: req.nextUrl.pathname,
       file: "proxy.ts",
       durationMs,
-      data: {
-        url: req.url,
-        status: res.status,
-      },
+      method: req.method,
+      url: req.url,
+      status: res.status,
+      requestId: getRequestId(req.url),
+      eventIndex: nextEventIndex(req.url),
+    },
     },
     {
       requestId: getRequestId(req.url),
-      eventIndex: nextEventIndex(req.url),
+      route: req.nextUrl.pathname,
+      userId: undefined,
     },
   );
 
