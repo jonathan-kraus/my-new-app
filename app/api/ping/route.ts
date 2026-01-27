@@ -4,6 +4,7 @@ import crypto from "crypto";
 import { logit } from "@/lib/log/logit";
 import { enrichContext } from "@/lib/log/context";
 import { db } from "@/lib/db";
+import { stat } from "fs";
 
 export async function GET(req: NextRequest) {
   const start = Date.now();
@@ -39,9 +40,5 @@ export async function GET(req: NextRequest) {
     },
   );
 
-  return NextResponse.json({
-    ok: true,
-
-    time: Date.now(),
-  });
+return NextResponse.json({ ok: false, time: Date.now() }, { status: 500 });
 }
