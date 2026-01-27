@@ -7,7 +7,7 @@ import { format } from "date-fns";
 
 export default async function DashboardAstronomyPage() {
   const snapshot = await getEphemerisSnapshot("KOP");
-
+console.log("Astronomy Snapshot", snapshot);
   const solar = snapshot.solar;
   const lunar = snapshot.lunar;
 
