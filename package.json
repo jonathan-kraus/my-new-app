@@ -35,7 +35,7 @@
     "lucide-react": "^0.563.0",
     "luxon": "^3.7.2",
     "mailersend": "^2.6.0",
-    "next": "16.1.4",
+    "next": "16.1.5",
     "next-auth": "5.0.0-beta.30",
     "next-axiom": "^1.10.0",
     "pg": "^8.16.3",
