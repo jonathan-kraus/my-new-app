@@ -51,7 +51,7 @@ console.log("solarNoon", solarNoon);
             </div>
             <div className="flex justify-between">
               <span>Solar Noon</span>
-              <span>{format(solarNoon, "h:mm a")}</span>
+              <span> {solarNoon.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: "America/New_York", })} </span>
             </div>
             <div className="flex justify-between">
               <span>Sunset</span>
