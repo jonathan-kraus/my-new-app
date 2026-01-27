@@ -1,7 +1,7 @@
 "use client";
 
 import { useNow } from "@/hooks/useNow";
-
+import { Countdown } from "@/app/components/Countdown";
 type AstronomyCardProps = {
   data: any | null;
 };
@@ -44,6 +44,24 @@ export function AstronomyCard({ data }: AstronomyCardProps) {
     if (illum < 0.9) return "🌖";
     return "🌕";
   };
+  let sinceSunrise: string | null = null;
+  const sunrise = solar.sunrise.timestamp;
+  const sunset = solar.sunset.timestamp;
+  if (now < sunrise) {
+    // Before sunrise
+    sinceSunrise = null; // or "Until Sunrise: ..."
+  } else if (now >= sunrise && now <= sunset) {
+    // Daylight
+    const diffMs = now.getTime() - sunrise.getTime();
+    const diffMinutes = Math.floor(diffMs / 60000);
+    const hours = Math.floor(diffMinutes / 60);
+    const minutes = diffMinutes % 60;
+
+    sinceSunrise = `${hours}h ${minutes}m`;
+  } else {
+    // After sunset
+    sinceSunrise = null; // or "Since Sunset: ..."
+  }
 
   const events = [
     {
@@ -76,7 +94,7 @@ export function AstronomyCard({ data }: AstronomyCardProps) {
           {safeTime(nextEvent?.timestamp)}
         </p>
         <p className="text-sm text-gray-300">
-          Countdown: {countdownTo(nextEvent?.timestamp)}
+          Countdown: <Countdown timestamp={nextEvent?.timestamp} />
         </p>
       </div>
 
@@ -89,9 +107,9 @@ export function AstronomyCard({ data }: AstronomyCardProps) {
         <p className="text-sm text-gray-300">
           Sunset: {safeTime(solar?.sunset?.timestamp)}
         </p>
-        <p className="text-sm text-gray-300">
-          Since Sunrise: {countdownTo(solar?.sunrise?.timestamp)}
-        </p>
+        {sinceSunrise && (
+          <p className="text-sm text-gray-300">Since Sunrise: {sinceSunrise}</p>
+        )}
       </div>
 
       {/* Lunar */}

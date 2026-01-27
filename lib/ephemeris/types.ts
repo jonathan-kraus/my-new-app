@@ -5,6 +5,7 @@ export type EphemerisEvent = {
   date: string; // "2026-01-25"
   isTomorrow: boolean;
   type: "solar" | "lunar";
+  dateObj: Date;
 };
 
 export type SolarWindow = {

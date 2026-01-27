@@ -75,8 +75,8 @@ export default async function DashboardAstronomyPage() {
         moonrise={lunar.moonrise ? new Date(lunar.moonrise.timestamp) : null}
         moonset={lunar.moonset ? new Date(lunar.moonset.timestamp) : null}
         sunriseBlueStart={
-          solar.blueHour.sunrise.start
-            ? new Date(solar.blueHour.sunrise.start.timestamp)
+          snapshot.solar.blueHour.sunrise.start
+            ? new Date(snapshot.solar.blueHour.sunrise.start.timestamp)
             : null
         }
         sunriseBlueEnd={

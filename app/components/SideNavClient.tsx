@@ -4,9 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { formatDistanceToNowStrict } from "date-fns";
-import { logit } from "@/lib/log/logit";
-import path from "node:path";
-
 
 export function SideNavClient({
   event,
@@ -27,30 +24,13 @@ export function SideNavClient({
     return () => clearInterval(id);
   }, []);
 
-     logit(
-      "github",
-      {
-        level: "error",
-        message: "GitHub activity API failed",
-        payload: { ename: event.name,
-          pathname: pathname,
-          now: now,
-          event: event,
-          navItems: navItems
-
-         },
-      },
-
-    );
-  const countdown = formatDistanceToNowStrict(
-    new Date(event.timestamp),
-    { roundingMethod: "floor" }
-  );
+  const countdown = formatDistanceToNowStrict(new Date(event.timestamp), {
+    roundingMethod: "floor",
+  });
 
   return (
     <aside className="w-64 h-screen flex flex-col bg-gradient-to-b from-blue-600 to-blue-900 text-white shadow-xl">
       <nav className="flex-1 p-4 space-y-2">
-
         {/* Header with countdown */}
         <div className="flex items-center justify-between text-xs uppercase tracking-wide text-white/60 mb-2">
           <span>Apps</span>

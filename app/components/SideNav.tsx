@@ -1,4 +1,6 @@
-import Link from "next/link";
+"use server";
+// app\components\SideNav.tsx
+
 import { getEphemerisSnapshot } from "@/lib/ephemeris/getEphemerisSnapshot";
 import { SideNavClient } from "./SideNavClient";
 
@@ -19,10 +21,5 @@ export default async function SideNav() {
     { href: "/profile", label: "Profile", icon: "👤" },
   ];
 
-  return (
-    <SideNavClient
-      event={event}
-      navItems={navItems}
-    />
-  );
+  return <SideNavClient event={event} navItems={navItems} />;
 }

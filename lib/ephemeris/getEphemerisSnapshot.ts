@@ -1,6 +1,9 @@
-import { db} from "@/lib/db";
+"use server";
+// lib\ephemeris\getEphemerisSnapshot.ts
+import { db } from "@/lib/db";
 import { buildEphemerisSnapshot } from "./buildEphemerisSnapshot";
 
+// Returns YYYY-MM-DD in Eastern time
 function getEasternDateString(offsetDays = 0) {
   const now = new Date();
 
@@ -11,7 +14,7 @@ function getEasternDateString(offsetDays = 0) {
   const eastern = new Date(easternString);
   eastern.setDate(eastern.getDate() + offsetDays);
 
-  return eastern.toISOString().slice(0, 10); // YYYY-MM-DD
+  return eastern.toISOString().slice(0, 10); // SAFE: only for DB day matching
 }
 
 export async function getEphemerisSnapshot(locationId: string) {
@@ -24,20 +27,21 @@ export async function getEphemerisSnapshot(locationId: string) {
     orderBy: { date: "asc" },
   });
 
-  // Filter by YYYY-MM-DD only
+  // Match by calendar day ONLY — never use this for event logic
   const todayRow = rows.find(
-    (r) => r.date.toISOString().slice(0, 10) === todayStr
+    (r) => r.date.toISOString().slice(0, 10) === todayStr,
   );
 
   const tomorrowRow = rows.find(
-    (r) => r.date.toISOString().slice(0, 10) === tomorrowStr
+    (r) => r.date.toISOString().slice(0, 10) === tomorrowStr,
   );
 
   if (!todayRow || !tomorrowRow) {
     throw new Error(
-      `AstronomySnapshot must contain today (${todayStr}) and tomorrow (${tomorrowStr}) for ${locationId}.`
+      `AstronomySnapshot must contain today (${todayStr}) and tomorrow (${tomorrowStr}) for ${locationId}.`,
     );
   }
 
+  // Pass raw DB rows directly — timestamps are already perfect
   return buildEphemerisSnapshot(todayRow, tomorrowRow);
 }

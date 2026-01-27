@@ -18,7 +18,7 @@ type CurrentWeatherCardProps = {
 };
 const ctx = {
   requestId: crypto.randomUUID(),
-  page: "cron:astronomy",
+  page: "current-weather-card",
   userId: null,
 };
 export default function CurrentWeatherCard({
