@@ -6,21 +6,21 @@ import { NextEventCard } from "@/components/astronomy/NextEventCard";
 import { format } from "date-fns";
 import { SolarArcBar } from "@/app/components/SolarArcBar";
 
-
 export default async function DashboardAstronomyPage() {
   const snapshot = await getEphemerisSnapshot("KOP");
   console.log("Astronomy Snapshot", snapshot);
   const solar = snapshot.solar;
   const lunar = snapshot.lunar;
 
-const solarNoon = computeSolarNoon(
-  snapshot.solar.sunrise.dateObj,
-  snapshot.solar.sunset.dateObj, );
+  const solarNoon = computeSolarNoon(
+    snapshot.solar.sunrise.dateObj,
+    snapshot.solar.sunset.dateObj,
+  );
   console.log("sunrise raw", snapshot.solar.sunrise.timestamp);
-console.log("sunrise date", new Date(snapshot.solar.sunrise.timestamp));
-console.log("sunset raw", snapshot.solar.sunset.timestamp);
-console.log("sunset date", new Date(snapshot.solar.sunset.timestamp));
-console.log("solarNoon", solarNoon);
+  console.log("sunrise date", new Date(snapshot.solar.sunrise.timestamp));
+  console.log("sunset raw", snapshot.solar.sunset.timestamp);
+  console.log("sunset date", new Date(snapshot.solar.sunset.timestamp));
+  console.log("solarNoon", solarNoon);
 
   return (
     <div className="p-6 space-y-10">
@@ -51,7 +51,14 @@ console.log("solarNoon", solarNoon);
             </div>
             <div className="flex justify-between">
               <span>Solar Noon</span>
-              <span> {solarNoon.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: "America/New_York", })} </span>
+              <span>
+                {" "}
+                {solarNoon.toLocaleTimeString("en-US", {
+                  hour: "numeric",
+                  minute: "2-digit",
+                  timeZone: "America/New_York",
+                })}{" "}
+              </span>
             </div>
             <div className="flex justify-between">
               <span>Sunset</span>
