@@ -12,17 +12,7 @@ console.log("Astronomy Snapshot", snapshot);
   const lunar = snapshot.lunar;
 
 
-<SolarArcBar
-  events={{
-    sunriseStart: new Date(snapshot.solar.goldenHour.sunrise.start!.timestamp), //new Date(snapshot.solar.goldenHourStart.timestamp),
-    sunriseEnd: new Date(snapshot.solar.goldenHour.sunrise.end!.timestamp),
-     solarNoon: new Date(snapshot.solar.sunrise.timestamp),
-    sunsetStart: new Date(snapshot.solar.goldenHour.sunset.start!.timestamp),
-    sunsetEnd: new Date(snapshot.solar.goldenHour.sunset.end!.dateObj),
-    sunset: new Date(snapshot.solar.sunset.timestamp),
-  }}
-  currentTime={new Date()}
-/>
+
 
   return (
     <div className="p-6 space-y-10">
@@ -129,6 +119,17 @@ console.log("Astronomy Snapshot", snapshot);
             : null
         }
       />
+      <SolarArcBar
+  events={{
+    sunriseStart: new Date(snapshot.solar.goldenHour.sunrise.start!.timestamp), //new Date(snapshot.solar.goldenHourStart.timestamp),
+    sunriseEnd: new Date(snapshot.solar.goldenHour.sunrise.end!.timestamp),
+     solarNoon: new Date(snapshot.solar.sunrise.timestamp),
+    sunsetStart: new Date(snapshot.solar.goldenHour.sunset.start!.timestamp),
+    sunsetEnd: new Date(snapshot.solar.goldenHour.sunset.end!.dateObj),
+    sunset: new Date(snapshot.solar.sunset.timestamp),
+  }}
+  currentTime={new Date()}
+/>
     </div>
   );
 }
