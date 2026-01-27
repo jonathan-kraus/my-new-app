@@ -103,6 +103,7 @@ export default async function DashboardAstronomyPage() {
             ? new Date(solar.goldenHour.sunrise.end.timestamp)
             : null
         }
+        solarNoon={solarNoon}
         sunsetBlueStart={
           solar.blueHour.sunset.start
             ? new Date(solar.blueHour.sunset.start.timestamp)

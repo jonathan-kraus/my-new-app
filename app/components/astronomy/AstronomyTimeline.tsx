@@ -14,7 +14,7 @@ type Props = {
 
   sunriseGoldenStart: Date | null;
   sunriseGoldenEnd: Date | null;
-
+  solarNoon: Date | null;
   sunsetBlueStart: Date | null;
   sunsetBlueEnd: Date | null;
 
@@ -39,7 +39,7 @@ export function AstronomyTimeline({
   sunriseBlueEnd,
   sunriseGoldenStart,
   sunriseGoldenEnd,
-
+  solarNoon,
   sunsetBlueStart,
   sunsetBlueEnd,
   sunsetGoldenStart,
