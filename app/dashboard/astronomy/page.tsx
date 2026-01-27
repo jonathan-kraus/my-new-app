@@ -10,11 +10,16 @@ export default async function DashboardAstronomyPage() {
   console.log("Astronomy Snapshot", snapshot);
   const solar = snapshot.solar;
   const lunar = snapshot.lunar;
+
   const solarNoon = computeSolarNoon(
     new Date(snapshot.solar.sunrise.timestamp),
     new Date(snapshot.solar.sunset.timestamp),
   );
-
+  console.log("sunrise raw", snapshot.solar.sunrise.timestamp);
+console.log("sunrise date", new Date(snapshot.solar.sunrise.timestamp));
+console.log("sunset raw", snapshot.solar.sunset.timestamp);
+console.log("sunset date", new Date(snapshot.solar.sunset.timestamp));
+console.log("solarNoon", solarNoon);
   return (
     <div className="p-6 space-y-10">
       {/* Header */}
