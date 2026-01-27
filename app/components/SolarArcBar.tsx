@@ -1,4 +1,5 @@
 "use client";
+// app\components\SolarArcBar.tsx
 
 import { format } from "date-fns";
 

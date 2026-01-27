@@ -1,5 +1,5 @@
 // app/dashboard/astronomy/page.tsx
-
+import { computeSolarNoon } from "@/lib/ephemeris/utils/computeSolarNoon";
 import { getEphemerisSnapshot } from "@/lib/ephemeris/getEphemerisSnapshot";
 import { AstronomyTimeline } from "@/components/astronomy/AstronomyTimeline";
 import { NextEventCard } from "@/components/astronomy/NextEventCard";
@@ -10,6 +10,10 @@ import { SolarArcBar } from "@/app/components/SolarArcBar";
 console.log("Astronomy Snapshot", snapshot);
   const solar = snapshot.solar;
   const lunar = snapshot.lunar;
+const solarNoon = computeSolarNoon(
+  new Date(snapshot.solar.sunrise.timestamp),
+  new Date(snapshot.solar.sunset.timestamp)
+);
 
 
 
@@ -40,6 +44,10 @@ console.log("Astronomy Snapshot", snapshot);
             <div className="flex justify-between">
               <span>Sunrise</span>
               <span>{solar.sunrise.timeLocal}</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Solar Noon</span>
+              <span>{format(solarNoon, 'MMMM d, yyyy hh:mm:ss a')}</span>
             </div>
             <div className="flex justify-between">
               <span>Sunset</span>
@@ -123,7 +131,7 @@ console.log("Astronomy Snapshot", snapshot);
   events={{
     sunriseStart: new Date(snapshot.solar.goldenHour.sunrise.start!.timestamp), //new Date(snapshot.solar.goldenHourStart.timestamp),
     sunriseEnd: new Date(snapshot.solar.goldenHour.sunrise.end!.timestamp),
-     solarNoon: new Date(snapshot.solar.sunrise.timestamp),
+     solarNoon: new Date(solarNoon),
     sunsetStart: new Date(snapshot.solar.goldenHour.sunset.start!.timestamp),
     sunsetEnd: new Date(snapshot.solar.goldenHour.sunset.end!.dateObj),
     sunset: new Date(snapshot.solar.sunset.timestamp),
