@@ -47,7 +47,7 @@ const solarNoon = computeSolarNoon(
             </div>
             <div className="flex justify-between">
               <span>Solar Noon</span>
-              <span>{format(solarNoon, 'MMMM d, yyyy hh:mm:ss a')}</span>
+              <span>{format(solarNoon, 'h:mm a')}</span>
             </div>
             <div className="flex justify-between">
               <span>Sunset</span>

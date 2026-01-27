@@ -1,5 +1,6 @@
 // proxy.ts
 
+import { Logger } from 'next-axiom'
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
@@ -19,7 +20,8 @@ export async function proxy(req: NextRequest) {
 
   // --- 1) Start tracking -----------------------------------------
   markRequestStart(req.url);
-
+    const logger = new Logger({ source: 'middleware' }); // traffic, request
+    logger.middleware(req)
   // --- 2) Log START ----------------------------------------------
   await logit(
     "middleware",
