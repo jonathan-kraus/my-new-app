@@ -19,6 +19,7 @@ function buildEvent(
     timeLocal: d.toLocaleTimeString("en-US", {
       hour: "numeric",
       minute: "2-digit",
+      timeZone: "America/New_York",
     }),
     date: ts.slice(0, 10),
     type,
