@@ -7,6 +7,7 @@ import { buildTestEmail } from "@/lib/buildTestEmail";
 export async function sendTestEmail(to: string) {
 // 1. Check if email sending is enabled
 const enabled = await getConfig("flag_email_send", "1");
+console.log("[email] flag_email_send value:", enabled);
 if (enabled !== "1") {
   console.log("[email] Disabled by runtime flag");
   return; }
