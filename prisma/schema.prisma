@@ -172,11 +172,12 @@ model Note {
   @@index([isArchived])
 }
 model RuntimeConfig {
-  key       String   @id
-  value     String
-  type      String   // "string" | "number" | "boolean" | "json"
-  updatedAt DateTime @updatedAt
+  key        String   @id
+  value      String
+  updatedAt  DateTime @updatedAt
+  createdAt  DateTime @default(now())
 }
+
 
 
 model Session {

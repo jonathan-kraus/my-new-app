@@ -97,7 +97,6 @@ export default async function HomePage() {
           </h2>
         </section>
 
-
         {/* Recent Activity */}
         <section className="mt-6">
           <h2 className="text-xl font-medium mb-2 text-sky-200">
