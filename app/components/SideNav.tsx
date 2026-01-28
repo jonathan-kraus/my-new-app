@@ -1,10 +1,18 @@
 "use server";
-// app\components\SideNav.tsx
+// app/components/SideNav.tsx
 
 import { getEphemerisSnapshot } from "@/lib/ephemeris/getEphemerisSnapshot";
 import { SideNavClient } from "./SideNavClient";
-
+import { logit } from "@/lib/log/logit";
 export default async function SideNav() {
+  await logit(
+    "Jonathan",
+    {
+      level: "info",
+      message: "SideNav started",
+    },
+    { second1: 1, second2: "2" },
+  );
   // Fetch astronomy snapshot on the server
   const snapshot = await getEphemerisSnapshot("KOP");
   const event = snapshot.nextEvent;
@@ -18,6 +26,7 @@ export default async function SideNav() {
     { href: "/notes", label: "Notes", icon: "📝" },
     { href: "/github", label: "GitHub", icon: "🐙" },
     { href: "/ping", label: "Ping", icon: "🛠️" },
+    { href: "/api/sendTestEmail", label: "Ping", icon: "🛠️" },
     { href: "/profile", label: "Profile", icon: "👤" },
   ];
 

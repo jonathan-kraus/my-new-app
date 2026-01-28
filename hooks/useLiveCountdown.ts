@@ -1,4 +1,4 @@
-// hooks\useLiveCountdown.ts
+// hooks/useLiveCountdown.ts
 
 import { useEffect, useState } from "react";
 export function useLiveCountdown(target: Date | null) {

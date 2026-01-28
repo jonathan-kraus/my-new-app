@@ -1,4 +1,4 @@
-// lib\ephemeris\utils\computeSolarNoon.ts
+// lib/ephemeris/utils/computeSolarNoon.ts
 
 export function computeSolarNoon(sunrise: Date, sunset: Date): Date {
   return new Date(

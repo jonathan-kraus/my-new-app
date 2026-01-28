@@ -1,5 +1,5 @@
 "use client";
-// hooks\useNow.ts
+// hooks/useNow.ts
 
 import { useEffect, useState } from "react";
 

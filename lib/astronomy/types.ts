@@ -1,4 +1,4 @@
-// lib\astronomy\types.ts
+// lib/astronomy/types.ts
 export interface SolarDay {
   sunrise: string | null;
   sunset: string | null;

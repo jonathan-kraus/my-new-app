@@ -1,4 +1,5 @@
 "use client";
+// app/logs/page.tsx
 import { logFromClient } from "@/app/actions/log";
 import { useEffect, useMemo, useState } from "react";
 

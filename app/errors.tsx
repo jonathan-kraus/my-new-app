@@ -1,5 +1,5 @@
 "use client";
-// app\errors.tsx
+// app/errors.tsx
 
 import { useEffect } from "react";
 import { useLogger } from "next-axiom";

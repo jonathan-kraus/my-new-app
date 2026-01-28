@@ -1,4 +1,4 @@
-// prisma\seed.ts
+// prisma/seed.ts
 import { db } from "@/lib/db";
 
 async function main() {

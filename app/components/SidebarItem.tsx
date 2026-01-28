@@ -1,5 +1,5 @@
 import Link from "next/link";
-// app\components\SidebarItem.tsx
+// app/components/SidebarItem.tsx
 export function SidebarItem({
   href,
   label,

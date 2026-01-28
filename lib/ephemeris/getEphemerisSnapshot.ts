@@ -1,5 +1,5 @@
 "use server";
-// lib\ephemeris\getEphemerisSnapshot.ts
+// lib/ephemeris/getEphemerisSnapshot.ts
 import { db } from "@/lib/db";
 import { buildEphemerisSnapshot } from "./buildEphemerisSnapshot";
 import { logit } from "@/lib/log/logit";
