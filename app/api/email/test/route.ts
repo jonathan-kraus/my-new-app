@@ -14,28 +14,6 @@ export async function GET(req: NextRequest) {
   const s1 = "second1";
   const s2 = "second2";
   const s3 = "second3";
-  await logit(
-    "jonathan",
-    {
-      level: "info",
-      message: "Email test sent",
-    },
-    {
-      requestId: ctx.requestId,
-      route: ctx.page,
-      userId: ctx.userId,
-      payload: {
-        first1: f1,
-        first2: f2,
-        first3: f3,
-        second1: s1,
-        second2: s2,
-        second3: s3,
-        requestId: ctx.requestId,
-        route: ctx.page,
-        userId: ctx.userId,
-      },
-    },
-  );
+  await logit( "jonathan", { level: "info", message: "Email test sent", debug: "logit-called", }, { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId, payload: { first1: f1, first2: f2, first3: f3, second1: s1, second2: s2, second3: s3, debug: "metadata-passed", }, } );
   return NextResponse.json(`Test email sent to ${to}`);
 }
