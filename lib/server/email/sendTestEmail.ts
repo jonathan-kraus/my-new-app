@@ -3,7 +3,7 @@
 import { getConfig, setConfig } from "@/lib/runtime/config";
 import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
 import { buildTestEmail } from "@/lib/buildTestEmail";
-import { logit } from "@/lib/logit"; // adjust path if needed
+import { logit } from "@/lib/log/logit";
 
 export async function sendTestEmail(to: string) {
   // --- 1. Read flag ---------------------------------------------------------
