@@ -29,14 +29,19 @@ if (enabled !== "1") {
 // 2. Get throttle minutes
 const throttleMinutes = Number(await getConfig("email.throttle.minutes", "0"));
 // 3. Get last sent timestamp
-const lastSent = await getConfig("email.last_sent_at", "");
-if (lastSent) {
-  const last = new Date(lastSent);
+const lastSentRaw = await getConfig("email.last_sent_at", "");
+
+if (typeof lastSentRaw === "string" && lastSentRaw.length > 0) {
+  const last = new Date(lastSentRaw);
   const now = new Date();
   const diffMinutes = (now.getTime() - last.getTime()) / 1000 / 60;
+
   if (diffMinutes < throttleMinutes) {
     console.log(`[email] Throttled. Last sent ${diffMinutes.toFixed(1)} minutes ago.`);
-        return; } }
+    return;
+  }
+}
+
 
   await mailerSend.email.send(emailParams);
   console.log(
