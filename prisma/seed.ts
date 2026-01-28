@@ -14,8 +14,6 @@ async function runtime() {
 }
 runtime();
 
-
-
 async function main() {
   // Clear existing locations (optional but safe for dev)
   await db.location.deleteMany();
@@ -63,6 +61,3 @@ main()
   .finally(async () => {
     await db.$disconnect();
   });
-
-
-

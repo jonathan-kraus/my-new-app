@@ -40,10 +40,11 @@ export async function logit(domain: string, payload: any, meta: any = {}) {
   //
   // 2. Flatten payload and meta
   //
- const flatPayload = {
-  eventIndex,
-  ...(payload ?? {}),
-  ...(meta?.payload ?? {}), };
+  const flatPayload = {
+    eventIndex,
+    ...(payload ?? {}),
+    ...(meta?.payload ?? {}),
+  };
 
   const flatMeta = {
     requestId,
