@@ -26,7 +26,7 @@ export default async function SideNav() {
     { href: "/notes", label: "Notes", icon: "📝" },
     { href: "/github", label: "GitHub", icon: "🐙" },
     { href: "/ping", label: "Ping", icon: "🛠️" },
-    { href: "/api/sendTestEmail", label: "Ping", icon: "🛠️" },
+    { href: "/api/email/test", label: "Email", icon: "🛠️" },
     { href: "/profile", label: "Profile", icon: "👤" },
   ];
 
