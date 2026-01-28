@@ -3,19 +3,31 @@
 import { getConfig, setConfig } from "@/lib/runtime/config";
 import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
 import { buildTestEmail } from "@/lib/buildTestEmail";
+import { logit } from "@/lib/logit"; // adjust path if needed
 
 export async function sendTestEmail(to: string) {
-// 1. Check if email sending is enabled
+  // --- 1. Read flag ---------------------------------------------------------
+  const enabled = await getConfig("flag_email_send", "1");
 
-const enabled = await getConfig("flag_email_send", "1");
-console.log("[email] flag_email_send value:", enabled, "as string:", String(enabled));
+  await logit("email", {
+    level: "info",
+    message: "Checked flag_email_send",
+  }, {
+    payload: {
+      enabled_raw: enabled,
+      enabled_string: String(enabled),
+    },
+  });
 
-console.log("[email] flag_email_send value:", enabled);
-if (String(enabled) !== "1") {
+  if (String(enabled) !== "1") {
+    await logit("email", {
+      level: "warn",
+      message: "Email sending disabled by runtime flag",
+    });
+    return;
+  }
 
-  console.log("[email] Disabled by runtime flag");
-  return; }
-
+  // --- 2. Build email -------------------------------------------------------
   const testEmail = buildTestEmail();
 
   const mailerSend = new MailerSend({
@@ -31,30 +43,89 @@ if (String(enabled) !== "1") {
     .setSubject(testEmail.subject)
     .setHtml(testEmail.html)
     .setText(testEmail.text);
-// 2. Get throttle minutes
-const throttleMinutes = Number(await getConfig("email.throttle.minutes", "0"));
-// 3. Get last sent timestamp
-const lastSentRaw = await getConfig("email.last_sent_at", "");
 
-if (typeof lastSentRaw === "string" && lastSentRaw.length > 0) {
-  const last = new Date(lastSentRaw);
-  const now = new Date();
-  const diffMinutes = (now.getTime() - last.getTime()) / 1000 / 60;
+  // --- 3. Throttle ----------------------------------------------------------
+  const throttleMinutes = Number(await getConfig("email.throttle.minutes", "0"));
+  const lastSentRaw = await getConfig("email.last_sent_at", "");
 
-  if (diffMinutes < throttleMinutes) {
-    console.log(`[email] Throttled. Last sent ${diffMinutes.toFixed(1)} minutes ago.`);
-    return;
+  await logit("email", {
+    level: "info",
+    message: "Throttle check starting",
+  }, {
+    payload: {
+      throttleMinutes,
+      lastSentRaw,
+    },
+  });
+
+  if (typeof lastSentRaw === "string" && lastSentRaw.length > 0) {
+    const last = new Date(lastSentRaw);
+    const now = new Date();
+    const diffMinutes = (now.getTime() - last.getTime()) / 1000 / 60;
+
+    await logit("email", {
+      level: "info",
+      message: "Computed throttle difference",
+    }, {
+      payload: {
+        diffMinutes,
+        throttleMinutes,
+      },
+    });
+
+    if (diffMinutes < throttleMinutes) {
+      await logit("email", {
+        level: "warn",
+        message: "Email throttled",
+      }, {
+        payload: {
+          diffMinutes,
+          throttleMinutes,
+          nextAllowedInMinutes: throttleMinutes - diffMinutes,
+        },
+      });
+      return;
+    }
   }
-}
 
+  // --- 4. Send email --------------------------------------------------------
+  try {
+    await mailerSend.email.send(emailParams);
 
-  await mailerSend.email.send(emailParams);
-  console.log(
-    "mailersend module loaded, sendTestEmail is defined:",
-    typeof sendTestEmail,
-  );
-  console.log(`Test email sent to ${to}`);
-    await setConfig("email.last_sent_at", new Date().toISOString());
-console.log("[email] Sent and timestamp updated");
+    await logit("email", {
+      level: "info",
+      message: "Test email sent",
+    }, {
+      payload: {
+        to,
+        subject: testEmail.subject,
+      },
+    });
+  } catch (err: any) {
+    await logit("email", {
+      level: "error",
+      message: "MailerSend error",
+    }, {
+      payload: {
+        error: err?.message,
+        stack: err?.stack,
+      },
+    });
+    throw err;
+  }
 
+  // --- 5. Update timestamp --------------------------------------------------
+  const newTimestamp = new Date().toISOString();
+  const saved = await setConfig("email.last_sent_at", newTimestamp);
+
+  await logit("email", {
+    level: "info",
+    message: "Updated last_sent_at",
+  }, {
+    payload: {
+      attempted: newTimestamp,
+      saved,
+      match: String(saved) === newTimestamp,
+    },
+  });
 }
