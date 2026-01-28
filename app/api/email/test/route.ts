@@ -19,17 +19,22 @@ export async function GET(req: NextRequest) {
     {
       level: "info",
       message: "Email test sent",
-      first1: f1,
-      first2: f2,
-      first3: f3,
     },
     {
-      second1: s1,
-      second2: s2,
-      second3: s3,
       requestId: ctx.requestId,
       route: ctx.page,
       userId: ctx.userId,
+      payload: {
+        first1: f1,
+        first2: f2,
+        first3: f3,
+        second1: s1,
+        second2: s2,
+        second3: s3,
+        requestId: ctx.requestId,
+        route: ctx.page,
+        userId: ctx.userId,
+      },
     },
   );
   return NextResponse.json(`Test email sent to ${to}`);
