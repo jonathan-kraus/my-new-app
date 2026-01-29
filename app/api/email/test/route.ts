@@ -33,5 +33,5 @@ export async function GET(req: NextRequest) {
       },
     },
   );
-  return NextResponse.json(result, { status: 200, statusText: `Test email sent to ${to}`);
+  return NextResponse.json(result, { status: 200, statusText: `Test email sent to ${to}` });
 }
