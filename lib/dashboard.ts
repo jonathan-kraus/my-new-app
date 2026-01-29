@@ -28,7 +28,7 @@ export async function getDashboardData(): Promise<DashboardData> {
   const vercel = vercelResult.ok ? vercelResult.data : null;
   const github = githubResult.ok ? githubResult.data : [];
   const astronomy = astronomyResult.ok
-    ? astronomyResult.data.snapshot ?? null
+    ? (astronomyResult.data.snapshot ?? null)
     : null;
 
   return {
@@ -40,9 +40,6 @@ export async function getDashboardData(): Promise<DashboardData> {
     },
   };
 }
-
-
-
 
 export type SafeResult<T> =
   | { ok: true; data: T }
@@ -57,4 +54,3 @@ export async function safe<T>(fn: () => Promise<T>): Promise<SafeResult<T>> {
     return { ok: false, error };
   }
 }
-

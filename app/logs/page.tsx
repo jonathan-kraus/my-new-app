@@ -136,7 +136,7 @@ export default function LogsPage() {
 
         if (fresh.length > 0) {
           setLogs((prev) => [...fresh, ...prev]);
-          setNewCount(prev => prev + fresh.length);
+          setNewCount((prev) => prev + fresh.length);
         }
       } catch (e) {
         console.error("Failed to live-tail logs", e);
@@ -161,14 +161,14 @@ export default function LogsPage() {
         {/* Header */}
         <div className="flex items-center justify-between gap-4">
           {newCount > 0 && (
-  <button
-    onClick={() => setNewCount(0)}
-    className="px-3 py-1 bg-green-500/20 border border-green-500/40
+            <button
+              onClick={() => setNewCount(0)}
+              className="px-3 py-1 bg-green-500/20 border border-green-500/40
                text-green-300 rounded-lg text-sm font-medium animate-fadeIn"
-  >
-    +{newCount} new log{newCount === 1 ? "" : "s"}
-  </button>
-)}
+            >
+              +{newCount} new log{newCount === 1 ? "" : "s"}
+            </button>
+          )}
 
           <div>
             <h1 className="text-2xl font-semibold">{title}</h1>

@@ -24,6 +24,7 @@ export default function SideNavClient({
     { href: "/notes", label: "Notes", icon: "📝" },
     { href: "/github", label: "GitHub", icon: "🐙" },
     { href: "/ping", label: "Ping", icon: "🛠️" },
+    { href: "/admin/runtime", label: "Runtime", icon: "🛠️" },
     { href: "/api/email/test", label: "Email", icon: "🛠️" },
     { href: "/profile", label: "Profile", icon: "👤" },
   ];

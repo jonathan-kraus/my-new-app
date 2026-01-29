@@ -103,7 +103,8 @@ export async function GET(req: Request) {
     {
       level: "info",
       message: "Forecast API response",
-      payload: parsed, raw,
+      payload: parsed,
+      raw,
     },
     { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
   );
