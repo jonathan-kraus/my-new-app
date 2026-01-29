@@ -59,6 +59,8 @@ const levelStyles: Record<
 };
 
 export default function LogsPage() {
+  const [newCount, setNewCount] = useState(0);
+
   const [logs, setLogs] = useState<LogRecord[]>([]);
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
@@ -134,6 +136,7 @@ export default function LogsPage() {
 
         if (fresh.length > 0) {
           setLogs((prev) => [...fresh, ...prev]);
+          setNewCount(prev => prev + fresh.length);
         }
       } catch (e) {
         console.error("Failed to live-tail logs", e);
@@ -157,6 +160,16 @@ export default function LogsPage() {
       <div className="max-w-5xl mx-auto space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between gap-4">
+          {newCount > 0 && (
+  <button
+    onClick={() => setNewCount(0)}
+    className="mb-3 px-3 py-1 bg-green-500/20 border border-green-500/40
+               text-green-300 rounded-lg text-sm font-medium"
+  >
+    +{newCount} new log{newCount === 1 ? "" : "s"}
+  </button>
+)}
+
           <div>
             <h1 className="text-2xl font-semibold">{title}</h1>
             <p className="text-sm text-gray-400">
