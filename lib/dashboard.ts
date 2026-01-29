@@ -19,11 +19,17 @@ export interface DashboardData {
 export async function getDashboardData(): Promise<DashboardData> {
   const projectId = process.env.VERCEL_PROJECT_ID!;
 
-  const [vercel, github, astronomy] = await Promise.all([
+  const [vercelResult, githubResult, astronomyResult] = await Promise.all([
     safe<VercelDeploymentsResponse>(() => getVercelDeployments(projectId)),
     safe(() => getRecentActivity("jonathan-kraus")),
     safe(() => getEphemerisSnapshot("KOP")),
   ]);
+
+  const vercel = vercelResult.ok ? vercelResult.data : null;
+  const github = githubResult.ok ? githubResult.data : [];
+  const astronomy = astronomyResult.ok
+    ? astronomyResult.data.snapshot ?? null
+    : null;
 
   return {
     vercel,
@@ -35,11 +41,20 @@ export async function getDashboardData(): Promise<DashboardData> {
   };
 }
 
-async function safe<T>(fn: () => Promise<T>): Promise<T | null> {
+
+
+
+export type SafeResult<T> =
+  | { ok: true; data: T }
+  | { ok: false; error: unknown };
+
+export async function safe<T>(fn: () => Promise<T>): Promise<SafeResult<T>> {
   try {
-    return await fn();
-  } catch (err) {
-    console.error("Dashboard fetch error:", err);
-    return null;
+    const data = await fn();
+    return { ok: true, data };
+  } catch (error) {
+    console.error("Dashboard fetch error:", error);
+    return { ok: false, error };
   }
 }
+
