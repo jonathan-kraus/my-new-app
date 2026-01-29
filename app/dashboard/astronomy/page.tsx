@@ -8,7 +8,6 @@ import { SolarArcBar } from "@/app/components/SolarArcBar";
 
 export default async function DashboardAstronomyPage() {
   const snapshot = await getEphemerisSnapshot("KOP");
-  console.log("Astronomy Snapshot", snapshot);
   const solar = snapshot.snapshot?.solar ?? null;
   const lunar = snapshot.snapshot?.lunar ?? null;
   if (!solar || !lunar) {

@@ -3,39 +3,30 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { logit } from "@/lib/log/logit";
+import { withLogging } from "@/lib/logging/withLogging";
 import { enrichContext } from "@/lib/log/context";
 import { getRequestDuration } from "@/lib/log/timing";
 
 // -------------------------
 // GET /api/notes
 // -------------------------
-export async function GET(req: NextRequest) {
-  const ctx = await enrichContext(req);
-  console.log("CTX requestId:", ctx.requestId);
 
-  await logit(
-    "notes",
-    {
-      level: "info",
-      message: "Notes GET started",
-      payload: { requestId: ctx.requestId },
-    },
-    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-  );
+export const GET = withLogging(async (req: Request) => {
+  await logit("notes", {
+    level: "info",
+    message: "Notes GET started",
+    payload: { requestId: "REQ" },
+  });
 
   try {
     const session = await auth();
 
     if (!session?.user) {
-      await logit(
-        "notes",
-        {
-          level: "warn",
-          message: "Unauthorized Notes GET",
-          payload: { requestId: ctx.requestId },
-        },
-        { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-      );
+      await logit("notes", {
+        level: "warn",
+        message: "Unauthorized Notes GET",
+        payload: { requestId: "REQ" },
+      });
 
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -51,74 +42,49 @@ export async function GET(req: NextRequest) {
       },
       orderBy: { createdAt: "desc" },
     });
-    console.log("Duration lookup:", getRequestDuration(ctx.requestId));
 
-    const durationMs = getRequestDuration(ctx.requestId);
-
-    await logit(
-      "notes",
-      {
-        level: "info",
-        message: `Notes GET completed ${notes.length}`,
-        payload: {
-          durationMs,
-          eventIndex: ctx.eventIndex,
-          count: notes.length,
-        },
+    await logit("notes", {
+      level: "info",
+      message: `Notes GET completed ${notes.length}`,
+      payload: {
+        count: notes.length,
       },
-      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-    );
+    });
 
     return NextResponse.json({ notes });
   } catch (err: any) {
-    const durationMs = getRequestDuration(ctx.requestId);
-
-    await logit(
-      "notes",
-      {
-        level: "error",
-        message: "Notes GET failed",
-        payload: { durationMs: durationMs, error: err.message },
-      },
-      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-    );
+    await logit("notes", {
+      level: "error",
+      message: "Notes GET failed",
+      payload: { error: err.message },
+    });
 
     return NextResponse.json(
       { error: "Failed to load notes" },
       { status: 500 },
     );
   }
-}
+});
 
 // -------------------------
 // POST /api/notes
 // -------------------------
-export async function POST(req: NextRequest) {
-  const ctx = await enrichContext(req);
-
-  await logit(
-    "notes",
-    {
-      level: "info",
-      message: "Notes POST started",
-      payload: {},
-    },
-    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-  );
+export const POST = withLogging(async (req: Request) => {
+  await logit("notes", {
+    level: "info",
+    message: "Notes POST started",
+    payload: {},
+  });
 
   try {
     const session = await auth();
 
     if (!session?.user) {
-      await logit(
-        "notes",
-        {
-          level: "warn",
-          message: "Unauthorized Notes POST",
-          payload: {},
-        },
-        { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-      );
+      await logit("notes", {
+        level: "warn",
+        message: "Unauthorized Notes POST",
+        payload: {},
+      });
 
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -142,54 +108,35 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    await logit(
-      "notes",
-      {
-        level: "info",
-        message: `Note created: ${note.title || "Untitled"} by ${email}`,
-        payload: {
-          noteId: note.id,
-          title: note.title,
-          action: "created",
-          userEmail: email,
-        },
+    await logit("notes", {
+      level: "info",
+      message: `Note created: ${note.title || "Untitled"} by ${email}`,
+      payload: {
+        noteId: note.id,
+        title: note.title,
+        action: "created",
+        userEmail: email,
       },
-      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-    );
+    });
 
-    const durationMs = getRequestDuration(ctx.requestId);
-
-    await logit(
-      "notes",
-      {
-        payload: { durationMs, noteId: note.id },
-        level: "info",
-        message: "Notes POST completed",
-      },
-      {
-        requestId: ctx.requestId,
-        route: ctx.page,
-        userId: ctx.userId,
-      },
-    );
+    await logit("notes", {
+      payload: { noteId: note.id },
+      level: "info",
+      message: "Notes POST completed",
+    });
 
     return NextResponse.json({ note });
   } catch (err: any) {
-    const durationMs = getRequestDuration(ctx.requestId);
-
     return NextResponse.json(
       { error: "Failed to create note" },
       { status: 500 },
     );
   }
-}
-
+});
 // -------------------------
 // PUT /api/notes/[id]
 // -------------------------
-export async function PUT(req: NextRequest) {
-  const ctx = await enrichContext(req);
-
+export const PUT = withLogging(async (req: Request) => {
   try {
     const session = await auth();
 
@@ -268,53 +215,42 @@ export async function PUT(req: NextRequest) {
       actionMessage = `Note edited: ${originalNote?.title || "Untitled"} by ${email} - ${changes.join(", ")}`;
     }
 
-    await logit(
-      "notes",
-      {
-        level: "info",
-        message: actionMessage,
-        payload: {
-          noteId: id,
-          title: originalNote?.title,
-          action: isArchived ? "archived" : "edited",
-          userEmail: email,
-          changes: {
-            title: title !== originalNote?.title,
-            content: content !== originalNote?.content,
-            followUpAt: followUpAt !== originalNote?.followUpAt,
-            color: color !== originalNote?.color,
-            isArchived,
-          },
+    await logit("notes", {
+      level: "info",
+      message: actionMessage,
+      payload: {
+        noteId: id,
+        title: originalNote?.title,
+        action: isArchived ? "archived" : "edited",
+        userEmail: email,
+        changes: {
+          title: title !== originalNote?.title,
+          content: content !== originalNote?.content,
+          followUpAt: followUpAt !== originalNote?.followUpAt,
+          color: color !== originalNote?.color,
+          isArchived,
         },
       },
-      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-    );
+    });
 
     return NextResponse.json({ note: updatedNote });
   } catch (err: any) {
-    await logit(
-      "notes",
-      {
-        level: "error",
-        message: "Notes PUT failed",
-        payload: { error: err.message },
-      },
-      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-    );
+    await logit("notes", {
+      level: "error",
+      message: "Notes PUT failed",
+      payload: { error: err.message },
+    });
 
     return NextResponse.json(
       { error: "Failed to update note" },
       { status: 500 },
     );
   }
-}
-
+});
 // -------------------------
 // DELETE /api/notes/[id]
 // -------------------------
-export async function DELETE(req: NextRequest) {
-  const ctx = await enrichContext(req);
-
+export const DELETE = withLogging(async (req: Request) => {
   try {
     const session = await auth();
 
@@ -350,36 +286,28 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: "Note not found" }, { status: 404 });
     }
 
-    await logit(
-      "notes",
-      {
-        level: "info",
-        message: `Note deleted: ${noteToDelete?.title || "Untitled"} by ${email}`,
-        payload: {
-          noteId: id,
-          title: noteToDelete?.title,
-          action: "deleted",
-          userEmail: email,
-        },
+    await logit("notes", {
+      level: "info",
+      message: `Note deleted: ${noteToDelete?.title || "Untitled"} by ${email}`,
+      payload: {
+        noteId: id,
+        title: noteToDelete?.title,
+        action: "deleted",
+        userEmail: email,
       },
-      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-    );
+    });
 
     return NextResponse.json({ success: true });
   } catch (err: any) {
-    await logit(
-      "notes",
-      {
-        level: "error",
-        message: "Notes DELETE failed",
-        payload: { error: err.message },
-      },
-      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-    );
+    await logit("notes", {
+      level: "error",
+      message: "Notes DELETE failed",
+      payload: { error: err.message },
+    });
 
     return NextResponse.json(
       { error: "Failed to delete note" },
       { status: 500 },
     );
   }
-}
+});

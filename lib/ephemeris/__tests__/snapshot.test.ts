@@ -74,11 +74,9 @@ mockedDb.astronomySnapshot.findFirst.mockImplementation(
   async ({ where }: { where: { date: Date; locationId: string } }) => {
     const target = new Date(where.date).toISOString().slice(0, 10);
     return (
-      rows.find(
-        (r) => r.date.toISOString().slice(0, 10) === target
-      ) ?? null
+      rows.find((r) => r.date.toISOString().slice(0, 10) === target) ?? null
     );
-  }
+  },
 );
 
 mockedDb.astronomySnapshot.findMany.mockResolvedValue(rows);
