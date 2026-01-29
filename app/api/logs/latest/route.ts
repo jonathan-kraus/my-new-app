@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
     const where: any = {};
 
     if (since) {
-      where.createdAt = { gt: new Date(since) };
+      where.created_at = { gt: new Date(since) };
     }
 
     if (search) {
