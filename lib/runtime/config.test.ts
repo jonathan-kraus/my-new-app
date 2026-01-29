@@ -14,6 +14,17 @@ vi.mock("@/lib/db", () => ({
 import { db } from "@/lib/db";
 import { getConfig, setConfig, deleteConfig } from "./config";
 
+// ---------------------------------------------------------
+// Cast db to a mock-friendly type so TS allows mock methods
+// ---------------------------------------------------------
+const mockedDb = db as unknown as {
+  runtimeConfig: {
+    findUnique: ReturnType<typeof vi.fn>;
+    upsert: ReturnType<typeof vi.fn>;
+    delete: ReturnType<typeof vi.fn>;
+  };
+};
+
 describe("runtime config", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -21,35 +32,35 @@ describe("runtime config", () => {
 
   describe("getConfig", () => {
     it("returns fallback when no row exists", async () => {
-      db.runtimeConfig.findUnique.mockResolvedValue(null);
+      mockedDb.runtimeConfig.findUnique.mockResolvedValue(null);
 
       const result = await getConfig("missing", "fallback");
       expect(result).toBe("fallback");
     });
 
     it("parses boolean true", async () => {
-      db.runtimeConfig.findUnique.mockResolvedValue({ value: "true" });
+      mockedDb.runtimeConfig.findUnique.mockResolvedValue({ value: "true" });
 
       const result = await getConfig("flag");
       expect(result).toBe(true);
     });
 
     it("parses boolean false", async () => {
-      db.runtimeConfig.findUnique.mockResolvedValue({ value: "false" });
+      mockedDb.runtimeConfig.findUnique.mockResolvedValue({ value: "false" });
 
       const result = await getConfig("flag");
       expect(result).toBe(false);
     });
 
     it("parses numbers", async () => {
-      db.runtimeConfig.findUnique.mockResolvedValue({ value: "42" });
+      mockedDb.runtimeConfig.findUnique.mockResolvedValue({ value: "42" });
 
       const result = await getConfig("num");
       expect(result).toBe(42);
     });
 
     it("returns raw string when not boolean or number", async () => {
-      db.runtimeConfig.findUnique.mockResolvedValue({ value: "hello" });
+      mockedDb.runtimeConfig.findUnique.mockResolvedValue({ value: "hello" });
 
       const result = await getConfig("str");
       expect(result).toBe("hello");
@@ -58,12 +69,12 @@ describe("runtime config", () => {
 
   describe("setConfig", () => {
     it("upserts and returns parsed value", async () => {
-      db.runtimeConfig.upsert.mockResolvedValue({ value: "123" });
+      mockedDb.runtimeConfig.upsert.mockResolvedValue({ value: "123" });
 
       const result = await setConfig("num", 123);
       expect(result).toBe(123);
 
-      expect(db.runtimeConfig.upsert).toHaveBeenCalledWith({
+      expect(mockedDb.runtimeConfig.upsert).toHaveBeenCalledWith({
         where: { key: "num" },
         update: { value: "123" },
         create: { key: "num", value: "123" },
@@ -75,7 +86,7 @@ describe("runtime config", () => {
     it("calls delete on the db", async () => {
       await deleteConfig("foo");
 
-      expect(db.runtimeConfig.delete).toHaveBeenCalledWith({
+      expect(mockedDb.runtimeConfig.delete).toHaveBeenCalledWith({
         where: { key: "foo" },
       });
     });

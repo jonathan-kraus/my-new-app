@@ -25,12 +25,31 @@ import { db } from "@/lib/db";
 import { getEphemerisSnapshot } from "../getEphemerisSnapshot";
 
 // ---------------------------------------------------------
+// Cast db to a mock-friendly type so TS allows mock methods
+// ---------------------------------------------------------
+const mockedDb = db as unknown as {
+  astronomySnapshot: {
+    findFirst: ReturnType<typeof vi.fn>;
+    findMany: ReturnType<typeof vi.fn>;
+    create: ReturnType<typeof vi.fn>;
+  };
+  runtimeConfig: {
+    findUnique: ReturnType<typeof vi.fn>;
+    upsert: ReturnType<typeof vi.fn>;
+    delete: ReturnType<typeof vi.fn>;
+  };
+  location: {
+    findUnique: ReturnType<typeof vi.fn>;
+  };
+};
+
+// ---------------------------------------------------------
 // Test data
 // ---------------------------------------------------------
 const rows = [
   {
-    date: new Date("2026-01-21T05:00:00.000Z"), // Date
-    sunrise: "2026-01-21T12:00:00.000Z", // string
+    date: new Date("2026-01-21T05:00:00.000Z"),
+    sunrise: "2026-01-21T12:00:00.000Z",
     sunset: "2026-01-21T22:00:00.000Z",
     moonrise: "2026-01-21T23:00:00.000Z",
     moonset: "2026-01-22T10:00:00.000Z",
@@ -38,7 +57,7 @@ const rows = [
     locationId: "KOP",
   },
   {
-    date: new Date("2026-01-22T05:00:00.000Z"), // Date
+    date: new Date("2026-01-22T05:00:00.000Z"),
     sunrise: "2026-01-22T12:00:00.000Z",
     sunset: "2026-01-22T22:00:00.000Z",
     moonrise: "2026-01-22T23:00:00.000Z",
@@ -49,14 +68,20 @@ const rows = [
 ];
 
 // ---------------------------------------------------------
-// Mock implementations
+// Mock implementations (now TS-safe)
 // ---------------------------------------------------------
-db.astronomySnapshot.findFirst.mockImplementation(async ({ where }) => {
-  const target = new Date(where.date).toISOString().slice(0, 10);
-  return rows.find((r) => r.date.toISOString().slice(0, 10) === target) ?? null;
-});
+mockedDb.astronomySnapshot.findFirst.mockImplementation(
+  async ({ where }: { where: { date: Date; locationId: string } }) => {
+    const target = new Date(where.date).toISOString().slice(0, 10);
+    return (
+      rows.find(
+        (r) => r.date.toISOString().slice(0, 10) === target
+      ) ?? null
+    );
+  }
+);
 
-db.astronomySnapshot.findMany.mockResolvedValue(rows);
+mockedDb.astronomySnapshot.findMany.mockResolvedValue(rows);
 
 // ---------------------------------------------------------
 // TEST
