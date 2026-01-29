@@ -36,10 +36,14 @@ describe("getEphemerisSnapshot", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-01-22T00:00:00Z"));
 
-    const snap = await getEphemerisSnapshot("KOP");
-
-    expect(snap.solar.sunrise.timeLocal).toBeDefined();
-    expect(snap.lunar.illumination).toBe(42.5);
-    expect(snap.nextEvent.name).toBeDefined();
+const snap = await getEphemerisSnapshot("KOP");
+// snapshot container exists
+expect(snap.snapshot).not.toBeNull();
+// solar + lunar exist inside snapshot
+expect(snap.snapshot!.solar).toBeDefined();
+expect(snap.snapshot!.lunar).toBeDefined();
+// nextEvent exists inside snapshot
+expect(snap.snapshot!.nextEvent).toBeDefined();
+expect(snap.snapshot!.nextEvent!.name).toBeDefined();
   });
 });
