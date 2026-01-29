@@ -5,8 +5,11 @@ import { auth } from "@/auth";
 import { logit } from "@/lib/log/logit";
 import { enrichContext } from "@/lib/log/context";
 import { ForecastResponseSchema } from "@/lib/weather/zodschema";
-
-const FORECAST_CACHE_MINUTES = Number(process.env.FORECAST_CACHE_MINUTES ?? 60);
+import { getConfig } from "@/lib/runtime/config";
+ const fcm = Number(
+    await getConfig("FORECAST_CACHE_MINUTES", "10"),
+  );
+const FORECAST_CACHE_MINUTES = fcm;
 
 export async function GET(req: Request) {
   const session = await auth();
