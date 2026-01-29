@@ -7,7 +7,7 @@ import { enrichContext } from "@/lib/log/context";
 export async function GET(req: NextRequest) {
   const to = "jonathan.c.kraus@gmail.com";
   const ctx = await enrichContext(req);
-  await sendTestEmail(to);
+  const result = await sendTestEmail(to);
   const f1 = "first1";
   const f2 = "first2";
   const f3 = "first3";
@@ -16,12 +16,13 @@ export async function GET(req: NextRequest) {
   const s3 = "second3";
   await logit(
     "jonathan",
-    { level: "info", message: "Email test sent", debug: "logit-called" },
+    { level: "info", message: "Email test finished", debug: "logit-called" },
     {
       requestId: ctx.requestId,
       route: ctx.page,
       userId: ctx.userId,
       payload: {
+        result: result,
         first1: f1,
         first2: f2,
         first3: f3,
@@ -32,5 +33,5 @@ export async function GET(req: NextRequest) {
       },
     },
   );
-  return NextResponse.json(`Test email sent to ${to}`);
+  return NextResponse.json(result, { status: 200, statusText: `Test email sent to ${to}`);
 }
