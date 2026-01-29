@@ -29,10 +29,10 @@ export function ForecastCard({
       {/* Current conditions */}
       <div className="mb-6">
         <p className="text-xl font-semibold">
-          {location.name}: {current.temperature}°F
+          {location.name}: {current.temperature.toFixed(0)}°F
         </p>
         <p className="opacity-80 text-sm">
-          Wind: {current.windspeed} mph · Code {current.weathercode}
+          Wind: {current.windspeed.toFixed(0)} mph · Code {current.weathercode}
         </p>
       </div>
 
