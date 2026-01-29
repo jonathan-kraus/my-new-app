@@ -1,29 +1,22 @@
 import { describe, it, expect, vi } from "vitest";
 
-// Mock Prisma BEFORE importing the builder
+// ---------------------------------------------------------
+// Mock Prisma BEFORE importing getEphemerisSnapshot
+// ---------------------------------------------------------
 vi.mock("@/lib/db", () => ({
   db: {
+    location: {
+      findUnique: vi.fn(),
+    },
     astronomySnapshot: {
-      findMany: vi.fn().mockResolvedValue([
-        {
-          date: new Date("2026-01-22"),
-          sunrise: new Date("2026-01-22T07:00:00Z"),
-          sunset: new Date("2026-01-22T17:00:00Z"),
-          moonrise: new Date("2026-01-22T20:00:00Z"),
-          moonset: new Date("2026-01-23T06:00:00Z"),
-          illumination: 42.5,
-          locationId: "KOP",
-        },
-        {
-          date: new Date("2026-01-23"),
-          sunrise: new Date("2026-01-23T07:01:00Z"),
-          sunset: new Date("2026-01-23T17:01:00Z"),
-          moonrise: new Date("2026-01-23T21:00:00Z"),
-          moonset: new Date("2026-01-24T07:00:00Z"),
-          illumination: 43.1,
-          locationId: "KOP",
-        },
-      ]),
+      findFirst: vi.fn(),
+      findMany: vi.fn(),
+      create: vi.fn(),
+    },
+    runtimeConfig: {
+      findUnique: vi.fn().mockResolvedValue(null),
+      upsert: vi.fn(),
+      delete: vi.fn(),
     },
   },
 }));
@@ -31,18 +24,53 @@ vi.mock("@/lib/db", () => ({
 import { db } from "@/lib/db";
 import { getEphemerisSnapshot } from "../getEphemerisSnapshot";
 
+// ---------------------------------------------------------
+// Test data
+// ---------------------------------------------------------
+const rows = [
+  {
+    date: new Date("2026-01-21T05:00:00.000Z"), // Date
+    sunrise: "2026-01-21T12:00:00.000Z", // string
+    sunset: "2026-01-21T22:00:00.000Z",
+    moonrise: "2026-01-21T23:00:00.000Z",
+    moonset: "2026-01-22T10:00:00.000Z",
+    illumination: 40,
+    locationId: "KOP",
+  },
+  {
+    date: new Date("2026-01-22T05:00:00.000Z"), // Date
+    sunrise: "2026-01-22T12:00:00.000Z",
+    sunset: "2026-01-22T22:00:00.000Z",
+    moonrise: "2026-01-22T23:00:00.000Z",
+    moonset: "2026-01-23T10:00:00.000Z",
+    illumination: 42,
+    locationId: "KOP",
+  },
+];
+
+// ---------------------------------------------------------
+// Mock implementations
+// ---------------------------------------------------------
+db.astronomySnapshot.findFirst.mockImplementation(async ({ where }) => {
+  const target = new Date(where.date).toISOString().slice(0, 10);
+  return rows.find((r) => r.date.toISOString().slice(0, 10) === target) ?? null;
+});
+
+db.astronomySnapshot.findMany.mockResolvedValue(rows);
+
+// ---------------------------------------------------------
+// TEST
+// ---------------------------------------------------------
 describe("getEphemerisSnapshot", () => {
   it("builds a combined solar + lunar snapshot", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-01-22T00:00:00Z"));
 
     const snap = await getEphemerisSnapshot("KOP");
-    // snapshot container exists
+
     expect(snap.snapshot).not.toBeNull();
-    // solar + lunar exist inside snapshot
     expect(snap.snapshot!.solar).toBeDefined();
     expect(snap.snapshot!.lunar).toBeDefined();
-    // nextEvent exists inside snapshot
     expect(snap.snapshot!.nextEvent).toBeDefined();
     expect(snap.snapshot!.nextEvent!.name).toBeDefined();
   });

@@ -2,7 +2,10 @@
 
 import { formatDistanceToNow } from "date-fns";
 import { useForecastTimeline } from "@/hooks/useForecastTimeline";
-
+import { WEATHER_ICONS } from "../../lib/ephemeris/weatherIcons";
+export function iconFor(code: number): string {
+  return WEATHER_ICONS[code] ?? "❓";
+}
 export function ForecastCard({
   location,
   current,
@@ -33,7 +36,7 @@ export function ForecastCard({
         </p>
         <p className="opacity-80 text-sm">
           Wind: {current.windspeed.toFixed(0)} mph · Code{" "}
-          {forecast.weathercode[0]}
+          {iconFor(forecast.weathercode[0])} {forecast.weathercode[0]}
         </p>
       </div>
 
