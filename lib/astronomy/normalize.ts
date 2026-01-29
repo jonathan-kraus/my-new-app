@@ -14,30 +14,37 @@ export interface RawAstronomyRow {
   moonset: string | null;
   moonPhase?: number | null;
 }
-export function normalizeAstronomySnapshot(
-  todayRow: RawAstronomyRow,
-  tomorrowRow: RawAstronomyRow | null,
-) {
-  const today = {
-    date: parseLocalDate(todayRow.date),
-    sunriseDate: parseLocalTimestamp(todayRow.sunrise),
-    sunsetDate: parseLocalTimestamp(todayRow.sunset),
-    moonriseDate: parseLocalTimestamp(todayRow.moonrise),
-    moonsetDate: parseLocalTimestamp(todayRow.moonset),
-    moonPhase: todayRow.moonPhase ?? null,
-  };
+import type { AstronomySnapshot } from "@prisma/client";
 
-  const tomorrow = {
-    nextSunrise: tomorrowRow ? parseLocalTimestamp(tomorrowRow.sunrise) : null,
-    nextSunset: tomorrowRow ? parseLocalTimestamp(tomorrowRow.sunset) : null,
-    nextMoonrise: tomorrowRow
-      ? parseLocalTimestamp(tomorrowRow.moonrise)
-      : null,
-    nextMoonset: tomorrowRow ? parseLocalTimestamp(tomorrowRow.moonset) : null,
-  };
+export function normalizeAstronomySnapshot(row: any) {
+  if (!row) return null;
 
   return {
-    ...today,
-    ...tomorrow,
+    id: row.id,
+    date: row.date,
+    createdAt: row.createdAt,
+    locationId: row.locationId,
+    fetchedAt: row.fetchedAt,
+
+    sunrise: row.sunrise,
+    sunset: row.sunset,
+    solarNoon: row.solarNoon,
+
+    sunriseBlueStart: row.sunriseBlueStart,
+    sunriseBlueEnd: row.sunriseBlueEnd,
+    sunsetBlueStart: row.sunsetBlueStart,
+    sunsetBlueEnd: row.sunsetBlueEnd,
+
+    sunriseGoldenStart: row.sunriseGoldenStart,
+    sunriseGoldenEnd: row.sunriseGoldenEnd,
+    sunsetGoldenStart: row.sunsetGoldenStart,
+    sunsetGoldenEnd: row.sunsetGoldenEnd,
+
+    moonrise: row.moonrise,
+    moonset: row.moonset,
+    moonPhase: row.moonPhase,
+
+    illumination: row.illumination,
+    phaseName: row.phaseName,
   };
 }

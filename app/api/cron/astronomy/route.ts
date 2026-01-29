@@ -16,6 +16,7 @@ function atLocalMidnight(d: Date) {
 export async function GET(req: NextRequest) {
   const start = Date.now();
   const ctx = await enrichContext(req);
+
   await logit(
     "ephemeris",
     {
@@ -49,12 +50,16 @@ export async function GET(req: NextRequest) {
         "ephemeris",
         {
           level: "info",
-          message: "astronomy.cron.fetching",
-          payload: { locationId: location.id, targetDate },
+          message: "astronomy.cron.day.started",
+          payload: {
+            locationId: location.id,
+            targetDate: targetDate.toISOString(),
+          },
         },
         { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
       );
 
+      // Build the full solar/lunar snapshot (now includes solarNoon, illumination, phaseName)
       const snapshot = await buildAstronomySnapshot(location, targetDate);
 
       await db.astronomySnapshot.upsert({
@@ -73,20 +78,10 @@ export async function GET(req: NextRequest) {
         {
           level: "info",
           message: "astronomy.cron.snapshot.saved",
-
           payload: {
             locationId: location.id,
-            date: new Date(
-              Date.UTC(
-                targetDate.getFullYear(),
-                targetDate.getMonth(),
-                targetDate.getDate(),
-                0,
-                0,
-                0,
-                0,
-              ),
-            ),
+            date: targetDate.toISOString().slice(0, 10),
+            snapshot,
           },
         },
         { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },

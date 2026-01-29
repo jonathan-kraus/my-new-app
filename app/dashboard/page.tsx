@@ -1,12 +1,11 @@
 // app/dashboard/page.tsx
 import { getDashboardData } from "@/lib/dashboard";
 import { AstronomyCard } from "@/app/astronomy/AstronomyCard";
-
 import VercelCard from "@/app/components/dashboard/vercel-card";
 //import { GitHubCard } from "./components/GitHubCard";
 //import { WeatherCard } from "./components/WeatherCard";
 //import { LogsCard } from "./components/LogsCard";
-
+export const dynamic = "force-dynamic";
 export default async function DashboardPage() {
   const data = await getDashboardData();
 

@@ -34,11 +34,14 @@ model AstronomySnapshot {
   date       DateTime   // keep the day as a real date
 
   sunrise   String
+  solarNoon String?
   sunset    String
 
-  moonrise  String?
-  moonset   String?
-  moonPhase Float?
+  moonrise      String?
+  moonset       String?
+  moonPhase     Float?
+  phaseName     String?
+  illumination  Float?
 
   sunriseBlueStart    String
   sunriseBlueEnd      String

@@ -11,7 +11,7 @@ export function EmailThrottleCountdown({
 }) {
   const [remaining, setRemaining] = useState<string>("");
   const [status, setStatus] = useState<"ready" | "countdown" | "invalid">(
-    "invalid"
+    "invalid",
   );
 
   useEffect(() => {
@@ -28,9 +28,7 @@ export function EmailThrottleCountdown({
       return;
     }
 
-    const nextAllowed = new Date(
-      last.getTime() + throttleMinutes * 60 * 1000
-    );
+    const nextAllowed = new Date(last.getTime() + throttleMinutes * 60 * 1000);
 
     function update() {
       const now = new Date();
@@ -59,8 +57,8 @@ export function EmailThrottleCountdown({
     status === "ready"
       ? "bg-green-600/20 text-green-300 border-green-600/40"
       : status === "countdown"
-      ? "bg-yellow-600/20 text-yellow-300 border-yellow-600/40"
-      : "bg-red-600/20 text-red-300 border-red-600/40";
+        ? "bg-yellow-600/20 text-yellow-300 border-yellow-600/40"
+        : "bg-red-600/20 text-red-300 border-red-600/40";
 
   return (
     <div

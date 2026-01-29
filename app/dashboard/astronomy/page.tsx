@@ -9,17 +9,25 @@ import { SolarArcBar } from "@/app/components/SolarArcBar";
 export default async function DashboardAstronomyPage() {
   const snapshot = await getEphemerisSnapshot("KOP");
   console.log("Astronomy Snapshot", snapshot);
-  const solar = snapshot.solar;
-  const lunar = snapshot.lunar;
+  const solar = snapshot.snapshot?.solar ?? null;
+  const lunar = snapshot.snapshot?.lunar ?? null;
+  if (!solar || !lunar) {
+    return (
+      <div className="p-4 text-gray-500">
+        {" "}
+        No astronomy data available yet.{" "}
+      </div>
+    );
+  }
 
   const solarNoon = computeSolarNoon(
-    snapshot.solar.sunrise.dateObj,
-    snapshot.solar.sunset.dateObj,
+    solar!.sunrise.dateObj,
+    solar!.sunset.dateObj,
   );
-  console.log("sunrise raw", snapshot.solar.sunrise.timestamp);
-  console.log("sunrise date", new Date(snapshot.solar.sunrise.timestamp));
-  console.log("sunset raw", snapshot.solar.sunset.timestamp);
-  console.log("sunset date", new Date(snapshot.solar.sunset.timestamp));
+  console.log("sunrise raw", solar!.sunrise.timestamp);
+  console.log("sunrise date", new Date(solar!.sunrise.timestamp));
+  console.log("sunset raw", solar!.sunset.timestamp);
+  console.log("sunset date", new Date(solar!.sunset.timestamp));
   console.log("solarNoon", solarNoon);
 
   return (
@@ -29,7 +37,7 @@ export default async function DashboardAstronomyPage() {
         <h1 className="text-3xl font-semibold tracking-tight">Astronomy</h1>
         <p className="text-white/60 mt-1">
           Solar & lunar events for{" "}
-          {format(new Date(snapshot.solar.sunrise.date), "MMMM d, yyyy")}
+          {format(new Date(solar!.sunrise.date), "MMMM d, yyyy")}
         </p>
       </div>
 
@@ -37,8 +45,8 @@ export default async function DashboardAstronomyPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Next Event */}
         <NextEventCard
-          nextEvent={snapshot.nextEvent.name}
-          nextEventTime={new Date(snapshot.nextEvent.timestamp)}
+          nextEvent={snapshot.nextEvent!.name}
+          nextEventTime={snapshot.nextEvent!.dateObj}
         />
 
         {/* Solar */}
@@ -98,8 +106,8 @@ export default async function DashboardAstronomyPage() {
         moonrise={lunar.moonrise ? new Date(lunar.moonrise.timestamp) : null}
         moonset={lunar.moonset ? new Date(lunar.moonset.timestamp) : null}
         sunriseBlueStart={
-          snapshot.solar.blueHour.sunrise.start
-            ? new Date(snapshot.solar.blueHour.sunrise.start.timestamp)
+          solar.blueHour.sunrise.start
+            ? new Date(solar.blueHour.sunrise.start.timestamp)
             : null
         }
         sunriseBlueEnd={
@@ -141,18 +149,12 @@ export default async function DashboardAstronomyPage() {
       />
       <SolarArcBar
         events={{
-          sunriseStart: new Date(
-            snapshot.solar.goldenHour.sunrise.start!.timestamp,
-          ), //new Date(snapshot.solar.goldenHourStart.timestamp),
-          sunriseEnd: new Date(
-            snapshot.solar.goldenHour.sunrise.end!.timestamp,
-          ),
+          sunriseStart: new Date(solar.goldenHour.sunrise.start!.timestamp), //new Date(solar.goldenHourStart.timestamp),
+          sunriseEnd: new Date(solar.goldenHour.sunrise.end!.timestamp),
           solarNoon: solarNoon,
-          sunsetStart: new Date(
-            snapshot.solar.goldenHour.sunset.start!.timestamp,
-          ),
-          sunsetEnd: new Date(snapshot.solar.goldenHour.sunset.end!.dateObj),
-          sunset: new Date(snapshot.solar.sunset.timestamp),
+          sunsetStart: new Date(solar.goldenHour.sunset.start!.timestamp),
+          sunsetEnd: new Date(solar.goldenHour.sunset.end!.dateObj),
+          sunset: new Date(solar.sunset.timestamp),
         }}
         currentTime={new Date()}
       />

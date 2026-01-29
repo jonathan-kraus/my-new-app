@@ -3,7 +3,11 @@
 import { useState } from "react";
 import { setConfig, deleteConfig } from "@/lib/runtime/config";
 
-export function ConfigTable({ configs }: { configs: { key: string; value: string }[] }) {
+export function ConfigTable({
+  configs,
+}: {
+  configs: { key: string; value: string }[];
+}) {
   const [rows, setRows] = useState(configs);
   const [newKey, setNewKey] = useState("");
   const [newValue, setNewValue] = useState("");
@@ -38,7 +42,6 @@ export function ConfigTable({ configs }: { configs: { key: string; value: string
 
   return (
     <div className="space-y-6">
-
       {/* Add New Setting */}
       <div className="p-4 bg-white/5 rounded-lg space-y-3">
         <div className="font-semibold text-white">Add New Setting</div>

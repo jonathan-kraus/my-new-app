@@ -9,15 +9,19 @@ export async function sendTestEmail(to: string) {
   // --- 1. Read flag ---------------------------------------------------------
   const enabled = await getConfig("flag_email_send", "1");
 
-  await logit("email", {
-    level: "info",
-    message: "Checked flag_email_send",
-  }, {
-    payload: {
-      enabled_raw: enabled,
-      enabled_string: String(enabled),
+  await logit(
+    "email",
+    {
+      level: "info",
+      message: "Checked flag_email_send",
     },
-  });
+    {
+      payload: {
+        enabled_raw: enabled,
+        enabled_string: String(enabled),
+      },
+    },
+  );
 
   if (String(enabled) !== "1") {
     await logit("email", {
@@ -45,45 +49,59 @@ export async function sendTestEmail(to: string) {
     .setText(testEmail.text);
 
   // --- 3. Throttle ----------------------------------------------------------
-  const throttleMinutes = Number(await getConfig("email.throttle.minutes", "0"));
+  const throttleMinutes = Number(
+    await getConfig("email.throttle.minutes", "0"),
+  );
   const lastSentRaw = await getConfig("email.last_sent_at", "");
 
-  await logit("email", {
-    level: "info",
-    message: "Throttle check starting",
-  }, {
-    payload: {
-      throttleMinutes,
-      lastSentRaw,
+  await logit(
+    "email",
+    {
+      level: "info",
+      message: "Throttle check starting",
     },
-  });
+    {
+      payload: {
+        throttleMinutes,
+        lastSentRaw,
+      },
+    },
+  );
 
   if (typeof lastSentRaw === "string" && lastSentRaw.length > 0) {
     const last = new Date(lastSentRaw);
     const now = new Date();
     const diffMinutes = (now.getTime() - last.getTime()) / 1000 / 60;
 
-    await logit("email", {
-      level: "info",
-      message: "Computed throttle difference",
-    }, {
-      payload: {
-        diffMinutes,
-        throttleMinutes,
+    await logit(
+      "email",
+      {
+        level: "info",
+        message: "Computed throttle difference",
       },
-    });
-
-    if (diffMinutes < throttleMinutes) {
-      await logit("email", {
-        level: "warn",
-        message: "Email throttled",
-      }, {
+      {
         payload: {
           diffMinutes,
           throttleMinutes,
-          nextAllowedInMinutes: throttleMinutes - diffMinutes,
         },
-      });
+      },
+    );
+
+    if (diffMinutes < throttleMinutes) {
+      await logit(
+        "email",
+        {
+          level: "warn",
+          message: "Email throttled",
+        },
+        {
+          payload: {
+            diffMinutes,
+            throttleMinutes,
+            nextAllowedInMinutes: throttleMinutes - diffMinutes,
+          },
+        },
+      );
       return;
     }
   }
@@ -92,25 +110,33 @@ export async function sendTestEmail(to: string) {
   try {
     await mailerSend.email.send(emailParams);
 
-    await logit("email", {
-      level: "info",
-      message: "Test email sent",
-    }, {
-      payload: {
-        to,
-        subject: testEmail.subject,
+    await logit(
+      "email",
+      {
+        level: "info",
+        message: "Test email sent",
       },
-    });
+      {
+        payload: {
+          to,
+          subject: testEmail.subject,
+        },
+      },
+    );
   } catch (err: any) {
-    await logit("email", {
-      level: "error",
-      message: "MailerSend error",
-    }, {
-      payload: {
-        error: err?.message,
-        stack: err?.stack,
+    await logit(
+      "email",
+      {
+        level: "error",
+        message: "MailerSend error",
       },
-    });
+      {
+        payload: {
+          error: err?.message,
+          stack: err?.stack,
+        },
+      },
+    );
     throw err;
   }
 
@@ -118,14 +144,18 @@ export async function sendTestEmail(to: string) {
   const newTimestamp = new Date().toISOString();
   const saved = await setConfig("email.last_sent_at", newTimestamp);
 
-  await logit("email", {
-    level: "info",
-    message: "Updated last_sent_at",
-  }, {
-    payload: {
-      attempted: newTimestamp,
-      saved,
-      match: String(saved) === newTimestamp,
+  await logit(
+    "email",
+    {
+      level: "info",
+      message: "Updated last_sent_at",
     },
-  });
+    {
+      payload: {
+        attempted: newTimestamp,
+        saved,
+        match: String(saved) === newTimestamp,
+      },
+    },
+  );
 }
