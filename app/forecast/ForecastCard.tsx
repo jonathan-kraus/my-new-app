@@ -32,7 +32,7 @@ export function ForecastCard({
           {location.name}: {current.temperature.toFixed(0)}°F
         </p>
         <p className="opacity-80 text-sm">
-          Wind: {current.windspeed.toFixed(0)} mph · Code {current.weathercode}
+          Wind: {current.windspeed.toFixed(0)} mph · Code {forecast.weathercode}
         </p>
       </div>
 
