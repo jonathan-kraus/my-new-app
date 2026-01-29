@@ -10,12 +10,13 @@ vi.mock("@/lib/db", () => ({
   db: {
     location: { findUnique: vi.fn() },
     forecastSnapshot: { findFirst: vi.fn(), create: vi.fn() },
+    runtimeConfig: { findUnique: vi.fn().mockResolvedValue(null) },
   },
 }));
 
 vi.mock("@/auth", () => ({
   auth: vi.fn().mockResolvedValue({
-    user: { id: "u1", name: "Jon", email: "jon@example.com" },
+    user: { id: "u1", name: "Jonathan", email: "jonathan@kraus.my.id" },
   }),
 }));
 

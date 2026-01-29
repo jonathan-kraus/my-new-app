@@ -6,9 +6,7 @@ import { logit } from "@/lib/log/logit";
 import { enrichContext } from "@/lib/log/context";
 import { ForecastResponseSchema } from "@/lib/weather/zodschema";
 import { getConfig } from "@/lib/runtime/config";
- const fcm = Number(
-    await getConfig("FORECAST_CACHE_MINUTES", "10"),
-  );
+const fcm = Number(await getConfig("FORECAST_CACHE_MINUTES", "10"));
 const FORECAST_CACHE_MINUTES = fcm;
 
 export async function GET(req: Request) {
