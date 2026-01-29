@@ -24,7 +24,7 @@ export function CurrentWeather({
             </div>{" "}
             <div className="text-4xl font-semibold text-sky-50">
               {" "}
-              {temperature}°{" "}
+              {temperature.toFixed(0)}°{"F"}
             </div>{" "}
             {isSnowmanMode && (
               <div className="mt-1 text-xs text-sky-200/80">
