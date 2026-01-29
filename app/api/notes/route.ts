@@ -4,8 +4,7 @@ import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { logit } from "@/lib/log/logit";
 import { withLogging } from "@/lib/logging/withLogging";
-import { enrichContext } from "@/lib/log/context";
-import { getRequestDuration } from "@/lib/log/timing";
+
 
 // -------------------------
 // GET /api/notes

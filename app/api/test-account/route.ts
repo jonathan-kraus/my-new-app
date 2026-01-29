@@ -1,20 +1,18 @@
-// app/api/test-account/route.ts
-import { db } from "@/lib/db";
+// app/api/test-error/route.ts
+import { NextResponse } from "next/server";
+import { logit } from "@/lib/log/logit";
+import { withLogging } from "@/lib/logging/withLogging";
 
-export async function GET() {
-  const user = await db.user.create({
-    data: { email: `test+${Date.now()}@example.com` },
+export const GET = withLogging(async () => {
+  // Log the intentional failure
+  logit("test_account_triggered", {
+    message: "Intentional 500 test route hit",
+    route: "/api/test-account",
   });
 
-  // const session = await db.session.create({
-  //   data: {
-  //     userId: user.id,
-  //     token: `abc`,
-  //     expiresAt: new Date(Date.now() + 1000 * 60 * 60),
-  //     ipAddress: "127.0.0.1",
-  //     userAgent: "test",
-  //   },
-  // });
-
-  return Response.json({ user });
-}
+  // Return a real 500 to trigger your Axiom monitor
+  return NextResponse.json(
+    { error: "Intentional test 500" },
+    { status: 500 }
+  );
+});
