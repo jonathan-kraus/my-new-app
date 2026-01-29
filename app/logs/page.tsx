@@ -163,8 +163,8 @@ export default function LogsPage() {
           {newCount > 0 && (
   <button
     onClick={() => setNewCount(0)}
-    className="mb-3 px-3 py-1 bg-green-500/20 border border-green-500/40
-               text-green-300 rounded-lg text-sm font-medium"
+    className="px-3 py-1 bg-green-500/20 border border-green-500/40
+               text-green-300 rounded-lg text-sm font-medium animate-fadeIn"
   >
     +{newCount} new log{newCount === 1 ? "" : "s"}
   </button>
