@@ -32,7 +32,8 @@ export function ForecastCard({
           {location.name}: {current.temperature.toFixed(0)}°F
         </p>
         <p className="opacity-80 text-sm">
-          Wind: {current.windspeed.toFixed(0)} mph · Code {forecast.weathercode}
+          Wind: {current.windspeed.toFixed(0)} mph · Code{" "}
+          {forecast.weathercode[0]}
         </p>
       </div>
 
@@ -44,23 +45,25 @@ export function ForecastCard({
             className="bg-white/20 rounded-lg p-4 backdrop-blur-sm"
           >
             <p className="font-semibold text-lg">
-              {new Date(day).toLocaleDateString("en-US", {
-                weekday: "short",
-              })}
+              {new Date(day).toLocaleDateString("en-US", { weekday: "short" })}
             </p>
+
             <p className="text-sm">
-              {forecast.temperature_2m_max[i]}° /{" "}
-              {forecast.temperature_2m_min[i]}°
+              {Math.round(forecast.temperature_2m_max[i])}° /{" "}
+              {Math.round(forecast.temperature_2m_min[i])}°
             </p>
-            <p className="text-xs opacity-80">Code {forecast.weathercode[i]}</p>
+
+            <p className="text-xs opacity-80">
+              Code {Number(forecast.weathercode[i])}
+            </p>
+
             <p className="text-2xl mt-1">🌤️</p>
           </div>
         ))}
       </div>
 
-      {/* Footer */}
-      <p className="text-sm opacity-70 mt-4">
-        Source: {source} · Updated {updatedAgo}
+      <p className="mt-4 opacity-80 text-sm">
+        Updated {updatedAgo} · Source: {source}
       </p>
     </div>
   );
