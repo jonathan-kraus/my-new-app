@@ -7,6 +7,38 @@ import { enrichContext } from "@/lib/log/context";
 export async function GET(req: NextRequest) {
   const to = "jonathan.c.kraus@gmail.com";
   const ctx = await enrichContext(req);
+
+  const page = req.nextUrl.pathname;
+  // URL: /api/test-email?verify=xxx
+  const verify = req.nextUrl.searchParams.get("verify");
+  if (verify !== "1278") {
+    await logit(
+      "jonathan",
+      {
+        level: "info",
+        message: "Email test finished",
+        page: page,
+        verify: verify,
+      },
+      {
+        requestId: ctx.requestId,
+        route: ctx.page,
+        userId: ctx.userId,
+        payload: {
+          result: null,
+          j1: "email not sent",
+          debug: "metadata-passed",
+        },
+      },
+    );
+    return NextResponse.json(
+      { error: "Invalid verify parameter" },
+      {
+        status: 400,
+        statusText: `Invalid verify parameter`,
+      },
+    );
+  }
   const result = await sendTestEmail(to);
   const f1 = "first1";
   const f2 = "first2";
@@ -16,7 +48,12 @@ export async function GET(req: NextRequest) {
   const s3 = "second3";
   await logit(
     "jonathan",
-    { level: "info", message: "Email test finished", debug: "logit-called" },
+    {
+      level: "info",
+      message: "Email test finished",
+      page: page,
+      verify: verify,
+    },
     {
       requestId: ctx.requestId,
       route: ctx.page,

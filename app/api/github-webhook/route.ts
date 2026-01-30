@@ -192,7 +192,6 @@ export const POST = withLogging(async (req: Request) => {
     return new Response("Unauthorized", { status: 401 });
   }
 
-
   const payload = JSON.parse(raw);
   const event = req.headers.get("x-github-event");
 

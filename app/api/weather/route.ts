@@ -80,28 +80,24 @@ export const GET = withLogging(async (req: Request) => {
     : null;
 
   if (currentCached) {
-
     const start = performance.now();
     let eventIndex = 0;
     const nextEvent = () => eventIndex++;
 
-    await logit(
-      "weather",
-      {
-        level: "info",
-        message: `Using cached current weather data ${currentAge}/${currentCacheMin}`,
+    await logit("weather", {
+      level: "info",
+      message: `Using cached current weather data ${currentAge}/${currentCacheMin}`,
 
-        payload: {
-          file: "/api/weather",
-          eventIndex: nextEvent(),
-          durationMs: performance.now() - start,
-          user: session?.user?.name || "Guest",
-          cacheWindowMinutes: currentCacheMin,
-          actualAgeMinutes: currentAge,
-          locationId,
-        },
+      payload: {
+        file: "/api/weather",
+        eventIndex: nextEvent(),
+        durationMs: performance.now() - start,
+        user: session?.user?.name || "Guest",
+        cacheWindowMinutes: currentCacheMin,
+        actualAgeMinutes: currentAge,
+        locationId,
       },
-    );
+    });
 
     return NextResponse.json({
       location,
@@ -136,23 +132,17 @@ export const GET = withLogging(async (req: Request) => {
       `https://api.tomorrow.io/v4/weather/realtime?location=${location.latitude},${location.longitude}&units=imperial&apikey=${API_KEY}`,
     );
 
-    await logit(
-      "weather",
-      {
-        level: "info",
-        message: "Realtime weather fetch attempted",
-        payload: { file: "/api/weather", status: res },
-      },
-    );
+    await logit("weather", {
+      level: "info",
+      message: "Realtime weather fetch attempted",
+      payload: { file: "/api/weather", status: res },
+    });
     if (!res.ok) {
-      await logit(
-        "weather",
-        {
-          level: "error",
-          message: "Realtime weather fetch failed",
-          payload: { status: res.status },
-        },
-      );
+      await logit("weather", {
+        level: "error",
+        message: "Realtime weather fetch failed",
+        payload: { status: res.status },
+      });
       return NextResponse.json(
         { error: "Weather fetch failed" },
         { status: 500 },
@@ -163,17 +153,13 @@ export const GET = withLogging(async (req: Request) => {
     const validated = TomorrowRealtimeSchema.safeParse(json);
 
     if (!validated.success) {
-      await logit(
-        "weather",
-        {
-          level: "error",
-          message: "Realtime weather validation failed",
+      await logit("weather", {
+        level: "error",
+        message: "Realtime weather validation failed",
 
-          // ✅ Fixed
-          payload: { issues: validated.error.issues.slice(0, 3) },
-        },
-
-      );
+        // ✅ Fixed
+        payload: { issues: validated.error.issues.slice(0, 3) },
+      });
       return NextResponse.json(
         { error: "Invalid weather data" },
         { status: 500 },
@@ -209,32 +195,29 @@ export const GET = withLogging(async (req: Request) => {
   // ----------------------------------------
   // LOG EVERYTHING
   // ----------------------------------------
-    await logit(
-    "weather",
-    {
-      level: "info",
-      message: "Unified weather request",
+  await logit("weather", {
+    level: "info",
+    message: "Unified weather request",
 
-      payload: {
-        locationId,
-        sources: {
-          current: currentSource,
-          forecast: forecastSource,
-          astronomy: "disabled",
-        },
-        ages: {
-          currentMinutes: currentAge,
-          forecastMinutes: forecastAge,
-          astronomyHours: null,
-        },
-        cacheWindows: {
-          currentMinutes: currentCacheMin,
-          forecastMinutes: forecastCacheMin,
-        },
-        file: "app/api/weather/route.ts",
+    payload: {
+      locationId,
+      sources: {
+        current: currentSource,
+        forecast: forecastSource,
+        astronomy: "disabled",
       },
+      ages: {
+        currentMinutes: currentAge,
+        forecastMinutes: forecastAge,
+        astronomyHours: null,
+      },
+      cacheWindows: {
+        currentMinutes: currentCacheMin,
+        forecastMinutes: forecastCacheMin,
+      },
+      file: "app/api/weather/route.ts",
     },
-  );
+  });
 
   // ----------------------------------------
   // RETURN EVERYTHING
