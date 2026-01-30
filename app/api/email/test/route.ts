@@ -20,7 +20,22 @@ export async function GET() {
 // -------------------------------------------------------------
 export async function POST(req: NextRequest) {
   const { requestId, page, userId } = await enrichContext(req);
-
+  await logit(
+    "jonathan",
+    {
+      level: "info",
+      message: "Test email started",
+      page,
+    },
+    {
+      requestId,
+      page,
+      userId,
+      payload: {
+        debug: "email-test-post",
+      },
+    }
+  );
   // Parse request body
   const body = await req.json().catch(() => ({}));
   const to = body.to || "jonathan.c.kraus@gmail.com";
