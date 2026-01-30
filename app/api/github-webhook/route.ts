@@ -6,6 +6,7 @@ import { logit } from "@/lib/log/logit";
 import { Axiom } from "@axiomhq/js";
 import { getSha } from "@/lib/github/parse";
 import { getCommitMessage } from "@/lib/github";
+import { withLogging } from "@/lib/logging/withLogging";
 const axiom = new Axiom({
   token: process.env.AXIOM_TOKEN!,
 });
@@ -150,7 +151,7 @@ export async function writeGithubDebugEvent(payload: any) {
 // -----------------------------
 // Signature verification
 // -----------------------------
-async function verifySignature(req: NextRequest, body: string) {
+async function verifySignature(req: Request, body: string) {
   const signature = req.headers.get("x-hub-signature-256");
   const secret = process.env.GITHUB_WEBHOOK_SECRET;
 
@@ -169,7 +170,7 @@ async function verifySignature(req: NextRequest, body: string) {
 // -----------------------------
 // POST handler
 // -----------------------------
-export async function POST(req: NextRequest) {
+export const POST = withLogging(async (req: Request) => {
   const raw = await req.text();
 
   // 1. Verify signature
@@ -190,6 +191,7 @@ export async function POST(req: NextRequest) {
     );
     return new Response("Unauthorized", { status: 401 });
   }
+
 
   const payload = JSON.parse(raw);
   const event = req.headers.get("x-github-event");
@@ -272,4 +274,4 @@ export async function POST(req: NextRequest) {
   );
 
   return new Response("Ignored", { status: 200 });
-}
+});

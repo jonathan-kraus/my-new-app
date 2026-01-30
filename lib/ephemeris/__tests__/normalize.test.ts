@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { normalizeAstronomySnapshot } from '../../astronomy/normalize';
+import { normalizeAstronomySnapshot } from "../../astronomy/normalize";
 
 describe("normalizeAstronomySnapshot", () => {
   it("returns null when row is null", () => {

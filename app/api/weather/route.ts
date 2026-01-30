@@ -5,7 +5,7 @@ import { z } from "zod";
 import { logit } from "@/lib/log/logit";
 import { enrichContext } from "@/lib/log/context";
 import { auth } from "@/auth";
-import { NextRequest } from "next/server";
+import { withLogging } from "@/lib/logging/withLogging";
 
 const API_KEY = process.env.TOMORROWIO_APIKEY!;
 // Zod schemas
@@ -46,7 +46,7 @@ const TomorrowTimelineSchema = z.object({
 const DEFAULT_CURRENT_MIN = Number(process.env.WEATHER_CACHE_MINUTES ?? 10);
 const DEFAULT_FORECAST_MIN = Number(process.env.FORECAST_CACHE_MINUTES ?? 30);
 
-export async function GET(req: NextRequest) {
+export const GET = withLogging(async (req: Request) => {
   const session = await auth();
 
   const { searchParams } = new URL(req.url);
@@ -80,7 +80,7 @@ export async function GET(req: NextRequest) {
     : null;
 
   if (currentCached) {
-    const ctx = await enrichContext(req);
+
     const start = performance.now();
     let eventIndex = 0;
     const nextEvent = () => eventIndex++;
@@ -101,7 +101,6 @@ export async function GET(req: NextRequest) {
           locationId,
         },
       },
-      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
     );
 
     return NextResponse.json({
@@ -136,7 +135,7 @@ export async function GET(req: NextRequest) {
     const res = await fetch(
       `https://api.tomorrow.io/v4/weather/realtime?location=${location.latitude},${location.longitude}&units=imperial&apikey=${API_KEY}`,
     );
-    const ctx = await enrichContext(req);
+
     await logit(
       "weather",
       {
@@ -144,7 +143,6 @@ export async function GET(req: NextRequest) {
         message: "Realtime weather fetch attempted",
         payload: { file: "/api/weather", status: res },
       },
-      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
     );
     if (!res.ok) {
       await logit(
@@ -154,7 +152,6 @@ export async function GET(req: NextRequest) {
           message: "Realtime weather fetch failed",
           payload: { status: res.status },
         },
-        { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
       );
       return NextResponse.json(
         { error: "Weather fetch failed" },
@@ -175,7 +172,7 @@ export async function GET(req: NextRequest) {
           // ✅ Fixed
           payload: { issues: validated.error.issues.slice(0, 3) },
         },
-        { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+
       );
       return NextResponse.json(
         { error: "Invalid weather data" },
@@ -212,8 +209,7 @@ export async function GET(req: NextRequest) {
   // ----------------------------------------
   // LOG EVERYTHING
   // ----------------------------------------
-  const ctx = await enrichContext(req);
-  await logit(
+    await logit(
     "weather",
     {
       level: "info",
@@ -238,7 +234,6 @@ export async function GET(req: NextRequest) {
         file: "app/api/weather/route.ts",
       },
     },
-    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
   );
 
   // ----------------------------------------
@@ -258,4 +253,4 @@ export async function GET(req: NextRequest) {
       forecastMinutes: forecastAge,
     },
   });
-}
+});

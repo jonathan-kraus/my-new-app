@@ -11,8 +11,5 @@ export const GET = withLogging(async () => {
   });
 
   // Return a real 500 to trigger your Axiom monitor
-  return NextResponse.json(
-    { error: "Intentional test 500" },
-    { status: 500 }
-  );
+  return NextResponse.json({ error: "Intentional test 500" }, { status: 500 });
 });

@@ -5,7 +5,6 @@ import { db } from "@/lib/db";
 import { logit } from "@/lib/log/logit";
 import { withLogging } from "@/lib/logging/withLogging";
 
-
 // -------------------------
 // GET /api/notes
 // -------------------------
