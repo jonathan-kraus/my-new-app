@@ -1,7 +1,7 @@
 "use client";
 
-import { toast } from "sonner";
-import { logit } from "@/lib/logging/logit";
+import { toast } from "react-hot-toast"
+import { logit } from "@/lib/log/logit";
 
 export function EmailSideNavLink() {
   async function handleClick() {
