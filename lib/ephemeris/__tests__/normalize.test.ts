@@ -1,5 +1,21 @@
 import { describe, it, expect } from "vitest";
-import { normalizeAstronomySnapshot } from "../../astronomy/normalize";
+import { parseLocalDate, normalizeAstronomySnapshot } from "../normalize";
+
+describe("parseLocalDate", () => {
+  it("parses YYYY-MM-DD correctly", () => {
+    const d = parseLocalDate("2026-01-18");
+    expect(d.getFullYear()).toBe(2026);
+    expect(d.getMonth()).toBe(0); // January
+    expect(d.getDate()).toBe(18);
+  });
+
+  it("parses ISO strings by stripping the time portion", () => {
+    const d = parseLocalDate("2026-01-18T12:34:56.000Z");
+    expect(d.getFullYear()).toBe(2026);
+    expect(d.getMonth()).toBe(0);
+    expect(d.getDate()).toBe(18);
+  });
+});
 
 describe("normalizeAstronomySnapshot", () => {
   it("returns null when row is null", () => {
@@ -38,7 +54,6 @@ describe("normalizeAstronomySnapshot", () => {
 
     const result = normalizeAstronomySnapshot(row);
 
-    // Flat passthrough: every field should match exactly
     expect(result).toEqual(row);
   });
 
