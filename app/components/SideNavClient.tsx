@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { NextEventCard } from "@/app/components/astronomy/NextEventCard";
 import { useSideNavActivationCounter } from "@/app/hooks/useSideNavActivationCounter";
+import { EmailSideNavLink } from "@/app/components/sidenav/EmailLink";
 
 type SideNavClientProps = {
   nextEventLabel: string;
@@ -40,7 +41,10 @@ export default function SideNavClient({
           >
             <span className="text-xl">{item.icon}</span>
             <span>{item.label}</span>
+          <EmailSideNavLink />
+
           </Link>
+
         ))}
 
         <div className="mt-6">
