@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { parseLocalDate, normalizeAstronomySnapshot } from "../normalize";
+import { normalizeAstronomySnapshot, parseLocalDate } from '../../astronomy/normalize';
 
 describe("parseLocalDate", () => {
   it("parses YYYY-MM-DD correctly", () => {
