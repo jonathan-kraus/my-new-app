@@ -4,10 +4,17 @@ import { sendTestEmail } from "@/lib/server/email/sendTestEmail";
 import { NextRequest, NextResponse } from "next/server";
 import { logit } from "@/lib/log/logit";
 import { enrichContext } from "@/lib/log/context";
-export async function handleTestEmailRequest(req: NextRequest) {
-  const to = "jonathan.c.kraus@gmail.com";
+
+export async function POST(
+  req: NextRequest,
+  context: { params: Promise<{}> }
+) {
   const { requestId, page, userId } = await enrichContext(req);
-  const verifyParam = req.nextUrl.searchParams.get("verify");
+
+  // Parse request body
+  const body = await req.json();
+  const to = body.to || "jonathan.c.kraus@gmail.com";
+  const verifyParam = body.verify;
 
   if (verifyParam !== "1278") {
     await logit(
@@ -15,6 +22,8 @@ export async function handleTestEmailRequest(req: NextRequest) {
       {
         level: "info",
         message: "Email test finished",
+        reason: "invalid-verify-param",
+        context: context,
         page,
         verify: verifyParam,
       },
@@ -32,7 +41,7 @@ export async function handleTestEmailRequest(req: NextRequest) {
       { error: "Invalid verify parameter" },
       {
         status: 400,
-        statusText: `Invalid verify parameter`,
+        statusText: "Invalid verify parameter",
       },
     );
   }
