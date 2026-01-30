@@ -26,7 +26,6 @@ export default function SideNavClient({
     { href: "/github", label: "GitHub", icon: "🐙" },
     { href: "/ping", label: "Ping", icon: "🛠️" },
     { href: "/admin/runtime", label: "Runtime", icon: "🛠️" },
-    { href: "/api/email/test?verify=1278", label: "Email", icon: "🛠️" },
     { href: "/profile", label: "Profile", icon: "👤" },
   ];
 
@@ -41,13 +40,12 @@ export default function SideNavClient({
           >
             <span className="text-xl">{item.icon}</span>
             <span>{item.label}</span>
-          <EmailSideNavLink />
-
           </Link>
 
         ))}
 
         <div className="mt-6">
+          Email<EmailSideNavLink />
           <NextEventCard
             nextEvent={nextEventLabel}
             nextEventTime={nextEventTime}
