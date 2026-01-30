@@ -45,7 +45,10 @@ export default function SideNavClient({
         ))}
 
         <div className="mt-6">
-          Email<EmailSideNavLink />
+          <div className="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4" > <path d="M4 4h16v16H4z" /> <path d="M4 4l8 8 8-8" /> </svg>
+            <EmailSideNavLink />
+          </div>
           <NextEventCard
             nextEvent={nextEventLabel}
             nextEventTime={nextEventTime}
