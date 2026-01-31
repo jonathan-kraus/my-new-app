@@ -1,21 +1,21 @@
-import type { AstronomySnapshot } from "@prisma/client";
+import type { AstronomySnapshot } from "./generated/prisma/client";
 import { getAstronomyForDashboard } from "@/lib/astronomy";
 
 export interface AstronomyDashboardResponse {
-  todaySnapshot: AstronomySnapshot | null;
-  tomorrowSnapshot: AstronomySnapshot | null;
-  allSnapshots: AstronomySnapshot[];
+	todaySnapshot: AstronomySnapshot | null;
+	tomorrowSnapshot: AstronomySnapshot | null;
+	allSnapshots: AstronomySnapshot[];
 }
 
 export async function getAstronomyDashboard(
-  locationId: string,
+	locationId: string,
 ): Promise<AstronomyDashboardResponse> {
-  const { todaySnapshot, tomorrowSnapshot, allSnapshots } =
-    await getAstronomyForDashboard(locationId);
+	const { todaySnapshot, tomorrowSnapshot, allSnapshots } =
+		await getAstronomyForDashboard(locationId);
 
-  return {
-    todaySnapshot,
-    tomorrowSnapshot,
-    allSnapshots,
-  };
+	return {
+		todaySnapshot,
+		tomorrowSnapshot,
+		allSnapshots,
+	};
 }
