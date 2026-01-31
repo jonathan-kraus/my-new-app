@@ -23,7 +23,7 @@ export default defineConfig({
       "app/**/__test__/**/*.{ts,tsx}",
       "tests/**/*.{ts,tsx}",
     ],
-
+exclude: [ "tests/log/__mocks__/**", ],
     coverage: {
       provider: "v8",
       reporter: ["text", "html", "json"],
