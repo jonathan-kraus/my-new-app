@@ -1,5 +1,3 @@
-// lib/ephemeris/buildAstronomySnapshot.ts
-
 import { combineDateTime } from "@/lib/ephemeris/utils/combineDateTime";
 import { format } from "date-fns";
 import { logit } from "@/lib/log/logit";
@@ -12,13 +10,6 @@ function parseOffsetDateString(ts: string): Date {
   return new Date(ts); // preserves offset
 }
 
-/**
- * Normalize API time strings:
- * - "07:09" → "07:09:00-05:00"
- * - "07:09:00" → "07:09:00-05:00"
- * - "07:09:00-05:00" → unchanged
- * - "-" → null
- */
 function normalizeTimeString(raw: string | null, offset: string): string | null {
   if (!raw || raw === "-") return null;
 
@@ -33,7 +24,7 @@ function normalizeTimeString(raw: string | null, offset: string): string | null 
 }
 
 export async function buildAstronomySnapshot(
-  location: { id: string; latitude: number; longitude: number },
+  location: { id: string; latitude: number; longitude: number; timezone?: string },
   targetDate: Date,
 ) {
   const domain = "ephemeris.snapshot.build";
@@ -46,7 +37,6 @@ export async function buildAstronomySnapshot(
 
   const { latitude, longitude } = location;
 
-  // Normalize to local midnight
   const date = new Date(
     targetDate.getFullYear(),
     targetDate.getMonth(),
@@ -59,9 +49,6 @@ export async function buildAstronomySnapshot(
     data: { normalizedDate: date.toString() }
   });
 
-  //
-  // --- FETCH FROM IPGEO ---
-  //
   async function fetchIPGeoAstronomy(lat: number, lon: number, date: Date) {
     const day = format(date, "yyyy-MM-dd");
 
@@ -90,8 +77,8 @@ export async function buildAstronomySnapshot(
     const json = await res.json();
 
     await logit(domain, {
-      level: "debug",
-      message: "Received astronomy payload",
+      level: "error",
+      message: "#1 DEBUG: astronomy payload",
       data: json.astronomy
     });
 
@@ -99,29 +86,33 @@ export async function buildAstronomySnapshot(
   }
 
   const astro = await fetchIPGeoAstronomy(latitude, longitude, date);
-await logit(domain, {
-  level: "error",
-  message: "DEBUG: astronomy payload",
-  data: astro
-});
 
   //
-  // --- OFFSET EXTRACTION (patched) ---
+  // --- TIMEZONE EXTRACTION WITH FALLBACK ---
   //
-  const offset = astro.timezone;
+  let offset = astro.timezone;
+
+  if (!offset && location.timezone) {
+    await logit(domain, {
+      level: "warn",
+      message: "Astronomy API missing timezone; using location fallback",
+      data: { fallback: location.timezone }
+    });
+    offset = location.timezone;
+  }
 
   if (!offset || !/[+-]\d{2}:\d{2}/.test(offset)) {
     await logit(domain, {
       level: "error",
       message: "Astronomy API missing timezone field",
-      data: { timezone: astro.timezone }
+      data: { timezone: astro.timezone, fallback: location.timezone }
     });
     throw new Error("Astronomy API did not include timezone offset");
   }
 
   await logit(domain, {
     level: "debug",
-    message: "Extracted timezone offset",
+    message: "Using timezone offset",
     data: { offset }
   });
 
@@ -131,15 +122,15 @@ await logit(domain, {
   const sunriseNorm = normalizeTimeString(astro.sunrise, offset);
   const sunsetNorm = normalizeTimeString(astro.sunset, offset);
 
-  const sunriseBlueStartNorm = normalizeTimeString(astro.morning.blue_hour_begin, offset);
-  const sunriseBlueEndNorm = normalizeTimeString(astro.morning.blue_hour_end, offset);
-  const sunsetBlueStartNorm = normalizeTimeString(astro.evening.blue_hour_begin, offset);
-  const sunsetBlueEndNorm = normalizeTimeString(astro.evening.blue_hour_end, offset);
+  const sunriseBlueStartNorm = normalizeTimeString(astro.morning?.blue_hour_begin, offset);
+  const sunriseBlueEndNorm = normalizeTimeString(astro.morning?.blue_hour_end, offset);
+  const sunsetBlueStartNorm = normalizeTimeString(astro.evening?.blue_hour_begin, offset);
+  const sunsetBlueEndNorm = normalizeTimeString(astro.evening?.blue_hour_end, offset);
 
-  const sunriseGoldenStartNorm = normalizeTimeString(astro.morning.golden_hour_begin, offset);
-  const sunriseGoldenEndNorm = normalizeTimeString(astro.morning.golden_hour_end, offset);
-  const sunsetGoldenStartNorm = normalizeTimeString(astro.evening.golden_hour_begin, offset);
-  const sunsetGoldenEndNorm = normalizeTimeString(astro.evening.golden_hour_end, offset);
+  const sunriseGoldenStartNorm = normalizeTimeString(astro.morning?.golden_hour_begin, offset);
+  const sunriseGoldenEndNorm = normalizeTimeString(astro.morning?.golden_hour_end, offset);
+  const sunsetGoldenStartNorm = normalizeTimeString(astro.evening?.golden_hour_begin, offset);
+  const sunsetGoldenEndNorm = normalizeTimeString(astro.evening?.golden_hour_end, offset);
 
   const moonriseNorm = normalizeTimeString(astro.moonrise, offset);
   const moonsetNorm = normalizeTimeString(astro.moonset, offset);
@@ -176,13 +167,11 @@ await logit(domain, {
   //
   // --- SOLAR NOON ---
   //
-  let solarNoon: string | null = null;
-
   const sunriseDate = parseOffsetDateString(sunriseStr);
   const sunsetDate = parseOffsetDateString(sunsetStr);
 
   const solarNoonDate = computeSolarNoon(sunriseDate, sunsetDate);
-  solarNoon = format(solarNoonDate, "HH:mm:ssXXX");
+  const solarNoon = format(solarNoonDate, "HH:mm:ssXXX");
 
   //
   // --- FINAL SNAPSHOT ---
@@ -209,9 +198,12 @@ await logit(domain, {
     moonrise: moonriseNorm ? combineDateTime(date, moonriseNorm) : null,
     moonset: moonsetNorm ? combineDateTime(date, moonsetNorm) : null,
 
-    illumination: astro.moon_illumination ?? null,
-    phaseName: astro.moon_phase_name ?? null,
-    moonPhase: astro.moon_phase ?? null,
+    illumination: astro.moon_illumination_percentage
+      ? parseFloat(astro.moon_illumination_percentage)
+      : null,
+
+    phaseName: astro.moon_phase ?? null,
+    moonPhase: astro.moon_angle ?? null,
   };
 
   await logit(domain, {
