@@ -283,6 +283,7 @@ UI updates optimistically
 **Prisma config:** This project uses `prisma.config.ts` as the canonical Prisma configuration. The legacy `prisma.config.cjs` has been removed to avoid ambiguity — run `pnpm exec prisma generate` (or `pnpm install`, which runs `prisma generate` via `postinstall`) to regenerate the Prisma client.
 
 **Logging:** Recent changes introduced a split between server and client logging to avoid bundling server-only code into client bundles. Key points:
+
 - `lib/log/logit.ts` — server-side logger that writes structured logs to the DB and queues events for ingestion.
 - `lib/log/logit.client.ts` — lightweight client-side logger that forwards client logs to `POST /api/logs`.
 - `app/api/logs/route.ts` was added/updated to accept client log POSTs and forward them to the server logger.
