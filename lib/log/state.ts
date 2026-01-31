@@ -1,6 +1,3 @@
-// lib/log/state.ts
-// In-memory per-request log index counter
-
 const counters = new Map<string, number>();
 
 export function nextLogIndex(requestId: string) {

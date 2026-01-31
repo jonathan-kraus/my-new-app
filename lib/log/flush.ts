@@ -1,5 +1,3 @@
-// lib/log/flush.ts
-
 import { client } from "@/lib/axiom";
 
 export async function flush(batch: any[]) {

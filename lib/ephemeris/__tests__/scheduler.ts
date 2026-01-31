@@ -1,8 +1,9 @@
 import { describe, test, expect, beforeEach, vi } from "vitest";
 import { startScheduler, stopScheduler, isSchedulerRunning } from "@/lib/log/scheduler";
 import { enqueue, clearQueue } from "@/lib/log/queue";
-import { mockAxiom } from "./__mocks__/axiom";
-import { useFakeTimers } from "./testUtils";
+import { mockAxiom } from "@/tests/log/__mocks__/axiom";
+import { useFakeTimers } from '../../../tests/log/__mocks__/testUtils';
+
 
 vi.mock("@/lib/log/axiomClient", () => ({
   axiomClient: mockAxiom,

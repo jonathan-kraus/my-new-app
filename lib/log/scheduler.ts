@@ -1,21 +1,25 @@
-// lib/log/scheduler.ts
-
 import { dequeueBatch } from "./queue";
 import { flush } from "./flush";
 
-let started = false;
+let interval: NodeJS.Timeout | null = null;
 
 export function startScheduler() {
-  if (started) return;
-  started = true;
+  if (interval) return;
 
-  setInterval(async () => {
+  interval = setInterval(async () => {
     const batch = dequeueBatch();
     if (batch.length === 0) return;
 
-    console.log("AXIOM FLUSH", batch.length);
-    console.log("AXIOM FLUSHING", JSON.stringify(batch, null, 2));
-
     await flush(batch);
   }, 2000);
+}
+
+export function stopScheduler() {
+  if (!interval) return;
+  clearInterval(interval);
+  interval = null;
+}
+
+export function isSchedulerRunning() {
+  return interval !== null;
 }

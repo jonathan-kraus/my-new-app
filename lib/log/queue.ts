@@ -1,8 +1,6 @@
-// lib/log/queue.ts
-
 let queue: any[] = [];
 
-export function queueEvent(event: any) {
+export function enqueue(event: any) {
   queue.push(event);
 }
 
@@ -12,6 +10,10 @@ export function dequeueBatch() {
   return batch;
 }
 
-export function getLength() {
-  return queue.length;
+export function peek() {
+  return [...queue];
+}
+
+export function clear() {
+  queue = [];
 }
