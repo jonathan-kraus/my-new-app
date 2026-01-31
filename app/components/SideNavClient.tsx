@@ -26,6 +26,7 @@ export default function SideNavClient({
     { href: "/github", label: "GitHub", icon: "🐙" },
     { href: "/ping", label: "Ping", icon: "🛠️" },
     { href: "/admin/runtime", label: "Runtime", icon: "🛠️" },
+    { href: "/debug/timestamps", label: "Timestamps", icon: "🛠️" },
     { href: "/profile", label: "Profile", icon: "👤" },
   ];
 
@@ -41,12 +42,23 @@ export default function SideNavClient({
             <span className="text-xl">{item.icon}</span>
             <span>{item.label}</span>
           </Link>
-
         ))}
 
         <div className="mt-6">
           <div className="flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4" > <path d="M4 4h16v16H4z" /> <path d="M4 4l8 8 8-8" /> </svg>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="w-4 h-4"
+            >
+              {" "}
+              <path d="M4 4h16v16H4z" /> <path d="M4 4l8 8 8-8" />{" "}
+            </svg>
             <EmailSideNavLink />
           </div>
           <NextEventCard
