@@ -125,8 +125,19 @@ export async function buildAstronomySnapshot(
   //
   // --- NORMALIZE ALL TIME STRINGS ---
   //
-  const sunriseNorm = normalizeTimeString(astro.sunrise, offset);
-  const sunsetNorm = normalizeTimeString(astro.sunset, offset);
+const sunriseNorm = normalizeTimeString(astro.sunrise, offset);
+const sunsetNorm = normalizeTimeString(astro.sunset, offset);
+
+// ⬇️ add this block
+if (!sunriseNorm || !sunsetNorm) {
+  await logit(domain, {
+    level: "error",
+    message: "Missing required sunrise/sunset after normalization",
+    data: { sunriseNorm, sunsetNorm },
+  });
+  throw new Error("Astronomy snapshot requires sunrise and sunset");
+}
+
 
   const sunriseBlueStartNorm = normalizeTimeString(astro.morning.blue_hour_begin, offset);
   const sunriseBlueEndNorm = normalizeTimeString(astro.morning.blue_hour_end, offset);
@@ -155,9 +166,16 @@ export async function buildAstronomySnapshot(
   //
   // --- COMBINE DATE + TIME ---
   //
-  const sunriseStr = sunriseNorm ? combineDateTime(date, sunriseNorm) : null;
-  const sunsetStr = sunsetNorm ? combineDateTime(date, sunsetNorm) : null;
-
+const sunriseStr = combineDateTime(date, sunriseNorm);
+const sunsetStr = combineDateTime(date, sunsetNorm);
+  await logit(domain, {
+    level: "debug",
+    message: "Combined date and time for sunrise/sunset",
+    data: {
+      sunriseStr,
+      sunsetStr
+    }
+  });
   //
   // --- SOLAR NOON ---
   //
@@ -196,32 +214,53 @@ export async function buildAstronomySnapshot(
   //
   // --- FINAL SNAPSHOT ---
   //
-  const snapshot = {
-    date,
-    locationId: location.id,
-    fetchedAt: new Date(),
+const snapshot: {
+  date: Date;
+  locationId: string;
+  fetchedAt: Date;
+  sunrise: string;
+  sunset: string;
+  solarNoon: string | null;
+  sunriseBlueStart: string | null;
+  sunriseBlueEnd: string | null;
+  sunsetBlueStart: string | null;
+  sunsetBlueEnd: string | null;
+  sunriseGoldenStart: string | null;
+  sunriseGoldenEnd: string | null;
+  sunsetGoldenStart: string | null;
+  sunsetGoldenEnd: string | null;
+  moonrise: string | null;
+  moonset: string | null;
+  illumination: any;
+  phaseName: any;
+  moonPhase: any;
+} = {
+  date,
+  locationId: location.id,
+  fetchedAt: new Date(),
 
-    sunrise: sunriseStr,
-    sunset: sunsetStr,
-    solarNoon,
+  sunrise: sunriseStr,
+  sunset: sunsetStr,
+  solarNoon,
 
-    sunriseBlueStart: sunriseBlueStartNorm ? combineDateTime(date, sunriseBlueStartNorm) : null,
-    sunriseBlueEnd: sunriseBlueEndNorm ? combineDateTime(date, sunriseBlueEndNorm) : null,
-    sunsetBlueStart: sunsetBlueStartNorm ? combineDateTime(date, sunsetBlueStartNorm) : null,
-    sunsetBlueEnd: sunsetBlueEndNorm ? combineDateTime(date, sunsetBlueEndNorm) : null,
+  sunriseBlueStart: sunriseBlueStartNorm ? combineDateTime(date, sunriseBlueStartNorm) : null,
+  sunriseBlueEnd: sunriseBlueEndNorm ? combineDateTime(date, sunriseBlueEndNorm) : null,
+  sunsetBlueStart: sunsetBlueStartNorm ? combineDateTime(date, sunsetBlueStartNorm) : null,
+  sunsetBlueEnd: sunsetBlueEndNorm ? combineDateTime(date, sunsetBlueEndNorm) : null,
 
-    sunriseGoldenStart: sunriseGoldenStartNorm ? combineDateTime(date, sunriseGoldenStartNorm) : null,
-    sunriseGoldenEnd: sunriseGoldenEndNorm ? combineDateTime(date, sunriseGoldenEndNorm) : null,
-    sunsetGoldenStart: sunsetGoldenStartNorm ? combineDateTime(date, sunsetGoldenStartNorm) : null,
-    sunsetGoldenEnd: sunsetGoldenEndNorm ? combineDateTime(date, sunsetGoldenEndNorm) : null,
+  sunriseGoldenStart: sunriseGoldenStartNorm ? combineDateTime(date, sunriseGoldenStartNorm) : null,
+  sunriseGoldenEnd: sunriseGoldenEndNorm ? combineDateTime(date, sunriseGoldenEndNorm) : null,
+  sunsetGoldenStart: sunsetGoldenStartNorm ? combineDateTime(date, sunsetGoldenStartNorm) : null,
+  sunsetGoldenEnd: sunsetGoldenEndNorm ? combineDateTime(date, sunsetGoldenEndNorm) : null,
 
-    moonrise: moonriseNorm ? combineDateTime(date, moonriseNorm) : null,
-    moonset: moonsetNorm ? combineDateTime(date, moonsetNorm) : null,
+  moonrise: moonriseNorm ? combineDateTime(date, moonriseNorm) : null,
+  moonset: moonsetNorm ? combineDateTime(date, moonsetNorm) : null,
 
-    illumination: astro.moon_illumination ?? null,
-    phaseName: astro.moon_phase_name ?? null,
-    moonPhase: astro.moon_phase ?? null,
-  };
+  illumination: astro.moon_illumination ?? null,
+  phaseName: astro.moon_phase_name ?? null,
+  moonPhase: astro.moon_phase ?? null,
+};
+
 
   await logit(domain, {
     level: "info",

@@ -27,33 +27,33 @@ model Account {
 }
 
 model AstronomySnapshot {
-  id         String   @id @default(cuid())
-  locationId String
-  fetchedAt  DateTime
-  createdAt  DateTime @default(now())
-  date       DateTime   // keep the day as a real date
+  id                 String   @id @default(cuid())
+  date               DateTime
+  locationId         String
+  fetchedAt          DateTime
 
-  sunrise   String
-  solarNoon String?
-  sunset    String
+  sunrise            String
+  sunset             String
+  solarNoon          String?
 
-  moonrise      String?
-  moonset       String?
-  moonPhase     Float?
-  phaseName     String?
-  illumination  Float?
+  sunriseBlueStart   String?
+  sunriseBlueEnd     String?
+  sunsetBlueStart    String?
+  sunsetBlueEnd      String?
 
-  sunriseBlueStart    String
-  sunriseBlueEnd      String
-  sunriseGoldenStart  String
-  sunriseGoldenEnd    String
-  sunsetGoldenStart   String
-  sunsetGoldenEnd     String
-  sunsetBlueStart     String
-  sunsetBlueEnd       String
+  sunriseGoldenStart String?
+  sunriseGoldenEnd   String?
+  sunsetGoldenStart  String?
+  sunsetGoldenEnd    String?
 
-  location Location @relation(fields: [locationId], references: [id])
+  moonrise           String?
+  moonset            String?
 
+  illumination       Float?
+  phaseName          String?
+  moonPhase          Float?
+
+  location           Location @relation(fields: [locationId], references: [id])
   @@unique([locationId, date])
 }
 model EphemerisDebug {
