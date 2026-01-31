@@ -1,102 +1,85 @@
-// app/debug/timestamps/page.tsx
+"use client";
 
-import { db } from "@/lib/db";
-import { parseISO } from "date-fns";
-import { logit } from "@/lib/log/logit";
+import { useEffect, useState } from "react";
 
-export default async function TimestampDebugPage() {
-  const domain = "debug.timestamps";
+interface Snapshot {
+  date: string;
+  sunrise: string;
+  sunset: string;
+  solarNoon: string | null;
 
-  await logit(domain, {
-    level: "info",
-    message: "Loading timestamp debug page",
-  });
+  sunriseBlueStart: string | null;
+  sunriseBlueEnd: string | null;
+  sunsetBlueStart: string | null;
+  sunsetBlueEnd: string | null;
 
-  const snapshots = await db.astronomySnapshot.findMany({
-    orderBy: { date: "desc" },
-    take: 10,
-  });
+  sunriseGoldenStart: string | null;
+  sunriseGoldenEnd: string | null;
+  sunsetGoldenStart: string | null;
+  sunsetGoldenEnd: string | null;
 
-  return (
-    <div style={{ padding: 24 }}>
-      <h1>Timestamp Debugger</h1>
-      <p>Showing raw vs parsed timestamps for recent snapshots.</p>
+  moonrise: string | null;
+  moonset: string | null;
 
-      {snapshots.map((snap) => (
-        <div
-          key={snap.id}
-          style={{
-            marginTop: 32,
-            padding: 16,
-            border: "1px solid #ccc",
-            borderRadius: 8,
-          }}
-        >
-          <h2>{snap.date.toDateString()}</h2>
-
-          <TimestampRow label="Sunrise" value={snap.sunrise} />
-          <TimestampRow label="Sunset" value={snap.sunset} />
-          <TimestampRow label="Solar Noon" value={snap.solarNoon ?? ""} />
-
-          <TimestampRow label="Blue Start (AM)" value={snap.sunriseBlueStart} />
-          <TimestampRow label="Blue End (AM)" value={snap.sunriseBlueEnd} />
-          <TimestampRow label="Blue Start (PM)" value={snap.sunsetBlueStart} />
-          <TimestampRow label="Blue End (PM)" value={snap.sunsetBlueEnd} />
-
-          <TimestampRow
-            label="Golden Start (AM)"
-            value={snap.sunriseGoldenStart}
-          />
-          <TimestampRow label="Golden End (AM)" value={snap.sunriseGoldenEnd} />
-          <TimestampRow
-            label="Golden Start (PM)"
-            value={snap.sunsetGoldenStart}
-          />
-          <TimestampRow label="Golden End (PM)" value={snap.sunsetGoldenEnd} />
-
-          <TimestampRow label="Moonrise" value={snap.moonrise ?? ""} />
-          <TimestampRow label="Moonset" value={snap.moonset ?? ""} />
-        </div>
-      ))}
-    </div>
-  );
+  illumination: number | null;
+  phaseName: string | null;
+  moonPhase: number | null;
 }
 
 function TimestampRow({ label, value }: { label: string; value: string }) {
-  const parsed = safeParse(value);
-
   return (
-    <div style={{ marginBottom: 12 }}>
-      <strong>{label}</strong>
-      <div>Raw: {value}</div>
-      <div>Parsed Local: {parsed.local}</div>
-      <div>Parsed UTC: {parsed.utc}</div>
-      <div>Offset Detected: {parsed.offset}</div>
-      {parsed.error && (
-        <div style={{ color: "red" }}>Error: {parsed.error}</div>
-      )}
+    <div className="flex justify-between py-1 border-b border-gray-700">
+      <span className="font-medium text-gray-300">{label}</span>
+      <span className="text-gray-100">{value}</span>
     </div>
   );
 }
 
-function safeParse(value: string) {
-  try {
-    if (!value) return { local: "-", utc: "-", offset: "-", error: null };
+export default function TimestampDebugPage() {
+  const [snap, setSnap] = useState<Snapshot | null>(null);
 
-    const date = parseISO(value);
+  useEffect(() => {
+    async function load() {
+      const res = await fetch("/api/debug/timestamps");
+      const json = await res.json();
+      setSnap(json.snapshot);
+    }
+    load();
+  }, []);
 
-    return {
-      local: date.toString(),
-      utc: date.toISOString(),
-      offset: value.match(/([+-]\d{2}:\d{2})/)?.[1] ?? "NONE",
-      error: null,
-    };
-  } catch (err: any) {
-    return {
-      local: "-",
-      utc: "-",
-      offset: "UNKNOWN",
-      error: err.message,
-    };
+  if (!snap) {
+    return <div className="p-6 text-gray-300">Loading…</div>;
   }
+
+  return (
+    <div className="p-6 max-w-xl mx-auto space-y-4">
+      <h1 className="text-2xl font-bold text-gray-100 mb-4">
+        Timestamp Debug
+      </h1>
+
+      <TimestampRow label="Date" value={snap.date} />
+      <TimestampRow label="Sunrise" value={snap.sunrise} />
+      <TimestampRow label="Sunset" value={snap.sunset} />
+      <TimestampRow label="Solar Noon" value={snap.solarNoon ?? ""} />
+
+      <h2 className="text-xl font-semibold text-gray-200 mt-4">Blue Hour</h2>
+      <TimestampRow label="Blue Start (AM)" value={snap.sunriseBlueStart ?? ""} />
+      <TimestampRow label="Blue End (AM)" value={snap.sunriseBlueEnd ?? ""} />
+      <TimestampRow label="Blue Start (PM)" value={snap.sunsetBlueStart ?? ""} />
+      <TimestampRow label="Blue End (PM)" value={snap.sunsetBlueEnd ?? ""} />
+
+      <h2 className="text-xl font-semibold text-gray-200 mt-4">Golden Hour</h2>
+      <TimestampRow label="Golden Start (AM)" value={snap.sunriseGoldenStart ?? ""} />
+      <TimestampRow label="Golden End (AM)" value={snap.sunriseGoldenEnd ?? ""} />
+      <TimestampRow label="Golden Start (PM)" value={snap.sunsetGoldenStart ?? ""} />
+      <TimestampRow label="Golden End (PM)" value={snap.sunsetGoldenEnd ?? ""} />
+
+      <h2 className="text-xl font-semibold text-gray-200 mt-4">Moon</h2>
+      <TimestampRow label="Moonrise" value={snap.moonrise ?? ""} />
+      <TimestampRow label="Moonset" value={snap.moonset ?? ""} />
+      <TimestampRow label="Illumination" value={snap.illumination?.toString() ?? ""} />
+      <TimestampRow label="Phase Name" value={snap.phaseName ?? ""} />
+      <TimestampRow label="Moon Phase" value={snap.moonPhase?.toString() ?? ""} />
+    </div>
+  );
 }
