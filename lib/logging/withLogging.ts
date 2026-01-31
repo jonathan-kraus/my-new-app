@@ -18,6 +18,7 @@ export function withLogging(
         path: url.pathname,
         status: res.status,
         duration: Date.now() - start,
+        message: `${req.method} ${url.pathname} status=${res.status}`,
       });
 
       return res;
@@ -29,6 +30,7 @@ export function withLogging(
         status: 500,
         duration: Date.now() - start,
         error: err?.message ?? "Unknown error",
+        message: `${req.method} ${url.pathname} status=500 error=${err?.message ?? "Unknown error"}`,
       });
 
       return NextResponse.json(
