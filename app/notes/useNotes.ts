@@ -2,7 +2,7 @@
 // app/notes/useNotes.ts
 
 import { useEffect, useState } from "react";
-import { logit } from "@/lib/log/logit";
+import { logit } from "@/lib/log/logit.client";
 
 export type Note = {
   id: string;
