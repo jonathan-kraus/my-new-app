@@ -34,8 +34,23 @@ export async function logit(domain: string, payload: any, meta: any = {}) {
 
   // Human-friendly numbering (#1, #2, #3…)
   //const humanIndex = eventIndex + 1;
-  const originalMessage = payload.message ?? "";
-  const message = `#${eventIndex} ${originalMessage}`;
+  const originalMessage = (payload.message ?? "").toString();
+  const trimmed = originalMessage.trim();
+
+  // If there is no provided message, build a sensible fallback for common domains
+  const fallbackParts: string[] = [];
+  if (!trimmed) {
+    if (domain === "response") {
+      if (payload.method) fallbackParts.push(payload.method);
+      if (payload.path) fallbackParts.push(payload.path);
+      if (payload.status !== undefined) fallbackParts.push(`status=${payload.status}`);
+    } else if (payload.action) {
+      fallbackParts.push(payload.action);
+    }
+  }
+
+  const finalMessageBody = trimmed || fallbackParts.join(" ") || "";
+  const message = finalMessageBody ? `#${eventIndex} ${finalMessageBody}` : `#${eventIndex}`;
 
   //
   // 2. Flatten payload and meta
