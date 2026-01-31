@@ -99,6 +99,11 @@ export async function buildAstronomySnapshot(
   }
 
   const astro = await fetchIPGeoAstronomy(latitude, longitude, date);
+await logit(domain, {
+  level: "error",
+  message: "DEBUG: astronomy payload",
+  data: astro
+});
 
   //
   // --- OFFSET EXTRACTION (patched) ---
