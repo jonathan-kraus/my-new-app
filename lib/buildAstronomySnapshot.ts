@@ -1,6 +1,7 @@
 import { combineDateTime } from "@/lib/ephemeris/utils/combineDateTime";
 import { format } from "date-fns";
 import { logit } from "@/lib/log/logit";
+import { DateTime } from "luxon";
 
 function computeSolarNoon(sunrise: Date, sunset: Date): Date {
   return new Date((sunrise.getTime() + sunset.getTime()) / 2);
@@ -78,7 +79,7 @@ export async function buildAstronomySnapshot(
 
     await logit(domain, {
       level: "error",
-      message: "#1 DEBUG: astronomy payload",
+      message: " DEBUG: astronomy payload",
       data: json.astronomy
     });
 
@@ -88,26 +89,43 @@ export async function buildAstronomySnapshot(
   const astro = await fetchIPGeoAstronomy(latitude, longitude, date);
 
   //
-  // --- TIMEZONE EXTRACTION WITH FALLBACK ---
+  // --- UNIVERSAL TIMEZONE FALLBACK ---
   //
   let offset = astro.timezone;
 
+  // Fallback: convert IANA zone (e.g., "America/New_York") to numeric offset
   if (!offset && location.timezone) {
     await logit(domain, {
       level: "warn",
-      message: "Astronomy API missing timezone; using location fallback",
-      data: { fallback: location.timezone }
+      message: "Astronomy API missing timezone; converting IANA zone to offset",
+      data: { iana: location.timezone }
     });
-    offset = location.timezone;
+
+    try {
+      const dt = DateTime.now().setZone(location.timezone);
+      offset = dt.toFormat("ZZ"); // "-05:00" or "-04:00"
+    } catch (err) {
+      await logit(domain, {
+        level: "error",
+        message: "Failed to convert IANA timezone to offset",
+        data: { iana: location.timezone, error: String(err) }
+      });
+    }
   }
 
+  // Final validation
   if (!offset || !/[+-]\d{2}:\d{2}/.test(offset)) {
     await logit(domain, {
       level: "error",
       message: "Astronomy API missing timezone field",
-      data: { timezone: astro.timezone, fallback: location.timezone }
+      data: {
+        apiTimezone: astro.timezone,
+        locationTimezone: location.timezone,
+        resolvedOffset: offset
+      }
     });
-    throw new Error("Astronomy API did not include timezone offset");
+
+    throw new Error("Astronomy API missing timezone field");
   }
 
   await logit(domain, {
@@ -155,7 +173,7 @@ export async function buildAstronomySnapshot(
       message: "Missing required sunrise/sunset after normalization",
       data: { sunriseNorm, sunsetNorm }
     });
-    throw new Error("Astronomy snapshot requires sunrise and sunset");
+    throw new Error("Missing required sunrise/sunset after normalization");
   }
 
   //
