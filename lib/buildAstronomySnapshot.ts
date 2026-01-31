@@ -101,17 +101,15 @@ export async function buildAstronomySnapshot(
   const astro = await fetchIPGeoAstronomy(latitude, longitude, date);
 
   //
-  // --- OFFSET EXTRACTION ---
+  // --- OFFSET EXTRACTION (patched) ---
   //
-  const offset =
-    astro.sunrise.match(/([+-]\d{2}:\d{2})$/)?.[1] ??
-    astro.sunset.match(/([+-]\d{2}:\d{2})$/)?.[1];
+  const offset = astro.timezone;
 
-  if (!offset) {
+  if (!offset || !/[+-]\d{2}:\d{2}/.test(offset)) {
     await logit(domain, {
       level: "error",
-      message: "API sunrise/sunset missing timezone offset",
-      data: { sunrise: astro.sunrise, sunset: astro.sunset }
+      message: "Astronomy API missing timezone field",
+      data: { timezone: astro.timezone }
     });
     throw new Error("Astronomy API did not include timezone offset");
   }
@@ -125,19 +123,8 @@ export async function buildAstronomySnapshot(
   //
   // --- NORMALIZE ALL TIME STRINGS ---
   //
-const sunriseNorm = normalizeTimeString(astro.sunrise, offset);
-const sunsetNorm = normalizeTimeString(astro.sunset, offset);
-
-// ⬇️ add this block
-if (!sunriseNorm || !sunsetNorm) {
-  await logit(domain, {
-    level: "error",
-    message: "Missing required sunrise/sunset after normalization",
-    data: { sunriseNorm, sunsetNorm },
-  });
-  throw new Error("Astronomy snapshot requires sunrise and sunset");
-}
-
+  const sunriseNorm = normalizeTimeString(astro.sunrise, offset);
+  const sunsetNorm = normalizeTimeString(astro.sunset, offset);
 
   const sunriseBlueStartNorm = normalizeTimeString(astro.morning.blue_hour_begin, offset);
   const sunriseBlueEndNorm = normalizeTimeString(astro.morning.blue_hour_end, offset);
@@ -164,103 +151,63 @@ if (!sunriseNorm || !sunsetNorm) {
   });
 
   //
+  // --- REQUIRED FIELDS ---
+  //
+  if (!sunriseNorm || !sunsetNorm) {
+    await logit(domain, {
+      level: "error",
+      message: "Missing required sunrise/sunset after normalization",
+      data: { sunriseNorm, sunsetNorm }
+    });
+    throw new Error("Astronomy snapshot requires sunrise and sunset");
+  }
+
+  //
   // --- COMBINE DATE + TIME ---
   //
-const sunriseStr = combineDateTime(date, sunriseNorm);
-const sunsetStr = combineDateTime(date, sunsetNorm);
-  await logit(domain, {
-    level: "debug",
-    message: "Combined date and time for sunrise/sunset",
-    data: {
-      sunriseStr,
-      sunsetStr
-    }
-  });
+  const sunriseStr = combineDateTime(date, sunriseNorm);
+  const sunsetStr = combineDateTime(date, sunsetNorm);
+
   //
   // --- SOLAR NOON ---
   //
   let solarNoon: string | null = null;
 
-  if (sunriseStr && sunsetStr) {
-    const sunriseDate = parseOffsetDateString(sunriseStr);
-    const sunsetDate = parseOffsetDateString(sunsetStr);
+  const sunriseDate = parseOffsetDateString(sunriseStr);
+  const sunsetDate = parseOffsetDateString(sunsetStr);
 
-    await logit(domain, {
-      level: "debug",
-      message: "Parsed sunrise/sunset for solar-noon math",
-      data: {
-        sunriseDate: sunriseDate.toString(),
-        sunsetDate: sunsetDate.toString()
-      }
-    });
-
-    const solarNoonDate = computeSolarNoon(sunriseDate, sunsetDate);
-
-    await logit(domain, {
-      level: "info",
-      message: "Computed solar noon",
-      data: { solarNoonDate: solarNoonDate.toString() }
-    });
-
-    solarNoon = format(solarNoonDate, "HH:mm:ssXXX");
-
-    await logit(domain, {
-      level: "debug",
-      message: "Formatted solar noon",
-      data: { solarNoon }
-    });
-  }
+  const solarNoonDate = computeSolarNoon(sunriseDate, sunsetDate);
+  solarNoon = format(solarNoonDate, "HH:mm:ssXXX");
 
   //
   // --- FINAL SNAPSHOT ---
   //
-const snapshot: {
-  date: Date;
-  locationId: string;
-  fetchedAt: Date;
-  sunrise: string;
-  sunset: string;
-  solarNoon: string | null;
-  sunriseBlueStart: string | null;
-  sunriseBlueEnd: string | null;
-  sunsetBlueStart: string | null;
-  sunsetBlueEnd: string | null;
-  sunriseGoldenStart: string | null;
-  sunriseGoldenEnd: string | null;
-  sunsetGoldenStart: string | null;
-  sunsetGoldenEnd: string | null;
-  moonrise: string | null;
-  moonset: string | null;
-  illumination: any;
-  phaseName: any;
-  moonPhase: any;
-} = {
-  date,
-  locationId: location.id,
-  fetchedAt: new Date(),
+  const snapshot = {
+    date,
+    locationId: location.id,
+    fetchedAt: new Date(),
 
-  sunrise: sunriseStr,
-  sunset: sunsetStr,
-  solarNoon,
+    sunrise: sunriseStr,
+    sunset: sunsetStr,
+    solarNoon,
 
-  sunriseBlueStart: sunriseBlueStartNorm ? combineDateTime(date, sunriseBlueStartNorm) : null,
-  sunriseBlueEnd: sunriseBlueEndNorm ? combineDateTime(date, sunriseBlueEndNorm) : null,
-  sunsetBlueStart: sunsetBlueStartNorm ? combineDateTime(date, sunsetBlueStartNorm) : null,
-  sunsetBlueEnd: sunsetBlueEndNorm ? combineDateTime(date, sunsetBlueEndNorm) : null,
+    sunriseBlueStart: sunriseBlueStartNorm ? combineDateTime(date, sunriseBlueStartNorm) : null,
+    sunriseBlueEnd: sunriseBlueEndNorm ? combineDateTime(date, sunriseBlueEndNorm) : null,
+    sunsetBlueStart: sunsetBlueStartNorm ? combineDateTime(date, sunsetBlueStartNorm) : null,
+    sunsetBlueEnd: sunsetBlueEndNorm ? combineDateTime(date, sunsetBlueEndNorm) : null,
 
-  sunriseGoldenStart: sunriseGoldenStartNorm ? combineDateTime(date, sunriseGoldenStartNorm) : null,
-  sunriseGoldenEnd: sunriseGoldenEndNorm ? combineDateTime(date, sunriseGoldenEndNorm) : null,
-  sunsetGoldenStart: sunsetGoldenStartNorm ? combineDateTime(date, sunsetGoldenStartNorm) : null,
-  sunsetGoldenEnd: sunsetGoldenEndNorm ? combineDateTime(date, sunsetGoldenEndNorm) : null,
+    sunriseGoldenStart: sunriseGoldenStartNorm ? combineDateTime(date, sunriseGoldenStartNorm) : null,
+    sunriseGoldenEnd: sunriseGoldenEndNorm ? combineDateTime(date, sunriseGoldenEndNorm) : null,
+    sunsetGoldenStart: sunsetGoldenStartNorm ? combineDateTime(date, sunsetGoldenStartNorm) : null,
+    sunsetGoldenEnd: sunsetGoldenEndNorm ? combineDateTime(date, sunsetGoldenEndNorm) : null,
 
-  moonrise: moonriseNorm ? combineDateTime(date, moonriseNorm) : null,
-  moonset: moonsetNorm ? combineDateTime(date, moonsetNorm) : null,
+    moonrise: moonriseNorm ? combineDateTime(date, moonriseNorm) : null,
+    moonset: moonsetNorm ? combineDateTime(date, moonsetNorm) : null,
 
-  illumination: astro.moon_illumination ?? null,
-  phaseName: astro.moon_phase_name ?? null,
-  moonPhase: astro.moon_phase ?? null,
-};
-
+    illumination: astro.moon_illumination ?? null,
+    phaseName: astro.moon_phase_name ?? null,
+    moonPhase: astro.moon_phase ?? null,
+  };
 
   await logit(domain, {
     level: "info",
