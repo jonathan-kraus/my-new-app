@@ -9,8 +9,6 @@ vi.mock("@/lib/db", () => ({
 const { db } = await import("@/lib/db");
 const mockedDb = vi.mocked(db, true);
 
-const makeRequest = (url: string) => new Request(url);
-
 beforeEach(() => {
 	vi.clearAllMocks();
 });
@@ -20,7 +18,7 @@ describe("GET /api/admin/runtime", () => {
 		mockedDb.runtimeConfig.findMany.mockResolvedValue([]);
 
 		const { GET } = await import("../route");
-		const res = await GET(makeRequest("http://localhost/api/admin/runtime"));
+		const res = await GET();
 		const json = await res.json();
 
 		expect(res.status).toBe(200);
@@ -37,7 +35,7 @@ describe("GET /api/admin/runtime", () => {
 		mockedDb.runtimeConfig.findMany.mockResolvedValue(mocked);
 
 		const { GET } = await import("../route");
-		const res = await GET(makeRequest("http://localhost/api/admin/runtime"));
+		const res = await GET();
 		const json = await res.json();
 
 		expect(res.status).toBe(200);
