@@ -280,6 +280,8 @@ UI updates optimistically
 
 ## Getting Started
 
+**Prisma config:** This project uses `prisma.config.ts` as the canonical Prisma configuration. The legacy `prisma.config.cjs` has been removed to avoid ambiguity — run `pnpm exec prisma generate` (or `pnpm install`, which runs `prisma generate` via `postinstall`) to regenerate the Prisma client.
+
 First, run the development server:
 
 ```bash
