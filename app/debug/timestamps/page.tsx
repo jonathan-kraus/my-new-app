@@ -39,11 +39,7 @@ export default function TimestampDebugPage() {
   const [snap, setSnap] = useState<Snapshot | null>(null);
 
   useEffect(() => {
-    async function load() {
-      const res = await fetch("/api/debug/timestamps");
-      const json = await res.json();
-      setSnap(json.snapshot);
-    }
+async function load() { const res = await fetch("/api/debug/timestamps"); const json = await res.json(); console.log("DEBUG TIMESTAMPS RESPONSE:", json); setSnap(json.snapshot); }
     load();
   }, []);
 
