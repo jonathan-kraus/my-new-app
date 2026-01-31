@@ -60,12 +60,12 @@ export default async function DashboardAstronomyPage() {
             </div>
             <div className="flex justify-between">
 <span>Solar Noon</span>
-            </div>
-            <div className="flex justify-between">
+
 <span>
   {DateTime.fromJSDate(solarNoon, { zone: "America/New_York" }).toFormat("h:mm a")}
 </span>
-
+            </div>
+            <div className="flex justify-between">
 <span>Sunset</span>
 <span>{solar.sunset.timeLocal}</span>
 
