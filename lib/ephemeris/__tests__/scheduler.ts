@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach, vi } from "vitest";
 import { startScheduler, stopScheduler, isSchedulerRunning } from "@/lib/log/scheduler";
-import { enqueue, clearQueue } from "@/lib/log/queue";
+import { enqueue, clear } from "@/lib/log/queue";
 import { mockAxiom } from "@/tests/log/__mocks__/axiom";
 import { useFakeTimers } from '../../../tests/log/__mocks__/testUtils';
 
@@ -14,7 +14,7 @@ describe("scheduler", () => {
 
   beforeEach(() => {
     stopScheduler();
-    clearQueue();
+    clear();
     mockAxiom.ingest.mockClear();
   });
 
