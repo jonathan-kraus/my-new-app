@@ -8,6 +8,11 @@ function computeSolarNoon(sunrise: Date, sunset: Date): Date {
   return new Date((sunrise.getTime() + sunset.getTime()) / 2);
 }
 
+function parseOffsetDateString(ts: string): Date {
+  // This preserves the offset and creates a correct Date object
+  return new Date(ts);
+}
+
 export async function buildAstronomySnapshot(
   location: { id: string; latitude: number; longitude: number },
   targetDate: Date,
@@ -17,7 +22,7 @@ export async function buildAstronomySnapshot(
   await logit(domain, {
     level: "info",
     message: "Starting buildAstronomySnapshot",
-    data: { location, targetDate },
+    data: { location, targetDate }
   });
 
   const { latitude, longitude } = location;
@@ -32,7 +37,7 @@ export async function buildAstronomySnapshot(
   await logit(domain, {
     level: "debug",
     message: "Normalized target date to local midnight",
-    data: { normalizedDate: date.toString() },
+    data: { normalizedDate: date.toString() }
   });
 
   //
@@ -50,7 +55,7 @@ export async function buildAstronomySnapshot(
     await logit(domain, {
       level: "info",
       message: "Fetching IPGeolocation astronomy data",
-      data: { url: url.toString() },
+      data: { url: url.toString() }
     });
 
     const res = await fetch(url.toString());
@@ -58,7 +63,7 @@ export async function buildAstronomySnapshot(
       await logit(domain, {
         level: "error",
         message: "IPGeolocation returned non-OK status",
-        data: { status: res.status },
+        data: { status: res.status }
       });
       throw new Error(`IPGeolocation error: ${res.status}`);
     }
@@ -68,7 +73,7 @@ export async function buildAstronomySnapshot(
     await logit(domain, {
       level: "debug",
       message: "Received astronomy payload",
-      data: json.astronomy,
+      data: json.astronomy
     });
 
     return json.astronomy;
@@ -79,63 +84,70 @@ export async function buildAstronomySnapshot(
   //
   // --- SOLAR TIMES ---
   //
-  const sunriseDate = combineDateTime(date, astro.sunrise);
-  const sunsetDate = combineDateTime(date, astro.sunset);
-  const solarNoonDate = computeSolarNoon(sunriseDate, sunsetDate);
+  const sunriseStr = combineDateTime(date, astro.sunrise);
+  const sunsetStr = combineDateTime(date, astro.sunset);
 
   await logit(domain, {
     level: "debug",
-    message: "Computed solar times",
+    message: "Combined sunrise/sunset into offset-preserving strings",
+    data: { sunriseStr, sunsetStr }
+  });
+
+  // Convert to Date objects ONLY for math
+  const sunriseDate = parseOffsetDateString(sunriseStr);
+  const sunsetDate = parseOffsetDateString(sunsetStr);
+
+  await logit(domain, {
+    level: "debug",
+    message: "Parsed sunrise/sunset into Date objects for solar-noon math",
     data: {
-      sunrise_raw: astro.sunrise,
-      sunset_raw: astro.sunset,
-      solarNoon_computed: solarNoonDate.toString(),
-    },
+      sunriseDate: sunriseDate.toString(),
+      sunsetDate: sunsetDate.toString()
+    }
+  });
+
+  const solarNoonDate = computeSolarNoon(sunriseDate, sunsetDate);
+
+  await logit(domain, {
+    level: "info",
+    message: "Computed solar noon",
+    data: {
+      solarNoonDate: solarNoonDate.toString(),
+      sunrise: sunriseStr,
+      sunset: sunsetStr
+    }
+  });
+
+  // Convert back to offset-preserving string
+  const solarNoon = format(solarNoonDate, "HH:mm:ssXXX");
+
+  await logit(domain, {
+    level: "debug",
+    message: "Formatted solar noon into offset-preserving string",
+    data: { solarNoon }
   });
 
   //
   // --- BLUE HOUR ---
   //
-  const sunriseBlueStartDate = combineDateTime(
-    date,
-    astro.morning.blue_hour_begin,
-  );
-  const sunriseBlueEndDate = combineDateTime(date, astro.morning.blue_hour_end);
-  const sunsetBlueStartDate = combineDateTime(
-    date,
-    astro.evening.blue_hour_begin,
-  );
-  const sunsetBlueEndDate = combineDateTime(date, astro.evening.blue_hour_end);
+  const sunriseBlueStart = combineDateTime(date, astro.morning.blue_hour_begin);
+  const sunriseBlueEnd = combineDateTime(date, astro.morning.blue_hour_end);
+  const sunsetBlueStart = combineDateTime(date, astro.evening.blue_hour_begin);
+  const sunsetBlueEnd = combineDateTime(date, astro.evening.blue_hour_end);
 
   //
   // --- GOLDEN HOUR ---
   //
-  const sunriseGoldenStartDate = combineDateTime(
-    date,
-    astro.morning.golden_hour_begin,
-  );
-  const sunriseGoldenEndDate = combineDateTime(
-    date,
-    astro.morning.golden_hour_end,
-  );
-  const sunsetGoldenStartDate = combineDateTime(
-    date,
-    astro.evening.golden_hour_begin,
-  );
-  const sunsetGoldenEndDate = combineDateTime(
-    date,
-    astro.evening.golden_hour_end,
-  );
+  const sunriseGoldenStart = combineDateTime(date, astro.morning.golden_hour_begin);
+  const sunriseGoldenEnd = combineDateTime(date, astro.morning.golden_hour_end);
+  const sunsetGoldenStart = combineDateTime(date, astro.evening.golden_hour_begin);
+  const sunsetGoldenEnd = combineDateTime(date, astro.evening.golden_hour_end);
 
   //
   // --- LUNAR ---
   //
-  const moonriseDate = astro.moonrise
-    ? combineDateTime(date, astro.moonrise)
-    : null;
-  const moonsetDate = astro.moonset
-    ? combineDateTime(date, astro.moonset)
-    : null;
+  const moonrise = astro.moonrise ? combineDateTime(date, astro.moonrise) : null;
+  const moonset = astro.moonset ? combineDateTime(date, astro.moonset) : null;
 
   const illumination = astro.moon_illumination ?? null;
   const phaseName = astro.moon_phase_name ?? null;
@@ -162,12 +174,12 @@ export async function buildAstronomySnapshot(
     level: "debug",
     message: "Computed lunar data",
     data: {
-      moonrise_raw: astro.moonrise,
-      moonset_raw: astro.moonset,
+      moonrise,
+      moonset,
       illumination,
       phaseName,
-      moonPhase,
-    },
+      moonPhase
+    }
   });
 
   //
@@ -178,23 +190,22 @@ export async function buildAstronomySnapshot(
     locationId: location.id,
     fetchedAt: new Date(),
 
-    // Store EXACT local strings from API — no UTC conversion
-    sunrise: astro.sunrise,
-    sunset: astro.sunset,
-    solarNoon: format(solarNoonDate, "HH:mm:ssXXX"),
+    sunrise: sunriseStr,
+    sunset: sunsetStr,
+    solarNoon,
 
-    sunriseBlueStart: astro.morning.blue_hour_begin,
-    sunriseBlueEnd: astro.morning.blue_hour_end,
-    sunsetBlueStart: astro.evening.blue_hour_begin,
-    sunsetBlueEnd: astro.evening.blue_hour_end,
+    sunriseBlueStart,
+    sunriseBlueEnd,
+    sunsetBlueStart,
+    sunsetBlueEnd,
 
-    sunriseGoldenStart: astro.morning.golden_hour_begin,
-    sunriseGoldenEnd: astro.morning.golden_hour_end,
-    sunsetGoldenStart: astro.evening.golden_hour_begin,
-    sunsetGoldenEnd: astro.evening.golden_hour_end,
+    sunriseGoldenStart,
+    sunriseGoldenEnd,
+    sunsetGoldenStart,
+    sunsetGoldenEnd,
 
-    moonrise: astro.moonrise ?? null,
-    moonset: astro.moonset ?? null,
+    moonrise,
+    moonset,
 
     illumination,
     phaseName,
@@ -204,7 +215,7 @@ export async function buildAstronomySnapshot(
   await logit(domain, {
     level: "info",
     message: "Astronomy snapshot built successfully",
-    data: snapshot,
+    data: snapshot
   });
 
   return snapshot;

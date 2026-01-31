@@ -1,6 +1,6 @@
 // app/debug/timestamps/page.tsx
 
-import { prisma } from "@/lib/db/prisma";
+import { db } from "@/lib/db";
 import { parseISO } from "date-fns";
 import { logit } from "@/lib/log/logit";
 
@@ -12,7 +12,7 @@ export default async function TimestampDebugPage() {
     message: "Loading timestamp debug page",
   });
 
-  const snapshots = await prisma.astronomySnapshot.findMany({
+  const snapshots = await db.astronomySnapshot.findMany({
     orderBy: { date: "desc" },
     take: 10,
   });
