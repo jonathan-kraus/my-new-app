@@ -59,6 +59,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/jest": "^30.0.0",
+    "@types/luxon": "^3.7.1",
     "@types/node": "^25.0.9",
     "@types/pg": "^8.16.0",
     "@types/react": "^19",
