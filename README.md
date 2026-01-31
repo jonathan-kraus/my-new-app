@@ -282,6 +282,15 @@ UI updates optimistically
 
 **Prisma config:** This project uses `prisma.config.ts` as the canonical Prisma configuration. The legacy `prisma.config.cjs` has been removed to avoid ambiguity — run `pnpm exec prisma generate` (or `pnpm install`, which runs `prisma generate` via `postinstall`) to regenerate the Prisma client.
 
+**Logging:** Recent changes introduced a split between server and client logging to avoid bundling server-only code into client bundles. Key points:
+- `lib/log/logit.ts` — server-side logger that writes structured logs to the DB and queues events for ingestion.
+- `lib/log/logit.client.ts` — lightweight client-side logger that forwards client logs to `POST /api/logs`.
+- `app/api/logs/route.ts` was added/updated to accept client log POSTs and forward them to the server logger.
+- `lib/log/logit.ts` now ensures a sensible fallback message (e.g., `"GET /api/weather status=200"`) so logs aren't just the counter (like `"#1 "`).
+- A maintenance script `scripts/patch-log-message.ts` can patch existing counter-only log messages in the DB.
+
+**Temporary security fixes (pnpm overrides):** To address `pnpm audit` findings, this project temporarily uses `pnpm.overrides` in `package.json` to force patched versions of some transitive deps (e.g., `lodash: ^4.17.23`, `hono: ^4.11.7`). These overrides should be removed when upstream packages are updated.
+
 First, run the development server:
 
 ```bash
