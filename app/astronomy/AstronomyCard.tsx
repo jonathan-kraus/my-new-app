@@ -124,7 +124,7 @@ export function AstronomyCard({ data }: AstronomyCardProps) {
         <p className="text-sm text-gray-300">
           Illumination:{" "}
           {lunar?.illumination !== null
-            ? `${Math.round(lunar.illumination * 100)}%`
+            ? `${Math.round(lunar.illumination)}%`
             : "—"}
         </p>
         <p className="text-2xl mt-1">{moonPhaseIcon(lunar?.illumination)}</p>
