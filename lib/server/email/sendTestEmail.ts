@@ -7,13 +7,13 @@ import { logit } from "@/lib/log/logit";
 
 export async function sendTestEmail(to: string) {
   // --- 1. Read flag ---------------------------------------------------------
-  const enabled = await getConfig("flag_email_send", "1");
+  const enabled = await getConfig("email_enabled", "1");
 
   await logit(
     "email",
     {
       level: "info",
-      message: "Checked flag_email_send",
+      message: "Checked email_enabled",
     },
     {
       payload: {
