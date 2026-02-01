@@ -2,7 +2,10 @@
 // app/logs/page.tsx
 import { logFromClient } from "@/app/actions/log";
 import { useEffect, useMemo, useState } from "react";
-
+import { isSchedulerRunning } from "@/lib/log/scheduler";
+import { peek } from '@/lib/log/queue';
+import { Payload } from '../../lib/generated/prisma/internal/prismaNamespace';
+console.log( "LOG HEALTH", { scheduler: isSchedulerRunning(), queueSize: peek().length, } );
 type LogRecord = {
   id: string;
   level: string;
@@ -87,6 +90,7 @@ export default function LogsPage() {
           const result = await logFromClient("jonathan", {
             level: "info",
             message: "in log page",
+            Payload: { scheduler: isSchedulerRunning(), queueSize: peek().length, }, 
           });
           console.log("logFromClient result:", result);
         } catch (err) {

@@ -2,10 +2,13 @@ import crypto from "crypto";
 import { enqueue } from "./queue";
 import { nextLogIndex } from "./state";
 import { db } from "@/lib/db";
-
+import { startScheduler } from "./scheduler";
 const ERROR_COOLDOWN_MS = 5000;
 const NEON_MAX_JSON = 200_000;
 let lastErrorTime = 0;
+
+
+startScheduler();
 
 function safeForNeon(obj: any) {
   try {
