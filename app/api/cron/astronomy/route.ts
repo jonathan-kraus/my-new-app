@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
     {
       level: "info",
       message: "astronomy.cron.started",
-      payload: { route: "cron", rebuild: true  },
+      payload: { route: "cron", rebuild: true },
     },
     { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
   );

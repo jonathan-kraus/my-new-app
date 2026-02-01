@@ -22,7 +22,7 @@ function safeForNeon(obj: any) {
 export async function logit(domain: string, payload: any, meta: any = {}) {
   const requestId = meta.requestId ?? crypto.randomUUID();
   const eventIndex = nextLogIndex(requestId);
-const jmsg = "JMSG";
+  const jmsg = "JMSG";
   const originalMessage = (payload.message ?? "").toString().trim();
   const message = originalMessage
     ? `#${eventIndex} ${originalMessage}`

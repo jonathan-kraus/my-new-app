@@ -11,7 +11,10 @@ function parseOffsetDateString(ts: string): Date {
   return new Date(ts); // preserves offset
 }
 
-function normalizeTimeString(raw: string | null, offset: string): string | null {
+function normalizeTimeString(
+  raw: string | null,
+  offset: string,
+): string | null {
   if (!raw || raw === "-") return null;
 
   // Already has offset
@@ -25,7 +28,12 @@ function normalizeTimeString(raw: string | null, offset: string): string | null 
 }
 
 export async function buildAstronomySnapshot(
-  location: { id: string; latitude: number; longitude: number; timezone?: string },
+  location: {
+    id: string;
+    latitude: number;
+    longitude: number;
+    timezone?: string;
+  },
   targetDate: Date,
 ) {
   const domain = "ephemeris.snapshot.build";
@@ -33,7 +41,7 @@ export async function buildAstronomySnapshot(
   await logit(domain, {
     level: "info",
     message: "Starting buildAstronomySnapshot",
-    data: { location, targetDate }
+    data: { location, targetDate },
   });
 
   const { latitude, longitude } = location;
@@ -47,7 +55,7 @@ export async function buildAstronomySnapshot(
   await logit(domain, {
     level: "debug",
     message: "Normalized target date",
-    data: { normalizedDate: date.toString() }
+    data: { normalizedDate: date.toString() },
   });
 
   async function fetchIPGeoAstronomy(lat: number, lon: number, date: Date) {
@@ -62,7 +70,7 @@ export async function buildAstronomySnapshot(
     await logit(domain, {
       level: "info",
       message: "Fetching IPGeolocation astronomy data",
-      data: { url: url.toString() }
+      data: { url: url.toString() },
     });
 
     const res = await fetch(url.toString());
@@ -70,7 +78,7 @@ export async function buildAstronomySnapshot(
       await logit(domain, {
         level: "error",
         message: "IPGeolocation returned non-OK status",
-        data: { status: res.status }
+        data: { status: res.status },
       });
       throw new Error(`IPGeolocation error: ${res.status}`);
     }
@@ -80,7 +88,7 @@ export async function buildAstronomySnapshot(
     await logit(domain, {
       level: "error",
       message: " DEBUG: astronomy payload",
-      data: json.astronomy
+      data: json.astronomy,
     });
 
     return json.astronomy;
@@ -98,7 +106,7 @@ export async function buildAstronomySnapshot(
     await logit(domain, {
       level: "warn",
       message: "Astronomy API missing timezone; converting IANA zone to offset",
-      data: { iana: location.timezone }
+      data: { iana: location.timezone },
     });
 
     try {
@@ -108,7 +116,7 @@ export async function buildAstronomySnapshot(
       await logit(domain, {
         level: "error",
         message: "Failed to convert IANA timezone to offset",
-        data: { iana: location.timezone, error: String(err) }
+        data: { iana: location.timezone, error: String(err) },
       });
     }
   }
@@ -121,8 +129,8 @@ export async function buildAstronomySnapshot(
       data: {
         apiTimezone: astro.timezone,
         locationTimezone: location.timezone,
-        resolvedOffset: offset
-      }
+        resolvedOffset: offset,
+      },
     });
 
     throw new Error("Astronomy API missing timezone field");
@@ -131,7 +139,7 @@ export async function buildAstronomySnapshot(
   await logit(domain, {
     level: "debug",
     message: "Using timezone offset",
-    data: { offset }
+    data: { offset },
   });
 
   //
@@ -140,15 +148,39 @@ export async function buildAstronomySnapshot(
   const sunriseNorm = normalizeTimeString(astro.sunrise, offset);
   const sunsetNorm = normalizeTimeString(astro.sunset, offset);
 
-  const sunriseBlueStartNorm = normalizeTimeString(astro.morning?.blue_hour_begin, offset);
-  const sunriseBlueEndNorm = normalizeTimeString(astro.morning?.blue_hour_end, offset);
-  const sunsetBlueStartNorm = normalizeTimeString(astro.evening?.blue_hour_begin, offset);
-  const sunsetBlueEndNorm = normalizeTimeString(astro.evening?.blue_hour_end, offset);
+  const sunriseBlueStartNorm = normalizeTimeString(
+    astro.morning?.blue_hour_begin,
+    offset,
+  );
+  const sunriseBlueEndNorm = normalizeTimeString(
+    astro.morning?.blue_hour_end,
+    offset,
+  );
+  const sunsetBlueStartNorm = normalizeTimeString(
+    astro.evening?.blue_hour_begin,
+    offset,
+  );
+  const sunsetBlueEndNorm = normalizeTimeString(
+    astro.evening?.blue_hour_end,
+    offset,
+  );
 
-  const sunriseGoldenStartNorm = normalizeTimeString(astro.morning?.golden_hour_begin, offset);
-  const sunriseGoldenEndNorm = normalizeTimeString(astro.morning?.golden_hour_end, offset);
-  const sunsetGoldenStartNorm = normalizeTimeString(astro.evening?.golden_hour_begin, offset);
-  const sunsetGoldenEndNorm = normalizeTimeString(astro.evening?.golden_hour_end, offset);
+  const sunriseGoldenStartNorm = normalizeTimeString(
+    astro.morning?.golden_hour_begin,
+    offset,
+  );
+  const sunriseGoldenEndNorm = normalizeTimeString(
+    astro.morning?.golden_hour_end,
+    offset,
+  );
+  const sunsetGoldenStartNorm = normalizeTimeString(
+    astro.evening?.golden_hour_begin,
+    offset,
+  );
+  const sunsetGoldenEndNorm = normalizeTimeString(
+    astro.evening?.golden_hour_end,
+    offset,
+  );
 
   const moonriseNorm = normalizeTimeString(astro.moonrise, offset);
   const moonsetNorm = normalizeTimeString(astro.moonset, offset);
@@ -160,8 +192,8 @@ export async function buildAstronomySnapshot(
       sunriseNorm,
       sunsetNorm,
       moonriseNorm,
-      moonsetNorm
-    }
+      moonsetNorm,
+    },
   });
 
   //
@@ -171,7 +203,7 @@ export async function buildAstronomySnapshot(
     await logit(domain, {
       level: "error",
       message: "Missing required sunrise/sunset after normalization",
-      data: { sunriseNorm, sunsetNorm }
+      data: { sunriseNorm, sunsetNorm },
     });
     throw new Error("Missing required sunrise/sunset after normalization");
   }
@@ -203,15 +235,31 @@ export async function buildAstronomySnapshot(
     sunset: sunsetStr,
     solarNoon,
 
-    sunriseBlueStart: sunriseBlueStartNorm ? combineDateTime(date, sunriseBlueStartNorm) : null,
-    sunriseBlueEnd: sunriseBlueEndNorm ? combineDateTime(date, sunriseBlueEndNorm) : null,
-    sunsetBlueStart: sunsetBlueStartNorm ? combineDateTime(date, sunsetBlueStartNorm) : null,
-    sunsetBlueEnd: sunsetBlueEndNorm ? combineDateTime(date, sunsetBlueEndNorm) : null,
+    sunriseBlueStart: sunriseBlueStartNorm
+      ? combineDateTime(date, sunriseBlueStartNorm)
+      : null,
+    sunriseBlueEnd: sunriseBlueEndNorm
+      ? combineDateTime(date, sunriseBlueEndNorm)
+      : null,
+    sunsetBlueStart: sunsetBlueStartNorm
+      ? combineDateTime(date, sunsetBlueStartNorm)
+      : null,
+    sunsetBlueEnd: sunsetBlueEndNorm
+      ? combineDateTime(date, sunsetBlueEndNorm)
+      : null,
 
-    sunriseGoldenStart: sunriseGoldenStartNorm ? combineDateTime(date, sunriseGoldenStartNorm) : null,
-    sunriseGoldenEnd: sunriseGoldenEndNorm ? combineDateTime(date, sunriseGoldenEndNorm) : null,
-    sunsetGoldenStart: sunsetGoldenStartNorm ? combineDateTime(date, sunsetGoldenStartNorm) : null,
-    sunsetGoldenEnd: sunsetGoldenEndNorm ? combineDateTime(date, sunsetGoldenEndNorm) : null,
+    sunriseGoldenStart: sunriseGoldenStartNorm
+      ? combineDateTime(date, sunriseGoldenStartNorm)
+      : null,
+    sunriseGoldenEnd: sunriseGoldenEndNorm
+      ? combineDateTime(date, sunriseGoldenEndNorm)
+      : null,
+    sunsetGoldenStart: sunsetGoldenStartNorm
+      ? combineDateTime(date, sunsetGoldenStartNorm)
+      : null,
+    sunsetGoldenEnd: sunsetGoldenEndNorm
+      ? combineDateTime(date, sunsetGoldenEndNorm)
+      : null,
 
     moonrise: moonriseNorm ? combineDateTime(date, moonriseNorm) : null,
     moonset: moonsetNorm ? combineDateTime(date, moonsetNorm) : null,
@@ -227,7 +275,7 @@ export async function buildAstronomySnapshot(
   await logit(domain, {
     level: "info",
     message: "Astronomy snapshot built successfully",
-    data: snapshot
+    data: snapshot,
   });
 
   return snapshot;

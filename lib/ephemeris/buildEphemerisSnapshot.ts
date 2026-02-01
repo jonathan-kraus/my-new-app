@@ -144,8 +144,8 @@ export function buildEphemerisSnapshot(
     solar,
     lunar: {
       date: todayStr,
-      illumination: todayRow.moonPhase, // ← your DB field
-      phaseName: getPhaseName(todayRow.moonPhase), // ← you already have this helper
+      illumination: todayRow.illumination,
+      phaseName: todayRow.phaseName ?? "not known",
       moonrise: find("Moonrise", todayStr),
       moonset: find("Moonset", todayStr),
     },

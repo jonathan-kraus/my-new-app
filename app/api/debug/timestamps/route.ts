@@ -9,7 +9,7 @@ export async function GET() {
         longitude: -75.383,
         timezone: "America/New_York",
       },
-      new Date()
+      new Date(),
     );
 
     return Response.json({ snapshot, error: null });

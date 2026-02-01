@@ -37,8 +37,10 @@ export default async function DashboardAstronomyPage() {
         <h1 className="text-3xl font-semibold tracking-tight">Astronomy</h1>
         <p className="text-white/60 mt-1">
           Solar & lunar events for{" "}
-          {format(DateTime.fromISO(solar!.sunrise.date).toJSDate(), "MMMM d, yyyy")}
-
+          {format(
+            DateTime.fromISO(solar!.sunrise.date).toJSDate(),
+            "MMMM d, yyyy",
+          )}
         </p>
       </div>
 
@@ -55,20 +57,21 @@ export default async function DashboardAstronomyPage() {
           <h2 className="text-lg font-semibold mb-4">Solar</h2>
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
-<span>Sunrise</span>
-<span>{solar.sunrise.timeLocal}</span>
+              <span>Sunrise</span>
+              <span>{solar.sunrise.timeLocal}</span>
             </div>
             <div className="flex justify-between">
-<span>Solar Noon</span>
+              <span>Solar Noon</span>
 
-<span>
-  {DateTime.fromJSDate(solarNoon, { zone: "America/New_York" }).toFormat("h:mm a")}
-</span>
+              <span>
+                {DateTime.fromJSDate(solarNoon, {
+                  zone: "America/New_York",
+                }).toFormat("h:mm a")}
+              </span>
             </div>
             <div className="flex justify-between">
-<span>Sunset</span>
-<span>{solar.sunset.timeLocal}</span>
-
+              <span>Sunset</span>
+              <span>{solar.sunset.timeLocal}</span>
             </div>
           </div>
         </div>
@@ -99,65 +102,108 @@ export default async function DashboardAstronomyPage() {
 
       {/* Full-width timeline */}
       <AstronomyTimeline
-        sunrise={DateTime.fromISO(solar.sunrise.timestamp, { setZone: true }).toJSDate()}
-        sunset={DateTime.fromISO(solar.sunset.timestamp, { setZone: true }).toJSDate()}
-        moonrise={lunar.moonrise ? DateTime.fromISO(lunar.moonrise.timestamp, { setZone: true }).toJSDate() : null}
-        moonset={lunar.moonset ? DateTime.fromISO(lunar.moonset.timestamp, { setZone: true }).toJSDate() : null}
+        sunrise={DateTime.fromISO(solar.sunrise.timestamp, {
+          setZone: true,
+        }).toJSDate()}
+        sunset={DateTime.fromISO(solar.sunset.timestamp, {
+          setZone: true,
+        }).toJSDate()}
+        moonrise={
+          lunar.moonrise
+            ? DateTime.fromISO(lunar.moonrise.timestamp, {
+                setZone: true,
+              }).toJSDate()
+            : null
+        }
+        moonset={
+          lunar.moonset
+            ? DateTime.fromISO(lunar.moonset.timestamp, {
+                setZone: true,
+              }).toJSDate()
+            : null
+        }
         sunriseBlueStart={
           solar.blueHour.sunrise.start
-            ? DateTime.fromISO(solar.blueHour.sunrise.start.timestamp, { setZone: true }).toJSDate()
+            ? DateTime.fromISO(solar.blueHour.sunrise.start.timestamp, {
+                setZone: true,
+              }).toJSDate()
             : null
         }
         sunriseBlueEnd={
           solar.blueHour.sunrise.end
-            ? DateTime.fromISO(solar.blueHour.sunrise.end.timestamp, { setZone: true }).toJSDate()
+            ? DateTime.fromISO(solar.blueHour.sunrise.end.timestamp, {
+                setZone: true,
+              }).toJSDate()
             : null
         }
         sunriseGoldenStart={
           solar.goldenHour.sunrise.start
-            ? DateTime.fromISO(solar.goldenHour.sunrise.start.timestamp, { setZone: true }).toJSDate()
+            ? DateTime.fromISO(solar.goldenHour.sunrise.start.timestamp, {
+                setZone: true,
+              }).toJSDate()
             : null
         }
         sunriseGoldenEnd={
           solar.goldenHour.sunrise.end
-            ? DateTime.fromISO(solar.goldenHour.sunrise.end.timestamp, { setZone: true }).toJSDate()
+            ? DateTime.fromISO(solar.goldenHour.sunrise.end.timestamp, {
+                setZone: true,
+              }).toJSDate()
             : null
         }
         solarNoon={solarNoon}
         sunsetBlueStart={
           solar.blueHour.sunset.start
-            ? DateTime.fromISO(solar.blueHour.sunset.start.timestamp, { setZone: true }).toJSDate()
+            ? DateTime.fromISO(solar.blueHour.sunset.start.timestamp, {
+                setZone: true,
+              }).toJSDate()
             : null
         }
         sunsetBlueEnd={
           solar.blueHour.sunset.end
-            ? DateTime.fromISO(solar.blueHour.sunset.end.timestamp, { setZone: true }).toJSDate()
+            ? DateTime.fromISO(solar.blueHour.sunset.end.timestamp, {
+                setZone: true,
+              }).toJSDate()
             : null
         }
         sunsetGoldenStart={
           solar.goldenHour.sunset.start
-            ? DateTime.fromISO(solar.goldenHour.sunset.start.timestamp, { setZone: true }).toJSDate()
+            ? DateTime.fromISO(solar.goldenHour.sunset.start.timestamp, {
+                setZone: true,
+              }).toJSDate()
             : null
         }
         sunsetGoldenEnd={
           solar.goldenHour.sunset.end
-            ? DateTime.fromISO(solar.goldenHour.sunset.end.timestamp, { setZone: true }).toJSDate()
+            ? DateTime.fromISO(solar.goldenHour.sunset.end.timestamp, {
+                setZone: true,
+              }).toJSDate()
             : null
         }
       />
       <SolarArcBar
-  events={{
-    sunriseStart: DateTime.fromISO(solar.goldenHour.sunrise.start!.timestamp, { setZone: true }).toJSDate(),
-    sunriseEnd: DateTime.fromISO(solar.goldenHour.sunrise.end!.timestamp, { setZone: true }).toJSDate(),
-    solarNoon,
-    sunsetStart: DateTime.fromISO(solar.goldenHour.sunset.start!.timestamp, { setZone: true }).toJSDate(),
-    sunsetEnd: DateTime.fromISO(solar.goldenHour.sunset.end!.timestamp, { setZone: true }).toJSDate(),
-    sunset: DateTime.fromISO(solar.sunset.timestamp, { setZone: true }).toJSDate(),
-  }}
-  currentTime={new Date()}
-/>
-
-
+        events={{
+          sunriseStart: DateTime.fromISO(
+            solar.goldenHour.sunrise.start!.timestamp,
+            { setZone: true },
+          ).toJSDate(),
+          sunriseEnd: DateTime.fromISO(
+            solar.goldenHour.sunrise.end!.timestamp,
+            { setZone: true },
+          ).toJSDate(),
+          solarNoon,
+          sunsetStart: DateTime.fromISO(
+            solar.goldenHour.sunset.start!.timestamp,
+            { setZone: true },
+          ).toJSDate(),
+          sunsetEnd: DateTime.fromISO(solar.goldenHour.sunset.end!.timestamp, {
+            setZone: true,
+          }).toJSDate(),
+          sunset: DateTime.fromISO(solar.sunset.timestamp, {
+            setZone: true,
+          }).toJSDate(),
+        }}
+        currentTime={new Date()}
+      />
     </div>
   );
 }
