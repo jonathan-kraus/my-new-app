@@ -4,8 +4,10 @@ import { logFromClient } from "@/app/actions/log";
 import { useEffect, useMemo, useState } from "react";
 import { isSchedulerRunning } from "@/lib/log/scheduler";
 import { peek } from '@/lib/log/queue';
-import { Payload } from '../../lib/generated/prisma/internal/prismaNamespace';
-console.log( "LOG HEALTH", { scheduler: isSchedulerRunning(), queueSize: peek().length, } );
+
+import { getLastFlushAt } from '@/lib/log/flush';
+import { get } from "node:http";
+console.log( "LOG HEALTH", { scheduler: isSchedulerRunning(), queueSize: peek().length, lastFlushAt: getLastFlushAt() } );
 type LogRecord = {
   id: string;
   level: string;
@@ -92,7 +94,7 @@ export default function LogsPage() {
             message: "in log page",
             Payload: { scheduler: isSchedulerRunning(),
               queueSize: peek().length,
-              pid: process.pid,
+              lastFlushAt: getLastFlushAt(),
             name: "log page info"},
           });
           console.log("logFromClient result:", result);
