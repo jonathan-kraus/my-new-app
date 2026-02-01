@@ -3,6 +3,16 @@ export const dynamic = "force-dynamic";
 import { getVercelDeployments } from "./vercel";
 import { getRecentActivity } from "./github";
 import { getEphemerisSnapshot } from "@/lib/ephemeris/getEphemerisSnapshot";
+// lib/log/dashboardLog.ts
+import { logit } from "@/lib/log/logit";
+
+export function logDashboardAstronomy(snapshot: unknown) {
+  logit("dashboard", {
+    level: "info",
+    message: "Dashboard astronomy snapshot",
+    data: snapshot,
+  });
+}
 
 export interface VercelDeploymentsResponse {
   deployments: any[];
@@ -30,7 +40,7 @@ export async function getDashboardData(): Promise<DashboardData> {
   const astronomy = astronomyResult.ok
     ? (astronomyResult.data.snapshot ?? null)
     : null;
-
+if (astronomy) { logDashboardAstronomy(astronomy); }
   return {
     vercel,
     github,
