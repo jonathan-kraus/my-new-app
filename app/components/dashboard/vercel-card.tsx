@@ -25,7 +25,9 @@ export default function VercelCard({ deployments }: Props) {
 
   return (
     <div className="p-4 bg-zinc-900 rounded">
-      <h2 className="font-semibold mb-3">Recent Vercel Deployments</h2>
+      <h2 className="text-lg font-semibold mb-3">
+        Recent Vercel Deployments
+      </h2>
 
       <ul className="space-y-3">
         {deployments.slice(0, 5).map((d) => {
@@ -37,26 +39,30 @@ export default function VercelCard({ deployments }: Props) {
               key={d.uid}
               className="p-3 rounded-lg bg-white/5 border border-white/10"
             >
-              <div className="flex justify-between items-start">
-                <div>
-                  <div className="font-semibold text-white">
+              <div className="flex justify-between items-start gap-4">
+                <div className="space-y-1">
+                  <div className="text-base font-semibold text-white">
                     {d.meta.githubCommitMessage ?? "No commit message"}
                   </div>
 
-                  <div className="text-xs text-gray-400 mt-1">SHA: {sha}</div>
+                  <div className="text-sm font-medium text-gray-300 tracking-wide">
+                    SHA: <span className="font-mono">{sha}</span>
+                  </div>
 
-                  <div className="text-xs text-gray-400 mt-1">
+                  <div className="text-sm font-medium text-gray-300">
                     State:{" "}
                     <span
                       className={
-                        d.state === "READY" ? "text-green-400" : "text-red-400"
+                        d.state === "READY"
+                          ? "text-green-400"
+                          : "text-red-400"
                       }
                     >
                       {d.state}
                     </span>
                   </div>
 
-                  <div className="text-xs text-gray-400 mt-1">
+                  <div className="text-sm text-gray-400">
                     Created: {created}
                   </div>
                 </div>
@@ -64,7 +70,7 @@ export default function VercelCard({ deployments }: Props) {
                 <a
                   href={`https://${d.url}`}
                   target="_blank"
-                  className="text-blue-400 text-xs underline"
+                  className="text-sm font-medium text-blue-400 underline"
                 >
                   View
                 </a>
