@@ -90,7 +90,7 @@ export default function LogsPage() {
           const result = await logFromClient("jonathan", {
             level: "info",
             message: "in log page",
-            Payload: { scheduler: isSchedulerRunning(), queueSize: peek().length, }, 
+            Payload: { scheduler: isSchedulerRunning(), queueSize: peek().length, pid: process.pid},
           });
           console.log("logFromClient result:", result);
         } catch (err) {
