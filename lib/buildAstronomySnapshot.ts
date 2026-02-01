@@ -221,7 +221,7 @@ export async function buildAstronomySnapshot(
   const sunsetDate = parseOffsetDateString(sunsetStr);
 
   const solarNoonDate = computeSolarNoon(sunriseDate, sunsetDate);
-  const solarNoon = format(solarNoonDate, "HH:mm:ssXXX");
+  const solarNoon = format(solarNoonDate, "yyyy-MM-dd'T'HH:mm:ssXXX");
 
   //
   // --- FINAL SNAPSHOT ---
