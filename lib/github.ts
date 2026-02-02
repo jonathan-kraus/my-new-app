@@ -45,45 +45,45 @@ export function getRepoInfo(payload: any): {
 export async function getCommitMessage(
   payload: any,
 ): Promise<string | undefined> {
-  // First try to get message directly from payload
-  let message =
-    payload.head_commit?.message || // push events
-    payload.pull_request?.title || // PR title
-    payload.deployment?.description; // deployment description
+  // 1. Try direct fields first
+  const direct =
+    payload.head_commit?.message ||
+    payload.pull_request?.title ||
+    payload.deployment?.description;
 
-  // Fallback: fetch commit message from GitHub API
-  if (!message) {
-    const sha = getSha(payload);
-    const repoInfo = getRepoInfo(payload);
+  if (direct) return direct;
 
-    // If SHA is missing or all zeros (branch delete / special events), skip API call
-    if (!repoInfo || isZeroSha(sha)) {
-      return message; // still undefined, and that's fine
-    }
+  // 2. Extract repo + SHA
+  const sha = getSha(payload);
+  const repoInfo = getRepoInfo(payload);
 
-    try {
-      const res = await fetch(
-        `https://api.github.com/repos/${repoInfo.owner}/${repoInfo.repo}/commits/${sha}`,
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-            Accept: "application/vnd.github+json",
-          },
-        },
-      );
-
-      if (res.ok) {
-        const data = await res.json();
-        message = data?.commit?.message;
-      } else {
-        console.error(`GitHub API error: ${res.status} ${await res.text()}`);
-      }
-    } catch (err) {
-      console.error("Commit fetch failed:", err);
-    }
+  if (!repoInfo || isZeroSha(sha)) {
+    return undefined;
   }
 
-  return message;
+  // 3. Best-effort GitHub API fetch
+  try {
+    const res = await fetch(
+      `https://api.github.com/repos/${repoInfo.owner}/${repoInfo.repo}/commits/${sha}`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+          Accept: "application/vnd.github+json",
+        },
+      },
+    );
+
+    if (!res.ok) {
+      // Soft failure — no console.error spam
+      return undefined;
+    }
+
+    const data = await res.json();
+    return data?.commit?.message;
+  } catch {
+    // Soft failure — no noise
+    return undefined;
+  }
 }
 
 /**
