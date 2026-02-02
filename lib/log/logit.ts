@@ -7,7 +7,6 @@ const ERROR_COOLDOWN_MS = 5000;
 const NEON_MAX_JSON = 200_000;
 let lastErrorTime = 0;
 
-
 startScheduler();
 
 function safeForNeon(obj: any) {

@@ -1,24 +1,20 @@
 // app/components/SideNav.tsx
 "use server";
 
-import { getAstronomySnapshot } from "@/lib/astronomy/getAstronomySnapshot";
-import { buildAstronomyEvents } from "@/lib/ephemeris/buildAstronomyEvents";
+import { buildEphemerisSnapshot } from "@/lib/ephemeris/buildEphemerisSnapshot";
 import SideNavClient from "./SideNavClient";
 
 export default async function SideNav() {
-  const { today, tomorrow } = await getAstronomySnapshot("KOP");
+  const snapshot = await buildEphemerisSnapshot("KOP");
 
-  if (!today || !tomorrow) {
+  if (!snapshot?.nextEvent) {
     return <SideNavClient nextEventLabel="—" nextEventTime={null} />;
   }
 
-  const events = buildAstronomyEvents(today, tomorrow);
-  const next = events[0];
-
   return (
     <SideNavClient
-      nextEventLabel={next?.label ?? "—"}
-      nextEventTime={next?.time ?? null}
+      nextEventLabel={snapshot.nextEvent.name}
+      nextEventTime={snapshot.nextEvent.dateObj}
     />
   );
 }

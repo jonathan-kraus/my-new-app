@@ -25,9 +25,7 @@ export default function VercelCard({ deployments }: Props) {
 
   return (
     <div className="p-4 bg-zinc-900 rounded">
-      <h2 className="text-lg font-semibold mb-3">
-        Recent Vercel Deployments
-      </h2>
+      <h2 className="text-lg font-semibold mb-3">Recent Vercel Deployments</h2>
 
       <ul className="space-y-3">
         {deployments.slice(0, 5).map((d) => {
@@ -53,9 +51,7 @@ export default function VercelCard({ deployments }: Props) {
                     State:{" "}
                     <span
                       className={
-                        d.state === "READY"
-                          ? "text-green-400"
-                          : "text-red-400"
+                        d.state === "READY" ? "text-green-400" : "text-red-400"
                       }
                     >
                       {d.state}

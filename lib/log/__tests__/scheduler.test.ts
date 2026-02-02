@@ -1,4 +1,8 @@
-import { startScheduler, stopScheduler, isSchedulerRunning } from "@/lib/log/scheduler";
+import {
+  startScheduler,
+  stopScheduler,
+  isSchedulerRunning,
+} from "@/lib/log/scheduler";
 import * as queue from "@/lib/log/queue";
 import * as flushMod from "@/lib/log/flush";
 import { vi } from "vitest";

@@ -40,7 +40,9 @@ export async function getDashboardData(): Promise<DashboardData> {
   const astronomy = astronomyResult.ok
     ? (astronomyResult.data.snapshot ?? null)
     : null;
-if (astronomy) { logDashboardAstronomy(astronomy); }
+  if (astronomy) {
+    logDashboardAstronomy(astronomy);
+  }
   return {
     vercel,
     github,

@@ -17,4 +17,3 @@ export async function flush(batch: any[]) {
     console.error("Axiom flush failed", err);
   }
 }
-
