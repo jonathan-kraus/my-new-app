@@ -7,6 +7,7 @@ import {
 import { enqueue, clear } from "@/lib/log/queue";
 import { mockAxiom } from "@/tests/log/__mocks__/axiom";
 import { useFakeTimers } from "../../../tests/log/__mocks__/testUtils";
+import { fakeEvent } from "@/lib/log/test-utils";
 
 vi.mock("@/lib/log/axiomClient", () => ({
   axiomClient: mockAxiom,
@@ -30,7 +31,7 @@ describe("scheduler", () => {
   });
 
   test("scheduler flushes periodically", async () => {
-    enqueue({ msg: "hello" });
+    enqueue(fakeEvent({ msg: "hello" }));
 
     startScheduler();
     await advance(5000);

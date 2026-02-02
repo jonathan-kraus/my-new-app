@@ -6,12 +6,14 @@ import {
 import * as queue from "@/lib/log/queue";
 import * as flushMod from "@/lib/log/flush";
 import { vi } from "vitest";
-
+import { fakeEvent } from "@/lib/log/test-utils";
 vi.useFakeTimers();
 
 describe("scheduler", () => {
   beforeEach(() => {
-    vi.spyOn(queue, "dequeueBatch").mockReturnValue([{ test: true }]);
+    vi.spyOn(queue, "dequeueBatch").mockReturnValue([
+      fakeEvent({ test: true }),
+    ]);
     vi.spyOn(flushMod, "flush").mockResolvedValue(undefined);
   });
 
