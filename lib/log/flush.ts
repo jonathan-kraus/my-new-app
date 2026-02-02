@@ -25,6 +25,7 @@ console.log('Pending logs:', log.logEvents, log.logEvents.length,batch.length); 
 
   try {
     await client.ingest(process.env.AXIOM_DATASET!, batch);
+    console.log('Ingest over:', log.logEvents, log.logEvents.length,batch.length);
     lastFlushAt = Date.now();
   } catch (err) {
     console.error("Axiom flush failed", err);
