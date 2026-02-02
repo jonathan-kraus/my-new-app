@@ -136,7 +136,7 @@ export async function writeGithubDebugEvent(payload: any) {
   try {
     await db.githubDebug.create({
       data: {
-        //raw: JSON.parse(JSON.stringify(payload)),
+        raw: JSON.parse(JSON.stringify(payload.action)), // change to action
         status: payload.workflow_run?.status ?? null,
         action: payload.action ?? null,
         commit: payload.workflow_run?.head_commit?.message ?? null,
