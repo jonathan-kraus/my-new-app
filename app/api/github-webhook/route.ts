@@ -129,23 +129,9 @@ function normalizeGitHubEvent(event: string | null, payload: any) {
       };
   }
 }
-import { db } from "@/lib/db";
 
 export async function writeGithubDebugEvent(payload: any) {
   console.log("Writing GitHub debug event", payload);
-  try {
-    await db.githubDebug.create({
-      data: {
-        raw: JSON.parse(JSON.stringify(payload.action)), // change to action
-        status: payload.workflow_run?.status ?? null,
-        action: payload.action ?? null,
-        commit: payload.workflow_run?.head_commit?.message ?? null,
-        sha: payload.workflow_run?.head_sha ?? null,
-      },
-    });
-  } catch (err) {
-    console.error("Failed to write GitHub debug event", err);
-  }
 }
 
 // -----------------------------
