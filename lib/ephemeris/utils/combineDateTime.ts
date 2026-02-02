@@ -2,7 +2,7 @@
 
 import { logit } from "@/lib/log/logit";
 
-const domain = "ephemeris.combineDateTime";
+const domain = "ephemeris";
 
 /**
  * Combines a JS Date (representing the *day*) with a time string

@@ -36,7 +36,7 @@ export async function buildAstronomySnapshot(
   },
   targetDate: Date,
 ) {
-  const domain = "ephemeris.snapshot.build";
+  const domain = "ephemeris";
 
   await logit(domain, {
     level: "info",
@@ -54,7 +54,7 @@ export async function buildAstronomySnapshot(
 
   await logit(domain, {
     level: "debug",
-    message: "Normalized target date",
+    message: "bas - Normalized target date",
     data: { normalizedDate: date.toString() },
   });
 
@@ -69,7 +69,7 @@ export async function buildAstronomySnapshot(
 
     await logit(domain, {
       level: "info",
-      message: "Fetching IPGeolocation astronomy data",
+      message: "bas - Fetching IPGeolocation astronomy data",
       data: { url: url.toString() },
     });
 
@@ -77,7 +77,7 @@ export async function buildAstronomySnapshot(
     if (!res.ok) {
       await logit(domain, {
         level: "error",
-        message: "IPGeolocation returned non-OK status",
+        message: "bas - IPGeolocation returned non-OK status",
         data: { status: res.status },
       });
       throw new Error(`IPGeolocation error: ${res.status}`);
@@ -105,7 +105,7 @@ export async function buildAstronomySnapshot(
   if (!offset && location.timezone) {
     await logit(domain, {
       level: "warn",
-      message: "Astronomy API missing timezone; converting IANA zone to offset",
+      message: "bas - Astronomy API missing timezone; converting IANA zone to offset",
       data: { iana: location.timezone },
     });
 
@@ -115,7 +115,7 @@ export async function buildAstronomySnapshot(
     } catch (err) {
       await logit(domain, {
         level: "error",
-        message: "Failed to convert IANA timezone to offset",
+        message: "bas - Failed to convert IANA timezone to offset",
         data: { iana: location.timezone, error: String(err) },
       });
     }
@@ -125,7 +125,7 @@ export async function buildAstronomySnapshot(
   if (!offset || !/[+-]\d{2}:\d{2}/.test(offset)) {
     await logit(domain, {
       level: "error",
-      message: "Astronomy API missing timezone field",
+      message: "bas - Astronomy API missing timezone field",
       data: {
         apiTimezone: astro.timezone,
         locationTimezone: location.timezone,
