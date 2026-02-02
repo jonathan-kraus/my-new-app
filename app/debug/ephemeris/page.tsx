@@ -17,8 +17,7 @@ export default async function DebugEphemerisPage() {
   const today = snapshot.today ?? null;
   const tomorrow = snapshot.tomorrow ?? null;
 
-  const events =
-    today && tomorrow ? buildAstronomyEvents(today, tomorrow) : [];
+  const events = today && tomorrow ? buildAstronomyEvents(today, tomorrow) : [];
 
   return (
     <div className="p-6 space-y-8 text-sm">
@@ -84,7 +83,6 @@ export default async function DebugEphemerisPage() {
               <tr className="bg-gray-100">
                 <th className="border px-2 py-1">Time</th>
                 <th className="border px-2 py-1">Label</th>
-
               </tr>
             </thead>
             <tbody>
@@ -92,7 +90,6 @@ export default async function DebugEphemerisPage() {
                 <tr key={i}>
                   <td className="border px-2 py-1">{fmt(e.time)}</td>
                   <td className="border px-2 py-1">{e.label}</td>
-
                 </tr>
               ))}
             </tbody>
