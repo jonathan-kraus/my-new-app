@@ -1,19 +1,35 @@
-let queue: any[] = [];
+// lib/log/queue.ts
 
-export function enqueue(event: any) {
+export type QueueEvent = {
+  domain: string;
+  dataj: Record<string, any>;
+};
+
+let queue: QueueEvent[] = [];
+
+// Add an event to the queue and return new length
+export function enqueue(event: QueueEvent): number {
   queue.push(event);
+  return queue.length;
 }
 
-export function dequeueBatch() {
-  const batch = queue;
+// Atomically snapshot and clear the queue
+export function dequeueBatch(): QueueEvent[] {
+  const snapshot = queue;
   queue = [];
-  return batch;
+  return snapshot;
 }
 
-export function peek() {
+// Read-only view of current queue
+export function peek(): QueueEvent[] {
   return [...queue];
 }
 
-export function clear() {
+// Hard reset
+export function clear(): void {
   queue = [];
 }
+
+// Optional test helpers
+export const _getQueue = () => queue;
+export const _clearQueue = () => (queue = []);

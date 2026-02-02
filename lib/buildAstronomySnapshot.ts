@@ -105,7 +105,8 @@ export async function buildAstronomySnapshot(
   if (!offset && location.timezone) {
     await logit(domain, {
       level: "warn",
-      message: "bas - Astronomy API missing timezone; converting IANA zone to offset",
+      message:
+        "bas - Astronomy API missing timezone; converting IANA zone to offset",
       data: { iana: location.timezone },
     });
 
