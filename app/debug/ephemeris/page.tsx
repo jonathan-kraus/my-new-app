@@ -50,7 +50,7 @@ export default async function DebugEphemerisPage() {
       <section>
         <h2 className="font-semibold mb-2">Tomorrow</h2>
         <ul className="space-y-1">
-          <li>Date: {tomorrow?.date ?? "—"}</li>
+          <li>Date: {fmt(tomorrow?.date) ?? "—"}</li>
           <li>Sunrise: {fmt(tomorrow?.sunrise)}</li>
           <li>Solar Noon: {fmt(tomorrow?.solarNoon)}</li>
           <li>Sunset: {fmt(tomorrow?.sunset)}</li>
