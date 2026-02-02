@@ -81,7 +81,6 @@ export async function getCommitMessage(
     const data = await res.json();
     return data?.commit?.message;
   } catch {
-    // Soft failure — no noise
     return undefined;
   }
 }
