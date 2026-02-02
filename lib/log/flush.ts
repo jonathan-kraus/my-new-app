@@ -17,7 +17,7 @@ log.info('message 1');
 log.info('message 2');
 
 // Check if there are pending logs
-console.log('Pending logs:', log.logEvents); // If accessible
+console.log('Pending logs:', log.logEvents, log.logEvents.length,batch.length); // If accessible
 
 
 
