@@ -182,14 +182,14 @@ export default async function DashboardAstronomyPage() {
       />
       <SolarArcBar
         events={{
-          sunriseStart: DateTime.fromISO(
-            solar.goldenHour.sunrise.start!.timestamp,
+          Sunrise: DateTime.fromISO(
+            solar.sunrise.timestamp,
             { setZone: true },
           ).toJSDate(),
-          sunriseEnd: DateTime.fromISO(
-            solar.goldenHour.sunrise.end!.timestamp,
-            { setZone: true },
-          ).toJSDate(),
+          SolarNoon: solarNoon,
+          Sunset: DateTime.fromISO(solar.sunset.timestamp, {
+            setZone: true,
+          })
           solarNoon,
           sunsetStart: DateTime.fromISO(
             solar.goldenHour.sunset.start!.timestamp,
