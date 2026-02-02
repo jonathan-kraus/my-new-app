@@ -1,6 +1,6 @@
 // lib\log\flush.ts
 import { client } from "@/lib/axiom";
-
+  import { Logger } from 'next-axiom';
 let lastFlushAt: number | null = null;
 
 export function getLastFlushAt() {
@@ -8,6 +8,19 @@ export function getLastFlushAt() {
 }
 
 export async function flush(batch: any[]) {
+
+
+const log = new Logger();
+
+// Add logs to batch
+log.info('message 1');
+log.info('message 2');
+
+// Check if there are pending logs
+console.log('Pending logs:', log.logEvents); // If accessible
+
+
+
   if (!batch.length) return;
 
   try {
