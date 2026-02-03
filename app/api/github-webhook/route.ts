@@ -134,7 +134,7 @@ function normalizeGitHubEvent(event: string | null, payload: any) {
 
 export async function writeGithubDebugEvent(payload: any) {
   console.log("Writing GitHub debug event", payload);
-  if (gw === 0)
+  if (gw === 0) {
     await logit(
       "github",
       {
@@ -144,10 +144,9 @@ export async function writeGithubDebugEvent(payload: any) {
       },
       { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
     );
-  }
     return;
-
-  try {
+  }
+    try {
     await axiom.ingest("github-debug-events", {
       ...payload,
       ingestedAt: new Date().toISOString(),
@@ -164,6 +163,7 @@ export async function writeGithubDebugEvent(payload: any) {
       { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
     );
   }
+}
 
 // -----------------------------
 // Signature verification
