@@ -1,14 +1,19 @@
 // app/api/activity/github/route.ts
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { Axiom } from "@axiomhq/js";
 import { logit } from "@/lib/log/logit";
 import { enrichContext } from "@/lib/log/context";
+export async function GET(req: NextRequest) {
+  const H1 = Date.now();
 
+  console.log("DB TEST", H1, req);
+  return NextResponse.json({ ok: true, time: H1 });
+}
 const axiom = new Axiom({
   token: process.env.AXIOM_TOKEN!,
 });
 
-export async function GET(req: Request) {
+export async function PUT(req: Request) {
   const ctx = await enrichContext(req as any);
 
   try {
