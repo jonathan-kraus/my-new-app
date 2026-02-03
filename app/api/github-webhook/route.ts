@@ -7,6 +7,8 @@ import { Axiom } from "@axiomhq/js";
 import { getSha } from "@/lib/github/parse";
 import { getCommitMessage } from "@/lib/github";
 import { withLogging } from "@/lib/logging/withLogging";
+import { getConfig } from "@/lib/runtime/config";
+const gw = Number(await getConfig("github_webhook", "0"));
 const axiom = new Axiom({
   token: process.env.AXIOM_TOKEN!,
 });
@@ -132,7 +134,36 @@ function normalizeGitHubEvent(event: string | null, payload: any) {
 
 export async function writeGithubDebugEvent(payload: any) {
   console.log("Writing GitHub debug event", payload);
-}
+  if (gw === 0)
+    await logit(
+      "github",
+      {
+        level: "warn",
+        message: " GitHub webhook disabled, not writing debug event to Axiom",
+        payload: { gw: String(gw) },
+      },
+      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+    );
+  }
+    return;
+
+  try {
+    await axiom.ingest("github-debug-events", {
+      ...payload,
+      ingestedAt: new Date().toISOString(),
+    });
+  } catch (err) {
+    console.error("Failed to write GitHub debug event to Axiom", err);
+    await logit(
+      "github",
+      {
+        level: "error",
+        message: "Failed to write GitHub debug event to Axiom",
+        payload: { error: String(err) },
+      },
+      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+    );
+  }
 
 // -----------------------------
 // Signature verification
