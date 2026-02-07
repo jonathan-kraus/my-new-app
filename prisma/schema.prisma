@@ -56,6 +56,19 @@ model AstronomySnapshot {
   location           Location @relation(fields: [locationId], references: [id])
   @@unique([locationId, date])
 }
+model DbTableStats {
+  id          String   @id @default(cuid())
+  tableName   String
+  rowEstimate Int
+  totalBytes  BigInt
+  indexBytes  BigInt
+  tableBytes  BigInt
+  toastBytes  BigInt
+  capturedAt  DateTime @default(now())
+
+  @@index([tableName, capturedAt])
+}
+
 model EphemerisDebug {
   id         String   @id @default(cuid())
   locationId String?

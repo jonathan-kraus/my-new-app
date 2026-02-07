@@ -100,6 +100,37 @@ export async function GET(req: NextRequest) {
     },
     { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
   );
+// db-stats
+
+
+  const stats = await db.$queryRawUnsafe(`
+    SELECT
+      c.relname AS table_name,
+      pg_total_relation_size(c.oid) AS total_bytes,
+      pg_relation_size(c.oid) AS table_bytes,
+      pg_indexes_size(c.oid) AS index_bytes,
+      pg_total_relation_size(c.oid) - pg_relation_size(c.oid) - pg_indexes_size(c.oid) AS toast_bytes,
+      c.reltuples AS estimated_rows
+    FROM pg_class c
+    JOIN pg_namespace n ON n.oid = c.relnamespace
+    WHERE c.relkind = 'r'
+      AND n.nspname = 'public';
+  `);
+
+  for (const row of stats as any[]) {
+    await db.dbTableStats.create({
+      data: {
+        tableName: row.table_name,
+        rowEstimate: Math.round(row.estimated_rows),
+        totalBytes: BigInt(row.total_bytes),
+        tableBytes: BigInt(row.table_bytes),
+        indexBytes: BigInt(row.index_bytes),
+        toastBytes: BigInt(row.toast_bytes),
+      },
+    });
+  }
+
+
 
   return NextResponse.json({ ok: true, durationMs });
 }
