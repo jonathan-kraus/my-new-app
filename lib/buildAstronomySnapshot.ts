@@ -265,9 +265,9 @@ export async function buildAstronomySnapshot(
     moonrise: moonriseNorm ? combineDateTime(date, moonriseNorm) : null,
     moonset: moonsetNorm ? combineDateTime(date, moonsetNorm) : null,
 
-illumination: astro.moon_illumination_percentage
-  ? Math.abs(parseFloat(astro.moon_illumination_percentage))
-  : null,
+    illumination: astro.moon_illumination_percentage
+      ? Math.abs(parseFloat(astro.moon_illumination_percentage))
+      : null,
 
     phaseName: astro.moon_phase ?? null,
     moonPhase: astro.moon_angle ?? null,

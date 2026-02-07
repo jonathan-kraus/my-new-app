@@ -2,7 +2,6 @@ import { NextResponse, NextRequest } from "next/server";
 import { logit } from "@/lib/log/logit";
 import { enrichContext } from "@/lib/log/context";
 
-
 export async function GET(req: NextRequest) {
   const start = Date.now();
   const ctx = await enrichContext(req);

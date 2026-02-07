@@ -132,16 +132,16 @@ export const GET = withLogging(async (req: Request) => {
       `https://api.tomorrow.io/v4/weather/realtime?location=${location.latitude},${location.longitude}&units=imperial&apikey=${API_KEY}`,
     );
 
-await logit("weather", {
-  level: "info",
-  message: "Realtime weather fetch attempted",
-  payload: {
-    file: "/api/weather",
-    status: res.status,
-    ok: res.ok,
-    url: res.url
-  },
-});
+    await logit("weather", {
+      level: "info",
+      message: "Realtime weather fetch attempted",
+      payload: {
+        file: "/api/weather",
+        status: res.status,
+        ok: res.ok,
+        url: res.url,
+      },
+    });
 
     if (!res.ok) {
       await logit("weather", {

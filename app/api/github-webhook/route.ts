@@ -146,7 +146,7 @@ export async function writeGithubDebugEvent(payload: any) {
     );
     return;
   }
-    try {
+  try {
     await axiom.ingest("github-debug-events", {
       ...payload,
       ingestedAt: new Date().toISOString(),

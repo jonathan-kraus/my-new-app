@@ -100,8 +100,7 @@ export async function GET(req: NextRequest) {
     },
     { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
   );
-// db-stats
-
+  // db-stats
 
   const stats = await db.$queryRawUnsafe(`
     SELECT
@@ -129,8 +128,6 @@ export async function GET(req: NextRequest) {
       },
     });
   }
-
-
 
   return NextResponse.json({ ok: true, durationMs });
 }
