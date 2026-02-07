@@ -5,6 +5,7 @@ import { logit } from "@/lib/log/logit";
 import { enrichContext } from "@/lib/log/context";
 import { addDays } from "date-fns";
 import { buildAstronomySnapshot } from "@/lib/buildAstronomySnapshot";
+import { runDbTableStats } from "@/lib/cron/runDbTableStats";
 
 export const runtime = "nodejs";
 
@@ -21,12 +22,25 @@ export async function GET(req: NextRequest) {
     "ephemeris",
     {
       level: "info",
-      message: "astronomy.cron.started",
+      message: "astronomy.cron.started DB-tables first",
       payload: { route: "cron", rebuild: true },
     },
     { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
   );
-
+  await runDbTableStats({
+    requestId: ctx.requestId,
+    route: ctx.page,
+    userId: ctx.userId,
+  });
+  await logit(
+    "DbTable",
+    {
+      level: "info",
+      message: "astronomy.cron.dbtables.completed",
+      payload: { Db: "Db", Table: "Table" },
+    },
+    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+  );
   const locations = await db.location.findMany();
 
   for (const location of locations) {

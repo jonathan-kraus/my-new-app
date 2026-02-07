@@ -1,12 +1,4 @@
-/*
- * @FilePath     : \my-new-app\app\components\dashboard\db-tables\page.tsx
- * @Author       : Jonathan
- * @Date         : 2026-02-07 01:58:10
- * @Description  :
- * @LastEditors  : Jonathan
- * @LastEditTime : 2026-02-07 01:58:17
- */
-// app/dashboard/db-tables/page.tsx
+// app\dashboard\db-tables\page.tsx
 import { DbGrowthChart } from "@/components/db/DbGrowthChart";
 import { DbDeltaBadge } from "@/components/db/DbDeltaBadge";
 
