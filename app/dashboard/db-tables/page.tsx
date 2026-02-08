@@ -11,7 +11,7 @@ type Row = {
 };
 
 export default async function Page() {
-  const baseUrl = getServerBaseUrl();
+  const baseUrl = await getServerBaseUrl();
 
   const res = await fetch(`${baseUrl}/api/db-stats/history`, {
     cache: "no-store",
