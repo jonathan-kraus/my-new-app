@@ -53,7 +53,7 @@ export default async function Page() {
               {/* Table name + delta badge */}
               <div className="flex items-center justify-between mb-2">
                 <h2 className="font-semibold">{tableName}</h2>
-                {latest && <DbDeltaBadge deltaBytes={latest.deltaBytes} />}
+                {latest && <DbDeltaBadge delta={latest.deltaBytes} />}
               </div>
 
               {/* Growth chart */}
