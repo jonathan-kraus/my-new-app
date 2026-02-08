@@ -1,9 +1,15 @@
 // components/db/DbDeltaBadge.tsx
-export function DbDeltaBadge({ delta }: { delta: number }) {
+export function DbDeltaBadge({ delta }: { delta: number | null }) {
+if (delta == null) {
+  return (
+  <span className="text-sm text-gray-400"> — </span>
+);
+}
   const positive = delta > 0;
   const negative = delta < 0;
 
   return (
+
     <span
       className={`px-2 py-1 rounded text-xs font-medium ${
         positive
