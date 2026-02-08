@@ -1,12 +1,3 @@
-/*
- * @FilePath     : \my-new-app\app\components\db\DbGrowthChart.tsx
- * @Author       : Jonathan
- * @Date         : 2026-02-07 01:54:34
- * @Description  :
- * @LastEditors  : Jonathan
- * @LastEditTime : 2026-02-07 02:00:12
- */
-// components/db/DbGrowthChart.tsx
 "use client";
 
 import {
@@ -19,37 +10,80 @@ import {
 } from "recharts";
 import { format } from "date-fns";
 
-export function DbGrowthChart({ data }: { data: any[] }) {
-  const chartData = data.map((d) => ({
-    date: format(new Date(d.capturedAt), "MMM d"),
-    totalBytes: Number(d.totalBytes),
-    deltaBytes: d.deltaBytes,
-  }));
+type Point = {
+  date: string;
+  value: number;
+};
+
+function toDateSafe(value: unknown): Date | null {
+  const d =
+    value instanceof Date
+      ? value
+      : typeof value === "number"
+      ? new Date(value)
+      : typeof value === "string"
+      ? new Date(value)
+      : null;
+
+  return d && !Number.isNaN(d.getTime()) ? d : null;
+}
+
+export function DbGrowthChart({ data }: { data: Point[] }) {
+  const safeData = data
+    .map((d) => ({
+      value: d.value,
+      dateObj: toDateSafe(d.date),
+    }))
+    .filter((d) => d.dateObj && Number.isFinite(d.value))
+    .sort(
+      (a, b) =>
+        a.dateObj!.getTime() - b.dateObj!.getTime(),
+    );
+
+  if (safeData.length < 2) {
+    return (
+      <div className="text-sm text-gray-400">
+        Not enough data yet
+      </div>
+    );
+  }
 
   return (
-    <div className="rounded-lg border bg-card p-4 shadow-sm">
-      <h2 className="text-lg font-semibold mb-2">Table Growth Over Time</h2>
-
-      <ResponsiveContainer width="100%" height={260}>
-        <LineChart data={chartData}>
-          <XAxis dataKey="date" />
-          <YAxis tickFormatter={(v) => `${(v / 1024 / 1024).toFixed(1)} MB`} />
-          <Tooltip
-            formatter={(value: number | undefined) => {
-              if (typeof value !== "number") return "0 MB";
-              return `${(value / 1024 / 1024).toFixed(2)} MB`;
-            }}
-          />
-
-          <Line
-            type="monotone"
-            dataKey="totalBytes"
-            stroke="#4f46e5"
-            strokeWidth={2}
-            dot={false}
-          />
-        </LineChart>
-      </ResponsiveContainer>
-    </div>
+    <ResponsiveContainer width="100%" height={160}>
+      <LineChart data={safeData}>
+        <XAxis
+          dataKey="dateObj"
+          tickFormatter={(v) => {
+            const d = toDateSafe(v);
+            return d ? format(d, "MMM d") : "";
+          }}
+          stroke="#888"
+          fontSize={12}
+        />
+        <YAxis
+          tickFormatter={(v) =>
+            `${Math.round(v / 1024 / 1024)} MB`
+          }
+          stroke="#888"
+          fontSize={12}
+        />
+        <Tooltip
+          labelFormatter={(v) => {
+            const d = toDateSafe(v);
+            return d ? format(d, "PPP") : "";
+          }}
+          formatter={(v: number) =>
+            `${(v / 1024 / 1024).toFixed(1)} MB`
+          }
+        />
+        <Line
+          type="monotone"
+          dataKey="value"
+          stroke="#3b82f6"
+          strokeWidth={2}
+          dot={false}
+        />
+      </LineChart>
+    </ResponsiveContainer>
   );
 }
