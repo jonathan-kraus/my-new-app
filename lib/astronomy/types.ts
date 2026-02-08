@@ -10,7 +10,14 @@ export interface LunarDay {
   moonset: string | null;
   nextMoonrise: string | null;
 }
-
+export const excludeTables = [
+  "UserRole",
+  "User",
+  "Session",
+  "verification",
+  "VerificationToken",
+  "pg_stat_statements",
+];
 export interface NormalizedAstronomySnapshot {
   sunriseDate: Date | null;
   sunsetDate: Date | null;
