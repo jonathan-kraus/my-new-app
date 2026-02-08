@@ -1,6 +1,7 @@
 // app/dashboard/db-tables/page.tsx
 import { DbGrowthChart } from "@/components/db/DbGrowthChart";
 import { DbDeltaBadge } from "@/components/db/DbDeltaBadge";
+import { getServerBaseUrl } from "@/lib/serverBaseUrl";
 
 type Row = {
   tableName: string;
@@ -10,7 +11,9 @@ type Row = {
 };
 
 export default async function Page() {
-  const res = await fetch("/api/db-stats/history", {
+  const baseUrl = getServerBaseUrl();
+
+  const res = await fetch(`${baseUrl}/api/db-stats/history`, {
     cache: "no-store",
   });
 
@@ -41,10 +44,7 @@ export default async function Page() {
         const latest = sorted.at(-1);
 
         return (
-          <div
-            key={tableName}
-            className="rounded-lg border p-4 space-y-3"
-          >
+          <div key={tableName} className="rounded-lg border p-4 space-y-3">
             <div className="flex items-center justify-between">
               <h2 className="font-semibold">{tableName}</h2>
               <DbDeltaBadge delta={latest?.deltaBytes ?? null} />
