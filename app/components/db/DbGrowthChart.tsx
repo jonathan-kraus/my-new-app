@@ -1,94 +1,87 @@
-"use client";
+// app/dashboard/db-tables/page.tsx
+import { DbGrowthChart } from "@/components/db/DbGrowthChart";
+import { DbDeltaBadge } from "@/components/db/DbDeltaBadge";
+import { getServerBaseUrl } from "@/lib/serverBaseUrl";
 
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
-import { format } from "date-fns";
-import type { ReactNode } from "react";
-
-type Point = {
-  date: string;
-  value: number;
+type Row = {
+  tableName: string;
+  snapshotDate: string;
+  totalBytes: string;
+  deltaBytes: number | null;
 };
 
-function toDateSafe(value: unknown): Date | null {
-  const d =
-    value instanceof Date
-      ? value
-      : typeof value === "number"
-      ? new Date(value)
-      : typeof value === "string"
-      ? new Date(value)
-      : null;
+export default async function Page() {
+  const baseUrl = await getServerBaseUrl();
 
-  return d && !Number.isNaN(d.getTime()) ? d : null;
-}
+  const res = await fetch(`${baseUrl}/api/db-stats/history`, {
+    cache: "no-store",
+  });
 
-export function DbGrowthChart({ data }: { data: Point[] }) {
-  const safeData = data
-    .map((d) => ({
-      value: d.value,
-      dateObj: toDateSafe(d.date),
-    }))
-    .filter((d) => d.dateObj && Number.isFinite(d.value))
-    .sort(
-      (a, b) =>
-        a.dateObj!.getTime() - b.dateObj!.getTime(),
-    );
-
-  if (safeData.length < 2) {
-    return (
-      <div className="text-sm text-gray-400">
-        Not enough data yet
-      </div>
-    );
+  if (!res.ok) {
+    throw new Error("Failed to load db stats");
   }
 
+  const rows: Row[] = await res.json();
+
+  // ✅ Tables to exclude from display
+  const excludeTables = [
+    "UserRole",
+    "User",
+    "Session",
+    "verification",
+    "VerificationToken",
+    "pg_stat_statements",
+  ];
+
+  // ✅ Filter out unwanted tables
+  const filteredRows = rows.filter(
+    (row) => !excludeTables.includes(row.tableName)
+  );
+
+  // ✅ Group rows by table name
+  const byTable = filteredRows.reduce<Record<string, Row[]>>((acc, row) => {
+    acc[row.tableName] ??= [];
+    acc[row.tableName].push(row);
+    return acc;
+  }, {});
+
   return (
-    <ResponsiveContainer width="100%" height={160}>
-      <LineChart data={safeData}>
-        <XAxis
-          dataKey="dateObj"
-          tickFormatter={(v: number | undefined) => {
-            const d = toDateSafe(v);
-            return d ? format(d, "MMM d") : "";
-          }}
-          stroke="#888"
-          fontSize={12}
-        />
-        <YAxis
-          tickFormatter={(v: number | undefined) =>
-            typeof v === "number"
-              ? `${Math.round(v / 1024 / 1024)} MB`
-              : ""
-          }
-          stroke="#888"
-          fontSize={12}
-        />
-        <Tooltip
-          labelFormatter={(label: ReactNode) => {
-            const d = toDateSafe(label);
-            return d ? format(d, "PPP") : "";
-          }}
-          formatter={(v: number | undefined) =>
-            typeof v === "number"
-              ? `${(v / 1024 / 1024).toFixed(1)} MB`
-              : ""
-          }
-        />
-        <Line
-          type="monotone"
-          dataKey="value"
-          stroke="#3b82f6"
-          strokeWidth={2}
-          dot={false}
-        />
-      </LineChart>
-    </ResponsiveContainer>
+    <div className="space-y-8">
+      <h1 className="text-2xl font-bold">Database Table Growth</h1>
+
+      {/* Responsive grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {Object.entries(byTable).map(([tableName, history]) => {
+          const sorted = history.sort(
+            (a, b) =>
+              new Date(a.snapshotDate).getTime() -
+              new Date(b.snapshotDate).getTime()
+          );
+
+          const latest = sorted.at(-1);
+
+          return (
+            <div
+              key={tableName}
+              className="p-4 border rounded-lg shadow-sm bg-white hover:shadow-md transition"
+            >
+              {/* Table name + delta badge */}
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="font-semibold">{tableName}</h2>
+                {latest && <DbDeltaBadge delta={latest.deltaBytes} />}
+              </div>
+
+              {/* Growth chart */}
+              <DbGrowthChart
+                data={sorted.map((r) => ({
+                  date: r.snapshotDate,
+                  value: Number(r.totalBytes),
+                }))}
+              />
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 }
