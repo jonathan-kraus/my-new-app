@@ -12,7 +12,7 @@ export async function runDbTableStats(ctx: {
   userId?: string;
 }) {
   const start = Date.now();
-const snapshotDate = atLocalMidnight(new Date());
+  const snapshotDate = atLocalMidnight(new Date());
 
   await logit(
     "db",
@@ -42,30 +42,30 @@ const snapshotDate = atLocalMidnight(new Date());
   let tablesProcessed = 0;
 
   for (const row of stats as any[]) {
-await db.dbTableStats.upsert({
-  where: {
-    tableName_snapshotDate: {
-      tableName: row.table_name,
-      snapshotDate,
-    },
-  },
-  update: {
-    rowEstimate: Math.round(row.estimated_rows),
-    totalBytes: BigInt(row.total_bytes),
-    tableBytes: BigInt(row.table_bytes),
-    indexBytes: BigInt(row.index_bytes),
-    toastBytes: BigInt(row.toast_bytes),
-  },
-  create: {
-    tableName: row.table_name,
-    snapshotDate,
-    rowEstimate: Math.round(row.estimated_rows),
-    totalBytes: BigInt(row.total_bytes),
-    tableBytes: BigInt(row.table_bytes),
-    indexBytes: BigInt(row.index_bytes),
-    toastBytes: BigInt(row.toast_bytes),
-  },
-});
+    await db.dbTableStats.upsert({
+      where: {
+        tableName_snapshotDate: {
+          tableName: row.table_name,
+          snapshotDate,
+        },
+      },
+      update: {
+        rowEstimate: Math.round(row.estimated_rows),
+        totalBytes: BigInt(row.total_bytes),
+        tableBytes: BigInt(row.table_bytes),
+        indexBytes: BigInt(row.index_bytes),
+        toastBytes: BigInt(row.toast_bytes),
+      },
+      create: {
+        tableName: row.table_name,
+        snapshotDate,
+        rowEstimate: Math.round(row.estimated_rows),
+        totalBytes: BigInt(row.total_bytes),
+        tableBytes: BigInt(row.table_bytes),
+        indexBytes: BigInt(row.index_bytes),
+        toastBytes: BigInt(row.toast_bytes),
+      },
+    });
 
     tablesProcessed++;
   }

@@ -4,7 +4,7 @@
  * @Date         : 2026-02-07 01:52:50
  * @Description  :
  * @LastEditors  : Jonathan
- * @LastEditTime : 2026-02-07 01:52:57
+ * @LastEditTime : 2026-02-07 21:09:15
  */
 // app/api/db-stats/history/route.ts
 import { NextResponse } from "next/server";
@@ -20,7 +20,7 @@ export async function GET(req: Request) {
 
   const rows = await db.dbTableStats.findMany({
     where,
-    orderBy: { capturedAt: "asc" },
+    orderBy: { snapshotDate: "asc" },
   });
 
   // Compute deltas (today vs yesterday)

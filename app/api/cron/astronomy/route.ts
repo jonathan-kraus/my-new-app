@@ -114,6 +114,6 @@ export async function GET(req: NextRequest) {
     },
     { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
   );
-  
+
   return NextResponse.json({ ok: true, durationMs });
 }
