@@ -23,7 +23,7 @@ export default async function Page() {
 
   const rows: Row[] = await res.json();
 
-  // ✅ Tables to exclude from display
+  // ✅ Tables to exclude
   const excludeTables = [
     "UserRole",
     "User",
@@ -66,8 +66,10 @@ export default async function Page() {
               className="p-4 border rounded-lg shadow-sm bg-white hover:shadow-md transition"
             >
               {/* Table name + delta badge */}
-              <div className="flex items-center justify-between mb-2">
-                <h2 className="font-semibold">{tableName}</h2>
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-lg font-semibold text-gray-800 truncate">
+                  {tableName}
+                </h2>
                 {latest && <DbDeltaBadge delta={latest.deltaBytes} />}
               </div>
 
