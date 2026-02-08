@@ -57,16 +57,19 @@ model AstronomySnapshot {
   @@unique([locationId, date])
 }
 model DbTableStats {
-  id          String   @id @default(cuid())
-  tableName   String
-  rowEstimate Int
-  totalBytes  BigInt
-  indexBytes  BigInt
-  tableBytes  BigInt
-  toastBytes  BigInt
-  capturedAt  DateTime @default(now())
+  id           String   @id @default(cuid())
+  tableName    String
+  snapshotDate DateTime // normalized to local midnight
+  rowEstimate  Int
+  totalBytes   BigInt
+  tableBytes   BigInt
+  indexBytes   BigInt
+  toastBytes   BigInt
+  createdAt    DateTime @default(now())
 
-  @@index([tableName, capturedAt])
+  @@index([tableName, snapshotDate])
+  @@unique([tableName, snapshotDate])
+
 }
 
 model EphemerisDebug {
