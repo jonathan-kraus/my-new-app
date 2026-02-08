@@ -35,7 +35,7 @@ export default async function Page() {
 
   // ✅ Filter out unwanted tables
   const filteredRows = rows.filter(
-    (row) => !excludeTables.includes(row.tableName)
+    (row) => !excludeTables.includes(row.tableName),
   );
 
   // ✅ Group rows by table name
@@ -55,7 +55,7 @@ export default async function Page() {
           const sorted = history.sort(
             (a, b) =>
               new Date(a.snapshotDate).getTime() -
-              new Date(b.snapshotDate).getTime()
+              new Date(b.snapshotDate).getTime(),
           );
 
           const latest = sorted.at(-1);

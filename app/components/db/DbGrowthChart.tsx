@@ -21,10 +21,10 @@ function toDateSafe(value: unknown): Date | null {
     value instanceof Date
       ? value
       : typeof value === "number"
-      ? new Date(value)
-      : typeof value === "string"
-      ? new Date(value)
-      : null;
+        ? new Date(value)
+        : typeof value === "string"
+          ? new Date(value)
+          : null;
 
   return d && !Number.isNaN(d.getTime()) ? d : null;
 }
@@ -36,17 +36,10 @@ export function DbGrowthChart({ data }: { data: Point[] }) {
       dateObj: toDateSafe(d.date),
     }))
     .filter((d) => d.dateObj && Number.isFinite(d.value))
-    .sort(
-      (a, b) =>
-        a.dateObj!.getTime() - b.dateObj!.getTime(),
-    );
+    .sort((a, b) => a.dateObj!.getTime() - b.dateObj!.getTime());
 
   if (safeData.length < 2) {
-    return (
-      <div className="text-sm text-gray-400">
-        Not enough data yet
-      </div>
-    );
+    return <div className="text-sm text-gray-400">Not enough data yet</div>;
   }
 
   return (
@@ -63,9 +56,7 @@ export function DbGrowthChart({ data }: { data: Point[] }) {
         />
         <YAxis
           tickFormatter={(v: number | undefined) =>
-            typeof v === "number"
-              ? `${Math.round(v / 1024 / 1024)} MB`
-              : ""
+            typeof v === "number" ? `${Math.round(v / 1024 / 1024)} MB` : ""
           }
           stroke="#888"
           fontSize={12}
@@ -76,9 +67,7 @@ export function DbGrowthChart({ data }: { data: Point[] }) {
             return d ? format(d, "PPP") : "";
           }}
           formatter={(v: number | undefined) =>
-            typeof v === "number"
-              ? `${(v / 1024 / 1024).toFixed(1)} MB`
-              : ""
+            typeof v === "number" ? `${(v / 1024 / 1024).toFixed(1)} MB` : ""
           }
         />
         <Line
