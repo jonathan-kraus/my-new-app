@@ -23,7 +23,7 @@ export default async function Page() {
 
   const rows: Row[] = await res.json();
 
-  // Group rows by table
+  // Group rows by table name
   const byTable = rows.reduce<Record<string, Row[]>>((acc, row) => {
     acc[row.tableName] ??= [];
     acc[row.tableName].push(row);
@@ -34,31 +34,39 @@ export default async function Page() {
     <div className="space-y-8">
       <h1 className="text-2xl font-bold">Database Table Growth</h1>
 
-      {Object.entries(byTable).map(([tableName, history]) => {
-        const sorted = history.sort(
-          (a, b) =>
-            new Date(a.snapshotDate).getTime() -
-            new Date(b.snapshotDate).getTime(),
-        );
+      {/* Responsive grid: 1 col mobile, 2 cols small, 3 cols medium, 4 cols large */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {Object.entries(byTable).map(([tableName, history]) => {
+          const sorted = history.sort(
+            (a, b) =>
+              new Date(a.snapshotDate).getTime() -
+              new Date(b.snapshotDate).getTime()
+          );
 
-        const latest = sorted.at(-1);
+          const latest = sorted.at(-1);
 
-        return (
-          <div key={tableName} className="rounded-lg border p-4 space-y-3">
-            <div className="flex items-center justify-between">
-              <h2 className="font-semibold">{tableName}</h2>
-              <DbDeltaBadge delta={latest?.deltaBytes ?? null} />
+          return (
+            <div
+              key={tableName}
+              className="p-4 border rounded-lg shadow-sm bg-white hover:shadow-md transition"
+            >
+              {/* Table name + delta badge */}
+              <div className="flex items-center justify-between mb-2">
+                <h2 className="font-semibold">{tableName}</h2>
+                {latest && <DbDeltaBadge deltaBytes={latest.deltaBytes} />}
+              </div>
+
+              {/* Growth chart */}
+              <DbGrowthChart
+                data={sorted.map((r) => ({
+                  date: r.snapshotDate,
+                  value: Number(r.totalBytes),
+                }))}
+              />
             </div>
-
-            <DbGrowthChart
-              data={sorted.map((r) => ({
-                date: r.snapshotDate,
-                value: Number(r.totalBytes),
-              }))}
-            />
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   );
 }
