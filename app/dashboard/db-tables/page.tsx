@@ -23,8 +23,23 @@ export default async function Page() {
 
   const rows: Row[] = await res.json();
 
-  // Group rows by table name
-  const byTable = rows.reduce<Record<string, Row[]>>((acc, row) => {
+  // ✅ Tables to exclude
+  const excludeTables = [
+    "UserRole",
+    "User",
+    "Session",
+    "verification",
+    "VerificationToken",
+    "pg_stat_statements",
+  ];
+
+  // ✅ Filter out unwanted tables
+  const filteredRows = rows.filter(
+    (row) => !excludeTables.includes(row.tableName)
+  );
+
+  // ✅ Group rows by table name
+  const byTable = filteredRows.reduce<Record<string, Row[]>>((acc, row) => {
     acc[row.tableName] ??= [];
     acc[row.tableName].push(row);
     return acc;
@@ -34,7 +49,7 @@ export default async function Page() {
     <div className="space-y-8">
       <h1 className="text-2xl font-bold">Database Table Growth</h1>
 
-      {/* Responsive grid: 1 col mobile, 2 cols small, 3 cols medium, 4 cols large */}
+      {/* Responsive grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {Object.entries(byTable).map(([tableName, history]) => {
           const sorted = history.sort(
@@ -51,8 +66,10 @@ export default async function Page() {
               className="p-4 border rounded-lg shadow-sm bg-white hover:shadow-md transition"
             >
               {/* Table name + delta badge */}
-              <div className="flex items-center justify-between mb-2">
-                <h2 className="font-semibold">{tableName}</h2>
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-lg font-semibold text-gray-800 truncate">
+                  {tableName}
+                </h2>
                 {latest && <DbDeltaBadge delta={latest.deltaBytes} />}
               </div>
 
