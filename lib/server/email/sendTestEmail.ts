@@ -5,7 +5,7 @@ import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
 import { buildTestEmail } from "@/lib/buildTestEmail";
 import { logit } from "@/lib/log/logit";
 
-export async function sendTestEmail(to: string, msg1?: string) {
+export async function sendTestEmail(message: string, subject: string) {
   // --- 1. Read flag ---------------------------------------------------------
   const enabled = await getConfig("email_enabled", "1");
 
@@ -13,12 +13,14 @@ export async function sendTestEmail(to: string, msg1?: string) {
     "email",
     {
       level: "info",
-      message: "Checked email_enabled msg1: " + msg1,
+      message: "Checked email_enabled message: " + message,
     },
     {
       payload: {
         enabled_raw: enabled,
         enabled_string: String(enabled),
+        message,
+        subject,
       },
     },
   );
@@ -36,21 +38,34 @@ export async function sendTestEmail(to: string, msg1?: string) {
   const lastSentRaw = await getConfig("email.last_sent_at", "");
 
   // --- 2. Build email -------------------------------------------------------
-  const testEmail = buildTestEmail();
+  const baseEmail = buildTestEmail();
+
+const finalSubject =
+  subject ?? baseEmail.subject;
+
+const finalText =
+  message ?? baseEmail.text;
+
+const finalHtml =
+  message
+    ? `<pre style="font-family: system-ui">${message}</pre>`
+    : baseEmail.html;
+
 
   const mailerSend = new MailerSend({
     apiKey: process.env.MAILERSEND_API_KEY!,
   });
 
   const sentFrom = new Sender("jonathan@www.kraus.my.id", "Weather Bot");
-  const recipients = [new Recipient(to)];
+  const recipients = [new Recipient("jonathankraus2026@outlook.com")];
 
-  const emailParams = new EmailParams()
-    .setFrom(sentFrom)
-    .setTo(recipients)
-    .setSubject(testEmail.subject)
-    .setHtml(testEmail.html)
-    .setText(testEmail.text);
+const emailParams = new EmailParams()
+  .setFrom(sentFrom)
+  .setTo(recipients)
+  .setSubject(finalSubject)
+  .setHtml(finalHtml)
+  .setText(finalText);
+
 
   // --- 3. Throttle ----------------------------------------------------------
 
@@ -122,8 +137,8 @@ export async function sendTestEmail(to: string, msg1?: string) {
       },
       {
         payload: {
-          to,
-          subject: testEmail.subject,
+          subject: finalSubject,
+          message_preview: message?.slice(0, 80),
         },
       },
     );

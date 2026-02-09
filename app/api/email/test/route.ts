@@ -5,9 +5,9 @@ import { NextResponse } from "next/server";
 
 export const POST = withLogging(async () => {
   const test_msg1 = "This is a test email sent from the Next.js API route.";
+  const test_subject = "Test Email Subject";
   const result = await sendTestEmail(
-    "jonathankraus2026@outlook.com",
-    test_msg1,
+    test_msg1, test_subject
   );
 
   await logit("jonathan", {
