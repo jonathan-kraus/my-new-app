@@ -4,22 +4,18 @@ import { logit } from "@/lib/log/logit";
 import { NextResponse } from "next/server";
 
 export const POST = withLogging(async () => {
-  const result = await sendTestEmail("jonathankraus2026@outlook.com", "test_msg1");
-
-
-  await logit(
-    "jonathan",
-    {
-      level: "info",
-      message: `Sent test email to ${result.to} with message "${test_msg1}" and subject "${result.subject}"`,
-
-      payload: { result: result,
-        b: "b",
-       },
-    },
+  const test_msg1 = "This is a test email sent from the Next.js API route.";
+  const result = await sendTestEmail(
+    "jonathankraus2026@outlook.com",
+    test_msg1,
   );
 
+  await logit("jonathan", {
+    level: "info",
+    message: `Sent test email  with message "${test_msg1}". Result: ${result}`,
 
+    payload: { result: result, b: "b" },
+  });
 
   return NextResponse.json(result);
 });

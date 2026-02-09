@@ -70,7 +70,7 @@ export async function runDbTableStats(ctx: {
 
     tablesProcessed++;
   }
-const count = await refreshLogRowEstimateForToday();
+  const count = await refreshLogRowEstimateForToday();
   await logit(
     "DbTables",
     {
