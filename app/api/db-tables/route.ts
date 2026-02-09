@@ -3,6 +3,13 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
 export const runtime = "nodejs";
+function sanitizeBigInt(obj: any) {
+  return JSON.parse(
+    JSON.stringify(obj, (_, v) =>
+      typeof v === "bigint" ? Number(v) : v
+    )
+  );
+}
 
 export async function GET() {
   const rows = await db.$queryRawUnsafe(`
@@ -20,5 +27,5 @@ export async function GET() {
     ORDER BY pg_total_relation_size(c.oid) DESC;
   `);
 
-  return NextResponse.json(rows);
+return NextResponse.json(sanitizeBigInt(rows));
 }
