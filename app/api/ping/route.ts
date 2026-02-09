@@ -4,7 +4,7 @@ import { enrichContext } from "@/lib/log/context";
 import { getTableStats } from "@/db/table-stats";
 
 export async function someServerLogic() {
-  const ctx = await enrichContext(new NextRequest("/api/ping"));
+  const ctx = await enrichContext(new NextRequest("https://www.kraus.my.id/ping"));
   const stats = await getTableStats();
 
   await logit(
