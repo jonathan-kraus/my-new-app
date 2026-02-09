@@ -6,10 +6,20 @@ import { NextResponse } from "next/server";
 export const POST = withLogging(async () => {
   const result = await sendTestEmail("jonathankraus2026@outlook.com", "test_msg1");
 
-  // Log the result for observability
-  logit("email_test_result", {
-    result,
-  });
+
+  await logit(
+    "jonathan",
+    {
+      level: "info",
+      message: `Sent test email to ${result.to} with message "${test_msg1}" and subject "${result.subject}"`,
+
+      payload: { result: result,
+        b: "b",
+       },
+    },
+  );
+
+
 
   return NextResponse.json(result);
 });
