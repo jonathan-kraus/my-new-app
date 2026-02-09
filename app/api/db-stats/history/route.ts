@@ -4,43 +4,45 @@
  * @Date         : 2026-02-07 01:52:50
  * @Description  :
  * @LastEditors  : Jonathan
- * @LastEditTime : 2026-02-07 21:09:15
+ * @LastEditTime : 2026-02-08 19:50:03
  */
 // app/api/db-stats/history/route.ts
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
 export const runtime = "nodejs";
-
+function sanitizeBigInt(obj: any) {
+	return JSON.parse(JSON.stringify(obj, (_, v) => (typeof v === "bigint" ? Number(v) : v)));
+}
 export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const table = searchParams.get("table"); // optional
+	const { searchParams } = new URL(req.url);
+	const table = searchParams.get("table"); // optional
 
-  const where = table ? { tableName: table } : {};
+	const where = table ? { tableName: table } : {};
 
-  const rows = await db.dbTableStats.findMany({
-    where,
-    orderBy: { snapshotDate: "asc" },
-  });
+	const rows = await db.dbTableStats.findMany({
+		where,
+		orderBy: { snapshotDate: "asc" },
+	});
 
-  // Compute deltas (today vs yesterday)
-  const withDeltas = rows.map((row, i) => {
-    const prev = rows[i - 1];
+	// Compute deltas (today vs yesterday)
+	const withDeltas = rows.map((row, i) => {
+		const prev = rows[i - 1];
 
-    if (!prev) {
-      return {
-        ...row,
-        deltaRows: 0,
-        deltaBytes: 0,
-      };
-    }
+		if (!prev) {
+			return {
+				...row,
+				deltaRows: 0,
+				deltaBytes: 0,
+			};
+		}
 
-    return {
-      ...row,
-      deltaRows: row.rowEstimate - prev.rowEstimate,
-      deltaBytes: Number(row.totalBytes) - Number(prev.totalBytes),
-    };
-  });
+		return {
+			...row,
+			deltaRows: row.rowEstimate - prev.rowEstimate,
+			deltaBytes: Number(row.totalBytes) - Number(prev.totalBytes),
+		};
+	});
 
-  return NextResponse.json(withDeltas);
+  return NextResponse.json(sanitizeBigInt(withDeltas));
 }
