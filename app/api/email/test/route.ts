@@ -4,7 +4,7 @@ import { logit } from "@/lib/log/logit";
 import { NextResponse } from "next/server";
 
 export const POST = withLogging(async () => {
-  const result = await sendTestEmail("jonathankraus2026@outlook.com");
+  const result = await sendTestEmail("jonathankraus2026@outlook.com", "test_msg1");
 
   // Log the result for observability
   logit("email_test_result", {
