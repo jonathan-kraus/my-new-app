@@ -3,8 +3,8 @@ import { logit } from "@/lib/log/logit";
 import { enrichContext } from "@/lib/log/context";
 import { getTableStats } from "@/db/table-stats";
 
-export async function someServerLogic() {
-  const ctx = await enrichContext(new NextRequest("https://www.kraus.my.id/ping"));
+export async function someServerLogic(req: NextRequest) {
+  const ctx = await enrichContext(req as any);
   const stats = await getTableStats();
 
   await logit(
@@ -52,8 +52,8 @@ export async function someServerLogic() {
   // );
 }
 
-export async function GET() {
-  await someServerLogic();
+export async function GET(req: NextRequest) {
+  await someServerLogic(req);
 
   await logit(
     "jonathan",
