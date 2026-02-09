@@ -1,5 +1,6 @@
 // lib/cron/runDbTableStats.ts
 import { db } from "@/lib/db";
+import { refreshLogRowEstimateForToday } from "@/lib/db/refreshLogRowEstimateForToday";
 import { logit } from "@/lib/log/logit";
 
 function atLocalMidnight(d: Date) {
@@ -69,7 +70,7 @@ export async function runDbTableStats(ctx: {
 
     tablesProcessed++;
   }
-
+const count = await refreshLogRowEstimateForToday();
   await logit(
     "DbTables",
     {
@@ -77,6 +78,7 @@ export async function runDbTableStats(ctx: {
       message: "dbTables.cron.completed",
       payload: {
         tablesProcessed: tablesProcessed,
+        count: count,
         durationMs: Date.now() - start,
       },
     },
