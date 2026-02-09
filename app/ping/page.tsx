@@ -1,10 +1,12 @@
 // app/ping/page.tsx
 
+import { refreshLogRowEstimateForToday } from "@/lib/db/refreshLogRowEstimateForToday";
+
 export default async function AxiomTestPage() {
   const res = await fetch("https://www.kraus.my.id/api/ping", {
     cache: "no-store",
   });
-
+const count = await refreshLogRowEstimateForToday()
   const data = await res.json();
   const rows = data.rows ?? []; // astronomy rows from your API
 
@@ -14,6 +16,7 @@ export default async function AxiomTestPage() {
 
       {/* Raw JSON (debug) */}
       <pre className="bg-black/40 p-4 rounded text-green-300 text-sm overflow-auto">
+      count: {count}
         {JSON.stringify(data, null, 2)}
       </pre>
 
