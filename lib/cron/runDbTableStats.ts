@@ -75,7 +75,7 @@ const count = await refreshLogRowEstimateForToday();
     "DbTables",
     {
       level: "info",
-      message: "dbTables.cron.completed",
+      message: "dbTables.cron.completed -- added refreshLogRowEstimateForToday",
       payload: {
         tablesProcessed: tablesProcessed,
         count: count,
