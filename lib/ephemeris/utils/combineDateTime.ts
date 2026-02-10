@@ -16,11 +16,11 @@ const domain = "ephemeris";
  */
 export function combineDateTime(date: Date, timeString: string): string {
   if (dl == 1) {
-  logit(domain, {
-    level: "debug",
-    message: "combineDateTime called",
-    data: { date: date.toString(), timeString },
-  });
+    logit(domain, {
+      level: "debug",
+      message: "combineDateTime called",
+      data: { date: date.toString(), timeString },
+    });
   }
   // --- VALIDATION: Reject UTC timestamps ---
   if (timeString.endsWith("Z")) {
@@ -61,12 +61,12 @@ export function combineDateTime(date: Date, timeString: string): string {
   const dd = String(date.getDate()).padStart(2, "0");
 
   const final = `${yyyy}-${mm}-${dd}T${timePart}${offset}`;
-if (dl == 1) {
-  logit(domain, {
-    level: "debug",
-    message: "combineDateTime produced final timestamp",
-    data: { final },
-  });
-}
+  if (dl == 1) {
+    logit(domain, {
+      level: "debug",
+      message: "combineDateTime produced final timestamp",
+      data: { final },
+    });
+  }
   return final;
 }
