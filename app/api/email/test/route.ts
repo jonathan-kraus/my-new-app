@@ -6,13 +6,11 @@ import { NextResponse } from "next/server";
 export const POST = withLogging(async () => {
   const test_msg1 = "This is a test email sent from the Next.js API route.";
   const test_subject = "Test Email Subject";
-  const result = await sendTestEmail(
-    test_msg1, test_subject
-  );
+  const result = await sendTestEmail(test_msg1, test_subject);
 
   await logit("jonathan", {
     level: "info",
-    message: `Sent test email  with message "${test_msg1}". Result: ${result}`,
+    message: `Sent test email with message "${test_msg1}". Result: ${JSON.stringify(result, null, 2)}`,
 
     payload: { result: result, b: "b" },
   });

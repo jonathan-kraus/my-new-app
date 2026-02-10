@@ -40,17 +40,13 @@ export async function sendTestEmail(message: string, subject: string) {
   // --- 2. Build email -------------------------------------------------------
   const baseEmail = buildTestEmail();
 
-const finalSubject =
-  subject ?? baseEmail.subject;
+  const finalSubject = subject ?? baseEmail.subject;
 
-const finalText =
-  message ?? baseEmail.text;
+  const finalText = message ?? baseEmail.text;
 
-const finalHtml =
-  message
+  const finalHtml = message
     ? `<pre style="font-family: system-ui">${message}</pre>`
     : baseEmail.html;
-
 
   const mailerSend = new MailerSend({
     apiKey: process.env.MAILERSEND_API_KEY!,
@@ -59,13 +55,12 @@ const finalHtml =
   const sentFrom = new Sender("jonathan@www.kraus.my.id", "Weather Bot");
   const recipients = [new Recipient("jonathankraus2026@outlook.com")];
 
-const emailParams = new EmailParams()
-  .setFrom(sentFrom)
-  .setTo(recipients)
-  .setSubject(finalSubject)
-  .setHtml(finalHtml)
-  .setText(finalText);
-
+  const emailParams = new EmailParams()
+    .setFrom(sentFrom)
+    .setTo(recipients)
+    .setSubject(finalSubject)
+    .setHtml(finalHtml)
+    .setText(finalText);
 
   // --- 3. Throttle ----------------------------------------------------------
 
