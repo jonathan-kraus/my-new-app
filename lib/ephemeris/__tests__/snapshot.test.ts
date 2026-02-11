@@ -39,7 +39,7 @@ describe("getEphemerisSnapshot", () => {
     vi.clearAllMocks();
 
     // Mock findUnique to behave like Prisma
-    (prisma.astronomySnapshot.findUnique as any).mockImplementation(
+    (db.astronomySnapshot.findUnique as any).mockImplementation(
       ({ where }) => {
         const { locationId, dateString } = where.locationId_dateString;
         return (
