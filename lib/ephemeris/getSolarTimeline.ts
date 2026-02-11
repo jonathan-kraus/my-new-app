@@ -7,7 +7,7 @@ export type SolarTimelineEvent = {
 };
 
 export function getSolarTimeline(input: {
-  date: string;
+  dateString: string;
   sunrise: string; // ISO
   sunset: string; // ISO
   goldenHourAM: string | null;

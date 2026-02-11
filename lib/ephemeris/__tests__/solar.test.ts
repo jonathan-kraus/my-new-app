@@ -4,7 +4,7 @@ import { getSolarTimeline } from "../getSolarTimeline";
 describe("getSolarTimeline", () => {
   it("returns a timeline including sunrise and sunset", () => {
     const timeline = getSolarTimeline({
-      date: "2026-01-22",
+      dateString: "2026-01-22",
       sunrise: "2026-01-22T07:17:00Z",
       sunset: "2026-01-22T17:00:00Z",
       goldenHourAM: null,
