@@ -27,7 +27,10 @@ export async function GET(req: NextRequest) {
       { requestId: "rid", route: "cron/refreshLogs", userId: "JK" },
     );
 
-    return NextResponse.json({ ok: true, message: "refreshLogRowEstimateForToday executed" });
+    return NextResponse.json({
+      ok: true,
+      message: "refreshLogRowEstimateForToday executed",
+    });
   } catch (error: any) {
     console.error("Error executing refreshLogs cron:", error);
 

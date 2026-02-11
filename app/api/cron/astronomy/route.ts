@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { logit } from "@/lib/log/logit";
 import { enrichContext } from "@/lib/log/context";
-import { addDays } from "date-fns";
+import { addDays, format } from "date-fns";
 import { buildAstronomySnapshot } from "@/lib/buildAstronomySnapshot";
 import { runDbTableStats } from "@/lib/cron/runDbTableStats";
 
@@ -27,11 +27,13 @@ export async function GET(req: NextRequest) {
     },
     { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
   );
+
   await runDbTableStats({
     requestId: ctx.requestId,
     route: ctx.page,
     userId: ctx.userId,
   });
+
   await logit(
     "DbTable",
     {
@@ -41,6 +43,7 @@ export async function GET(req: NextRequest) {
     },
     { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
   );
+
   const locations = await db.location.findMany();
 
   for (const location of locations) {
@@ -54,11 +57,11 @@ export async function GET(req: NextRequest) {
       { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
     );
 
-    // Always start from local midnight to avoid “tomorrow’s data”
     const base = atLocalMidnight(new Date());
 
     for (let i = 0; i < 7; i++) {
       const targetDate = addDays(base, i);
+      const dateString = format(targetDate, "yyyy-MM-dd");
 
       await logit(
         "ephemeris",
@@ -67,24 +70,31 @@ export async function GET(req: NextRequest) {
           message: "astronomy.cron.day.started",
           payload: {
             locationId: location.id,
-            targetDate: targetDate.toISOString(),
+            targetDate: dateString,
           },
         },
         { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
       );
 
-      // Build the full solar/lunar snapshot (now includes solarNoon, illumination, phaseName)
+      // Build the full solar/lunar snapshot
       const snapshot = await buildAstronomySnapshot(location, targetDate);
+
+      // Inject dateString into the snapshot before writing
+      const row = {
+        ...snapshot,
+        locationId: location.id,
+        dateString,
+      };
 
       await db.astronomySnapshot.upsert({
         where: {
-          locationId_date: {
+          locationId_dateString: {
             locationId: location.id,
-            date: targetDate,
+            dateString,
           },
         },
-        update: snapshot,
-        create: snapshot,
+        update: row,
+        create: row,
       });
 
       await logit(
@@ -94,8 +104,8 @@ export async function GET(req: NextRequest) {
           message: "astronomy.cron.snapshot.saved",
           payload: {
             locationId: location.id,
-            date: targetDate.toISOString().slice(0, 10),
-            snapshot,
+            dateString,
+            snapshot: row,
           },
         },
         { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },

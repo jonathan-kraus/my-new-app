@@ -6,7 +6,10 @@ type CurrentWeatherProps = {
   windspeed: number;
 };
 
-export function CurrentWeather({ temperature, windspeed }: CurrentWeatherProps) {
+export function CurrentWeather({
+  temperature,
+  windspeed,
+}: CurrentWeatherProps) {
   const isWindy = windspeed > 10;
   const isSnowmanMode = temperature < 15;
   const animatedTemp = useCountUp(temperature);

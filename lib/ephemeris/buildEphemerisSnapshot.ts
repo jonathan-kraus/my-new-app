@@ -2,6 +2,8 @@ import type { AstronomySnapshot } from "../generated/prisma/client";
 import type { SolarSnapshot } from "@/lib/ephemeris/types";
 import { EphemerisEvent, EphemerisSnapshot } from "./types";
 import { getPhaseName } from "@/lib/astronomy/getPhaseName";
+import { writeEphemerisDebugEvent } from "@/lib/ephemeris/writeEphemerisDebugEvent";
+
 function buildEvent(
   name: string,
   ts: string | null,
@@ -43,6 +45,7 @@ export function buildEphemerisSnapshot(
     buildEvent("Sunset", tomorrowRow.sunset, "solar", true),
     buildEvent("Moonrise", tomorrowRow.moonrise, "lunar", true),
     buildEvent("Moonset", tomorrowRow.moonset, "lunar", true),
+
     // Today — Blue Hour
     buildEvent("Sunrise Blue Start", todayRow.sunriseBlueStart, "solar", false),
     buildEvent("Sunrise Blue End", todayRow.sunriseBlueEnd, "solar", false),
@@ -99,7 +102,7 @@ export function buildEphemerisSnapshot(
   ]
     .filter((e): e is EphemerisEvent => e !== null)
     .sort((a, b) => a.dateObj.getTime() - b.dateObj.getTime());
-  // NOW define helper functions
+
   function find(name: string, date: string) {
     return events.find((e) => e.name === name && e.date === date)!;
   }
@@ -111,7 +114,9 @@ export function buildEphemerisSnapshot(
     throw new Error("No upcoming astronomy events found.");
   }
 
-  const todayStr = todayRow.date.toISOString().slice(0, 10);
+  // IMPORTANT: you are switching to dateString, so use that
+  const todayStr = todayRow.dateString;
+  // const todayStr = format(now, "yyyy-MM-dd");
 
   const solar: SolarSnapshot = {
     sunrise: find("Sunrise", todayStr),
@@ -140,17 +145,53 @@ export function buildEphemerisSnapshot(
     },
   };
 
-  return {
+  const snapshot: EphemerisSnapshot = {
     solar,
     lunar: {
       date: todayStr,
       illumination: todayRow.illumination,
-      phaseName: todayRow.phaseName ?? "not known",
+      phaseName: todayRow.phaseName ?? getPhaseName(todayRow.illumination),
       moonrise: find("Moonrise", todayStr),
       moonset: find("Moonset", todayStr),
     },
-
     nextEvent,
     fetchedAt: new Date().toISOString(),
   };
+
+  // ⭐ Write debug event (non-blocking)
+  try {
+    writeEphemerisDebugEvent({
+      locationId: todayRow.locationId ?? null,
+      fetchedAt: snapshot.fetchedAt,
+      createdAt: new Date().toISOString(),
+      date: todayStr,
+
+      sunrise: todayRow.sunrise,
+      sunset: todayRow.sunset,
+
+      moonrise: todayRow.moonrise,
+      moonset: todayRow.moonset,
+      moonPhase: todayRow.illumination ?? null,
+
+      sunriseBlueStart: todayRow.sunriseBlueStart,
+      sunriseBlueEnd: todayRow.sunriseBlueEnd,
+      sunriseGoldenStart: todayRow.sunriseGoldenStart,
+      sunriseGoldenEnd: todayRow.sunriseGoldenEnd,
+      sunsetGoldenStart: todayRow.sunsetGoldenStart,
+      sunsetGoldenEnd: todayRow.sunsetGoldenEnd,
+      sunsetBlueStart: todayRow.sunsetBlueStart,
+      sunsetBlueEnd: todayRow.sunsetBlueEnd,
+
+      raw: {
+        todayRow,
+        tomorrowRow,
+        snapshot,
+        events,
+      },
+    });
+  } catch (err) {
+    console.error("Failed to write ephemeris debug event:", err);
+  }
+
+  return snapshot;
 }

@@ -1,43 +1,38 @@
-import { addDays } from "date-fns";
-import { toZonedTime } from "date-fns-tz";
+// lib/astronomy/getAstronomySnapshot.ts
+
 import { db } from "@/lib/db";
-import { normalizeAstronomySnapshot } from "@/lib/astronomy/normalize";
-
-const TZ = "America/New_York";
-
-function easternMidnight(date: Date) {
-  // Convert "now" into Eastern Time
-  const zoned = toZonedTime(date, TZ);
-
-  // Build midnight in Eastern Time
-  const midnightInET = new Date(
-    zoned.getFullYear(),
-    zoned.getMonth(),
-    zoned.getDate(),
-    0, 0, 0, 0
-  );
-
-  // Convert that Eastern-midnight timestamp back to UTC
-  return toZonedTime(midnightInET, "UTC");
-}
+import { format, addDays } from "date-fns";
 
 export async function getAstronomySnapshot(
   locationId: string,
   now = new Date(),
 ) {
-  const todayLocalMidnight = easternMidnight(now);
-  const tomorrowLocalMidnight = easternMidnight(addDays(now, 1));
+  // Compute today/tomorrow dateStrings
+  const todayStr = format(now, "yyyy-MM-dd");
+  const tomorrowStr = format(addDays(now, 1), "yyyy-MM-dd");
 
-  const rawToday = await db.astronomySnapshot.findFirst({
-    where: { locationId, date: todayLocalMidnight },
+  // Fetch today's snapshot
+  const today = await db.astronomySnapshot.findUnique({
+    where: {
+      locationId_dateString: {
+        locationId,
+        dateString: todayStr,
+      },
+    },
   });
 
-  const rawTomorrow = await db.astronomySnapshot.findFirst({
-    where: { locationId, date: tomorrowLocalMidnight },
+  // Fetch tomorrow's snapshot
+  const tomorrow = await db.astronomySnapshot.findUnique({
+    where: {
+      locationId_dateString: {
+        locationId,
+        dateString: tomorrowStr,
+      },
+    },
   });
 
   return {
-    today: normalizeAstronomySnapshot(rawToday),
-    tomorrow: normalizeAstronomySnapshot(rawTomorrow),
+    today,
+    tomorrow,
   };
 }

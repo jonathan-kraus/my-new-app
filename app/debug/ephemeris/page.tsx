@@ -2,8 +2,12 @@
 import { getEphemerisSnapshot } from "@/lib/ephemeris/getEphemerisSnapshot";
 import { buildAstronomyEvents } from "@/lib/ephemeris/buildAstronomyEvents";
 
-function fmt(d: Date | null | undefined) {
-  if (!d) return "—";
+function fmt(value: string | Date | null | undefined) {
+  if (!value) return "—";
+
+  const d = value instanceof Date ? value : new Date(value);
+  if (isNaN(d.getTime())) return "—";
+
   return d.toLocaleString("en-US", { timeZoneName: "short" });
 }
 
@@ -28,7 +32,6 @@ export default async function DebugEphemerisPage() {
         <h2 className="font-semibold mb-2">Snapshot</h2>
         <ul className="space-y-1">
           <li>Location: {snapshot.today?.locationId ?? "—"}</li>
-          <li>Fetched At: {fmt(today?.fetchedAt)}</li>
         </ul>
       </section>
 
@@ -36,7 +39,7 @@ export default async function DebugEphemerisPage() {
       <section>
         <h2 className="font-semibold mb-2">Today</h2>
         <ul className="space-y-1">
-          <li>Date: {fmt(today?.date) ?? "—"}</li>
+          <li>Date: {today?.dateString ?? "—"}</li>
           <li>Sunrise: {fmt(today?.sunrise)}</li>
           <li>Solar Noon: {fmt(today?.solarNoon)}</li>
           <li>Sunset: {fmt(today?.sunset)}</li>
@@ -49,7 +52,7 @@ export default async function DebugEphemerisPage() {
       <section>
         <h2 className="font-semibold mb-2">Tomorrow</h2>
         <ul className="space-y-1">
-          <li>Date: {fmt(tomorrow?.date) ?? "—"}</li>
+          <li>Date: {fmt(tomorrow?.dateString) ?? "—"}</li>
           <li>Sunrise: {fmt(tomorrow?.sunrise)}</li>
           <li>Solar Noon: {fmt(tomorrow?.solarNoon)}</li>
           <li>Sunset: {fmt(tomorrow?.sunset)}</li>

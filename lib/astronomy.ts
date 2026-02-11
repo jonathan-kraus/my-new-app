@@ -2,6 +2,7 @@ import { fetchAstronomyMultiDay } from "./astronomy-provider";
 import { computeGoldenBlueHours } from "@/lib/computeGoldenBlueHours";
 import { db } from "./db";
 import { buildAstronomySnapshot } from "./buildAstronomySnapshot";
+import { format, addDays } from "date-fns";
 
 export async function refreshAstronomySnapshotsForLocation(
   location: { id: string; latitude: number; longitude: number },
@@ -18,17 +19,25 @@ export async function refreshAstronomySnapshotsForLocation(
 
     const results = await Promise.all(
       computedDays.map(async (day) => {
+        // Convert the date to YYYY-MM-DD
+        const dateString = format(day.date, "yyyy-MM-dd");
+
+        // Build the snapshot using the actual Date object
         const snapshot = await buildAstronomySnapshot(location, day.date);
 
         return db.astronomySnapshot.upsert({
           where: {
-            locationId_date: {
+            locationId_dateString: {
               locationId: location.id,
-              date: day.date,
+              dateString,
             },
           },
           update: snapshot,
-          create: snapshot,
+          create: {
+            ...snapshot,
+            locationId: location.id,
+            dateString,
+          },
         });
       }),
     );
@@ -46,17 +55,16 @@ export async function refreshAstronomySnapshotsForLocation(
     };
   }
 }
+
 export async function getLatestLocation() {
   const jloc = "KOP";
-  return {
-    jloc,
-  };
+  return { jloc };
 }
 
 export async function getAstronomyForDashboard(locationId: string) {
   const snapshots = await db.astronomySnapshot.findMany({
     where: { locationId },
-    orderBy: { date: "asc" },
+    orderBy: { dateString: "asc" },
   });
 
   if (snapshots.length === 0) {
@@ -67,18 +75,14 @@ export async function getAstronomyForDashboard(locationId: string) {
     };
   }
 
-  const todayISO = new Date().toISOString().slice(0, 10);
-  const tomorrowISO = new Date(Date.now() + 86400000)
-    .toISOString()
-    .slice(0, 10);
+  const todayStr = format(new Date(), "yyyy-MM-dd");
+  const tomorrowStr = format(addDays(new Date(), 1), "yyyy-MM-dd");
 
   const todaySnapshot =
-    snapshots.find((snap) => snap.date.toISOString().startsWith(todayISO)) ??
-    null;
+    snapshots.find((snap) => snap.dateString === todayStr) ?? null;
 
   const tomorrowSnapshot =
-    snapshots.find((snap) => snap.date.toISOString().startsWith(tomorrowISO)) ??
-    null;
+    snapshots.find((snap) => snap.dateString === tomorrowStr) ?? null;
 
   return {
     todaySnapshot,

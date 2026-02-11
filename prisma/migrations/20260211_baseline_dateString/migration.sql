@@ -1,0 +1,2 @@
+-- Baseline migration for manual DB changes
+-- No SQL needed because the DB already matches schema.prisma
