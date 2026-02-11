@@ -9,7 +9,7 @@ vi.mock("@/lib/db", () => ({
       findUnique: vi.fn(),
     },
     astronomySnapshot: {
-      findFirst: vi.fn(),
+      findUnique: vi.fn(),
       findMany: vi.fn(),
       create: vi.fn(),
     },
