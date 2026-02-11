@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { getEphemerisSnapshot } from "../snapshot";
-import { prisma } from "@/lib/db";
+import { getEphemerisSnapshot } from "@/lib/ephemeris/getEphemerisSnapshot";
+import { db } from "@/lib/db";
 
 vi.mock("@/lib/db", () => ({
-  prisma: {
+  db: {
     astronomySnapshot: {
       findUnique: vi.fn(),
     },
