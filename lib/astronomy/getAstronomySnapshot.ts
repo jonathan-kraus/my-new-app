@@ -1,17 +1,24 @@
 import { addDays } from "date-fns";
-import { zonedTimeToUtc } from "date-fns-tz";
+import { toZonedTime } from "date-fns-tz";
 import { db } from "@/lib/db";
 import { normalizeAstronomySnapshot } from "@/lib/astronomy/normalize";
 
 const TZ = "America/New_York";
 
 function easternMidnight(date: Date) {
-  const year = date.getFullYear();
-  const month = date.getMonth();
-  const day = date.getDate();
+  // Convert "now" into Eastern Time
+  const zoned = toZonedTime(date, TZ);
 
-  // Construct midnight in Eastern Time, then convert to UTC for DB comparison
-  return zonedTimeToUtc(new Date(year, month, day, 0, 0, 0), TZ);
+  // Build midnight in Eastern Time
+  const midnightInET = new Date(
+    zoned.getFullYear(),
+    zoned.getMonth(),
+    zoned.getDate(),
+    0, 0, 0, 0
+  );
+
+  // Convert that Eastern-midnight timestamp back to UTC
+  return toZonedTime(midnightInET, "UTC");
 }
 
 export async function getAstronomySnapshot(
