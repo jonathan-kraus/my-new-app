@@ -48,7 +48,7 @@ const mockedDb = db as unknown as {
 // ---------------------------------------------------------
 const rows = [
   {
-    date: new Date("2026-01-21T05:00:00.000Z"),
+    dateString: "2026-01-21",
     sunrise: "2026-01-21T12:00:00.000Z",
     sunset: "2026-01-21T22:00:00.000Z",
     moonrise: "2026-01-21T23:00:00.000Z",
@@ -57,7 +57,7 @@ const rows = [
     locationId: "KOP",
   },
   {
-    date: new Date("2026-01-22T05:00:00.000Z"),
+    dateString: "2026-01-22",
     sunrise: "2026-01-22T12:00:00.000Z",
     sunset: "2026-01-22T22:00:00.000Z",
     moonrise: "2026-01-22T23:00:00.000Z",
