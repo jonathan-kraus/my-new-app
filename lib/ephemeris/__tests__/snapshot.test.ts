@@ -29,7 +29,7 @@ import { getEphemerisSnapshot } from "../getEphemerisSnapshot";
 // ---------------------------------------------------------
 const mockedDb = db as unknown as {
   astronomySnapshot: {
-    findFirst: ReturnType<typeof vi.fn>;
+    findUnique: ReturnType<typeof vi.fn>;
     findMany: ReturnType<typeof vi.fn>;
     create: ReturnType<typeof vi.fn>;
   };
@@ -70,14 +70,17 @@ const rows = [
 // ---------------------------------------------------------
 // Mock implementations (now TS-safe)
 // ---------------------------------------------------------
-mockedDb.astronomySnapshot.findFirst.mockImplementation(
-  async ({ where }: { where: { date: Date; locationId: string } }) => {
-    const target = new Date(where.date).toISOString().slice(0, 10);
-    return (
-      rows.find((r) => r.date.toISOString().slice(0, 10) === target) ?? null
-    );
-  },
+mockedDb.astronomySnapshot.findUnique.mockImplementation(
+  async ({ where }) => {
+    const { locationId, dateString } = where.locationId_dateString;
+    return rows.find(
+      r =>
+        r.locationId === locationId &&
+        r.dateString === dateString
+    ) ?? null;
+  }
 );
+
 
 mockedDb.astronomySnapshot.findMany.mockResolvedValue(rows);
 
