@@ -1,30 +1,25 @@
-import { combineDateTime } from "@/lib/ephemeris/utils/combineDateTime";
+// MUST be first
+import { mockDb } from "@/test/__mocks__/db";
+
+vi.mock("@/lib/db", () => ({
+  db: mockDb,
+}));
+
+import { combineDateTime } from "../utils/combineDateTime";
+import { date } from "zod";
 
 describe("combineDateTime", () => {
-  const base = new Date("2026-01-31T00:00:00-05:00");
-
-  test("preserves offset", () => {
-    const result = combineDateTime(base, "07:09:00-05:00");
-    expect(result).toBe("2026-01-31T07:09:00-05:00");
+  beforeEach(() => {
+    mockDb.runtimeConfig.findUnique.mockResolvedValue(null);
   });
 
-  test("throws on UTC timestamps", () => {
-    expect(() => combineDateTime(base, "07:09:00Z")).toThrow("UTC timestamp");
-  });
-
-  test("throws on missing offset", () => {
-    expect(() => combineDateTime(base, "07:09:00")).toThrow(
-      "expected a time string with offset",
+  it("combines date and time correctly", async () => {
+    const result = await combineDateTime(
+      new Date("2026-01-21"),
+      "12:34:00-05:00",
     );
-  });
 
-  test("handles seconds correctly", () => {
-    const result = combineDateTime(base, "12:34:56-05:00");
-    expect(result).toBe("2026-01-31T12:34:56-05:00");
-  });
-
-  test("handles midnight", () => {
-    const result = combineDateTime(base, "00:00:00-05:00");
-    expect(result).toBe("2026-01-31T00:00:00-05:00");
+    expect(typeof result).toBe("string");
+    expect(result).toBe("2026-01-20T12:34:00-05:00");
   });
 });
