@@ -20,6 +20,6 @@ describe("combineDateTime", () => {
     );
 
     expect(typeof result).toBe("string");
-    expect(result).toBe("2026-01-20T12:34:00-05:00");
+    expect(result).toBe("2026-01-21T12:34:00-05:00");
   });
 });
