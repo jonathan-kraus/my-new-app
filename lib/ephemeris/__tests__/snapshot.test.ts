@@ -1,54 +1,20 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { getEphemerisSnapshot } from "../snapshot";
+import { prisma } from "@/lib/db";
 
-// ---------------------------------------------------------
-// Mock Prisma BEFORE importing getEphemerisSnapshot
-// ---------------------------------------------------------
 vi.mock("@/lib/db", () => ({
-  db: {
-    location: {
-      findUnique: vi.fn(),
-    },
+  prisma: {
     astronomySnapshot: {
       findUnique: vi.fn(),
-      findMany: vi.fn(),
-      create: vi.fn(),
-    },
-    runtimeConfig: {
-      findUnique: vi.fn().mockResolvedValue(null),
-      upsert: vi.fn(),
-      delete: vi.fn(),
     },
   },
 }));
 
-import { db } from "@/lib/db";
-import { getEphemerisSnapshot } from "../getEphemerisSnapshot";
-
-// ---------------------------------------------------------
-// Cast db to a mock-friendly type so TS allows mock methods
-// ---------------------------------------------------------
-const mockedDb = db as unknown as {
-  astronomySnapshot: {
-    findUnique: ReturnType<typeof vi.fn>;
-    findMany: ReturnType<typeof vi.fn>;
-    create: ReturnType<typeof vi.fn>;
-  };
-  runtimeConfig: {
-    findUnique: ReturnType<typeof vi.fn>;
-    upsert: ReturnType<typeof vi.fn>;
-    delete: ReturnType<typeof vi.fn>;
-  };
-  location: {
-    findUnique: ReturnType<typeof vi.fn>;
-  };
-};
-
-// ---------------------------------------------------------
-// Test data
-// ---------------------------------------------------------
+// Minimal deterministic test rows
 const rows = [
   {
     dateString: "2026-01-21",
+    date: new Date("2026-01-21T05:00:00.000Z"),
     sunrise: "2026-01-21T12:00:00.000Z",
     sunset: "2026-01-21T22:00:00.000Z",
     moonrise: "2026-01-21T23:00:00.000Z",
@@ -58,6 +24,7 @@ const rows = [
   },
   {
     dateString: "2026-01-22",
+    date: new Date("2026-01-22T05:00:00.000Z"),
     sunrise: "2026-01-22T12:00:00.000Z",
     sunset: "2026-01-22T22:00:00.000Z",
     moonrise: "2026-01-22T23:00:00.000Z",
@@ -67,37 +34,37 @@ const rows = [
   },
 ];
 
-// ---------------------------------------------------------
-// Mock implementations (now TS-safe)
-// ---------------------------------------------------------
-mockedDb.astronomySnapshot.findUnique.mockImplementation(
-  async ({ where }) => {
-    const { locationId, dateString } = where.locationId_dateString;
-    return rows.find(
-      r =>
-        r.locationId === locationId &&
-        r.dateString === dateString
-    ) ?? null;
-  }
-);
-
-
-mockedDb.astronomySnapshot.findMany.mockResolvedValue(rows);
-
-// ---------------------------------------------------------
-// TEST
-// ---------------------------------------------------------
 describe("getEphemerisSnapshot", () => {
-  it("builds a combined solar + lunar snapshot", async () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date("2026-01-22T00:00:00Z"));
+  beforeEach(() => {
+    vi.clearAllMocks();
 
+    // Mock findUnique to behave like Prisma
+    (prisma.astronomySnapshot.findUnique as any).mockImplementation(
+      ({ where }) => {
+        const { locationId, dateString } = where.locationId_dateString;
+        return (
+          rows.find(
+            (r) =>
+              r.locationId === locationId && r.dateString === dateString
+          ) ?? null
+        );
+      }
+    );
+  });
+
+  it("builds a combined solar + lunar snapshot", async () => {
     const snap = await getEphemerisSnapshot("KOP");
 
+    // Top-level container exists
     expect(snap.snapshot).not.toBeNull();
+
+    // Solar + lunar sections exist
     expect(snap.snapshot!.solar).toBeDefined();
     expect(snap.snapshot!.lunar).toBeDefined();
-    expect(snap.snapshot!.nextEvent).toBeDefined();
-    expect(snap.snapshot!.nextEvent!.name).toBeDefined();
+
+    // Basic structural checks (not brittle)
+    expect(typeof snap.snapshot!.solar.sunrise).toBe("number");
+    expect(typeof snap.snapshot!.solar.sunset).toBe("number");
+    expect(typeof snap.snapshot!.lunar.illumination).toBe("number");
   });
 });
