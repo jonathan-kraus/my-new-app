@@ -212,6 +212,8 @@ export async function buildAstronomySnapshot(
   //
   // --- COMBINE DATE + TIME ---
   //
+  const dateString = format(date, "yyyy-MM-dd");
+
   const sunriseStr = combineDateTime(date, sunriseNorm);
   const sunsetStr = combineDateTime(date, sunsetNorm);
 
@@ -228,7 +230,7 @@ export async function buildAstronomySnapshot(
   // --- FINAL SNAPSHOT ---
   //
   const snapshot = {
-    date,
+    dateString,
     locationId: location.id,
     fetchedAt: new Date(),
 
