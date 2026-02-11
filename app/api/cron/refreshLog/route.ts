@@ -1,34 +1,49 @@
-/*
- * @FilePath     : \my-new-app\app\api\cron\callrefreshLog.ts
- * @Author       : Jonathan
- * @Date         : 2026-02-10 18:39:19
- * @Description  :
- * @LastEditors  : Jonathan
- * @LastEditTime : 2026-02-10 18:46:15
- */
-// File: api/non-async-job.js
+import { NextRequest, NextResponse } from "next/server";
 import { refreshLogRowEstimateForToday } from "@/lib/db/refreshLogRowEstimateForToday";
 import { logit } from "@/lib/log/logit";
 
 export const runtime = "nodejs";
-export default function handler(req: Request, res: any) {
-	try {
-		// Synchronous task
-    const req = "cron job trigger";
-		logit(
-			"jonathan",
-			{
-				level: "info",
-				message: " in called refreshLogRowEstimateForToday from cron job",
-				payload: { req: String(req) },
-			},
-			{ requestId: "rid", route: "cron/callrefreshLog", userId: "JK" },
-		);
-		refreshLogRowEstimateForToday();
 
-		res.status(200).json({ message: "Synchronous job executed successfully" });
-	} catch (error) {
-		console.error("Error executing job:", error);
-		res.status(500).json({ message: "Error executing synchronous job", error: "error.message" });
-	}
+export async function GET(req: NextRequest) {
+  try {
+    await logit(
+      "jonathan",
+      {
+        level: "info",
+        message: "cron.refreshLogs.started",
+        payload: { trigger: "manual or scheduled" },
+      },
+      { requestId: "rid", route: "cron/refreshLogs", userId: "JK" },
+    );
+
+    await refreshLogRowEstimateForToday();
+
+    await logit(
+      "jonathan",
+      {
+        level: "info",
+        message: "cron.refreshLogs.completed",
+      },
+      { requestId: "rid", route: "cron/refreshLogs", userId: "JK" },
+    );
+
+    return NextResponse.json({ ok: true, message: "refreshLogRowEstimateForToday executed" });
+  } catch (error: any) {
+    console.error("Error executing refreshLogs cron:", error);
+
+    await logit(
+      "jonathan",
+      {
+        level: "error",
+        message: "cron.refreshLogs.error",
+        payload: { error: String(error?.message || error) },
+      },
+      { requestId: "rid", route: "cron/refreshLogs", userId: "JK" },
+    );
+
+    return NextResponse.json(
+      { ok: false, error: "Error executing refreshLogRowEstimateForToday" },
+      { status: 500 },
+    );
+  }
 }
