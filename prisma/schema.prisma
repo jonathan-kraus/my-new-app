@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Account {
-  id                String  @id
+  id                String  @id @default(cuid())
   userId            String
   type              String
   provider          String
@@ -52,7 +52,7 @@ model AstronomySnapshot {
 }
 
 model DbTableStats {
-  id           String   @id
+  id           String   @id @default(cuid())
   tableName    String
   rowEstimate  Int
   totalBytes   BigInt
@@ -67,7 +67,7 @@ model DbTableStats {
 }
 
 model EphemerisDebug {
-  id                 String   @id
+  id                 String   @id @default(cuid())
   locationId         String?
   fetchedAt          String?
   createdAt          String?
@@ -90,7 +90,7 @@ model EphemerisDebug {
 }
 
 model ForecastSnapshot {
-  id         String   @id
+  id         String   @id @default(cuid())
   locationId String
   fetchedAt  DateTime @default(now())
   payload    Json
@@ -98,7 +98,7 @@ model ForecastSnapshot {
 }
 
 model GithubDebug {
-  id         String   @id
+  id         String   @id @default(cuid())
   raw        Json
   status     String?
   action     String?
@@ -108,7 +108,7 @@ model GithubDebug {
 }
 
 model Location {
-  id               String             @id
+  id               String             @id @default(cuid())
   key              String             @unique
   name             String
   latitude         Float
@@ -116,7 +116,7 @@ model Location {
   timezone         String
   isDefault        Boolean            @default(false)
   createdAt        DateTime           @default(now())
-  updatedAt        DateTime
+  updatedAt        DateTime           @updatedAt
   AstronomySnapshot AstronomySnapshot[]
   ForecastSnapshot ForecastSnapshot[]
   WeatherSnapshot  WeatherSnapshot[]
@@ -156,13 +156,13 @@ model Log {
 }
 
 model Note {
-  id          String    @id
+  id          String    @id @default(cuid())
   userId      String
   userEmail   String
   title       String?
   content     String
   createdAt   DateTime  @default(now())
-  updatedAt   DateTime
+  updatedAt   DateTime  @updatedAt
   followUpAt  DateTime?
   isCompleted Boolean   @default(false)
   isArchived  Boolean   @default(false)
@@ -185,7 +185,7 @@ model RuntimeConfig {
 }
 
 model Session {
-  id           String   @id
+  id           String   @id @default(cuid())
   sessionToken String   @unique
   userId       String
   expires      DateTime
@@ -193,7 +193,7 @@ model Session {
 }
 
 model User {
-  id            String    @id
+  id            String    @id @default(cuid())
   name          String?
   email         String?   @unique
   emailVerified DateTime?
@@ -207,6 +207,17 @@ model UserRole {
   role  String
 }
 
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime
+
+  @@index([identifier])
+  @@map("verification")
+}
 model VerificationToken {
   identifier String
   token      String   @unique
@@ -232,13 +243,4 @@ model WeatherSnapshot {
   @@index([locationId, fetchedAt])
 }
 
-model verification {
-  id         String   @id
-  identifier String
-  value      String
-  expiresAt  DateTime
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime
 
-  @@index([identifier])
-}
