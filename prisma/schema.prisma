@@ -26,7 +26,7 @@ model Account {
 }
 
 model AstronomySnapshot {
-  id                 String   @id
+  id                 String   @id @default(cuid())
   locationId         String
   fetchedAt          DateTime
   sunrise            String
