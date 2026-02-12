@@ -26,9 +26,8 @@ model Account {
 }
 
 model AstronomySnapshot {
+  id                 String   @id
   locationId         String
-  dateString         String   @db.VarChar(10)
-
   fetchedAt          DateTime
   sunrise            String
   sunset             String
@@ -46,12 +45,9 @@ model AstronomySnapshot {
   solarNoon          String?
   illumination       Float?
   phaseName          String?
-
+  dateString         String?  @db.VarChar(10)
   location           Location @relation(fields: [locationId], references: [id])
-
-  @@id([locationId, dateString])
 }
-
 
 model DbTableStats {
   id           String   @id @default(cuid())
