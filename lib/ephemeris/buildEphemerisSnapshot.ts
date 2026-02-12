@@ -119,28 +119,28 @@ export function buildEphemerisSnapshot(
   // const todayStr = format(now, "yyyy-MM-dd");
 
   const solar: SolarSnapshot = {
-    sunrise: find("Sunrise", todayStr),
-    sunset: find("Sunset", todayStr),
+    sunrise: find("Sunrise", todayStr ?? ""),
+    sunset: find("Sunset", todayStr ?? ""),
 
     blueHour: {
       sunrise: {
-        start: find("Sunrise Blue Start", todayStr),
-        end: find("Sunrise Blue End", todayStr),
+        start: find("Sunrise Blue Start", todayStr ?? ""),
+        end: find("Sunrise Blue End", todayStr ?? ""),
       },
       sunset: {
-        start: find("Sunset Blue Start", todayStr),
-        end: find("Sunset Blue End", todayStr),
+        start: find("Sunset Blue Start", todayStr ?? ""),
+        end: find("Sunset Blue End", todayStr ?? ""),
       },
     },
 
     goldenHour: {
       sunrise: {
-        start: find("Sunrise Golden Start", todayStr),
-        end: find("Sunrise Golden End", todayStr),
+        start: find("Sunrise Golden Start", todayStr ?? ""),
+        end: find("Sunrise Golden End", todayStr ?? ""),
       },
       sunset: {
-        start: find("Sunset Golden Start", todayStr),
-        end: find("Sunset Golden End", todayStr),
+        start: find("Sunset Golden Start", todayStr ?? ""),
+        end: find("Sunset Golden End", todayStr ?? ""),
       },
     },
   };
@@ -148,11 +148,11 @@ export function buildEphemerisSnapshot(
   const snapshot: EphemerisSnapshot = {
     solar,
     lunar: {
-      date: todayStr,
+      date: todayStr ?? "",
       illumination: todayRow.illumination,
       phaseName: todayRow.phaseName ?? getPhaseName(todayRow.illumination),
-      moonrise: find("Moonrise", todayStr),
-      moonset: find("Moonset", todayStr),
+      moonrise: find("Moonrise", todayStr ?? ""),
+      moonset: find("Moonset", todayStr ?? ""),
     },
     nextEvent,
     fetchedAt: new Date().toISOString(),
