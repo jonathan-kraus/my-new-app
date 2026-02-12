@@ -1,6 +1,6 @@
 {
   "extends": ["config:recommended"],
-  "prCreation": "not-pending",
+  "prCreation": "immediate",
   "rebaseWhen": "behind-base-branch",
   "ignoreTests": false,
   "packageRules": [
