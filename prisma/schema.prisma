@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Account {
-  id                String  @id @default(cuid())
+  id                String  @id
   userId            String
   type              String
   provider          String
@@ -20,11 +20,10 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-  user              User    @relation(fields: [userId], references: [id])
+  User              User    @relation(fields: [userId], references: [id])
 
   @@unique([provider, providerAccountId])
 }
-
 model AstronomySnapshot {
   id                 String   @id @default(cuid())
   locationId         String
@@ -46,13 +45,14 @@ model AstronomySnapshot {
   illumination       Float?
   phaseName          String?
   dateString         String   @db.VarChar(10)
-  location           Location @relation(fields: [locationId], references: [id])
-  @@unique([locationId, dateString])
 
+  Location           Location @relation(fields: [locationId], references: [id])
+
+  @@unique([locationId, dateString])
 }
 
 model DbTableStats {
-  id           String   @id @default(cuid())
+  id           String   @id
   tableName    String
   rowEstimate  Int
   totalBytes   BigInt
@@ -67,7 +67,7 @@ model DbTableStats {
 }
 
 model EphemerisDebug {
-  id                 String   @id @default(cuid())
+  id                 String   @id
   locationId         String?
   fetchedAt          String?
   createdAt          String?
@@ -90,15 +90,15 @@ model EphemerisDebug {
 }
 
 model ForecastSnapshot {
-  id         String   @id @default(cuid())
+  id         String   @id
   locationId String
   fetchedAt  DateTime @default(now())
   payload    Json
-  location   Location @relation(fields: [locationId], references: [id])
+  Location   Location @relation(fields: [locationId], references: [id])
 }
 
 model GithubDebug {
-  id         String   @id @default(cuid())
+  id         String   @id
   raw        Json
   status     String?
   action     String?
@@ -108,18 +108,19 @@ model GithubDebug {
 }
 
 model Location {
-  id        String              @id @default(cuid())
-  key       String              @unique
-  name      String
-  latitude  Float
-  longitude Float
-  timezone  String
-  isDefault Boolean             @default(false)
-  createdAt DateTime            @default(now())
-  updatedAt DateTime            @updatedAt
-  astronomy AstronomySnapshot[]
-  forecast  ForecastSnapshot[]
-  weather   WeatherSnapshot[]
+  id               String             @id
+  key              String             @unique
+  name             String
+  latitude         Float
+  longitude        Float
+  timezone         String
+  isDefault        Boolean            @default(false)
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime
+  AstronomySnapshot AstronomySnapshot[]
+  ForecastSnapshot ForecastSnapshot[]
+  WeatherSnapshot  WeatherSnapshot[]
+
 }
 
 model Log {
@@ -141,27 +142,27 @@ model Log {
   data         Json?
   created_at   DateTime @default(now())
 
-  @@index([domain])
-  @@index([level])
   @@index([created_at])
-  @@index([requestId])
+  @@index([domain])
+  @@index([file])
+  @@index([level])
+  @@index([meta], type: Gin)
   @@index([page])
-  @@index([userId])
+  @@index([payload], type: Gin)
+  @@index([requestId])
   @@index([sessionEmail])
   @@index([sessionUser])
-  @@index([file])
-  @@index([payload], type: Gin)
-  @@index([meta], type: Gin)
+  @@index([userId])
 }
 
 model Note {
-  id          String    @id @default(cuid())
+  id          String    @id
   userId      String
   userEmail   String
   title       String?
   content     String
   createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  updatedAt   DateTime
   followUpAt  DateTime?
   isCompleted Boolean   @default(false)
   isArchived  Boolean   @default(false)
@@ -169,53 +170,41 @@ model Note {
   tags        String[]  @default([])
   color       String?
 
-  @@index([userId])
-  @@index([userEmail])
   @@index([followUpAt])
-  @@index([isCompleted])
   @@index([isArchived])
+  @@index([isCompleted])
+  @@index([userEmail])
+  @@index([userId])
 }
 
 model RuntimeConfig {
   key       String   @id
   value     String
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime
   createdAt DateTime @default(now())
 }
 
 model Session {
-  id           String   @id @default(cuid())
+  id           String   @id
   sessionToken String   @unique
   userId       String
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id])
+  User         User     @relation(fields: [userId], references: [id])
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String    @id
   name          String?
   email         String?   @unique
   emailVerified DateTime?
   image         String?
-  accounts      Account[]
-  sessions      Session[]
+  Account       Account[]
+  Session       Session[]
 }
 
 model UserRole {
   email String @id
   role  String
-}
-
-model Verification {
-  id         String   @id @default(cuid())
-  identifier String
-  value      String
-  expiresAt  DateTime
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  @@index([identifier])
-  @@map("verification")
 }
 
 model VerificationToken {
@@ -227,7 +216,7 @@ model VerificationToken {
 }
 
 model WeatherSnapshot {
-  id            String   @id @default(cuid())
+  id            String   @id
   locationId    String
   temperature   Float
   feelsLike     Float?
@@ -238,7 +227,18 @@ model WeatherSnapshot {
   visibility    Float?
   weatherCode   Int?
   fetchedAt     DateTime @default(now())
-  location      Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  Location      Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
 
   @@index([locationId, fetchedAt])
+}
+
+model verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime
+
+  @@index([identifier])
 }
