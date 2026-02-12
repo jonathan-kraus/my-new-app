@@ -47,6 +47,8 @@ model AstronomySnapshot {
   phaseName          String?
   dateString         String?  @db.VarChar(10)
   location           Location @relation(fields: [locationId], references: [id])
+  @@unique([locationId, dateString])
+
 }
 
 model DbTableStats {
