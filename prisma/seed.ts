@@ -4,10 +4,10 @@ import { db } from "../lib/db";
 async function runtime() {
   await db.runtimeConfig.createMany({
     data: [
-      { key: "email.enabled", value: "1" },
-      { key: "solar.speed", value: "1000" },
-      { key: "toast.enabled", value: "1" },
-      { key: "debug.logging", value: "1" },
+      { key: "email.enabled", value: "1", updatedAt: new Date() },
+      { key: "solar.speed", value: "1000", updatedAt: new Date() },
+      { key: "toast.enabled", value: "1", updatedAt: new Date() },
+      { key: "debug.logging", value: "1", updatedAt: new Date() },
     ],
     skipDuplicates: true,
   });
@@ -28,6 +28,7 @@ async function main() {
         longitude: -75.3836,
         timezone: "America/New_York",
         isDefault: true,
+        updatedAt: "2026-02-03 03:56:19.84",
       },
       {
         id: "BKL",
@@ -36,6 +37,7 @@ async function main() {
         latitude: 42.3318,
         longitude: -71.1212,
         timezone: "America/New_York",
+        updatedAt: "2026-02-03 03:56:19.84",
         isDefault: false,
       },
       {
@@ -45,6 +47,7 @@ async function main() {
         latitude: 42.712,
         longitude: -73.2037,
         timezone: "America/New_York",
+        updatedAt: "2026-02-03 03:56:19.84",
         isDefault: false,
       },
     ],
