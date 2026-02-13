@@ -11,6 +11,7 @@ export interface LunarDay {
   nextMoonrise: string | null;
 }
 export const excludeTables = [
+  "Account",
   "UserRole",
   "User",
   "Session",
