@@ -1,51 +1,55 @@
+// app/api/cron/refreshLog/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { refreshLogRowEstimateForToday } from "@/lib/db/refreshLogRowEstimateForToday";
+import { runDbTableStats } from "@/lib/cron/runDbTableStats";
 import { logit } from "@/lib/log/logit";
 
 export const runtime = "nodejs";
 
 export async function GET(req: NextRequest) {
+  const requestId = crypto.randomUUID();
+
   try {
     await logit(
       "jonathan",
       {
         level: "info",
-        message: "cron.refreshLogs.started",
-        payload: { trigger: "manual or scheduled" },
+        message: "cron.dbTableStats.started",
       },
-      { requestId: "rid", route: "cron/refreshLogs", userId: "JK" },
+      { requestId, route: "cron/dbTableStats", userId: "JK" },
     );
 
-    await refreshLogRowEstimateForToday();
+    await runDbTableStats({
+      requestId,
+      route: "cron/dbTableStats",
+      userId: "JK",
+    });
 
     await logit(
       "jonathan",
       {
         level: "info",
-        message: "cron.refreshLogs.completed",
+        message: "cron.dbTableStats.completed",
       },
-      { requestId: "rid", route: "cron/refreshLogs", userId: "JK" },
+      { requestId, route: "cron/dbTableStats", userId: "JK" },
     );
 
     return NextResponse.json({
       ok: true,
-      message: "refreshLogRowEstimateForToday executed",
+      executedAt: new Date().toISOString(),
     });
   } catch (error: any) {
-    console.error("Error executing refreshLogs cron:", error);
-
     await logit(
       "jonathan",
       {
         level: "error",
-        message: "cron.refreshLogs.error",
+        message: "cron.dbTableStats.error",
         payload: { error: String(error?.message || error) },
       },
-      { requestId: "rid", route: "cron/refreshLogs", userId: "JK" },
+      { requestId, route: "cron/dbTableStats", userId: "JK" },
     );
 
     return NextResponse.json(
-      { ok: false, error: "Error executing refreshLogRowEstimateForToday" },
+      { ok: false, error: "Error executing runDbTableStats" },
       { status: 500 },
     );
   }
