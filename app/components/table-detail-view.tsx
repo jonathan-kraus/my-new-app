@@ -66,7 +66,7 @@ export function TableDetailView({
                 asChild={page > 1}
               >
                 {page > 1 ? (
-                  <Link href={`/db/table/${name}?page=${page - 1}`}>
+                  <Link href={`/admin/db/table/${name}?page=${page - 1}`}>
                     <ChevronLeft className="h-4 w-4" />
                     <span className="sr-only">Previous page</span>
                   </Link>
@@ -85,7 +85,7 @@ export function TableDetailView({
                 asChild={page < totalPages}
               >
                 {page < totalPages ? (
-                  <Link href={`/table/${name}?page=${page + 1}`}>
+                  <Link href={`/admin/db/table/${name}?page=${page + 1}`}>
                     <ChevronRight className="h-4 w-4" />
                     <span className="sr-only">Next page</span>
                   </Link>

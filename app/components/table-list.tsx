@@ -59,7 +59,7 @@ export function TableList({ tables }: TableListProps) {
               <TableRow key={table.name}>
                 <TableCell className="pl-6">
                   <Link
-                    href={`/table/${table.name}`}
+                    href={`/admin/db/table/${table.name}`}
                     className="font-mono text-sm font-medium text-primary hover:underline"
                   >
                     {table.name}
