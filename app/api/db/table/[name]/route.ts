@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ name: string }> }
+  { params }: { params: Promise<{ name: string }> },
 ) {
   const { name } = await params;
 
@@ -38,14 +38,14 @@ export async function GET(
 
     // Get row count
     const countResult = await sql.query(
-      `SELECT COUNT(*)::int AS count FROM "${name}"`
+      `SELECT COUNT(*)::int AS count FROM "${name}"`,
     );
     const totalRows = countResult[0].count;
 
     // Get rows with pagination - order by first column
     const firstCol = columns[0]?.column_name || "id";
     const rows = await sql.query(
-      `SELECT * FROM "${name}" ORDER BY "${firstCol}" DESC LIMIT ${limit} OFFSET ${offset}`
+      `SELECT * FROM "${name}" ORDER BY "${firstCol}" DESC LIMIT ${limit} OFFSET ${offset}`,
     );
 
     return NextResponse.json({
@@ -65,7 +65,7 @@ export async function GET(
     console.error(`Table ${name} error:`, error);
     return NextResponse.json(
       { error: `Failed to fetch table ${name}` },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -5,7 +5,7 @@
  * @Date         : 2026-02-19 18:12:14
  * @Description  :
  * @LastEditors  : Jonathan
- * @LastEditTime : 2026-02-19 22:46:52
+ * @LastEditTime : 2026-02-20 01:09:05
  */
 import { DashboardHeader } from "./dashboard-header";
 import { StatCard } from "./stat-card";
@@ -15,15 +15,17 @@ import { TableGrowthChart } from "./table-growth-chart";
 import { SnapshotButton } from "./snapshot-button";
 import { Database, Rows3, HardDrive, Columns3 } from "lucide-react";
 
-type DbDashboardProps = {
-  tables: {
-    name: string;
-    rowEstimate: number;
-    totalBytes: number;
-    columnCount: number;
-  }[];
-  history: any[];
+export type TableInfo = {
+  name: string;
+  rowEstimate: number;
+  totalBytes: number;
+  indexBytes: number;
+  tableBytes: number;
+  toastBytes: number;
+  columnCount: number;
 };
+
+type DbDashboardProps = { tables: TableInfo[]; history: any[] };
 
 export function DbDashboard({ tables, history }: DbDashboardProps) {
   const totalTables = tables.length;

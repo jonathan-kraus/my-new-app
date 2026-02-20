@@ -34,7 +34,7 @@ async function getTableData(name: string, page: number) {
   `;
 
   const countResult = await sql.query(
-    `SELECT COUNT(*)::int AS count FROM "${name}"`
+    `SELECT COUNT(*)::int AS count FROM "${name}"`,
   );
   const totalRows = countResult[0].count;
 
@@ -47,20 +47,20 @@ async function getTableData(name: string, page: number) {
     (c) =>
       c.column_name === "createdAt" ||
       c.column_name === "created_at" ||
-      c.column_name === "fetchedAt"
+      c.column_name === "fetchedAt",
   );
   if (hasCreatedAt) {
     const col = columns.find(
       (c) =>
         c.column_name === "createdAt" ||
         c.column_name === "created_at" ||
-        c.column_name === "fetchedAt"
+        c.column_name === "fetchedAt",
     );
     if (col) orderCol = col.column_name;
   }
 
   const rows = await sql.query(
-    `SELECT * FROM "${name}" ORDER BY "${orderCol}" DESC LIMIT ${limit} OFFSET ${offset}`
+    `SELECT * FROM "${name}" ORDER BY "${orderCol}" DESC LIMIT ${limit} OFFSET ${offset}`,
   );
 
   // Get size info
@@ -157,38 +157,40 @@ export default async function TablePage({ params, searchParams }: PageProps) {
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             <StatCard
               title="Rows"
-              value={formatNumber(tableData.totalRows)}
+              value={tableData.totalRows}
               subtitle="Exact count"
               icon={Rows3}
             />
             <StatCard
               title="Total Size"
-              value={formatBytes(tableData.totalBytes)}
+              value={tableData.totalBytes}
               subtitle="Data + indexes"
               icon={HardDrive}
             />
             <StatCard
               title="Columns"
-              value={tableData.columns.length.toString()}
+              value={tableData.columns.length}
               icon={Columns3}
             />
-            <StatCard
-              title="Tracked Since"
-              value={
-                firstSnapshot
+            <div className="rounded-lg border p-4">
+              {" "}
+              <div className="text-sm text-muted-foreground">
+                Tracked Since
+              </div>{" "}
+              <div className="text-lg font-medium">
+                {" "}
+                {firstSnapshot
                   ? new Date(firstSnapshot).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
                     })
-                  : "Not yet"
-              }
-              subtitle={
-                history.length > 0
-                  ? `${history.length} snapshots`
-                  : "Take a snapshot"
-              }
-              icon={Calendar}
-            />
+                  : "Not yet"}{" "}
+              </div>{" "}
+            </div>
+            subtitle=
+            {history.length > 0
+              ? `${history.length} snapshots`
+              : "Take a snapshot"}
           </div>
 
           {/* History charts */}
