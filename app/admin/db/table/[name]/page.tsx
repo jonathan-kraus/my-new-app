@@ -3,11 +3,11 @@ import { notFound } from "next/navigation";
 import { DashboardHeader } from "@/components/dashboard-header";
 import { TableDetailView } from "@/components/table-detail-view";
 import { TableHistoryChart } from "@/components/table-history-chart";
-import { formatBytes, formatNumber } from "@/lib/format";
 import { StatCard } from "@/components/stat-card";
-import { Rows3, HardDrive, Columns3, Calendar } from "lucide-react";
+import { Rows3, HardDrive, Columns3, Calendar, Package2 } from "lucide-react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { logit } from "@/lib/log/logit";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +18,24 @@ interface PageProps {
 
 async function getTableData(name: string, page: number) {
   // Validate table exists and is not excluded
+  await logit(
+    "jonathan",
+    {
+      level: "info",
+      message: "Checking table existence",
+      payload: {
+        page: `/admin/db/${name}`,
+        file: "page.tsx",
+        method: "GET",
+        page2: `page ${page}`,
+        requestId: crypto.randomUUID(),
+        tableName: name,
+      },
+    },
+    {
+      userId: "JK",
+    },
+  );
   const tableCheck = await sql`
     SELECT table_name FROM information_schema.tables
     WHERE table_schema = 'public' AND table_name = ${name}
