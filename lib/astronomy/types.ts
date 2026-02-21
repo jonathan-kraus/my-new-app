@@ -20,10 +20,10 @@ export const excludeTables = [
   "pg_stat_statements",
 ];
 export interface NormalizedAstronomySnapshot {
-  sunriseDate: Date | null;
-  sunsetDate: Date | null;
-  moonriseDate: Date | null;
-  moonsetDate: Date | null;
+  sunrise: string | null; // "05:07:00" or "2026-02-21T17:07:00-05:00"
+  sunset: string | null;
+  moonrise: string | null;
+  moonset: string | null;
   moonPhase?: number | null;
 }
 
@@ -38,20 +38,30 @@ export interface DashboardAstronomyClientProps {
 import { z } from "zod";
 
 export const NormalizedAstronomySnapshotSchema = z.object({
-  date: z.date(),
+  id: z.string(),
+  date: z.string(), // or dateString if you prefer
+  createdAt: z.string(),
+  locationId: z.string(),
+  fetchedAt: z.string(),
 
-  // Solar
-  sunriseDate: z.date().nullable(),
-  sunsetDate: z.date().nullable(),
-  nextSunrise: z.date().nullable(),
-  nextSunset: z.date().nullable(),
+  sunrise: z.string().nullable(),
+  sunset: z.string().nullable(),
+  solarNoon: z.string().nullable(),
 
-  // Lunar
-  moonriseDate: z.date().nullable(),
-  moonsetDate: z.date().nullable(),
-  nextMoonrise: z.date().nullable(),
-  nextMoonset: z.date().nullable(),
+  sunriseBlueStart: z.string().nullable(),
+  sunriseBlueEnd: z.string().nullable(),
+  sunriseGoldenStart: z.string().nullable(),
+  sunriseGoldenEnd: z.string().nullable(),
+
+  sunsetGoldenStart: z.string().nullable(),
+  sunsetGoldenEnd: z.string().nullable(),
+  sunsetBlueStart: z.string().nullable(),
+  sunsetBlueEnd: z.string().nullable(),
+
+  moonrise: z.string().nullable(),
+  moonset: z.string().nullable(),
   moonPhase: z.number().nullable(),
-  // Metadata
-  type: z.enum(["solar", "lunar"]).optional(),
+
+  illumination: z.number().nullable(),
+  phaseName: z.string().nullable(),
 });
