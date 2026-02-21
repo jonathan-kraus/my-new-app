@@ -20,12 +20,11 @@ export default async function DashboardPage() {
         url: "/admin/db",
         requestId: crypto.randomUUID(),
         tablesCount: tables.length,
-        historyCount: history.length
+        historyCount: history.length,
       },
     },
     {
-
-      userId:"JK",
+      userId: "JK",
     },
   );
   return <DbDashboard tables={tables} history={history} />;

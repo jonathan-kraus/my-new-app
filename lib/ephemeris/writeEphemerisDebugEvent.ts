@@ -1,18 +1,21 @@
 /*
  * @FilePath     : \my-new-app\lib\ephemeris\writeEphemerisDebugEvent.ts
  * @Author       : Jonathan
- * @Date         : 2026-02-11 13:00:15
- * @Description  :
- * @LastEditors  : Jonathan
- * @LastEditTime : 2026-02-11 13:00:15
+ * @Description  : Persist ephemeris snapshots into EphemerisDebug with safe date handling.
  */
-import { db } from "@/lib/db";
 
-type DebugEventInput = {
+import { db } from "@/lib/db";
+import type { Prisma } from "@prisma/client";
+
+type IsoDateTimeString = string;
+type IsoDateString = string;
+
+export type DebugEventInput = {
   locationId: string | null;
-  fetchedAt: string | null;
-  createdAt: string | null;
-  date: string | null;
+
+  fetchedAt: IsoDateTimeString | null;
+  createdAt: IsoDateTimeString | null;
+  date: IsoDateString | null;
 
   sunrise: string | null;
   sunset: string | null;
@@ -30,17 +33,36 @@ type DebugEventInput = {
   sunsetBlueStart: string | null;
   sunsetBlueEnd: string | null;
 
-  raw: any;
+  raw: unknown;
 };
+
+function toIsoString(value: string | null): string | null {
+  if (!value) return null;
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? null : d.toISOString();
+}
+
+function toJsonSafe(value: unknown): Prisma.InputJsonValue {
+  try {
+    return JSON.parse(JSON.stringify(value));
+  } catch {
+    return String(value);
+  }
+}
 
 export async function writeEphemerisDebugEvent(data: DebugEventInput) {
   try {
+    const safeFetchedAt = toIsoString(data.fetchedAt);
+    const safeCreatedAt = toIsoString(data.createdAt);
+    const safeDate = toIsoString(data.date);
+
     await db.ephemerisDebug.create({
       data: {
         locationId: data.locationId,
-        fetchedAt: data.fetchedAt,
-        createdAt: data.createdAt,
-        date: data.date,
+
+        fetchedAt: safeFetchedAt,
+        createdAt: safeCreatedAt,
+        date: safeDate,
 
         sunrise: data.sunrise,
         sunset: data.sunset,
@@ -58,7 +80,7 @@ export async function writeEphemerisDebugEvent(data: DebugEventInput) {
         sunsetBlueStart: data.sunsetBlueStart,
         sunsetBlueEnd: data.sunsetBlueEnd,
 
-        raw: data.raw,
+        raw: toJsonSafe(data.raw),
       },
     });
   } catch (err) {
