@@ -1,104 +1,60 @@
-// app/debug/ephemeris/page.tsx
-import { getEphemerisSnapshot } from "@/lib/ephemeris/getEphemerisSnapshot";
-import { buildAstronomyEvents } from "@/lib/ephemeris/buildAstronomyEvents";
+import { db } from "@/lib/db";
+import { Metadata } from "next";
 
-function fmt(value: string | Date | null | undefined) {
-  if (!value) return "—";
+export const metadata: Metadata = {
+  title: "Ephemeris Debug Events",
+};
 
-  const d = value instanceof Date ? value : new Date(value);
-  if (isNaN(d.getTime())) return "—";
-
-  return d.toLocaleString("en-US", { timeZoneName: "short" });
-}
-
-export default async function DebugEphemerisPage() {
-  const snapshot = await getEphemerisSnapshot("KOP");
-
-  if (!snapshot) {
-    return <div className="p-6">No snapshot available</div>;
-  }
-
-  const today = snapshot.today ?? null;
-  const tomorrow = snapshot.tomorrow ?? null;
-
-  const events = today && tomorrow ? buildAstronomyEvents(today, tomorrow) : [];
+export default async function EphemerisDebugPage() {
+  const events = await db.ephemerisDebug.findMany({
+    orderBy: { createdAt: "desc" },
+    take: 200, // keep it fast
+  });
 
   return (
-    <div className="p-6 space-y-8 text-sm">
-      <h1 className="text-xl font-semibold">Debug · Ephemeris</h1>
+    <div className="p-6 space-y-6">
+      <h1 className="text-2xl font-semibold">Ephemeris Debug Events</h1>
 
-      {/* Snapshot metadata */}
-      <section>
-        <h2 className="font-semibold mb-2">Snapshot</h2>
-        <ul className="space-y-1">
-          <li>Location: {snapshot.today?.locationId ?? "—"}</li>
-        </ul>
-      </section>
+      <div className="border rounded-lg overflow-hidden">
+        <table className="min-w-full text-sm">
+          <thead className="bg-gray-100 border-b">
+            <tr>
+              <th className="px-3 py-2 text-left">Date</th>
+              <th className="px-3 py-2 text-left">Location</th>
+              <th className="px-3 py-2 text-left">Fetched</th>
+              <th className="px-3 py-2 text-left">Sunrise</th>
+              <th className="px-3 py-2 text-left">Sunset</th>
+              <th className="px-3 py-2 text-left">Raw</th>
+            </tr>
+          </thead>
 
-      {/* Today */}
-      <section>
-        <h2 className="font-semibold mb-2">Today</h2>
-        <ul className="space-y-1">
-          <li>Date: {today?.dateString ?? "—"}</li>
-          <li>Sunrise: {fmt(today?.sunrise)}</li>
-          <li>Solar Noon: {fmt(today?.solarNoon)}</li>
-          <li>Sunset: {fmt(today?.sunset)}</li>
-          <li>Moonrise: {fmt(today?.moonrise)}</li>
-          <li>Moonset: {fmt(today?.moonset)}</li>
-        </ul>
-      </section>
-
-      {/* Tomorrow */}
-      <section>
-        <h2 className="font-semibold mb-2">Tomorrow</h2>
-        <ul className="space-y-1">
-          <li>Date: {fmt(tomorrow?.dateString) ?? "—"}</li>
-          <li>Sunrise: {fmt(tomorrow?.sunrise)}</li>
-          <li>Solar Noon: {fmt(tomorrow?.solarNoon)}</li>
-          <li>Sunset: {fmt(tomorrow?.sunset)}</li>
-          <li>Moonrise: {fmt(tomorrow?.moonrise)}</li>
-          <li>Moonset: {fmt(tomorrow?.moonset)}</li>
-        </ul>
-      </section>
-
-      {/* Next event */}
-      <section>
-        <h2 className="font-semibold mb-2">Next Event</h2>
-        {snapshot.nextEvent ? (
-          <ul className="space-y-1">
-            <li>Name: {snapshot.nextEvent.name}</li>
-            <li>Time: {fmt(snapshot.nextEvent.dateObj)}</li>
-            <li>Type: {snapshot.nextEvent.type}</li>
-          </ul>
-        ) : (
-          <div>—</div>
-        )}
-      </section>
-
-      {/* Derived event list */}
-      <section>
-        <h2 className="font-semibold mb-2">All Events (Derived)</h2>
-        {events.length === 0 ? (
-          <div>—</div>
-        ) : (
-          <table className="border-collapse border border-gray-300">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="border px-2 py-1">Time</th>
-                <th className="border px-2 py-1">Label</th>
-              </tr>
-            </thead>
-            <tbody>
-              {events.map((e, i) => (
-                <tr key={i}>
-                  <td className="border px-2 py-1">{fmt(e.time)}</td>
-                  <td className="border px-2 py-1">{e.label}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
-      </section>
+          <tbody>
+            {events.map((e) => (
+              <DebugRow key={e.id} event={e} />
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
+  );
+}
+
+function DebugRow({ event }: { event: any }) {
+  return (
+    <tr className="border-b hover:bg-gray-50">
+      <td className="px-3 py-2">{event.date}</td>
+      <td className="px-3 py-2">{event.locationId}</td>
+      <td className="px-3 py-2">{event.fetchedAt}</td>
+      <td className="px-3 py-2">{event.sunrise}</td>
+      <td className="px-3 py-2">{event.sunset}</td>
+      <td className="px-3 py-2">
+        <details className="cursor-pointer">
+          <summary className="text-blue-600">View</summary>
+          <pre className="mt-2 p-2 bg-gray-100 rounded text-xs overflow-x-auto">
+            {JSON.stringify(event.raw, null, 2)}
+          </pre>
+        </details>
+      </td>
+    </tr>
   );
 }
