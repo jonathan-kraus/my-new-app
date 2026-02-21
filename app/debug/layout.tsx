@@ -4,14 +4,16 @@
  * @Date         : 2026-02-21 02:21:52
  * @Description  :
  * @LastEditors  : Jonathan
- * @LastEditTime : 2026-02-21 02:34:51
+ * @LastEditTime : 2026-02-21 02:50:26
  */
-import AppShell from "@/components/layouts/AppShell";
-
 export default function DebugLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <AppShell>{children}</AppShell>;
+  return (
+    <div className="min-h-screen bg-white text-black">
+      <main className="mx-auto max-w-7xl p-6">{children}</main>
+    </div>
+  );
 }

@@ -13,10 +13,12 @@ export default async function EphemerisDebugPage() {
 
   return (
     <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-semibold">Ephemeris Debug Events</h1>
+      <h1 className="text-2xl font-semibold text-black">
+        Ephemeris Debug Events
+      </h1>
 
       <div className="border rounded-lg overflow-hidden">
-        <table className="min-w-full text-sm">
+        <table className="min-w-full text-sm text-black">
           <thead className="bg-gray-100 border-b">
             <tr>
               <th className="px-3 py-2 text-left">Date</th>
@@ -50,7 +52,7 @@ function DebugRow({ event }: { event: any }) {
       <td className="px-3 py-2">
         <details className="cursor-pointer">
           <summary className="text-blue-600">View</summary>
-          <pre className="mt-2 p-2 bg-gray-100 rounded text-xs overflow-x-auto">
+          <pre className="mt-2 p-2 bg-gray-100 text-gray-900 rounded text-xs overflow-x-auto">
             {JSON.stringify(event.raw, null, 2)}
           </pre>
         </details>
