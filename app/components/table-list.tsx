@@ -84,11 +84,11 @@ export function TableList({ tables }: TableListProps) {
                 </TableCell>
                 <TableCell className="pr-6 text-right">
                   <Link
-                    href={`/table/${table.name}`}
+                    href={`/admin/db/table/${table.name}`}
                     className="inline-flex items-center text-muted-foreground hover:text-primary transition-colors"
                     aria-label={`View ${table.name} data`}
                   >
-                    <ArrowRight className="h-4 w-4" />
+                    <ArrowRight className="h-4 w-4 text-red-500" />
                   </Link>
                 </TableCell>
               </TableRow>
