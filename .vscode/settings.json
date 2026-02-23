@@ -2,19 +2,17 @@
   "files.autoSave": "afterDelay",
   "workbench.editor.empty.hint": "hidden",
   "terminal.integrated.initialHint": false,
+  "terminal.integrated.shellIntegration.enabled": false,
 
   "fileheader.customMade": {
-    "Author": "Jonathan",
-    "Date": "Do not edit",
-    "Description": "",
-    "LastEditors": "Jonathan",
-    "LastEditTime": "Do not edit",
-    "FilePath": "Do not edit"
+    "FilePath": "",
+    "LastEditTime": ""
   },
   "fileheader.configObj": {
-    "createFileTime": true,
-    "autoAdd": true,
-    "autoAddLine": 1,
-    "autoAlready": true
+    "createHeader": true, // insert header on new file
+    "autoAdd": true, // auto-insert header
+    "autoAlready": true, // allow updating existing header
+    "updateHeader": true, // update LastEditTime on save
+    "autoAddLine": 1 // insert at top of filetrav
   }
 }

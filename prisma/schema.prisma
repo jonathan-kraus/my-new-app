@@ -193,6 +193,44 @@ model Session {
   user         User     @relation(fields: [userId], references: [id])
 }
 
+model TravelSnapshot {
+  id               String   @id @default(cuid())
+  source           String
+  receivedAt       DateTime
+  confirmationCode String
+  issuedDate       String
+  passengers       Json
+  payment          Json
+  bags             Json
+  rawHtml          String
+
+  // Relational segments
+  segments         TravelSegment[]
+
+  @@index([receivedAt])
+}
+
+model TravelSegment {
+  id               String   @id @default(cuid())
+  snapshotId       String
+  date             String
+  departureAirport String
+  departureCity    String
+  departureTime    String
+  arrivalAirport   String
+  arrivalCity      String
+  arrivalTime      String
+  flightNumber     String
+  operatedBy       String?
+  marketedAs       String?
+  cabin            String?
+  fareClass        String?
+  seats            String?
+
+  snapshot TravelSnapshot @relation(fields: [snapshotId], references: [id])
+}
+
+
 model User {
   id            String    @id @default(cuid())
   name          String?

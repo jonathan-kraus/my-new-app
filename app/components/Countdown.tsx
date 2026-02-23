@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { formatDistanceToNowStrict } from "date-fns";
 
-export function Countdown({ timestamp }: { timestamp: string }) {
+export function Countdown({ timestamp }: { timestamp: Date }) {
   const [now, setNow] = useState(Date.now());
 
   useEffect(() => {
@@ -11,10 +11,10 @@ export function Countdown({ timestamp }: { timestamp: string }) {
     return () => clearInterval(id);
   }, []);
 
-  const countdown = formatDistanceToNowStrict(new Date(timestamp), {
+  const countdown = formatDistanceToNowStrict(timestamp, {
     roundingMethod: "floor",
     addSuffix: false,
   });
 
-  return <span>{countdown}</span>;
+  return <span>Countdown: {countdown}</span>;
 }
