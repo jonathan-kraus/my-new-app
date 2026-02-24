@@ -159,7 +159,7 @@ export function parseAAEmail(
       .trim();
     const arrTime = arrTable.find(".itinerary-text").first().text().trim();
 
-// Find the row AFTER the arrival row
+// The row AFTER the arrival row contains flight info
 const infoRow = $(arrEl).closest("tr").next();
 
 // Flight number (AA 4363)
@@ -177,8 +177,6 @@ const operatedBy = infoRow
   .replace(/\s+/g, " ")
   .trim();
 
-
-
 // Seat row is usually the row AFTER the flight info row
 const seatRow = infoRow.next();
 
@@ -189,13 +187,13 @@ seatRow
     const seatText = $(seatEl).text().trim();
     const match = seatText.match(/Seat:\s*(.*)/i);
     if (match && match[1]) {
-      // Split "12B, 12C" into ["12B", "12C"]
       match[1]
         .split(",")
         .map((s) => s.trim())
         .forEach((s) => seats.push(s));
     }
   });
+
 
 
     const dateIndex = Math.floor(i / 2);
