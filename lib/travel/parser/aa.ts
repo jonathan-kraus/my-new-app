@@ -7,7 +7,8 @@ import { TextDecoder } from "util";
 
 export type ParsedPassenger = {
   name: string;
-};
+  aadvantage?: string | null;
+  raw?: string; };
 
 export type ParsedPayment = {
   label: string;
@@ -213,10 +214,28 @@ function extractSegments(
   return segments;
 }
 
-function extractPassengers(_$: cheerio.CheerioAPI): ParsedPassenger[] {
-  // Placeholder until we map the passenger section
-  return [];
+function extractPassengers($: cheerio.CheerioAPI): ParsedPassenger[] {
+  const passengers: ParsedPassenger[] = [];
+
+  $('td.basic').each((_, el) => {
+    const text = $(el).text().trim();
+
+    // Look for AAdvantage number or masked pattern
+    if (/AAdvantage|#:\s*\w+\*+/.test(text)) {
+      // Clean up whitespace
+      const cleaned = text.replace(/\s+/g, " ").trim();
+
+      passengers.push({
+        name: cleaned.split("-")[0].trim(), // "Jonathan Kraus"
+        aadvantage: cleaned.match(/#:\s*([A-Za-z0-9*]+)/)?.[1] ?? null,
+        raw: cleaned,
+      });
+    }
+  });
+
+  return passengers;
 }
+
 
 function extractPayment(_$: cheerio.CheerioAPI): ParsedPayment[] {
   // Placeholder until we map the payment section
@@ -247,7 +266,7 @@ console.log(
   fullyDecoded.slice(0, 500)
   );
   // 2. Load into Cheerio const $ = cheerio.load(decoded);
-  
+
   console.log("HEADER SPANS FOUND:", $("span.itinerary-header").length);
 
   const issuedDate = extractIssuedDate($);
