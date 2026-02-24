@@ -54,26 +54,23 @@ function decodeQuotedPrintable(input: string): string {
 }
 
 /**
- * Find the date header that appears above the given table.
- * This ties each segment to the correct date, even if there are
- * multiple segments per day or AA changes row counts.
+ * Find the date header that appears above the given segment block.
  */
-function findDateForTable(table: any, $: cheerio.CheerioAPI): string {
+function findDateForSegment(segmentTable: any, $: cheerio.CheerioAPI): string {
   const headerSelector = ".itinerary-header";
 
-  let current = $(table).closest("tr");
+  // The segment table is inside:
+  // <tr><td><table>SEGMENT</table></td></tr>
+  // We want the <tr> that contains this segment.
+  let row = $(segmentTable).closest("tr");
 
-  while (current.length) {
-    const header = current.prevAll(headerSelector).first();
-    if (header.length) {
-      return header.text().trim();
-    }
-    current = current.parent();
+  while (row.length) {
+    const header = row.prevAll(headerSelector).first();
+    if (header.length) return header.text().trim();
+    row = row.parent();
   }
 
-  // Fallback: first date header if we somehow don't find one above
-  const first = $(headerSelector).first();
-  return first.length ? first.text().trim() : "";
+  return $(headerSelector).first().text().trim();
 }
 
 // -----------------------------
@@ -161,16 +158,8 @@ export function parseAAEmail(
     const depTable = $(depEl).closest("table");
 
     const departureAirport = $(depEl).text().trim();
-    const departureCity = depTable
-      .find(".itinerary-small-text")
-      .first()
-      .text()
-      .trim();
-    const departureTime = depTable
-      .find(".itinerary-text")
-      .first()
-      .text()
-      .trim();
+    const departureCity = depTable.find(".itinerary-small-text").first().text().trim();
+    const departureTime = depTable.find(".itinerary-text").first().text().trim();
 
     // -----------------------------
     // ARRIVAL BLOCK
@@ -178,21 +167,13 @@ export function parseAAEmail(
     const arrTable = $(arrEl).closest("table");
 
     const arrivalAirport = $(arrEl).text().trim();
-    const arrivalCity = arrTable
-      .find(".itinerary-small-text")
-      .first()
-      .text()
-      .trim();
-    const arrivalTime = arrTable
-      .find(".itinerary-text")
-      .first()
-      .text()
-      .trim();
+    const arrivalCity = arrTable.find(".itinerary-small-text").first().text().trim();
+    const arrivalTime = arrTable.find(".itinerary-text").first().text().trim();
 
     // -----------------------------
-    // DATE (DOM proximity)
+    // DATE (correct DOM proximity)
     // -----------------------------
-    const date = findDateForTable(depTable, $);
+    const date = findDateForSegment(depTable, $);
 
     // -----------------------------
     // FLIGHT NUMBER + OPERATED BY
@@ -218,8 +199,8 @@ export function parseAAEmail(
     // SEATS (row-scoped)
     // -----------------------------
     const seatRow = arrTable
-      .parent()
-      .next()
+      .closest("td")
+      .next("td")
       .find("tr")
       .filter((_, tr) => $(tr).text().includes("Seat"))
       .first();
