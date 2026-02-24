@@ -1,5 +1,3 @@
-// lib/travel/ingest/email-ingest.ts
-
 import fs from "fs";
 import path from "path";
 import { db } from "@/lib/db";
@@ -18,17 +16,27 @@ function extractHtmlPart(eml: string): string {
 export async function ingestTravelEmails() {
   console.log("INGEST: starting travel email ingestion");
 
-  const filePath = path.join(process.cwd(), "travel-mail", "aa.eml");
+  // Dynamically find .eml files in the folder
+  const dir = path.join(process.cwd(), "travel-emails");
+  const files = fs.readdirSync(dir).filter(f => f.endsWith(".eml"));
+
+  if (files.length === 0) {
+    throw new Error("No .eml files found in travel-emails/");
+  }
+
+  // Use the first .eml file
+  const filePath = path.join(dir, files[0]);
+  console.log("INGEST: reading file:", filePath);
+
   const raw = fs.readFileSync(filePath, "utf8");
 
-  // Extract the HTML part before parsing
+  // Extract HTML
   const html = extractHtmlPart(raw);
 
   console.log("INGEST: extracted HTML length =", html.length);
 
-  // Parse the HTML into a TravelSnapshot
+  // Parse
   const parsed = parseAAEmail(html, new Date());
-
   console.log("INGEST: parsed snapshot =", parsed);
 
   // Write to DB
@@ -40,9 +48,8 @@ export async function ingestTravelEmails() {
       issuedDate: parsed.issuedDate,
       rawHtml: parsed.rawHtml,
 
-      // Segments
       segments: {
-        create: parsed.segments.map((seg) => ({
+        create: parsed.segments.map(seg => ({
           date: seg.date,
           departureAirport: seg.departureAirport,
           departureCity: seg.departureCity,
@@ -55,28 +62,23 @@ export async function ingestTravelEmails() {
           marketedAs: seg.marketedAs,
           cabin: seg.cabin,
           fareClass: seg.fareClass,
-          seats: seg.seats,
+          seats: seg.seats, // now String[]?
         })),
       },
 
-      // Passengers
       passengers: {
-        create: parsed.passengers.map((p) => ({
-          name: p.name,
-        })),
+        create: parsed.passengers.map(p => ({ name: p.name })),
       },
 
-      // Payment
       payment: {
-        create: parsed.payment.map((p) => ({
+        create: parsed.payment.map(p => ({
           label: p.label,
           amount: p.amount,
         })),
       },
 
-      // Bags
       bags: {
-        create: parsed.bags.map((b) => ({
+        create: parsed.bags.map(b => ({
           description: b.description,
         })),
       },
