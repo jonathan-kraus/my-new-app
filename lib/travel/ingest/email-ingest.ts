@@ -76,9 +76,7 @@ export async function ingestTravelEmails() {
           arrivalTime: seg.arrivalTime,
           flightNumber: seg.flightNumber,
           operatedBy: seg.operatedBy,
-          marketedAs: seg.marketedAs,
-          cabin: seg.cabin,
-          fareClass: seg.fareClass,
+
           seats: seg.seats, // String[]? in Prisma
         })),
       },
