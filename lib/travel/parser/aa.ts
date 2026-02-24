@@ -53,6 +53,17 @@ function decodeQuotedPrintable(input: string): string {
       String.fromCharCode(parseInt(hex, 16)),
     );
 }
+
+// Normalize all the weirdness: NBSP, Â, zero-width, extra spaces
+function clean(text: string): string {
+  return text
+    .replace(/\u00A0/g, " ") // NBSP
+    .replace(/Â/g, " ") // literal Â
+    .replace(/[\u200B-\u200D\uFEFF]/g, "") // zero-width chars
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function debugTree(node: cheerio.Cheerio<any>, $: cheerio.CheerioAPI) {
   const chain: string[] = [];
   let cur: cheerio.Cheerio<any> = node;
@@ -66,34 +77,6 @@ function debugTree(node: cheerio.Cheerio<any>, $: cheerio.CheerioAPI) {
   }
 
   return chain;
-}
-
-
-// Remove ALL weird unicode: Â, NBSP, zero‑width, etc.
-function clean(text: string): string {
-  return text
-    .replace(/\u00A0/g, " ") // NBSP
-    .replace(/Â/g, " ") // literal Â
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-/**
- * Find the date header above the segment block.
- */
-function findDateForSegment(segmentTable: any, $: cheerio.CheerioAPI): string {
-  const headerSelector = ".itinerary-header";
-
-  let row = $(segmentTable).closest("tr");
-
-  while (row.length) {
-    const header = row.prevAll(headerSelector).first();
-    if (header.length) return clean(header.text());
-    row = row.parent();
-  }
-
-  const fallback = $(headerSelector).first();
-  return fallback.length ? clean(fallback.text()) : "";
 }
 
 // -----------------------------
@@ -162,9 +145,16 @@ export function parseAAEmail(
     });
 
   // -----------------------------
-  // BAGS (none)
-  // -----------------------------
+  // BAGS (none for now)
+// -----------------------------
   const bags: ParsedBag[] = [];
+
+  // -----------------------------
+  // DATES (index-based)
+// -----------------------------
+  const dateHeaders = $(".itinerary-header.darkmode-altblue")
+    .map((_, el) => clean($(el).text()))
+    .get();
 
   // -----------------------------
   // SEGMENTS
@@ -177,6 +167,8 @@ export function parseAAEmail(
     const depEl = airportBlocks[i];
     const arrEl = airportBlocks[i + 1];
     if (!arrEl) break;
+
+    const segmentIndex = i / 2;
 
     // -----------------------------
     // DEPARTURE BLOCK
@@ -200,12 +192,15 @@ export function parseAAEmail(
     const arrivalCity = clean(
       arrTable.find(".itinerary-small-text").first().text(),
     );
-    const arrivalTime = clean(arrTable.find(".itinerary-text").first().text());
+    const arrivalTime = clean(
+      arrTable.find(".itinerary-text").first().text(),
+    );
 
     // -----------------------------
-    // DATE (DOM proximity)
+    // DATE (index-based: 0/1 → header[0], 2/3 → header[1], etc.)
     // -----------------------------
-    const date = findDateForSegment(depTable, $);
+    const dateIndex = Math.floor(segmentIndex);
+    const date = dateHeaders[dateIndex] ?? dateHeaders[0] ?? "";
 
     // -----------------------------
     // FLIGHT NUMBER + OPERATED BY
@@ -229,8 +224,8 @@ export function parseAAEmail(
     );
 
     // -----------------------------
-    // SEATS (row-scoped)
-    // -----------------------------
+    // SEATS (regex-filtered from merged row)
+// -----------------------------
     const seatRow = arrTable
       .closest("td")
       .next("td")
@@ -238,21 +233,19 @@ export function parseAAEmail(
       .filter((_, tr) => $(tr).text().includes("Seat"))
       .first();
 
-    const seats = seatRow
-      .find("span")
-      .toArray()
-      .slice(1) // skip "Seat:"
-      .map((el) => clean($(el).text().replace(",", "")))
-      .filter((s) => s.length > 0);
+    const seats = clean(seatRow.text())
+      .split(/\s+/)
+      .map((t) => t.replace("Seat:", "").replace(",", "").trim())
+      .filter((t) => /^[0-9]{1,2}[A-Z]$/.test(t));
 
     // -----------------------------
-    // LOGIT — DEBUGGING
-    // -----------------------------
+    // LOGGING (shape you requested)
+// -----------------------------
     logit("jonathan", {
       level: "info",
       message: "aa-segment-debugging",
       payload: {
-        i,
+        i: segmentIndex,
         date,
         departureAirport,
         departureCity,
@@ -263,20 +256,12 @@ export function parseAAEmail(
         flightNumber,
         operatedBy,
         seats,
+        depTree: debugTree($(depEl), $),
+        arrTree: debugTree($(arrEl), $),
         rawSeatRow: clean(seatRow.text()),
         rawFlightCell: clean(flightCell.text()),
       },
     });
-      logit("jonathan", {
-      level: "info",
-      message: "aa-dom-tree-debugging",
-      payload: {
-        i,
-        depTree: debugTree($(depEl), $),
-        arrTree: debugTree($(arrEl), $),
-      },
-    });
-
 
     segments.push({
       date,
@@ -292,9 +277,6 @@ export function parseAAEmail(
     });
   }
 
-  // -----------------------------
-  // RETURN SNAPSHOT
-  // -----------------------------
   return {
     source: "AA_EMAIL",
     receivedAt,
