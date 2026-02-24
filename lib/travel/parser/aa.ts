@@ -43,11 +43,14 @@ function decodeQuotedPrintable(input: string): string {
   return input
     .replace(/=\r?\n/g, "")
     .replace(/=([A-Fa-f0-9]{2})/g, (_, hex) =>
-      String.fromCharCode(parseInt(hex, 16))
+      String.fromCharCode(parseInt(hex, 16)),
     );
 }
 
-export function parseAAEmail(html: string, receivedAt: Date): ParsedTravelSnapshot {
+export function parseAAEmail(
+  html: string,
+  receivedAt: Date,
+): ParsedTravelSnapshot {
   // AA HTML is double-encoded → decode again
   const fullyDecoded = decodeQuotedPrintable(html);
   const $ = cheerio.load(fullyDecoded);
@@ -56,31 +59,22 @@ export function parseAAEmail(html: string, receivedAt: Date): ParsedTravelSnapsh
   // CONFIRMATION CODE
   // -----------------------------
   const confirmationCode =
-    $('span:contains("Confirmation code")')
-      .next()
-      .text()
-      .trim() ||
-    $('td:contains("Confirmation code") span')
-      .last()
-      .text()
-      .trim();
+    $('span:contains("Confirmation code")').next().text().trim() ||
+    $('td:contains("Confirmation code") span').last().text().trim();
 
   // -----------------------------
   // ISSUED DATE
   // -----------------------------
-const issuedDate = $('.background-color-standard span')
-.filter((_, el) => $(el).text().includes("Issued"))
-.next()
-.text()
-.trim();
+  const issuedDate = $(".background-color-standard span")
+    .filter((_, el) => $(el).text().includes("Issued"))
+    .next()
+    .text()
+    .trim();
 
   // -----------------------------
   // TRIP DATE (e.g. Saturday, March 7, 2026)
   // -----------------------------
-  const tripDate = $(".itinerary-header")
-    .first()
-    .text()
-    .trim();
+  const tripDate = $(".itinerary-header").first().text().trim();
 
   // -----------------------------
   // PASSENGERS (deduped)
@@ -88,7 +82,7 @@ const issuedDate = $('.background-color-standard span')
   const passengers: ParsedPassenger[] = [];
   const seen = new Set<string>();
 
-  $('td.basic').each((_, el) => {
+  $("td.basic").each((_, el) => {
     const text = $(el).text().replace(/\s+/g, " ").trim();
 
     // Only match rows with AAdvantage number
@@ -131,69 +125,78 @@ const issuedDate = $('.background-color-standard span')
   // This itinerary has none → return empty array.
 
   // -----------------------------
-// SEGMENTS (corrected)
-// -----------------------------
-const segments: ParsedSegment[] = [];
+  // SEGMENTS (corrected)
+  // -----------------------------
+  const segments: ParsedSegment[] = [];
 
-const dateHeaders = $('.itinerary-header')
-  .map((_, el) => $(el).text().trim())
-  .get();
+  const dateHeaders = $(".itinerary-header")
+    .map((_, el) => $(el).text().trim())
+    .get();
 
-const airportBlocks = $('td.itinerary-iata').toArray();
+  const airportBlocks = $("td.itinerary-iata").toArray();
 
-for (let i = 0; i < airportBlocks.length; i += 2) {
-  const depEl = airportBlocks[i];
-  const arrEl = airportBlocks[i + 1];
-  if (!arrEl) break;
+  for (let i = 0; i < airportBlocks.length; i += 2) {
+    const depEl = airportBlocks[i];
+    const arrEl = airportBlocks[i + 1];
+    if (!arrEl) break;
 
-  const depAirport = $(depEl).text().trim();
-  const arrAirport = $(arrEl).text().trim();
+    const depAirport = $(depEl).text().trim();
+    const arrAirport = $(arrEl).text().trim();
 
-  const depTable = $(depEl).closest("table");
-  const depCity = depTable.find(".itinerary-small-text").first().text().trim();
-  const depTime = depTable.find(".itinerary-text").first().text().trim();
+    const depTable = $(depEl).closest("table");
+    const depCity = depTable
+      .find(".itinerary-small-text")
+      .first()
+      .text()
+      .trim();
+    const depTime = depTable.find(".itinerary-text").first().text().trim();
 
-  const arrTable = $(arrEl).closest("table");
-  const arrCity = arrTable.find(".itinerary-small-text").first().text().trim();
-  const arrTime = arrTable.find(".itinerary-text").first().text().trim();
+    const arrTable = $(arrEl).closest("table");
+    const arrCity = arrTable
+      .find(".itinerary-small-text")
+      .first()
+      .text()
+      .trim();
+    const arrTime = arrTable.find(".itinerary-text").first().text().trim();
 
-  const flightNumber = $(depEl)
-    .closest("tr")
-    .find('.itinerary-small-text:contains("AA")')
-    .first()
-    .text()
-    .replace(/\s+/g, " ")
-    .trim();
+    const flightNumber = $(depEl)
+      .closest("tr")
+      .find('.itinerary-small-text:contains("AA")')
+      .first()
+      .text()
+      .replace(/\s+/g, " ")
+      .trim();
 
-  const operatedBy = $(depEl)
-    .closest("tr")
-    .find('.itinerary-small-text:contains("Operated")')
-    .text()
-    .replace(/\s+/g, " ")
-    .trim();
+    const operatedBy = $(depEl)
+      .closest("tr")
+      .find('.itinerary-small-text:contains("Operated")')
+      .text()
+      .replace(/\s+/g, " ")
+      .trim();
 
-  const seats: string[] = [];
-  $(depEl)
-    .closest("table")
-    .find('.itinerary-small-text:contains("Seat")')
-    .each((_, seatEl) => {
-      const seat = $(seatEl).text().trim();
-      if (seat) seats.push(seat);
+    const seats: string[] = [];
+    $(depEl)
+      .closest("table")
+      .find('.itinerary-small-text:contains("Seat")')
+      .each((_, seatEl) => {
+        const seat = $(seatEl).text().trim();
+        if (seat) seats.push(seat);
+      });
+
+    const dateIndex = Math.floor(i / 2);
+    const date = dateHeaders[dateIndex] ?? dateHeaders[0];
+
+    segments.push({
+      date,
+      departureAirport: depAirport,
+      departureCity: depCity,
+      departureTime: depTime,
+      arrivalAirport: arrAirport,
+      arrivalCity: arrCity,
+      arrivalTime: arrTime,
+      flightNumber,
+      operatedBy,
+      seats,
     });
-
-  const dateIndex = Math.floor(i / 2);
-  const date = dateHeaders[dateIndex] ?? dateHeaders[0];
-
-  segments.push({
-    date,
-    departureAirport: depAirport,
-    departureCity: depCity,
-    departureTime: depTime,
-    arrivalAirport: arrAirport,
-    arrivalCity: arrCity,
-    arrivalTime: arrTime,
-    flightNumber,
-    operatedBy,
-    seats,
-  });
+  }
 }

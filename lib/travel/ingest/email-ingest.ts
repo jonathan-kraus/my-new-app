@@ -7,13 +7,15 @@ import { parseAAEmail } from "@/lib/travel/parser/aa";
 
 // 1. Decode quoted-printable BEFORE extracting HTML
 function decodeQuotedPrintable(input: string): string {
-  return input
-    // remove soft line breaks
-    .replace(/=\r?\n/g, "")
-    // decode =XX hex escapes
-    .replace(/=([A-Fa-f0-9]{2})/g, (_, hex) =>
-      String.fromCharCode(parseInt(hex, 16))
-    );
+  return (
+    input
+      // remove soft line breaks
+      .replace(/=\r?\n/g, "")
+      // decode =XX hex escapes
+      .replace(/=([A-Fa-f0-9]{2})/g, (_, hex) =>
+        String.fromCharCode(parseInt(hex, 16)),
+      )
+  );
 }
 
 // 2. Extract only the HTML portion AFTER decoding
@@ -31,7 +33,7 @@ export async function ingestTravelEmails() {
 
   // Dynamically detect .eml files in the folder
   const dir = path.join(process.cwd(), "travel-emails");
-  const files = fs.readdirSync(dir).filter(f => f.endsWith(".eml"));
+  const files = fs.readdirSync(dir).filter((f) => f.endsWith(".eml"));
 
   if (files.length === 0) {
     throw new Error("No .eml files found in travel-emails/");
@@ -66,7 +68,7 @@ export async function ingestTravelEmails() {
       rawHtml: parsed.rawHtml,
 
       segments: {
-        create: parsed.segments.map(seg => ({
+        create: parsed.segments.map((seg) => ({
           date: seg.date,
           departureAirport: seg.departureAirport,
           departureCity: seg.departureCity,
@@ -82,18 +84,18 @@ export async function ingestTravelEmails() {
       },
 
       passengers: {
-        create: parsed.passengers.map(p => ({ name: p.name })),
+        create: parsed.passengers.map((p) => ({ name: p.name })),
       },
 
       payment: {
-        create: parsed.payment.map(p => ({
+        create: parsed.payment.map((p) => ({
           label: p.label,
           amount: p.amount,
         })),
       },
 
       bags: {
-        create: parsed.bags.map(b => ({
+        create: parsed.bags.map((b) => ({
           description: b.description,
         })),
       },
