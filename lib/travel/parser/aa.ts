@@ -1,37 +1,29 @@
-// lib/travel/parser/aa.ts
-
 import * as cheerio from "cheerio";
-import { parse } from "date-fns";
-import { decode as decodeQuotedPrintable } from "quoted-printable";
-import { TextDecoder } from "util";
 
 export type ParsedPassenger = {
   name: string;
-  aadvantage?: string | null;
-  raw?: string; };
+};
 
 export type ParsedPayment = {
   label: string;
   amount: string;
 };
 
-export type ParsedBagInfo = {
+export type ParsedBag = {
   description: string;
+  price?: string;
 };
 
-export type ParsedFlightSegment = {
-  date: string; // ISO yyyy-MM-dd
+export type ParsedSegment = {
+  date: string;
   departureAirport: string;
   departureCity: string;
-  departureTime: string; // e.g. "9:14 AM"
+  departureTime: string;
   arrivalAirport: string;
   arrivalCity: string;
-  arrivalTime: string; // e.g. "10:43 AM"
+  arrivalTime: string;
   flightNumber: string;
   operatedBy: string;
-  marketedAs: string;
-  cabin: string;
-  fareClass: string;
   seats: string[];
 };
 
@@ -39,254 +31,194 @@ export type ParsedTravelSnapshot = {
   source: "AA_EMAIL";
   receivedAt: Date;
   confirmationCode: string;
-  issuedDate: string; // ISO yyyy-MM-dd
+  issuedDate: string;
+  rawHtml: string;
   passengers: ParsedPassenger[];
   payment: ParsedPayment[];
-  bags: ParsedBagInfo[];
-  segments: ParsedFlightSegment[];
-  rawHtml: string;
+  bags: ParsedBag[];
+  segments: ParsedSegment[];
 };
 
-function cleanText(text: string): string {
-  return text
-    .replace(/\s+/g, " ")
-    .replace(/\u00A0/g, " ")
+function decodeQuotedPrintable(input: string): string {
+  return input
+    .replace(/=\r?\n/g, "")
+    .replace(/=([A-Fa-f0-9]{2})/g, (_, hex) =>
+      String.fromCharCode(parseInt(hex, 16))
+    );
+}
+
+export function parseAAEmail(html: string, receivedAt: Date): ParsedTravelSnapshot {
+  // AA HTML is double-encoded → decode again
+  const fullyDecoded = decodeQuotedPrintable(html);
+  const $ = cheerio.load(fullyDecoded);
+
+  // -----------------------------
+  // CONFIRMATION CODE
+  // -----------------------------
+  const confirmationCode =
+    $('span:contains("Confirmation code")')
+      .next()
+      .text()
+      .trim() ||
+    $('td:contains("Confirmation code") span')
+      .last()
+      .text()
+      .trim();
+
+  // -----------------------------
+  // ISSUED DATE
+  // -----------------------------
+  const issuedDate = $('td:contains("Issued:")')
+    .find("span")
+    .last()
+    .text()
     .trim();
-}
 
-function extractIssuedDate($: cheerio.CheerioAPI): string {
-  const issuedSpan = $("td.background-color-standard span")
-    .filter((_, el) => $(el).text().includes("Issued:"))
-    .parent()
-    .find("span")
-    .last()
-    .text();
+  // -----------------------------
+  // TRIP DATE (e.g. Saturday, March 7, 2026)
+  // -----------------------------
+  const tripDate = $(".itinerary-header")
+    .first()
+    .text()
+    .trim();
 
-  const raw = cleanText(issuedSpan);
-  if (!raw) return "";
-
-  const parsed = parse(raw, "MMMM d, yyyy", new Date());
-  if (isNaN(parsed.getTime())) return "";
-  return parsed.toISOString().slice(0, 10);
-}
-
-function extractConfirmationCode($: cheerio.CheerioAPI): string {
-  const codeSpan = $("span.itinerary-text")
-    .filter((_, el) => $(el).text().includes("Confirmation code"))
-    .find("span")
-    .last()
-    .text();
-
-  const altSpan = $("span.basic")
-    .filter((_, el) => $(el).text().includes("Confirmation code"))
-    .parent()
-    .find("span")
-    .last()
-    .text();
-
-  const raw = cleanText(codeSpan || altSpan);
-  return raw || "UNKNOWN";
-}
-
-function extractTripDate($: cheerio.CheerioAPI): string {
-const dateSpan = $('span[class*="itinerary-header"]')
-  .filter((_, el) =>
-    /[A-Za-z]+,\s+[A-Za-z]+\s+\d{1,2},\s+\d{4}/.test($(el).text())
-  )
-  .first()
-  .text();
-
-
-  const raw = cleanText(dateSpan);
-  if (!raw) return "";
-
-  const parsed = parse(raw, "EEEE, MMMM d, yyyy", new Date());
-  if (isNaN(parsed.getTime())) return "";
-  return parsed.toISOString().slice(0, 10);
-}
-
-function extractSegments(
-  $: cheerio.CheerioAPI,
-  tripDate: string,
-): ParsedFlightSegment[] {
-  const segments: ParsedFlightSegment[] = [];
-
-  // Each segment block starts at the date row, then has the PHL/BOS structure you pasted.
-  $("span.itinerary-header")
-.filter((_, el) => {
-  const text = $(el).text();
-  return /[A-Za-z]+,\s+[A-Za-z]+\s+\d{1,2},\s+\d{4}/.test(text);
-})
-
-    .each((_, dateEl) => {
-      const dateCell = $(dateEl).closest("td");
-      const segmentRoot = dateCell.closest("tr").next().find("table").first(); // the table containing the PHL/BOS layout
-
-      if (!segmentRoot.length) return;
-
-      const departureBlock = segmentRoot
-        .find("td")
-        .first()
-        .find("table")
-        .first();
-      const arrivalBlock = segmentRoot
-        .find("td")
-        .eq(1)
-        .closest("td")
-        .parent()
-        .next()
-        .find("table")
-        .first();
-
-      const departureIata = cleanText(
-        departureBlock.find("td.itinerary-iata").first().text(),
-      );
-      const departureCity = cleanText(
-        departureBlock.find("td.itinerary-small-text").first().text(),
-      );
-      const departureTime = cleanText(
-        departureBlock.find("td.itinerary-text").first().text(),
-      );
-
-      const flightNumber = cleanText(
-        segmentRoot
-          .find("span.itinerary-small-text")
-          .filter((_, el) => $(el).text().includes("AA"))
-          .first()
-          .text(),
-      ).replace(/\s+/g, " ");
-
-      const operatedBy = cleanText(
-        segmentRoot
-          .find("span.itinerary-small-text")
-          .filter((_, el) => $(el).text().includes("Operated by"))
-          .first()
-          .text(),
-      );
-
-      const marketedAs = cleanText(
-        segmentRoot
-          .find("span.itinerary-small-text")
-          .filter((_, el) => $(el).text().includes("as "))
-          .first()
-          .text(),
-      );
-
-      const arrivalIata = cleanText(
-        arrivalBlock.find("td.itinerary-iata").first().text(),
-      );
-      const arrivalCity = cleanText(
-        arrivalBlock.find("td.itinerary-small-text").first().text(),
-      );
-      const arrivalTime = cleanText(
-        arrivalBlock.find("td.itinerary-text").first().text(),
-      );
-
-      const seats: string[] = [];
-      arrivalBlock
-        .closest("td")
-        .next()
-        .find("span.itinerary-small-text")
-        .each((_, seatEl) => {
-          const seat = cleanText($(seatEl).text());
-          if (/^\d+[A-Z]$/.test(seat.replace(",", ""))) {
-            seats.push(seat.replace(",", ""));
-          }
-        });
-
-      segments.push({
-        date: tripDate,
-        departureAirport: departureIata,
-        departureCity,
-        departureTime,
-        arrivalAirport: arrivalIata,
-        arrivalCity,
-        arrivalTime,
-        flightNumber,
-        operatedBy,
-        marketedAs,
-        cabin: "",
-        fareClass: "",
-        seats,
-      });
-    });
-
-  return segments;
-}
-
-function extractPassengers($: cheerio.CheerioAPI): ParsedPassenger[] {
+  // -----------------------------
+  // PASSENGERS (deduped)
+  // -----------------------------
   const passengers: ParsedPassenger[] = [];
+  const seen = new Set<string>();
 
   $('td.basic').each((_, el) => {
-    const text = $(el).text().trim();
+    const text = $(el).text().replace(/\s+/g, " ").trim();
 
-    // Look for AAdvantage number or masked pattern
-    if (/AAdvantage|#:\s*\w+\*+/.test(text)) {
-      // Clean up whitespace
-      const cleaned = text.replace(/\s+/g, " ").trim();
+    // Only match rows with AAdvantage number
+    if (!/AAdvantage/i.test(text)) return;
 
-      passengers.push({
-        name: cleaned.split("-")[0].trim(), // "Jonathan Kraus"
-        aadvantage: cleaned.match(/#:\s*([A-Za-z0-9*]+)/)?.[1] ?? null,
-        raw: cleaned,
-      });
-    }
+    const name = text.split("-")[0].trim();
+    if (seen.has(name)) return;
+
+    seen.add(name);
+    passengers.push({ name });
   });
 
-  return passengers;
-}
+  // -----------------------------
+  // PAYMENT
+  // -----------------------------
+  const payment: ParsedPayment[] = [];
 
+  $('td.basic.whiteTextApple:contains("$")')
+    .closest("tr")
+    .each((_, row) => {
+      const tds = $(row).find("td");
+      if (tds.length < 2) return;
 
-function extractPayment(_$: cheerio.CheerioAPI): ParsedPayment[] {
-  // Placeholder until we map the payment section
-  return [];
-}
+      const label = tds.eq(0).text().replace(/\s+/g, " ").trim();
+      const amount = tds.eq(1).text().trim();
 
-function extractBags(_$: cheerio.CheerioAPI): ParsedBagInfo[] {
-  // Placeholder until we map the bag section
-  return [];
-}
+      if (!amount.startsWith("$")) return;
 
-export function parseAAEmail(
-  html: string,
-  receivedAt: Date,
-): ParsedTravelSnapshot {
+      payment.push({ label, amount });
+    });
 
-console.log("RUNNING NEW PARSER");
-// 1. Decode quoted-printable
-const decoded = decodeQuotedPrintable(html);
-// Decode AGAIN — AA double-encodes the HTML block
-const fullyDecoded = decodeQuotedPrintable(html);
+  // -----------------------------
+  // BAGS (none in this itinerary)
+  // -----------------------------
+  const bags: ParsedBag[] = [];
 
-// Load into Cheerio
-const $ = cheerio.load(fullyDecoded);
+  // If AA ever includes bag rows, they look like:
+  // <td class="checkedbag-standard">1st bag</td>
+  // <td class="checkedbag-standard">No charge</td>
+  // This itinerary has none → return empty array.
 
-console.log(
-  "fullyDecoded",
-  fullyDecoded.slice(0, 500)
-  );
-  // 2. Load into Cheerio const $ = cheerio.load(decoded);
+  // -----------------------------
+  // SEGMENTS
+  // -----------------------------
+  const segments: ParsedSegment[] = [];
 
-  console.log("HEADER SPANS FOUND:", $("span.itinerary-header").length);
+  // Each segment starts with a departure airport code
+  $('td.itinerary-iata').each((_, el) => {
+    const depAirport = $(el).text().trim();
 
-  const issuedDate = extractIssuedDate($);
-  const confirmationCode = extractConfirmationCode($);
-  const tripDate = extractTripDate($);
-  const segments = extractSegments($, tripDate);
+    const depCity = $(el)
+      .closest("table")
+      .find(".itinerary-small-text")
+      .eq(0)
+      .text()
+      .trim();
 
-  const passengers = extractPassengers($);
-  const payment = extractPayment($);
-  const bags = extractBags($);
+    const depTime = $(el)
+      .closest("table")
+      .find(".itinerary-text")
+      .eq(0)
+      .text()
+      .trim();
+
+    // Arrival block is the next itinerary-iata
+    const arrivalBlock = $(el).closest("tr").next().find("td.itinerary-iata");
+
+    const arrAirport = arrivalBlock.text().trim();
+    const arrCity = arrivalBlock
+      .closest("table")
+      .find(".itinerary-small-text")
+      .eq(0)
+      .text()
+      .trim();
+
+    const arrTime = arrivalBlock
+      .closest("table")
+      .find(".itinerary-text")
+      .eq(0)
+      .text()
+      .trim();
+
+    const flightNumber = $(el)
+      .closest("tr")
+      .find('.itinerary-small-text:contains("AA")')
+      .first()
+      .text()
+      .replace(/\s+/g, " ")
+      .trim();
+
+    const operatedBy = $(el)
+      .closest("tr")
+      .find('.itinerary-small-text:contains("Operated")')
+      .text()
+      .replace(/\s+/g, " ")
+      .trim();
+
+    // Seats (if present)
+    const seats: string[] = [];
+    $(el)
+      .closest("table")
+      .find('.itinerary-small-text:contains("Seat")')
+      .each((_, seatEl) => {
+        const seat = $(seatEl).text().trim();
+        if (seat) seats.push(seat);
+      });
+
+    segments.push({
+      date: tripDate,
+      departureAirport: depAirport,
+      departureCity: depCity,
+      departureTime: depTime,
+      arrivalAirport: arrAirport,
+      arrivalCity: arrCity,
+      arrivalTime: arrTime,
+      flightNumber,
+      operatedBy,
+      seats,
+    });
+  });
 
   return {
     source: "AA_EMAIL",
     receivedAt,
     confirmationCode,
     issuedDate,
+    rawHtml: fullyDecoded,
     passengers,
     payment,
     bags,
     segments,
-    rawHtml: html,
   };
 }
