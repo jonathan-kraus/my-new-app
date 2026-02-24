@@ -225,7 +225,7 @@ model TravelSegment {
   marketedAs       String?
   cabin            String?
   fareClass        String?
-  seats            String?
+  seats            String[]
 
   snapshot TravelSnapshot @relation(fields: [snapshotId], references: [id])
 }
