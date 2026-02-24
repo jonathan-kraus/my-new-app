@@ -1,9 +1,22 @@
+// lib/travel/ingest/email-ingest.ts
+
 import fs from "fs";
 import path from "path";
 import { db } from "@/lib/db";
 import { parseAAEmail } from "@/lib/travel/parser/aa";
 
-// Extract only the HTML portion from the .eml file
+// 1. Decode quoted-printable BEFORE extracting HTML
+function decodeQuotedPrintable(input: string): string {
+  return input
+    // remove soft line breaks
+    .replace(/=\r?\n/g, "")
+    // decode =XX hex escapes
+    .replace(/=([A-Fa-f0-9]{2})/g, (_, hex) =>
+      String.fromCharCode(parseInt(hex, 16))
+    );
+}
+
+// 2. Extract only the HTML portion AFTER decoding
 function extractHtmlPart(eml: string): string {
   const idx = eml.indexOf("<!DOCTYPE html>");
   if (idx === -1) {
@@ -16,7 +29,7 @@ function extractHtmlPart(eml: string): string {
 export async function ingestTravelEmails() {
   console.log("INGEST: starting travel email ingestion");
 
-  // Dynamically find .eml files in the folder
+  // Dynamically detect .eml files in the folder
   const dir = path.join(process.cwd(), "travel-emails");
   const files = fs.readdirSync(dir).filter(f => f.endsWith(".eml"));
 
@@ -30,12 +43,16 @@ export async function ingestTravelEmails() {
 
   const raw = fs.readFileSync(filePath, "utf8");
 
-  // Extract HTML
-  const html = extractHtmlPart(raw);
+  // *** CRITICAL FIX ***
+  // Decode BEFORE extracting HTML
+  const decodedEml = decodeQuotedPrintable(raw);
+
+  // Extract HTML AFTER decoding
+  const html = extractHtmlPart(decodedEml);
 
   console.log("INGEST: extracted HTML length =", html.length);
 
-  // Parse
+  // Parse the HTML
   const parsed = parseAAEmail(html, new Date());
   console.log("INGEST: parsed snapshot =", parsed);
 
@@ -62,7 +79,7 @@ export async function ingestTravelEmails() {
           marketedAs: seg.marketedAs,
           cabin: seg.cabin,
           fareClass: seg.fareClass,
-          seats: seg.seats, // now String[]?
+          seats: seg.seats, // String[]? in Prisma
         })),
       },
 
