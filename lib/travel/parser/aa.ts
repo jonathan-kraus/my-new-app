@@ -53,6 +53,21 @@ function decodeQuotedPrintable(input: string): string {
       String.fromCharCode(parseInt(hex, 16)),
     );
 }
+function debugTree(node: cheerio.Cheerio<any>, $: cheerio.CheerioAPI) {
+  const chain: string[] = [];
+  let cur: cheerio.Cheerio<any> = node;
+
+  for (let depth = 0; depth < 12; depth++) {
+    if (!cur.length) break;
+    const tag = cur[0].tagName;
+    const classes = (cur.attr("class") || "").trim();
+    chain.push(`${tag}${classes ? "." + classes.replace(/\s+/g, ".") : ""}`);
+    cur = cur.parent();
+  }
+
+  return chain;
+}
+
 
 // Remove ALL weird unicode: Â, NBSP, zero‑width, etc.
 function clean(text: string): string {
@@ -252,6 +267,16 @@ export function parseAAEmail(
         rawFlightCell: clean(flightCell.text()),
       },
     });
+      logit("jonathan", {
+      level: "info",
+      message: "aa-dom-tree-debugging",
+      payload: {
+        i,
+        depTree: debugTree($(depEl), $),
+        arrTree: debugTree($(arrEl), $),
+      },
+    });
+
 
     segments.push({
       date,
