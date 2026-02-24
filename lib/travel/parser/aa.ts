@@ -1,4 +1,5 @@
 import * as cheerio from "cheerio";
+import { logit } from "@/lib/log/logit";
 
 // -----------------------------
 // TYPES
@@ -53,24 +54,31 @@ function decodeQuotedPrintable(input: string): string {
     );
 }
 
+// Remove ALL weird unicode: Â, NBSP, zero‑width, etc.
+function clean(text: string): string {
+  return text
+    .replace(/\u00A0/g, " ") // NBSP
+    .replace(/Â/g, " ") // literal Â
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 /**
- * Find the date header that appears above the given segment block.
+ * Find the date header above the segment block.
  */
 function findDateForSegment(segmentTable: any, $: cheerio.CheerioAPI): string {
   const headerSelector = ".itinerary-header";
 
-  // The segment table is inside:
-  // <tr><td><table>SEGMENT</table></td></tr>
-  // We want the <tr> that contains this segment.
   let row = $(segmentTable).closest("tr");
 
   while (row.length) {
     const header = row.prevAll(headerSelector).first();
-    if (header.length) return header.text().trim();
+    if (header.length) return clean(header.text());
     row = row.parent();
   }
 
-  return $(headerSelector).first().text().trim();
+  const fallback = $(headerSelector).first();
+  return fallback.length ? clean(fallback.text()) : "";
 }
 
 // -----------------------------
@@ -86,18 +94,21 @@ export function parseAAEmail(
   // -----------------------------
   // CONFIRMATION CODE
   // -----------------------------
-  const confirmationCode =
+  const confirmationCode = clean(
     $('span:contains("Confirmation code")').next().text().trim() ||
-    $('td:contains("Confirmation code") span').last().text().trim();
+      $('td:contains("Confirmation code") span').last().text().trim(),
+  );
 
   // -----------------------------
   // ISSUED DATE
   // -----------------------------
-  const issuedDate = $(".background-color-standard span")
-    .filter((_, el) => $(el).text().includes("Issued"))
-    .next()
-    .text()
-    .trim();
+  const issuedDate = clean(
+    $(".background-color-standard span")
+      .filter((_, el) => $(el).text().includes("Issued"))
+      .next()
+      .text()
+      .trim(),
+  );
 
   // -----------------------------
   // PASSENGERS
@@ -106,10 +117,10 @@ export function parseAAEmail(
   const seen = new Set<string>();
 
   $("td.basic").each((_, el) => {
-    const text = $(el).text().replace(/\s+/g, " ").trim();
+    const text = clean($(el).text());
     if (!/AAdvantage/i.test(text)) return;
 
-    const name = text.split("-")[0].trim();
+    const name = clean(text.split("-")[0]);
     if (!seen.has(name)) {
       seen.add(name);
       passengers.push({ name });
@@ -127,8 +138,8 @@ export function parseAAEmail(
       const tds = $(row).find("td");
       if (tds.length < 2) return;
 
-      const label = tds.eq(0).text().replace(/\s+/g, " ").trim();
-      const amount = tds.eq(1).text().trim();
+      const label = clean(tds.eq(0).text());
+      const amount = clean(tds.eq(1).text());
 
       if (amount.startsWith("$")) {
         payment.push({ label, amount });
@@ -157,21 +168,27 @@ export function parseAAEmail(
     // -----------------------------
     const depTable = $(depEl).closest("table");
 
-    const departureAirport = $(depEl).text().trim();
-    const departureCity = depTable.find(".itinerary-small-text").first().text().trim();
-    const departureTime = depTable.find(".itinerary-text").first().text().trim();
+    const departureAirport = clean($(depEl).text());
+    const departureCity = clean(
+      depTable.find(".itinerary-small-text").first().text(),
+    );
+    const departureTime = clean(
+      depTable.find(".itinerary-text").first().text(),
+    );
 
     // -----------------------------
     // ARRIVAL BLOCK
     // -----------------------------
     const arrTable = $(arrEl).closest("table");
 
-    const arrivalAirport = $(arrEl).text().trim();
-    const arrivalCity = arrTable.find(".itinerary-small-text").first().text().trim();
-    const arrivalTime = arrTable.find(".itinerary-text").first().text().trim();
+    const arrivalAirport = clean($(arrEl).text());
+    const arrivalCity = clean(
+      arrTable.find(".itinerary-small-text").first().text(),
+    );
+    const arrivalTime = clean(arrTable.find(".itinerary-text").first().text());
 
     // -----------------------------
-    // DATE (correct DOM proximity)
+    // DATE (DOM proximity)
     // -----------------------------
     const date = findDateForSegment(depTable, $);
 
@@ -181,19 +198,20 @@ export function parseAAEmail(
     const flightCell = depTable.closest("td").next("td");
     const flightSpans = flightCell.find(".itinerary-small-text");
 
-    const flightNumber = flightSpans
-      .filter((_, el) => $(el).text().includes("AA"))
-      .first()
-      .text()
-      .replace(/\u00A0/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
+    const flightNumber = clean(
+      flightSpans
+        .filter((_, el) => $(el).text().includes("AA"))
+        .first()
+        .text(),
+    );
 
-    const operatedBy = flightSpans
-      .filter((_, el) => $(el).text().includes("Operated"))
-      .map((_, el) => $(el).text().trim())
-      .get()
-      .join(" ");
+    const operatedBy = clean(
+      flightSpans
+        .filter((_, el) => $(el).text().includes("Operated"))
+        .map((_, el) => $(el).text())
+        .get()
+        .join(" "),
+    );
 
     // -----------------------------
     // SEATS (row-scoped)
@@ -207,15 +225,33 @@ export function parseAAEmail(
 
     const seats = seatRow
       .find("span")
-      .map((_, el) =>
-        $(el)
-          .text()
-          .replace("Seat:", "")
-          .replace(",", "")
-          .trim(),
-      )
-      .get()
+      .toArray()
+      .slice(1) // skip "Seat:"
+      .map((el) => clean($(el).text().replace(",", "")))
       .filter((s) => s.length > 0);
+
+    // -----------------------------
+    // LOGIT — DEBUGGING
+    // -----------------------------
+    logit("jonathan", {
+      level: "info",
+      message: "aa-segment-debugging",
+      payload: {
+        i,
+        date,
+        departureAirport,
+        departureCity,
+        departureTime,
+        arrivalAirport,
+        arrivalCity,
+        arrivalTime,
+        flightNumber,
+        operatedBy,
+        seats,
+        rawSeatRow: clean(seatRow.text()),
+        rawFlightCell: clean(flightCell.text()),
+      },
+    });
 
     segments.push({
       date,

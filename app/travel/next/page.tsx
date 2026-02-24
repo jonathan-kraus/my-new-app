@@ -1,11 +1,12 @@
 /*
  * @FilePath: \my-new-app\app\travel\next\page.tsx
- * @LastEditTime: 2026-02-23 13:07:05
+ * @LastEditTime: 2026-02-24 00:51:25
  */
 import { getNextTravelEvent } from "@/lib/travel/next-event";
 
 export default async function NextTravelPage() {
   const event = await getNextTravelEvent();
+  console.log(event?.snapshot.segments[0].seats);
 
   return (
     <div className="p-6 space-y-6">
