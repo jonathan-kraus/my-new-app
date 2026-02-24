@@ -199,4 +199,16 @@ export function parseAAEmail(
       seats,
     });
   }
+  return {
+    source: "AA_EMAIL",
+    receivedAt,
+    confirmationCode,
+    issuedDate,
+    rawHtml: fullyDecoded,
+    passengers,
+    payment,
+    bags,
+    segments,
+  };
 }
+
