@@ -3,11 +3,11 @@
  * @Author       : Jonathan
  * @Date         : 2026-02-22 13:02:05
  * @Description  : Parsed snapshot model produced directly from AA email HTML
- * @LastEditors: Jonathan
- * @LastEditTime: 2026-02-23 12:32:54
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2026-02-23 22:31:10
  */
 
-import type { ParsedFlightSegment } from "@/lib/travel/parser/aa";
+import type { ParsedSegment } from "@/lib/travel/parser/aa";
 
 /* -------------------------------------------------------
  * Parsed Travel Snapshot (parser-layer model)
@@ -20,7 +20,7 @@ export interface ParsedTravelSnapshot {
   confirmationCode: string; // e.g. "YGZGJQ"
   issuedDate: string; // e.g. "February 21, 2026"
   passengers: Passenger[];
-  segments: ParsedFlightSegment[]; // parser-layer segments (array seats, rich structure)
+  segments: ParsedSegment[]; // parser-layer segments (array seats, rich structure)
   payment: PaymentBreakdown[];
   bags: BagInfo[];
   rawHtml: string; // full HTML for debugging + reprocessing
