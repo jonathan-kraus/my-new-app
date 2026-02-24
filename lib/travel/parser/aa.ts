@@ -68,11 +68,11 @@ export function parseAAEmail(html: string, receivedAt: Date): ParsedTravelSnapsh
   // -----------------------------
   // ISSUED DATE
   // -----------------------------
-  const issuedDate = $('td:contains("Issued:")')
-    .find("span")
-    .last()
-    .text()
-    .trim();
+const issuedDate = $('.background-color-standard span')
+.filter((_, el) => $(el).text().includes("Issued"))
+.next()
+.text()
+.trim();
 
   // -----------------------------
   // TRIP DATE (e.g. Saturday, March 7, 2026)
@@ -131,94 +131,69 @@ export function parseAAEmail(html: string, receivedAt: Date): ParsedTravelSnapsh
   // This itinerary has none → return empty array.
 
   // -----------------------------
-  // SEGMENTS
-  // -----------------------------
-  const segments: ParsedSegment[] = [];
+// SEGMENTS (corrected)
+// -----------------------------
+const segments: ParsedSegment[] = [];
 
-  // Each segment starts with a departure airport code
-  $('td.itinerary-iata').each((_, el) => {
-    const depAirport = $(el).text().trim();
+const dateHeaders = $('.itinerary-header')
+  .map((_, el) => $(el).text().trim())
+  .get();
 
-    const depCity = $(el)
-      .closest("table")
-      .find(".itinerary-small-text")
-      .eq(0)
-      .text()
-      .trim();
+const airportBlocks = $('td.itinerary-iata').toArray();
 
-    const depTime = $(el)
-      .closest("table")
-      .find(".itinerary-text")
-      .eq(0)
-      .text()
-      .trim();
+for (let i = 0; i < airportBlocks.length; i += 2) {
+  const depEl = airportBlocks[i];
+  const arrEl = airportBlocks[i + 1];
+  if (!arrEl) break;
 
-    // Arrival block is the next itinerary-iata
-    const arrivalBlock = $(el).closest("tr").next().find("td.itinerary-iata");
+  const depAirport = $(depEl).text().trim();
+  const arrAirport = $(arrEl).text().trim();
 
-    const arrAirport = arrivalBlock.text().trim();
-    const arrCity = arrivalBlock
-      .closest("table")
-      .find(".itinerary-small-text")
-      .eq(0)
-      .text()
-      .trim();
+  const depTable = $(depEl).closest("table");
+  const depCity = depTable.find(".itinerary-small-text").first().text().trim();
+  const depTime = depTable.find(".itinerary-text").first().text().trim();
 
-    const arrTime = arrivalBlock
-      .closest("table")
-      .find(".itinerary-text")
-      .eq(0)
-      .text()
-      .trim();
+  const arrTable = $(arrEl).closest("table");
+  const arrCity = arrTable.find(".itinerary-small-text").first().text().trim();
+  const arrTime = arrTable.find(".itinerary-text").first().text().trim();
 
-    const flightNumber = $(el)
-      .closest("tr")
-      .find('.itinerary-small-text:contains("AA")')
-      .first()
-      .text()
-      .replace(/\s+/g, " ")
-      .trim();
+  const flightNumber = $(depEl)
+    .closest("tr")
+    .find('.itinerary-small-text:contains("AA")')
+    .first()
+    .text()
+    .replace(/\s+/g, " ")
+    .trim();
 
-    const operatedBy = $(el)
-      .closest("tr")
-      .find('.itinerary-small-text:contains("Operated")')
-      .text()
-      .replace(/\s+/g, " ")
-      .trim();
+  const operatedBy = $(depEl)
+    .closest("tr")
+    .find('.itinerary-small-text:contains("Operated")')
+    .text()
+    .replace(/\s+/g, " ")
+    .trim();
 
-    // Seats (if present)
-    const seats: string[] = [];
-    $(el)
-      .closest("table")
-      .find('.itinerary-small-text:contains("Seat")')
-      .each((_, seatEl) => {
-        const seat = $(seatEl).text().trim();
-        if (seat) seats.push(seat);
-      });
-
-    segments.push({
-      date: tripDate,
-      departureAirport: depAirport,
-      departureCity: depCity,
-      departureTime: depTime,
-      arrivalAirport: arrAirport,
-      arrivalCity: arrCity,
-      arrivalTime: arrTime,
-      flightNumber,
-      operatedBy,
-      seats,
+  const seats: string[] = [];
+  $(depEl)
+    .closest("table")
+    .find('.itinerary-small-text:contains("Seat")')
+    .each((_, seatEl) => {
+      const seat = $(seatEl).text().trim();
+      if (seat) seats.push(seat);
     });
-  });
 
-  return {
-    source: "AA_EMAIL",
-    receivedAt,
-    confirmationCode,
-    issuedDate,
-    rawHtml: fullyDecoded,
-    passengers,
-    payment,
-    bags,
-    segments,
-  };
+  const dateIndex = Math.floor(i / 2);
+  const date = dateHeaders[dateIndex] ?? dateHeaders[0];
+
+  segments.push({
+    date,
+    departureAirport: depAirport,
+    departureCity: depCity,
+    departureTime: depTime,
+    arrivalAirport: arrAirport,
+    arrivalCity: arrCity,
+    arrivalTime: arrTime,
+    flightNumber,
+    operatedBy,
+    seats,
+  });
 }
