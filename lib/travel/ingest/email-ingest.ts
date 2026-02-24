@@ -1,36 +1,46 @@
+// lib/travel/ingest/email-ingest.ts
+
 import fs from "fs";
 import path from "path";
 import { db } from "@/lib/db";
 import { parseAAEmail } from "@/lib/travel/parser/aa";
-import type { ParsedTravelSnapshot } from "@/lib/travel/parser/aa";
+
+// Extract only the HTML portion from the .eml file
+function extractHtmlPart(eml: string): string {
+  const idx = eml.indexOf("<!DOCTYPE html>");
+  if (idx === -1) {
+    console.warn("WARNING: <!DOCTYPE html> not found — using full file");
+    return eml;
+  }
+  return eml.slice(idx);
+}
 
 export async function ingestTravelEmails() {
-  const dir = path.join(process.cwd(), "travel-emails");
-  const files = fs.readdirSync(dir).filter((f) => f.endsWith(".eml"));
+  console.log("INGEST: starting travel email ingestion");
 
-  if (files.length === 0) {
-    throw new Error("No .eml files found in travel-emails/");
-  }
+  const filePath = path.join(process.cwd(), "travel-mail", "aa.eml");
+  const raw = fs.readFileSync(filePath, "utf8");
 
-  const latest = files.sort().reverse()[0];
-  const fullPath = path.join(dir, latest);
-  const raw = fs.readFileSync(fullPath, "utf8");
+  // Extract the HTML part before parsing
+  const html = extractHtmlPart(raw);
 
-  const parsed: ParsedTravelSnapshot = parseAAEmail(raw, new Date());
+  console.log("INGEST: extracted HTML length =", html.length);
 
+  // Parse the HTML into a TravelSnapshot
+  const parsed = parseAAEmail(html, new Date());
+
+  console.log("INGEST: parsed snapshot =", parsed);
+
+  // Write to DB
   const created = await db.travelSnapshot.create({
     data: {
-      
       source: parsed.source,
       receivedAt: parsed.receivedAt,
       confirmationCode: parsed.confirmationCode,
       issuedDate: parsed.issuedDate,
-      passengers: parsed.passengers as any,
-      payment: parsed.payment as any,
-      bags: parsed.bags as any,
-
       rawHtml: parsed.rawHtml,
 
+      // Segments
       segments: {
         create: parsed.segments.map((seg) => ({
           date: seg.date,
@@ -41,15 +51,39 @@ export async function ingestTravelEmails() {
           arrivalCity: seg.arrivalCity,
           arrivalTime: seg.arrivalTime,
           flightNumber: seg.flightNumber,
-          operatedBy: seg.operatedBy ?? null,
-          marketedAs: null,
-          cabin: null,
+          operatedBy: seg.operatedBy,
+          marketedAs: seg.marketedAs,
+          cabin: seg.cabin,
           fareClass: seg.fareClass,
-          seats: seg.seats.length ? seg.seats.join(", ") : null,
+          seats: seg.seats,
+        })),
+      },
+
+      // Passengers
+      passengers: {
+        create: parsed.passengers.map((p) => ({
+          name: p.name,
+        })),
+      },
+
+      // Payment
+      payment: {
+        create: parsed.payment.map((p) => ({
+          label: p.label,
+          amount: p.amount,
+        })),
+      },
+
+      // Bags
+      bags: {
+        create: parsed.bags.map((b) => ({
+          description: b.description,
         })),
       },
     },
   });
+
+  console.log("INGEST: created DB row id =", created.id);
 
   return created;
 }
