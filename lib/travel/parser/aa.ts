@@ -52,7 +52,7 @@ function decodeQuotedPrintable(input: string): string {
  * This is the only reliable way to map segments to dates in AA emails.
  */
 function findDateForRow(
-  row: cheerio.Element,
+  row: any,
   $: cheerio.CheerioAPI,
 ): string {
   const headerSelector = ".itinerary-header";
