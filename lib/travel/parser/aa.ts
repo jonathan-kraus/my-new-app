@@ -236,13 +236,18 @@ export function parseAAEmail(
 console.log("RUNNING NEW PARSER");
 // 1. Decode quoted-printable
 const decoded = decodeQuotedPrintable(html);
+// Decode AGAIN — AA double-encodes the HTML block
+const fullyDecoded = decodeQuotedPrintable(html);
+
+// Load into Cheerio
+const $ = cheerio.load(fullyDecoded);
 
 console.log(
-  "decoded",
-  decoded.slice(0, 500)
+  "fullyDecoded",
+  fullyDecoded.slice(0, 500)
   );
   // 2. Load into Cheerio const $ = cheerio.load(decoded);
-  const $ = cheerio.load(decoded);
+  
   console.log("HEADER SPANS FOUND:", $("span.itinerary-header").length);
 
   const issuedDate = extractIssuedDate($);
