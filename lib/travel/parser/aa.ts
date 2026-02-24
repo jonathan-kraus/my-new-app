@@ -88,14 +88,13 @@ function extractConfirmationCode($: cheerio.CheerioAPI): string {
 }
 
 function extractTripDate($: cheerio.CheerioAPI): string {
-  const dateSpan = $("span.itinerary-header")
-.filter((_, el) => {
-  const text = $(el).text();
-  return /[A-Za-z]+,\s+[A-Za-z]+\s+\d{1,2},\s+\d{4}/.test(text);
-})
+const dateSpan = $('span[class*="itinerary-header"]')
+  .filter((_, el) =>
+    /[A-Za-z]+,\s+[A-Za-z]+\s+\d{1,2},\s+\d{4}/.test($(el).text())
+  )
+  .first()
+  .text();
 
-    .first()
-    .text();
 
   const raw = cleanText(dateSpan);
   if (!raw) return "";
@@ -244,6 +243,8 @@ console.log(
   );
   // 2. Load into Cheerio const $ = cheerio.load(decoded);
   const $ = cheerio.load(decoded);
+  console.log("HEADER SPANS FOUND:", $("span.itinerary-header").length);
+
   const issuedDate = extractIssuedDate($);
   const confirmationCode = extractConfirmationCode($);
   const tripDate = extractTripDate($);
