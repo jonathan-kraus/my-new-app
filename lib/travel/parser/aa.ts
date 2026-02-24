@@ -1,12 +1,66 @@
 import * as cheerio from "cheerio";
 
-export function parseAAEmail(html: string, receivedAt: Date) {
-  const fullyDecoded = html
+// -----------------------------
+// TYPES
+// -----------------------------
+export type ParsedPassenger = {
+  name: string;
+};
+
+export type ParsedPayment = {
+  label: string;
+  amount: string;
+};
+
+export type ParsedBag = {
+  description: string;
+  price?: string;
+};
+
+export type ParsedSegment = {
+  date: string;
+  departureAirport: string;
+  departureCity: string;
+  departureTime: string;
+  arrivalAirport: string;
+  arrivalCity: string;
+  arrivalTime: string;
+  flightNumber: string;
+  operatedBy: string;
+  seats: string[];
+};
+
+export type ParsedTravelSnapshot = {
+  source: "AA_EMAIL";
+  receivedAt: Date;
+  confirmationCode: string;
+  issuedDate: string;
+  rawHtml: string;
+  passengers: ParsedPassenger[];
+  payment: ParsedPayment[];
+  bags: ParsedBag[];
+  segments: ParsedSegment[];
+};
+
+// -----------------------------
+// HELPERS
+// -----------------------------
+function decodeQuotedPrintable(input: string): string {
+  return input
     .replace(/=\r?\n/g, "")
     .replace(/=([A-Fa-f0-9]{2})/g, (_, hex) =>
       String.fromCharCode(parseInt(hex, 16)),
     );
+}
 
+// -----------------------------
+// MAIN PARSER
+// -----------------------------
+export function parseAAEmail(
+  html: string,
+  receivedAt: Date,
+): ParsedTravelSnapshot {
+  const fullyDecoded = decodeQuotedPrintable(html);
   const $ = cheerio.load(fullyDecoded);
 
   // -----------------------------
@@ -28,7 +82,7 @@ export function parseAAEmail(html: string, receivedAt: Date) {
   // -----------------------------
   // PASSENGERS
   // -----------------------------
-  const passengers = [];
+  const passengers: ParsedPassenger[] = [];
   const seen = new Set<string>();
 
   $("td.basic").each((_, el) => {
@@ -45,7 +99,7 @@ export function parseAAEmail(html: string, receivedAt: Date) {
   // -----------------------------
   // PAYMENT
   // -----------------------------
-  const payment = [];
+  const payment: ParsedPayment[] = [];
 
   $('td.basic.whiteTextApple:contains("$")')
     .closest("tr")
@@ -62,9 +116,14 @@ export function parseAAEmail(html: string, receivedAt: Date) {
     });
 
   // -----------------------------
+  // BAGS (none)
+  // -----------------------------
+  const bags: ParsedBag[] = [];
+
+  // -----------------------------
   // SEGMENTS
   // -----------------------------
-  const segments = [];
+  const segments: ParsedSegment[] = [];
 
   const dateHeaders = $(".itinerary-header")
     .map((_, el) => $(el).text().trim())
@@ -77,19 +136,26 @@ export function parseAAEmail(html: string, receivedAt: Date) {
     const arrEl = airportBlocks[i + 1];
     if (!arrEl) break;
 
+    // -----------------------------
+    // DEPARTURE BLOCK
+    // -----------------------------
     const depTable = $(depEl).closest("table");
-    const arrTable = $(arrEl).closest("table");
 
     const departureAirport = $(depEl).text().trim();
     const departureCity = depTable.find(".itinerary-small-text").first().text().trim();
     const departureTime = depTable.find(".itinerary-text").first().text().trim();
+
+    // -----------------------------
+    // ARRIVAL BLOCK
+    // -----------------------------
+    const arrTable = $(arrEl).closest("table");
 
     const arrivalAirport = $(arrEl).text().trim();
     const arrivalCity = arrTable.find(".itinerary-small-text").first().text().trim();
     const arrivalTime = arrTable.find(".itinerary-text").first().text().trim();
 
     // -----------------------------
-    // DATE (based on index)
+    // DATE (index-based)
     // -----------------------------
     const dateIndex = Math.floor(i / 2);
     const date = dateHeaders[dateIndex] ?? dateHeaders[0];
@@ -114,7 +180,10 @@ export function parseAAEmail(html: string, receivedAt: Date) {
     // -----------------------------
     // SEATS
     // -----------------------------
-    const seatBlock = arrTable.parent().next().find('.itinerary-small-text:contains("Seat")');
+    const seatBlock = arrTable
+      .parent()
+      .next()
+      .find('.itinerary-small-text:contains("Seat")');
 
     const seats = seatBlock
       .parent()
@@ -137,6 +206,9 @@ export function parseAAEmail(html: string, receivedAt: Date) {
     });
   }
 
+  // -----------------------------
+  // RETURN SNAPSHOT
+  // -----------------------------
   return {
     source: "AA_EMAIL",
     receivedAt,
@@ -145,7 +217,7 @@ export function parseAAEmail(html: string, receivedAt: Date) {
     rawHtml: fullyDecoded,
     passengers,
     payment,
-    bags: [],
+    bags,
     segments,
   };
 }
