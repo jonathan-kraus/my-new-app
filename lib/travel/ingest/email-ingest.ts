@@ -1,8 +1,8 @@
 import fs from "fs";
 import path from "path";
 import { db } from "@/lib/db";
-import { parseAAConfirmation } from "@/lib/travel/parser/aa";
-import type { ParsedTravelSnapshot } from "@/lib/travel/models/parsed-snapshot";
+import { parseAAEmail } from "@/lib/travel/parser/aa";
+import type { ParsedTravelSnapshot } from "@/lib/travel/parser/aa";
 
 export async function ingestTravelEmails() {
   const dir = path.join(process.cwd(), "travel-emails");
@@ -16,11 +16,11 @@ export async function ingestTravelEmails() {
   const fullPath = path.join(dir, latest);
   const raw = fs.readFileSync(fullPath, "utf8");
 
-  const parsed: ParsedTravelSnapshot = parseAAConfirmation(raw);
+  const parsed: ParsedTravelSnapshot = parseAAEmail(raw, new Date());
 
   const created = await db.travelSnapshot.create({
     data: {
-      id: parsed.id,
+      
       source: parsed.source,
       receivedAt: parsed.receivedAt,
       confirmationCode: parsed.confirmationCode,
