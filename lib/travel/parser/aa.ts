@@ -159,29 +159,44 @@ export function parseAAEmail(
       .trim();
     const arrTime = arrTable.find(".itinerary-text").first().text().trim();
 
-    const flightNumber = $(depEl)
-      .closest("tr")
-      .find('.itinerary-small-text:contains("AA")')
-      .first()
-      .text()
-      .replace(/\s+/g, " ")
-      .trim();
+// Find the row AFTER the arrival row
+const infoRow = $(arrEl).closest("tr").next();
 
-    const operatedBy = $(depEl)
-      .closest("tr")
-      .find('.itinerary-small-text:contains("Operated")')
-      .text()
-      .replace(/\s+/g, " ")
-      .trim();
+// Flight number (AA 4363)
+const flightNumber = infoRow
+  .find('.itinerary-small-text:contains("AA")')
+  .first()
+  .text()
+  .replace(/\s+/g, " ")
+  .trim();
 
-    const seats: string[] = [];
-    $(depEl)
-      .closest("table")
-      .find('.itinerary-small-text:contains("Seat")')
-      .each((_, seatEl) => {
-        const seat = $(seatEl).text().trim();
-        if (seat) seats.push(seat);
-      });
+// Operated by
+const operatedBy = infoRow
+  .find('.itinerary-small-text:contains("Operated")')
+  .text()
+  .replace(/\s+/g, " ")
+  .trim();
+
+
+
+// Seat row is usually the row AFTER the flight info row
+const seatRow = infoRow.next();
+
+const seats: string[] = [];
+seatRow
+  .find('.itinerary-small-text:contains("Seat")')
+  .each((_, seatEl) => {
+    const seatText = $(seatEl).text().trim();
+    const match = seatText.match(/Seat:\s*(.*)/i);
+    if (match && match[1]) {
+      // Split "12B, 12C" into ["12B", "12C"]
+      match[1]
+        .split(",")
+        .map((s) => s.trim())
+        .forEach((s) => seats.push(s));
+    }
+  });
+
 
     const dateIndex = Math.floor(i / 2);
     const date = dateHeaders[dateIndex] ?? dateHeaders[0];
