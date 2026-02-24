@@ -57,8 +57,6 @@ jobs:
       - name: Check for outdated dependencies
         run: pnpm outdated | grep -v -E '(prisma|@prisma)' || true
 
-      - name: Fix Prettier
-        run: pnpm pfix
       - name: Run tests with coverage
         run: pnpm coverage
       - name: Upload coverage report
