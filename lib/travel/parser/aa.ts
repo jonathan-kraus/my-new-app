@@ -53,6 +53,29 @@ function decodeQuotedPrintable(input: string): string {
     );
 }
 
+/**
+ * Find the date header that appears above the given table.
+ * This ties each segment to the correct date, even if there are
+ * multiple segments per day or AA changes row counts.
+ */
+function findDateForTable(table: any, $: cheerio.CheerioAPI): string {
+  const headerSelector = ".itinerary-header";
+
+  let current = $(table).closest("tr");
+
+  while (current.length) {
+    const header = current.prevAll(headerSelector).first();
+    if (header.length) {
+      return header.text().trim();
+    }
+    current = current.parent();
+  }
+
+  // Fallback: first date header if we somehow don't find one above
+  const first = $(headerSelector).first();
+  return first.length ? first.text().trim() : "";
+}
+
 // -----------------------------
 // MAIN PARSER
 // -----------------------------
@@ -125,10 +148,6 @@ export function parseAAEmail(
   // -----------------------------
   const segments: ParsedSegment[] = [];
 
-  const dateHeaders = $(".itinerary-header")
-    .map((_, el) => $(el).text().trim())
-    .get();
-
   const airportBlocks = $("td.itinerary-iata").toArray();
 
   for (let i = 0; i < airportBlocks.length; i += 2) {
@@ -142,8 +161,16 @@ export function parseAAEmail(
     const depTable = $(depEl).closest("table");
 
     const departureAirport = $(depEl).text().trim();
-    const departureCity = depTable.find(".itinerary-small-text").first().text().trim();
-    const departureTime = depTable.find(".itinerary-text").first().text().trim();
+    const departureCity = depTable
+      .find(".itinerary-small-text")
+      .first()
+      .text()
+      .trim();
+    const departureTime = depTable
+      .find(".itinerary-text")
+      .first()
+      .text()
+      .trim();
 
     // -----------------------------
     // ARRIVAL BLOCK
@@ -151,46 +178,63 @@ export function parseAAEmail(
     const arrTable = $(arrEl).closest("table");
 
     const arrivalAirport = $(arrEl).text().trim();
-    const arrivalCity = arrTable.find(".itinerary-small-text").first().text().trim();
-    const arrivalTime = arrTable.find(".itinerary-text").first().text().trim();
-
-    // -----------------------------
-    // DATE (index-based)
-    // -----------------------------
-    const dateIndex = Math.floor(i / 2);
-    const date = dateHeaders[dateIndex] ?? dateHeaders[0];
-
-    // -----------------------------
-    // FLIGHT NUMBER + OPERATED BY
-    // -----------------------------
-    const flightBlock = depTable.parent().next().find(".itinerary-small-text");
-
-    const flightNumber = flightBlock
-      .filter((_, el) => $(el).text().includes("AA"))
+    const arrivalCity = arrTable
+      .find(".itinerary-small-text")
+      .first()
+      .text()
+      .trim();
+    const arrivalTime = arrTable
+      .find(".itinerary-text")
       .first()
       .text()
       .trim();
 
-    const operatedBy = flightBlock
+    // -----------------------------
+    // DATE (DOM proximity)
+    // -----------------------------
+    const date = findDateForTable(depTable, $);
+
+    // -----------------------------
+    // FLIGHT NUMBER + OPERATED BY
+    // -----------------------------
+    const flightCell = depTable.closest("td").next("td");
+    const flightSpans = flightCell.find(".itinerary-small-text");
+
+    const flightNumber = flightSpans
+      .filter((_, el) => $(el).text().includes("AA"))
+      .first()
+      .text()
+      .replace(/\u00A0/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    const operatedBy = flightSpans
       .filter((_, el) => $(el).text().includes("Operated"))
       .map((_, el) => $(el).text().trim())
       .get()
       .join(" ");
 
     // -----------------------------
-    // SEATS
+    // SEATS (row-scoped)
     // -----------------------------
-    const seatBlock = arrTable
+    const seatRow = arrTable
       .parent()
       .next()
-      .find('.itinerary-small-text:contains("Seat")');
+      .find("tr")
+      .filter((_, tr) => $(tr).text().includes("Seat"))
+      .first();
 
-    const seats = seatBlock
-      .parent()
+    const seats = seatRow
       .find("span")
-      .map((_, el) => $(el).text().replace("Seat:", "").trim())
+      .map((_, el) =>
+        $(el)
+          .text()
+          .replace("Seat:", "")
+          .replace(",", "")
+          .trim(),
+      )
       .get()
-      .filter((s) => s && s !== ",");
+      .filter((s) => s.length > 0);
 
     segments.push({
       date,
