@@ -2,6 +2,8 @@
 
 import * as cheerio from "cheerio";
 import { parse } from "date-fns";
+import { decode as decodeQuotedPrintable } from "quoted-printable";
+import { TextDecoder } from "util";
 
 export type ParsedPassenger = {
   name: string;
@@ -231,8 +233,17 @@ export function parseAAEmail(
   html: string,
   receivedAt: Date,
 ): ParsedTravelSnapshot {
-  const $ = cheerio.load(html);
 
+console.log("RUNNING NEW PARSER");
+// 1. Decode quoted-printable
+const decoded = decodeQuotedPrintable(html);
+
+console.log(
+  "decoded",
+  decoded.slice(0, 500)
+  );
+  // 2. Load into Cheerio const $ = cheerio.load(decoded);
+  const $ = cheerio.load(decoded);
   const issuedDate = extractIssuedDate($);
   const confirmationCode = extractConfirmationCode($);
   const tripDate = extractTripDate($);
