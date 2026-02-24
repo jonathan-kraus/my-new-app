@@ -1,83 +1,12 @@
 import * as cheerio from "cheerio";
 
-export type ParsedPassenger = {
-  name: string;
-};
-
-export type ParsedPayment = {
-  label: string;
-  amount: string;
-};
-
-export type ParsedBag = {
-  description: string;
-  price?: string;
-};
-
-export type ParsedSegment = {
-  date: string;
-  departureAirport: string;
-  departureCity: string;
-  departureTime: string;
-  arrivalAirport: string;
-  arrivalCity: string;
-  arrivalTime: string;
-  flightNumber: string;
-  operatedBy: string;
-  seats: string[];
-};
-
-export type ParsedTravelSnapshot = {
-  source: "AA_EMAIL";
-  receivedAt: Date;
-  confirmationCode: string;
-  issuedDate: string;
-  rawHtml: string;
-  passengers: ParsedPassenger[];
-  payment: ParsedPayment[];
-  bags: ParsedBag[];
-  segments: ParsedSegment[];
-};
-
-function decodeQuotedPrintable(input: string): string {
-  return input
+export function parseAAEmail(html: string, receivedAt: Date) {
+  const fullyDecoded = html
     .replace(/=\r?\n/g, "")
     .replace(/=([A-Fa-f0-9]{2})/g, (_, hex) =>
       String.fromCharCode(parseInt(hex, 16)),
     );
-}
 
-/**
- * Find the date header that appears *above* a given row.
- * This is the only reliable way to map segments to dates in AA emails.
- */
-function findDateForRow(
-  row: any,
-  $: cheerio.CheerioAPI,
-): string {
-  const headerSelector = ".itinerary-header";
-
-  // Walk upward through previous siblings
-  let current = $(row).closest("tr");
-
-  while (current.length) {
-    const header = current.prevAll(headerSelector).first();
-    if (header.length) {
-      return header.text().trim();
-    }
-    current = current.parent();
-  }
-
-  // Fallback: first date header
-  return $(headerSelector).first().text().trim();
-}
-
-export function parseAAEmail(
-  html: string,
-  receivedAt: Date,
-): ParsedTravelSnapshot {
-  // AA HTML is double-encoded → decode again
-  const fullyDecoded = decodeQuotedPrintable(html);
   const $ = cheerio.load(fullyDecoded);
 
   // -----------------------------
@@ -97,27 +26,26 @@ export function parseAAEmail(
     .trim();
 
   // -----------------------------
-  // PASSENGERS (deduped)
+  // PASSENGERS
   // -----------------------------
-  const passengers: ParsedPassenger[] = [];
+  const passengers = [];
   const seen = new Set<string>();
 
   $("td.basic").each((_, el) => {
     const text = $(el).text().replace(/\s+/g, " ").trim();
-
     if (!/AAdvantage/i.test(text)) return;
 
     const name = text.split("-")[0].trim();
-    if (seen.has(name)) return;
-
-    seen.add(name);
-    passengers.push({ name });
+    if (!seen.has(name)) {
+      seen.add(name);
+      passengers.push({ name });
+    }
   });
 
   // -----------------------------
   // PAYMENT
   // -----------------------------
-  const payment: ParsedPayment[] = [];
+  const payment = [];
 
   $('td.basic.whiteTextApple:contains("$")')
     .closest("tr")
@@ -128,20 +56,19 @@ export function parseAAEmail(
       const label = tds.eq(0).text().replace(/\s+/g, " ").trim();
       const amount = tds.eq(1).text().trim();
 
-      if (!amount.startsWith("$")) return;
-
-      payment.push({ label, amount });
+      if (amount.startsWith("$")) {
+        payment.push({ label, amount });
+      }
     });
 
   // -----------------------------
-  // BAGS (none in this itinerary)
+  // SEGMENTS
   // -----------------------------
-  const bags: ParsedBag[] = [];
+  const segments = [];
 
-  // -----------------------------
-  // SEGMENTS (corrected)
-  // -----------------------------
-  const segments: ParsedSegment[] = [];
+  const dateHeaders = $(".itinerary-header")
+    .map((_, el) => $(el).text().trim())
+    .get();
 
   const airportBlocks = $("td.itinerary-iata").toArray();
 
@@ -150,91 +77,66 @@ export function parseAAEmail(
     const arrEl = airportBlocks[i + 1];
     if (!arrEl) break;
 
-    // -----------------------------
-    // DEPARTURE INFO
-    // -----------------------------
-    const depAirport = $(depEl).text().trim();
-    const depRow = $(depEl).closest("tr");
-    const depCity = depRow.find(".itinerary-small-text").first().text().trim();
-    const depTime = depRow.find(".itinerary-text").first().text().trim();
+    const depTable = $(depEl).closest("table");
+    const arrTable = $(arrEl).closest("table");
+
+    const departureAirport = $(depEl).text().trim();
+    const departureCity = depTable.find(".itinerary-small-text").first().text().trim();
+    const departureTime = depTable.find(".itinerary-text").first().text().trim();
+
+    const arrivalAirport = $(arrEl).text().trim();
+    const arrivalCity = arrTable.find(".itinerary-small-text").first().text().trim();
+    const arrivalTime = arrTable.find(".itinerary-text").first().text().trim();
 
     // -----------------------------
-    // ARRIVAL INFO
+    // DATE (based on index)
     // -----------------------------
-    const arrAirport = $(arrEl).text().trim();
-    const arrRow = $(arrEl).closest("tr");
-    const arrCity = arrRow.find(".itinerary-small-text").first().text().trim();
-    const arrTime = arrRow.find(".itinerary-text").first().text().trim();
+    const dateIndex = Math.floor(i / 2);
+    const date = dateHeaders[dateIndex] ?? dateHeaders[0];
 
     // -----------------------------
-    // DATE (corrected via DOM proximity)
+    // FLIGHT NUMBER + OPERATED BY
     // -----------------------------
-    const date = findDateForRow(depEl, $);
+    const flightBlock = depTable.parent().next().find(".itinerary-small-text");
 
-    // -----------------------------
-    // FLIGHT INFO ROW
-    // -----------------------------
-    const infoRow = arrRow
-      .nextAll("tr")
-      .filter((_, tr) =>
-        $(tr).find('.itinerary-small-text:contains("AA")').length > 0,
-      )
-      .first();
-
-    const flightNumber = infoRow
-      .find('.itinerary-small-text:contains("AA")')
+    const flightNumber = flightBlock
+      .filter((_, el) => $(el).text().includes("AA"))
       .first()
       .text()
-      .replace(/\s+/g, " ")
       .trim();
 
-    const operatedBy = infoRow
-      .find('.itinerary-small-text:contains("Operated")')
-      .text()
-      .replace(/\s+/g, " ")
-      .trim();
+    const operatedBy = flightBlock
+      .filter((_, el) => $(el).text().includes("Operated"))
+      .map((_, el) => $(el).text().trim())
+      .get()
+      .join(" ");
 
     // -----------------------------
-    // SEAT ROW
+    // SEATS
     // -----------------------------
-    const seatRow = infoRow
-      .nextAll("tr")
-      .filter((_, tr) =>
-        $(tr).find('.itinerary-small-text:contains("Seat")').length > 0,
-      )
-      .first();
+    const seatBlock = arrTable.parent().next().find('.itinerary-small-text:contains("Seat")');
 
-    const seats: string[] = [];
-    seatRow
-      .find('.itinerary-small-text:contains("Seat")')
-      .each((_, seatEl) => {
-        const seatText = $(seatEl).text().trim();
-        const match = seatText.match(/Seat:\s*(.*)/i);
-        if (match && match[1]) {
-          match[1]
-            .split(",")
-            .map((s) => s.trim())
-            .forEach((s) => seats.push(s));
-        }
-      });
+    const seats = seatBlock
+      .parent()
+      .find("span")
+      .map((_, el) => $(el).text().replace("Seat:", "").trim())
+      .get()
+      .filter((s) => s && s !== ",");
 
     segments.push({
       date,
-      departureAirport: depAirport,
-      departureCity: depCity,
-      departureTime: depTime,
-      arrivalAirport: arrAirport,
-      arrivalCity: arrCity,
-      arrivalTime: arrTime,
+      departureAirport,
+      departureCity,
+      departureTime,
+      arrivalAirport,
+      arrivalCity,
+      arrivalTime,
       flightNumber,
       operatedBy,
       seats,
     });
   }
 
-  // -----------------------------
-  // RETURN SNAPSHOT
-  // -----------------------------
   return {
     source: "AA_EMAIL",
     receivedAt,
@@ -243,7 +145,7 @@ export function parseAAEmail(
     rawHtml: fullyDecoded,
     passengers,
     payment,
-    bags,
+    bags: [],
     segments,
   };
 }
