@@ -10,7 +10,7 @@ import { logit } from "@/lib/log/logit";
 
 export async function POST() {
   try {
-    const result = await sendWeatherEmail();
+    const result = await sendWeatherEmail("TW message", "TW subject");
 
     logit("jonathan", {
       level: "info",

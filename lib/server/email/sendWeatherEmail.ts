@@ -1,25 +1,185 @@
 /*
  * @FilePath: \my-new-app\lib\server\email\sendWeatherEmail.ts
- * @LastEditTime: 2026-02-24 18:07:11
+ * @LastEditTime: 2026-02-25 00:25:06
  */
 // lib/server/email/sendWeatherEmail.ts
+"use server";
 
+import { getConfig, setConfig } from "@/lib/runtime/config";
+import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
+import { buildSendWeatherEmail } from "@/lib/buildSendWeatherEmail";
 import { logit } from "@/lib/log/logit";
 
-export async function sendWeatherEmail() {
-  // TODO: integrate MailerSend here
-  // For now, return a mock payload so your UI works
+export async function sendWeatherEmail(message: string, subject: string) {
+  // --- 1. Read flag ---------------------------------------------------------
+  const enabled = await getConfig("email_enabled", "1");
 
-  const result = {
-    ok: true,
-    message: "Weather email sent (mock)",
-  };
+  await logit(
+    "email",
+    {
+      level: "info",
+      message: "sendWeatherEmail - Checked email_enabled message: " + message,
+    },
+    {
+      payload: {
+        enabled_raw: enabled,
+        enabled_string: String(enabled),
+        message,
+        subject,
+      },
+    },
+  );
 
-  logit("jonathan", {
-    level: "info",
-    message: "weather_email_sent_mock",
-    payload: result,
+  if (String(enabled) !== "1") {
+    await logit("email", {
+      level: "warn",
+      message: "sendWeatherEmail - Email sending disabled by runtime flag",
+    });
+    return { ok: false, reason: "disabled" };
+  }
+  const throttleMinutes = Number(
+    await getConfig("email.throttle.minutes", "0"),
+  );
+  const lastSentRaw = await getConfig("email.last_sent_at", "");
+
+  // --- 2. Build email -------------------------------------------------------
+  const baseEmail = buildSendWeatherEmail();
+
+  const finalSubject = subject ?? baseEmail.subject;
+
+  const finalText = message ?? baseEmail.text;
+
+  const finalHtml = message
+    ? `<pre style="font-family: system-ui">${message}</pre>`
+    : baseEmail.html;
+
+  const mailerSend = new MailerSend({
+    apiKey: process.env.MAILERSEND_API_KEY!,
   });
 
-  return result;
+  const sentFrom = new Sender("jonathan@www.kraus.my.id", "Travel Weather Bot");
+  const recipients = [new Recipient("jonathankraus2026@outlook.com")];
+
+  const emailParams = new EmailParams()
+    .setFrom(sentFrom)
+    .setTo(recipients)
+    .setSubject(finalSubject)
+    .setHtml(finalHtml)
+    .setText(finalText);
+
+  // --- 3. Throttle ----------------------------------------------------------
+
+  await logit(
+    "email",
+    {
+      level: "info",
+      message: "Throttle check starting",
+    },
+    {
+      payload: {
+        throttleMinutes,
+        lastSentRaw,
+      },
+    },
+  );
+
+  if (typeof lastSentRaw === "string" && lastSentRaw.length > 0) {
+    const last = new Date(lastSentRaw);
+    const now = new Date();
+    const diffMinutes = (now.getTime() - last.getTime()) / 1000 / 60;
+
+    await logit(
+      "email",
+      {
+        level: "info",
+        message: "Computed throttle difference",
+      },
+      {
+        payload: {
+          diffMinutes,
+          throttleMinutes,
+        },
+      },
+    );
+
+    if (diffMinutes < throttleMinutes) {
+      await logit(
+        "email",
+        {
+          level: "warn",
+          message: "Email throttled",
+        },
+        {
+          payload: {
+            diffMinutes,
+            throttleMinutes,
+            nextAllowedInMinutes: throttleMinutes - diffMinutes,
+          },
+        },
+      );
+      return {
+        ok: false,
+        reason: "throttled",
+        detail: `Wait ${Math.ceil(throttleMinutes - diffMinutes)} more minutes`,
+      };
+    }
+  }
+
+  // --- 4. Send email --------------------------------------------------------
+  try {
+    await mailerSend.email.send(emailParams);
+
+    await logit(
+      "email",
+      {
+        level: "info",
+        message: "Travel Weather email sent",
+      },
+      {
+        payload: {
+          subject: finalSubject,
+          message_preview: message?.slice(0, 80),
+        },
+      },
+    );
+    await logit("email", {
+      level: "info",
+      message: "Updated last_sent_at",
+    });
+    // --- 5. Update timestamp --------------------------------------------------
+    const newTimestamp = new Date().toISOString();
+    const saved = await setConfig("email.last_sent_at", newTimestamp);
+    await logit(
+      "email",
+      {
+        level: "info",
+        message: "Updated last_sent_at",
+      },
+      {
+        payload: {
+          attempted: newTimestamp,
+          saved,
+          match: String(saved) === newTimestamp,
+        },
+      },
+    );
+
+    return { ok: true, sent: true };
+  } catch (err: any) {
+    await logit(
+      "email",
+      {
+        level: "error",
+        message: "MailerSend error",
+      },
+      {
+        payload: {
+          error: err?.message,
+          stack: err?.stack,
+        },
+      },
+    );
+
+    return { ok: false, reason: "error", detail: err.message };
+  }
 }
