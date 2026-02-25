@@ -5,13 +5,6 @@ import { useEffect, useMemo, useState } from "react";
 import { isSchedulerRunning } from "@/lib/log/scheduler";
 import { peek } from "@/lib/log/queue";
 
-import { getLastFlushAt } from "@/lib/log/flush";
-import { get } from "node:http";
-console.log("LOG HEALTH", {
-  scheduler: isSchedulerRunning(),
-  queueSize: peek().length,
-  lastFlushAt: getLastFlushAt(),
-});
 type LogRecord = {
   id: string;
   level: string;
@@ -99,7 +92,6 @@ export default function LogsPage() {
             Payload: {
               scheduler: isSchedulerRunning(),
               queueSize: peek().length,
-              lastFlushAt: getLastFlushAt(),
               name: "log page info",
             },
           });
