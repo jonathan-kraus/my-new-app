@@ -1,8 +1,3 @@
-/*
- * @FilePath: \my-new-app\lib\server\email\sendWeatherEmail.ts
- * @LastEditTime: 2026-02-25 00:25:06
- */
-// lib/server/email/sendWeatherEmail.ts
 "use server";
 
 import { getConfig, setConfig } from "@/lib/runtime/config";
@@ -10,7 +5,7 @@ import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
 import { buildSendWeatherEmail } from "@/lib/buildSendWeatherEmail";
 import { logit } from "@/lib/log/logit";
 
-export async function sendWeatherEmail(message: string, subject: string) {
+export async function sendWeatherEmail(message?: string, subject?: string) {
   // --- 1. Read flag ---------------------------------------------------------
   const enabled = await getConfig("email_enabled", "1");
 
@@ -18,7 +13,7 @@ export async function sendWeatherEmail(message: string, subject: string) {
     "email",
     {
       level: "info",
-      message: "sendWeatherEmail - Checked email_enabled message: " + message,
+      message: "sendWeatherEmail - Checked email_enabled",
     },
     {
       payload: {
@@ -37,6 +32,7 @@ export async function sendWeatherEmail(message: string, subject: string) {
     });
     return { ok: false, reason: "disabled" };
   }
+
   const throttleMinutes = Number(
     await getConfig("email.throttle.minutes", "0"),
   );
@@ -45,13 +41,17 @@ export async function sendWeatherEmail(message: string, subject: string) {
   // --- 2. Build email -------------------------------------------------------
   const baseEmail = buildSendWeatherEmail();
 
-  const finalSubject = subject ?? baseEmail.subject;
+  const finalSubject = subject || baseEmail.subject;
+  const finalText = message || baseEmail.text;
 
-  const finalText = message ?? baseEmail.text;
-
-  const finalHtml = message
-    ? `<pre style="font-family: system-ui">${message}</pre>`
-    : baseEmail.html;
+  // Always include your template, optionally append message
+  const finalHtml =
+    baseEmail.html +
+    (message
+      ? `<div style="margin-top:20px; font-family: system-ui;">
+           <pre>${message}</pre>
+         </div>`
+      : "");
 
   const mailerSend = new MailerSend({
     apiKey: process.env.MAILERSEND_API_KEY!,
@@ -68,7 +68,6 @@ export async function sendWeatherEmail(message: string, subject: string) {
     .setText(finalText);
 
   // --- 3. Throttle ----------------------------------------------------------
-
   await logit(
     "email",
     {
@@ -103,20 +102,6 @@ export async function sendWeatherEmail(message: string, subject: string) {
     );
 
     if (diffMinutes < throttleMinutes) {
-      await logit(
-        "email",
-        {
-          level: "warn",
-          message: "Email throttled",
-        },
-        {
-          payload: {
-            diffMinutes,
-            throttleMinutes,
-            nextAllowedInMinutes: throttleMinutes - diffMinutes,
-          },
-        },
-      );
       return {
         ok: false,
         reason: "throttled",
@@ -142,13 +127,11 @@ export async function sendWeatherEmail(message: string, subject: string) {
         },
       },
     );
-    await logit("email", {
-      level: "info",
-      message: "Updated last_sent_at",
-    });
+
     // --- 5. Update timestamp --------------------------------------------------
     const newTimestamp = new Date().toISOString();
     const saved = await setConfig("email.last_sent_at", newTimestamp);
+
     await logit(
       "email",
       {
