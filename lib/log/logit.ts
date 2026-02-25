@@ -3,11 +3,14 @@ import { enqueue } from "./queue";
 import { nextLogIndex } from "./state";
 import { db } from "@/lib/db";
 import { startScheduler } from "./scheduler";
+
 const ERROR_COOLDOWN_MS = 5000;
 const NEON_MAX_JSON = 200_000;
 let lastErrorTime = 0;
 
 startScheduler();
+
+// --- Helpers ---------------------------------------------------------------
 
 function safeForNeon(obj: any) {
   try {
@@ -21,15 +24,27 @@ function safeForNeon(obj: any) {
   }
 }
 
+// Axiom requires flat, stable fields — no nested objects, no dynamic keys
+function safeForAxiom(obj: any) {
+  try {
+    return JSON.stringify(obj ?? {});
+  } catch {
+    return "{}";
+  }
+}
+
+// --- Main logit ------------------------------------------------------------
+
 export async function logit(domain: string, payload: any, meta: any = {}) {
   const requestId = meta.requestId ?? crypto.randomUUID();
   const eventIndex = nextLogIndex(requestId);
-  const jmsg = "JMSG";
+
   const originalMessage = (payload.message ?? "").toString().trim();
   const message = originalMessage
     ? `#${eventIndex} ${originalMessage}`
-    : `#${eventIndex} ${jmsg}`;
+    : `#${eventIndex} JMSG`;
 
+  // Flatten payload + meta for Neon
   const flatPayload = {
     eventIndex,
     ...(payload ?? {}),
@@ -42,20 +57,43 @@ export async function logit(domain: string, payload: any, meta: any = {}) {
     userId: meta.userId ?? null,
   };
 
+  const timestamp = new Date().toISOString();
+
+  // Full structured event (Neon)
   const event = {
     domain,
     level: payload.level ?? "info",
     message,
-    timestamp: new Date().toISOString(),
+    timestamp,
     payload: flatPayload,
     meta: flatMeta,
   };
 
+  // --- Axiom-safe event ----------------------------------------------------
+  const axiomEvent = {
+    domain,
+    level: event.level,
+    message: event.message,
+    timestamp,
+
+    // Flattened for Axiom
+    payload_json: safeForAxiom(flatPayload),
+    meta_json: safeForAxiom(flatMeta),
+
+    // Useful top-level fields for filtering
+    requestId,
+    eventIndex,
+    page: flatMeta.page,
+    userId: flatMeta.userId,
+  };
+
+  // Queue for Axiom ingestion
   enqueue({
     domain,
-    dataj: event,
+    dataj: axiomEvent,
   });
 
+  // --- Neon write ----------------------------------------------------------
   try {
     await db.log.create({
       data: {
