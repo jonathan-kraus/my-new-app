@@ -20,19 +20,19 @@ export async function someServerLogic(req: NextRequest) {
   );
 
   // Use for...of so you can await
-  for (const s of stats) {
-    await logit(
-      "jonathan",
-      {
-        level: "info",
-        message: "Table stat row",
-        payload: {
-          tableStats: `${s.table_name}: rows≈${s.estimated_rows}, total_bytes=${s.total_bytes}`,
-        },
-      },
-      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-    );
-  }
+  // for (const s of stats) {
+  //   await logit(
+  //     "jonathan",
+  //     {
+  //       level: "info",
+  //       message: "Table stat row",
+  //       payload: {
+  //         tableStats: `${s.table_name}: rows≈${s.estimated_rows}, total_bytes=${s.total_bytes}`,
+  //       },
+  //     },
+  //     { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+  //   );
+  // }
 
   // Or, if you prefer parallel logging:
   // await Promise.all(
