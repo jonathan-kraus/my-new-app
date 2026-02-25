@@ -14,7 +14,7 @@ export async function POST() {
 
     logit("jonathan", {
       level: "info",
-      message: "weather_email_api_success",
+      message: "weather_email_api_success mock",
       payload: { result },
     });
 
