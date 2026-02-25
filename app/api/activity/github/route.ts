@@ -3,18 +3,39 @@ import { NextRequest, NextResponse } from "next/server";
 import { Axiom } from "@axiomhq/js";
 import { logit } from "@/lib/log/logit";
 import { enrichContext } from "@/lib/log/context";
+
+// GET handler — simple health check
 export async function GET(req: NextRequest) {
-  const H1 = Date.now();
-
-  console.log("DB TEST", H1, req);
-  return NextResponse.json({ ok: true, time: H1 });
+  const now = Date.now();
+  console.log("GitHub Activity GET", now);
+  return NextResponse.json({ ok: true, time: now });
 }
-const axiom = new Axiom({
-  token: process.env.AXIOM_TOKEN!,
-});
 
-export async function PUT(req: Request) {
+// PUT handler — fetch GitHub activity from Axiom
+export async function PUT(req: NextRequest) {
   const ctx = await enrichContext(req as any);
+
+  // Validate token early
+  const token = process.env.AXIOM_TOKEN;
+  if (!token) {
+    await logit(
+      "github",
+      {
+        level: "error",
+        message: "Missing Axiom token",
+        payload: {},
+      },
+      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId }
+    );
+
+    return NextResponse.json(
+      { ok: false, error: "Axiom token missing" },
+      { status: 500 }
+    );
+  }
+
+  // Create client *inside* the handler (safe)
+  const axiom = new Axiom({ token });
 
   try {
     await logit(
@@ -24,11 +45,7 @@ export async function PUT(req: Request) {
         message: "GitHub activity API hit",
         payload: { route: "activity" },
       },
-      {
-        requestId: ctx.requestId,
-        route: ctx.page,
-        userId: ctx.userId,
-      },
+      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId }
     );
 
     const query = `
@@ -45,32 +62,11 @@ export async function PUT(req: Request) {
         message: "Running Axiom query",
         payload: { query },
       },
-      {
-        requestId: ctx.requestId,
-        route: ctx.page,
-        userId: ctx.userId,
-      },
+      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId }
     );
 
+    // Run the query
     const result = await axiom.query(query);
-
-    await logit(
-      "github",
-      {
-        level: "info",
-        message: "Axiom query result",
-
-        payload: {
-          dataset: result.datasetNames,
-          matchCount: result.matches?.length ?? 0,
-        },
-      },
-      {
-        requestId: ctx.requestId,
-        route: ctx.page,
-        userId: ctx.userId,
-      },
-    );
 
     const rows = result?.matches ?? [];
 
@@ -96,7 +92,6 @@ export async function PUT(req: Request) {
 
     // Deduplicate by commitSha
     const bySha = new Map<string, any>();
-
     for (const item of normalized) {
       const sha = item.commitSha ?? "unknown";
 
@@ -107,7 +102,6 @@ export async function PUT(req: Request) {
 
       const existing = bySha.get(sha);
 
-      // Prefer success
       const isSuccess = (x: any) => x.conclusion === "success";
 
       if (isSuccess(item) && !isSuccess(existing)) {
@@ -115,7 +109,6 @@ export async function PUT(req: Request) {
         continue;
       }
 
-      // Otherwise prefer newest
       if (new Date(item.updatedAt) > new Date(existing.updatedAt)) {
         bySha.set(sha, item);
       }
@@ -130,11 +123,7 @@ export async function PUT(req: Request) {
         message: "Mapped GitHub activity",
         payload: { count: activity.length },
       },
-      {
-        requestId: ctx.requestId,
-        route: ctx.page,
-        userId: ctx.userId,
-      },
+      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId }
     );
 
     return NextResponse.json({ ok: true, activity });
@@ -144,18 +133,14 @@ export async function PUT(req: Request) {
       {
         level: "error",
         message: "GitHub activity API failed",
-        payload: { error: err?.message },
+        payload: { error: err?.message ?? "Unknown error" },
       },
-      {
-        requestId: ctx.requestId,
-        route: ctx.page,
-        userId: ctx.userId,
-      },
+      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId }
     );
 
     return NextResponse.json(
       { ok: false, error: "Failed to fetch GitHub activity" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
