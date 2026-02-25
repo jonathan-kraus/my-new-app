@@ -99,5 +99,6 @@ async function end(req: NextRequest, res: NextResponse) {
 }
 
 export const config = {
-  matcher: ["/notes/:path*", "/api/private/:path*"],
+  matcher: ["/((?!_next|favicon.ico).*)"],
 };
+
