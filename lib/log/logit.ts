@@ -86,6 +86,7 @@ export async function logit(domain: string, payload: any, meta: any = {}) {
     page: flatMeta.page,
     userId: flatMeta.userId,
   };
+console.log("LOGIT VERSION: 2026-02-25");
 
   // Queue for Axiom ingestion
   enqueue({
