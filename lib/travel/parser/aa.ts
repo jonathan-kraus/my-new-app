@@ -146,12 +146,12 @@ export function parseAAEmail(
 
   // -----------------------------
   // BAGS (none for now)
-// -----------------------------
+  // -----------------------------
   const bags: ParsedBag[] = [];
 
   // -----------------------------
   // DATES (index-based)
-// -----------------------------
+  // -----------------------------
   const dateHeaders = $(".itinerary-header.darkmode-altblue")
     .map((_, el) => clean($(el).text()))
     .get();
@@ -192,9 +192,7 @@ export function parseAAEmail(
     const arrivalCity = clean(
       arrTable.find(".itinerary-small-text").first().text(),
     );
-    const arrivalTime = clean(
-      arrTable.find(".itinerary-text").first().text(),
-    );
+    const arrivalTime = clean(arrTable.find(".itinerary-text").first().text());
 
     // -----------------------------
     // DATE (index-based: 0/1 → header[0], 2/3 → header[1], etc.)
@@ -225,7 +223,7 @@ export function parseAAEmail(
 
     // -----------------------------
     // SEATS (regex-filtered from merged row)
-// -----------------------------
+    // -----------------------------
     const seatRow = arrTable
       .closest("td")
       .next("td")
@@ -240,7 +238,7 @@ export function parseAAEmail(
 
     // -----------------------------
     // LOGGING (shape you requested)
-// -----------------------------
+    // -----------------------------
     logit("jonathan", {
       level: "info",
       message: "aa-segment-debugging",
