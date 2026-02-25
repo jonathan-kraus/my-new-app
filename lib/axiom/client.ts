@@ -18,4 +18,4 @@ export const logger = new Logger({
 });
 
 export const useLogger = createUseLogger(logger);
-export const WebVitals = createWebVitalsComponent(logger);
+//export const WebVitals = createWebVitalsComponent(logger);
