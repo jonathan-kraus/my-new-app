@@ -1,18 +1,18 @@
 /*
  * @FilePath: \my-new-app\lib\normalizePath.ts
- * @LastEditTime: 2026-02-26 13:23:30
+ * @LastEditTime: 2026-02-26 16:49:03
  */
 export function normalizePath(url: string): {
   last: string;
-  lastTwo: string; // normalized as "a/b" or just "a"
+  lastTwo: string;
 } {
   try {
     const u = new URL(url);
 
-    // Split path into non-empty segments
+    // Remove empty segments caused by leading/trailing slashes
     const parts = u.pathname.split("/").filter(Boolean);
 
-    // Root case → return "base"
+    // Root → return "base"
     if (parts.length === 0) {
       return {
         last: "base",
@@ -31,8 +31,7 @@ export function normalizePath(url: string): {
 
     return { last, lastTwo };
   } catch {
+    // Malformed URL → treat as base
     return { last: "base", lastTwo: "base" };
   }
 }
-
-export default normalizePath;
