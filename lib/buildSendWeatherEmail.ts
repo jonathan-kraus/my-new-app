@@ -5,7 +5,7 @@ const API_KEY = process.env.TOMORROWIO_APIKEY!;
 
 async function fetchWeatherForCity(city: string) {
   const url = `https://api.tomorrow.io/v4/weather/realtime?location=${encodeURIComponent(
-    city
+    city,
   )}&units=imperial&apikey=${API_KEY}`;
 
   const res = await fetch(url);
@@ -43,7 +43,7 @@ export async function buildSendWeatherEmail() {
   }
 
   const segments = snapshot.segments.sort((a, b) =>
-    a.departureTime.localeCompare(b.departureTime)
+    a.departureTime.localeCompare(b.departureTime),
   );
 
   if (segments.length === 0) {

@@ -55,7 +55,7 @@ function transformWorkflowRun(payload: any) {
     source: "github",
   };
 }
-
+console.log("~~ transformWorkflowRun write debug", transformWorkflowRun);
 // -----------------------------
 // Normalize all GitHub events
 // -----------------------------
@@ -146,8 +146,6 @@ export async function writeGithubDebugEvent(payload: any) {
     );
     return;
   }
-
-
 }
 
 // -----------------------------
