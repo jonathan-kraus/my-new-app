@@ -55,7 +55,7 @@ export async function proxy(req: NextRequest) {
     "jonathan",
     {
       level: "info",
-      message: "REQUEST START pathname: " + pathname,
+      message: "REQUEST START " + pathname,
       payload: {
         page: pathname,
         file: "proxy.ts",
@@ -106,7 +106,7 @@ async function end(req: NextRequest, res: NextResponse) {
     "middleware",
     {
       level: "info",
-      message: "REQUEST END pathname: " + pathname,
+      message: "REQUEST END " + pathname,
       // payload: {
         page: req.nextUrl.pathname,
         file: "proxy.ts",
