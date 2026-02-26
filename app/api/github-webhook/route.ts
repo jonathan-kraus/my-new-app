@@ -148,7 +148,7 @@ export async function writeGithubDebugEvent(payload: any) {
   }
 
 
-
+}
 
 // -----------------------------
 // Signature verification
