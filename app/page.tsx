@@ -36,7 +36,7 @@ export default async function HomePage() {
         userId: session?.user?.id ?? null,
       },
     },
-    ctx
+    ctx,
   );
 
   // -----------------------------
@@ -69,13 +69,12 @@ export default async function HomePage() {
         locationId: location.id,
       },
     },
-    ctx
+    ctx,
   );
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-600 to-sky-900 text-white p-8">
       <div className="max-w-5xl mx-auto bg-sky-800/60 backdrop-blur-md rounded-2xl p-8 shadow-xl border border-white/10">
-
         {/* Header */}
         <section className="mb-8">
           <h1 className="text-4xl font-semibold mb-1">

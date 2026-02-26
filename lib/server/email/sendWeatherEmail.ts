@@ -39,7 +39,7 @@ export async function sendWeatherEmail(message?: string, subject?: string) {
   const lastSentRaw = await getConfig("email.last_sent_at", "");
 
   // --- 2. Build email -------------------------------------------------------
-  const baseEmail = buildSendWeatherEmail();
+  const baseEmail = await buildSendWeatherEmail();
 
   const finalSubject = subject || baseEmail.subject;
   const finalText = message || baseEmail.text;

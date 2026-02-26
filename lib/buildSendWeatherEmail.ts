@@ -1,17 +1,40 @@
 // lib/buildSendWeatherEmail.ts
 import { db } from "@/lib/db";
 
+const API_KEY = process.env.TOMORROWIO_APIKEY!;
+
+async function fetchWeatherForCity(city: string) {
+  const url = `https://api.tomorrow.io/v4/weather/realtime?location=${encodeURIComponent(
+    city
+  )}&units=imperial&apikey=${API_KEY}`;
+
+  const res = await fetch(url);
+  if (!res.ok) return null;
+
+  const json = await res.json();
+  const v = json?.data?.values;
+
+  if (!v) return null;
+
+  return {
+    temperature: v.temperature,
+    feelsLike: v.temperatureApparent,
+    humidity: v.humidity,
+    windSpeed: v.windSpeed,
+    visibility: v.visibility,
+    weatherCode: v.weatherCode,
+    fetchedAt: new Date(),
+  };
+}
+
 export async function buildSendWeatherEmail() {
-  const trip = await db.travelSnapshot.findFirst({
-    where: { isNext: true },
-    include: {
-      segments: {
-        orderBy: { departureTime: "asc" },
-      },
-    },
+  // 1. Get the most recent snapshot
+  const snapshot = await db.travelSnapshot.findFirst({
+    orderBy: { receivedAt: "desc" },
+    include: { segments: true },
   });
 
-  if (!trip) {
+  if (!snapshot) {
     return {
       subject: "Your Upcoming Trip",
       text: "No upcoming trip found.",
@@ -19,25 +42,34 @@ export async function buildSendWeatherEmail() {
     };
   }
 
-  // Load weather for each arrival city
-  const weatherByLocation: Record<string, any> = {};
+  const segments = snapshot.segments.sort((a, b) =>
+    a.departureTime.localeCompare(b.departureTime)
+  );
 
-  for (const seg of trip.segments) {
-    const weather = await db.weatherSnapshot.findFirst({
-      where: { locationId: seg.arrivalLocationId },
-      orderBy: { fetchedAt: "desc" },
-    });
-    weatherByLocation[seg.arrivalLocationId] = weather;
+  if (segments.length === 0) {
+    return {
+      subject: "Your Upcoming Trip",
+      text: "No segments found for this trip.",
+      html: `<p>No segments found for this trip.</p>`,
+    };
   }
 
-  const [outbound, inbound] = trip.segments;
+  // 2. Fetch weather for each arrival city
+  const weatherByCity: Record<string, any> = {};
 
-  const outWeather = weatherByLocation[outbound.arrivalLocationId];
-  const inWeather = weatherByLocation[inbound.arrivalLocationId];
+  for (const seg of segments) {
+    weatherByCity[seg.arrivalCity] = await fetchWeatherForCity(seg.arrivalCity);
+  }
 
-  const formatTemp = (t: number | null) =>
+  const [outbound, inbound] = segments;
+
+  const outWeather = weatherByCity[outbound.arrivalCity];
+  const inWeather = weatherByCity[inbound.arrivalCity];
+
+  const formatTemp = (t: number | null | undefined) =>
     t != null ? `${t}°F` : "—";
 
+  // 3. Build HTML
   const html = `
   <div style="font-family: system-ui, sans-serif; padding: 20px; color: #0a2540;">
     <h1 style="margin-bottom: 10px;">Your Upcoming Trip</h1>
