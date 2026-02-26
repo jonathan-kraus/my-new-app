@@ -100,14 +100,14 @@ export async function proxy(req: NextRequest) {
 // --- END helper ---------------------------------------------------
 async function end(req: NextRequest, res: NextResponse) {
   const durationMs = getRequestDuration(req.url);
-  const { pathname } = req.nextUrl;
+  const pathname = req.nextUrl.pathname;
   const { last, lastTwo } = normalizePath(pathname);
   await logit(
     "middleware",
     {
       level: "info",
       message: "REQUEST END pathname: " + pathname,
-      payload: {
+      // payload: {
         page: req.nextUrl.pathname,
         file: "proxy.ts",
         durationMs,
@@ -119,7 +119,7 @@ async function end(req: NextRequest, res: NextResponse) {
         last:  last,
         lastTwo: lastTwo,
       },
-    },
+    // },
     {
       requestId: getRequestId(req.url),
       route: req.nextUrl.pathname,
