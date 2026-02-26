@@ -4,6 +4,7 @@ import { Logger } from "next-axiom";
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import normalizePath from "@/lib/normalizePath";
 
 import {
   markRequestStart,
@@ -17,7 +18,33 @@ import { logit } from "@/lib/log/logit";
 
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
+  const { last, lastTwo } = normalizePath(pathname);
 
+  // You can use `last` and `lastTwo` for more granular logging or routing if needed
+  // For example, you could log them:
+  await logit(
+    "middleware",
+    {
+      level: "info",
+      message: "Normalized path segments",
+      payload: {
+        last,
+        lastTwo,
+      },
+    },
+    {
+      requestId: getRequestId(req.url),
+      route: pathname,
+      userId: undefined,
+    },
+  );
+
+  // Or use them for conditional logic:
+  // if (lastTwo === "some/specific/path") {
+  //   // Do something specific for this path
+  // }
+
+  // For now, we'll just continue with the normalized path segments available for logging or future use
   // --- 1) Start tracking -----------------------------------------
   markRequestStart(req.url);
   const logger = new Logger({ source: "middleware" }); // traffic, request
@@ -27,7 +54,7 @@ export async function proxy(req: NextRequest) {
     "jonathan",
     {
       level: "info",
-      message: "REQUEST START",
+      message: "REQUEST START lastTwo: " + lastTwo,
       payload: {
         page: pathname,
         file: "proxy.ts",
@@ -35,6 +62,8 @@ export async function proxy(req: NextRequest) {
         url: req.url,
         requestId: getRequestId(req.url),
         eventIndex: nextEventIndex(req.url),
+        last: last,
+        lastTwo: lastTwo,
       },
     },
     {
@@ -70,12 +99,13 @@ export async function proxy(req: NextRequest) {
 // --- END helper ---------------------------------------------------
 async function end(req: NextRequest, res: NextResponse) {
   const durationMs = getRequestDuration(req.url);
-
+  const { pathname } = req.nextUrl;
+  const { last, lastTwo } = normalizePath(pathname);
   await logit(
     "middleware",
     {
       level: "info",
-      message: "REQUEST END",
+      message: "REQUEST END lastTwo: " + lastTwo,
       payload: {
         page: req.nextUrl.pathname,
         file: "proxy.ts",
@@ -85,6 +115,8 @@ async function end(req: NextRequest, res: NextResponse) {
         status: res.status,
         requestId: getRequestId(req.url),
         eventIndex: nextEventIndex(req.url),
+        last:  last,
+        lastTwo: lastTwo,
       },
     },
     {
