@@ -27,7 +27,7 @@ export async function proxy(req: NextRequest) {
     "middleware",
     {
       level: "info",
-      message: "Normalized path segments",
+      message: "Normalized path segments pathname: " + pathname,
       payload: {
         last,
         lastTwo,
@@ -55,7 +55,7 @@ export async function proxy(req: NextRequest) {
     "jonathan",
     {
       level: "info",
-      message: "REQUEST START lastTwo: " + lastTwo,
+      message: "REQUEST START pathname: " + pathname,
       payload: {
         page: pathname,
         file: "proxy.ts",
@@ -106,7 +106,7 @@ async function end(req: NextRequest, res: NextResponse) {
     "middleware",
     {
       level: "info",
-      message: "REQUEST END lastTwo: " + lastTwo,
+      message: "REQUEST END pathname: " + pathname,
       payload: {
         page: req.nextUrl.pathname,
         file: "proxy.ts",
