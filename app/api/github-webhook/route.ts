@@ -146,24 +146,9 @@ export async function writeGithubDebugEvent(payload: any) {
     );
     return;
   }
-  try {
-    await axiom.ingest("github-debug-events", {
-      ...payload,
-      ingestedAt: new Date().toISOString(),
-    });
-  } catch (err) {
-    console.error("Failed to write GitHub debug event to Axiom", err);
-    await logit(
-      "github",
-      {
-        level: "error",
-        message: "Failed to write GitHub debug event to Axiom",
-        payload: { error: String(err) },
-      },
-      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-    );
-  }
-}
+
+
+
 
 // -----------------------------
 // Signature verification
