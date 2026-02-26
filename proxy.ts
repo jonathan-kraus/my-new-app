@@ -26,7 +26,7 @@ export async function proxy(req: NextRequest) {
     "middleware",
     {
       level: "info",
-      message: "Normalized path segments pathname: " + pathname,
+      message: "Normalized path segments " + pathname,
       payload: {
         last,
         lastTwo,
