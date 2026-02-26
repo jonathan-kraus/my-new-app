@@ -1,8 +1,8 @@
 /*
  * @FilePath: \my-new-app\lib\normalizePath.ts
- * @LastEditTime: 2026-02-26 16:49:03
+ * @LastEditTime: 2026-02-26 16:51:03
  */
-export function normalizePath(url: string): {
+export default function normalizePath(url: string): {
   last: string;
   lastTwo: string;
 } {
