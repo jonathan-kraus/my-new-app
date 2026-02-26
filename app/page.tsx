@@ -56,7 +56,8 @@ export default async function HomePage() {
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/weather?locationId=${location?.id}`,
     { cache: "no-store" },
   );
-  const weatherData = await weatherRes.json();
+
+  //const weatherData = await weatherRes.json();
   await logit(
     "jonathan",
     {
@@ -64,7 +65,7 @@ export default async function HomePage() {
       message: "Visited dashboard 2",
 
       payload: {
-        weatherData: weatherData,
+        //weatherData: weatherData,
         sessionEmail: session?.user?.email ?? null,
         userId: session?.user?.id ?? null,
         session: session ?? null,
@@ -84,27 +85,23 @@ export default async function HomePage() {
             Your weather system is online and running smoothly.
           </p>
         </section>
-
         {/* Current Weather */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <CurrentWeatherCard location={location} />
-        </section>
-
+        </section> */}
         {/* System Health */}
         <section className="mt-10">
           <h2 className="text-xl font-medium mb-2 text-sky-200">
             System Health
           </h2>
         </section>
-
         {/* Recent Activity */}
         <section className="mt-6">
           <h2 className="text-xl font-medium mb-2 text-sky-200">
             {<RecentActivity />}
           </h2>
         </section>
-
-        {/* Quick Actions */}
+        Quick Actions
         <section className="mt-8 flex gap-4">
           <Button asChild>
             <Link href="/forecast">Full Forecast</Link>

@@ -25,12 +25,12 @@ export async function PUT(req: NextRequest) {
         message: "Missing Axiom token",
         payload: {},
       },
-      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId }
+      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
     );
 
     return NextResponse.json(
       { ok: false, error: "Axiom token missing" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -45,7 +45,7 @@ export async function PUT(req: NextRequest) {
         message: "GitHub activity API hit",
         payload: { route: "activity" },
       },
-      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId }
+      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
     );
 
     const query = `
@@ -62,7 +62,7 @@ export async function PUT(req: NextRequest) {
         message: "Running Axiom query",
         payload: { query },
       },
-      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId }
+      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
     );
 
     // Run the query
@@ -123,7 +123,7 @@ export async function PUT(req: NextRequest) {
         message: "Mapped GitHub activity",
         payload: { count: activity.length },
       },
-      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId }
+      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
     );
 
     return NextResponse.json({ ok: true, activity });
@@ -135,12 +135,12 @@ export async function PUT(req: NextRequest) {
         message: "GitHub activity API failed",
         payload: { error: err?.message ?? "Unknown error" },
       },
-      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId }
+      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
     );
 
     return NextResponse.json(
       { ok: false, error: "Failed to fetch GitHub activity" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

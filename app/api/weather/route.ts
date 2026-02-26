@@ -3,11 +3,9 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { z } from "zod";
 import { logit } from "@/lib/log/logit";
-import { enrichContext } from "@/lib/log/context";
-import { auth } from "@/auth";
-import { withLogging } from "@/lib/logging/withLogging";
 
 const API_KEY = process.env.TOMORROWIO_APIKEY!;
+
 // Zod schemas
 const TomorrowRealtimeSchema = z.object({
   data: z.object({
@@ -43,12 +41,10 @@ const TomorrowTimelineSchema = z.object({
   }),
 });
 // Default cache windows
-const DEFAULT_CURRENT_MIN = Number(process.env.WEATHER_CACHE_MINUTES ?? 10);
-const DEFAULT_FORECAST_MIN = Number(process.env.FORECAST_CACHE_MINUTES ?? 30);
+const CURRENT_CACHE_MIN = 30;
+const FORECAST_CACHE_MINUTES = 30;
 
-export const GET = withLogging(async (req: Request) => {
-  const session = await auth();
-
+export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const locationId = searchParams.get("locationId");
 
@@ -61,13 +57,9 @@ export const GET = withLogging(async (req: Request) => {
     return NextResponse.json({ error: "Invalid locationId" }, { status: 404 });
   }
 
-  // Runtime overrides
   const currentCacheMin = 30;
   const forecastCacheMin = 30;
 
-  // ----------------------------------------
-  // CURRENT WEATHER (working)
-  // ----------------------------------------
   const currentCutoff = new Date(Date.now() - currentCacheMin * 60_000);
 
   const currentCached = await db.weatherSnapshot.findFirst({
@@ -80,23 +72,10 @@ export const GET = withLogging(async (req: Request) => {
     : null;
 
   if (currentCached) {
-    const start = performance.now();
-    let eventIndex = 0;
-    const nextEvent = () => eventIndex++;
-
     await logit("weather", {
       level: "info",
-      message: `Using cached current weather data ${currentAge}/${currentCacheMin}`,
-
-      payload: {
-        file: "/api/weather",
-        eventIndex: nextEvent(),
-        durationMs: performance.now() - start,
-        user: session?.user?.name || "Guest",
-        cacheWindowMinutes: currentCacheMin,
-        actualAgeMinutes: currentAge,
-        locationId,
-      },
+      message: `Using cached current weather data`,
+      payload: { locationId, currentAge },
     });
 
     return NextResponse.json({
@@ -114,132 +93,58 @@ export const GET = withLogging(async (req: Request) => {
         forecastMinutes: null,
         astronomyHours: null,
       },
-
-      headers: {
-        "x-status-code": "200", // 👈 Inject for logging
-      },
     });
   }
 
-  let current;
-  let currentSource: "cache" | "api";
+  // Fetch from Tomorrow.io
+  const res = await fetch(
+    `https://api.tomorrow.io/v4/weather/realtime?location=${location.latitude},${location.longitude}&units=imperial&apikey=${API_KEY}`,
+  );
 
-  if (currentCached) {
-    current = currentCached;
-    currentSource = "cache";
-  } else {
-    const res = await fetch(
-      `https://api.tomorrow.io/v4/weather/realtime?location=${location.latitude},${location.longitude}&units=imperial&apikey=${API_KEY}`,
+  if (!res.ok) {
+    return NextResponse.json(
+      { error: "Weather fetch failed" },
+      { status: 500 },
     );
-
-    await logit("weather", {
-      level: "info",
-      message: "Realtime weather fetch attempted",
-      payload: {
-        file: "/api/weather",
-        status: res.status,
-        ok: res.ok,
-        url: res.url,
-      },
-    });
-
-    if (!res.ok) {
-      await logit("weather", {
-        level: "error",
-        message: "Realtime weather fetch failed",
-        payload: { status: res.status },
-      });
-      return NextResponse.json(
-        { error: "Weather fetch failed" },
-        { status: 500 },
-      );
-    }
-
-    const json = await res.json();
-    const validated = TomorrowRealtimeSchema.safeParse(json);
-
-    if (!validated.success) {
-      await logit("weather", {
-        level: "error",
-        message: "Realtime weather validation failed",
-
-        // ✅ Fixed
-        payload: { issues: validated.error.issues.slice(0, 3) },
-      });
-      return NextResponse.json(
-        { error: "Invalid weather data" },
-        { status: 500 },
-      );
-    }
-
-    const v = validated.data.data.values;
-
-    current = await db.weatherSnapshot.create({
-      data: {
-        locationId,
-        temperature: v.temperature,
-        feelsLike: v.temperatureApparent,
-        humidity: v.humidity,
-        windSpeed: v.windSpeed,
-        windDirection: v.windDirection,
-        pressure: v.pressureSurfaceLevel,
-        visibility: v.visibility,
-        weatherCode: v.weatherCode,
-      },
-    });
-
-    currentSource = "api";
   }
 
-  // ----------------------------------------
-  // FORECAST (temporarily disabled)
-  // ----------------------------------------
-  const forecast = null;
-  const forecastSource = "disabled";
-  const forecastAge = null;
+  const json = await res.json();
+  const validated = TomorrowRealtimeSchema.safeParse(json);
 
-  // ----------------------------------------
-  // LOG EVERYTHING
-  // ----------------------------------------
-  await logit("weather", {
-    level: "info",
-    message: "Unified weather request",
+  if (!validated.success) {
+    return NextResponse.json(
+      { error: "Invalid weather data" },
+      { status: 500 },
+    );
+  }
 
-    payload: {
+  const v = validated.data.data.values;
+
+  const current = await db.weatherSnapshot.create({
+    data: {
       locationId,
-      sources: {
-        current: currentSource,
-        forecast: forecastSource,
-        astronomy: "disabled",
-      },
-      ages: {
-        currentMinutes: currentAge,
-        forecastMinutes: forecastAge,
-        astronomyHours: null,
-      },
-      cacheWindows: {
-        currentMinutes: currentCacheMin,
-        forecastMinutes: forecastCacheMin,
-      },
-      file: "app/api/weather/route.ts",
+      temperature: v.temperature,
+      feelsLike: v.temperatureApparent,
+      humidity: v.humidity,
+      windSpeed: v.windSpeed,
+      windDirection: v.windDirection,
+      pressure: v.pressureSurfaceLevel,
+      visibility: v.visibility,
+      weatherCode: v.weatherCode,
     },
   });
 
-  // ----------------------------------------
-  // RETURN EVERYTHING
-  // ----------------------------------------
   return NextResponse.json({
     location,
     current,
-    forecast: forecast ?? null,
-
+    forecast: null,
     sources: {
-      current: currentSource,
-      forecast: forecastSource,
+      current: "api",
+      forecast: "disabled",
     },
     ages: {
       currentMinutes: currentAge,
-      forecastMinutes: forecastAge,
+      forecastMinutes: null,
     },
   });
-});
+}

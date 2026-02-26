@@ -1,13 +1,11 @@
-// lib/axiom.ts
 import { Axiom } from "@axiomhq/js";
 
 export function getAxiomClient() {
   const token = process.env.AXIOM_TOKEN;
-  const orgId = process.env.AXIOM_ORG_ID;
 
-  if (!token || !orgId) {
-    throw new Error("Missing Axiom environment variables");
+  if (!token) {
+    throw new Error("Missing AXIOM_TOKEN");
   }
 
-  return new Axiom({ token, orgId });
+  return new Axiom({ token });
 }
