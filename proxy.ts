@@ -19,8 +19,7 @@ import { logit } from "@/lib/log/logit";
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const { last, lastTwo } = normalizePath(pathname);
-  console.log("Original path:", pathname);
-  console.log("Normalized path segments:", { last, lastTwo });
+
   // You can use `last` and `lastTwo` for more granular logging or routing if needed
   // For example, you could log them:
   await logit(
