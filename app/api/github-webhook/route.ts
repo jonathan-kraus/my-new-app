@@ -1,13 +1,12 @@
 export const runtime = "nodejs";
 
-import { NextRequest } from "next/server";
 import crypto from "crypto";
-import { logit } from "@/lib/log/logit";
 import { Axiom } from "@axiomhq/js";
-import { getSha } from "@/lib/github/parse";
-import { getCommitMessage } from "@/lib/github";
+import { logit } from "@/lib/log/logit";
 import { withLogging } from "@/lib/logging/withLogging";
 import { getConfig } from "@/lib/runtime/config";
+import { getSha } from "@/lib/github/parse";
+import { getCommitMessage } from "@/lib/github";
 import { db } from "@/lib/db";
 
 const gw = Number(await getConfig("github_webhook", "0"));
@@ -232,7 +231,7 @@ export const POST = withLogging(async (req: Request) => {
       return new Response("OK");
     }
 
-    axiom.ingest("github-events", wr);
+    await axiom.ingest("github-events", wr);
 
     await logit(
       "github",
@@ -259,3 +258,7 @@ export const POST = withLogging(async (req: Request) => {
 
   return new Response("Ignored", { status: 200 });
 });
+
+/* -------------------------------------------------------------------------- */
+/*                                GET HANDLER                                 */
+/* -------------------------------------------------------------------------- */
