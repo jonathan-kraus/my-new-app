@@ -86,7 +86,7 @@ export async function buildAstronomySnapshot(
     const json = await res.json();
 
     await logit(domain, {
-      level: "error",
+      level: "warn",
       message: " DEBUG: astronomy payload",
       data: json.astronomy,
     });
