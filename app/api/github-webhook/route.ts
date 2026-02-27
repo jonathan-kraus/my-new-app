@@ -20,33 +20,19 @@ const ctx = {
 };
 
 /* -------------------------------------------------------------------------- */
-/*                               DB DEBUG WRITER                              */
+/*                               DB EVENT WRITER                              */
 /* -------------------------------------------------------------------------- */
 
-export async function writeGithubDebugEvent(payload: any) {
-  console.log("🔥 writeGithubDebugEvent CALLED", gw, payload);
-
-  try {
-    const commitValue =
-      typeof payload.commit === "string"
-        ? payload.commit
-        : null;
-
-    await db.githubDebug.create({
-      data: {
-        raw: payload.raw ?? payload,
-        ci: payload.ci ?? null,
-        status: payload.status ?? null,
-        action: payload.action ?? null,
-        commit: commitValue,
-        sha: payload.sha ?? null,
-      },
-    });
-  } catch (err) {
-    console.error("❌ Failed to write GithubDebug event:", err);
-  }
+async function writeGithubEvent(normalized: any) {
+  await db.githubEvent.upsert({
+    where: { eventId: normalized.eventId },
+    update: normalized,
+    create: normalized,
+  });
 }
 
+/* -------------------------------------------------------------------------- */
+/*                                MAIN ROUTE                                 */
 
 /* -------------------------------------------------------------------------- */
 /*                         WORKFLOW_RUN TRANSFORMER                           */
@@ -81,79 +67,64 @@ function transformWorkflowRun(payload: any) {
 /*                        NORMALIZE ALL GITHUB EVENTS                         */
 /* -------------------------------------------------------------------------- */
 
-function normalizeGitHubEvent(event: string | null, payload: any) {
+function normalizeGitHubEvent(
+  event: string | null,
+  payload: any,
+  deliveryId: string | null,
+) {
   const repo = payload.repository?.full_name ?? null;
   const actor = payload.sender?.login ?? null;
 
-  const commit = getCommitMessage(payload);
-  const sha = getSha(payload);
+  const commitMessage = getCommitMessage(payload) ?? null;
+  const commitSha = getSha(payload) ?? null;
 
-  // ⭐ Single unified DB write
-  writeGithubDebugEvent({
-    raw: payload,
-    event,
-    repo,
-    actor,
-    status: payload.workflow_run?.status ?? payload.status ?? null,
-    action: payload.action ?? null,
-    commit,
-    sha,
-    ci: payload.workflow_run?.name ?? null,
-  });
+  let status = null;
+  let conclusion = null;
+  let url = null;
 
   switch (event) {
-    case "push":
-      return {
-        type: "push",
-        repo,
-        actor,
-        sha: payload.after,
-        branch: payload.ref?.replace("refs/heads/", ""),
-        commitMessage: payload.head_commit?.message ?? null,
-        url: payload.head_commit?.url ?? null,
-      };
+    case "workflow_run": {
+      const wr = payload.workflow_run;
+      status = wr?.status ?? null;
+      conclusion = wr?.conclusion ?? null;
+      url = wr?.html_url ?? null;
+      break;
+    }
 
-    case "pull_request":
-      return {
-        type: "pull_request",
-        repo,
-        actor,
-        action: payload.action,
-        number: payload.number,
-        title: payload.pull_request?.title,
-        url: payload.pull_request?.html_url,
-        sha: payload.pull_request?.head?.sha,
-        branch: payload.pull_request?.head?.ref,
-      };
+    case "push": {
+      url = payload.head_commit?.url ?? null;
+      break;
+    }
 
-    case "workflow_run":
-      return transformWorkflowRun(payload);
+    case "pull_request": {
+      url = payload.pull_request?.html_url ?? null;
+      break;
+    }
 
-    case "deployment_status":
-      return {
-        type: "deployment_status",
-        repo,
-        actor,
-        environment: payload.deployment?.environment,
-        status: payload.deployment_status?.state,
-        url: payload.deployment_status?.target_url,
-        sha: payload.deployment?.sha,
-      };
+    case "deployment_status": {
+      status = payload.deployment_status?.state ?? null;
+      url = payload.deployment_status?.target_url ?? null;
+      break;
+    }
 
-    case "issue_comment":
-      return {
-        type: "issue_comment",
-        repo,
-        actor,
-        action: payload.action,
-        issueNumber: payload.issue?.number,
-        comment: payload.comment?.body,
-        url: payload.comment?.html_url,
-      };
-
-    default:
-      return { type: event, repo, actor };
+    case "issue_comment": {
+      url = payload.comment?.html_url ?? null;
+      break;
+    }
   }
+
+  return {
+    eventId: deliveryId ?? payload.workflow_run?.id ?? crypto.randomUUID(),
+    type: event,
+    repo,
+    actor,
+    status,
+    conclusion,
+    commitSha,
+    commitMessage,
+    url,
+    raw: payload,
+  };
 }
 
 /* -------------------------------------------------------------------------- */
@@ -182,78 +153,41 @@ async function verifySignature(req: Request, body: string) {
 
 export const POST = withLogging(async (req: Request) => {
   const raw = await req.text();
-
   if (!(await verifySignature(req, raw))) {
-    await logit(
-      "github",
-      {
-        level: "warn",
-        message: "Invalid GitHub signature",
-      },
-      ctx
-    );
     return new Response("Unauthorized", { status: 401 });
   }
-
   const payload = JSON.parse(raw);
   const event = req.headers.get("x-github-event");
-
+  const deliveryId = req.headers.get("x-github-delivery");
+  const commitMessage = await getCommitMessage(payload); // FIX #1 const sha = getSha(payload);
+  const sha = getSha(payload);
   await logit(
     "github",
     {
       level: "info",
-      message: "GitHub webhook received",
+      message: "GitHub webhook received -- new post code",
       payload: { event },
     },
-    ctx
+    ctx,
   );
 
-  const normalized = normalizeGitHubEvent(event, payload);
+  const normalized = {
+    eventId: deliveryId!,
+    type: event ?? "unknown", // FIX #2
+    repo: payload.repository?.full_name ?? "unknown",
+    actor: payload.sender?.login ?? null,
+    status: payload.workflow_run?.status ?? payload.status ?? null,
+    conclusion: payload.workflow_run?.conclusion ?? null,
+    commitSha: sha ?? null,
+    commitMessage: commitMessage ?? null, // FIX #3
+    url: payload.workflow_run?.html_url ?? null,
+    raw: payload,
+  };
 
-  if (event === "workflow_run") {
-    const wr = transformWorkflowRun(payload);
-
-    if (!wr) {
-      await logit(
-        "github",
-        {
-          level: "warn",
-          message: "workflow_run missing payload",
-          payload: { event },
-        },
-        ctx
-      );
-      return new Response("OK");
-    }
-
-    await axiom.ingest("github-events", wr);
-
-    await logit(
-      "github",
-      {
-        level: "info",
-        message: "GitHub workflow_run ingested",
-        payload: { id: wr.id },
-      },
-      ctx
-    );
-
-    return new Response("OK");
-  }
-
-  await logit(
-    "github",
-    {
-      level: "info",
-      message: "GitHub event ignored",
-      payload: { event },
-    },
-    ctx
-  );
-
-  return new Response("Ignored", { status: 200 });
+  await db.githubEvent.upsert({
+    where: { eventId: normalized.eventId },
+    update: normalized,
+    create: normalized,
+  });
+  return new Response("OK");
 });
-
-/* -------------------------------------------------------------------------- */
-/*                                GET HANDLER                                 */
-/* -------------------------------------------------------------------------- */

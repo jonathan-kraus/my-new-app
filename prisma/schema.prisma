@@ -24,6 +24,7 @@ model Account {
 
   @@unique([provider, providerAccountId])
 }
+
 model AstronomySnapshot {
   id                 String   @id @default(cuid())
   locationId         String
@@ -45,7 +46,6 @@ model AstronomySnapshot {
   illumination       Float?
   phaseName          String?
   dateString         String   @db.VarChar(10)
-
   Location           Location @relation(fields: [locationId], references: [id])
 
   @@unique([locationId, dateString])
@@ -97,31 +97,35 @@ model ForecastSnapshot {
   Location   Location @relation(fields: [locationId], references: [id])
 }
 
-model GithubDebug {
-  id         String   @id @default(cuid())
-  raw        Json
-  ci         String?
-  status     String?
-  action     String?
-  commit     String?
-  sha        String?
-  receivedAt DateTime @default(now())
+model GithubEvent {
+  id            String   @id @default(cuid())
+  eventId       String   @unique
+  type          String
+  repo          String
+  actor         String?
+  status        String?
+  conclusion    String?
+  commitSha     String?
+  commitMessage String?
+  url           String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  raw           Json?
 }
 
 model Location {
-  id               String             @id @default(cuid())
-  key              String             @unique
-  name             String
-  latitude         Float
-  longitude        Float
-  timezone         String
-  isDefault        Boolean            @default(false)
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
+  id                String              @id @default(cuid())
+  key               String              @unique
+  name              String
+  latitude          Float
+  longitude         Float
+  timezone          String
+  isDefault         Boolean             @default(false)
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
   AstronomySnapshot AstronomySnapshot[]
-  ForecastSnapshot ForecastSnapshot[]
-  WeatherSnapshot  WeatherSnapshot[]
-
+  ForecastSnapshot  ForecastSnapshot[]
+  WeatherSnapshot   WeatherSnapshot[]
 }
 
 model Log {
@@ -194,7 +198,7 @@ model Session {
 }
 
 model TravelSnapshot {
-  id               String   @id @default(cuid())
+  id               String          @id @default(cuid())
   source           String
   receivedAt       DateTime
   confirmationCode String
@@ -203,15 +207,13 @@ model TravelSnapshot {
   payment          Json
   bags             Json
   rawHtml          String
-
-  // Relational segments
   segments         TravelSegment[]
 
   @@index([receivedAt])
 }
 
 model TravelSegment {
-  id               String   @id @default(cuid())
+  id               String         @id @default(cuid())
   snapshotId       String
   date             String
   departureAirport String
@@ -226,10 +228,8 @@ model TravelSegment {
   cabin            String?
   fareClass        String?
   seats            String[]
-
-  snapshot TravelSnapshot @relation(fields: [snapshotId], references: [id])
+  snapshot         TravelSnapshot @relation(fields: [snapshotId], references: [id])
 }
-
 
 model User {
   id            String    @id @default(cuid())
@@ -257,6 +257,7 @@ model Verification {
   @@index([identifier])
   @@map("verification")
 }
+
 model VerificationToken {
   identifier String
   token      String   @unique
@@ -266,7 +267,7 @@ model VerificationToken {
 }
 
 model WeatherSnapshot {
-  id            String    @id @default(cuid())
+  id            String   @id @default(cuid())
   locationId    String
   temperature   Float
   feelsLike     Float?
@@ -281,5 +282,3 @@ model WeatherSnapshot {
 
   @@index([locationId, fetchedAt])
 }
-
-
