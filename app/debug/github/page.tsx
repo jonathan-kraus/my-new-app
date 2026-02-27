@@ -10,7 +10,7 @@ export default async function DebugGithubPage() {
 
   return (
     <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold text-white">GitHub Debug Events</h1>
+      <h1 className="text-2xl font-bold text-white">GitHub Debug Events </h1>
 
       {events.length === 0 && (
         <p className="text-gray-400">No debug events recorded.</p>
