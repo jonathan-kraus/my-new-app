@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/db/prisma";
+import { db } from "@/lib/db";
 
 // GET — return recent GitHub events from the database
 export async function GET(req: NextRequest) {
   try {
-    const events = await prisma.githubEvent.findMany({
+    const events = await db.githubEvent.findMany({
       orderBy: { updatedAt: "desc" },
       take: 50,
     });
