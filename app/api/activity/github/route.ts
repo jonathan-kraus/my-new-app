@@ -1,99 +1,36 @@
-// app/api/activity/github/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { Axiom } from "@axiomhq/js";
-import { logit } from "@/lib/log/logit";
-import { enrichContext } from "@/lib/log/context";
+import { prisma } from "@/lib/db/prisma";
 
-// GET handler — simple health check
+// GET — return recent GitHub events from the database
 export async function GET(req: NextRequest) {
-  const now = Date.now();
-  console.log("GitHub Activity GET", now);
-  return NextResponse.json({ ok: true, time: now });
-}
-
-// PUT handler — fetch GitHub activity from Axiom
-export async function PUT(req: NextRequest) {
-  const ctx = await enrichContext(req as any);
-
-  // Validate token early
-  const token = process.env.AXIOM_TOKEN;
-  if (!token) {
-    await logit(
-      "github",
-      {
-        level: "error",
-        message: "Missing Axiom token",
-        payload: {},
-      },
-      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-    );
-
-    return NextResponse.json(
-      { ok: false, error: "Axiom token missing" },
-      { status: 500 },
-    );
-  }
-
-  // Create client *inside* the handler (safe)
-  const axiom = new Axiom({ token });
-
   try {
-    await logit(
-      "github",
-      {
-        level: "info",
-        message: "GitHub activity API hit",
-        payload: { route: "activity" },
-      },
-      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-    );
-
-    const query = `
-['github-events']
-| where repo == "jonathan-kraus/my-new-app"
-| sort by _time desc
-| limit 40
-`;
-
-    await logit(
-      "github",
-      {
-        level: "info",
-        message: "Running Axiom query",
-        payload: { query },
-      },
-      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-    );
-
-    // Run the query
-    const result = await axiom.query(query);
-
-    const rows = result?.matches ?? [];
-
-    // Normalize rows
-    const normalized = rows.map((row: any) => {
-      const d = row.data;
-      return {
-        id: d.id,
-        name: d.name,
-        repo: d.repo,
-        status: d.status,
-        conclusion: d.conclusion,
-        event: d.event,
-        actor: d.actor,
-        commitMessage: d.commitMessage,
-        commitSha: d.commitSha,
-        url: d.url,
-        createdAt: d.createdAt,
-        updatedAt: d.updatedAt,
-        source: d.source,
-      };
+    const events = await prisma.githubEvent.findMany({
+      orderBy: { updatedAt: "desc" },
+      take: 50,
     });
 
-    // Deduplicate by commitSha
+    // Normalize to the shape your UI expects
+    const normalized = events.map((e) => ({
+      id: e.id,
+      name: e.type, // your UI uses "name" for workflow name / event type
+      repo: e.repo,
+      status: e.status,
+      conclusion: e.conclusion,
+      event: e.type,
+      actor: e.actor,
+      commitMessage: e.commitMessage,
+      commitSha: e.commitSha,
+      url: e.url,
+      createdAt: e.createdAt,
+      updatedAt: e.updatedAt,
+      source: "github",
+    }));
+
+    // Deduplicate by commitSha (same logic you already had)
     const bySha = new Map<string, any>();
+
     for (const item of normalized) {
-      const sha = item.commitSha ?? "unknown";
+      const sha = item.commitSha ?? item.id;
 
       if (!bySha.has(sha)) {
         bySha.set(sha, item);
@@ -116,31 +53,22 @@ export async function PUT(req: NextRequest) {
 
     const activity = Array.from(bySha.values());
 
-    await logit(
-      "github",
-      {
-        level: "info",
-        message: "Mapped GitHub activity",
-        payload: { count: activity.length },
-      },
-      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-    );
-
     return NextResponse.json({ ok: true, activity });
   } catch (err: any) {
-    await logit(
-      "github",
-      {
-        level: "error",
-        message: "GitHub activity API failed",
-        payload: { error: err?.message ?? "Unknown error" },
-      },
-      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-    );
-
+    console.error("GitHub activity DB error:", err);
     return NextResponse.json(
       { ok: false, error: "Failed to fetch GitHub activity" },
       { status: 500 },
     );
   }
+}
+
+// PUT — optional: keep as a no-op or remove entirely
+export async function PUT() {
+  return NextResponse.json({ ok: true, note: "PUT no longer needed" });
+}
+
+// DELETE — optional: keep as a no-op or remove entirely
+export async function DELETE() {
+  return NextResponse.json({ ok: true, note: "DELETE no longer needed" });
 }
