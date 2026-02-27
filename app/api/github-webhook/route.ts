@@ -48,21 +48,6 @@ export async function writeGithubDebugEvent(payload: any) {
 }
 
 
-    await db.githubDebug.create({
-      data: {
-        raw: payload.raw ?? payload,
-        ci: payload.ci ?? null,
-        status: payload.status ?? null,
-        action: payload.action ?? null,
-        commit: payload.commit ?? null,
-        sha: payload.sha ?? null,
-      },
-    });
-  } catch (err) {
-    console.error("Failed to write GithubDebug event:", err);
-  }
-}
-
 /* -------------------------------------------------------------------------- */
 /*                         WORKFLOW_RUN TRANSFORMER                           */
 /* -------------------------------------------------------------------------- */
