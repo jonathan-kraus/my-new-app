@@ -24,6 +24,8 @@ const ctx = {
 /* -------------------------------------------------------------------------- */
 
 export async function writeGithubDebugEvent(payload: any) {
+  console.log("🔥 writeGithubDebugEvent CALLED", gw, payload);
+
   try {
     if (gw === 0) {
       await logit(
