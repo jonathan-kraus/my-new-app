@@ -27,18 +27,26 @@ export async function writeGithubDebugEvent(payload: any) {
   console.log("🔥 writeGithubDebugEvent CALLED", gw, payload);
 
   try {
-    if (gw === 0) {
-      await logit(
-        "github",
-        {
-          level: "warn",
-          message: "GitHub webhook disabled, not writing debug event",
-          payload: { gw: String(gw) },
-        },
-        ctx
-      );
-      return;
-    }
+    const commitValue =
+      typeof payload.commit === "string"
+        ? payload.commit
+        : null;
+
+    await db.githubDebug.create({
+      data: {
+        raw: payload.raw ?? payload,
+        ci: payload.ci ?? null,
+        status: payload.status ?? null,
+        action: payload.action ?? null,
+        commit: commitValue,
+        sha: payload.sha ?? null,
+      },
+    });
+  } catch (err) {
+    console.error("❌ Failed to write GithubDebug event:", err);
+  }
+}
+
 
     await db.githubDebug.create({
       data: {
