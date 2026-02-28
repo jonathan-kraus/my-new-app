@@ -4,7 +4,7 @@ import Link from "next/link";
 import { NextEventCard } from "@/app/components/astronomy/NextEventCard";
 import { useSideNavActivationCounter } from "@/app/hooks/useSideNavActivationCounter";
 import { EmailSideNavLink } from "@/app/components/sidenav/EmailLink";
-
+import versionInfo from "../../version.json";
 type SideNavClientProps = {
   nextEventLabel: string;
   nextEventTime: Date | null;
@@ -70,6 +70,7 @@ export default function SideNavClient({
 
         <div className="text-xs opacity-60 mt-4">
           SideNav activations: {activations}
+          Version:  {versionInfo.version}
         </div>
       </nav>
     </aside>
