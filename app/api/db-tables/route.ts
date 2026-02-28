@@ -3,27 +3,49 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
 export const runtime = "nodejs";
+
 function sanitizeBigInt(obj: any) {
   return JSON.parse(
-    JSON.stringify(obj, (_, v) => (typeof v === "bigint" ? Number(v) : v)),
+    JSON.stringify(obj, (_, v) => (typeof v === "bigint" ? Number(v) : v))
   );
 }
 
 export async function GET() {
-  const rows = await db.$queryRawUnsafe(`
-    SELECT
-      c.relname AS table_name,
-      pg_total_relation_size(c.oid) AS total_bytes,
-      pg_relation_size(c.oid) AS table_bytes,
-      pg_indexes_size(c.oid) AS index_bytes,
-      pg_total_relation_size(c.oid) - pg_relation_size(c.oid) - pg_indexes_size(c.oid) AS toast_bytes,
-      c.reltuples AS estimated_rows
-    FROM pg_class c
-    JOIN pg_namespace n ON n.oid = c.relnamespace
-    WHERE c.relkind = 'r'
-      AND n.nspname = 'public'
-    ORDER BY pg_total_relation_size(c.oid) DESC;
+  // Fetch all table names in the public schema
+  const tables = await db.$queryRawUnsafe<{ table_name: string }[]>(`
+    SELECT tablename AS table_name
+    FROM pg_tables
+    WHERE schemaname = 'public';
   `);
 
-  return NextResponse.json(sanitizeBigInt(rows));
+  const results = [];
+
+  for (const { table_name } of tables) {
+    // Exact row count
+    const [{ exact_count }] = await db.$queryRawUnsafe<{ exact_count: number }[]>(`
+      SELECT COUNT(*)::bigint AS exact_count FROM "${table_name}";
+    `);
+
+    // Size metrics
+    const [sizes] = await db.$queryRawUnsafe<any[]>(`
+      SELECT
+        pg_total_relation_size('"${table_name}"') AS total_bytes,
+        pg_relation_size('"${table_name}"') AS table_bytes,
+        pg_indexes_size('"${table_name}"') AS index_bytes,
+        pg_total_relation_size('"${table_name}"')
+          - pg_relation_size('"${table_name}"')
+          - pg_indexes_size('"${table_name}"') AS toast_bytes
+    `);
+
+    results.push({
+      table_name,
+      exact_rows: exact_count,
+      ...sizes,
+    });
+  }
+
+  // Sort by total size descending
+  results.sort((a, b) => Number(b.total_bytes) - Number(a.total_bytes));
+
+  return NextResponse.json(sanitizeBigInt(results));
 }
