@@ -70,6 +70,9 @@ export default function SideNavClient({
 
         <div className="text-xs opacity-60 mt-4">
           SideNav activations: {activations}
+          </div>
+
+        <div className="text-xs opacity-75 bg-yellow-300 mt-4">
           Version:  {versionInfo.version}
         </div>
       </nav>
