@@ -13,6 +13,8 @@ jobs:
     env:
       CI: true
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
+    permissions:
+      contents: write   # allow pushing updated version.json
 
     steps:
       - name: Checkout repository
@@ -23,10 +25,34 @@ jobs:
       - name: Clean workspace
         run: git clean -fdx
 
+      - name: Bump UI version (version.json)
+        run: |
+          if [ ! -f version.json ]; then
+            echo '{"version":"0.0.0"}' > version.json
+          fi
+
+          VERSION=$(jq -r '.version' version.json)
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+          PATCH=$((PATCH + 1))
+          NEW_VERSION="$MAJOR.$MINOR.$PATCH"
+
+          jq --arg v "$NEW_VERSION" '.version = $v' version.json > version.tmp && mv version.tmp version.json
+          echo "Bumped UI version: $VERSION -> $NEW_VERSION"
+
+          # Only commit/push on direct pushes to main, not PRs
+          if [ "${{ github.event_name }}" = "push" ] && [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add version.json
+            git commit -m "chore: bump UI version to $NEW_VERSION [skip ci]" || exit 0
+            git push
+          fi
+
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
           node-version: '25.4.0'
+
       - name: Enable Corepack and pnpm
         run: |
           corepack enable
@@ -59,11 +85,13 @@ jobs:
 
       - name: Run tests with coverage
         run: pnpm coverage
+
       - name: Upload coverage report
         uses: actions/upload-artifact@v7
         with:
           name: coverage
           path: coverage/
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
