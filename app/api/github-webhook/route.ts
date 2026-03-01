@@ -179,7 +179,7 @@ export const POST = withLogging(async (req: Request) => {
     status: payload.workflow_run?.status ?? payload.status ?? null,
     conclusion: payload.workflow_run?.conclusion ?? null,
     commitSha: sha ?? null,
-    commitMessage: commitMessage ?? null, 
+    commitMessage: commitMessage ?? null,
     url: payload.workflow_run?.html_url ?? null,
     raw: payload,
   };

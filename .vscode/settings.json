@@ -14,5 +14,6 @@
     "autoAlready": true, // allow updating existing header
     "updateHeader": true, // update LastEditTime on save
     "autoAddLine": 1 // insert at top of filetrav
-  }
+  },
+  "WillLuke.nextjs.hasPrompted": true
 }

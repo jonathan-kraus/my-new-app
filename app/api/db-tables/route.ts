@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 
 function sanitizeBigInt(obj: any) {
   return JSON.parse(
-    JSON.stringify(obj, (_, v) => (typeof v === "bigint" ? Number(v) : v))
+    JSON.stringify(obj, (_, v) => (typeof v === "bigint" ? Number(v) : v)),
   );
 }
 
@@ -22,7 +22,9 @@ export async function GET() {
 
   for (const { table_name } of tables) {
     // Exact row count
-    const [{ exact_count }] = await db.$queryRawUnsafe<{ exact_count: number }[]>(`
+    const [{ exact_count }] = await db.$queryRawUnsafe<
+      { exact_count: number }[]
+    >(`
       SELECT COUNT(*)::bigint AS exact_count FROM "${table_name}";
     `);
 
