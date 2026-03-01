@@ -44,16 +44,11 @@ export async function ingestTravelEmails() {
 const sorted = files
   .map((name) => {
     const full = path.join(dir, name);
-    return { name, mtime: fs.statSync(full).mtime };
+    const stat = fs.statSync(full);
+    console.log("candidate=%s mtime=%s", full, stat.mtime.toISOString());
+    return { name, full, mtime: stat.mtime };
   })
   .sort((a, b) => b.mtime.getTime() - a.mtime.getTime());
-
-// Pick the newest file
-const newest = sorted[0].name;
-const filePath = path.join(dir, newest);
-console.log("INGEST: dir =", dir);
-console.log("INGEST: files =", files);
-console.log("INGEST: reading newest file:", newest);
 
   const raw = fs.readFileSync(filePath, "utf8");
 
