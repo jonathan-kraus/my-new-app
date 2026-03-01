@@ -49,7 +49,7 @@ const sorted = files
     const stat = fs.statSync(full);
     console.log("candidate=%s mtime=%s", full, stat.mtime.toISOString());
     logit("INGEST: candidate=%s mtime=%s", full, stat.mtime.toISOString());
-     await logit(
+     logit(
        "jonathan",
        {
          level: "info",
