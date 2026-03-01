@@ -1,7 +1,6 @@
 // lib/cron/runDbTableStats.ts
 import { db } from "@/lib/db";
 import { logit } from "@/lib/log/logit";
-import { Exact } from '../generated/prisma/internal/prismaNamespace';
 
 function atLocalMidnight(d: Date) {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate());
@@ -17,14 +16,10 @@ export async function runDbTableStats(ctx: {
 
   await logit(
     "db",
-    {
-      level: "info",
-      message: "dbTables.cron.started",
-    },
-    ctx,
+    { level: "info", message: "dbTables.cron.started" },
+    ctx
   );
 
-  // Pull table stats from Postgres system catalogs
   const stats = await db.$queryRawUnsafe(`
     SELECT
       c.relname AS table_name,
@@ -33,8 +28,7 @@ export async function runDbTableStats(ctx: {
       pg_indexes_size(c.oid) AS index_bytes,
       pg_total_relation_size(c.oid)
         - pg_relation_size(c.oid)
-        - pg_indexes_size(c.oid) AS toast_bytes,
-      c.reltuples AS estimated_rows
+        - pg_indexes_size(c.oid) AS toast_bytes
     FROM pg_class c
     JOIN pg_namespace n ON n.oid = c.relnamespace
     WHERE c.relkind = 'r'
@@ -44,6 +38,11 @@ export async function runDbTableStats(ctx: {
   let tablesProcessed = 0;
 
   for (const row of stats as any[]) {
+    // Get exact row count
+    const [{ count }] = await db.$queryRawUnsafe(
+      `SELECT COUNT(*)::int AS count FROM "${row.table_name}"`
+    );
+
     await db.dbTableStats.upsert({
       where: {
         tableName_snapshotDate: {
@@ -52,7 +51,7 @@ export async function runDbTableStats(ctx: {
         },
       },
       update: {
-        rowEstimate: Math.round(row.exact_rows),
+        rowEstimate: count,
         totalBytes: BigInt(row.total_bytes),
         tableBytes: BigInt(row.table_bytes),
         indexBytes: BigInt(row.index_bytes),
@@ -61,7 +60,7 @@ export async function runDbTableStats(ctx: {
       create: {
         tableName: row.table_name,
         snapshotDate,
-        rowEstimate: Math.round(row.exact_rows),
+        rowEstimate: count,
         totalBytes: BigInt(row.total_bytes),
         tableBytes: BigInt(row.table_bytes),
         indexBytes: BigInt(row.index_bytes),
@@ -82,6 +81,6 @@ export async function runDbTableStats(ctx: {
         durationMs: Date.now() - start,
       },
     },
-    ctx,
+    ctx
   );
 }
