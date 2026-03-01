@@ -39,19 +39,21 @@ export async function ingestTravelEmails() {
     throw new Error("No .eml files found in travel-emails/");
   }
 
-  // Sort by modified time descending
-  const sorted = files
-    .map((name) => {
-      const full = path.join(dir, name);
-      return { name, mtime: fs.statSync(full).mtime };
-    })
-    .sort((a, b) => b.mtime.getTime() - a.mtime.getTime());
 
-  // Pick the newest file
-  const newest = sorted[0].name;
-  const filePath = path.join(dir, newest);
+// Sort by modified time descending
+const sorted = files
+  .map((name) => {
+    const full = path.join(dir, name);
+    return { name, mtime: fs.statSync(full).mtime };
+  })
+  .sort((a, b) => b.mtime.getTime() - a.mtime.getTime());
 
-  console.log("INGEST: reading newest file:", newest);
+// Pick the newest file
+const newest = sorted[0].name;
+const filePath = path.join(dir, newest);
+console.log("INGEST: dir =", dir);
+console.log("INGEST: files =", files);
+console.log("INGEST: reading newest file:", newest);
 
   const raw = fs.readFileSync(filePath, "utf8");
 
