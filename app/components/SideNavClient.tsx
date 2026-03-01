@@ -9,7 +9,6 @@ type SideNavClientProps = {
   nextEventLabel: string;
   nextEventTime: Date | null;
 };
-
 export default function SideNavClient({
   nextEventLabel,
   nextEventTime,
@@ -32,8 +31,9 @@ export default function SideNavClient({
   ];
 
   return (
-    <aside className="w-64 h-screen flex flex-col bg-gradient-to-b from-blue-600 to-blue-900 text-white shadow-xl">
-      <nav className="flex-1 p-4 space-y-2">
+    <aside className="w-64 h-screen flex flex-col bg-slate-950 text-white shadow-xl">
+      {/* Scrollable content with gradient */}
+      <nav className="flex-1 p-4 space-y-2 overflow-y-auto bg-gradient-to-b from-blue-600 via-blue-700 to-transparent">
         {navItems.map((item) => (
           <Link
             key={item.href}
@@ -47,6 +47,7 @@ export default function SideNavClient({
 
         <div className="mt-6">
           <div className="flex items-center gap-2">
+            {/* email icon */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -57,8 +58,8 @@ export default function SideNavClient({
               strokeLinejoin="round"
               className="w-4 h-4"
             >
-              {" "}
-              <path d="M4 4h16v16H4z" /> <path d="M4 4l8 8 8-8" />{" "}
+              <path d="M4 4h16v16H4z" />
+              <path d="M4 4l8 8 8-8" />
             </svg>
             <EmailSideNavLink />
           </div>
@@ -72,7 +73,7 @@ export default function SideNavClient({
           SideNav activations: {activations}
         </div>
 
-        <div className="text-xs opacity-75 text-yellow-300 mt-4">
+        <div className="text-xs opacity-75 text-yellow-300 mt-1">
           Version: {versionInfo.version}
         </div>
       </nav>
