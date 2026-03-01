@@ -50,6 +50,8 @@ const sorted = files
   })
   .sort((a, b) => b.mtime.getTime() - a.mtime.getTime());
 
+const { full: filePath } = sorted[0];
+console.log("INGEST: selected file =", filePath);
   const raw = fs.readFileSync(filePath, "utf8");
 
   // *** CRITICAL FIX ***
