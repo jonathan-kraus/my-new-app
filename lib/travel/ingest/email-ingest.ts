@@ -4,6 +4,8 @@ import fs from "fs";
 import path from "path";
 import { db } from "@/lib/db";
 import { parseAAEmail } from "@/lib/travel/parser/aa";
+import { logit } from "@/lib/log/logit";
+import { file } from "zod";
 
 // 1. Decode quoted-printable BEFORE extracting HTML
 function decodeQuotedPrintable(input: string): string {
@@ -46,6 +48,24 @@ const sorted = files
     const full = path.join(dir, name);
     const stat = fs.statSync(full);
     console.log("candidate=%s mtime=%s", full, stat.mtime.toISOString());
+    logit("INGEST: candidate=%s mtime=%s", full, stat.mtime.toISOString());
+     await logit(
+       "jonathan",
+       {
+         level: "info",
+         message: "Pick email: " + full,
+         payload: {
+           full: full,
+           lastTwo: name.split("-").slice(-2).join("-") + ".eml",
+         },
+       },
+       {
+        file: "email-ingest.ts",
+         requestId: "N/A",
+         route: "N/A",
+         userId: undefined,
+       },
+     );
     return { name, full, mtime: stat.mtime };
   })
   .sort((a, b) => b.mtime.getTime() - a.mtime.getTime());
