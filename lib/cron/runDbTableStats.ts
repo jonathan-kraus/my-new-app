@@ -1,6 +1,7 @@
 // lib/cron/runDbTableStats.ts
 import { db } from "@/lib/db";
 import { logit } from "@/lib/log/logit";
+import { Exact } from '../generated/prisma/internal/prismaNamespace';
 
 function atLocalMidnight(d: Date) {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate());
@@ -51,7 +52,7 @@ export async function runDbTableStats(ctx: {
         },
       },
       update: {
-        rowEstimate: Math.round(row.estimated_rows),
+        rowEstimate: Math.round(row.exact_rows),
         totalBytes: BigInt(row.total_bytes),
         tableBytes: BigInt(row.table_bytes),
         indexBytes: BigInt(row.index_bytes),
@@ -60,7 +61,7 @@ export async function runDbTableStats(ctx: {
       create: {
         tableName: row.table_name,
         snapshotDate,
-        rowEstimate: Math.round(row.estimated_rows),
+        rowEstimate: Math.round(row.exact_rows),
         totalBytes: BigInt(row.total_bytes),
         tableBytes: BigInt(row.table_bytes),
         indexBytes: BigInt(row.index_bytes),
