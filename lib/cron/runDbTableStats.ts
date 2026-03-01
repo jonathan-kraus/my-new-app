@@ -1,6 +1,5 @@
 // lib/cron/runDbTableStats.ts
 import { db } from "@/lib/db";
-import { refreshLogRowEstimateForToday } from "@/lib/db/refreshLogRowEstimateForToday";
 import { logit } from "@/lib/log/logit";
 
 function atLocalMidnight(d: Date) {
@@ -24,6 +23,7 @@ export async function runDbTableStats(ctx: {
     ctx,
   );
 
+  // Pull table stats from Postgres system catalogs
   const stats = await db.$queryRawUnsafe(`
     SELECT
       c.relname AS table_name,
@@ -70,15 +70,14 @@ export async function runDbTableStats(ctx: {
 
     tablesProcessed++;
   }
-  const count = await refreshLogRowEstimateForToday();
+
   await logit(
-    "DbTables",
+    "db",
     {
       level: "info",
-      message: "dbTables.cron.completed -- added refreshLogRowEstimateForToday",
+      message: "dbTables.cron.completed",
       payload: {
-        tablesProcessed: tablesProcessed,
-        count: count,
+        tablesProcessed,
         durationMs: Date.now() - start,
       },
     },
