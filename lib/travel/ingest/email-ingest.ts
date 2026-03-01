@@ -41,37 +41,36 @@ export async function ingestTravelEmails() {
     throw new Error("No .eml files found in travel-emails/");
   }
 
+  // Sort by modified time descending
+  const sorted = files
+    .map((name) => {
+      const full = path.join(dir, name);
+      const stat = fs.statSync(full);
+      console.log("candidate=%s mtime=%s", full, stat.mtime.toISOString());
+      logit("INGEST: candidate=%s mtime=%s", full, stat.mtime.toISOString());
+      logit(
+        "jonathan",
+        {
+          level: "info",
+          message: "Pick email: " + full,
+          payload: {
+            full: full,
+            lastTwo: name.split("-").slice(-2).join("-") + ".eml",
+          },
+        },
+        {
+          file: "email-ingest.ts",
+          requestId: "N/A",
+          route: "N/A",
+          userId: undefined,
+        },
+      );
+      return { name, full, mtime: stat.mtime };
+    })
+    .sort((a, b) => b.mtime.getTime() - a.mtime.getTime());
 
-// Sort by modified time descending
-const sorted = files
-  .map((name) => {
-    const full = path.join(dir, name);
-    const stat = fs.statSync(full);
-    console.log("candidate=%s mtime=%s", full, stat.mtime.toISOString());
-    logit("INGEST: candidate=%s mtime=%s", full, stat.mtime.toISOString());
-     logit(
-       "jonathan",
-       {
-         level: "info",
-         message: "Pick email: " + full,
-         payload: {
-           full: full,
-           lastTwo: name.split("-").slice(-2).join("-") + ".eml",
-         },
-       },
-       {
-        file: "email-ingest.ts",
-         requestId: "N/A",
-         route: "N/A",
-         userId: undefined,
-       },
-     );
-    return { name, full, mtime: stat.mtime };
-  })
-  .sort((a, b) => b.mtime.getTime() - a.mtime.getTime());
-
-const { full: filePath } = sorted[0];
-console.log("INGEST: selected file =", filePath);
+  const { full: filePath } = sorted[0];
+  console.log("INGEST: selected file =", filePath);
   const raw = fs.readFileSync(filePath, "utf8");
 
   // *** CRITICAL FIX ***

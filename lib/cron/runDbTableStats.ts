@@ -14,11 +14,7 @@ export async function runDbTableStats(ctx: {
   const start = Date.now();
   const snapshotDate = atLocalMidnight(new Date());
 
-  await logit(
-    "db",
-    { level: "info", message: "dbTables.cron.started" },
-    ctx
-  );
+  await logit("db", { level: "info", message: "dbTables.cron.started" }, ctx);
 
   const stats = await db.$queryRawUnsafe(`
     SELECT
@@ -38,10 +34,12 @@ export async function runDbTableStats(ctx: {
   let tablesProcessed = 0;
 
   for (const row of stats as any[]) {
-    // Get exact row count
-    const [{ count }] = await db.$queryRawUnsafe(
-      `SELECT COUNT(*)::int AS count FROM "${row.table_name}"`
+    // Get exact row count with proper typing
+    const result = await db.$queryRawUnsafe<{ count: number }[]>(
+      `SELECT COUNT(*)::int AS count FROM "${row.table_name}"`,
     );
+
+    const count = result[0]?.count ?? 0;
 
     await db.dbTableStats.upsert({
       where: {
@@ -81,6 +79,6 @@ export async function runDbTableStats(ctx: {
         durationMs: Date.now() - start,
       },
     },
-    ctx
+    ctx,
   );
 }
