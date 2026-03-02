@@ -1,17 +1,36 @@
 import { NextResponse, NextRequest } from "next/server";
 import { logit } from "@/lib/log/logit";
 import { enrichContext } from "@/lib/log/context";
-import { getTableStats } from "@/db/table-stats";
+import { fetchWithToken, NeonPostgrestClient } from '@neondatabase/postgrest-js';
+import { getSession } from 'next-auth/react';
 
 export async function someServerLogic(req: NextRequest) {
   const ctx = await enrichContext(req as any);
-  const stats = await getTableStats();
+
+
+
+
+const client = new NeonPostgrestClient({
+  dataApiUrl: process.env.NEON_DATA_API_URL!,
+  options: {
+    global: {
+fetch: fetchWithToken(async () => {
+  const session = await getSession();
+  return (session as any)?.token as string;
+}),
+    },
+  }
+});
+
+const { data, error } = await client
+  .from('WeatherSnapshot')
+  .select('count()')
 
   await logit(
     "jonathan",
     {
       level: "info",
-      message: `Table stats: ${stats.length} tables`,
+      message: `Table count: ${data?.[0]?.count} rows`,
       payload: {
         sessionUser: "sessionuser",
       },
