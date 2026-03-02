@@ -25,7 +25,7 @@ console.log("Data API tables:", data);
 
   return NextResponse.json({
     ok: true,
-    count: Number(data?.count ?? 0),
+    count: Number(data ?? 0),
     time: {
   local: new Date().toLocaleString("en-US", {
     timeZone: "America/New_York",
