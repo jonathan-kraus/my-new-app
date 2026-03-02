@@ -1,12 +1,12 @@
 /*
  * @FilePath: \my-new-app\.husky\gen-commit-msg.js
- * @LastEditTime: 2026-03-01 18:37:43
+ * @LastEditTime: 2026-03-01 18:45:58
  */
 // scripts/gen-commit-msg.js
 import fs from "fs";
 import path from "path";
 import { execSync } from "child_process";
-import { generateCommitMessage } from "./your-generator.js";
+import { generateCommitMessage } from "./generate-commit.js";
 
 function getChangedFiles() {
   const output = execSync("git status --porcelain", { encoding: "utf8" });

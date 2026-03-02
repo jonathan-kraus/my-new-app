@@ -1,29 +1,36 @@
 /*
  * @FilePath: \my-new-app\scripts\generate-commit.js
- * @LastEditors: Please set LastEditors
- * @LastEditTime: 2026-03-01 02:32:00
  */
 
-import { execSync } from "child_process";
+export async function generateCommitMessage({ changedFiles }) {
+  const prompt = `
+Generate a concise commit message based on these changed files:
 
-function run(cmd) {
-  return execSync(cmd, { encoding: "utf8" }).trim();
+${changedFiles.map(f => `- ${f}`).join("\n")}
+  `.trim();
+
+  const response = await fetch("http://localhost:11434/api/generate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "mistral",
+      prompt,
+      stream: true
+    })
+  });
+
+  let full = "";
+
+  for await (const chunk of response.body) {
+    const text = new TextDecoder().decode(chunk);
+
+    for (const line of text.split("\n")) {
+      if (!line.trim()) continue;
+
+      const json = JSON.parse(line);
+      if (json.response) full += json.response;
+    }
+  }
+
+  return full.trim();
 }
-
-const diff = run("git diff --staged");
-
-if (!diff) {
-  console.log("No staged changes.");
-  process.exit(0);
-}
-
-const prompt = `
-Generate a concise, high‑quality Git commit message summarizing the following diff.
-Use imperative mood. No preface. No quotes. No explanations.
-
-Diff:
-${diff}
-`;
-
-const response = run(`echo ${JSON.stringify(prompt)} | ollama run llama3.2`);
-console.log(response);
