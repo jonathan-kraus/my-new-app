@@ -14,10 +14,7 @@ const client = new NeonPostgrestClient({
   dataApiUrl: process.env.NEON_DATA_API_URL!,
   options: {
     global: {
-fetch: fetchWithToken(async () => {
-  const session = await getSession();
-  return (session as any)?.token as string;
-}),
+fetch: fetchWithToken(async () => process.env.NEON_DATA_API_KEY ?? null)
     },
   }
 });
