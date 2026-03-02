@@ -9,10 +9,7 @@ export async function GET(req: NextRequest) {
   const client = neon();
 
 
-const { data } = await client
-  .from("DbTableStats")
-  .select("*")
-  .limit(50);
+const { data } = await client .from("DbTableStats") .select("table_name") .order("table_name"); console.log(data);
 
 console.log("Data API tables:", data);
 
@@ -20,7 +17,7 @@ console.log("Data API tables:", data);
     "jonathan",
     {
       level: "info",
-      message: `Table count: ${data?.count} rows`,
+      message: `Table count: ${data} rows`,
       payload: { sessionUser: "sessionuser" },
     },
     { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
