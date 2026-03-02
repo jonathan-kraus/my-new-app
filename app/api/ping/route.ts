@@ -9,7 +9,10 @@ export async function GET(req: NextRequest) {
   const client = neon();
 
 
-const { data } = await client .from("DbTableStats") .select("table_name") .order("table_name"); console.log(data);
+const { data } = await client
+.from('"DbTableStats"')
+.select("table_name")
+.order("table_name"); 
 
 console.log("Data API tables:", data);
 
