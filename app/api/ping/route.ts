@@ -1,41 +1,41 @@
 import { NextResponse, NextRequest } from "next/server";
 import { logit } from "@/lib/log/logit";
+import { enrichContext } from "@/lib/log/context";
 import { neon } from "@/lib/neon";
 
-export async function someServerLogic(req: NextRequest) {
+export async function GET(req: NextRequest) {
+  const ctx = await enrichContext(req as any);
+
   const client = neon();
 
-  const { data } = await client
+  const { data, error } = await client
     .from("WeatherSnapshot")
     .select("count()")
     .single();
-
-  return Response.json({ count: Number(data?.count)  });
-}
-
-export async function GET(req: NextRequest) {
-  await someServerLogic(req);
 
   await logit(
     "jonathan",
     {
       level: "info",
-      message: "Ping route hit (axiom test)",
-      payload: {
-        uuid: "uuid",
-        route: "/api/ping",
-      },
+      message: `Table count: ${data?.count} rows`,
+      payload: { sessionUser: "sessionuser" },
     },
-    {
-      requestId: "requestId",
-      route: "page",
-      userId: "userId",
-    },
+    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
   );
 
-  return NextResponse.json({ ok: true, time: Date.now(), count: 1 }, { status: 200 });
+  return NextResponse.json({
+    ok: true,
+    count: Number(data?.count ?? 0),
+    time: {
+  local: new Date().toLocaleString("en-US", {
+    timeZone: "America/New_York",
+  }),
+  utc: new Date().toISOString(),
+}
+
+  });
 }
 
 export async function POST() {
-  return NextResponse.json({ ok: true, time: Date.now() }, { status: 200 });
+  return NextResponse.json({ ok: true, time: Date.now() });
 }
