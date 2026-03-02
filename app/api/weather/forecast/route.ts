@@ -8,7 +8,7 @@ import { ForecastResponseSchema } from "@/lib/weather/zodschema";
 import { getConfig } from "@/lib/runtime/config";
 const fcm = Number(await getConfig("FORECAST_CACHE_MINUTES", "10"));
 const FORECAST_CACHE_MINUTES = fcm;
-
+console.log("Forecast cache duration (minutes):", FORECAST_CACHE_MINUTES);
 export async function GET(req: Request) {
   const session = await auth();
 

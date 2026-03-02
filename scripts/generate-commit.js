@@ -4,9 +4,13 @@
 
 export async function generateCommitMessage({ changedFiles }) {
   const prompt = `
-Generate a concise commit message based on these changed files:
+You are generating a commit message. Infer the commit type and tone from the changed files.
+Keep it concise, meaningful, funny and developer-friendly.
 
+Changed files:
 ${changedFiles.map(f => `- ${f}`).join("\n")}
+
+Write only the commit message. No explanations.
   `.trim();
 
   const response = await fetch("http://localhost:11434/api/generate", {
