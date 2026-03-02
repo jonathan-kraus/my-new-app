@@ -6,7 +6,7 @@ import { getSession } from 'next-auth/react';
 
 export async function someServerLogic(req: NextRequest) {
   const ctx = await enrichContext(req as any);
-
+console.log("api/ping/route enriched ctx", ctx);
 
 
 
@@ -25,7 +25,7 @@ fetch: fetchWithToken(async () => {
 const { data, error } = await client
   .from('WeatherSnapshot')
   .select('count()')
-console.log("data", data, "error", error);
+console.log("api/ping/route data", data, "error", error);
 
   await logit(
     "jonathan",
