@@ -26,7 +26,7 @@ const { data, error } = await client
   .from('WeatherSnapshot')
   .select('count()')
 console.log("data", data, "error", error);
-console.log(await getSession())
+
   await logit(
     "jonathan",
     {
