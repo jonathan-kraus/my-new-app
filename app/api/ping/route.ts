@@ -10,9 +10,9 @@ export async function GET(req: NextRequest) {
 
 
 const { data } = await client
-.from('"DbTableStats"')
+.from("verification")
 .select("table_name")
-.order("table_name"); 
+.order("table_name");
 
 console.log("Data API tables:", data);
 
