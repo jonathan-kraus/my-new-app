@@ -25,7 +25,8 @@ fetch: fetchWithToken(async () => {
 const { data, error } = await client
   .from('WeatherSnapshot')
   .select('count()')
-
+console.log("data", data, "error", error);
+console.log(await getSession())
   await logit(
     "jonathan",
     {
@@ -91,7 +92,7 @@ export async function GET(req: NextRequest) {
     },
   );
 
-  return NextResponse.json({ ok: true, time: Date.now() }, { status: 200 });
+  return NextResponse.json({ ok: true, time: Date.now(), count: 1 }, { status: 200 });
 }
 
 export async function POST() {
