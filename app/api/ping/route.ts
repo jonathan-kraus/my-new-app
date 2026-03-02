@@ -8,10 +8,13 @@ export async function GET(req: NextRequest) {
 
   const client = neon();
 
-  const { data, error } = await client
-    .from("WeatherSnapshot")
-    .select("count()")
-    .single();
+
+const { data } = await client
+  .from("DbTableStats")
+  .select("*")
+  .limit(50);
+
+console.log("Data API tables:", data);
 
   await logit(
     "jonathan",
