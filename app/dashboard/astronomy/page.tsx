@@ -29,6 +29,12 @@ export default async function DashboardAstronomyPage() {
   console.log("sunset raw", solar!.sunset.timestamp);
   console.log("sunset date", DateTime.fromISO(solar!.sunset.timestamp));
   console.log("solarNoon", solarNoon);
+  const jnow = new Date();
+  console.log("now", jnow);
+  console.log(
+    "solarNoon > now?",
+    solarNoon.getTime() > jnow.getTime(),
+  );
 console.log("COUNTDOWN COMPUTED AT:", new Date());
 
   return (
@@ -37,7 +43,7 @@ console.log("COUNTDOWN COMPUTED AT:", new Date());
       <div>
         <h1 className="text-3xl font-semibold tracking-tight">Astronomy</h1>
         <p className="text-white/60 mt-1">
-          new Date() Solar & lunar events for{" "}
+          Astronomy for {format(jnow, "MMMM dd, yyyy hh:mm:ss")} — Solar & lunar events for{" "}
           {format(
             DateTime.fromISO(solar!.sunrise.date).toJSDate(),
             "MMMM dd, yyyy",
