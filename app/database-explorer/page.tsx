@@ -17,11 +17,10 @@ async function getTableStats() {
           AND c.table_schema = t.table_schema
       ) AS column_count,
       (
-        SELECT reltuples::bigint
-        FROM pg_class c
-        JOIN pg_namespace n ON n.oid = c.relnamespace
-        WHERE c.relname = t.table_name
-          AND n.nspname = t.table_schema
+        SELECT n_live_tup
+        FROM pg_stat_user_tables s
+        WHERE s.relname = t.table_name
+          AND s.schemaname = t.table_schema
       ) AS estimated_rows,
       pg_size_pretty(
         pg_total_relation_size(
