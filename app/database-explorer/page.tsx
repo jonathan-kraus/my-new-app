@@ -337,7 +337,7 @@ export default async function DatabaseExplorerPage() {
                   <div className="table-name">{table.table_name}</div>
                   <span className="badge cyan">{table.column_count} cols</span>
                   <span className="badge green">
-                    ~{Number(table.estimated_rows).toLocaleString()} rows
+                    {Number(table.estimated_rows).toLocaleString()} rows
                   </span>
                   <span className="badge">{table.total_size}</span>
                 </summary>

@@ -22,22 +22,21 @@ export function AstronomyCard({ data }: AstronomyCardProps) {
   const safeTime = (ts: string | null | undefined) =>
     ts ? new Date(ts).toLocaleTimeString() : "—";
 
-const countdownTo = (ts: string | Date | null | undefined) => {
-  if (!ts) return "—";
+  const countdownTo = (ts: string | Date | null | undefined) => {
+    if (!ts) return "—";
 
-  const target = ts instanceof Date ? ts : new Date(ts);
-  if (isNaN(target.getTime())) return "—";
+    const target = ts instanceof Date ? ts : new Date(ts);
+    if (isNaN(target.getTime())) return "—";
 
-  const diff = target.getTime() - now.getTime();
-  if (diff <= 0) return "—";
+    const diff = target.getTime() - now.getTime();
+    if (diff <= 0) return "—";
 
-  const totalMinutes = Math.floor(diff / 1000 / 60);
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
+    const totalMinutes = Math.floor(diff / 1000 / 60);
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
 
-  return `${hours}h ${minutes}m`;
-};
-
+    return `${hours}h ${minutes}m`;
+  };
 
   const moonPhaseIcon = (illum: number | null) => {
     if (illum === null) return "○";
