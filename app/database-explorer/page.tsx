@@ -1,16 +1,12 @@
-/*
- * @FilePath: \my-new-app\app\database-explorer.tsx
- * @LastEditTime: 2026-03-02 21:41:10
- */
 // app/database-explorer/page.tsx
-import { neon } from "@neondatabase/serverless";
-import { auth } from "@/auth";
-import { redirect } from "next/navigation";
+import { neon } from '@neondatabase/serverless';
+import { auth } from '@/auth';
+import { redirect } from 'next/navigation';
 
 const sql = neon(process.env.DATABASE_URL!);
 
 async function getTableStats() {
-	const tables = await sql`
+  const tables = await sql`
     SELECT
       t.table_name,
       t.table_schema,
@@ -22,8 +18,10 @@ async function getTableStats() {
       ) AS column_count,
       (
         SELECT reltuples::bigint
-        FROM pg_class
-        WHERE relname = t.table_name
+        FROM pg_class c
+        JOIN pg_namespace n ON n.oid = c.relnamespace
+        WHERE c.relname = t.table_name
+          AND n.nspname = t.table_schema
       ) AS estimated_rows,
       pg_size_pretty(
         pg_total_relation_size(
@@ -39,7 +37,7 @@ async function getTableStats() {
     ORDER BY total_size_bytes DESC;
   `;
 
-	const columns = await sql`
+  const columns = await sql`
     SELECT
       table_name,
       column_name,
@@ -52,39 +50,31 @@ async function getTableStats() {
     ORDER BY table_name, ordinal_position;
   `;
 
-	return { tables, columns };
+  return { tables, columns };
 }
 
 export default async function DatabaseExplorerPage() {
-	const session = await auth();
-	if (!session) redirect("/api/auth/signin");
+  const session = await auth();
+  if (!session) redirect('/api/auth/signin');
 
-	const { tables, columns } = await getTableStats();
+  const { tables, columns } = await getTableStats();
 
-	const columnsByTable: Record<string, typeof columns> = {};
-	for (const col of columns) {
-		if (!columnsByTable[col.table_name]) columnsByTable[col.table_name] = [];
-		columnsByTable[col.table_name].push(col);
-	}
+  const columnsByTable: Record<string, typeof columns> = {};
+  for (const col of columns) {
+    if (!columnsByTable[col.table_name]) columnsByTable[col.table_name] = [];
+    columnsByTable[col.table_name].push(col);
+  }
 
-	const totalSize = tables.reduce((sum: number, t: any) => sum + Number(t.total_size_bytes), 0);
-	const formatBytes = (bytes: number) => {
-		if (bytes < 1024) return bytes + " B";
-		if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
-		return (bytes / (1024 * 1024)).toFixed(1) + " MB";
-	};
+  const totalSize = tables.reduce((sum: number, t: any) => sum + Number(t.total_size_bytes), 0);
+  const formatBytes = (bytes: number) => {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  };
 
-	return (
-		<div
-			style={{
-				fontFamily: "'IBM Plex Mono', monospace",
-				minHeight: "100vh",
-				background: "#0a0a0f",
-				color: "#e2e8f0",
-				padding: "0",
-			}}
-		>
-			<style>{`
+  return (
+    <div style={{ fontFamily: "'IBM Plex Mono', monospace", minHeight: '100vh', background: '#0a0a0f', color: '#e2e8f0', padding: '0' }}>
+      <style>{`
         @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=Syne:wght@700;800&display=swap');
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -294,90 +284,77 @@ export default async function DatabaseExplorerPage() {
         }
       `}</style>
 
-			<div className="header">
-				<div>
-					<div className="header-title">
-						DB <span>Explorer</span>
-					</div>
-					<div className="header-sub">
-						Live schema · public schema ·{" "}
-						{new Date().toLocaleDateString("en-US", {
-							month: "long",
-							day: "numeric",
-							year: "numeric",
-						})}
-					</div>
-				</div>
-			</div>
+      <div className="header">
+        <div>
+          <div className="header-title">DB <span>Explorer</span></div>
+          <div className="header-sub">Live schema · public schema · {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
+        </div>
+      </div>
 
-			<div className="stats-bar">
-				<div className="stat">
-					<div className="stat-value">{tables.length}</div>
-					<div className="stat-label">Tables</div>
-				</div>
-				<div className="stat">
-					<div className="stat-value">{columns.length}</div>
-					<div className="stat-label">Total Columns</div>
-				</div>
-				<div className="stat">
-					<div className="stat-value">{formatBytes(totalSize)}</div>
-					<div className="stat-label">Total Size</div>
-				</div>
-			</div>
+      <div className="stats-bar">
+        <div className="stat">
+          <div className="stat-value">{tables.length}</div>
+          <div className="stat-label">Tables</div>
+        </div>
+        <div className="stat">
+          <div className="stat-value">{columns.length}</div>
+          <div className="stat-label">Total Columns</div>
+        </div>
+        <div className="stat">
+          <div className="stat-value">{formatBytes(totalSize)}</div>
+          <div className="stat-label">Total Size</div>
+        </div>
+      </div>
 
-			<div className="content">
-				{tables.length === 0 ? (
-					<div className="empty-state">No tables found in public schema.</div>
-				) : (
-					tables.map((table: any) => {
-						const cols = columnsByTable[table.table_name] || [];
-						return (
-							<details key={table.table_name} className="table-card">
-								<summary className="table-header" style={{ listStyle: "none" }}>
-									<div className="table-name">{table.table_name}</div>
-									<span className="badge cyan">{table.column_count} cols</span>
-									<span className="badge green">
-										~{Number(table.estimated_rows).toLocaleString()} rows
-									</span>
-									<span className="badge">{table.total_size}</span>
-								</summary>
-								<div className="columns-section">
-									<table className="columns-table">
-										<thead>
-											<tr>
-												<th>#</th>
-												<th>Column</th>
-												<th>Type</th>
-												<th>Nullable</th>
-												<th>Default</th>
-											</tr>
-										</thead>
-										<tbody>
-											{cols.map((col: any) => (
-												<tr key={col.column_name}>
-													<td style={{ color: "#334155" }}>{col.ordinal_position}</td>
-													<td className="col-name">{col.column_name}</td>
-													<td className="col-type">{col.data_type}</td>
-													<td
-														className={col.is_nullable === "YES" ? "nullable-yes" : "nullable-no"}
-													>
-														{col.is_nullable === "YES" ? "yes" : "no"}
-													</td>
-													<td style={{ color: "#475569" }}>{col.column_default ?? "—"}</td>
-												</tr>
-											))}
-										</tbody>
-									</table>
-								</div>
-							</details>
-						);
-					})
-				)}
-			</div>
+      <div className="content">
+        {tables.length === 0 ? (
+          <div className="empty-state">No tables found in public schema.</div>
+        ) : (
+          tables.map((table: any) => {
+            const cols = columnsByTable[table.table_name] || [];
+            return (
+              <details key={table.table_name} className="table-card">
+                <summary className="table-header" style={{ listStyle: 'none' }}>
+                  <div className="table-name">{table.table_name}</div>
+                  <span className="badge cyan">{table.column_count} cols</span>
+                  <span className="badge green">~{Number(table.estimated_rows).toLocaleString()} rows</span>
+                  <span className="badge">{table.total_size}</span>
+                </summary>
+                <div className="columns-section">
+                  <table className="columns-table">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Column</th>
+                        <th>Type</th>
+                        <th>Nullable</th>
+                        <th>Default</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {cols.map((col: any) => (
+                        <tr key={col.column_name}>
+                          <td style={{ color: '#334155' }}>{col.ordinal_position}</td>
+                          <td className="col-name">{col.column_name}</td>
+                          <td className="col-type">{col.data_type}</td>
+                          <td className={col.is_nullable === 'YES' ? 'nullable-yes' : 'nullable-no'}>
+                            {col.is_nullable === 'YES' ? 'yes' : 'no'}
+                          </td>
+                          <td style={{ color: '#475569' }}>{col.column_default ?? '—'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </details>
+            );
+          })
+        )}
+      </div>
 
-			<div className="refresh-note">
-				⟳ This page queries live schema on every load — new tables appear automatically.
-			</div>
-		</div>
-	);
+      <div className="refresh-note">
+        ⟳ This page queries live schema on every load — new tables appear automatically.
+      </div>
+    </div>
+  );
 }
