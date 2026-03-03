@@ -12,7 +12,7 @@ function getChangedFiles() {
   return output
     .split("\n")
     .filter(Boolean)
-    .map(line => line.trim().slice(3));
+    .map((line) => line.trim().slice(3));
 }
 
 async function main() {
