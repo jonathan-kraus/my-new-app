@@ -19,7 +19,7 @@ export function Countdown({ timestamp }: { timestamp: Date }) {
 
   return (
     <>
-      {hours}h {minutes}mm
+      {hours}h {minutes}m
     </>
   );
 }

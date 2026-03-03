@@ -107,18 +107,17 @@ export function buildEphemerisSnapshot(
     return events.find((e) => e.name === name && e.date === date)!;
   }
 
-const now = new Date();
-const nextEvent = events.find((e) => e.dateObj > now);
+  const now = new Date();
+  const nextEvent = events.find((e) => e.dateObj > now);
 
-console.log("ASTRONOMY NEXT EVENT RAW:", {
-  now,
-  nextEvent,
-  nextEventName: nextEvent?.name,
-  nextEventDate: nextEvent?.date,
-  nextEventDateObj: nextEvent?.dateObj,
-  nextEventISO: nextEvent?.dateObj?.toISOString(),
-});
-
+  console.log("ASTRONOMY NEXT EVENT RAW:", {
+    now,
+    nextEvent,
+    nextEventName: nextEvent?.name,
+    nextEventDate: nextEvent?.date,
+    nextEventDateObj: nextEvent?.dateObj,
+    nextEventISO: nextEvent?.dateObj?.toISOString(),
+  });
 
   if (!nextEvent) {
     throw new Error("No upcoming astronomy events found.");

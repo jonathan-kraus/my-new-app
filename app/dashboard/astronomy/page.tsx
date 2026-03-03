@@ -33,11 +33,8 @@ export default async function DashboardAstronomyPage() {
   console.log("solarNoon", solarNoon);
   const jnow = new Date();
   console.log("now", jnow);
-  console.log(
-    "solarNoon > now?",
-    solarNoon.getTime() > jnow.getTime(),
-  );
-console.log("COUNTDOWN COMPUTED AT:", new Date());
+  console.log("solarNoon > now?", solarNoon.getTime() > jnow.getTime());
+  console.log("COUNTDOWN COMPUTED AT:", new Date());
 
   return (
     <div className="p-6 space-y-10">
@@ -49,7 +46,6 @@ console.log("COUNTDOWN COMPUTED AT:", new Date());
           {format(
             DateTime.fromISO(solar!.sunrise.date).toJSDate(),
             "MMMM dd, yyyy",
-
           )}
         </p>
       </div>

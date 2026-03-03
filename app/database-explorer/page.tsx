@@ -1,7 +1,7 @@
 // app/database-explorer/page.tsx
-import { neon } from '@neondatabase/serverless';
-import { auth } from '@/auth';
-import { redirect } from 'next/navigation';
+import { neon } from "@neondatabase/serverless";
+import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 
 const sql = neon(process.env.DATABASE_URL!);
 
@@ -54,7 +54,7 @@ async function getTableStats() {
 
 export default async function DatabaseExplorerPage() {
   const session = await auth();
-  if (!session) redirect('/api/auth/signin');
+  if (!session) redirect("/api/auth/signin");
 
   const { tables, columns } = await getTableStats();
 
@@ -64,15 +64,26 @@ export default async function DatabaseExplorerPage() {
     columnsByTable[col.table_name].push(col);
   }
 
-  const totalSize = tables.reduce((sum: number, t: any) => sum + Number(t.total_size_bytes), 0);
+  const totalSize = tables.reduce(
+    (sum: number, t: any) => sum + Number(t.total_size_bytes),
+    0,
+  );
   const formatBytes = (bytes: number) => {
-    if (bytes < 1024) return bytes + ' B';
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    if (bytes < 1024) return bytes + " B";
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+    return (bytes / (1024 * 1024)).toFixed(1) + " MB";
   };
 
   return (
-    <div style={{ fontFamily: "'IBM Plex Mono', monospace", minHeight: '100vh', background: '#0a0a0f', color: '#e2e8f0', padding: '0' }}>
+    <div
+      style={{
+        fontFamily: "'IBM Plex Mono', monospace",
+        minHeight: "100vh",
+        background: "#0a0a0f",
+        color: "#e2e8f0",
+        padding: "0",
+      }}
+    >
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600&family=Syne:wght@700;800&display=swap');
 
@@ -285,8 +296,17 @@ export default async function DatabaseExplorerPage() {
 
       <div className="header">
         <div>
-          <div className="header-title">DB <span>Explorer</span></div>
-          <div className="header-sub">Live schema · public schema · {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
+          <div className="header-title">
+            DB <span>Explorer</span>
+          </div>
+          <div className="header-sub">
+            Live schema · public schema ·{" "}
+            {new Date().toLocaleDateString("en-US", {
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+            })}
+          </div>
         </div>
       </div>
 
@@ -313,10 +333,12 @@ export default async function DatabaseExplorerPage() {
             const cols = columnsByTable[table.table_name] || [];
             return (
               <details key={table.table_name} className="table-card">
-                <summary className="table-header" style={{ listStyle: 'none' }}>
+                <summary className="table-header" style={{ listStyle: "none" }}>
                   <div className="table-name">{table.table_name}</div>
                   <span className="badge cyan">{table.column_count} cols</span>
-                  <span className="badge green">~{Number(table.estimated_rows).toLocaleString()} rows</span>
+                  <span className="badge green">
+                    ~{Number(table.estimated_rows).toLocaleString()} rows
+                  </span>
                   <span className="badge">{table.total_size}</span>
                 </summary>
                 <div className="columns-section">
@@ -333,13 +355,23 @@ export default async function DatabaseExplorerPage() {
                     <tbody>
                       {cols.map((col: any) => (
                         <tr key={col.column_name}>
-                          <td style={{ color: '#334155' }}>{col.ordinal_position}</td>
+                          <td style={{ color: "#334155" }}>
+                            {col.ordinal_position}
+                          </td>
                           <td className="col-name">{col.column_name}</td>
                           <td className="col-type">{col.data_type}</td>
-                          <td className={col.is_nullable === 'YES' ? 'nullable-yes' : 'nullable-no'}>
-                            {col.is_nullable === 'YES' ? 'yes' : 'no'}
+                          <td
+                            className={
+                              col.is_nullable === "YES"
+                                ? "nullable-yes"
+                                : "nullable-no"
+                            }
+                          >
+                            {col.is_nullable === "YES" ? "yes" : "no"}
                           </td>
-                          <td style={{ color: '#475569' }}>{col.column_default ?? '—'}</td>
+                          <td style={{ color: "#475569" }}>
+                            {col.column_default ?? "—"}
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -352,7 +384,8 @@ export default async function DatabaseExplorerPage() {
       </div>
 
       <div className="refresh-note">
-        ⟳ This page queries live schema on every load — new tables appear automatically.
+        ⟳ This page queries live schema on every load — new tables appear
+        automatically.
       </div>
     </div>
   );
