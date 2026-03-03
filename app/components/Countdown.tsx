@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-export function Countdown({ timestamp }: { timestamp: Date }) {
+export function Countdown({ timestamp }: { timestamp: Date | string }) {
   const [now, setNow] = useState(new Date());
 
   useEffect(() => {
@@ -10,7 +10,11 @@ export function Countdown({ timestamp }: { timestamp: Date }) {
     return () => clearInterval(id);
   }, []);
 
-  const diff = timestamp.getTime() - now.getTime();
+  const target = timestamp instanceof Date ? timestamp : new Date(timestamp);
+
+  if (isNaN(target.getTime())) return <>—</>;
+
+  const diff = target.getTime() - now.getTime();
   if (diff <= 0) return <>Now</>;
 
   const totalMinutes = Math.floor(diff / 1000 / 60);
