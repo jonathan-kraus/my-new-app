@@ -1,20 +1,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { formatDistanceToNowStrict } from "date-fns";
 
 export function Countdown({ timestamp }: { timestamp: Date }) {
-  const [now, setNow] = useState(Date.now());
+  const [now, setNow] = useState(new Date());
 
   useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 1000);
+    const id = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(id);
   }, []);
 
-  const countdown = formatDistanceToNowStrict(timestamp, {
-    roundingMethod: "floor",
-    addSuffix: false,
-  });
+  const diff = timestamp.getTime() - now.getTime();
+  if (diff <= 0) return <>Now</>;
 
-  return <span>Countdown: {countdown}</span>;
+  const totalMinutes = Math.floor(diff / 1000 / 60);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+
+  return (
+    <>
+      {hours}h {minutes}mm
+    </>
+  );
 }

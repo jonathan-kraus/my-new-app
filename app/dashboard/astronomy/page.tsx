@@ -7,6 +7,8 @@ import { format } from "date-fns";
 import { SolarArcBar } from "@/app/components/SolarArcBar";
 import { DateTime } from "luxon";
 
+export const revalidate = 60;
+
 export default async function DashboardAstronomyPage() {
   const snapshot = await getEphemerisSnapshot("KOP");
   const solar = snapshot.snapshot?.solar ?? null;
@@ -43,7 +45,7 @@ console.log("COUNTDOWN COMPUTED AT:", new Date());
       <div>
         <h1 className="text-3xl font-semibold tracking-tight">Astronomy</h1>
         <p className="text-white/60 mt-1">
-          Astronomy for {format(jnow, "MMMM dd, yyyy hh:mm:ss")} — Solar & lunar events for{" "}
+          Solar & lunar events for{" "}
           {format(
             DateTime.fromISO(solar!.sunrise.date).toJSDate(),
             "MMMM dd, yyyy",
