@@ -3,9 +3,9 @@
  */
 
 export async function generateCommitMessage({ changedFiles }) {
-  const prompt = `
+	const prompt = `
 You are generating a commit message. Infer the commit type and tone from the changed files.
-Keep it concise, meaningful, funny and developer-friendly. Do not mention version.json changes.
+Keep it concise, meaningful, funny and developer-friendly.
 
 Changed files:
 ${changedFiles.map((f) => `- ${f}`).join("\n")}
@@ -13,28 +13,28 @@ ${changedFiles.map((f) => `- ${f}`).join("\n")}
 Write only the commit message. No explanations.
   `.trim();
 
-  const response = await fetch("http://localhost:11434/api/generate", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: "mistral",
-      prompt,
-      stream: true,
-    }),
-  });
+	const response = await fetch("http://localhost:11434/api/generate", {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		body: JSON.stringify({
+			model: "mistral",
+			prompt,
+			stream: true,
+		}),
+	});
 
-  let full = "";
+	let full = "";
 
-  for await (const chunk of response.body) {
-    const text = new TextDecoder().decode(chunk);
+	for await (const chunk of response.body) {
+		const text = new TextDecoder().decode(chunk);
 
-    for (const line of text.split("\n")) {
-      if (!line.trim()) continue;
+		for (const line of text.split("\n")) {
+			if (!line.trim()) continue;
 
-      const json = JSON.parse(line);
-      if (json.response) full += json.response;
-    }
-  }
+			const json = JSON.parse(line);
+			if (json.response) full += json.response;
+		}
+	}
 
-  return full.trim();
+	return full.trim();
 }
