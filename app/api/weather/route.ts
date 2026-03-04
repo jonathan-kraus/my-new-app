@@ -1,5 +1,6 @@
 // app/api/weather/route.ts
 import { NextResponse } from "next/server";
+import { waitUntil } from "@vercel/functions";
 import { db } from "@/lib/db";
 import { z } from "zod";
 import { logit } from "@/lib/log/logit";
@@ -22,27 +23,8 @@ const TomorrowRealtimeSchema = z.object({
   }),
 });
 
-const TomorrowTimelineSchema = z.object({
-  data: z.object({
-    timelines: z.array(
-      z.object({
-        intervals: z.array(
-          z.object({
-            values: z.object({
-              sunriseTime: z.string().datetime(),
-              sunsetTime: z.string().datetime(),
-              moonriseTime: z.string().datetime().nullable(),
-              moonsetTime: z.string().datetime().nullable(),
-            }),
-          }),
-        ),
-      }),
-    ),
-  }),
-});
 // Default cache windows
 const CURRENT_CACHE_MIN = 30;
-const FORECAST_CACHE_MINUTES = 30;
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -57,10 +39,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Invalid locationId" }, { status: 404 });
   }
 
-  const currentCacheMin = 30;
-  const forecastCacheMin = 30;
-
-  const currentCutoff = new Date(Date.now() - currentCacheMin * 60_000);
+  const currentCutoff = new Date(Date.now() - CURRENT_CACHE_MIN * 60_000);
 
   const currentCached = await db.weatherSnapshot.findFirst({
     where: { locationId, fetchedAt: { gte: currentCutoff } },
@@ -71,12 +50,15 @@ export async function GET(req: Request) {
     ? Math.round((Date.now() - currentCached.fetchedAt.getTime()) / 60000)
     : null;
 
+  // Cached path — fast return
   if (currentCached) {
-    await logit("weather", {
-      level: "info",
-      message: `Using cached current weather data`,
-      payload: { locationId, currentAge },
-    });
+    waitUntil(
+      logit("weather", {
+        level: "info",
+        message: "Using cached current weather data",
+        payload: { locationId, currentAge },
+      }),
+    );
 
     return NextResponse.json({
       location,
@@ -102,6 +84,14 @@ export async function GET(req: Request) {
   );
 
   if (!res.ok) {
+    waitUntil(
+      logit("weather", {
+        level: "error",
+        message: "Weather fetch failed",
+        payload: { locationId, status: res.status },
+      }),
+    );
+
     return NextResponse.json(
       { error: "Weather fetch failed" },
       { status: 500 },
@@ -112,6 +102,14 @@ export async function GET(req: Request) {
   const validated = TomorrowRealtimeSchema.safeParse(json);
 
   if (!validated.success) {
+    waitUntil(
+      logit("weather", {
+        level: "error",
+        message: "Invalid weather data from Tomorrow.io",
+        payload: { locationId, json },
+      }),
+    );
+
     return NextResponse.json(
       { error: "Invalid weather data" },
       { status: 500 },
@@ -120,8 +118,10 @@ export async function GET(req: Request) {
 
   const v = validated.data.data.values;
 
-  const current = await db.weatherSnapshot.create({
-    data: {
+  // Create the response immediately — do not block on DB writes
+  const response = NextResponse.json({
+    location,
+    current: {
       locationId,
       temperature: v.temperature,
       feelsLike: v.temperatureApparent,
@@ -131,12 +131,8 @@ export async function GET(req: Request) {
       pressure: v.pressureSurfaceLevel,
       visibility: v.visibility,
       weatherCode: v.weatherCode,
+      fetchedAt: new Date(),
     },
-  });
-
-  return NextResponse.json({
-    location,
-    current,
     forecast: null,
     sources: {
       current: "api",
@@ -147,4 +143,30 @@ export async function GET(req: Request) {
       forecastMinutes: null,
     },
   });
+
+  // Background work — guaranteed to finish
+  waitUntil(
+    Promise.all([
+      db.weatherSnapshot.create({
+        data: {
+          locationId,
+          temperature: v.temperature,
+          feelsLike: v.temperatureApparent,
+          humidity: v.humidity,
+          windSpeed: v.windSpeed,
+          windDirection: v.windDirection,
+          pressure: v.pressureSurfaceLevel,
+          visibility: v.visibility,
+          weatherCode: v.weatherCode,
+        },
+      }),
+      logit("weather", {
+        level: "info",
+        message: "Fetched fresh weather data",
+        payload: { locationId },
+      }),
+    ]),
+  );
+
+  return response;
 }

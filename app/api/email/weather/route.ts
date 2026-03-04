@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\email\weather\route.ts
- * @LastEditTime: 2026-02-24 18:08:20
+ * @LastEditTime: 2026-03-04 17:57:41
  */
 // app/api/email/weather/route.ts
 
@@ -14,7 +14,7 @@ export async function POST() {
 
     logit("jonathan", {
       level: "info",
-      message: "weather_email_api_success mock",
+      message: "weather_email_api_success",
       payload: { result },
     });
 
