@@ -7,9 +7,7 @@ export async function generateCommitMessage({ changedFiles }) {
 You are generating a commit message. Infer the commit type and tone from the changed files.
 Keep it concise, meaningful, funny, and developer-friendly.
 
-Completely ignore version.json. Treat it as if it was never changed.
-Do not reference it, joke about it, or allude to it in any way.
-It should have zero influence on the commit message.
+Completely ignore version.json. It is just an artifact of the build process and does not reflect any actual changes to the codebase. It should have zero influence on the commit message.
 
 
 Changed files:
