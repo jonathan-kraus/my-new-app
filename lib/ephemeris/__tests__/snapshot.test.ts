@@ -1,8 +1,20 @@
-import { mockDb } from "@/test/__mocks__/db";
+import { vi } from "vitest";
 
 vi.mock("@/lib/db", () => ({
-  db: mockDb,
+  db: {
+    ephemerisDebug: {
+      create: vi.fn().mockResolvedValue({ id: "debug-ok" }),
+    },
+    runtimeConfig: {
+      findUnique: vi.fn().mockResolvedValue(null),
+    },
+  },
 }));
+
+vi.mock("@/lib/runtime/config", () => ({
+  getConfig: vi.fn().mockReturnValue("0"), // debug off
+}));
+
 
 import { getEphemerisSnapshot } from "@/lib/ephemeris/getEphemerisSnapshot";
 
