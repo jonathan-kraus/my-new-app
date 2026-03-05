@@ -37,6 +37,6 @@
     ".next/dev/types/**/*.ts",
     "scripts/test-db.js",
     "lib/travel/ingest/email-ingest.ts"
-  ],
+, "lib/ephemeris/__tests__/snapshot.bad.tst.tst"  ],
   "exclude": ["node_modules"]
 }
