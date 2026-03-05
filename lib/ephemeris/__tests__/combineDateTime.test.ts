@@ -14,12 +14,12 @@ describe("combineDateTime", () => {
   });
 
   it("combines date and time correctly", async () => {
-    const result = await combineDateTime(
-      new Date("2026-01-21"),
-      "12:34:00-05:00",
-    );
 
-    expect(typeof result).toBe("string");
+const date = new Date(2026, 0, 21); // local midnight, not UTC
+const result = combineDateTime(date, "12:34:00-05:00");
+
+
+
     expect(result).toBe("2026-01-21T12:34:00-05:00");
   });
 });
