@@ -22,22 +22,22 @@ export async function proxy(req: NextRequest) {
 
   // You can use `last` and `lastTwo` for more granular logging or routing if needed
   // For example, you could log them:
-  await logit(
-    "middleware",
-    {
-      level: "info",
-      message: "Normalized path segments pathname: " + pathname,
-      payload: {
-        last,
-        lastTwo,
-      },
-    },
-    {
-      requestId: getRequestId(req.url),
-      route: pathname,
-      userId: undefined,
-    },
-  );
+  // await logit(
+  //   "middleware",
+  //   {
+  //     level: "info",
+  //     message: "Normalized path segments pathname: " + pathname,
+  //     payload: {
+  //       last,
+  //       lastTwo,
+  //     },
+  //   },
+  //   {
+  //     requestId: getRequestId(req.url),
+  //     route: pathname,
+  //     userId: undefined,
+  //   },
+  // );
 
   // Or use them for conditional logic:
   // if (lastTwo === "some/specific/path") {
@@ -50,28 +50,28 @@ export async function proxy(req: NextRequest) {
   const logger = new Logger({ source: "middleware" }); // traffic, request
   logger.middleware(req);
   // --- 2) Log START ----------------------------------------------
-  await logit(
-    "jonathan",
-    {
-      level: "info",
-      message: "REQUEST START " + pathname,
-      payload: {
-        page: pathname,
-        file: "proxy.ts",
-        method: req.method,
-        url: req.url,
-        requestId: getRequestId(req.url),
-        eventIndex: nextEventIndex(req.url),
-        last: last,
-        lastTwo: lastTwo,
-      },
-    },
-    {
-      requestId: getRequestId(req.url),
-      route: pathname,
-      userId: undefined,
-    },
-  );
+  // await logit(
+  //   "jonathan",
+  //   {
+  //     level: "info",
+  //     message: "REQUEST START " + pathname,
+  //     payload: {
+  //       page: pathname,
+  //       file: "proxy.ts",
+  //       method: req.method,
+  //       url: req.url,
+  //       requestId: getRequestId(req.url),
+  //       eventIndex: nextEventIndex(req.url),
+  //       last: last,
+  //       lastTwo: lastTwo,
+  //     },
+  //   },
+  //   {
+  //     requestId: getRequestId(req.url),
+  //     route: pathname,
+  //     userId: undefined,
+  //   },
+  // );
 
   // --- 3) Skip internal assets -----------------------------------
   if (pathname.startsWith("/_next") || pathname.startsWith("/favicon")) {
@@ -101,30 +101,30 @@ async function end(req: NextRequest, res: NextResponse) {
   const durationMs = getRequestDuration(req.url);
   const pathname = req.nextUrl.pathname;
   const { last, lastTwo } = normalizePath(pathname);
-  await logit(
-    "middleware",
-    {
-      level: "info",
-      message: "REQUEST END " + pathname,
-      // payload: {
-      page: req.nextUrl.pathname,
-      file: "proxy.ts",
-      durationMs,
-      method: req.method,
-      url: req.url,
-      status: res.status,
-      requestId: getRequestId(req.url),
-      eventIndex: nextEventIndex(req.url),
-      last: last,
-      lastTwo: lastTwo,
-    },
-    // },
-    {
-      requestId: getRequestId(req.url),
-      route: req.nextUrl.pathname,
-      userId: undefined,
-    },
-  );
+  // await logit(
+  //   "middleware",
+  //   {
+  //     level: "info",
+  //     message: "REQUEST END " + pathname,
+  //     // payload: {
+  //     page: req.nextUrl.pathname,
+  //     file: "proxy.ts",
+  //     durationMs,
+  //     method: req.method,
+  //     url: req.url,
+  //     status: res.status,
+  //     requestId: getRequestId(req.url),
+  //     eventIndex: nextEventIndex(req.url),
+  //     last: last,
+  //     lastTwo: lastTwo,
+  //   },
+  //   // },
+  //   {
+  //     requestId: getRequestId(req.url),
+  //     route: req.nextUrl.pathname,
+  //     userId: undefined,
+  //   },
+  // );
 
   clearRequest(req.url);
   return res;
