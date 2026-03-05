@@ -58,7 +58,7 @@ export type DebugEventInput = {
   sunset?: string | null;
   moonrise?: string | null;
   moonset?: string | null;
-  moonPhase?: string | null;
+  moonPhase?: number | null;
   sunriseBlueStart?: string | null;
   sunriseBlueEnd?: string | null;
   sunriseGoldenStart?: string | null;

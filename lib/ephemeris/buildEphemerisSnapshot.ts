@@ -161,6 +161,7 @@ export function buildEphemerisSnapshot(
   // ⭐ Write debug event (non-blocking)
   try {
     writeEphemerisDebugEvent({
+      id: crypto.randomUUID(),
       locationId: todayRow.locationId ?? null,
       fetchedAt: snapshot.fetchedAt,
       createdAt: new Date().toISOString(),
