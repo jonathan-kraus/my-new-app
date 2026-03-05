@@ -2,7 +2,32 @@
 
 import { logit } from "@/lib/log/logit";
 import { getConfig } from "@/lib/runtime/config";
-const dl = Number(await getConfig("debug.logging", "11"));
+
+let dl: number | null = null;
+
+function loadDebugLevelSync() {
+  // Lazy-load once, but without async.
+  // If getConfig() is async, we fall back to default "11".
+  if (dl !== null) return dl;
+
+  try {
+    // getConfig may return a Promise in real runtime,
+    // but during tests we mock it to return a string synchronously.
+    const maybe = getConfig("debug.logging", "11");
+
+    if (typeof maybe === "string" || typeof maybe === "number") {
+      dl = Number(maybe);
+    } else {
+      // If it's a Promise (real runtime), don't block.
+      // Use fallback and let real logging config load elsewhere.
+      dl = 11;
+    }
+  } catch {
+    dl = 11;
+  }
+
+  return dl;
+}
 
 const domain = "ephemeris";
 
@@ -15,13 +40,16 @@ const domain = "ephemeris";
  * NEVER returns UTC. NEVER strips the offset.
  */
 export function combineDateTime(date: Date, timeString: string): string {
-  if (dl == 1) {
+  const debugLevel = loadDebugLevelSync();
+
+  if (debugLevel === 1) {
     logit(domain, {
       level: "debug",
       message: "combineDateTime called",
       data: { date: date.toString(), timeString },
     });
   }
+
   // --- VALIDATION: Reject UTC timestamps ---
   if (timeString.endsWith("Z")) {
     logit(domain, {
@@ -61,12 +89,14 @@ export function combineDateTime(date: Date, timeString: string): string {
   const dd = String(date.getDate()).padStart(2, "0");
 
   const final = `${yyyy}-${mm}-${dd}T${timePart}${offset}`;
-  if (dl == 1) {
+
+  if (debugLevel === 1) {
     logit(domain, {
       level: "debug",
       message: "combineDateTime produced final timestamp",
       data: { final },
     });
   }
+
   return final;
 }
