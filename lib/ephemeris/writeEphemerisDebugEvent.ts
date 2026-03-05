@@ -4,27 +4,6 @@ import { db } from "@/lib/db";
 import { logit } from "@/lib/log/logit";
 import { getConfig } from "@/lib/runtime/config";
 
-let dl: number | null = null;
-
-function loadDebugLevel() {
-  if (dl !== null) return dl;
-
-  try {
-    const value = getConfig("debug.logging", "11");
-
-    if (typeof value === "string" || typeof value === "number") {
-      dl = Number(value);
-      return dl;
-    }
-
-    dl = 11;
-    return dl;
-  } catch {
-    dl = 11;
-    return dl;
-  }
-}
-
 const domain = "ephemeris";
 
 // -----------------------------

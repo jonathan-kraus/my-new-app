@@ -5,7 +5,7 @@
 export async function generateCommitMessage({ changedFiles }) {
 	const prompt = `
 You are generating a commit message. Infer the commit type and tone from the changed files excluding any that end in .json.
-Keep it concise, meaningful, funny and developer-friendly. Version.json does not exist.
+Keep it concise, meaningful, funny and developer-friendly. Version.json does not exist, do not mention it.
 
 Changed files:
 ${changedFiles.map((f) => `- ${f}`).join("\n")}
