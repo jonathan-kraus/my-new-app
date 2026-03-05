@@ -1,23 +1,40 @@
 import { vi } from "vitest";
 
-vi.mock("@/lib/db", () => ({
-  db: {
-    ephemerisDebug: {
-      create: vi.fn().mockResolvedValue({ id: "debug-ok" }),
-    },
-    runtimeConfig: {
-      findUnique: vi.fn().mockResolvedValue(null),
-    },
+// ------------------------------------------------------------
+// 1. Create a shared mock DB object so we can reference it later
+// ------------------------------------------------------------
+const mockDb = {
+  ephemerisDebug: {
+    create: vi.fn().mockResolvedValue({ id: "debug-ok" }),
   },
+  runtimeConfig: {
+    findUnique: vi.fn().mockResolvedValue(null),
+  },
+  astronomySnapshot: {
+    findUnique: vi.fn(),
+    findMany: vi.fn(),
+  },
+};
+
+// ------------------------------------------------------------
+// 2. Apply mocks BEFORE importing the module under test
+// ------------------------------------------------------------
+vi.mock("@/lib/db", () => ({
+  db: mockDb,
 }));
 
 vi.mock("@/lib/runtime/config", () => ({
   getConfig: vi.fn().mockReturnValue("0"), // debug off
 }));
 
-
+// ------------------------------------------------------------
+// 3. Now import AFTER mocks are applied
+// ------------------------------------------------------------
 import { getEphemerisSnapshot } from "@/lib/ephemeris/getEphemerisSnapshot";
 
+// ------------------------------------------------------------
+// 4. Test data
+// ------------------------------------------------------------
 const rows = [
   {
     dateString: "2026-01-21",
@@ -41,6 +58,9 @@ const rows = [
   },
 ];
 
+// ------------------------------------------------------------
+// 5. Tests
+// ------------------------------------------------------------
 describe("getEphemerisSnapshot", () => {
   beforeEach(() => {
     vi.setSystemTime(new Date("2026-01-21T10:00:00Z"));
@@ -51,10 +71,12 @@ describe("getEphemerisSnapshot", () => {
       const { locationId, dateString } = where.locationId_dateString;
       return (
         rows.find(
-          (r) => r.locationId === locationId && r.dateString === dateString,
+          (r) => r.locationId === locationId && r.dateString === dateString
         ) ?? null
       );
     });
+
+    mockDb.astronomySnapshot.findMany.mockResolvedValue(rows);
   });
 
   it("builds a combined solar + lunar snapshot", async () => {
