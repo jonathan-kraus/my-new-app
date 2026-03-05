@@ -31,7 +31,7 @@
     "lint": "eslint",
     "genmsg": "node scripts/gen-commit-msg.js",
     "commit": "git commit -F .git/COMMIT_MSG",
-    "smart-commit": "pnpm genmsg && git add -A && git commit -F .git/COMMIT_MSG && git push origin main",
+    "smart-commit": "pnpm genmsg && git add . && git commit -F .git/COMMIT_MSG && git push origin main",
     "pfix": "prettier --write . --ignore-path .prettierignore",
     "postinstall": "prisma generate",
     "pchk": "prettier --check . --ignore-path .prettierignore",

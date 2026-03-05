@@ -27,6 +27,26 @@ function loadDebugLevel() {
 
 const domain = "ephemeris";
 
+// -----------------------------
+// Exported helpers for tests
+// -----------------------------
+export function toIsoString(value: string | null): string | null {
+  if (!value) return null;
+  const d = new Date(value);
+  return isNaN(d.getTime()) ? null : d.toISOString();
+}
+
+export function toJsonSafe(value: unknown): any {
+  try {
+    return JSON.parse(JSON.stringify(value));
+  } catch {
+    return String(value);
+  }
+}
+
+// -----------------------------
+// Main function
+// -----------------------------
 export type DebugEventInput = {
   raw: unknown;
   id: string;
@@ -62,38 +82,47 @@ export async function writeEphemerisDebugEvent(data: DebugEventInput) {
 
   const now = new Date();
 
-  const row = await db.ephemerisDebug.create({
-    data: {
-      raw: data.raw as any,
-      id: data.id,
-      createdAt: data.createdAt ?? null,
-      date: data.date ?? null,
-      locationId: data.locationId ?? null,
-      fetchedAt: data.fetchedAt ?? null,
-      sunrise: data.sunrise ?? null,
-      sunset: data.sunset ?? null,
-      moonrise: data.moonrise ?? null,
-      moonset: data.moonset ?? null,
-      moonPhase: data.moonPhase ?? null,
-      sunriseBlueStart: data.sunriseBlueStart ?? null,
-      sunriseBlueEnd: data.sunriseBlueEnd ?? null,
-      sunriseGoldenStart: data.sunriseGoldenStart ?? null,
-      sunriseGoldenEnd: data.sunriseGoldenEnd ?? null,
-      sunsetGoldenStart: data.sunsetGoldenStart ?? null,
-      sunsetGoldenEnd: data.sunsetGoldenEnd ?? null,
-      sunsetBlueStart: data.sunsetBlueStart ?? null,
-      sunsetBlueEnd: data.sunsetBlueEnd ?? null,
-      receivedAt: now,
-    },
-  });
-
-  if (debugLevel === 1) {
-    logit(domain, {
-      level: "debug",
-      message: "writeEphemerisDebugEvent inserted row",
-      data: { id: row.id },
+  try {
+    const row = await db.ephemerisDebug.create({
+      data: {
+        raw: toJsonSafe(data.raw),
+        id: data.id,
+        createdAt: toIsoString(data.createdAt ?? null),
+        date: toIsoString(data.date ?? null),
+        locationId: data.locationId ?? null,
+        fetchedAt: toIsoString(data.fetchedAt ?? null),
+        sunrise: toIsoString(data.sunrise ?? null),
+        sunset: toIsoString(data.sunset ?? null),
+        moonrise: toIsoString(data.moonrise ?? null),
+        moonset: toIsoString(data.moonset ?? null),
+        moonPhase: data.moonPhase ?? null,
+        sunriseBlueStart: toIsoString(data.sunriseBlueStart ?? null),
+        sunriseBlueEnd: toIsoString(data.sunriseBlueEnd ?? null),
+        sunriseGoldenStart: toIsoString(data.sunriseGoldenStart ?? null),
+        sunriseGoldenEnd: toIsoString(data.sunriseGoldenEnd ?? null),
+        sunsetGoldenStart: toIsoString(data.sunsetGoldenStart ?? null),
+        sunsetGoldenEnd: toIsoString(data.sunsetGoldenEnd ?? null),
+        sunsetBlueStart: toIsoString(data.sunsetBlueStart ?? null),
+        sunsetBlueEnd: toIsoString(data.sunsetBlueEnd ?? null),
+        receivedAt: now,
+      },
     });
-  }
 
-  return row;
+    if (debugLevel === 1) {
+      logit(domain, {
+        level: "debug",
+        message: "writeEphemerisDebugEvent inserted row",
+        data: { id: row.id },
+      });
+    }
+
+    return row;
+  } catch (err) {
+    logit(domain, {
+      level: "error",
+      message: "writeEphemerisDebugEvent failed",
+      data: { error: String(err) },
+    });
+    throw err;
+  }
 }
