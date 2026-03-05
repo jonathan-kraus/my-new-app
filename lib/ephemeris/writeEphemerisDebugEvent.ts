@@ -49,15 +49,6 @@ export type DebugEventInput = {
 };
 
 export async function writeEphemerisDebugEvent(data: DebugEventInput) {
-  const debugLevel = loadDebugLevel();
-
-  if (debugLevel === 1) {
-    logit(domain, {
-      level: "debug",
-      message: "writeEphemerisDebugEvent called",
-      data,
-    });
-  }
 
   const now = new Date();
 
@@ -87,13 +78,7 @@ export async function writeEphemerisDebugEvent(data: DebugEventInput) {
       },
     });
 
-    if (debugLevel === 1) {
-      logit(domain, {
-        level: "debug",
-        message: "writeEphemerisDebugEvent inserted row",
-        data: { id: row.id },
-      });
-    }
+    
 
     return row;
   } catch (err) {
