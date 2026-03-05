@@ -1,10 +1,10 @@
 /*
- * @FilePath     : \my-new-app\test\__mocks__\db.ts
+ * @FilePath: \my-new-app\test\__mocks__\db.ts
  * @Author       : Jonathan
  * @Date         : 2026-02-11 17:32:13
  * @Description  :
- * @LastEditors  : Jonathan
- * @LastEditTime : 2026-02-11 18:07:40
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2026-03-05 03:04:52
  */
 // test/__mocks__/db.ts
 
@@ -22,10 +22,9 @@ export const mockDb = {
     findUnique: vi.fn(),
     upsert: vi.fn(),
   },
-  ephemerisDebugEvent: {
-    create: vi.fn(),
+  ephemerisDebug: {
+    create: vi.fn(),   // <-- THIS is the correct name
   },
-  // Prisma client lifecycle methods
   $connect: vi.fn(),
   $disconnect: vi.fn(),
 };

@@ -1,20 +1,8 @@
 import { vi } from "vitest";
-
+import { mockDb } from "@/test/__mocks__/db";
 // ------------------------------------------------------------
 // 1. Create a shared mock DB object so we can reference it later
 // ------------------------------------------------------------
-const mockDb = {
-  ephemerisDebug: {
-    create: vi.fn().mockResolvedValue({ id: "debug-ok" }),
-  },
-  runtimeConfig: {
-    findUnique: vi.fn().mockResolvedValue(null),
-  },
-  astronomySnapshot: {
-    findUnique: vi.fn(),
-    findMany: vi.fn(),
-  },
-};
 
 // ------------------------------------------------------------
 // 2. Apply mocks BEFORE importing the module under test
