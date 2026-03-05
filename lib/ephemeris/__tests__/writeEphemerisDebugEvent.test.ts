@@ -8,7 +8,7 @@ vi.mock("@/lib/db", () => ({
 
 /*
  * @FilePath: \my-new-app\lib\ephemeris\__tests__\writeEphemerisDebugEvent.test.ts
- * @LastEditTime: 2026-03-04 21:26:07
+ * @LastEditTime: 2026-03-04 20:49:55
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { db } from "@/lib/db";
@@ -61,29 +61,30 @@ describe("writeEphemerisDebugEvent", () => {
 	// writeEphemerisDebugEvent tests
 	// -----------------------------
 	it("writes a debug event with safe values", async () => {
-		const create = vi.spyOn(db.ephemerisDebug, "create");
-		mockResolvedValue({
-			id: "ok",
-			raw: {},
-			createdAt: null,
-			date: null,
-			locationId: null,
-			fetchedAt: null,
-			sunrise: null,
-			sunset: null,
-			moonrise: null,
-			moonset: null,
-			moonPhase: null,
-			sunriseBlueStart: null,
-			sunriseBlueEnd: null,
-			sunriseGoldenStart: null,
-			sunriseGoldenEnd: null,
-			sunsetGoldenStart: null,
-			sunsetGoldenEnd: null,
-			sunsetBlueStart: null,
-			sunsetBlueEnd: null,
-			receivedAt: new Date(),
-		});
+		const create = vi
+			.spyOn(db.ephemerisDebug, "create")
+			.mockResolvedValue({
+				id: "ok",
+				raw: {},
+				createdAt: null,
+				date: null,
+				locationId: null,
+				fetchedAt: null,
+				sunrise: null,
+				sunset: null,
+				moonrise: null,
+				moonset: null,
+				moonPhase: null,
+				sunriseBlueStart: null,
+				sunriseBlueEnd: null,
+				sunriseGoldenStart: null,
+				sunriseGoldenEnd: null,
+				sunsetGoldenStart: null,
+				sunsetGoldenEnd: null,
+				sunsetBlueStart: null,
+				sunsetBlueEnd: null,
+				receivedAt: new Date(),
+			});
 
 		await writeEphemerisDebugEvent({
 			locationId: "123",
