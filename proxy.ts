@@ -20,24 +20,24 @@ export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const { last, lastTwo } = normalizePath(pathname);
 
-  // You can use `last` and `lastTwo` for more granular logging or routing if needed
-  // For example, you could log them:
-  // await logit(
-  //   "middleware",
-  //   {
-  //     level: "info",
-  //     message: "Normalized path segments pathname: " + pathname,
-  //     payload: {
-  //       last,
-  //       lastTwo,
-  //     },
-  //   },
-  //   {
-  //     requestId: getRequestId(req.url),
-  //     route: pathname,
-  //     userId: undefined,
-  //   },
-  // );
+  You can use `last` and `lastTwo` for more granular logging or routing if needed
+  For example, you could log them:
+  await logit(
+    "middleware",
+    {
+      level: "info",
+      message: "Normalized path segments pathname: " + pathname,
+      payload: {
+        last,
+        lastTwo,
+      },
+    },
+    {
+      requestId: getRequestId(req.url),
+      route: pathname,
+      userId: undefined,
+    },
+  );
 
   // Or use them for conditional logic:
   // if (lastTwo === "some/specific/path") {
