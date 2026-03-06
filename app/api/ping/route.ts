@@ -2,42 +2,32 @@
 import { NextResponse, NextRequest } from "next/server";
 import { logit } from "@/lib/log/logit";
 import { enrichContext } from "@/lib/log/context";
-import { neon } from "@/lib/neon";
+import { auth } from "@/auth";
+import { headers } from "next/headers";
 
 export async function GET(req: NextRequest) {
   const ctx = await enrichContext(req as any);
-
-  const client = neon();
-
-  // Query the Data API with no API key (Anonymous Mode)
-  const { data, error } = await client
-    .from("verification")
-    .select("table_name")
-    .order("table_name");
-
-  console.log("Data API tables:", data, error);
+  const h = await headers(); // ✅ await the Promise
+  const session = await auth();
 
   await logit(
-    "jonathan",
+    "ephemeris",
     {
       level: "info",
-      message: `Table count: ${data?.length ?? 0} rows`,
-      payload: { sessionUser: "sessionuser" },
-    },
-    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-  );
+      message: "Visited dashboard",
 
-  return NextResponse.json({
-    ok: true,
-    count: data?.length ?? 0,
-    time: {
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
-      utc: new Date().toISOString(),
+      payload: {
+        sessionUser: session?.user?.name ?? null,
+        sessionEmail: session?.user?.email ?? null,
+        userId: session?.user?.id ?? null,
+        session: session ?? null,
+      },
     },
-  });
+    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId })
+      return NextResponse.json({ ok: true, time: Date.now() });
+
 }
+
 
 export async function POST() {
   return NextResponse.json({ ok: true, time: Date.now() });

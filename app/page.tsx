@@ -4,7 +4,6 @@ import { headers } from "next/headers";
 import { logit } from "@/lib/log/logit";
 import { Button } from "@/components/ui/button";
 import CurrentWeatherCard from "@/app/components/dashboard/current-weather-card";
-import { AstronomyCard } from "@/app/astronomy/AstronomyCard";
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { RecentActivity } from "@/components/activity/RecentActivity";
