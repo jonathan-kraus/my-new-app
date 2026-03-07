@@ -39,6 +39,7 @@ export default async function AxiomTestPage() {
               <div>E: {row.data?.dataj_sunrisee}</div>
               <div>F: {row.data?.dataj_sunrisef}</div>
               <div>G: {row.data?.dataj_sunriseg}</div>
+              <div>H: {row.data?.dataj_sunriseh}</div>
               <div>Fetched: {row.data?.dataj_fetchedAt}</div>
             </div>
           </div>
