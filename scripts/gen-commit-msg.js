@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\scripts\gen-commit-msg.js
- * @LastEditTime: 2026-03-06 23:16:40
+ * @LastEditTime: 2026-03-06 23:22:36
  */
 import fs from "fs";
 import path from "path";
@@ -9,11 +9,14 @@ import { generateCommitMessage } from "./generate-commit.js";
 
 function getChangedFiles() {
   const output = execSync("git status --porcelain", { encoding: "utf8" });
+
   return output
     .split("\n")
     .filter(Boolean)
-    .map((line) => line.trim().slice(3));
+    .map(line => line.trim().split(/\s+/).pop()) // correct filename extraction
+    .filter(file => !file.endsWith(".json"));    // remove ALL .json files
 }
+
 
 async function main() {
   const changedFiles = getChangedFiles();
