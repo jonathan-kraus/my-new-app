@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
     "ephemeris",
     {
       level: "info",
-      message: "Visited dashboard",
+      message: "Called Ping",
 
       payload: {
         sessionUser: session?.user?.name ?? null,
