@@ -1,30 +1,31 @@
-// scripts/gen-commit-msg.js
-import { execSync } from "child_process";
+/*
+ * @FilePath: \my-new-app\scripts\gen-commit-msg.js
+ * @LastEditTime: 2026-03-06 23:16:40
+ */
 import fs from "fs";
 import path from "path";
+import { execSync } from "child_process";
 import { generateCommitMessage } from "./generate-commit.js";
 
 function getChangedFiles() {
   const output = execSync("git status --porcelain", { encoding: "utf8" });
-
   return output
     .split("\n")
     .filter(Boolean)
-    .map(line => line.trim().split(/\s+/).pop()) // ← correct extraction
-    .filter(file => !file.endsWith(".json"));
+    .map((line) => line.trim().slice(3));
 }
 
 async function main() {
-  try {
-    const changedFiles = getChangedFiles();
-    const commitMessage = await generateCommitMessage({ changedFiles });
+  const changedFiles = getChangedFiles();
 
-    fs.writeFileSync(".git/COMMIT_MSG", commitMessage + "\n", "utf8");
-    console.log("✔ Commit message generated.");
-  } catch (err) {
-    console.error("❌ Failed to generate commit message:", err);
-    process.exit(1);
-  }
+  const msg = await generateCommitMessage({
+    changedFiles,
+  });
+
+  const file = path.join(process.cwd(), ".git", "COMMIT_MSG");
+  fs.writeFileSync(file, msg.trim() + "\n");
+
+  console.log("Commit message written to .git/COMMIT_MSG");
 }
 
 main();

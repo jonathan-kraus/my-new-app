@@ -1,45 +1,40 @@
-// scripts/generate-commit.js
-import { execSync } from "child_process";
-
-function runOllama(prompt) {
-  const safe = prompt.replace(/"/g, '\\"');
-  const result = execSync(
-    `echo "${safe}" | ollama run llama3.1:8b`,
-    { encoding: "utf8" }
-  );
-  return result.trim();
-}
+/*
+ * @FilePath: \my-new-app\scripts\generate-commit.js
+ */
 
 export async function generateCommitMessage({ changedFiles }) {
-  const filtered = changedFiles.filter(f => !f.endsWith(".json"));
+  const prompt = `
+You are generating a commit message. Infer the commit type and tone from the changed files.
+Keep it concise, meaningful, funny and developer-friendly. Do not mention version.json changes.
 
-  const fileList =
-    filtered.length > 0
-      ? filtered.map(f => `- ${f}`).join("\n")
-      : "(no non‑JSON files changed)";
+Changed files:
+${changedFiles.map((f) => `- ${f}`).join("\n")}
 
-const prompt = `
-You are generating a commit message for a Git repository.
+Write only the commit message. No explanations.
+  `.trim();
 
-### Style Requirements
-- The commit message MUST be funny.
-- Dry humor, sarcasm, self‑deprecation, or chaotic‑developer energy is welcome.
-- Keep it short, punchy, and clever.
-- Do NOT mention JSON files under any circumstances.
-- Output ONLY the commit message text. No explanations.
+  const response = await fetch("http://localhost:11434/api/generate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "mistral",
+      prompt,
+      stream: true,
+    }),
+  });
 
-### Changed files (JSON removed):
-${fileList}
+  let full = "";
 
-### Additional Rules
-- If the changes are tiny, make a joke about overengineering.
-- If the changes are unclear, blame "past me" or "future me".
-- If it's an API route, pretend it has feelings.
-- If all else fails, output something like:
-  "chore: mysterious code rituals performed"
+  for await (const chunk of response.body) {
+    const text = new TextDecoder().decode(chunk);
 
-Now generate a funny commit message:
-`;
+    for (const line of text.split("\n")) {
+      if (!line.trim()) continue;
 
-  return runOllama(prompt);
+      const json = JSON.parse(line);
+      if (json.response) full += json.response;
+    }
+  }
+
+  return full.trim();
 }
