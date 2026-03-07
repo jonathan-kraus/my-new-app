@@ -1,40 +1,36 @@
-/*
- * @FilePath: \my-new-app\scripts\generate-commit.js
- */
+// scripts/generate-commit.js
+import { execSync } from "child_process";
+
+function runOllama(prompt) {
+  const safe = prompt.replace(/"/g, '\\"');
+  const result = execSync(
+    `echo "${safe}" | ollama run llama3.1:8b`,
+    { encoding: "utf8" }
+  );
+  return result.trim();
+}
 
 export async function generateCommitMessage({ changedFiles }) {
-	const prompt = `
-You are generating a commit message. Infer the commit type and tone from the changed files excluding any that end in .json.
-Keep it concise, meaningful, funny and developer-friendly. Version.json does not exist, do not mention it.
+  const filtered = changedFiles.filter(f => !f.endsWith(".json"));
 
-Changed files:
-${changedFiles.map((f) => `- ${f}`).join("\n")}
+  const fileList =
+    filtered.length > 0
+      ? filtered.map(f => `- ${f}`).join("\n")
+      : "(no non‑JSON files changed)";
 
-Write only the commit message. No explanations.
-  `.trim();
+  const prompt = `
+You are generating a commit message for a Git repository.
 
-	const response = await fetch("http://localhost:11434/api/generate", {
-		method: "POST",
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify({
-			model: "mistral",
-			prompt,
-			stream: true,
-		}),
-	});
+### Requirements
+- Keep it concise and meaningful.
+- Do NOT mention JSON files.
+- Output ONLY the commit message.
 
-	let full = "";
+### Changed files:
+${fileList}
 
-	for await (const chunk of response.body) {
-		const text = new TextDecoder().decode(chunk);
+Generate the commit message now:
+`;
 
-		for (const line of text.split("\n")) {
-			if (!line.trim()) continue;
-
-			const json = JSON.parse(line);
-			if (json.response) full += json.response;
-		}
-	}
-
-	return full.trim();
+  return runOllama(prompt);
 }

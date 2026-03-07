@@ -1,9 +1,6 @@
-// proxy.ts
-
 import { Logger } from "next-axiom";
 import { auth } from "@/auth";
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import normalizePath from "@/lib/normalizePath";
 
 import {
@@ -17,81 +14,67 @@ import {
 import { logit } from "@/lib/log/logit";
 
 export async function proxy(req: NextRequest) {
-  const { pathname } = req.nextUrl;
+  const pathname = req.nextUrl.pathname;
+
+  // --- 0) Filter out ALL noise -----------------------------------
+  const isInternal =
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/favicon");
+    //pathname.startsWith("/admin") ||
+    //pathname.startsWith("/dashboard") ||
+    //pathname === "/" ||
+    //pathname.startsWith("/logs");
+
+  if (isInternal) {
+    return NextResponse.next();
+  }
+
+  // Prefetch detection (correct way)
+  const isPrefetch =
+    req.headers.get("purpose") === "prefetch" ||
+    req.headers.get("x-middleware-prefetch") === "1";
+
+  if (isPrefetch) {
+    return NextResponse.next();
+  }
+
+  // --- 1) Normalize path segments (you want to keep this) --------
   const { last, lastTwo } = normalizePath(pathname);
 
-  // Log the normalized path segments
   await logit(
     "middleware",
     {
       level: "info",
       message: "Normalized path segments pathname: " + pathname,
-      payload: {
-        last,
-        lastTwo,
-      },
+      payload: { last, lastTwo },
     },
     {
       requestId: getRequestId(req.url),
       route: pathname,
       userId: undefined,
-    },
+    }
   );
 
-  // Or use them for conditional logic:
-  // if (lastTwo === "some/specific/path") {
-  //   // Do something specific for this path
-  // }
-
-  // For now, we'll just continue with the normalized path segments available for logging or future use
-  // --- 1) Start tracking -----------------------------------------
+  // --- 2) Start timing -------------------------------------------
   markRequestStart(req.url);
-  const logger = new Logger({ source: "middleware" }); // traffic, request
+  const logger = new Logger({ source: "middleware" });
   logger.middleware(req);
-  // --- 2) Log START ----------------------------------------------
-  // await logit(
-  //   "jonathan",
-  //   {
-  //     level: "info",
-  //     message: "REQUEST START " + pathname,
-  //     payload: {
-  //       page: pathname,
-  //       file: "proxy.ts",
-  //       method: req.method,
-  //       url: req.url,
-  //       requestId: getRequestId(req.url),
-  //       eventIndex: nextEventIndex(req.url),
-  //       last: last,
-  //       lastTwo: lastTwo,
-  //     },
-  //   },
-  //   {
-  //     requestId: getRequestId(req.url),
-  //     route: pathname,
-  //     userId: undefined,
-  //   },
-  // );
 
-  // --- 3) Skip internal assets -----------------------------------
-  if (pathname.startsWith("/_next") || pathname.startsWith("/favicon")) {
-    return end(req, NextResponse.next());
-  }
-
-  // --- 4) Skip NextAuth routes -----------------------------------
+  // --- 3) Skip NextAuth routes -----------------------------------
   if (pathname.startsWith("/api/auth")) {
     return end(req, NextResponse.next());
   }
 
-  // --- 5) Auth check ---------------------------------------------
+  // --- 4) Auth check ---------------------------------------------
   const session = await auth();
   if (!session) {
     return end(
       req,
-      NextResponse.redirect(new URL("/api/auth/signin", req.url)),
+      NextResponse.redirect(new URL("/api/auth/signin", req.url))
     );
   }
 
-  // --- 6) Continue request ---------------------------------------
+  // --- 5) Continue request ---------------------------------------
   return end(req, NextResponse.next());
 }
 
@@ -100,30 +83,29 @@ async function end(req: NextRequest, res: NextResponse) {
   const durationMs = getRequestDuration(req.url);
   const pathname = req.nextUrl.pathname;
   const { last, lastTwo } = normalizePath(pathname);
-  // await logit(
-  //   "middleware",
-  //   {
-  //     level: "info",
-  //     message: "REQUEST END " + pathname,
-  //     // payload: {
-  //     page: req.nextUrl.pathname,
-  //     file: "proxy.ts",
-  //     durationMs,
-  //     method: req.method,
-  //     url: req.url,
-  //     status: res.status,
-  //     requestId: getRequestId(req.url),
-  //     eventIndex: nextEventIndex(req.url),
-  //     last: last,
-  //     lastTwo: lastTwo,
-  //   },
-  //   // },
-  //   {
-  //     requestId: getRequestId(req.url),
-  //     route: req.nextUrl.pathname,
-  //     userId: undefined,
-  //   },
-  // );
+
+  await logit(
+    "middleware",
+    {
+      level: "info",
+      message: "REQUEST END " + pathname,
+      page: pathname,
+      file: "proxy.ts",
+      durationMs,
+      method: req.method,
+      url: req.url,
+      status: res.status,
+      requestId: getRequestId(req.url),
+      eventIndex: nextEventIndex(req.url),
+      last,
+      lastTwo,
+    },
+    {
+      requestId: getRequestId(req.url),
+      route: pathname,
+      userId: undefined,
+    }
+  );
 
   clearRequest(req.url);
   return res;
