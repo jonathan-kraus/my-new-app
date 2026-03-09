@@ -1,19 +1,18 @@
 /*
  * @FilePath: \my-new-app\app\api\fa\count\route.ts
- * @LastEditTime: 2026-03-09 16:32:27
+ * @LastEditTime: 2026-03-09 16:49:49
  */
 // app/api/fa/count/route.ts
 import { NextResponse } from "next/server";
 import { logit } from "@/lib/log/logit";
-import { url } from "node:inspector";
+import { getConfig } from "@/lib/runtime/config";
 
 export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
 
-  const minLat = searchParams.get("minLat");
-  const minLon = searchParams.get("minLon");
-  const maxLat = searchParams.get("maxLat");
-  const maxLon = searchParams.get("maxLon");
+  const minLat = getConfig("minLat", "40.0893");
+  const minLon = getConfig("minLon", "-105.7435");
+  const maxLat = getConfig("maxLat", "40.7142");
+  const maxLon = getConfig("maxLon", "-104.9679");
 
       await logit(
         "fa",
