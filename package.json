@@ -4,7 +4,7 @@
   "type": "module",
   "vercel-build-id": "4",
   "private": true,
-  "packageManager": "pnpm@10.30.3",
+  "packageManager": "pnpm@10.31.0",
   "pnpm": {
     "overrides": {
       "ajv": "^8.18.0",
