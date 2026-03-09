@@ -13,6 +13,7 @@ export async function GET(req: Request) {
   const minLon = getConfig("minLon", "-105.7435");
   const maxLat = getConfig("maxLat", "40.7142");
   const maxLon = getConfig("maxLon", "-104.9679");
+  console.log("FA COUNT QUERY:", { minLat, minLon, maxLat, maxLon, url: req.url });
 
       await logit(
         "fa",
