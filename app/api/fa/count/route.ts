@@ -1,9 +1,11 @@
 /*
  * @FilePath: \my-new-app\app\api\fa\count\route.ts
- * @LastEditTime: 2026-03-09 13:41:30
+ * @LastEditTime: 2026-03-09 16:32:27
  */
 // app/api/fa/count/route.ts
 import { NextResponse } from "next/server";
+import { logit } from "@/lib/log/logit";
+import { url } from "node:inspector";
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -13,7 +15,21 @@ export async function GET(req: Request) {
   const maxLat = searchParams.get("maxLat");
   const maxLon = searchParams.get("maxLon");
 
+      await logit(
+        "fa",
+        {
+          level: "info",
+          message: "Missing lat/long parameters",
+          payload: { minLat: minLat, minLon: minLon, maxLat: maxLat, maxLon: maxLon, url: req.url },
+        },
+        {
+          requestId: crypto.randomUUID(),
+          userId: undefined,
+        },
+      );
+
   if (!minLat || !minLon || !maxLat || !maxLon) {
+
     return NextResponse.json(
       { error: "Missing lat/long parameters" },
       { status: 400 },
