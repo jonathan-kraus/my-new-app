@@ -23,11 +23,10 @@ export async function GET(req: NextRequest) {
         session: session ?? null,
       },
     },
-    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId })
-      return NextResponse.json({ ok: true, time: Date.now() });
-
+    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+  );
+  return NextResponse.json({ ok: true, time: Date.now() });
 }
-
 
 export async function POST() {
   return NextResponse.json({ ok: true, time: Date.now() });

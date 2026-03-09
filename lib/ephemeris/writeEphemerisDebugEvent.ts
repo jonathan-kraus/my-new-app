@@ -49,7 +49,6 @@ export type DebugEventInput = {
 };
 
 export async function writeEphemerisDebugEvent(data: DebugEventInput) {
-
   const now = new Date();
 
   try {
@@ -77,8 +76,6 @@ export async function writeEphemerisDebugEvent(data: DebugEventInput) {
         receivedAt: now,
       },
     });
-
-    
 
     return row;
   } catch (err) {

@@ -82,7 +82,7 @@ describe("writeEphemerisDebugEvent", () => {
       mod.writeEphemerisDebugEvent({
         id: "abc",
         raw: { test: true },
-      })
+      }),
     ).rejects.toThrow("fail");
   });
 });

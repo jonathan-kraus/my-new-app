@@ -95,11 +95,10 @@ export async function logit(domain: string, payload: any, meta: any = {}) {
 
   // --- Neon write ----------------------------------------------------------
   if (domain === "ephemeris") {
-    domain = "🛰️ 🛰️ 🛰️ ephemeris 🛰️ 🛰️ 🛰️"  }
+    domain = "🛰️ 🛰️ 🛰️ ephemeris 🛰️ 🛰️ 🛰️";
+  }
 
   try {
-
-  
     await db.log.create({
       data: {
         domain,

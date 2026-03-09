@@ -27,7 +27,7 @@ export default function SideNavClient({
     { href: "/travel/next", label: "Travel", icon: "✈️" }, // ← NEW
     { href: "/admin/runtime", label: "Runtime", icon: "🛠️" },
     { href: "/admin/db", label: "Tables", icon: "🛢️" },
-    { href: "/database-explorer", label: "Database Explorer", icon: "🛢️" }
+    { href: "/database-explorer", label: "Database Explorer", icon: "🛢️" },
   ];
 
   return (

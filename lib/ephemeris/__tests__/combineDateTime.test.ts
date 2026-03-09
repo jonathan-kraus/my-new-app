@@ -16,9 +16,8 @@ describe("combineDateTime", () => {
   it("rejects UTC timestamps", () => {
     const date = new Date(2026, 0, 21);
 
-
     expect(() => combineDateTime(date, "12:34:00Z")).toThrow(
-      /received a UTC timestamp/i
+      /received a UTC timestamp/i,
     );
   });
 
@@ -26,7 +25,7 @@ describe("combineDateTime", () => {
     const date = new Date(2026, 0, 21);
 
     expect(() => combineDateTime(date, "12:34:00")).toThrow(
-      /expected a time string with offset/i
+      /expected a time string with offset/i,
     );
   });
 

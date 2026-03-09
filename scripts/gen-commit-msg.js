@@ -13,10 +13,9 @@ function getChangedFiles() {
   return output
     .split("\n")
     .filter(Boolean)
-    .map(line => line.trim().split(/\s+/).pop()) // correct filename extraction
-    .filter(file => !file.endsWith(".json"));    // remove ALL .json files
+    .map((line) => line.trim().split(/\s+/).pop()) // correct filename extraction
+    .filter((file) => !file.endsWith(".json")); // remove ALL .json files
 }
-
 
 async function main() {
   const changedFiles = getChangedFiles();

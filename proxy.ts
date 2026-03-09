@@ -18,12 +18,11 @@ export async function proxy(req: NextRequest) {
 
   // --- 0) Filter out ALL noise -----------------------------------
   const isInternal =
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/favicon");
-    //pathname.startsWith("/admin") ||
-    //pathname.startsWith("/dashboard") ||
-    //pathname === "/" ||
-    //pathname.startsWith("/logs");
+    pathname.startsWith("/_next") || pathname.startsWith("/favicon");
+  //pathname.startsWith("/admin") ||
+  //pathname.startsWith("/dashboard") ||
+  //pathname === "/" ||
+  //pathname.startsWith("/logs");
 
   if (isInternal) {
     return NextResponse.next();
@@ -52,7 +51,7 @@ export async function proxy(req: NextRequest) {
       requestId: getRequestId(req.url),
       route: pathname,
       userId: undefined,
-    }
+    },
   );
 
   // --- 2) Start timing -------------------------------------------
@@ -70,7 +69,7 @@ export async function proxy(req: NextRequest) {
   if (!session) {
     return end(
       req,
-      NextResponse.redirect(new URL("/api/auth/signin", req.url))
+      NextResponse.redirect(new URL("/api/auth/signin", req.url)),
     );
   }
 
@@ -104,7 +103,7 @@ async function end(req: NextRequest, res: NextResponse) {
       requestId: getRequestId(req.url),
       route: pathname,
       userId: undefined,
-    }
+    },
   );
 
   clearRequest(req.url);

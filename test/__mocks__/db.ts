@@ -23,7 +23,7 @@ export const mockDb = {
     upsert: vi.fn(),
   },
   ephemerisDebug: {
-    create: vi.fn(),   // <-- THIS is the correct name
+    create: vi.fn(), // <-- THIS is the correct name
   },
   $connect: vi.fn(),
   $disconnect: vi.fn(),
