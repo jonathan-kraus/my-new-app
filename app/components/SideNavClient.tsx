@@ -25,6 +25,7 @@ export default function SideNavClient({
     { href: "/github", label: "GitHub", icon: "🐙" },
     { href: "/ping", label: "Ping", icon: "🛠️" },
     { href: "/travel/next", label: "Travel", icon: "✈️" }, // ← NEW
+    { href: "/fa/dashboard", label: "Flight Dashboard", icon: "✈️" }, // ← NEW
     { href: "/admin/runtime", label: "Runtime", icon: "🛠️" },
     { href: "/admin/db", label: "Tables", icon: "🛢️" },
     { href: "/database-explorer", label: "Database Explorer", icon: "🛢️" },

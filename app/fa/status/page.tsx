@@ -22,7 +22,9 @@ export default function FlightStatusPage() {
 
       {status && (
         <div style={{ marginTop: 16 }}>
-          <p><strong>{status.ident}</strong></p>
+          <p>
+            <strong>{status.ident}</strong>
+          </p>
           <p>
             {status.origin.code} → {status.destination.code}
           </p>
@@ -34,17 +36,14 @@ export default function FlightStatusPage() {
             {new Date(status.scheduled_out).toLocaleString()}
           </p>
           <p>
-            Updated Departure:{" "}
-            {new Date(status.estimated_out).toLocaleString()}
+            Updated Departure: {new Date(status.estimated_out).toLocaleString()}
           </p>
 
           <p>
-            Scheduled Arrival:{" "}
-            {new Date(status.scheduled_in).toLocaleString()}
+            Scheduled Arrival: {new Date(status.scheduled_in).toLocaleString()}
           </p>
           <p>
-            Updated Arrival:{" "}
-            {new Date(status.estimated_in).toLocaleString()}
+            Updated Arrival: {new Date(status.estimated_in).toLocaleString()}
           </p>
 
           <p>
