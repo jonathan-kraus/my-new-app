@@ -47,34 +47,34 @@ export function DbGrowthChart({ data }: { data: Point[] }) {
       <LineChart data={safeData}>
         <XAxis
           dataKey="dateObj"
-          tickFormatter={(v: number | undefined) => {
-            const d = toDateSafe(v);
+          tickFormatter={(value: any) => {
+            const d = toDateSafe(value);
             return d ? format(d, "MMM d") : "";
           }}
           stroke="#888"
           fontSize={12}
         />
         <YAxis
-          tickFormatter={(v: number | undefined) => {
-            if (typeof v !== "number") return "";
-            return v < 1024 * 1024
-              ? `${Math.round(v / 1024)} KB`
-              : `${Math.round(v / 1024 / 1024)} MB`;
+          tickFormatter={(value: any) => {
+            if (typeof value !== "number") return "";
+            return value < 1024 * 1024
+              ? `${Math.round(value / 1024)} KB`
+              : `${Math.round(value / 1024 / 1024)} MB`;
           }}
           stroke="#888"
           fontSize={12}
         />
 
         <Tooltip
-          labelFormatter={(label: ReactNode) => {
+          labelFormatter={(label: any) => {
             const d = toDateSafe(label);
             return d ? format(d, "PPP") : "";
           }}
-          formatter={(v: number | undefined) => {
-            if (typeof v !== "number") return "";
-            return v < 1024 * 1024
-              ? `${(v / 1024).toFixed(1)} KB`
-              : `${(v / 1024 / 1024).toFixed(1)} MB`;
+          formatter={(value: any) => {
+            if (typeof value !== "number") return "";
+            return value < 1024 * 1024
+              ? `${(value / 1024).toFixed(1)} KB`
+              : `${(value / 1024 / 1024).toFixed(1)} MB`;
           }}
         />
 
