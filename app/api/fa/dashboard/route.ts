@@ -11,6 +11,7 @@ type Flight = {
   scheduled_out?: string | null;
 };
 
+
 export async function GET() {
   // 1. Fetch flight count
   const minLat = await getConfig("minLat", "40.0893");
