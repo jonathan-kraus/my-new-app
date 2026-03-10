@@ -30,14 +30,12 @@ export default function SideNavClient({
     { href: "/admin/db", label: "Tables", icon: "🛢️" },
     { href: "/database-explorer", label: "Database Explorer", icon: "🛢️" },
   ];
-const [major, minor, patch] = versionInfo.version.split(".");
-const formattedVersion = [
-  major.padStart(2, "0"),
-  minor.padStart(2, "0"),
-  patch.padStart(2, "0"),
-].join(".");
-
-
+  const [major, minor, patch] = versionInfo.version.split(".");
+  const formattedVersion = [
+    major.padStart(2, "0"),
+    minor.padStart(2, "0"),
+    patch.padStart(2, "0"),
+  ].join(".");
 
   return (
     <aside className="w-64 h-screen flex flex-col bg-slate-950 text-white shadow-xl">

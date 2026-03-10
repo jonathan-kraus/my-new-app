@@ -66,10 +66,7 @@ export default function Dashboard() {
   }
 
   const delay = data
-    ? getDelayMinutes(
-        data.flight?.scheduled_out,
-        data.flight?.estimated_out
-      )
+    ? getDelayMinutes(data.flight?.scheduled_out, data.flight?.estimated_out)
     : 0;
 
   return (
@@ -91,9 +88,7 @@ export default function Dashboard() {
 
               <p>Scheduled: {formatET(data.flight.scheduled_out)}</p>
 
-              <p>
-                Estimated: {formatET(data.flight.estimated_out)}
-              </p>
+              <p>Estimated: {formatET(data.flight.estimated_out)}</p>
 
               <p>
                 Gate: {data.flight.gate_origin ?? "TBD"} →{" "}

@@ -1,16 +1,35 @@
 /*
  * @FilePath: \my-new-app\app\api\fa\dashboard\route.ts
- * @LastEditTime: 2026-03-09 20:48:06
+ * @LastEditTime: 2026-03-10 03:30:39
  */
 // app/api/fa/dashboard/route.ts
 import { getConfig } from "@/lib/runtime/config";
 import { NextResponse } from "next/server";
 import { toZonedTime, format } from "date-fns-tz";
+import { logit } from "@/lib/log/logit";
+
+export async function j1() {
+  await logit(
+    "jonathan",
+    {
+      level: "info",
+      message: "Loading FA dashboard route",
+      payload: { time: format(new Date(), "yyyy-MM-dd HH:mm:ss") },
+    },
+    {
+      requestId: crypto.randomUUID(),
+      route: "app/api/fa/dashboard/route.ts",
+      userId: "JK",
+    },
+  );
+
+  return "j1";
+}
+
 getConfig;
 type Flight = {
   scheduled_out?: string | null;
 };
-
 
 export async function GET() {
   // 1. Fetch flight count
@@ -31,7 +50,15 @@ export async function GET() {
   );
 
   const countData = await countRes.json();
-
+  await logit(
+    "jonathan",
+    {
+      level: "info",
+      message: "Loading FA dashboard route",
+      payload: { time: format(new Date(), "yyyy-MM-dd HH:mm:ss") },
+    },
+    { requestId: crypto.randomUUID(), countData: countData },
+  );
   // 2. Fetch AA877 status
   const ident = await getConfig("flight-ID", "flight-ID");
   const statusRes = await fetch(
@@ -45,11 +72,9 @@ export async function GET() {
 
   // 3. Filter to today's flight
 
+  const eastern = "America/New_York";
 
-const eastern = "America/New_York";
-
-const today = format(toZonedTime(new Date(), eastern), "yyyy-MM-dd");
-
+  const today = format(toZonedTime(new Date(), eastern), "yyyy-MM-dd");
 
   const current = statusData.flights.find((f: Flight) => {
     const sched = f.scheduled_out?.slice(0, 10);

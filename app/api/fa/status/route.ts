@@ -48,35 +48,32 @@ export async function GET(req: Request) {
   const data = await res.json();
   console.log("FA STATUS DATA:", data);
   type Flight = {
-  scheduled_out?: string | null;
-};
+    scheduled_out?: string | null;
+  };
 
-const today = new Date().toISOString().slice(0, 10);
+  const today = new Date().toISOString().slice(0, 10);
 
-const todaysFlights = data.flights.filter((f: Flight) => {
-  const sched = f.scheduled_out?.slice(0, 10);
-  return sched === today;
-});
+  const todaysFlights = data.flights.filter((f: Flight) => {
+    const sched = f.scheduled_out?.slice(0, 10);
+    return sched === today;
+  });
 
-let current: Flight | null = null;
+  let current: Flight | null = null;
 
-if (todaysFlights.length > 0) {
-  const now = Date.now();
+  if (todaysFlights.length > 0) {
+    const now = Date.now();
 
-const current = todaysFlights.reduce(
-  (closest: Flight, flight: Flight) => {
-    const schedTime = new Date(flight.scheduled_out!).getTime();
-    const closestTime = new Date(closest.scheduled_out!).getTime();
+    const current = todaysFlights.reduce((closest: Flight, flight: Flight) => {
+      const schedTime = new Date(flight.scheduled_out!).getTime();
+      const closestTime = new Date(closest.scheduled_out!).getTime();
 
-    return Math.abs(schedTime - now) < Math.abs(closestTime - now)
-      ? flight
-      : closest;
+      return Math.abs(schedTime - now) < Math.abs(closestTime - now)
+        ? flight
+        : closest;
+    });
   }
-);
 
-}
+  console.log("CURRENT FLIGHT:", current);
 
-console.log("CURRENT FLIGHT:", current);
-
-return NextResponse.json({ flight: current });
+  return NextResponse.json({ flight: current });
 }
