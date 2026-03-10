@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\fa\status\route.ts
- * @LastEditTime: 2026-03-09 20:13:16
+ * @LastEditTime: 2026-03-09 20:22:02
  */
 import { logit } from "@/lib/log/logit";
 import { getConfig } from "@/lib/runtime/config";
@@ -48,10 +48,9 @@ export async function GET(req: Request) {
   const data = await res.json();
   console.log("FA STATUS DATA:", data);
   type Flight = {
-    scheduled_out?: string | null;
-    // you can add more fields later if needed
-  };
-  // Filter for today's flight
+  scheduled_out?: string | null;
+};
+
 const today = new Date().toISOString().slice(0, 10);
 
 const todaysFlights = data.flights.filter((f: Flight) => {
@@ -59,20 +58,22 @@ const todaysFlights = data.flights.filter((f: Flight) => {
   return sched === today;
 });
 
-// If multiple flights match today, pick the one closest to now
-let current = null;
+let current: Flight | null = null;
 
 if (todaysFlights.length > 0) {
   const now = Date.now();
 
-  current = todaysFlights.reduce((closest, flight) => {
+const current = todaysFlights.reduce(
+  (closest: Flight, flight: Flight) => {
     const schedTime = new Date(flight.scheduled_out!).getTime();
     const closestTime = new Date(closest.scheduled_out!).getTime();
 
     return Math.abs(schedTime - now) < Math.abs(closestTime - now)
       ? flight
       : closest;
-  });
+  }
+);
+
 }
 
 console.log("CURRENT FLIGHT:", current);

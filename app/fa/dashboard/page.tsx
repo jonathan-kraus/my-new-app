@@ -43,10 +43,7 @@ export default function Dashboard() {
               <p>
                 <strong>{data.flight.ident_iata}</strong> — {data.flight.status}
               </p>
-              <p>
-                Scheduled:{" "}
-                {formatET(data.flight.scheduled_out)}
-              </p>
+              <p>Scheduled: {formatET(data.flight.scheduled_out)}</p>
               <p>
                 Estimated:{" "}
                 {new Date(data.flight.estimated_out).toLocaleString()}
