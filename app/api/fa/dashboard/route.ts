@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\fa\dashboard\route.ts
- * @LastEditTime: 2026-03-10 17:41:37
+ * @LastEditTime: 2026-03-10 17:44:20
  */
 // app/api/fa/dashboard/route.ts
 import { getConfig } from "@/lib/runtime/config";
@@ -13,7 +13,6 @@ type Flight = {
   scheduled_out?: string | null;
 };
 
-export async function GET() {
   export async function GET() {
   await logit(
     "jonathan",
