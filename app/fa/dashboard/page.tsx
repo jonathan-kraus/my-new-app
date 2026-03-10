@@ -1,7 +1,3 @@
-/*
- * @FilePath: \my-new-app\app\fa\dashboard\page.tsx
- * @LastEditTime: 2026-03-09 21:00:25
- */
 "use client";
 import { Button } from "@/components/ui/buttonfly";
 import { useState } from "react";
@@ -26,7 +22,7 @@ function getDelayMinutes(scheduled: string | null, estimated: string | null) {
   const est = new Date(estimated).getTime();
 
   const diff = est - sched;
-  return Math.max(0, Math.round(diff / 60000)); // minutes
+  return Math.max(0, Math.round(diff / 60000));
 }
 
 function formatDelay(minutes: number) {
@@ -38,6 +34,7 @@ function formatDelay(minutes: number) {
   if (h > 0) return `+${h}h ${m}m delay`;
   return `+${m}m delay`;
 }
+
 function DelayBadge({ minutes }: { minutes: number }) {
   if (minutes <= 0) return null;
 
@@ -45,7 +42,7 @@ function DelayBadge({ minutes }: { minutes: number }) {
     <span
       style={{
         display: "inline-block",
-        backgroundColor: "#dc2626", // red
+        backgroundColor: "#dc2626",
         color: "white",
         padding: "4px 10px",
         borderRadius: "6px",
@@ -66,14 +63,14 @@ export default function Dashboard() {
     const res = await fetch("/api/fa/dashboard");
     const json = await res.json();
     setData(json);
-    const delay = getDelayMinutes(
-  data.flight.scheduled_out,
-  data.flight.estimated_out
-);
+  }
 
-
-
-
+  const delay = data
+    ? getDelayMinutes(
+        data.flight?.scheduled_out,
+        data.flight?.estimated_out
+      )
+    : 0;
 
   return (
     <div style={{ padding: 24 }}>
@@ -89,16 +86,15 @@ export default function Dashboard() {
             <>
               <p>
                 <strong>{data.flight.ident_iata}</strong> — {data.flight.status}
+                <DelayBadge minutes={delay} />
               </p>
-              <p>
-  <strong>{data.flight.ident_iata}</strong> — {data.flight.status}
-  <DelayBadge minutes={delay} />
-</p>
+
               <p>Scheduled: {formatET(data.flight.scheduled_out)}</p>
+
               <p>
-                Estimated:{" "}
-                {new Date(data.flight.estimated_out).toLocaleString()}
+                Estimated: {formatET(data.flight.estimated_out)}
               </p>
+
               <p>
                 Gate: {data.flight.gate_origin ?? "TBD"} →{" "}
                 {data.flight.gate_destination ?? "TBD"}
@@ -114,4 +110,4 @@ export default function Dashboard() {
       )}
     </div>
   );
-}}
+}
