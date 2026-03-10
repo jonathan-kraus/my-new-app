@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\fa\dashboard\route.ts
- * @LastEditTime: 2026-03-10 03:30:39
+ * @LastEditTime: 2026-03-10 17:41:37
  */
 // app/api/fa/dashboard/route.ts
 import { getConfig } from "@/lib/runtime/config";
@@ -8,7 +8,13 @@ import { NextResponse } from "next/server";
 import { toZonedTime, format } from "date-fns-tz";
 import { logit } from "@/lib/log/logit";
 
-export async function j1() {
+
+type Flight = {
+  scheduled_out?: string | null;
+};
+
+export async function GET() {
+  export async function GET() {
   await logit(
     "jonathan",
     {
@@ -23,16 +29,6 @@ export async function j1() {
     },
   );
 
-  return "j1";
-}
-
-getConfig;
-type Flight = {
-  scheduled_out?: string | null;
-};
-const myres = await j1();
-console.log("myres", myres);
-export async function GET() {
   // 1. Fetch flight count
   const minLat = await getConfig("minLat", "40.0893");
   const minLon = await getConfig("minLon", "-105.7435");
