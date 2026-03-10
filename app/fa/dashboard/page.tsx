@@ -1,10 +1,23 @@
 /*
  * @FilePath: \my-new-app\app\fa\dashboard\page.tsx
- * @LastEditTime: 2026-03-09 19:35:50
+ * @LastEditTime: 2026-03-09 20:04:29
  */
 "use client";
 import { Button } from "@/components/ui/buttonfly";
 import { useState } from "react";
+
+function formatET(dateString: string | null) {
+  if (!dateString) return "—";
+
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(new Date(dateString));
+}
 
 export default function Dashboard() {
   const [data, setData] = useState<any>(null);
@@ -32,7 +45,7 @@ export default function Dashboard() {
               </p>
               <p>
                 Scheduled:{" "}
-                {new Date(data.flight.scheduled_out).toLocaleString()}
+                {formatET(data.flight.scheduled_out)}
               </p>
               <p>
                 Estimated:{" "}
