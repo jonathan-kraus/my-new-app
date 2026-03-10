@@ -1,4 +1,5 @@
 "use client";
+import { RadarSkybox } from "@/components/RadarSkybox";
 import { Button } from "@/components/ui/buttonfly";
 import { useState } from "react";
 
@@ -94,6 +95,8 @@ export default function Dashboard() {
                 Gate: {data.flight.gate_origin ?? "TBD"} →{" "}
                 {data.flight.gate_destination ?? "TBD"}
               </p>
+              <h2 style={{ marginTop: 32 }}>📡 Skybox Radar</h2>
+              <RadarSkybox count={data.count} />
             </>
           ) : (
             <p>No flight found for today.</p>
