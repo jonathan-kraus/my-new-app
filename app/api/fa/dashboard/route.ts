@@ -1,10 +1,11 @@
 /*
  * @FilePath: \my-new-app\app\api\fa\dashboard\route.ts
- * @LastEditTime: 2026-03-09 19:16:24
+ * @LastEditTime: 2026-03-09 20:48:06
  */
 // app/api/fa/dashboard/route.ts
 import { getConfig } from "@/lib/runtime/config";
 import { NextResponse } from "next/server";
+import { toZonedTime, format } from "date-fns-tz";
 getConfig;
 type Flight = {
   scheduled_out?: string | null;
@@ -42,7 +43,12 @@ export async function GET() {
   const statusData = await statusRes.json();
 
   // 3. Filter to today's flight
-  const today = new Date().toISOString().slice(0, 10);
+
+
+const eastern = "America/New_York";
+
+const today = format(toZonedTime(new Date(), eastern), "yyyy-MM-dd");
+
 
   const current = statusData.flights.find((f: Flight) => {
     const sched = f.scheduled_out?.slice(0, 10);
