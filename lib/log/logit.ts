@@ -112,6 +112,7 @@ export async function logit(
   // --- Axiom ingestion (direct) -------------------------------------------
   try {
     const client = getAxiomClient();
+    console.log("Axiom event:", axiomEvent);
     await client.ingest(process.env.AXIOM_DATASET!, axiomEvent);
   } catch (err) {
     console.error("Axiom log ingestion failed:", err);
