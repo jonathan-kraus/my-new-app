@@ -1,6 +1,7 @@
 import { logit } from "@/lib/log/logit";
 import { db } from "@/lib/db";
-
+const eventIndex = 22;
+const requestId = crypto.randomUUID();
 vi.mock("@/lib/db", () => ({
   db: {
     log: {
