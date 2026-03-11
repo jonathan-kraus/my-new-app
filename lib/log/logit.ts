@@ -116,13 +116,15 @@ export async function logit(
   }
 
   // --- Axiom ingestion (direct) -------------------------------------------
-  try {
-    const client = getAxiomClient();
-        console.log("Axiom event:", axiomEvent);
-    client.ingest(process.env.AXIOM_DATASET!, [axiomEvent]); // <-- IMPORTANT: array
-  } catch (err) {
-    console.error("Axiom log ingestion failed:", err);
-  }
+  console.log("INGEST START");
+try {
+  const client = getAxiomClient();
+  await client.ingest(process.env.AXIOM_DATASET!, [axiomEvent]);
+  console.log("INGEST SUCCESS");
+} catch (err) {
+  console.error("AXIOM INGEST ERROR:", err);
+}
+console.log("INGEST END");
 
   return eventRecord;
 }
