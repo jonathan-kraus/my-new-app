@@ -1,14 +1,10 @@
 import crypto from "crypto";
-import { enqueue } from "./queue";
-import { nextLogIndex } from "./state";
 import { db } from "@/lib/db";
-import { startScheduler } from "./scheduler";
+import { getAxiomClient } from "@/lib/axiom";
 
-const ERROR_COOLDOWN_MS = 5000;
 const NEON_MAX_JSON = 200_000;
+const ERROR_COOLDOWN_MS = 5000;
 let lastErrorTime = 0;
-
-startScheduler();
 
 // --- Helpers ---------------------------------------------------------------
 
@@ -32,7 +28,7 @@ function safeForAxiom(obj: any) {
   }
 }
 
-// --- FINAL MERGED LOGIT ----------------------------------------------------
+// --- FINAL DIRECT‑INGEST LOGIT --------------------------------------------
 
 export async function logit(
   domain: string,
@@ -40,37 +36,30 @@ export async function logit(
   payload: Record<string, any>,
   meta: Record<string, any>
 ) {
-  // --- Request + event identity -------------------------------------------
   const requestId = meta.requestId ?? crypto.randomUUID();
-  const eventIndex = nextLogIndex(requestId);
+  const eventIndex = meta.eventIndex ?? 1;
 
-  // --- Message -------------------------------------------------------------
   const originalMessage = (event.message ?? "").toString().trim();
   const message = originalMessage
     ? `#${eventIndex} ${originalMessage}`
     : `#${eventIndex} JMSG`;
 
-  // --- Flatten payload -----------------------------------------------------
   const flatPayload = {
-    eventIndex,
     ...(payload ?? {}),
     ...(meta?.payload ?? {}),
+    eventIndex,
   };
 
-  // --- Flatten meta --------------------------------------------------------
   const flatMeta = {
     requestId,
     page: meta.page ?? null,
     userId: meta.userId ?? null,
-
-    // codemod‑injected timestamps
     zulu: meta.zulu,
     local: meta.local,
   };
 
   const timestamp = new Date().toISOString();
 
-  // --- Structured event (Neon) --------------------------------------------
   const eventRecord = {
     domain,
     level: event.level ?? "info",
@@ -80,27 +69,18 @@ export async function logit(
     meta: flatMeta,
   };
 
-  // --- Axiom event ---------------------------------------------------------
   const axiomEvent = {
     domain,
     level: eventRecord.level,
     message: eventRecord.message,
     timestamp,
-
     payload_json: safeForAxiom(flatPayload),
     meta_json: safeForAxiom(flatMeta),
-
     requestId,
     eventIndex,
     page: flatMeta.page,
     userId: flatMeta.userId,
   };
-
-  // --- Axiom ingestion via queue ------------------------------------------
-  enqueue({
-    domain,
-    dataj: axiomEvent,
-  });
 
   // --- Neon ingestion ------------------------------------------------------
   try {
@@ -127,6 +107,14 @@ export async function logit(
       console.error("NEON LOG ERROR (suppressed after this)", err);
       lastErrorTime = now;
     }
+  }
+
+  // --- Axiom ingestion (direct) -------------------------------------------
+  try {
+    const client = getAxiomClient();
+    await client.ingest(process.env.AXIOM_DATASET!, axiomEvent);
+  } catch (err) {
+    console.error("Axiom log ingestion failed:", err);
   }
 
   return eventRecord;
