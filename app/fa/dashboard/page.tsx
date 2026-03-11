@@ -85,24 +85,30 @@ function FlightTable({ planes }: { planes: any[] }) {
 
       <tbody>
         {planes.map((p, i) => {
+          const originAirport = p.origin || {};
+          const destAirport = p.destination || {};
+
           const origin =
-            p.origin?.code_iata ||
-            p.origin?.code ||
-            p.origin?.city ||
+            originAirport.code_iata ||
+            originAirport.code ||
+            originAirport.city ||
+            originAirport.name ||
             "—";
 
           const destination =
-            p.destination?.code_iata ||
-            p.destination?.code ||
-            p.destination?.city ||
+            destAirport.code_iata ||
+            destAirport.code ||
+            destAirport.city ||
+            destAirport.name ||
             "—";
 
+          const altitude = p.last_position?.altitude ?? "—";
+          const groundspeed = p.last_position?.groundspeed ?? "—";
+
           const status =
-            p.altitude > 0
+            typeof altitude === "number" && altitude > 0
               ? "Enroute"
-              : p.estimated_out
-              ? "Scheduled"
-              : "Unknown";
+              : "On Ground";
 
           const scheduled = p.scheduled_out
             ? formatET(p.scheduled_out)
@@ -118,9 +124,9 @@ function FlightTable({ planes }: { planes: any[] }) {
               <td>
                 {origin} → {destination}
               </td>
-              <td>{p.aircrafttype || "—"}</td>
-              <td>{p.altitude || "—"}</td>
-              <td>{p.groundspeed || "—"}</td>
+              <td>{p.aircraft_type || p.aircrafttype || "—"}</td>
+              <td>{altitude}</td>
+              <td>{groundspeed}</td>
               <td>{status}</td>
               <td>{scheduled}</td>
               <td>{estimated}</td>
@@ -131,6 +137,7 @@ function FlightTable({ planes }: { planes: any[] }) {
     </table>
   );
 }
+
 
 
 
