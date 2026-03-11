@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\fa\dashboard\route.ts
- * @LastEditTime: 2026-03-10 17:44:20
+ * @LastEditTime: 2026-03-10 17:53:44
  */
 // app/api/fa/dashboard/route.ts
 import { getConfig } from "@/lib/runtime/config";
@@ -8,12 +8,11 @@ import { NextResponse } from "next/server";
 import { toZonedTime, format } from "date-fns-tz";
 import { logit } from "@/lib/log/logit";
 
-
 type Flight = {
   scheduled_out?: string | null;
 };
 
-  export async function GET() {
+export async function GET() {
   await logit(
     "jonathan",
     {
@@ -46,15 +45,18 @@ type Flight = {
   );
 
   const countData = await countRes.json();
-  await logit(
-    "jonathan",
-    {
-      level: "info",
-      message: "Completed FA dashboard route",
-      payload: { time: format(new Date(), "yyyy-MM-dd HH:mm:ss") },
-    },
-    { requestId: crypto.randomUUID(), countData: countData },
-  );
+  await logit("jonathan", {
+    level: "info",
+    message: "Completed FA dashboard route",
+    requestId: crypto.randomUUID(),
+    countData: countData,
+    minLat: minLat,
+    minLon: minLon,
+    maxLat: maxLat,
+    maxLon: maxLon,
+    route: "app/api/fa/dashboard/route.ts",
+    userId: "JK",
+  });
   // 2. Fetch AA877 status
   const ident = await getConfig("flight-ID", "flight-ID");
   const statusRes = await fetch(
