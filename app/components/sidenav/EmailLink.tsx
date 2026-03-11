@@ -8,13 +8,23 @@ export function EmailSideNavLink() {
     try {
       const res = await fetch("/api/email/test", { method: "POST" });
       const data = await res.json();
-
+      const eventIndex = 22;
+      const ctx = {
+        page: "/sidenav/email-test",
+        file: "app/components/sidenav/EmailLink.tsx",
+      };
       // Log client-side as well (optional but nice)
-      logit("email_test_clicked", { data }, { eventIndex }, {
-              requestId: ctx?.requestId ?? req?.id,
-              zulu: new Date().toISOString(),
-              local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-            });
+      logit(
+        "email_test_clicked",
+        { data },
+        { eventIndex },
+        {
+          zulu: new Date().toISOString(),
+          local: new Date().toLocaleString("en-US", {
+            timeZone: "America/New_York",
+          }),
+        },
+      );
 
       toast.custom(
         () => (
@@ -34,12 +44,23 @@ export function EmailSideNavLink() {
         { duration: Infinity },
       );
     } catch (err) {
+      const eventIndex = 222;
+      const requestId = crypto.randomUUID();
       toast.error("Failed to send test email");
-      logit("email_test_error", { error: String(err) }, { eventIndex }, {
-              requestId: ctx?.requestId ?? req?.id,
-              zulu: new Date().toISOString(),
-              local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-            });
+      logit(
+        "email_test_error",
+        { error: String(err) },
+        { eventIndex },
+        {
+          requestId: requestId,
+          route: "/sidenav/email-test",
+          userId: "JK",
+          zulu: new Date().toISOString(),
+          local: new Date().toLocaleString("en-US", {
+            timeZone: "America/New_York",
+          }),
+        },
+      );
     }
   }
 

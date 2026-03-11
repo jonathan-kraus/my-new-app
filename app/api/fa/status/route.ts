@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\fa\status\route.ts
- * @LastEditTime: 2026-03-09 20:22:02
+ * @LastEditTime: 2026-03-11 00:23:19
  */
 import { logit } from "@/lib/log/logit";
 import { getConfig } from "@/lib/runtime/config";
@@ -9,17 +9,26 @@ import { NextResponse } from "next/server";
 export async function GET(req: Request) {
   const ident = await getConfig("flight-ID", "flight-ID");
   console.log("FINAL IDENT:", ident);
-
-  await logit("jonathan", {
-        level: "info",
-        message: "API FA status route accessed",
-        ident: ident,
-      }, { eventIndex }, {
-          requestId: "r", route: "p", userId: "u",
-          requestId: ctx?.requestId ?? req?.id,
-          zulu: new Date().toISOString(),
-          local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-        });
+  const eventIndex = 22;
+  const requestId = crypto.randomUUID();
+  await logit(
+    "jonathan",
+    {
+      level: "info",
+      message: "API FA status route accessed",
+      ident: ident,
+    },
+    { eventIndex },
+    {
+      requestId: requestId,
+      route: "app/api/fa/status/route.ts",
+      userId: "JK",
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
   if (!ident) {
     return NextResponse.json({ error: "Missing ident" }, { status: 400 });
   }

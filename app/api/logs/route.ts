@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
     const { domain, payload, meta } = body ?? {};
 
     // Use server-side logit to write to DB & queue
-    await logit(domain ?? "client", payload ?? {}, meta ?? {});
+    await logit(domain ?? "client", payload ?? {}, event ?? {}, meta ?? {});
 
     return NextResponse.json({ ok: true });
   } catch (err) {

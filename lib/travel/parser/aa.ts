@@ -82,6 +82,8 @@ function debugTree(node: cheerio.Cheerio<any>, $: cheerio.CheerioAPI) {
 // -----------------------------
 // MAIN PARSER
 // -----------------------------
+const eventIndex = 22;
+const requestId = crypto.randomUUID();
 export function parseAAEmail(
   html: string,
   receivedAt: Date,
@@ -239,29 +241,36 @@ export function parseAAEmail(
     // -----------------------------
     // LOGGING (shape you requested)
     // -----------------------------
-    logit("jonathan", {
-            level: "info",
-            message: "aa-segment-debugging",
-            i: segmentIndex,
-            date,
-            departureAirport,
-            departureCity,
-            departureTime,
-            arrivalAirport,
-            arrivalCity,
-            arrivalTime,
-            flightNumber,
-            operatedBy,
-            seats,
-            depTree: debugTree($(depEl), $),
-            arrTree: debugTree($(arrEl), $),
-            rawSeatRow: clean(seatRow.text()),
-            rawFlightCell: clean(flightCell.text()),
-          }, { eventIndex }, {
-            requestId: ctx?.requestId ?? req?.id,
-            zulu: new Date().toISOString(),
-            local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-          });
+    logit(
+      "jonathan",
+      {
+        level: "info",
+        message: "aa-segment-debugging",
+        i: segmentIndex,
+        date,
+        departureAirport,
+        departureCity,
+        departureTime,
+        arrivalAirport,
+        arrivalCity,
+        arrivalTime,
+        flightNumber,
+        operatedBy,
+        seats,
+        depTree: debugTree($(depEl), $),
+        arrTree: debugTree($(arrEl), $),
+        rawSeatRow: clean(seatRow.text()),
+        rawFlightCell: clean(flightCell.text()),
+      },
+      { eventIndex },
+      {
+        requestId: requestId,
+        zulu: new Date().toISOString(),
+        local: new Date().toLocaleString("en-US", {
+          timeZone: "America/New_York",
+        }),
+      },
+    );
 
     segments.push({
       date,

@@ -66,22 +66,28 @@ export async function GET(req: Request) {
     where: { locationId, fetchedAt: { gte: currentCutoff } },
     orderBy: { fetchedAt: "desc" },
   });
-
+  const eventIndex = 22;
   const currentAge = currentCached
     ? Math.round((Date.now() - currentCached.fetchedAt.getTime()) / 60000)
     : null;
 
   if (currentCached) {
-    await logit("weather", {
-          level: "info",
-          message: `Using cached current weather data`,
-          locationId,
-          currentAge,
-        }, { eventIndex }, {
-          requestId: ctx?.requestId ?? req?.id,
-          zulu: new Date().toISOString(),
-          local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-        });
+    await logit(
+      "weather",
+      {
+        level: "info",
+        message: `Using cached current weather data`,
+        locationId,
+        currentAge,
+      },
+      { eventIndex },
+      {
+        zulu: new Date().toISOString(),
+        local: new Date().toLocaleString("en-US", {
+          timeZone: "America/New_York",
+        }),
+      },
+    );
 
     return NextResponse.json({
       location,

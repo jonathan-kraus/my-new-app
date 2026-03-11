@@ -161,15 +161,25 @@ export const POST = withLogging(async (req: Request) => {
   const deliveryId = req.headers.get("x-github-delivery");
   const commitMessage = await getCommitMessage(payload); // FIX #1 const sha = getSha(payload);
   const sha = getSha(payload);
-  await logit("github", {
-        level: "info",
-        message: "GitHub webhook received -- new post code",
-        event,
-      }, { eventIndex }, {
-        requestId: ctx?.requestId ?? req?.id,
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-      });
+  const eventIndex = 22;
+  const requestId = crypto.randomUUID();
+
+  await logit(
+    "github",
+    {
+      level: "info",
+      message: "GitHub webhook received -- new post code",
+      event,
+    },
+    { eventIndex },
+    {
+      requestId: requestId,
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
 
   const normalized = {
     eventId: deliveryId!,

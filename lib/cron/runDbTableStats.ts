@@ -2,6 +2,8 @@
 import { db } from "@/lib/db";
 import { logit } from "@/lib/log/logit";
 
+const eventIndex = 22;
+const requestId = crypto.randomUUID();
 function atLocalMidnight(d: Date) {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate());
 }
@@ -14,11 +16,18 @@ export async function runDbTableStats(ctx: {
   const start = Date.now();
   const snapshotDate = atLocalMidnight(new Date());
 
-  await logit("db", { level: "info", message: "dbTables.cron.started" }, { eventIndex }, {
-        requestId: ctx?.requestId ?? req?.id,
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-      });
+  await logit(
+    "db",
+    { level: "info", message: "dbTables.cron.started" },
+    { eventIndex },
+    {
+      requestId: requestId,
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
 
   const stats = await db.$queryRawUnsafe(`
     SELECT
@@ -73,14 +82,21 @@ export async function runDbTableStats(ctx: {
     tablesProcessed++;
   }
 
-  await logit("db", {
-        level: "info",
-        message: "dbTables.cron.completed",
-        tablesProcessed,
-        durationMs: Date.now() - start,
-      }, { eventIndex }, {
-        requestId: ctx?.requestId ?? req?.id,
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-      });
+  await logit(
+    "db",
+    {
+      level: "info",
+      message: "dbTables.cron.completed",
+      tablesProcessed,
+      durationMs: Date.now() - start,
+    },
+    { eventIndex },
+    {
+      requestId: requestId,
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
 }

@@ -36,7 +36,8 @@ export async function ingestTravelEmails() {
   // Dynamically detect .eml files in the folder
   const dir = path.join(process.cwd(), "travel-emails");
   const files = fs.readdirSync(dir).filter((f) => f.endsWith(".eml"));
-
+  const eventIndex = 22;
+  const requestId = crypto.randomUUID();
   if (files.length === 0) {
     throw new Error("No .eml files found in travel-emails/");
   }
@@ -47,18 +48,27 @@ export async function ingestTravelEmails() {
       const full = path.join(dir, name);
       const stat = fs.statSync(full);
       console.log("candidate=%s mtime=%s", full, stat.mtime.toISOString());
-      logit("INGEST: candidate=%s mtime=%s", full, stat.mtime.toISOString());
-      logit("jonathan", {
-                  level: "info",
-                  message: "Pick email: " + full,
-                  full: full,
-                  lastTwo: name.split("-").slice(-2).join("-") + ".eml",
-                }, { eventIndex }, {
-                file: "email-ingest.ts", requestId: "N/A", route: "N/A", userId: undefined,
-                requestId: ctx?.requestId ?? req?.id,
-                zulu: new Date().toISOString(),
-                local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-              });
+
+      logit(
+        "jonathan",
+        {
+          level: "info",
+          message: "Pick email: " + full,
+          full: full,
+          lastTwo: name.split("-").slice(-2).join("-") + ".eml",
+        },
+        { eventIndex },
+        {
+          file: "email-ingest.ts",
+          route: "N/A",
+          userId: undefined,
+          requestId: requestId,
+          zulu: new Date().toISOString(),
+          local: new Date().toLocaleString("en-US", {
+            timeZone: "America/New_York",
+          }),
+        },
+      );
       return { name, full, mtime: stat.mtime };
     })
     .sort((a, b) => b.mtime.getTime() - a.mtime.getTime());

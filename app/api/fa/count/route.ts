@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\fa\count\route.ts
- * @LastEditTime: 2026-03-09 16:49:49
+ * @LastEditTime: 2026-03-11 00:17:25
  */
 // app/api/fa/count/route.ts
 import { NextResponse } from "next/server";
@@ -8,6 +8,8 @@ import { logit } from "@/lib/log/logit";
 import { getConfig } from "@/lib/runtime/config";
 
 export async function GET(req: Request) {
+  const eventIndex = 22;
+  const requestId = crypto.randomUUID();
   const minLat = await getConfig("minLat", "40.0893");
   const minLon = await getConfig("minLon", "-105.7435");
   const maxLat = await getConfig("maxLat", "40.7142");
@@ -20,20 +22,27 @@ export async function GET(req: Request) {
     url: req.url,
   });
 
-  await logit("fa", {
-        level: "info",
-        message: "Missing lat/long parameters",
-        minLat: minLat,
-        minLon: minLon,
-        maxLat: maxLat,
-        maxLon: maxLon,
-        url: req.url,
-      }, { eventIndex }, {
-          requestId: crypto.randomUUID(), userId: undefined,
-          requestId: ctx?.requestId ?? req?.id,
-          zulu: new Date().toISOString(),
-          local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-        });
+  await logit(
+    "fa",
+    {
+      level: "info",
+      message: "Missing lat/long parameters",
+      minLat: minLat,
+      minLon: minLon,
+      maxLat: maxLat,
+      maxLon: maxLon,
+      url: req.url,
+    },
+    { eventIndex },
+    {
+      requestId: requestId,
+      userId: undefined,
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
 
   if (!minLat || !minLon || !maxLat || !maxLon) {
     return NextResponse.json(

@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\fa\dashboard\route.ts
- * @LastEditTime: 2026-03-10 17:53:44
+ * @LastEditTime: 2026-03-11 00:22:26
  */
 // app/api/fa/dashboard/route.ts
 import { getConfig } from "@/lib/runtime/config";
@@ -11,18 +11,27 @@ import { logit } from "@/lib/log/logit";
 type Flight = {
   scheduled_out?: string | null;
 };
-
+const eventIndex = 22;
+const requestId = crypto.randomUUID();
 export async function GET() {
-  await logit("jonathan", {
-        level: "info",
-        message: "Loading FA dashboard route",
-        time: format(new Date(), "yyyy-MM-dd HH:mm:ss"),
-      }, { eventIndex }, {
-          requestId: crypto.randomUUID(), route: "app/api/fa/dashboard/route.ts", userId: "JK",
-          requestId: ctx?.requestId ?? req?.id,
-          zulu: new Date().toISOString(),
-          local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-        });
+  await logit(
+    "jonathan",
+    {
+      level: "info",
+      message: "Loading FA dashboard route",
+      time: format(new Date(), "yyyy-MM-dd HH:mm:ss"),
+    },
+    { eventIndex },
+    {
+      requestId: requestId,
+      route: "app/api/fa/dashboard/route.ts",
+      userId: "JK",
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
 
   // 1. Fetch flight count
   const minLat = await getConfig("minLat", "40.0893");
@@ -42,7 +51,9 @@ export async function GET() {
   );
 
   const countData = await countRes.json();
-  await logit("jonathan", {
+  await logit(
+    "jonathan",
+    {
       level: "info",
       message: "Completed FA dashboard route",
       requestId: crypto.randomUUID(),
@@ -53,11 +64,18 @@ export async function GET() {
       maxLon: maxLon,
       route: "app/api/fa/dashboard/route.ts",
       userId: "JK",
-    }, { eventIndex }, {
-        requestId: ctx?.requestId ?? req?.id,
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-      });
+    },
+    { eventIndex },
+    {
+      requestId: requestId,
+      route: "app/api/fa/dashboard/route.ts",
+      userId: "JK",
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
   // 2. Fetch AA877 status
   const ident = await getConfig("flight-ID", "flight-ID");
   const statusRes = await fetch(

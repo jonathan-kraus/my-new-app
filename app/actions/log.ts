@@ -8,14 +8,15 @@ export async function logFromClient(domain: string, payload: any) {
     domain,
     {
       level: payload?.level ?? "info",
-      message: payload?.message ?? "client log"
+      message: payload?.message ?? "client log",
     },
     { eventIndex },
     {
       requestId: undefined,
       zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-    }
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
   );
 }
-

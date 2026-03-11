@@ -3,6 +3,7 @@
 
 import { useEffect, useState } from "react";
 import { logit } from "@/lib/log/logit.client";
+const eventIndex = 22;
 
 export type Note = {
   id: string;
@@ -27,16 +28,24 @@ export function useNotes(): NotesState {
   const [state, setState] = useState<NotesState>({ status: "loading" });
 
   useEffect(() => {
-    logit("notes", {
-              level: "info",
-              message: "Notes page mounted",
-              loc: "/notes",
-            }, { eventIndex }, {
-              requestId: ctx.requestId ?? undefined, route: ctx.page ?? undefined, userId: ctx.userId ?? undefined,
-              requestId: ctx?.requestId ?? req?.id,
-              zulu: new Date().toISOString(),
-              local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-            });
+    logit(
+      "notes",
+      {
+        level: "info",
+        message: "Notes page mounted",
+        loc: "/notes",
+      },
+      { eventIndex },
+      {
+        requestId: ctx.requestId ?? undefined,
+        route: ctx.page ?? undefined,
+        userId: ctx.userId ?? undefined,
+        zulu: new Date().toISOString(),
+        local: new Date().toLocaleString("en-US", {
+          timeZone: "America/New_York",
+        }),
+      },
+    );
 
     async function load() {
       try {
@@ -59,16 +68,24 @@ export function useNotes(): NotesState {
       } catch {
         setState({ status: "error" });
 
-        logit("notes", {
-                      level: "info",
-                      message: "Notes page mounted",
-                      loc: "/notes",
-                    }, { eventIndex }, {
-                  requestId: ctx.requestId ?? undefined, route: ctx.page ?? undefined, userId: ctx.userId ?? undefined,
-                  requestId: ctx?.requestId ?? req?.id,
-                  zulu: new Date().toISOString(),
-                  local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-                });
+        logit(
+          "notes",
+          {
+            level: "info",
+            message: "Notes page mounted",
+            loc: "/notes",
+          },
+          { eventIndex },
+          {
+            requestId: ctx.requestId ?? undefined,
+            route: ctx.page ?? undefined,
+            userId: ctx.userId ?? undefined,
+            zulu: new Date().toISOString(),
+            local: new Date().toLocaleString("en-US", {
+              timeZone: "America/New_York",
+            }),
+          },
+        );
       }
     }
 

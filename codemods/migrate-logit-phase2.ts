@@ -36,7 +36,7 @@ for (const sourceFile of project.getSourceFiles()) {
   const logitCalls: CallExpression[] = [];
 
   for (const call of sourceFile.getDescendantsOfKind(
-    SyntaxKind.CallExpression
+    SyntaxKind.CallExpression,
   )) {
     const expr = call.getExpression();
     if (expr && expr.getText() === "logit") {
@@ -67,7 +67,7 @@ for (const sourceFile of project.getSourceFiles()) {
 
     // Default meta
     const defaultMeta = `{
-      requestId: ctx?.requestId ?? req?.id,
+      requestId: requestId,
       zulu: new Date().toISOString(),
       local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
     }`;
@@ -81,7 +81,7 @@ for (const sourceFile of project.getSourceFiles()) {
 
       newMetaArg = `{
         ${metaProps.join(", ")},
-        requestId: ctx?.requestId ?? req?.id,
+        requestId: requestId,
         zulu: new Date().toISOString(),
         local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
       }`;
@@ -89,7 +89,7 @@ for (const sourceFile of project.getSourceFiles()) {
 
     // Replace call
     call.replaceWithText(
-      `logit(${domainArg.getText()}, ${eventArg.getText()}, ${payloadArg}, ${newMetaArg})`
+      `logit(${domainArg.getText()}, ${eventArg.getText()}, ${payloadArg}, ${newMetaArg})`,
     );
 
     const after = call.getText();
@@ -102,9 +102,6 @@ for (const sourceFile of project.getSourceFiles()) {
   }
 }
 
-const reportPath = path.join(
-  process.cwd(),
-  "logit-migrate-phase2-report.json"
-);
+const reportPath = path.join(process.cwd(), "logit-migrate-phase2-report.json");
 fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
 console.log(`Phase 2 logit migration report written to ${reportPath}`);

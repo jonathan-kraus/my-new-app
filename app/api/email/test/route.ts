@@ -7,17 +7,27 @@ export const POST = withLogging(async () => {
   const test_msg1 = "This is a test email sent from the Next.js API route.";
   const test_subject = "Test Email Subject";
   const result = await sendTestEmail(test_msg1, test_subject);
-
-  await logit("jonathan", {
+  const eventIndex = 22;
+  const requestId = crypto.randomUUID();
+  await logit(
+    "jonathan",
+    {
       level: "info",
       message: `Sent test email with message "${test_msg1}". Result: ${JSON.stringify(result, null, 2)}`,
       result: result,
       b: "b",
-    }, { eventIndex }, {
-        requestId: ctx?.requestId ?? req?.id,
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-      });
+    },
+    { eventIndex },
+    {
+      requestId: requestId,
+      route: "api/email/test",
+      userId: "JK",
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
 
   return NextResponse.json(result);
 });

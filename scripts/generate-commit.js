@@ -22,29 +22,29 @@ Write only the commit message. No explanations.
       stream: true,
     }),
   });
-let full = "";
+  let full = "";
 
-for await (const chunk of response.body) {
-  const text = new TextDecoder().decode(chunk);
+  for await (const chunk of response.body) {
+    const text = new TextDecoder().decode(chunk);
 
-  for (const line of text.split("\n")) {
-    const trimmed = line.trim();
-    if (!trimmed) continue;
+    for (const line of text.split("\n")) {
+      const trimmed = line.trim();
+      if (!trimmed) continue;
 
-    // Only attempt to parse JSON objects
-    if (!trimmed.startsWith("{")) continue;
+      // Only attempt to parse JSON objects
+      if (!trimmed.startsWith("{")) continue;
 
-    try {
-      const json = JSON.parse(trimmed);
-      if (typeof json.response === "string") {
-        full += json.response;
+      try {
+        const json = JSON.parse(trimmed);
+        if (typeof json.response === "string") {
+          full += json.response;
+        }
+      } catch {
+        // Ignore malformed JSON lines
+        continue;
       }
-    } catch {
-      // Ignore malformed JSON lines
-      continue;
     }
   }
-}
 
   return full.trim();
 }

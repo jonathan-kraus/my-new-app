@@ -5,38 +5,51 @@ import { logit } from "@/lib/log/logit";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
+const eventIndex = 22;
 
 export async function GET() {
   const requestId = crypto.randomUUID();
 
-  await logit("travel", {
-        level: "info",
-        message: "Starting next travel event computation",
-        page: "lib/travel/next/route.ts",
-        somedate: new Date().toISOString(),
-        somevalue: "somevalue",
-      }, { eventIndex }, {
-          requestId,
-          requestId: ctx?.requestId ?? req?.id,
-          zulu: new Date().toISOString(),
-          local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-        });
+  await logit(
+    "travel",
+    {
+      level: "info",
+      message: "Starting next travel event computation",
+      page: "lib/travel/next/route.ts",
+      somedate: new Date().toISOString(),
+      somevalue: "somevalue",
+    },
+    { eventIndex },
+    {
+      requestId: requestId,
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
 
   try {
     const event = await getNextTravelEvent(requestId);
 
-    await logit("travel", {
-            level: "info",
-            message: "Next travel event computed",
-            page: "lib/travel/next/route.ts",
-            somedate: new Date().toISOString(),
-            somevalue: "somevalue",
-          }, { eventIndex }, {
-            requestId,
-            requestId: ctx?.requestId ?? req?.id,
-            zulu: new Date().toISOString(),
-            local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-          });
+    await logit(
+      "travel",
+      {
+        level: "info",
+        message: "Next travel event computed",
+        page: "lib/travel/next/route.ts",
+        somedate: new Date().toISOString(),
+        somevalue: "somevalue",
+      },
+      { eventIndex },
+      {
+        requestId: requestId,
+        zulu: new Date().toISOString(),
+        local: new Date().toLocaleString("en-US", {
+          timeZone: "America/New_York",
+        }),
+      },
+    );
 
     return NextResponse.json({
       ok: true,
@@ -44,19 +57,25 @@ export async function GET() {
       event,
     });
   } catch (err: any) {
-    await logit("travel", {
-            level: "error",
-            message: "Failed to compute next travel event",
-            page: "lib/travel/next/route.ts",
-            somedate: new Date().toISOString(),
-            somevalue: "somevalue",
-            error: err.message,
-          }, { eventIndex }, {
-            requestId,
-            requestId: ctx?.requestId ?? req?.id,
-            zulu: new Date().toISOString(),
-            local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-          });
+    await logit(
+      "travel",
+      {
+        level: "error",
+        message: "Failed to compute next travel event",
+        page: "lib/travel/next/route.ts",
+        somedate: new Date().toISOString(),
+        somevalue: "somevalue",
+        error: err.message,
+      },
+      { eventIndex },
+      {
+        requestId: requestId,
+        zulu: new Date().toISOString(),
+        local: new Date().toLocaleString("en-US", {
+          timeZone: "America/New_York",
+        }),
+      },
+    );
 
     return NextResponse.json(
       { ok: false, requestId, error: err.message },

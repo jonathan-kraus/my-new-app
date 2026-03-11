@@ -40,17 +40,25 @@ export async function proxy(req: NextRequest) {
   // --- 1) Normalize path segments (you want to keep this) --------
   const { last, lastTwo } = normalizePath(pathname);
 
-  await logit("middleware", {
-        level: "info",
-        message: "Normalized path segments pathname: " + pathname,
-        last,
-        lastTwo,
-      }, { eventIndex }, {
-          requestId: getRequestId(req.url), route: pathname, userId: undefined,
-          requestId: ctx?.requestId ?? req?.id,
-          zulu: new Date().toISOString(),
-          local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-        });
+  await logit(
+    "middleware",
+    {
+      level: "info",
+      message: "Normalized path segments pathname: " + pathname,
+      last,
+      lastTwo,
+    },
+    {},
+    {
+      requestId: getRequestId(req.url),
+      route: pathname,
+      userId: undefined,
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
 
   // --- 2) Start timing -------------------------------------------
   markRequestStart(req.url);
@@ -81,25 +89,33 @@ async function end(req: NextRequest, res: NextResponse) {
   const pathname = req.nextUrl.pathname;
   const { last, lastTwo } = normalizePath(pathname);
 
-  await logit("middleware", {
-        level: "info",
-        message: "REQUEST END " + pathname,
-        page: pathname,
-        file: "proxy.ts",
-        durationMs,
-        method: req.method,
-        url: req.url,
-        status: res.status,
-        requestId: getRequestId(req.url),
-        eventIndex: nextEventIndex(req.url),
-        last,
-        lastTwo,
-      }, { eventIndex }, {
-          requestId: getRequestId(req.url), route: pathname, userId: undefined,
-          requestId: ctx?.requestId ?? req?.id,
-          zulu: new Date().toISOString(),
-          local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-        });
+  await logit(
+    "middleware",
+    {
+      level: "info",
+      message: "REQUEST END " + pathname,
+      page: pathname,
+      file: "proxy.ts",
+      durationMs,
+      method: req.method,
+      url: req.url,
+      status: res.status,
+      requestId: getRequestId(req.url),
+      eventIndex: nextEventIndex(req.url),
+      last,
+      lastTwo,
+    },
+    {},
+    {
+      requestId: getRequestId(req.url),
+      route: pathname,
+      userId: undefined,
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
 
   clearRequest(req.url);
   return res;

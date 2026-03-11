@@ -1,5 +1,10 @@
 // lib/log/logit.client.ts
-export async function logit(domain: string, payload: any = {}, meta: any = {}) {
+export async function logit(
+  domain: string,
+  payload: any = {},
+  event: any = {},
+  meta: any = {},
+) {
   try {
     await fetch("/api/logs", {
       method: "POST",

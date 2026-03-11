@@ -12,19 +12,28 @@ export async function GET(req: NextRequest) {
     const result = await getAxiomClient().query(apl);
     const legacy = result as any;
     const rows = legacy?.result?.matches ?? [];
+    const eventIndex = 22;
 
     const ctx = await enrichContext(req);
-    await logit("jonathan", {
-            level: "info",
-            message: "GitHub test route completed",
-            count: rows.length,
-            rows: rows,
-          }, { eventIndex }, {
-            requestId: ctx.requestId, route: ctx.page, userId: ctx.userId,
-            requestId: ctx?.requestId ?? req?.id,
-            zulu: new Date().toISOString(),
-            local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-          });
+    await logit(
+      "jonathan",
+      {
+        level: "info",
+        message: "GitHub test route completed",
+        count: rows.length,
+        rows: rows,
+      },
+      { eventIndex },
+      {
+        route: ctx.page,
+        userId: ctx.userId,
+        requestId: ctx?.requestId,
+        zulu: new Date().toISOString(),
+        local: new Date().toLocaleString("en-US", {
+          timeZone: "America/New_York",
+        }),
+      },
+    );
     return NextResponse.json({
       ok: true,
       count: rows.length,

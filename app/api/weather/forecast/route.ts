@@ -32,7 +32,7 @@ export async function GET(req: Request) {
   // CACHE CHECK
   // ----------------------------------------
   const cutoff = new Date(Date.now() - FORECAST_CACHE_MINUTES * 60_000);
-
+  const eventIndex = 22;
   const cached = await db.forecastSnapshot.findFirst({
     where: { locationId, fetchedAt: { gte: cutoff } },
     orderBy: { fetchedAt: "desc" },
@@ -41,23 +41,31 @@ export async function GET(req: Request) {
   if (cached) {
     const age = Math.round((Date.now() - cached.fetchedAt.getTime()) / 60000);
     console.log("age", age);
-    await logit("weather", {
-            level: "warn",
-            message: `Forecast cache hit ${age}/${FORECAST_CACHE_MINUTES}`,
-            locationId: locationId,
-            cacheWindowMinutes: FORECAST_CACHE_MINUTES,
-            actualAgeMinutes: age,
-            sessionUser: session?.user?.name ?? null,
-            sessionEmail: session?.user?.email ?? null,
-            userId: session?.user?.id ?? null,
-            file: "app/api/weather/forecast/route.ts",
-            page: "/api/weather/forecast",
-          }, { eventIndex }, {
-            requestId: ctx.requestId, route: ctx.page, userId: ctx.userId,
-            requestId: ctx?.requestId ?? req?.id,
-            zulu: new Date().toISOString(),
-            local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-          });
+    await logit(
+      "weather",
+      {
+        level: "warn",
+        message: `Forecast cache hit ${age}/${FORECAST_CACHE_MINUTES}`,
+        locationId: locationId,
+        cacheWindowMinutes: FORECAST_CACHE_MINUTES,
+        actualAgeMinutes: age,
+        sessionUser: session?.user?.name ?? null,
+        sessionEmail: session?.user?.email ?? null,
+        userId: session?.user?.id ?? null,
+        file: "app/api/weather/forecast/route.ts",
+        page: "/api/weather/forecast",
+      },
+      { eventIndex },
+      {
+        requestId: ctx.requestId,
+        route: ctx.page,
+        userId: ctx.userId,
+        zulu: new Date().toISOString(),
+        local: new Date().toLocaleString("en-US", {
+          timeZone: "America/New_York",
+        }),
+      },
+    );
     const weather = cached.payload as {
       current: any;
       forecast: any;
@@ -74,17 +82,25 @@ export async function GET(req: Request) {
   // ----------------------------------------
   // CACHE MISS → FETCH EXTERNAL API
   // ----------------------------------------
-  await logit("weather", {
-        level: "info",
-        message: "Forecast cache miss → fetching external API",
-        locationId,
-        file: "app/api/weather/forecast/route.ts",
-      }, { eventIndex }, {
-          requestId: ctx.requestId, route: ctx.page, userId: ctx.userId,
-          requestId: ctx?.requestId ?? req?.id,
-          zulu: new Date().toISOString(),
-          local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-        });
+  await logit(
+    "weather",
+    {
+      level: "info",
+      message: "Forecast cache miss → fetching external API",
+      locationId,
+      file: "app/api/weather/forecast/route.ts",
+    },
+    { eventIndex },
+    {
+      requestId: ctx.requestId,
+      route: ctx.page,
+      userId: ctx.userId,
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
 
   const weatherRes = await fetch(
     `https://api.open-meteo.com/v1/forecast` +
@@ -98,28 +114,44 @@ export async function GET(req: Request) {
 
   const raw = await weatherRes.json();
   const parsed = ForecastResponseSchema.safeParse(raw);
-  await logit("weather", {
-        level: "info",
-        message: "Forecast API response",
-        payload: parsed,
-        raw,
-      }, { eventIndex }, {
-          requestId: ctx.requestId, route: ctx.page, userId: ctx.userId,
-          requestId: ctx?.requestId ?? req?.id,
-          zulu: new Date().toISOString(),
-          local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-        });
+  await logit(
+    "weather",
+    {
+      level: "info",
+      message: "Forecast API response",
+      payload: parsed,
+      raw,
+    },
+    { eventIndex },
+    {
+      requestId: ctx.requestId,
+      route: ctx.page,
+      userId: ctx.userId,
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
   if (!parsed.success) {
-    await logit("weather", {
-            level: "error",
-            message: "Invalid forecast API response",
-            payload: parsed.error.flatten(),
-          }, { eventIndex }, {
-            requestId: ctx.requestId, route: ctx.page, userId: ctx.userId,
-            requestId: ctx?.requestId ?? req?.id,
-            zulu: new Date().toISOString(),
-            local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-          });
+    await logit(
+      "weather",
+      {
+        level: "error",
+        message: "Invalid forecast API response",
+        payload: parsed.error.flatten(),
+      },
+      { eventIndex },
+      {
+        requestId: ctx.requestId,
+        route: ctx.page,
+        userId: ctx.userId,
+        zulu: new Date().toISOString(),
+        local: new Date().toLocaleString("en-US", {
+          timeZone: "America/New_York",
+        }),
+      },
+    );
 
     return NextResponse.json(
       { error: "Forecast unavailable" },
@@ -142,17 +174,25 @@ export async function GET(req: Request) {
     },
   });
 
-  await logit("weather", {
-        level: "info",
-        message: `Forecast snapshot stored, ${Math.round(weather.current_weather.temperature)}°F`,
+  await logit(
+    "weather",
+    {
+      level: "info",
+      message: `Forecast snapshot stored, ${Math.round(weather.current_weather.temperature)}°F`,
 
-        snapshotId: snapshot.id,
-      }, { eventIndex }, {
-          requestId: ctx.requestId, route: ctx.page, userId: ctx.userId,
-          requestId: ctx?.requestId ?? req?.id,
-          zulu: new Date().toISOString(),
-          local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-        });
+      snapshotId: snapshot.id,
+    },
+    { eventIndex },
+    {
+      requestId: ctx.requestId,
+      route: ctx.page,
+      userId: ctx.userId,
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
 
   // ----------------------------------------
   // RETURN FRESH DATA

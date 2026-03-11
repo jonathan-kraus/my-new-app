@@ -26,7 +26,7 @@ function normalizeTimeString(
 
   return `${raw}${offset}`;
 }
-
+const eventIndex = 22;
 export async function buildAstronomySnapshot(
   location: {
     id: string;
@@ -36,13 +36,24 @@ export async function buildAstronomySnapshot(
   },
   targetDate: Date,
 ) {
-  const domain = "ephemeris";
-
-  await logit(domain, {
-    level: "info",
-    message: "Starting buildAstronomySnapshot",
-    data: { location, targetDate },
-  });
+  await logit(
+    "ephemeris",
+    {
+      level: "info",
+      message: "Starting buildAstronomySnapshot",
+      data: { location, targetDate },
+    },
+    { eventIndex },
+    {
+      requestId: crypto.randomUUID(),
+      route: "lib\buildAstronomySnapshot.ts",
+      userId: "JK",
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
 
   const { latitude, longitude } = location;
 
@@ -52,11 +63,24 @@ export async function buildAstronomySnapshot(
     targetDate.getDate(),
   );
 
-  await logit(domain, {
-    level: "debug",
-    message: "bas - Normalized target date",
-    data: { normalizedDate: date.toString() },
-  });
+  await logit(
+    "ephemeris",
+    {
+      level: "info",
+      message: "bas - Normalized target date",
+      data: { location, targetDate },
+    },
+    { eventIndex },
+    {
+      requestId: crypto.randomUUID(),
+      route: "lib\buildAstronomySnapshot.ts",
+      userId: "JK",
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
 
   async function fetchIPGeoAstronomy(lat: number, lon: number, date: Date) {
     const day = format(date, "yyyy-MM-dd");
@@ -67,29 +91,67 @@ export async function buildAstronomySnapshot(
     url.searchParams.set("long", lon.toString());
     url.searchParams.set("date", day);
 
-    await logit(domain, {
-      level: "info",
-      message: "bas - Fetching IPGeolocation astronomy data",
-      data: { url: url.toString() },
-    });
-
+    await logit(
+      "ephemeris",
+      {
+        level: "info",
+        message: "bas - Fetching IPGeolocation astronomy data",
+        data: { location, targetDate },
+      },
+      { eventIndex },
+      {
+        requestId: crypto.randomUUID(),
+        route: "lib\buildAstronomySnapshot.ts",
+        userId: "JK",
+        zulu: new Date().toISOString(),
+        local: new Date().toLocaleString("en-US", {
+          timeZone: "America/New_York",
+        }),
+      },
+    );
     const res = await fetch(url.toString());
     if (!res.ok) {
-      await logit(domain, {
-        level: "error",
-        message: "bas - IPGeolocation returned non-OK status",
-        data: { status: res.status },
-      });
+      await logit(
+        "ephemeris",
+        {
+          level: "error",
+          message: "bas - IPGeolocation returned non-OK status",
+        },
+        { eventIndex },
+        {
+          requestId: crypto.randomUUID(),
+          route: "lib\buildAstronomySnapshot.ts",
+          userId: "JK",
+          zulu: new Date().toISOString(),
+          local: new Date().toLocaleString("en-US", {
+            timeZone: "America/New_York",
+          }),
+        },
+      );
+
       throw new Error(`IPGeolocation error: ${res.status}`);
     }
 
     const json = await res.json();
 
-    await logit(domain, {
-      level: "warn",
-      message: " DEBUG: astronomy payload",
-      data: json.astronomy,
-    });
+    await logit(
+      "ephemeris",
+      {
+        level: "warn",
+        message: " DEBUG: astronomy payload",
+        data: { data: json.astronomy },
+      },
+      { eventIndex },
+      {
+        requestId: crypto.randomUUID(),
+        route: "lib\buildAstronomySnapshot.ts",
+        userId: "JK",
+        zulu: new Date().toISOString(),
+        local: new Date().toLocaleString("en-US", {
+          timeZone: "America/New_York",
+        }),
+      },
+    );
 
     return json.astronomy;
   }
@@ -103,45 +165,97 @@ export async function buildAstronomySnapshot(
 
   // Fallback: convert IANA zone (e.g., "America/New_York") to numeric offset
   if (!offset && location.timezone) {
-    await logit(domain, {
-      level: "warn",
-      message:
-        "bas - Astronomy API missing timezone; converting IANA zone to offset",
-      data: { iana: location.timezone },
-    });
+    await logit(
+      "ephemeris",
+      {
+        level: "warn",
+        message:
+          "bas - Astronomy API missing timezone; converting IANA zone to offset",
+        data: { iana: location.timezone },
+      },
+      { eventIndex },
+      {
+        requestId: crypto.randomUUID(),
+        route: "lib\buildAstronomySnapshot.ts",
+        userId: "JK",
+        zulu: new Date().toISOString(),
+        local: new Date().toLocaleString("en-US", {
+          timeZone: "America/New_York",
+        }),
+      },
+    );
 
     try {
       const dt = DateTime.now().setZone(location.timezone);
       offset = dt.toFormat("ZZ"); // "-05:00" or "-04:00"
     } catch (err) {
-      await logit(domain, {
-        level: "error",
-        message: "bas - Failed to convert IANA timezone to offset",
-        data: { iana: location.timezone, error: String(err) },
-      });
+      await logit(
+        "ephemeris",
+        {
+          level: "error",
+          message: "bas - Failed to convert IANA timezone to offset",
+          data: { iana: location.timezone, error: String(err) },
+        },
+        { eventIndex },
+        {
+          requestId: crypto.randomUUID(),
+          route: "lib\buildAstronomySnapshot.ts",
+          userId: "JK",
+          zulu: new Date().toISOString(),
+          local: new Date().toLocaleString("en-US", {
+            timeZone: "America/New_York",
+          }),
+        },
+      );
     }
   }
 
   // Final validation
   if (!offset || !/[+-]\d{2}:\d{2}/.test(offset)) {
-    await logit(domain, {
-      level: "error",
-      message: "bas - Astronomy API missing timezone field",
-      data: {
-        apiTimezone: astro.timezone,
-        locationTimezone: location.timezone,
-        resolvedOffset: offset,
+    await logit(
+      "ephemeris",
+      {
+        level: "error",
+        message: "bas - Astronomy API missing timezone field",
+        data: {
+          apiTimezone: astro.timezone,
+          locationTimezone: location.timezone,
+          resolvedOffset: offset,
+        },
       },
-    });
+      { eventIndex },
+      {
+        requestId: crypto.randomUUID(),
+        route: "lib\buildAstronomySnapshot.ts",
+        userId: "JK",
+        zulu: new Date().toISOString(),
+        local: new Date().toLocaleString("en-US", {
+          timeZone: "America/New_York",
+        }),
+      },
+    );
 
     throw new Error("Astronomy API missing timezone field");
   }
 
-  await logit(domain, {
-    level: "debug",
-    message: "Using timezone offset",
-    data: { offset },
-  });
+  await logit(
+    "ephemeris",
+    {
+      level: "debug",
+      message: "Using timezone offset",
+      data: { offset },
+    },
+    { eventIndex },
+    {
+      requestId: crypto.randomUUID(),
+      route: "lib\buildAstronomySnapshot.ts",
+      userId: "JK",
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
 
   //
   // --- NORMALIZE ALL TIME STRINGS ---
@@ -186,26 +300,52 @@ export async function buildAstronomySnapshot(
   const moonriseNorm = normalizeTimeString(astro.moonrise, offset);
   const moonsetNorm = normalizeTimeString(astro.moonset, offset);
 
-  await logit(domain, {
-    level: "debug",
-    message: "Normalized all time strings",
-    data: {
-      sunriseNorm,
-      sunsetNorm,
-      moonriseNorm,
-      moonsetNorm,
+  await logit(
+    "ephemeris",
+    {
+      level: "debug",
+      message: "Normalized all time strings",
+      data: {
+        sunriseNorm,
+        sunsetNorm,
+        moonriseNorm,
+        moonsetNorm,
+      },
     },
-  });
+    { eventIndex },
+    {
+      requestId: crypto.randomUUID(),
+      route: "lib\buildAstronomySnapshot.ts",
+      userId: "JK",
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
 
   //
   // --- REQUIRED FIELDS ---
   //
   if (!sunriseNorm || !sunsetNorm) {
-    await logit(domain, {
-      level: "error",
-      message: "Missing required sunrise/sunset after normalization",
-      data: { sunriseNorm, sunsetNorm },
-    });
+    await logit(
+      "ephemeris",
+      {
+        level: "error",
+        message: "Missing required sunrise/sunset after normalization",
+        data: { sunriseNorm, sunsetNorm },
+      },
+      { eventIndex },
+      {
+        requestId: crypto.randomUUID(),
+        route: "lib\buildAstronomySnapshot.ts",
+        userId: "JK",
+        zulu: new Date().toISOString(),
+        local: new Date().toLocaleString("en-US", {
+          timeZone: "America/New_York",
+        }),
+      },
+    );
     throw new Error("Missing required sunrise/sunset after normalization");
   }
 
@@ -275,11 +415,24 @@ export async function buildAstronomySnapshot(
     moonPhase: astro.moon_angle ?? null,
   };
 
-  await logit(domain, {
-    level: "info",
-    message: "Astronomy snapshot built successfully",
-    data: snapshot,
-  });
+  await logit(
+    "ephemeris",
+    {
+      level: "info",
+      message: "Astronomy snapshot built successfully",
+      data: snapshot,
+    },
+    { eventIndex },
+    {
+      requestId: crypto.randomUUID(),
+      route: "lib\buildAstronomySnapshot.ts",
+      userId: "JK",
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
 
   return snapshot;
 }

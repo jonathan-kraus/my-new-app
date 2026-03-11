@@ -30,7 +30,8 @@ function loadDebugLevelSync() {
 }
 
 const domain = "ephemeris";
-
+const eventIndex = 22;
+const requestId = crypto.randomUUID();
 /**
  * Combines a JS Date (representing the *day*) with a time string
  * that already includes a timezone offset (e.g. "07:09:00-05:00").
@@ -43,28 +44,42 @@ export function combineDateTime(date: Date, timeString: string): string {
   const debugLevel = loadDebugLevelSync();
 
   if (debugLevel === 1) {
-    logit(domain, {
-            level: "debug",
-            message: "combineDateTime called",
-            data: { date: date.toString(), timeString },
-          }, { eventIndex }, {
-            requestId: ctx?.requestId ?? req?.id,
-            zulu: new Date().toISOString(),
-            local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-          });
+    logit(
+      domain,
+      {
+        level: "debug",
+        message: "combineDateTime called",
+        data: { date: date.toString(), timeString },
+      },
+      { eventIndex },
+      {
+        requestId: requestId,
+        zulu: new Date().toISOString(),
+        local: new Date().toLocaleString("en-US", {
+          timeZone: "America/New_York",
+        }),
+      },
+    );
   }
 
   // --- VALIDATION: Reject UTC timestamps ---
   if (timeString.endsWith("Z")) {
-    logit(domain, {
-            level: "error",
-            message: "UTC timestamp detected in combineDateTime",
-            data: { timeString },
-          }, { eventIndex }, {
-            requestId: ctx?.requestId ?? req?.id,
-            zulu: new Date().toISOString(),
-            local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-          });
+    logit(
+      domain,
+      {
+        level: "error",
+        message: "UTC timestamp detected in combineDateTime",
+        data: { timeString },
+      },
+      { eventIndex },
+      {
+        requestId: requestId,
+        zulu: new Date().toISOString(),
+        local: new Date().toLocaleString("en-US", {
+          timeZone: "America/New_York",
+        }),
+      },
+    );
 
     throw new Error(
       `combineDateTime received a UTC timestamp (${timeString}). ` +
@@ -75,15 +90,22 @@ export function combineDateTime(date: Date, timeString: string): string {
   // --- VALIDATION: Ensure offset exists ---
   const offsetMatch = timeString.match(/([+-]\d{2}:\d{2})$/);
   if (!offsetMatch) {
-    logit(domain, {
-            level: "error",
-            message: "Time string missing timezone offset",
-            data: { timeString },
-          }, { eventIndex }, {
-            requestId: ctx?.requestId ?? req?.id,
-            zulu: new Date().toISOString(),
-            local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-          });
+    logit(
+      domain,
+      {
+        level: "error",
+        message: "Time string missing timezone offset",
+        data: { timeString },
+      },
+      { eventIndex },
+      {
+        requestId: requestId,
+        zulu: new Date().toISOString(),
+        local: new Date().toLocaleString("en-US", {
+          timeZone: "America/New_York",
+        }),
+      },
+    );
 
     throw new Error(
       `combineDateTime expected a time string with offset (e.g. "07:09:00-05:00"), got: ${timeString}`,
@@ -103,15 +125,22 @@ export function combineDateTime(date: Date, timeString: string): string {
   const final = `${yyyy}-${mm}-${dd}T${timePart}${offset}`;
 
   if (debugLevel === 1) {
-    logit(domain, {
-            level: "debug",
-            message: "combineDateTime produced final timestamp",
-            data: { final },
-          }, { eventIndex }, {
-            requestId: ctx?.requestId ?? req?.id,
-            zulu: new Date().toISOString(),
-            local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-          });
+    logit(
+      domain,
+      {
+        level: "debug",
+        message: "combineDateTime produced final timestamp",
+        data: { final },
+      },
+      { eventIndex },
+      {
+        requestId: requestId,
+        zulu: new Date().toISOString(),
+        local: new Date().toLocaleString("en-US", {
+          timeZone: "America/New_York",
+        }),
+      },
+    );
   }
 
   return final;

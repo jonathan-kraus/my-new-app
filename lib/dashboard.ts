@@ -6,16 +6,27 @@ import { getEphemerisSnapshot } from "@/lib/ephemeris/getEphemerisSnapshot";
 // lib/log/dashboardLog.ts
 import { logit } from "@/lib/log/logit";
 
+const eventIndex = 22;
+const requestId = crypto.randomUUID();
 export function logDashboardAstronomy(snapshot: unknown) {
-  logit("dashboard", {
-        level: "info",
-        message: "Dashboard astronomy snapshot",
-        data: snapshot,
-      }, { eventIndex }, {
-          requestId: ctx?.requestId ?? req?.id,
-          zulu: new Date().toISOString(),
-          local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
-        });
+  logit(
+    "dashboard",
+    {
+      level: "info",
+      message: "Dashboard astronomy snapshot",
+      data: snapshot,
+    },
+    { eventIndex },
+    {
+      requestId: requestId,
+      route: "lib/dashboard.ts",
+      userId: "JK",
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
 }
 
 export interface VercelDeploymentsResponse {
