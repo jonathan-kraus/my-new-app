@@ -120,7 +120,7 @@ export async function logit(
 try {
   const client = getAxiomClient();
   await client.ingest(process.env.AXIOM_DATASET!, [axiomEvent]);
-  console.log("INGEST SUCCESS");
+  console.log("INGEST SUCCESS", process.env.AXIOM_DATASET);
 } catch (err) {
   console.error("AXIOM INGEST ERROR:", err);
 }
