@@ -11,20 +11,28 @@ import { withLogging } from "@/lib/logging/withLogging";
 
 export const GET = withLogging(async (req: Request) => {
   await logit("notes", {
-    level: "info",
-    message: "Notes GET started",
-    requestId: "REQ",
-  });
+      level: "info",
+      message: "Notes GET started",
+      requestId: "REQ",
+    }, { eventIndex }, {
+        requestId: ctx?.requestId ?? req?.id,
+        zulu: new Date().toISOString(),
+        local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+      });
 
   try {
     const session = await auth();
 
     if (!session?.user) {
       await logit("notes", {
-        level: "warn",
-        message: "Unauthorized Notes GET",
-        requestId: "REQ",
-      });
+              level: "warn",
+              message: "Unauthorized Notes GET",
+              requestId: "REQ",
+            }, { eventIndex }, {
+            requestId: ctx?.requestId ?? req?.id,
+            zulu: new Date().toISOString(),
+            local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+          });
 
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -42,18 +50,26 @@ export const GET = withLogging(async (req: Request) => {
     });
 
     await logit("notes", {
-      level: "info",
-      message: `Notes GET completed ${notes.length}`,
-      count: notes.length,
-    });
+          level: "info",
+          message: `Notes GET completed ${notes.length}`,
+          count: notes.length,
+        }, { eventIndex }, {
+          requestId: ctx?.requestId ?? req?.id,
+          zulu: new Date().toISOString(),
+          local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+        });
 
     return NextResponse.json({ notes });
   } catch (err: any) {
     await logit("notes", {
-      level: "error",
-      message: "Notes GET failed",
-      error: err.message,
-    });
+          level: "error",
+          message: "Notes GET failed",
+          error: err.message,
+        }, { eventIndex }, {
+          requestId: ctx?.requestId ?? req?.id,
+          zulu: new Date().toISOString(),
+          local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+        });
 
     return NextResponse.json(
       { error: "Failed to load notes" },
@@ -67,18 +83,26 @@ export const GET = withLogging(async (req: Request) => {
 // -------------------------
 export const POST = withLogging(async (req: Request) => {
   await logit("notes", {
-    level: "info",
-    message: "Notes POST started",
-  });
+      level: "info",
+      message: "Notes POST started",
+    }, { eventIndex }, {
+        requestId: ctx?.requestId ?? req?.id,
+        zulu: new Date().toISOString(),
+        local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+      });
 
   try {
     const session = await auth();
 
     if (!session?.user) {
       await logit("notes", {
-        level: "warn",
-        message: "Unauthorized Notes POST",
-      });
+              level: "warn",
+              message: "Unauthorized Notes POST",
+            }, { eventIndex }, {
+            requestId: ctx?.requestId ?? req?.id,
+            zulu: new Date().toISOString(),
+            local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+          });
 
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -103,19 +127,27 @@ export const POST = withLogging(async (req: Request) => {
     });
 
     await logit("notes", {
-      level: "info",
-      message: `Note created: ${note.title || "Untitled"} by ${email}`,
-      noteId: note.id,
-      title: note.title,
-      action: "created",
-      userEmail: email,
-    });
+          level: "info",
+          message: `Note created: ${note.title || "Untitled"} by ${email}`,
+          noteId: note.id,
+          title: note.title,
+          action: "created",
+          userEmail: email,
+        }, { eventIndex }, {
+          requestId: ctx?.requestId ?? req?.id,
+          zulu: new Date().toISOString(),
+          local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+        });
 
     await logit("notes", {
-      level: "info",
-      message: "Notes POST completed",
-      noteId: note.id,
-    });
+          level: "info",
+          message: "Notes POST completed",
+          noteId: note.id,
+        }, { eventIndex }, {
+          requestId: ctx?.requestId ?? req?.id,
+          zulu: new Date().toISOString(),
+          local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+        });
 
     return NextResponse.json({ note });
   } catch (err: any) {
@@ -208,29 +240,37 @@ export const PUT = withLogging(async (req: Request) => {
     }
 
     await logit("notes", {
-      level: "info",
-      message: actionMessage,
-      noteId: id,
-      title: originalNote?.title,
-      action: isArchived ? "archived" : "edited",
-      userEmail: email,
+          level: "info",
+          message: actionMessage,
+          noteId: id,
+          title: originalNote?.title,
+          action: isArchived ? "archived" : "edited",
+          userEmail: email,
 
-      changes: {
-        title: title !== originalNote?.title,
-        content: content !== originalNote?.content,
-        followUpAt: followUpAt !== originalNote?.followUpAt,
-        color: color !== originalNote?.color,
-        isArchived,
-      },
-    });
+          changes: {
+            title: title !== originalNote?.title,
+            content: content !== originalNote?.content,
+            followUpAt: followUpAt !== originalNote?.followUpAt,
+            color: color !== originalNote?.color,
+            isArchived,
+          },
+        }, { eventIndex }, {
+          requestId: ctx?.requestId ?? req?.id,
+          zulu: new Date().toISOString(),
+          local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+        });
 
     return NextResponse.json({ note: updatedNote });
   } catch (err: any) {
     await logit("notes", {
-      level: "error",
-      message: "Notes PUT failed",
-      error: err.message,
-    });
+          level: "error",
+          message: "Notes PUT failed",
+          error: err.message,
+        }, { eventIndex }, {
+          requestId: ctx?.requestId ?? req?.id,
+          zulu: new Date().toISOString(),
+          local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+        });
 
     return NextResponse.json(
       { error: "Failed to update note" },
@@ -278,21 +318,29 @@ export const DELETE = withLogging(async (req: Request) => {
     }
 
     await logit("notes", {
-      level: "info",
-      message: `Note deleted: ${noteToDelete?.title || "Untitled"} by ${email}`,
-      noteId: id,
-      title: noteToDelete?.title,
-      action: "deleted",
-      userEmail: email,
-    });
+          level: "info",
+          message: `Note deleted: ${noteToDelete?.title || "Untitled"} by ${email}`,
+          noteId: id,
+          title: noteToDelete?.title,
+          action: "deleted",
+          userEmail: email,
+        }, { eventIndex }, {
+          requestId: ctx?.requestId ?? req?.id,
+          zulu: new Date().toISOString(),
+          local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+        });
 
     return NextResponse.json({ success: true });
   } catch (err: any) {
     await logit("notes", {
-      level: "error",
-      message: "Notes DELETE failed",
-      error: err.message,
-    });
+          level: "error",
+          message: "Notes DELETE failed",
+          error: err.message,
+        }, { eventIndex }, {
+          requestId: ctx?.requestId ?? req?.id,
+          zulu: new Date().toISOString(),
+          local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+        });
 
     return NextResponse.json(
       { error: "Failed to delete note" },

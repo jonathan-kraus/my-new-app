@@ -14,20 +14,28 @@ export function SendWeatherEmailButton() {
       const data = await res.json();
 
       logit("jonathan", {
-        level: "info",
-        message: "weather_email_clicked",
-        data,
-      });
+                level: "info",
+                message: "weather_email_clicked",
+                data,
+              }, { eventIndex }, {
+              requestId: ctx?.requestId ?? req?.id,
+              zulu: new Date().toISOString(),
+              local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+            });
 
       toast.success("Weather email sent!");
     } catch (err) {
       toast.error("Failed to send weather email");
 
       logit("jonathan", {
-        level: "error",
-        message: "weather_email_error",
-        error: String(err),
-      });
+                level: "error",
+                message: "weather_email_error",
+                error: String(err),
+              }, { eventIndex }, {
+              requestId: ctx?.requestId ?? req?.id,
+              zulu: new Date().toISOString(),
+              local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+            });
     }
   }
 

@@ -18,16 +18,17 @@ export async function GET(req: NextRequest) {
   const start = Date.now();
   const ctx = await enrichContext(req);
 
-  await logit(
-    "ephemeris",
-    {
-      level: "info",
-      message: "astronomy.cron.started DB-tables first",
-      route: "cron",
-      rebuild: true,
-    },
-    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-  );
+  await logit("ephemeris", {
+        level: "info",
+        message: "astronomy.cron.started DB-tables first",
+        route: "cron",
+        rebuild: true,
+      }, { eventIndex }, {
+          requestId: ctx.requestId, route: ctx.page, userId: ctx.userId,
+          requestId: ctx?.requestId ?? req?.id,
+          zulu: new Date().toISOString(),
+          local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+        });
 
   await runDbTableStats({
     requestId: ctx.requestId,
@@ -35,30 +36,32 @@ export async function GET(req: NextRequest) {
     userId: ctx.userId,
   });
 
-  await logit(
-    "DbTable",
-    {
-      level: "info",
-      message: "astronomy.cron.dbtables.completed",
-      Db: "Db",
-      Table: "Table",
-    },
-    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-  );
+  await logit("DbTable", {
+        level: "info",
+        message: "astronomy.cron.dbtables.completed",
+        Db: "Db",
+        Table: "Table",
+      }, { eventIndex }, {
+          requestId: ctx.requestId, route: ctx.page, userId: ctx.userId,
+          requestId: ctx?.requestId ?? req?.id,
+          zulu: new Date().toISOString(),
+          local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+        });
 
   const locations = await db.location.findMany();
 
   for (const location of locations) {
-    await logit(
-      "ephemeris",
-      {
-        level: "info",
-        message: "astronomy.cron.location.started",
-        locationId: location.id,
-        name: location.name,
-      },
-      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-    );
+    await logit("ephemeris", {
+            level: "info",
+            message: "astronomy.cron.location.started",
+            locationId: location.id,
+            name: location.name,
+          }, { eventIndex }, {
+            requestId: ctx.requestId, route: ctx.page, userId: ctx.userId,
+            requestId: ctx?.requestId ?? req?.id,
+            zulu: new Date().toISOString(),
+            local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+          });
 
     const base = atLocalMidnight(new Date());
 
@@ -66,16 +69,17 @@ export async function GET(req: NextRequest) {
       const targetDate = addDays(base, i);
       const dateString = format(targetDate, "yyyy-MM-dd");
 
-      await logit(
-        "ephemeris",
-        {
-          level: "info",
-          message: "astronomy.cron.day.started",
-          locationId: location.id,
-          targetDate: dateString,
-        },
-        { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-      );
+      await logit("ephemeris", {
+                level: "info",
+                message: "astronomy.cron.day.started",
+                locationId: location.id,
+                targetDate: dateString,
+              }, { eventIndex }, {
+              requestId: ctx.requestId, route: ctx.page, userId: ctx.userId,
+              requestId: ctx?.requestId ?? req?.id,
+              zulu: new Date().toISOString(),
+              local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+            });
 
       // Build the full solar/lunar snapshot
       const snapshot = await buildAstronomySnapshot(location, targetDate);
@@ -98,31 +102,33 @@ export async function GET(req: NextRequest) {
         create: row,
       });
 
-      await logit(
-        "ephemeris",
-        {
-          level: "info",
-          message: "astronomy.cron.snapshot.saved",
-          locationId: location.id,
-          dateString,
-          snapshot: row,
-        },
-        { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-      );
+      await logit("ephemeris", {
+                level: "info",
+                message: "astronomy.cron.snapshot.saved",
+                locationId: location.id,
+                dateString,
+                snapshot: row,
+              }, { eventIndex }, {
+              requestId: ctx.requestId, route: ctx.page, userId: ctx.userId,
+              requestId: ctx?.requestId ?? req?.id,
+              zulu: new Date().toISOString(),
+              local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+            });
     }
   }
 
   const durationMs = Date.now() - start;
 
-  await logit(
-    "ephemeris",
-    {
-      level: "info",
-      message: "astronomy.cron.completed",
-      durationMs,
-    },
-    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-  );
+  await logit("ephemeris", {
+        level: "info",
+        message: "astronomy.cron.completed",
+        durationMs,
+      }, { eventIndex }, {
+          requestId: ctx.requestId, route: ctx.page, userId: ctx.userId,
+          requestId: ctx?.requestId ?? req?.id,
+          zulu: new Date().toISOString(),
+          local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+        });
 
   return NextResponse.json({ ok: true, durationMs });
 }

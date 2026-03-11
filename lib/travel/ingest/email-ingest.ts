@@ -48,21 +48,17 @@ export async function ingestTravelEmails() {
       const stat = fs.statSync(full);
       console.log("candidate=%s mtime=%s", full, stat.mtime.toISOString());
       logit("INGEST: candidate=%s mtime=%s", full, stat.mtime.toISOString());
-      logit(
-        "jonathan",
-        {
-          level: "info",
-          message: "Pick email: " + full,
-          full: full,
-          lastTwo: name.split("-").slice(-2).join("-") + ".eml",
-        },
-        {
-          file: "email-ingest.ts",
-          requestId: "N/A",
-          route: "N/A",
-          userId: undefined,
-        },
-      );
+      logit("jonathan", {
+                  level: "info",
+                  message: "Pick email: " + full,
+                  full: full,
+                  lastTwo: name.split("-").slice(-2).join("-") + ".eml",
+                }, { eventIndex }, {
+                file: "email-ingest.ts", requestId: "N/A", route: "N/A", userId: undefined,
+                requestId: ctx?.requestId ?? req?.id,
+                zulu: new Date().toISOString(),
+                local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+              });
       return { name, full, mtime: stat.mtime };
     })
     .sort((a, b) => b.mtime.getTime() - a.mtime.getTime());

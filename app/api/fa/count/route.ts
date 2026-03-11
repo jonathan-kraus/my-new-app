@@ -20,22 +20,20 @@ export async function GET(req: Request) {
     url: req.url,
   });
 
-  await logit(
-    "fa",
-    {
-      level: "info",
-      message: "Missing lat/long parameters",
-      minLat: minLat,
-      minLon: minLon,
-      maxLat: maxLat,
-      maxLon: maxLon,
-      url: req.url,
-    },
-    {
-      requestId: crypto.randomUUID(),
-      userId: undefined,
-    },
-  );
+  await logit("fa", {
+        level: "info",
+        message: "Missing lat/long parameters",
+        minLat: minLat,
+        minLon: minLon,
+        maxLat: maxLat,
+        maxLon: maxLon,
+        url: req.url,
+      }, { eventIndex }, {
+          requestId: crypto.randomUUID(), userId: undefined,
+          requestId: ctx?.requestId ?? req?.id,
+          zulu: new Date().toISOString(),
+          local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+        });
 
   if (!minLat || !minLon || !maxLat || !maxLon) {
     return NextResponse.json(

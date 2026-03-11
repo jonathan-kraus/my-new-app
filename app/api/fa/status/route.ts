@@ -10,15 +10,16 @@ export async function GET(req: Request) {
   const ident = await getConfig("flight-ID", "flight-ID");
   console.log("FINAL IDENT:", ident);
 
-  await logit(
-    "jonathan",
-    {
-      level: "info",
-      message: "API FA status route accessed",
-      ident: ident,
-    },
-    { requestId: "r", route: "p", userId: "u" },
-  );
+  await logit("jonathan", {
+        level: "info",
+        message: "API FA status route accessed",
+        ident: ident,
+      }, { eventIndex }, {
+          requestId: "r", route: "p", userId: "u",
+          requestId: ctx?.requestId ?? req?.id,
+          zulu: new Date().toISOString(),
+          local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+        });
   if (!ident) {
     return NextResponse.json({ error: "Missing ident" }, { status: 400 });
   }

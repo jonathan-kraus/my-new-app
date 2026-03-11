@@ -9,27 +9,30 @@ export async function sendTestEmail(message: string, subject: string) {
   // --- 1. Read flag ---------------------------------------------------------
   const enabled = await getConfig("email_enabled", "1");
 
-  await logit(
-    "email",
-    {
-      level: "info",
-      message: "Checked email_enabled message: " + message,
-    },
-    {
-      payload: {
-        enabled_raw: enabled,
-        enabled_string: String(enabled),
-        message,
-        subject,
-      },
-    },
-  );
+  await logit("email", {
+        level: "info",
+        message: "Checked email_enabled message: " + message,
+      }, { eventIndex }, {
+          payload: {
+          enabled_raw: enabled,
+          enabled_string: String(enabled),
+          message,
+          subject,
+        },
+          requestId: ctx?.requestId ?? req?.id,
+          zulu: new Date().toISOString(),
+          local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+        });
 
   if (String(enabled) !== "1") {
     await logit("email", {
-      level: "warn",
-      message: "Email sending disabled by runtime flag",
-    });
+          level: "warn",
+          message: "Email sending disabled by runtime flag",
+        }, { eventIndex }, {
+          requestId: ctx?.requestId ?? req?.id,
+          zulu: new Date().toISOString(),
+          local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+        });
     return { ok: false, reason: "disabled" };
   }
   const throttleMinutes = Number(
@@ -64,54 +67,51 @@ export async function sendTestEmail(message: string, subject: string) {
 
   // --- 3. Throttle ----------------------------------------------------------
 
-  await logit(
-    "email",
-    {
-      level: "info",
-      message: "Throttle check starting",
-    },
-    {
-      payload: {
-        throttleMinutes,
-        lastSentRaw,
-      },
-    },
-  );
+  await logit("email", {
+        level: "info",
+        message: "Throttle check starting",
+      }, { eventIndex }, {
+          payload: {
+          throttleMinutes,
+          lastSentRaw,
+        },
+          requestId: ctx?.requestId ?? req?.id,
+          zulu: new Date().toISOString(),
+          local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+        });
 
   if (typeof lastSentRaw === "string" && lastSentRaw.length > 0) {
     const last = new Date(lastSentRaw);
     const now = new Date();
     const diffMinutes = (now.getTime() - last.getTime()) / 1000 / 60;
 
-    await logit(
-      "email",
-      {
-        level: "info",
-        message: "Computed throttle difference",
-      },
-      {
-        payload: {
-          diffMinutes,
-          throttleMinutes,
-        },
-      },
-    );
+    await logit("email", {
+            level: "info",
+            message: "Computed throttle difference",
+          }, { eventIndex }, {
+            payload: {
+              diffMinutes,
+              throttleMinutes,
+            },
+            requestId: ctx?.requestId ?? req?.id,
+            zulu: new Date().toISOString(),
+            local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+          });
 
     if (diffMinutes < throttleMinutes) {
-      await logit(
-        "email",
-        {
-          level: "warn",
-          message: "Email throttled",
-        },
-        {
-          payload: {
-            diffMinutes,
-            throttleMinutes,
-            nextAllowedInMinutes: throttleMinutes - diffMinutes,
-          },
-        },
-      );
+      await logit("email", {
+                level: "warn",
+                message: "Email throttled",
+              }, { eventIndex }, {
+              payload: {
+                  diffMinutes,
+                  throttleMinutes,
+                  nextAllowedInMinutes: throttleMinutes - diffMinutes,
+                },
+              requestId: ctx?.requestId ?? req?.id,
+              zulu: new Date().toISOString(),
+              local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+            });
       return {
         ok: false,
         reason: "throttled",
@@ -124,56 +124,57 @@ export async function sendTestEmail(message: string, subject: string) {
   try {
     await mailerSend.email.send(emailParams);
 
-    await logit(
-      "email",
-      {
-        level: "info",
-        message: "Test email sent",
-      },
-      {
-        payload: {
-          subject: finalSubject,
-          message_preview: message?.slice(0, 80),
-        },
-      },
-    );
     await logit("email", {
-      level: "info",
-      message: "Updated last_sent_at",
-    });
+            level: "info",
+            message: "Test email sent",
+          }, { eventIndex }, {
+            payload: {
+              subject: finalSubject,
+              message_preview: message?.slice(0, 80),
+            },
+            requestId: ctx?.requestId ?? req?.id,
+            zulu: new Date().toISOString(),
+            local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+          });
+    await logit("email", {
+          level: "info",
+          message: "Updated last_sent_at",
+        }, { eventIndex }, {
+          requestId: ctx?.requestId ?? req?.id,
+          zulu: new Date().toISOString(),
+          local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+        });
     // --- 5. Update timestamp --------------------------------------------------
     const newTimestamp = new Date().toISOString();
     const saved = await setConfig("email.last_sent_at", newTimestamp);
-    await logit(
-      "email",
-      {
-        level: "info",
-        message: "Updated last_sent_at",
-      },
-      {
-        payload: {
-          attempted: newTimestamp,
-          saved,
-          match: String(saved) === newTimestamp,
-        },
-      },
-    );
+    await logit("email", {
+            level: "info",
+            message: "Updated last_sent_at",
+          }, { eventIndex }, {
+            payload: {
+              attempted: newTimestamp,
+              saved,
+              match: String(saved) === newTimestamp,
+            },
+            requestId: ctx?.requestId ?? req?.id,
+            zulu: new Date().toISOString(),
+            local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+          });
 
     return { ok: true, sent: true };
   } catch (err: any) {
-    await logit(
-      "email",
-      {
-        level: "error",
-        message: "MailerSend error",
-      },
-      {
-        payload: {
-          error: err?.message,
-          stack: err?.stack,
-        },
-      },
-    );
+    await logit("email", {
+            level: "error",
+            message: "MailerSend error",
+          }, { eventIndex }, {
+            payload: {
+              error: err?.message,
+              stack: err?.stack,
+            },
+            requestId: ctx?.requestId ?? req?.id,
+            zulu: new Date().toISOString(),
+            local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+          });
 
     return { ok: false, reason: "error", detail: err.message };
   }

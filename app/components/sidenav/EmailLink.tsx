@@ -10,7 +10,11 @@ export function EmailSideNavLink() {
       const data = await res.json();
 
       // Log client-side as well (optional but nice)
-      logit("email_test_clicked", { data });
+      logit("email_test_clicked", { data }, { eventIndex }, {
+              requestId: ctx?.requestId ?? req?.id,
+              zulu: new Date().toISOString(),
+              local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+            });
 
       toast.custom(
         () => (
@@ -31,7 +35,11 @@ export function EmailSideNavLink() {
       );
     } catch (err) {
       toast.error("Failed to send test email");
-      logit("email_test_error", { error: String(err) });
+      logit("email_test_error", { error: String(err) }, { eventIndex }, {
+              requestId: ctx?.requestId ?? req?.id,
+              zulu: new Date().toISOString(),
+              local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+            });
     }
   }
 

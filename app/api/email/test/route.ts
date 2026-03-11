@@ -9,11 +9,15 @@ export const POST = withLogging(async () => {
   const result = await sendTestEmail(test_msg1, test_subject);
 
   await logit("jonathan", {
-    level: "info",
-    message: `Sent test email with message "${test_msg1}". Result: ${JSON.stringify(result, null, 2)}`,
-    result: result,
-    b: "b",
-  });
+      level: "info",
+      message: `Sent test email with message "${test_msg1}". Result: ${JSON.stringify(result, null, 2)}`,
+      result: result,
+      b: "b",
+    }, { eventIndex }, {
+        requestId: ctx?.requestId ?? req?.id,
+        zulu: new Date().toISOString(),
+        local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+      });
 
   return NextResponse.json(result);
 });

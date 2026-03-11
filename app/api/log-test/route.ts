@@ -14,20 +14,17 @@ export async function GET(req: NextRequest) {
     const rows = legacy?.result?.matches ?? [];
 
     const ctx = await enrichContext(req);
-    await logit(
-      "jonathan",
-      {
-        level: "info",
-        message: "GitHub test route completed",
-        count: rows.length,
-        rows: rows,
-      },
-      {
-        requestId: ctx.requestId,
-        route: ctx.page,
-        userId: ctx.userId,
-      },
-    );
+    await logit("jonathan", {
+            level: "info",
+            message: "GitHub test route completed",
+            count: rows.length,
+            rows: rows,
+          }, { eventIndex }, {
+            requestId: ctx.requestId, route: ctx.page, userId: ctx.userId,
+            requestId: ctx?.requestId ?? req?.id,
+            zulu: new Date().toISOString(),
+            local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+          });
     return NextResponse.json({
       ok: true,
       count: rows.length,

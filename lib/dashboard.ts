@@ -8,10 +8,14 @@ import { logit } from "@/lib/log/logit";
 
 export function logDashboardAstronomy(snapshot: unknown) {
   logit("dashboard", {
-    level: "info",
-    message: "Dashboard astronomy snapshot",
-    data: snapshot,
-  });
+        level: "info",
+        message: "Dashboard astronomy snapshot",
+        data: snapshot,
+      }, { eventIndex }, {
+          requestId: ctx?.requestId ?? req?.id,
+          zulu: new Date().toISOString(),
+          local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+        });
 }
 
 export interface VercelDeploymentsResponse {

@@ -80,10 +80,14 @@ export async function writeEphemerisDebugEvent(data: DebugEventInput) {
     return row;
   } catch (err) {
     logit(domain, {
-      level: "error",
-      message: "writeEphemerisDebugEvent failed",
-      data: { error: String(err) },
-    });
+            level: "error",
+            message: "writeEphemerisDebugEvent failed",
+            data: { error: String(err) },
+          }, { eventIndex }, {
+            requestId: ctx?.requestId ?? req?.id,
+            zulu: new Date().toISOString(),
+            local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+          });
     throw err;
   }
 }

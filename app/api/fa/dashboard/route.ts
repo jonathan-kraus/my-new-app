@@ -13,19 +13,16 @@ type Flight = {
 };
 
 export async function GET() {
-  await logit(
-    "jonathan",
-    {
-      level: "info",
-      message: "Loading FA dashboard route",
-      time: format(new Date(), "yyyy-MM-dd HH:mm:ss"),
-    },
-    {
-      requestId: crypto.randomUUID(),
-      route: "app/api/fa/dashboard/route.ts",
-      userId: "JK",
-    },
-  );
+  await logit("jonathan", {
+        level: "info",
+        message: "Loading FA dashboard route",
+        time: format(new Date(), "yyyy-MM-dd HH:mm:ss"),
+      }, { eventIndex }, {
+          requestId: crypto.randomUUID(), route: "app/api/fa/dashboard/route.ts", userId: "JK",
+          requestId: ctx?.requestId ?? req?.id,
+          zulu: new Date().toISOString(),
+          local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+        });
 
   // 1. Fetch flight count
   const minLat = await getConfig("minLat", "40.0893");
@@ -46,17 +43,21 @@ export async function GET() {
 
   const countData = await countRes.json();
   await logit("jonathan", {
-    level: "info",
-    message: "Completed FA dashboard route",
-    requestId: crypto.randomUUID(),
-    countData: countData,
-    minLat: minLat,
-    minLon: minLon,
-    maxLat: maxLat,
-    maxLon: maxLon,
-    route: "app/api/fa/dashboard/route.ts",
-    userId: "JK",
-  });
+      level: "info",
+      message: "Completed FA dashboard route",
+      requestId: crypto.randomUUID(),
+      countData: countData,
+      minLat: minLat,
+      minLon: minLon,
+      maxLat: maxLat,
+      maxLon: maxLon,
+      route: "app/api/fa/dashboard/route.ts",
+      userId: "JK",
+    }, { eventIndex }, {
+        requestId: ctx?.requestId ?? req?.id,
+        zulu: new Date().toISOString(),
+        local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+      });
   // 2. Fetch AA877 status
   const ident = await getConfig("flight-ID", "flight-ID");
   const statusRes = await fetch(

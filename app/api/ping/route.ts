@@ -10,18 +10,19 @@ export async function GET(req: NextRequest) {
   const h = await headers(); // ✅ await the Promise
   const session = await auth();
 
-  await logit(
-    "ephemeris",
-    {
-      level: "info",
-      message: "Called Ping",
-      sessionUser: session?.user?.name ?? null,
-      sessionEmail: session?.user?.email ?? null,
-      userId: session?.user?.id ?? null,
-      session: session ?? null,
-    },
-    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
-  );
+  await logit("ephemeris", {
+        level: "info",
+        message: "Called Ping",
+        sessionUser: session?.user?.name ?? null,
+        sessionEmail: session?.user?.email ?? null,
+        userId: session?.user?.id ?? null,
+        session: session ?? null,
+      }, { eventIndex }, {
+          requestId: ctx.requestId, route: ctx.page, userId: ctx.userId,
+          requestId: ctx?.requestId ?? req?.id,
+          zulu: new Date().toISOString(),
+          local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+        });
   return NextResponse.json({ ok: true, time: Date.now() });
 }
 

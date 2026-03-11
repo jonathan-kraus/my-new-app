@@ -1,0 +1,407 @@
+[
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/proxy.ts",
+    "before": "logit(\n    \"middleware\",\n    {\n      level: \"info\",\n      message: \"Normalized path segments pathname: \" + pathname,\n      last,\n      lastTwo,\n    },\n    {\n      requestId: getRequestId(req.url),\n      route: pathname,\n      userId: undefined,\n    },\n  )",
+    "after": "logit(\"middleware\", {\n        level: \"info\",\n        message: \"Normalized path segments pathname: \" + pathname,\n        last,\n        lastTwo,\n      }, { eventIndex }, {\n          requestId: getRequestId(req.url), route: pathname, userId: undefined,\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/proxy.ts",
+    "before": "logit(\n    \"middleware\",\n    {\n      level: \"info\",\n      message: \"REQUEST END \" + pathname,\n      page: pathname,\n      file: \"proxy.ts\",\n      durationMs,\n      method: req.method,\n      url: req.url,\n      status: res.status,\n      requestId: getRequestId(req.url),\n      eventIndex: nextEventIndex(req.url),\n      last,\n      lastTwo,\n    },\n    {\n      requestId: getRequestId(req.url),\n      route: pathname,\n      userId: undefined,\n    },\n  )",
+    "after": "logit(\"middleware\", {\n        level: \"info\",\n        message: \"REQUEST END \" + pathname,\n        page: pathname,\n        file: \"proxy.ts\",\n        durationMs,\n        method: req.method,\n        url: req.url,\n        status: res.status,\n        requestId: getRequestId(req.url),\n        eventIndex: nextEventIndex(req.url),\n        last,\n        lastTwo,\n      }, { eventIndex }, {\n          requestId: getRequestId(req.url), route: pathname, userId: undefined,\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/dashboard.ts",
+    "before": "logit(\"dashboard\", {\n    level: \"info\",\n    message: \"Dashboard astronomy snapshot\",\n    data: snapshot,\n  })",
+    "after": "logit(\"dashboard\", {\n        level: \"info\",\n        message: \"Dashboard astronomy snapshot\",\n        data: snapshot,\n      }, { eventIndex }, {\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/notes/useNotes.ts",
+    "before": "logit(\n      \"notes\",\n      {\n        level: \"info\",\n        message: \"Notes page mounted\",\n        loc: \"/notes\",\n      },\n      {\n        requestId: ctx.requestId ?? undefined,\n        route: ctx.page ?? undefined,\n        userId: ctx.userId ?? undefined,\n      },\n    )",
+    "after": "logit(\"notes\", {\n              level: \"info\",\n              message: \"Notes page mounted\",\n              loc: \"/notes\",\n            }, { eventIndex }, {\n              requestId: ctx.requestId ?? undefined, route: ctx.page ?? undefined, userId: ctx.userId ?? undefined,\n              requestId: ctx?.requestId ?? req?.id,\n              zulu: new Date().toISOString(),\n              local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n            })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/notes/useNotes.ts",
+    "before": "logit(\n          \"notes\",\n          {\n            level: \"info\",\n            message: \"Notes page mounted\",\n            loc: \"/notes\",\n          },\n          {\n            requestId: ctx.requestId ?? undefined,\n            route: ctx.page ?? undefined,\n            userId: ctx.userId ?? undefined,\n          },\n        )",
+    "after": "logit(\"notes\", {\n                      level: \"info\",\n                      message: \"Notes page mounted\",\n                      loc: \"/notes\",\n                    }, { eventIndex }, {\n                  requestId: ctx.requestId ?? undefined, route: ctx.page ?? undefined, userId: ctx.userId ?? undefined,\n                  requestId: ctx?.requestId ?? req?.id,\n                  zulu: new Date().toISOString(),\n                  local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n                })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/cron/runDbTableStats.ts",
+    "before": "logit(\"db\", { level: \"info\", message: \"dbTables.cron.started\" }, ctx)",
+    "after": "logit(\"db\", { level: \"info\", message: \"dbTables.cron.started\" }, { eventIndex }, {\n        requestId: ctx?.requestId ?? req?.id,\n        zulu: new Date().toISOString(),\n        local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n      })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/cron/runDbTableStats.ts",
+    "before": "logit(\n    \"db\",\n    {\n      level: \"info\",\n      message: \"dbTables.cron.completed\",\n      tablesProcessed,\n      durationMs: Date.now() - start,\n    },\n    ctx,\n  )",
+    "after": "logit(\"db\", {\n        level: \"info\",\n        message: \"dbTables.cron.completed\",\n        tablesProcessed,\n        durationMs: Date.now() - start,\n      }, { eventIndex }, {\n        requestId: ctx?.requestId ?? req?.id,\n        zulu: new Date().toISOString(),\n        local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n      })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/ephemeris/writeEphemerisDebugEvent.ts",
+    "before": "logit(domain, {\n      level: \"error\",\n      message: \"writeEphemerisDebugEvent failed\",\n      data: { error: String(err) },\n    })",
+    "after": "logit(domain, {\n            level: \"error\",\n            message: \"writeEphemerisDebugEvent failed\",\n            data: { error: String(err) },\n          }, { eventIndex }, {\n            requestId: ctx?.requestId ?? req?.id,\n            zulu: new Date().toISOString(),\n            local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n          })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/logging/withLogging.ts",
+    "before": "logit(\"response\", {\n        requestId,\n        method: req.method,\n        path: url.pathname,\n        status: res.status,\n        duration: Date.now() - start,\n        message: `${req.method} ${url.pathname} status=${res.status}`,\n      })",
+    "after": "logit(\"response\", {\n                requestId,\n                method: req.method,\n                path: url.pathname,\n                status: res.status,\n                duration: Date.now() - start,\n                message: `${req.method} ${url.pathname} status=${res.status}`,\n              }, { eventIndex }, {\n              requestId: ctx?.requestId ?? req?.id,\n              zulu: new Date().toISOString(),\n              local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n            })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/logging/withLogging.ts",
+    "before": "logit(\"response_error\", {\n        requestId,\n        method: req.method,\n        path: url.pathname,\n        status: 500,\n        duration: Date.now() - start,\n        error: err?.message ?? \"Unknown error\",\n        message: `${req.method} ${url.pathname} status=500 error=${err?.message ?? \"Unknown error\"}`,\n      })",
+    "after": "logit(\"response_error\", {\n                requestId,\n                method: req.method,\n                path: url.pathname,\n                status: 500,\n                duration: Date.now() - start,\n                error: err?.message ?? \"Unknown error\",\n                message: `${req.method} ${url.pathname} status=500 error=${err?.message ?? \"Unknown error\"}`,\n              }, { eventIndex }, {\n              requestId: ctx?.requestId ?? req?.id,\n              zulu: new Date().toISOString(),\n              local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n            })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/admin/db/page.tsx",
+    "before": "logit(\n    \"jonathan\",\n    {\n      level: \"info\",\n      message: \"Fetched DB overview and history\",\n    },\n    {\n      page: \"/admin/db\",\n      file: \"page.tsx\",\n      method: \"GET\",\n      url: \"/admin/db\",\n      requestId: crypto.randomUUID(),\n      tablesCount: tables.length,\n      historyCount: history.length,\n      userId: \"JK\",\n    },\n  )",
+    "after": "logit(\"jonathan\", {\n        level: \"info\",\n        message: \"Fetched DB overview and history\",\n      }, { eventIndex }, {\n          page: \"/admin/db\", file: \"page.tsx\", method: \"GET\", url: \"/admin/db\", requestId: crypto.randomUUID(), tablesCount: tables.length, historyCount: history.length, userId: \"JK\",\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/github-webhook/route.ts",
+    "before": "logit(\n    \"github\",\n    {\n      level: \"info\",\n      message: \"GitHub webhook received -- new post code\",\n      event,\n    },\n    ctx,\n  )",
+    "after": "logit(\"github\", {\n        level: \"info\",\n        message: \"GitHub webhook received -- new post code\",\n        event,\n      }, { eventIndex }, {\n        requestId: ctx?.requestId ?? req?.id,\n        zulu: new Date().toISOString(),\n        local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n      })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/log-test/route.ts",
+    "before": "logit(\n      \"jonathan\",\n      {\n        level: \"info\",\n        message: \"GitHub test route completed\",\n        count: rows.length,\n        rows: rows,\n      },\n      {\n        requestId: ctx.requestId,\n        route: ctx.page,\n        userId: ctx.userId,\n      },\n    )",
+    "after": "logit(\"jonathan\", {\n            level: \"info\",\n            message: \"GitHub test route completed\",\n            count: rows.length,\n            rows: rows,\n          }, { eventIndex }, {\n            requestId: ctx.requestId, route: ctx.page, userId: ctx.userId,\n            requestId: ctx?.requestId ?? req?.id,\n            zulu: new Date().toISOString(),\n            local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n          })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/notes/route.ts",
+    "before": "logit(\"notes\", {\n    level: \"info\",\n    message: \"Notes GET started\",\n    requestId: \"REQ\",\n  })",
+    "after": "logit(\"notes\", {\n      level: \"info\",\n      message: \"Notes GET started\",\n      requestId: \"REQ\",\n    }, { eventIndex }, {\n        requestId: ctx?.requestId ?? req?.id,\n        zulu: new Date().toISOString(),\n        local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n      })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/notes/route.ts",
+    "before": "logit(\"notes\", {\n        level: \"warn\",\n        message: \"Unauthorized Notes GET\",\n        requestId: \"REQ\",\n      })",
+    "after": "logit(\"notes\", {\n              level: \"warn\",\n              message: \"Unauthorized Notes GET\",\n              requestId: \"REQ\",\n            }, { eventIndex }, {\n            requestId: ctx?.requestId ?? req?.id,\n            zulu: new Date().toISOString(),\n            local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n          })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/notes/route.ts",
+    "before": "logit(\"notes\", {\n      level: \"info\",\n      message: `Notes GET completed ${notes.length}`,\n      count: notes.length,\n    })",
+    "after": "logit(\"notes\", {\n          level: \"info\",\n          message: `Notes GET completed ${notes.length}`,\n          count: notes.length,\n        }, { eventIndex }, {\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/notes/route.ts",
+    "before": "logit(\"notes\", {\n      level: \"error\",\n      message: \"Notes GET failed\",\n      error: err.message,\n    })",
+    "after": "logit(\"notes\", {\n          level: \"error\",\n          message: \"Notes GET failed\",\n          error: err.message,\n        }, { eventIndex }, {\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/notes/route.ts",
+    "before": "logit(\"notes\", {\n    level: \"info\",\n    message: \"Notes POST started\",\n  })",
+    "after": "logit(\"notes\", {\n      level: \"info\",\n      message: \"Notes POST started\",\n    }, { eventIndex }, {\n        requestId: ctx?.requestId ?? req?.id,\n        zulu: new Date().toISOString(),\n        local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n      })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/notes/route.ts",
+    "before": "logit(\"notes\", {\n        level: \"warn\",\n        message: \"Unauthorized Notes POST\",\n      })",
+    "after": "logit(\"notes\", {\n              level: \"warn\",\n              message: \"Unauthorized Notes POST\",\n            }, { eventIndex }, {\n            requestId: ctx?.requestId ?? req?.id,\n            zulu: new Date().toISOString(),\n            local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n          })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/notes/route.ts",
+    "before": "logit(\"notes\", {\n      level: \"info\",\n      message: `Note created: ${note.title || \"Untitled\"} by ${email}`,\n      noteId: note.id,\n      title: note.title,\n      action: \"created\",\n      userEmail: email,\n    })",
+    "after": "logit(\"notes\", {\n          level: \"info\",\n          message: `Note created: ${note.title || \"Untitled\"} by ${email}`,\n          noteId: note.id,\n          title: note.title,\n          action: \"created\",\n          userEmail: email,\n        }, { eventIndex }, {\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/notes/route.ts",
+    "before": "logit(\"notes\", {\n      level: \"info\",\n      message: \"Notes POST completed\",\n      noteId: note.id,\n    })",
+    "after": "logit(\"notes\", {\n          level: \"info\",\n          message: \"Notes POST completed\",\n          noteId: note.id,\n        }, { eventIndex }, {\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/notes/route.ts",
+    "before": "logit(\"notes\", {\n      level: \"info\",\n      message: actionMessage,\n      noteId: id,\n      title: originalNote?.title,\n      action: isArchived ? \"archived\" : \"edited\",\n      userEmail: email,\n\n      changes: {\n        title: title !== originalNote?.title,\n        content: content !== originalNote?.content,\n        followUpAt: followUpAt !== originalNote?.followUpAt,\n        color: color !== originalNote?.color,\n        isArchived,\n      },\n    })",
+    "after": "logit(\"notes\", {\n          level: \"info\",\n          message: actionMessage,\n          noteId: id,\n          title: originalNote?.title,\n          action: isArchived ? \"archived\" : \"edited\",\n          userEmail: email,\n\n          changes: {\n            title: title !== originalNote?.title,\n            content: content !== originalNote?.content,\n            followUpAt: followUpAt !== originalNote?.followUpAt,\n            color: color !== originalNote?.color,\n            isArchived,\n          },\n        }, { eventIndex }, {\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/notes/route.ts",
+    "before": "logit(\"notes\", {\n      level: \"error\",\n      message: \"Notes PUT failed\",\n      error: err.message,\n    })",
+    "after": "logit(\"notes\", {\n          level: \"error\",\n          message: \"Notes PUT failed\",\n          error: err.message,\n        }, { eventIndex }, {\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/notes/route.ts",
+    "before": "logit(\"notes\", {\n      level: \"info\",\n      message: `Note deleted: ${noteToDelete?.title || \"Untitled\"} by ${email}`,\n      noteId: id,\n      title: noteToDelete?.title,\n      action: \"deleted\",\n      userEmail: email,\n    })",
+    "after": "logit(\"notes\", {\n          level: \"info\",\n          message: `Note deleted: ${noteToDelete?.title || \"Untitled\"} by ${email}`,\n          noteId: id,\n          title: noteToDelete?.title,\n          action: \"deleted\",\n          userEmail: email,\n        }, { eventIndex }, {\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/notes/route.ts",
+    "before": "logit(\"notes\", {\n      level: \"error\",\n      message: \"Notes DELETE failed\",\n      error: err.message,\n    })",
+    "after": "logit(\"notes\", {\n          level: \"error\",\n          message: \"Notes DELETE failed\",\n          error: err.message,\n        }, { eventIndex }, {\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/ping/route.ts",
+    "before": "logit(\n    \"ephemeris\",\n    {\n      level: \"info\",\n      message: \"Called Ping\",\n      sessionUser: session?.user?.name ?? null,\n      sessionEmail: session?.user?.email ?? null,\n      userId: session?.user?.id ?? null,\n      session: session ?? null,\n    },\n    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },\n  )",
+    "after": "logit(\"ephemeris\", {\n        level: \"info\",\n        message: \"Called Ping\",\n        sessionUser: session?.user?.name ?? null,\n        sessionEmail: session?.user?.email ?? null,\n        userId: session?.user?.id ?? null,\n        session: session ?? null,\n      }, { eventIndex }, {\n          requestId: ctx.requestId, route: ctx.page, userId: ctx.userId,\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/test-account/route.ts",
+    "before": "logit(\"test_account_triggered\", {\n    message: \"Intentional 500 test route hit -- returning okay now\",\n    route: \"/api/test-account\",\n  })",
+    "after": "logit(\"test_account_triggered\", {\n      message: \"Intentional 500 test route hit -- returning okay now\",\n      route: \"/api/test-account\",\n    }, { eventIndex }, {\n        requestId: ctx?.requestId ?? req?.id,\n        zulu: new Date().toISOString(),\n        local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n      })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/weather/route.ts",
+    "before": "logit(\"weather\", {\n      level: \"info\",\n      message: `Using cached current weather data`,\n      locationId,\n      currentAge,\n    })",
+    "after": "logit(\"weather\", {\n          level: \"info\",\n          message: `Using cached current weather data`,\n          locationId,\n          currentAge,\n        }, { eventIndex }, {\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/components/sidenav/EmailLink.tsx",
+    "before": "logit(\"email_test_clicked\", { data })",
+    "after": "logit(\"email_test_clicked\", { data }, { eventIndex }, {\n              requestId: ctx?.requestId ?? req?.id,\n              zulu: new Date().toISOString(),\n              local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n            })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/components/sidenav/EmailLink.tsx",
+    "before": "logit(\"email_test_error\", { error: String(err) })",
+    "after": "logit(\"email_test_error\", { error: String(err) }, { eventIndex }, {\n              requestId: ctx?.requestId ?? req?.id,\n              zulu: new Date().toISOString(),\n              local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n            })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/components/travel/SendWeatherEmailButton.tsx",
+    "before": "logit(\"jonathan\", {\n        level: \"info\",\n        message: \"weather_email_clicked\",\n        data,\n      })",
+    "after": "logit(\"jonathan\", {\n                level: \"info\",\n                message: \"weather_email_clicked\",\n                data,\n              }, { eventIndex }, {\n              requestId: ctx?.requestId ?? req?.id,\n              zulu: new Date().toISOString(),\n              local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n            })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/components/travel/SendWeatherEmailButton.tsx",
+    "before": "logit(\"jonathan\", {\n        level: \"error\",\n        message: \"weather_email_error\",\n        error: String(err),\n      })",
+    "after": "logit(\"jonathan\", {\n                level: \"error\",\n                message: \"weather_email_error\",\n                error: String(err),\n              }, { eventIndex }, {\n              requestId: ctx?.requestId ?? req?.id,\n              zulu: new Date().toISOString(),\n              local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n            })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/ephemeris/utils/combineDateTime.ts",
+    "before": "logit(domain, {\n      level: \"debug\",\n      message: \"combineDateTime called\",\n      data: { date: date.toString(), timeString },\n    })",
+    "after": "logit(domain, {\n            level: \"debug\",\n            message: \"combineDateTime called\",\n            data: { date: date.toString(), timeString },\n          }, { eventIndex }, {\n            requestId: ctx?.requestId ?? req?.id,\n            zulu: new Date().toISOString(),\n            local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n          })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/ephemeris/utils/combineDateTime.ts",
+    "before": "logit(domain, {\n      level: \"error\",\n      message: \"UTC timestamp detected in combineDateTime\",\n      data: { timeString },\n    })",
+    "after": "logit(domain, {\n            level: \"error\",\n            message: \"UTC timestamp detected in combineDateTime\",\n            data: { timeString },\n          }, { eventIndex }, {\n            requestId: ctx?.requestId ?? req?.id,\n            zulu: new Date().toISOString(),\n            local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n          })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/ephemeris/utils/combineDateTime.ts",
+    "before": "logit(domain, {\n      level: \"error\",\n      message: \"Time string missing timezone offset\",\n      data: { timeString },\n    })",
+    "after": "logit(domain, {\n            level: \"error\",\n            message: \"Time string missing timezone offset\",\n            data: { timeString },\n          }, { eventIndex }, {\n            requestId: ctx?.requestId ?? req?.id,\n            zulu: new Date().toISOString(),\n            local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n          })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/ephemeris/utils/combineDateTime.ts",
+    "before": "logit(domain, {\n      level: \"debug\",\n      message: \"combineDateTime produced final timestamp\",\n      data: { final },\n    })",
+    "after": "logit(domain, {\n            level: \"debug\",\n            message: \"combineDateTime produced final timestamp\",\n            data: { final },\n          }, { eventIndex }, {\n            requestId: ctx?.requestId ?? req?.id,\n            zulu: new Date().toISOString(),\n            local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n          })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/log/__tests__/logit.test.ts",
+    "before": "logit(\"test\", { message: \"\" })",
+    "after": "logit(\"test\", { message: \"\" }, { eventIndex }, {\n        requestId: ctx?.requestId ?? req?.id,\n        zulu: new Date().toISOString(),\n        local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n      })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/server/email/sendTestEmail.ts",
+    "before": "logit(\n    \"email\",\n    {\n      level: \"info\",\n      message: \"Checked email_enabled message: \" + message,\n    },\n    {\n      payload: {\n        enabled_raw: enabled,\n        enabled_string: String(enabled),\n        message,\n        subject,\n      },\n    },\n  )",
+    "after": "logit(\"email\", {\n        level: \"info\",\n        message: \"Checked email_enabled message: \" + message,\n      }, { eventIndex }, {\n          payload: {\n          enabled_raw: enabled,\n          enabled_string: String(enabled),\n          message,\n          subject,\n        },\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/server/email/sendTestEmail.ts",
+    "before": "logit(\"email\", {\n      level: \"warn\",\n      message: \"Email sending disabled by runtime flag\",\n    })",
+    "after": "logit(\"email\", {\n          level: \"warn\",\n          message: \"Email sending disabled by runtime flag\",\n        }, { eventIndex }, {\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/server/email/sendTestEmail.ts",
+    "before": "logit(\n    \"email\",\n    {\n      level: \"info\",\n      message: \"Throttle check starting\",\n    },\n    {\n      payload: {\n        throttleMinutes,\n        lastSentRaw,\n      },\n    },\n  )",
+    "after": "logit(\"email\", {\n        level: \"info\",\n        message: \"Throttle check starting\",\n      }, { eventIndex }, {\n          payload: {\n          throttleMinutes,\n          lastSentRaw,\n        },\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/server/email/sendTestEmail.ts",
+    "before": "logit(\n      \"email\",\n      {\n        level: \"info\",\n        message: \"Computed throttle difference\",\n      },\n      {\n        payload: {\n          diffMinutes,\n          throttleMinutes,\n        },\n      },\n    )",
+    "after": "logit(\"email\", {\n            level: \"info\",\n            message: \"Computed throttle difference\",\n          }, { eventIndex }, {\n            payload: {\n              diffMinutes,\n              throttleMinutes,\n            },\n            requestId: ctx?.requestId ?? req?.id,\n            zulu: new Date().toISOString(),\n            local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n          })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/server/email/sendTestEmail.ts",
+    "before": "logit(\n        \"email\",\n        {\n          level: \"warn\",\n          message: \"Email throttled\",\n        },\n        {\n          payload: {\n            diffMinutes,\n            throttleMinutes,\n            nextAllowedInMinutes: throttleMinutes - diffMinutes,\n          },\n        },\n      )",
+    "after": "logit(\"email\", {\n                level: \"warn\",\n                message: \"Email throttled\",\n              }, { eventIndex }, {\n              payload: {\n                  diffMinutes,\n                  throttleMinutes,\n                  nextAllowedInMinutes: throttleMinutes - diffMinutes,\n                },\n              requestId: ctx?.requestId ?? req?.id,\n              zulu: new Date().toISOString(),\n              local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n            })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/server/email/sendTestEmail.ts",
+    "before": "logit(\n      \"email\",\n      {\n        level: \"info\",\n        message: \"Test email sent\",\n      },\n      {\n        payload: {\n          subject: finalSubject,\n          message_preview: message?.slice(0, 80),\n        },\n      },\n    )",
+    "after": "logit(\"email\", {\n            level: \"info\",\n            message: \"Test email sent\",\n          }, { eventIndex }, {\n            payload: {\n              subject: finalSubject,\n              message_preview: message?.slice(0, 80),\n            },\n            requestId: ctx?.requestId ?? req?.id,\n            zulu: new Date().toISOString(),\n            local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n          })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/server/email/sendTestEmail.ts",
+    "before": "logit(\"email\", {\n      level: \"info\",\n      message: \"Updated last_sent_at\",\n    })",
+    "after": "logit(\"email\", {\n          level: \"info\",\n          message: \"Updated last_sent_at\",\n        }, { eventIndex }, {\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/server/email/sendTestEmail.ts",
+    "before": "logit(\n      \"email\",\n      {\n        level: \"info\",\n        message: \"Updated last_sent_at\",\n      },\n      {\n        payload: {\n          attempted: newTimestamp,\n          saved,\n          match: String(saved) === newTimestamp,\n        },\n      },\n    )",
+    "after": "logit(\"email\", {\n            level: \"info\",\n            message: \"Updated last_sent_at\",\n          }, { eventIndex }, {\n            payload: {\n              attempted: newTimestamp,\n              saved,\n              match: String(saved) === newTimestamp,\n            },\n            requestId: ctx?.requestId ?? req?.id,\n            zulu: new Date().toISOString(),\n            local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n          })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/server/email/sendTestEmail.ts",
+    "before": "logit(\n      \"email\",\n      {\n        level: \"error\",\n        message: \"MailerSend error\",\n      },\n      {\n        payload: {\n          error: err?.message,\n          stack: err?.stack,\n        },\n      },\n    )",
+    "after": "logit(\"email\", {\n            level: \"error\",\n            message: \"MailerSend error\",\n          }, { eventIndex }, {\n            payload: {\n              error: err?.message,\n              stack: err?.stack,\n            },\n            requestId: ctx?.requestId ?? req?.id,\n            zulu: new Date().toISOString(),\n            local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n          })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/server/email/sendWeatherEmail.ts",
+    "before": "logit(\n    \"email\",\n    {\n      level: \"info\",\n      message: \"sendWeatherEmail - Checked email_enabled\",\n    },\n    {\n      payload: {\n        enabled_raw: enabled,\n        enabled_string: String(enabled),\n        message,\n        subject,\n      },\n    },\n  )",
+    "after": "logit(\"email\", {\n        level: \"info\",\n        message: \"sendWeatherEmail - Checked email_enabled\",\n      }, { eventIndex }, {\n          payload: {\n          enabled_raw: enabled,\n          enabled_string: String(enabled),\n          message,\n          subject,\n        },\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/server/email/sendWeatherEmail.ts",
+    "before": "logit(\"email\", {\n      level: \"warn\",\n      message: \"sendWeatherEmail - Email sending disabled by runtime flag\",\n    })",
+    "after": "logit(\"email\", {\n          level: \"warn\",\n          message: \"sendWeatherEmail - Email sending disabled by runtime flag\",\n        }, { eventIndex }, {\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/server/email/sendWeatherEmail.ts",
+    "before": "logit(\n    \"email\",\n    {\n      level: \"info\",\n      message: \"Throttle check starting\",\n    },\n    {\n      payload: {\n        throttleMinutes,\n        lastSentRaw,\n      },\n    },\n  )",
+    "after": "logit(\"email\", {\n        level: \"info\",\n        message: \"Throttle check starting\",\n      }, { eventIndex }, {\n          payload: {\n          throttleMinutes,\n          lastSentRaw,\n        },\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/server/email/sendWeatherEmail.ts",
+    "before": "logit(\n      \"email\",\n      {\n        level: \"info\",\n        message: \"Computed throttle difference\",\n      },\n      {\n        payload: {\n          diffMinutes,\n          throttleMinutes,\n        },\n      },\n    )",
+    "after": "logit(\"email\", {\n            level: \"info\",\n            message: \"Computed throttle difference\",\n          }, { eventIndex }, {\n            payload: {\n              diffMinutes,\n              throttleMinutes,\n            },\n            requestId: ctx?.requestId ?? req?.id,\n            zulu: new Date().toISOString(),\n            local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n          })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/server/email/sendWeatherEmail.ts",
+    "before": "logit(\n      \"email\",\n      {\n        level: \"info\",\n        message: \"Travel Weather email sent\",\n      },\n      {\n        payload: {\n          subject: finalSubject,\n          message_preview: message?.slice(0, 80),\n        },\n      },\n    )",
+    "after": "logit(\"email\", {\n            level: \"info\",\n            message: \"Travel Weather email sent\",\n          }, { eventIndex }, {\n            payload: {\n              subject: finalSubject,\n              message_preview: message?.slice(0, 80),\n            },\n            requestId: ctx?.requestId ?? req?.id,\n            zulu: new Date().toISOString(),\n            local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n          })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/server/email/sendWeatherEmail.ts",
+    "before": "logit(\n      \"email\",\n      {\n        level: \"info\",\n        message: \"Updated last_sent_at\",\n      },\n      {\n        payload: {\n          attempted: newTimestamp,\n          saved,\n          match: String(saved) === newTimestamp,\n        },\n      },\n    )",
+    "after": "logit(\"email\", {\n            level: \"info\",\n            message: \"Updated last_sent_at\",\n          }, { eventIndex }, {\n            payload: {\n              attempted: newTimestamp,\n              saved,\n              match: String(saved) === newTimestamp,\n            },\n            requestId: ctx?.requestId ?? req?.id,\n            zulu: new Date().toISOString(),\n            local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n          })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/server/email/sendWeatherEmail.ts",
+    "before": "logit(\n      \"email\",\n      {\n        level: \"error\",\n        message: \"MailerSend error\",\n      },\n      {\n        payload: {\n          error: err?.message,\n          stack: err?.stack,\n        },\n      },\n    )",
+    "after": "logit(\"email\", {\n            level: \"error\",\n            message: \"MailerSend error\",\n          }, { eventIndex }, {\n            payload: {\n              error: err?.message,\n              stack: err?.stack,\n            },\n            requestId: ctx?.requestId ?? req?.id,\n            zulu: new Date().toISOString(),\n            local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n          })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/travel/ingest/email-ingest.ts",
+    "before": "logit(\n        \"jonathan\",\n        {\n          level: \"info\",\n          message: \"Pick email: \" + full,\n          full: full,\n          lastTwo: name.split(\"-\").slice(-2).join(\"-\") + \".eml\",\n        },\n        {\n          file: \"email-ingest.ts\",\n          requestId: \"N/A\",\n          route: \"N/A\",\n          userId: undefined,\n        },\n      )",
+    "after": "logit(\"jonathan\", {\n                  level: \"info\",\n                  message: \"Pick email: \" + full,\n                  full: full,\n                  lastTwo: name.split(\"-\").slice(-2).join(\"-\") + \".eml\",\n                }, { eventIndex }, {\n                file: \"email-ingest.ts\", requestId: \"N/A\", route: \"N/A\", userId: undefined,\n                requestId: ctx?.requestId ?? req?.id,\n                zulu: new Date().toISOString(),\n                local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n              })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/travel/ingest/route.ts",
+    "before": "logit(\n    \"jonathan\",\n    {\n      level: \"info\",\n      message: \"travel-ingest-start\",\n      url: req.url,\n      someatent: \"somevalue\",\n    },\n    { notused: \"notused\" },\n  )",
+    "after": "logit(\"jonathan\", {\n        level: \"info\",\n        message: \"travel-ingest-start\",\n        url: req.url,\n        someatent: \"somevalue\",\n      }, { eventIndex }, {\n          notused: \"notused\",\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/travel/ingest/route.ts",
+    "before": "logit(\n    \"jonathan\",\n    {\n      level: \"info\",\n      message: \"travel-ingest-end\",\n      result: result,\n      someatent: \"somevalue\",\n    },\n    { notused: \"notused\" },\n  )",
+    "after": "logit(\"jonathan\", {\n        level: \"info\",\n        message: \"travel-ingest-end\",\n        result: result,\n        someatent: \"somevalue\",\n      }, { eventIndex }, {\n          notused: \"notused\",\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/travel/next/route.ts",
+    "before": "logit(\n    \"travel\",\n    {\n      level: \"info\",\n      message: \"Starting next travel event computation\",\n      page: \"lib/travel/next/route.ts\",\n      somedate: new Date().toISOString(),\n      somevalue: \"somevalue\",\n    },\n    { requestId },\n  )",
+    "after": "logit(\"travel\", {\n        level: \"info\",\n        message: \"Starting next travel event computation\",\n        page: \"lib/travel/next/route.ts\",\n        somedate: new Date().toISOString(),\n        somevalue: \"somevalue\",\n      }, { eventIndex }, {\n          requestId,\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/travel/next/route.ts",
+    "before": "logit(\n      \"travel\",\n      {\n        level: \"info\",\n        message: \"Next travel event computed\",\n        page: \"lib/travel/next/route.ts\",\n        somedate: new Date().toISOString(),\n        somevalue: \"somevalue\",\n      },\n      { requestId },\n    )",
+    "after": "logit(\"travel\", {\n            level: \"info\",\n            message: \"Next travel event computed\",\n            page: \"lib/travel/next/route.ts\",\n            somedate: new Date().toISOString(),\n            somevalue: \"somevalue\",\n          }, { eventIndex }, {\n            requestId,\n            requestId: ctx?.requestId ?? req?.id,\n            zulu: new Date().toISOString(),\n            local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n          })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/travel/next/route.ts",
+    "before": "logit(\n      \"travel\",\n      {\n        level: \"error\",\n        message: \"Failed to compute next travel event\",\n        page: \"lib/travel/next/route.ts\",\n        somedate: new Date().toISOString(),\n        somevalue: \"somevalue\",\n        error: err.message,\n      },\n      { requestId },\n    )",
+    "after": "logit(\"travel\", {\n            level: \"error\",\n            message: \"Failed to compute next travel event\",\n            page: \"lib/travel/next/route.ts\",\n            somedate: new Date().toISOString(),\n            somevalue: \"somevalue\",\n            error: err.message,\n          }, { eventIndex }, {\n            requestId,\n            requestId: ctx?.requestId ?? req?.id,\n            zulu: new Date().toISOString(),\n            local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n          })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/lib/travel/parser/aa.ts",
+    "before": "logit(\"jonathan\", {\n      level: \"info\",\n      message: \"aa-segment-debugging\",\n      i: segmentIndex,\n      date,\n      departureAirport,\n      departureCity,\n      departureTime,\n      arrivalAirport,\n      arrivalCity,\n      arrivalTime,\n      flightNumber,\n      operatedBy,\n      seats,\n      depTree: debugTree($(depEl), $),\n      arrTree: debugTree($(arrEl), $),\n      rawSeatRow: clean(seatRow.text()),\n      rawFlightCell: clean(flightCell.text()),\n    })",
+    "after": "logit(\"jonathan\", {\n            level: \"info\",\n            message: \"aa-segment-debugging\",\n            i: segmentIndex,\n            date,\n            departureAirport,\n            departureCity,\n            departureTime,\n            arrivalAirport,\n            arrivalCity,\n            arrivalTime,\n            flightNumber,\n            operatedBy,\n            seats,\n            depTree: debugTree($(depEl), $),\n            arrTree: debugTree($(arrEl), $),\n            rawSeatRow: clean(seatRow.text()),\n            rawFlightCell: clean(flightCell.text()),\n          }, { eventIndex }, {\n            requestId: ctx?.requestId ?? req?.id,\n            zulu: new Date().toISOString(),\n            local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n          })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/cron/astronomy/route.ts",
+    "before": "logit(\n    \"ephemeris\",\n    {\n      level: \"info\",\n      message: \"astronomy.cron.started DB-tables first\",\n      route: \"cron\",\n      rebuild: true,\n    },\n    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },\n  )",
+    "after": "logit(\"ephemeris\", {\n        level: \"info\",\n        message: \"astronomy.cron.started DB-tables first\",\n        route: \"cron\",\n        rebuild: true,\n      }, { eventIndex }, {\n          requestId: ctx.requestId, route: ctx.page, userId: ctx.userId,\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/cron/astronomy/route.ts",
+    "before": "logit(\n    \"DbTable\",\n    {\n      level: \"info\",\n      message: \"astronomy.cron.dbtables.completed\",\n      Db: \"Db\",\n      Table: \"Table\",\n    },\n    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },\n  )",
+    "after": "logit(\"DbTable\", {\n        level: \"info\",\n        message: \"astronomy.cron.dbtables.completed\",\n        Db: \"Db\",\n        Table: \"Table\",\n      }, { eventIndex }, {\n          requestId: ctx.requestId, route: ctx.page, userId: ctx.userId,\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/cron/astronomy/route.ts",
+    "before": "logit(\n      \"ephemeris\",\n      {\n        level: \"info\",\n        message: \"astronomy.cron.location.started\",\n        locationId: location.id,\n        name: location.name,\n      },\n      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },\n    )",
+    "after": "logit(\"ephemeris\", {\n            level: \"info\",\n            message: \"astronomy.cron.location.started\",\n            locationId: location.id,\n            name: location.name,\n          }, { eventIndex }, {\n            requestId: ctx.requestId, route: ctx.page, userId: ctx.userId,\n            requestId: ctx?.requestId ?? req?.id,\n            zulu: new Date().toISOString(),\n            local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n          })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/cron/astronomy/route.ts",
+    "before": "logit(\n        \"ephemeris\",\n        {\n          level: \"info\",\n          message: \"astronomy.cron.day.started\",\n          locationId: location.id,\n          targetDate: dateString,\n        },\n        { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },\n      )",
+    "after": "logit(\"ephemeris\", {\n                level: \"info\",\n                message: \"astronomy.cron.day.started\",\n                locationId: location.id,\n                targetDate: dateString,\n              }, { eventIndex }, {\n              requestId: ctx.requestId, route: ctx.page, userId: ctx.userId,\n              requestId: ctx?.requestId ?? req?.id,\n              zulu: new Date().toISOString(),\n              local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n            })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/cron/astronomy/route.ts",
+    "before": "logit(\n        \"ephemeris\",\n        {\n          level: \"info\",\n          message: \"astronomy.cron.snapshot.saved\",\n          locationId: location.id,\n          dateString,\n          snapshot: row,\n        },\n        { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },\n      )",
+    "after": "logit(\"ephemeris\", {\n                level: \"info\",\n                message: \"astronomy.cron.snapshot.saved\",\n                locationId: location.id,\n                dateString,\n                snapshot: row,\n              }, { eventIndex }, {\n              requestId: ctx.requestId, route: ctx.page, userId: ctx.userId,\n              requestId: ctx?.requestId ?? req?.id,\n              zulu: new Date().toISOString(),\n              local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n            })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/cron/astronomy/route.ts",
+    "before": "logit(\n    \"ephemeris\",\n    {\n      level: \"info\",\n      message: \"astronomy.cron.completed\",\n      durationMs,\n    },\n    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },\n  )",
+    "after": "logit(\"ephemeris\", {\n        level: \"info\",\n        message: \"astronomy.cron.completed\",\n        durationMs,\n      }, { eventIndex }, {\n          requestId: ctx.requestId, route: ctx.page, userId: ctx.userId,\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/cron/refreshLog/route.ts",
+    "before": "logit(\n      \"jonathan\",\n      {\n        level: \"info\",\n        message: \"cron.dbTableStats.started\",\n      },\n      { requestId, route: \"cron/dbTableStats\", userId: \"JK\" },\n    )",
+    "after": "logit(\"jonathan\", {\n            level: \"info\",\n            message: \"cron.dbTableStats.started\",\n          }, { eventIndex }, {\n            requestId, route: \"cron/dbTableStats\", userId: \"JK\",\n            requestId: ctx?.requestId ?? req?.id,\n            zulu: new Date().toISOString(),\n            local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n          })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/cron/refreshLog/route.ts",
+    "before": "logit(\n      \"jonathan\",\n      {\n        level: \"info\",\n        message: \"cron.dbTableStats.completed\",\n      },\n      { requestId, route: \"cron/dbTableStats\", userId: \"JK\" },\n    )",
+    "after": "logit(\"jonathan\", {\n            level: \"info\",\n            message: \"cron.dbTableStats.completed\",\n          }, { eventIndex }, {\n            requestId, route: \"cron/dbTableStats\", userId: \"JK\",\n            requestId: ctx?.requestId ?? req?.id,\n            zulu: new Date().toISOString(),\n            local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n          })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/cron/refreshLog/route.ts",
+    "before": "logit(\n      \"jonathan\",\n      {\n        level: \"error\",\n        message: \"cron.dbTableStats.error\",\n        error: String(error?.message || error),\n      },\n      { requestId, route: \"cron/dbTableStats\", userId: \"JK\" },\n    )",
+    "after": "logit(\"jonathan\", {\n            level: \"error\",\n            message: \"cron.dbTableStats.error\",\n            error: String(error?.message || error),\n          }, { eventIndex }, {\n            requestId, route: \"cron/dbTableStats\", userId: \"JK\",\n            requestId: ctx?.requestId ?? req?.id,\n            zulu: new Date().toISOString(),\n            local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n          })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/email/test/route.ts",
+    "before": "logit(\"jonathan\", {\n    level: \"info\",\n    message: `Sent test email with message \"${test_msg1}\". Result: ${JSON.stringify(result, null, 2)}`,\n    result: result,\n    b: \"b\",\n  })",
+    "after": "logit(\"jonathan\", {\n      level: \"info\",\n      message: `Sent test email with message \"${test_msg1}\". Result: ${JSON.stringify(result, null, 2)}`,\n      result: result,\n      b: \"b\",\n    }, { eventIndex }, {\n        requestId: ctx?.requestId ?? req?.id,\n        zulu: new Date().toISOString(),\n        local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n      })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/email/weather/route.ts",
+    "before": "logit(\"jonathan\", {\n      level: \"info\",\n      message: \"weather_email_api_success mock\",\n      result,\n    })",
+    "after": "logit(\"jonathan\", {\n            level: \"info\",\n            message: \"weather_email_api_success mock\",\n            result,\n          }, { eventIndex }, {\n            requestId: ctx?.requestId ?? req?.id,\n            zulu: new Date().toISOString(),\n            local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n          })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/email/weather/route.ts",
+    "before": "logit(\"jonathan\", {\n      level: \"error\",\n      message: \"weather_email_api_error\",\n      error: String(err),\n    })",
+    "after": "logit(\"jonathan\", {\n            level: \"error\",\n            message: \"weather_email_api_error\",\n            error: String(err),\n          }, { eventIndex }, {\n            requestId: ctx?.requestId ?? req?.id,\n            zulu: new Date().toISOString(),\n            local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n          })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/fa/count/route.ts",
+    "before": "logit(\n    \"fa\",\n    {\n      level: \"info\",\n      message: \"Missing lat/long parameters\",\n      minLat: minLat,\n      minLon: minLon,\n      maxLat: maxLat,\n      maxLon: maxLon,\n      url: req.url,\n    },\n    {\n      requestId: crypto.randomUUID(),\n      userId: undefined,\n    },\n  )",
+    "after": "logit(\"fa\", {\n        level: \"info\",\n        message: \"Missing lat/long parameters\",\n        minLat: minLat,\n        minLon: minLon,\n        maxLat: maxLat,\n        maxLon: maxLon,\n        url: req.url,\n      }, { eventIndex }, {\n          requestId: crypto.randomUUID(), userId: undefined,\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/fa/dashboard/route.ts",
+    "before": "logit(\n    \"jonathan\",\n    {\n      level: \"info\",\n      message: \"Loading FA dashboard route\",\n      time: format(new Date(), \"yyyy-MM-dd HH:mm:ss\"),\n    },\n    {\n      requestId: crypto.randomUUID(),\n      route: \"app/api/fa/dashboard/route.ts\",\n      userId: \"JK\",\n    },\n  )",
+    "after": "logit(\"jonathan\", {\n        level: \"info\",\n        message: \"Loading FA dashboard route\",\n        time: format(new Date(), \"yyyy-MM-dd HH:mm:ss\"),\n      }, { eventIndex }, {\n          requestId: crypto.randomUUID(), route: \"app/api/fa/dashboard/route.ts\", userId: \"JK\",\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/fa/dashboard/route.ts",
+    "before": "logit(\"jonathan\", {\n    level: \"info\",\n    message: \"Completed FA dashboard route\",\n    requestId: crypto.randomUUID(),\n    countData: countData,\n    minLat: minLat,\n    minLon: minLon,\n    maxLat: maxLat,\n    maxLon: maxLon,\n    route: \"app/api/fa/dashboard/route.ts\",\n    userId: \"JK\",\n  })",
+    "after": "logit(\"jonathan\", {\n      level: \"info\",\n      message: \"Completed FA dashboard route\",\n      requestId: crypto.randomUUID(),\n      countData: countData,\n      minLat: minLat,\n      minLon: minLon,\n      maxLat: maxLat,\n      maxLon: maxLon,\n      route: \"app/api/fa/dashboard/route.ts\",\n      userId: \"JK\",\n    }, { eventIndex }, {\n        requestId: ctx?.requestId ?? req?.id,\n        zulu: new Date().toISOString(),\n        local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n      })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/fa/status/route.ts",
+    "before": "logit(\n    \"jonathan\",\n    {\n      level: \"info\",\n      message: \"API FA status route accessed\",\n      ident: ident,\n    },\n    { requestId: \"r\", route: \"p\", userId: \"u\" },\n  )",
+    "after": "logit(\"jonathan\", {\n        level: \"info\",\n        message: \"API FA status route accessed\",\n        ident: ident,\n      }, { eventIndex }, {\n          requestId: \"r\", route: \"p\", userId: \"u\",\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/weather/forecast/route.ts",
+    "before": "logit(\n      \"weather\",\n      {\n        level: \"warn\",\n        message: `Forecast cache hit ${age}/${FORECAST_CACHE_MINUTES}`,\n        locationId: locationId,\n        cacheWindowMinutes: FORECAST_CACHE_MINUTES,\n        actualAgeMinutes: age,\n        sessionUser: session?.user?.name ?? null,\n        sessionEmail: session?.user?.email ?? null,\n        userId: session?.user?.id ?? null,\n        file: \"app/api/weather/forecast/route.ts\",\n        page: \"/api/weather/forecast\",\n      },\n      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },\n    )",
+    "after": "logit(\"weather\", {\n            level: \"warn\",\n            message: `Forecast cache hit ${age}/${FORECAST_CACHE_MINUTES}`,\n            locationId: locationId,\n            cacheWindowMinutes: FORECAST_CACHE_MINUTES,\n            actualAgeMinutes: age,\n            sessionUser: session?.user?.name ?? null,\n            sessionEmail: session?.user?.email ?? null,\n            userId: session?.user?.id ?? null,\n            file: \"app/api/weather/forecast/route.ts\",\n            page: \"/api/weather/forecast\",\n          }, { eventIndex }, {\n            requestId: ctx.requestId, route: ctx.page, userId: ctx.userId,\n            requestId: ctx?.requestId ?? req?.id,\n            zulu: new Date().toISOString(),\n            local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n          })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/weather/forecast/route.ts",
+    "before": "logit(\n    \"weather\",\n    {\n      level: \"info\",\n      message: \"Forecast cache miss → fetching external API\",\n      locationId,\n      file: \"app/api/weather/forecast/route.ts\",\n    },\n    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },\n  )",
+    "after": "logit(\"weather\", {\n        level: \"info\",\n        message: \"Forecast cache miss → fetching external API\",\n        locationId,\n        file: \"app/api/weather/forecast/route.ts\",\n      }, { eventIndex }, {\n          requestId: ctx.requestId, route: ctx.page, userId: ctx.userId,\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/weather/forecast/route.ts",
+    "before": "logit(\n    \"weather\",\n    {\n      level: \"info\",\n      message: \"Forecast API response\",\n      payload: parsed,\n      raw,\n    },\n    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },\n  )",
+    "after": "logit(\"weather\", {\n        level: \"info\",\n        message: \"Forecast API response\",\n        payload: parsed,\n        raw,\n      }, { eventIndex }, {\n          requestId: ctx.requestId, route: ctx.page, userId: ctx.userId,\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/weather/forecast/route.ts",
+    "before": "logit(\n      \"weather\",\n      {\n        level: \"error\",\n        message: \"Invalid forecast API response\",\n        payload: parsed.error.flatten(),\n      },\n      { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },\n    )",
+    "after": "logit(\"weather\", {\n            level: \"error\",\n            message: \"Invalid forecast API response\",\n            payload: parsed.error.flatten(),\n          }, { eventIndex }, {\n            requestId: ctx.requestId, route: ctx.page, userId: ctx.userId,\n            requestId: ctx?.requestId ?? req?.id,\n            zulu: new Date().toISOString(),\n            local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n          })"
+  },
+  {
+    "file": "C:/Users/jonat/Documents/git/my-new-app/app/api/weather/forecast/route.ts",
+    "before": "logit(\n    \"weather\",\n    {\n      level: \"info\",\n      message: `Forecast snapshot stored, ${Math.round(weather.current_weather.temperature)}°F`,\n\n      snapshotId: snapshot.id,\n    },\n    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },\n  )",
+    "after": "logit(\"weather\", {\n        level: \"info\",\n        message: `Forecast snapshot stored, ${Math.round(weather.current_weather.temperature)}°F`,\n\n        snapshotId: snapshot.id,\n      }, { eventIndex }, {\n          requestId: ctx.requestId, route: ctx.page, userId: ctx.userId,\n          requestId: ctx?.requestId ?? req?.id,\n          zulu: new Date().toISOString(),\n          local: new Date().toLocaleString(\"en-US\", { timeZone: \"America/New_York\" })\n        })"
+  }
+]

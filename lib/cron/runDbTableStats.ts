@@ -14,7 +14,11 @@ export async function runDbTableStats(ctx: {
   const start = Date.now();
   const snapshotDate = atLocalMidnight(new Date());
 
-  await logit("db", { level: "info", message: "dbTables.cron.started" }, ctx);
+  await logit("db", { level: "info", message: "dbTables.cron.started" }, { eventIndex }, {
+        requestId: ctx?.requestId ?? req?.id,
+        zulu: new Date().toISOString(),
+        local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+      });
 
   const stats = await db.$queryRawUnsafe(`
     SELECT
@@ -69,14 +73,14 @@ export async function runDbTableStats(ctx: {
     tablesProcessed++;
   }
 
-  await logit(
-    "db",
-    {
-      level: "info",
-      message: "dbTables.cron.completed",
-      tablesProcessed,
-      durationMs: Date.now() - start,
-    },
-    ctx,
-  );
+  await logit("db", {
+        level: "info",
+        message: "dbTables.cron.completed",
+        tablesProcessed,
+        durationMs: Date.now() - start,
+      }, { eventIndex }, {
+        requestId: ctx?.requestId ?? req?.id,
+        zulu: new Date().toISOString(),
+        local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+      });
 }

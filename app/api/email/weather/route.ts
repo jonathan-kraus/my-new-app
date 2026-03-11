@@ -13,18 +13,26 @@ export async function POST() {
     const result = await sendWeatherEmail("TW message", "TW subject");
 
     logit("jonathan", {
-      level: "info",
-      message: "weather_email_api_success mock",
-      result,
-    });
+            level: "info",
+            message: "weather_email_api_success mock",
+            result,
+          }, { eventIndex }, {
+            requestId: ctx?.requestId ?? req?.id,
+            zulu: new Date().toISOString(),
+            local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+          });
 
     return NextResponse.json({ ok: true, result });
   } catch (err: any) {
     logit("jonathan", {
-      level: "error",
-      message: "weather_email_api_error",
-      error: String(err),
-    });
+            level: "error",
+            message: "weather_email_api_error",
+            error: String(err),
+          }, { eventIndex }, {
+            requestId: ctx?.requestId ?? req?.id,
+            zulu: new Date().toISOString(),
+            local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+          });
 
     return NextResponse.json(
       { ok: false, error: "Failed to send weather email" },
