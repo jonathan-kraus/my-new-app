@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import { db } from "@/lib/db";
-import { getAxiomClient } from "@/lib/axiom";
+import { axiomIngest } from "@/lib/axiom";
 
 const NEON_MAX_JSON = 200_000;
 const ERROR_COOLDOWN_MS = 5000;
@@ -118,9 +118,8 @@ export async function logit(
   // --- Axiom ingestion (direct) -------------------------------------------
   console.log("INGEST START");
 try {
-  const client = getAxiomClient();
-  await client.ingest(process.env.AXIOM_DATASET!, [axiomEvent]);
-  console.log("INGEST SUCCESS", process.env.AXIOM_DATASET);
+  await axiomIngest(process.env.AXIOM_DATASET!, [axiomEvent]);
+  console.log("INGEST SUCCESS");
 } catch (err) {
   console.error("AXIOM INGEST ERROR:", err);
 }
