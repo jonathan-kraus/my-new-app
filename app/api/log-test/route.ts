@@ -1,17 +1,13 @@
 // app/api/log-test/route.ts
-import { getAxiomClient } from "@/lib/axiom";
+
+
 import { NextResponse, NextRequest } from "next/server";
 import { logit } from "@/lib/log/logit";
 import { enrichContext } from "@/lib/log/context";
 
 export async function GET(req: NextRequest) {
   try {
-    const apl =
-      "['github-events'] | where repo == \"jonathan-kraus/my-new-app\" | sort by _time desc | limit 3";
 
-    const result = await getAxiomClient().query(apl);
-    const legacy = result as any;
-    const rows = legacy?.result?.matches ?? [];
     const eventIndex = 22;
 
     const ctx = await enrichContext(req);
@@ -20,8 +16,7 @@ export async function GET(req: NextRequest) {
       {
         level: "info",
         message: "GitHub test route completed",
-        count: rows.length,
-        rows: rows,
+
       },
       { eventIndex },
       {
@@ -36,8 +31,7 @@ export async function GET(req: NextRequest) {
     );
     return NextResponse.json({
       ok: true,
-      count: rows.length,
-      events: rows,
+
     });
   } catch (err) {
     console.error("AXIOM QUERY ERROR", err);
