@@ -56,6 +56,40 @@ function DelayBadge({ minutes }: { minutes: number }) {
     </span>
   );
 }
+function FlightTable({ planes }: { planes: any[] }) {
+  if (!planes || planes.length === 0) {
+    return <p>No planes in your skybox.</p>;
+  }
+
+  return (
+    <table style={{ width: "100%", marginTop: 24, borderCollapse: "collapse" }}>
+      <thead>
+        <tr>
+          <th>Ident</th>
+          <th>From → To</th>
+          <th>Aircraft</th>
+          <th>Alt</th>
+          <th>GS</th>
+          <th>Scheduled</th>
+          <th>Estimated</th>
+        </tr>
+      </thead>
+      <tbody>
+        {planes.map((p, i) => (
+          <tr key={i}>
+            <td>{p.ident}</td>
+            <td>{p.origin} → {p.destination}</td>
+            <td>{p.aircrafttype}</td>
+            <td>{p.altitude}</td>
+            <td>{p.groundspeed}</td>
+            <td>{formatET(p.scheduled_out)}</td>
+            <td>{formatET(p.estimated_out)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
 
 export default function Dashboard() {
   const [data, setData] = useState<any>(null);
@@ -97,6 +131,10 @@ export default function Dashboard() {
               </p>
               <h2 style={{ marginTop: 32 }}>📡 Skybox Radar</h2>
               <RadarSkybox count={data.count} />
+
+              <h2 style={{ marginTop: 32 }}>🛩️ Skybox Flights</h2>
+              <FlightTable planes={data.planes} />
+
             </>
           ) : (
             <p>No flight found for today.</p>
