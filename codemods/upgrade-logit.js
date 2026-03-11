@@ -52,10 +52,10 @@ module.exports = function transformer(file, api) {
 
       const levelProp = eventArg.properties.find((p) => p.key.name === "level");
       const messageProp = eventArg.properties.find(
-        (p) => p.key.name === "message"
+        (p) => p.key.name === "message",
       );
       const payloadProp = eventArg.properties.find(
-        (p) => p.key.name === "payload"
+        (p) => p.key.name === "payload",
       );
 
       // Build new arguments

@@ -11,8 +11,8 @@ export const POST = withLogging(async () => {
   await logit("jonathan", {
     level: "info",
     message: `Sent test email with message "${test_msg1}". Result: ${JSON.stringify(result, null, 2)}`,
-
-    payload: { result: result, b: "b" },
+    result: result,
+    b: "b",
   });
 
   return NextResponse.json(result);

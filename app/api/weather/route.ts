@@ -75,7 +75,8 @@ export async function GET(req: Request) {
     await logit("weather", {
       level: "info",
       message: `Using cached current weather data`,
-      payload: { locationId, currentAge },
+      locationId,
+      currentAge,
     });
 
     return NextResponse.json({

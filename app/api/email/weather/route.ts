@@ -15,7 +15,7 @@ export async function POST() {
     logit("jonathan", {
       level: "info",
       message: "weather_email_api_success mock",
-      payload: { result },
+      result,
     });
 
     return NextResponse.json({ ok: true, result });
@@ -23,7 +23,7 @@ export async function POST() {
     logit("jonathan", {
       level: "error",
       message: "weather_email_api_error",
-      payload: { error: String(err) },
+      error: String(err),
     });
 
     return NextResponse.json(

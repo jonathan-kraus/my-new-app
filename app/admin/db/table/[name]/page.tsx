@@ -23,17 +23,21 @@ async function getTableData(name: string, page: number) {
     {
       level: "info",
       message: "Checking table existence",
-      payload: {
-        page: `/admin/db/${name}`,
-        file: "page.tsx",
-        method: "GET",
-        page2: `page ${page}`,
-        requestId: crypto.randomUUID(),
-        tableName: name,
-      },
+    },
+    {
+      page: `/admin/db/${name}`,
+      file: "page.tsx",
+      method: "GET",
+      page2: `page ${page}`,
+      requestId: crypto.randomUUID(),
+      tableName: name,
     },
     {
       userId: "JK",
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
     },
   );
   const tableCheck = await sql`

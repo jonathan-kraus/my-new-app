@@ -53,10 +53,8 @@ export async function ingestTravelEmails() {
         {
           level: "info",
           message: "Pick email: " + full,
-          payload: {
-            full: full,
-            lastTwo: name.split("-").slice(-2).join("-") + ".eml",
-          },
+          full: full,
+          lastTwo: name.split("-").slice(-2).join("-") + ".eml",
         },
         {
           file: "email-ingest.ts",

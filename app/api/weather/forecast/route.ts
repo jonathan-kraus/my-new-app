@@ -46,18 +46,14 @@ export async function GET(req: Request) {
       {
         level: "warn",
         message: `Forecast cache hit ${age}/${FORECAST_CACHE_MINUTES}`,
-        payload: {
-          locationId: locationId,
-
-          cacheWindowMinutes: FORECAST_CACHE_MINUTES,
-          actualAgeMinutes: age,
-          sessionUser: session?.user?.name ?? null,
-          sessionEmail: session?.user?.email ?? null,
-          userId: session?.user?.id ?? null,
-
-          file: "app/api/weather/forecast/route.ts",
-          page: "/api/weather/forecast",
-        },
+        locationId: locationId,
+        cacheWindowMinutes: FORECAST_CACHE_MINUTES,
+        actualAgeMinutes: age,
+        sessionUser: session?.user?.name ?? null,
+        sessionEmail: session?.user?.email ?? null,
+        userId: session?.user?.id ?? null,
+        file: "app/api/weather/forecast/route.ts",
+        page: "/api/weather/forecast",
       },
       { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
     );
@@ -82,7 +78,8 @@ export async function GET(req: Request) {
     {
       level: "info",
       message: "Forecast cache miss → fetching external API",
-      payload: { locationId, file: "app/api/weather/forecast/route.ts" },
+      locationId,
+      file: "app/api/weather/forecast/route.ts",
     },
     { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
   );
@@ -147,7 +144,7 @@ export async function GET(req: Request) {
       level: "info",
       message: `Forecast snapshot stored, ${Math.round(weather.current_weather.temperature)}°F`,
 
-      payload: { snapshotId: snapshot.id },
+      snapshotId: snapshot.id,
     },
     { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
   );

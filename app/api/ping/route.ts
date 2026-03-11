@@ -15,13 +15,10 @@ export async function GET(req: NextRequest) {
     {
       level: "info",
       message: "Called Ping",
-
-      payload: {
-        sessionUser: session?.user?.name ?? null,
-        sessionEmail: session?.user?.email ?? null,
-        userId: session?.user?.id ?? null,
-        session: session ?? null,
-      },
+      sessionUser: session?.user?.name ?? null,
+      sessionEmail: session?.user?.email ?? null,
+      userId: session?.user?.id ?? null,
+      session: session ?? null,
     },
     { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
   );

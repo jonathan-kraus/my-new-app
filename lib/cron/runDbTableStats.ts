@@ -74,10 +74,8 @@ export async function runDbTableStats(ctx: {
     {
       level: "info",
       message: "dbTables.cron.completed",
-      payload: {
-        tablesProcessed,
-        durationMs: Date.now() - start,
-      },
+      tablesProcessed,
+      durationMs: Date.now() - start,
     },
     ctx,
   );

@@ -45,7 +45,8 @@ export async function proxy(req: NextRequest) {
     {
       level: "info",
       message: "Normalized path segments pathname: " + pathname,
-      payload: { last, lastTwo },
+      last,
+      lastTwo,
     },
     {
       requestId: getRequestId(req.url),

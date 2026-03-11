@@ -32,7 +32,7 @@ export function useNotes(): NotesState {
       {
         level: "info",
         message: "Notes page mounted",
-        payload: { loc: "/notes" },
+        loc: "/notes",
       },
       {
         requestId: ctx.requestId ?? undefined,
@@ -67,7 +67,7 @@ export function useNotes(): NotesState {
           {
             level: "info",
             message: "Notes page mounted",
-            payload: { loc: "/notes" },
+            loc: "/notes",
           },
           {
             requestId: ctx.requestId ?? undefined,

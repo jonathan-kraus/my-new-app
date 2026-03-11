@@ -13,7 +13,7 @@ export const GET = withLogging(async (req: Request) => {
   await logit("notes", {
     level: "info",
     message: "Notes GET started",
-    payload: { requestId: "REQ" },
+    requestId: "REQ",
   });
 
   try {
@@ -23,7 +23,7 @@ export const GET = withLogging(async (req: Request) => {
       await logit("notes", {
         level: "warn",
         message: "Unauthorized Notes GET",
-        payload: { requestId: "REQ" },
+        requestId: "REQ",
       });
 
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -44,9 +44,7 @@ export const GET = withLogging(async (req: Request) => {
     await logit("notes", {
       level: "info",
       message: `Notes GET completed ${notes.length}`,
-      payload: {
-        count: notes.length,
-      },
+      count: notes.length,
     });
 
     return NextResponse.json({ notes });
@@ -54,7 +52,7 @@ export const GET = withLogging(async (req: Request) => {
     await logit("notes", {
       level: "error",
       message: "Notes GET failed",
-      payload: { error: err.message },
+      error: err.message,
     });
 
     return NextResponse.json(
@@ -71,7 +69,6 @@ export const POST = withLogging(async (req: Request) => {
   await logit("notes", {
     level: "info",
     message: "Notes POST started",
-    payload: {},
   });
 
   try {
@@ -81,7 +78,6 @@ export const POST = withLogging(async (req: Request) => {
       await logit("notes", {
         level: "warn",
         message: "Unauthorized Notes POST",
-        payload: {},
       });
 
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -109,18 +105,16 @@ export const POST = withLogging(async (req: Request) => {
     await logit("notes", {
       level: "info",
       message: `Note created: ${note.title || "Untitled"} by ${email}`,
-      payload: {
-        noteId: note.id,
-        title: note.title,
-        action: "created",
-        userEmail: email,
-      },
+      noteId: note.id,
+      title: note.title,
+      action: "created",
+      userEmail: email,
     });
 
     await logit("notes", {
-      payload: { noteId: note.id },
       level: "info",
       message: "Notes POST completed",
+      noteId: note.id,
     });
 
     return NextResponse.json({ note });
@@ -216,18 +210,17 @@ export const PUT = withLogging(async (req: Request) => {
     await logit("notes", {
       level: "info",
       message: actionMessage,
-      payload: {
-        noteId: id,
-        title: originalNote?.title,
-        action: isArchived ? "archived" : "edited",
-        userEmail: email,
-        changes: {
-          title: title !== originalNote?.title,
-          content: content !== originalNote?.content,
-          followUpAt: followUpAt !== originalNote?.followUpAt,
-          color: color !== originalNote?.color,
-          isArchived,
-        },
+      noteId: id,
+      title: originalNote?.title,
+      action: isArchived ? "archived" : "edited",
+      userEmail: email,
+
+      changes: {
+        title: title !== originalNote?.title,
+        content: content !== originalNote?.content,
+        followUpAt: followUpAt !== originalNote?.followUpAt,
+        color: color !== originalNote?.color,
+        isArchived,
       },
     });
 
@@ -236,7 +229,7 @@ export const PUT = withLogging(async (req: Request) => {
     await logit("notes", {
       level: "error",
       message: "Notes PUT failed",
-      payload: { error: err.message },
+      error: err.message,
     });
 
     return NextResponse.json(
@@ -287,12 +280,10 @@ export const DELETE = withLogging(async (req: Request) => {
     await logit("notes", {
       level: "info",
       message: `Note deleted: ${noteToDelete?.title || "Untitled"} by ${email}`,
-      payload: {
-        noteId: id,
-        title: noteToDelete?.title,
-        action: "deleted",
-        userEmail: email,
-      },
+      noteId: id,
+      title: noteToDelete?.title,
+      action: "deleted",
+      userEmail: email,
     });
 
     return NextResponse.json({ success: true });
@@ -300,7 +291,7 @@ export const DELETE = withLogging(async (req: Request) => {
     await logit("notes", {
       level: "error",
       message: "Notes DELETE failed",
-      payload: { error: err.message },
+      error: err.message,
     });
 
     return NextResponse.json(

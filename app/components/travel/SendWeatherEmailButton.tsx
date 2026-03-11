@@ -16,7 +16,7 @@ export function SendWeatherEmailButton() {
       logit("jonathan", {
         level: "info",
         message: "weather_email_clicked",
-        payload: { data },
+        data,
       });
 
       toast.success("Weather email sent!");
@@ -26,7 +26,7 @@ export function SendWeatherEmailButton() {
       logit("jonathan", {
         level: "error",
         message: "weather_email_error",
-        payload: { error: String(err) },
+        error: String(err),
       });
     }
   }

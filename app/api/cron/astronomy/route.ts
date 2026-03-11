@@ -23,7 +23,8 @@ export async function GET(req: NextRequest) {
     {
       level: "info",
       message: "astronomy.cron.started DB-tables first",
-      payload: { route: "cron", rebuild: true },
+      route: "cron",
+      rebuild: true,
     },
     { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
   );
@@ -39,7 +40,8 @@ export async function GET(req: NextRequest) {
     {
       level: "info",
       message: "astronomy.cron.dbtables.completed",
-      payload: { Db: "Db", Table: "Table" },
+      Db: "Db",
+      Table: "Table",
     },
     { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
   );
@@ -52,7 +54,8 @@ export async function GET(req: NextRequest) {
       {
         level: "info",
         message: "astronomy.cron.location.started",
-        payload: { locationId: location.id, name: location.name },
+        locationId: location.id,
+        name: location.name,
       },
       { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
     );
@@ -68,10 +71,8 @@ export async function GET(req: NextRequest) {
         {
           level: "info",
           message: "astronomy.cron.day.started",
-          payload: {
-            locationId: location.id,
-            targetDate: dateString,
-          },
+          locationId: location.id,
+          targetDate: dateString,
         },
         { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
       );
@@ -102,11 +103,9 @@ export async function GET(req: NextRequest) {
         {
           level: "info",
           message: "astronomy.cron.snapshot.saved",
-          payload: {
-            locationId: location.id,
-            dateString,
-            snapshot: row,
-          },
+          locationId: location.id,
+          dateString,
+          snapshot: row,
         },
         { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
       );
@@ -120,7 +119,7 @@ export async function GET(req: NextRequest) {
     {
       level: "info",
       message: "astronomy.cron.completed",
-      payload: { durationMs },
+      durationMs,
     },
     { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
   );

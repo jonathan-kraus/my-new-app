@@ -19,7 +19,8 @@ export async function GET(req: NextRequest) {
       {
         level: "info",
         message: "GitHub test route completed",
-        payload: { count: rows.length, rows: rows },
+        count: rows.length,
+        rows: rows,
       },
       {
         requestId: ctx.requestId,

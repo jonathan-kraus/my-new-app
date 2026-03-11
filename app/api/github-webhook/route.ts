@@ -166,7 +166,7 @@ export const POST = withLogging(async (req: Request) => {
     {
       level: "info",
       message: "GitHub webhook received -- new post code",
-      payload: { event },
+      event,
     },
     ctx,
   );

@@ -34,15 +34,22 @@ export default async function HomePage() {
     {
       level: "info",
       message: "Visited dashboard",
-
-      payload: {
-        sessionUser: session?.user?.name ?? null,
-        sessionEmail: session?.user?.email ?? null,
-        userId: session?.user?.id ?? null,
-        session: session ?? null,
-      },
     },
-    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+    {
+      sessionUser: session?.user?.name ?? null,
+      sessionEmail: session?.user?.email ?? null,
+      userId: session?.user?.id ?? null,
+      session: session ?? null,
+    },
+    {
+      requestId: ctx.requestId,
+      route: ctx.page,
+      userId: ctx.userId,
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
   );
 
   const location = await db.location.findFirst({
@@ -61,15 +68,22 @@ export default async function HomePage() {
     {
       level: "info",
       message: "Visited dashboard 2",
-
-      payload: {
-        weatherData: weatherData,
-        sessionEmail: session?.user?.email ?? null,
-        userId: session?.user?.id ?? null,
-        session: session ?? null,
-      },
     },
-    { requestId: ctx.requestId, route: ctx.page, userId: ctx.userId },
+    {
+      weatherData: weatherData,
+      sessionEmail: session?.user?.email ?? null,
+      userId: session?.user?.id ?? null,
+      session: session ?? null,
+    },
+    {
+      requestId: ctx.requestId,
+      route: ctx.page,
+      userId: ctx.userId,
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
   );
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-600 to-sky-900 text-white p-8">

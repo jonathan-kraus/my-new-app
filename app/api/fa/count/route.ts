@@ -25,13 +25,11 @@ export async function GET(req: Request) {
     {
       level: "info",
       message: "Missing lat/long parameters",
-      payload: {
-        minLat: minLat,
-        minLon: minLon,
-        maxLat: maxLat,
-        maxLon: maxLon,
-        url: req.url,
-      },
+      minLat: minLat,
+      minLon: minLon,
+      maxLat: maxLat,
+      maxLon: maxLon,
+      url: req.url,
     },
     {
       requestId: crypto.randomUUID(),

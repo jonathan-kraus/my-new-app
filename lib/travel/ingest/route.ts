@@ -18,12 +18,8 @@ export async function POST(req: Request) {
     {
       level: "info",
       message: "travel-ingest-start",
-
-      payload: {
-        url: req.url,
-
-        someatent: "somevalue",
-      },
+      url: req.url,
+      someatent: "somevalue",
     },
     { notused: "notused" },
   );
@@ -34,11 +30,8 @@ export async function POST(req: Request) {
     {
       level: "info",
       message: "travel-ingest-end",
-
-      payload: {
-        result: result,
-        someatent: "somevalue",
-      },
+      result: result,
+      someatent: "somevalue",
     },
     { notused: "notused" },
   );

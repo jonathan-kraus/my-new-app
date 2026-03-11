@@ -18,7 +18,7 @@ export async function GET() {
     {
       level: "info",
       message: "Loading FA dashboard route",
-      payload: { time: format(new Date(), "yyyy-MM-dd HH:mm:ss") },
+      time: format(new Date(), "yyyy-MM-dd HH:mm:ss"),
     },
     {
       requestId: crypto.randomUUID(),

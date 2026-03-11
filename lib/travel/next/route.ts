@@ -14,11 +14,9 @@ export async function GET() {
     {
       level: "info",
       message: "Starting next travel event computation",
-      payload: {
-        page: "lib/travel/next/route.ts",
-        somedate: new Date().toISOString(),
-        somevalue: "somevalue",
-      },
+      page: "lib/travel/next/route.ts",
+      somedate: new Date().toISOString(),
+      somevalue: "somevalue",
     },
     { requestId },
   );
@@ -31,11 +29,9 @@ export async function GET() {
       {
         level: "info",
         message: "Next travel event computed",
-        payload: {
-          page: "lib/travel/next/route.ts",
-          somedate: new Date().toISOString(),
-          somevalue: "somevalue",
-        },
+        page: "lib/travel/next/route.ts",
+        somedate: new Date().toISOString(),
+        somevalue: "somevalue",
       },
       { requestId },
     );
@@ -51,12 +47,10 @@ export async function GET() {
       {
         level: "error",
         message: "Failed to compute next travel event",
-        payload: {
-          page: "lib/travel/next/route.ts",
-          somedate: new Date().toISOString(),
-          somevalue: "somevalue",
-          error: err.message,
-        },
+        page: "lib/travel/next/route.ts",
+        somedate: new Date().toISOString(),
+        somevalue: "somevalue",
+        error: err.message,
       },
       { requestId },
     );

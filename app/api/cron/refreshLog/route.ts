@@ -43,7 +43,7 @@ export async function GET(req: NextRequest) {
       {
         level: "error",
         message: "cron.dbTableStats.error",
-        payload: { error: String(error?.message || error) },
+        error: String(error?.message || error),
       },
       { requestId, route: "cron/dbTableStats", userId: "JK" },
     );

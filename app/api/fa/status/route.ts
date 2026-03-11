@@ -15,7 +15,7 @@ export async function GET(req: Request) {
     {
       level: "info",
       message: "API FA status route accessed",
-      payload: { ident: ident },
+      ident: ident,
     },
     { requestId: "r", route: "p", userId: "u" },
   );
