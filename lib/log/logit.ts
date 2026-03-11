@@ -36,20 +36,24 @@ export async function logit(
   payload: Record<string, any>,
   meta: Record<string, any>
 ) {
+  // --- Identity ------------------------------------------------------------
   const requestId = meta.requestId ?? crypto.randomUUID();
   const eventIndex = meta.eventIndex ?? 1;
 
+  // --- Message -------------------------------------------------------------
   const originalMessage = (event.message ?? "").toString().trim();
   const message = originalMessage
     ? `#${eventIndex} ${originalMessage}`
     : `#${eventIndex} JMSG`;
 
+  // --- Flatten payload -----------------------------------------------------
   const flatPayload = {
     ...(payload ?? {}),
     ...(meta?.payload ?? {}),
     eventIndex,
   };
 
+  // --- Flatten meta --------------------------------------------------------
   const flatMeta = {
     requestId,
     page: meta.page ?? null,
@@ -60,6 +64,7 @@ export async function logit(
 
   const timestamp = new Date().toISOString();
 
+  // --- Structured event for DB --------------------------------------------
   const eventRecord = {
     domain,
     level: event.level ?? "info",
@@ -69,6 +74,7 @@ export async function logit(
     meta: flatMeta,
   };
 
+  // --- Structured event for Axiom -----------------------------------------
   const axiomEvent = {
     domain,
     level: eventRecord.level,
@@ -112,8 +118,8 @@ export async function logit(
   // --- Axiom ingestion (direct) -------------------------------------------
   try {
     const client = getAxiomClient();
-    console.log("Axiom event:", axiomEvent);
-    await client.ingest(process.env.AXIOM_DATASET!, axiomEvent);
+        console.log("Axiom event:", axiomEvent);
+    client.ingest(process.env.AXIOM_DATASET!, [axiomEvent]); // <-- IMPORTANT: array
   } catch (err) {
     console.error("Axiom log ingestion failed:", err);
   }
