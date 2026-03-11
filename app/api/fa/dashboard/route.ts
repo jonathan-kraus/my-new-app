@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\fa\dashboard\route.ts
- * @LastEditTime: 2026-03-11 00:22:26
+ * @LastEditTime: 2026-03-11 18:54:19
  */
 // app/api/fa/dashboard/route.ts
 import { getConfig } from "@/lib/runtime/config";
@@ -38,6 +38,7 @@ export async function GET() {
   const minLon = await getConfig("minLon", "-105.7435");
   const maxLat = await getConfig("maxLat", "40.7142");
   const maxLon = await getConfig("maxLon", "-104.9679");
+console.log("BOUNDING BOX", { minLat, minLon, maxLat, maxLon });
 
   const query = `-latlong "${minLat} ${minLon} ${maxLat} ${maxLon}"`;
 
@@ -76,6 +77,19 @@ export async function GET() {
       }),
     },
   );
+  // 1b. Fetch actual planes in the skybox
+const planesRes = await fetch(
+  `https://aeroapi.flightaware.com/aeroapi/flights/search?query=${encodeURIComponent(
+    query,
+  )}`,
+  {
+    headers: { "x-apikey": process.env.FLIGHTAWARE_API_KEY! },
+  },
+);
+
+const planesData = await planesRes.json();
+console.log("PLANES DATA", planesData);
+
   // 2. Fetch AA877 status
   const ident = await getConfig("flight-ID", "flight-ID");
   const statusRes = await fetch(
@@ -98,8 +112,10 @@ export async function GET() {
     return sched === today;
   });
 
-  return NextResponse.json({
-    count: countData.count,
-    flight: current ?? null,
-  });
+return NextResponse.json({
+  count: countData.count,
+  flight: current ?? null,
+  planes: planesData.flights ?? []
+});
+
 }

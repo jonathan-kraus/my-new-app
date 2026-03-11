@@ -62,7 +62,14 @@ function FlightTable({ planes }: { planes: any[] }) {
   }
 
   return (
-    <table style={{ width: "100%", marginTop: 24, borderCollapse: "collapse" }}>
+    <table
+      style={{
+        width: "100%",
+        marginTop: 24,
+        borderCollapse: "collapse",
+        fontSize: 14,
+      }}
+    >
       <thead>
         <tr>
           <th>Ident</th>
@@ -70,26 +77,62 @@ function FlightTable({ planes }: { planes: any[] }) {
           <th>Aircraft</th>
           <th>Alt</th>
           <th>GS</th>
+          <th>Status</th>
           <th>Scheduled</th>
           <th>Estimated</th>
         </tr>
       </thead>
+
       <tbody>
-        {planes.map((p, i) => (
-          <tr key={i}>
-            <td>{p.ident}</td>
-            <td>{p.origin} → {p.destination}</td>
-            <td>{p.aircrafttype}</td>
-            <td>{p.altitude}</td>
-            <td>{p.groundspeed}</td>
-            <td>{formatET(p.scheduled_out)}</td>
-            <td>{formatET(p.estimated_out)}</td>
-          </tr>
-        ))}
+        {planes.map((p, i) => {
+          const origin =
+            p.origin?.code_iata ||
+            p.origin?.code ||
+            p.origin?.city ||
+            "—";
+
+          const destination =
+            p.destination?.code_iata ||
+            p.destination?.code ||
+            p.destination?.city ||
+            "—";
+
+          const status =
+            p.altitude > 0
+              ? "Enroute"
+              : p.estimated_out
+              ? "Scheduled"
+              : "Unknown";
+
+          const scheduled = p.scheduled_out
+            ? formatET(p.scheduled_out)
+            : "—";
+
+          const estimated = p.estimated_out
+            ? formatET(p.estimated_out)
+            : "—";
+
+          return (
+            <tr key={i}>
+              <td>{p.ident}</td>
+              <td>
+                {origin} → {destination}
+              </td>
+              <td>{p.aircrafttype || "—"}</td>
+              <td>{p.altitude || "—"}</td>
+              <td>{p.groundspeed || "—"}</td>
+              <td>{status}</td>
+              <td>{scheduled}</td>
+              <td>{estimated}</td>
+            </tr>
+          );
+        })}
       </tbody>
     </table>
   );
 }
+
+
 
 export default function Dashboard() {
   const [data, setData] = useState<any>(null);
