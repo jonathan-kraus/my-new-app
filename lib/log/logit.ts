@@ -6,8 +6,6 @@ const NEON_MAX_JSON = 200_000;
 const ERROR_COOLDOWN_MS = 5000;
 let lastErrorTime = 0;
 
-// --- Helpers ---------------------------------------------------------------
-
 function safeForNeon(obj: any) {
   try {
     const json = JSON.stringify(obj);
@@ -20,7 +18,7 @@ function safeForNeon(obj: any) {
   }
 }
 
-function safeForAxiom(obj: any) {
+function safeString(obj: any) {
   try {
     return JSON.stringify(obj ?? {});
   } catch {
@@ -28,82 +26,50 @@ function safeForAxiom(obj: any) {
   }
 }
 
-// --- FINAL DIRECT‑INGEST LOGIT --------------------------------------------
-
 export async function logit(
   domain: string,
   event: Record<string, any>,
   payload: Record<string, any>,
-  meta: Record<string, any>
+  meta: Record<string, any>,
 ) {
-  // --- Identity ------------------------------------------------------------
+  // --- Core identifiers ----------------------------------------------------
   const requestId = meta.requestId ?? crypto.randomUUID();
   const eventIndex = meta.eventIndex ?? 1;
 
-  // --- Message -------------------------------------------------------------
   const originalMessage = (event.message ?? "").toString().trim();
   const message = originalMessage
     ? `#${eventIndex} ${originalMessage}`
     : `#${eventIndex} JMSG`;
 
-  // --- Flatten payload -----------------------------------------------------
+  // --- Internal structures (your new format) -------------------------------
   const flatPayload = {
-    ...(payload ?? {}),
-    ...(meta?.payload ?? {}),
     eventIndex,
+    level: event.level ?? "info",
+    message: originalMessage,
+    payload,
   };
 
-  // --- Flatten meta --------------------------------------------------------
   const flatMeta = {
     requestId,
     page: meta.page ?? null,
     userId: meta.userId ?? null,
-    zulu: meta.zulu,
-    local: meta.local,
+
+    // any additional fields you want are safe here
+    ...meta,
   };
 
-  const timestamp = new Date().toISOString();
-
-  // --- Structured event for DB --------------------------------------------
-  const eventRecord = {
-    domain,
-    level: event.level ?? "info",
-    message,
-    timestamp,
-    payload: flatPayload,
-    meta: flatMeta,
-  };
-
-  // --- Structured event for Axiom -----------------------------------------
-  const axiomEvent = {
-    domain,
-    level: eventRecord.level,
-    message: eventRecord.message,
-    timestamp,
-    payload_json: safeForAxiom(flatPayload),
-    meta_json: safeForAxiom(flatMeta),
-    requestId,
-    eventIndex,
-    page: flatMeta.page,
-    userId: flatMeta.userId,
-  };
-
-  // --- Neon ingestion ------------------------------------------------------
+  // --- DB write (unchanged) ------------------------------------------------
   try {
     await db.log.create({
       data: {
         domain,
-        level: eventRecord.level,
-        message: eventRecord.message,
+        level: event.level ?? "info",
+        message,
         requestId,
         payload: safeForNeon(flatPayload),
         meta: safeForNeon(flatMeta),
         page: flatMeta.page,
         userId: flatMeta.userId,
-        sessionEmail: payload.sessionEmail ?? null,
-        sessionUser: payload.sessionUser ?? null,
-        file: payload.file ?? null,
-        line: payload.line ?? null,
         data: safeForNeon(flatPayload),
       },
     });
@@ -115,15 +81,28 @@ export async function logit(
     }
   }
 
-  // --- Axiom ingestion (direct) -------------------------------------------
-  console.log("INGEST START");
-try {
-  await axiomIngest(process.env.AXIOM_DATASET!, [axiomEvent]);
-  console.log("INGEST SUCCESS");
-} catch (err) {
-  console.error("AXIOM INGEST ERROR:", err);
-}
-console.log("INGEST END");
+  // --- Axiom ingestion (schema‑compatible) --------------------------------
+  const axiomEvent = {
+    domain,
+    eventIndex,
+    level: event.level ?? "info",
+    message,
 
-  return eventRecord;
+    // These two fields are ALWAYS allowed because they are strings
+    meta_json: safeString(flatMeta),
+    payload_json: safeString(flatPayload),
+
+    // You may add ANY additional fields here *if they already exist in your schema*
+    // or if you want to expand your schema intentionally.
+    // Example:
+    // jzulu: new Date().toISOString()
+  };
+
+  try {
+    await axiomIngest(process.env.AXIOM_DATASET!, [axiomEvent]);
+  } catch (err) {
+    console.error("AXIOM INGEST ERROR:", err);
+  }
+
+  return axiomEvent;
 }

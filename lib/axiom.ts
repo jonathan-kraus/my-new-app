@@ -7,7 +7,7 @@ export async function axiomIngest(dataset: string, events: any[]) {
   const res = await fetch(url, {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${token}`,
+      Authorization: `Bearer ${token}`,
       "X-Axiom-Org-Id": orgId,
       "Content-Type": "application/json",
     },

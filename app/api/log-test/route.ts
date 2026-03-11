@@ -1,40 +1,38 @@
 // app/api/log-test/route.ts
+import { NextResponse } from "next/server";
+import { axiomIngest } from "@/lib/axiom";
 
+export async function GET() {
+  const timestamp = new Date().toISOString();
 
-import { NextResponse, NextRequest } from "next/server";
-import { logit } from "@/lib/log/logit";
-import { enrichContext } from "@/lib/log/context";
+  const event = {
+    domain: "notes",
+    level: "info",
+    jzulu: new Date().toISOString(),
+    message: "#1 Notes GET completed TEST",
+    eventIndex: 1,
+    payload_json: JSON.stringify({
+      eventIndex: 1,
+      level: "info",
+      message: "Notes GET completed TEST",
+      payload: { count: 999 },
+    }),
+    meta_json: JSON.stringify({
+      requestId: "test-request-id",
+      page: null,
+      userId: null,
+    }),
+    _time: timestamp,
+  };
 
-export async function GET(req: NextRequest) {
   try {
-
-    const eventIndex = 22;
-
-    const ctx = await enrichContext(req);
-    await logit(
-      "jonathan",
-      {
-        level: "info",
-        message: "GitHub test route completed",
-
-      },
-      { eventIndex },
-      {
-        route: ctx.page,
-        userId: ctx.userId,
-        requestId: ctx?.requestId,
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", {
-          timeZone: "America/New_York",
-        }),
-      },
-    );
-    return NextResponse.json({
-      ok: true,
-
-    });
+    await axiomIngest(process.env.AXIOM_DATASET!, [event]);
+    return NextResponse.json({ ok: true, sent: event });
   } catch (err) {
-    console.error("AXIOM QUERY ERROR", err);
-    return NextResponse.json({ ok: false, error: "Axiom query failed" });
+    console.error("AXIOM INGEST ERROR", err);
+    return NextResponse.json(
+      { ok: false, error: String(err) },
+      { status: 500 },
+    );
   }
 }
