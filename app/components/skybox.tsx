@@ -55,7 +55,9 @@ export default function Skybox() {
                 className="cursor-pointer hover:bg-slate-700 transition-colors"
               >
                 <td className="p-2">{p.ident}</td>
-                <td className="p-2">{origin} → {dest}</td>
+                <td className="p-2">
+                  {origin} → {dest}
+                </td>
                 <td className="p-2">{p.aircraft_type || "—"}</td>
                 <td className="p-2">{alt}</td>
                 <td className="p-2">{gs}</td>
@@ -66,9 +68,7 @@ export default function Skybox() {
         </tbody>
       </table>
 
-      <p className="mt-4 text-slate-300">
-        📡 Flight Count: {planes.length}
-      </p>
+      <p className="mt-4 text-slate-300">📡 Flight Count: {planes.length}</p>
     </div>
   );
 }

@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
   //
   const metaRes = await fetch(
     `https://aeroapi.flightaware.com/aeroapi/flights/${ident}`,
-    { headers }
+    { headers },
   );
 
   const metaText = await metaRes.text();
@@ -42,21 +42,57 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "No flights found for ident" });
   }
 
-  // Pick the first flight (today’s or next upcoming)
-  const flight = flights[0];
+  //
+  // 3. Pick the correct flight
+  //
 
-  // Extract the REAL flight ID for track lookup
+  // Helper: check if scheduled_out is today in origin's local timezone
+  function isTodayLocal(flight: any) {
+    const tz = flight.origin?.timezone;
+    if (!tz || !flight.scheduled_out) return false;
+
+    const localDate = new Date(flight.scheduled_out).toLocaleDateString(
+      "en-US",
+      {
+        timeZone: tz,
+      },
+    );
+
+    const todayLocal = new Date().toLocaleDateString("en-US", {
+      timeZone: tz,
+    });
+
+    return localDate === todayLocal;
+  }
+
+  // 3a. Active flights first
+  const active = flights.find(
+    (f: any) =>
+      f.status?.includes("En Route") ||
+      f.status?.includes("Departed") ||
+      f.actual_off != null ||
+      (typeof f.progress_percent === "number" && f.progress_percent > 0),
+  );
+
+  // 3b. If no active flight, pick today's flight
+  const todayFlight = flights.find(isTodayLocal);
+
+  // 3c. Else fallback to next scheduled
+  const nextScheduled = flights[0];
+
+  const flight = active ?? todayFlight ?? nextScheduled;
+
+  //
+  // 4. Fetch track using the REAL flight ID
+  //
   const flightId = flight.fa_flight_id;
   if (!flightId) {
     return NextResponse.json({ error: "No fa_flight_id available" });
   }
 
-  //
-  // 3. Fetch track using the REAL flight ID
-  //
   const trackRes = await fetch(
     `https://aeroapi.flightaware.com/aeroapi/flights/${flightId}/track`,
-    { headers }
+    { headers },
   );
 
   const trackText = await trackRes.text();
@@ -73,7 +109,7 @@ export async function GET(request: NextRequest) {
   const live = positions.length > 0 ? positions[positions.length - 1] : null;
 
   //
-  // 4. Return merged data
+  // 5. Return merged data
   //
   return NextResponse.json({
     ident,
