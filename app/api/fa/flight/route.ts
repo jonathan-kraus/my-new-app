@@ -1,9 +1,11 @@
-import { getConfig } from "@/lib/runtime/config";
 import { NextRequest, NextResponse } from "next/server";
-
+import { getConfig } from "@/lib/runtime/config";
 
 export async function GET(request: NextRequest) {
+  // 1. Load ident from config
   const identRaw = await getConfig("flight-ID", "ident");
+
+  // Safely convert runtime value → string
   const identStr = identRaw != null ? String(identRaw) : "";
   const identUpper = identStr.toUpperCase();
 
@@ -17,7 +19,9 @@ export async function GET(request: NextRequest) {
     "x-apikey": process.env.FLIGHTAWARE_API_KEY!,
   };
 
-  // --- Fetch metadata ---
+  //
+  // 2. Fetch metadata for the ident
+  //
   const metaRes = await fetch(
     `https://aeroapi.flightaware.com/aeroapi/flights/${ident}`,
     { headers }
@@ -33,9 +37,25 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON from FlightAware META" });
   }
 
-  // --- Fetch track ---
+  const flights = metaData?.flights ?? [];
+  if (flights.length === 0) {
+    return NextResponse.json({ error: "No flights found for ident" });
+  }
+
+  // Pick the first flight (today’s or next upcoming)
+  const flight = flights[0];
+
+  // Extract the REAL flight ID for track lookup
+  const flightId = flight.fa_flight_id;
+  if (!flightId) {
+    return NextResponse.json({ error: "No fa_flight_id available" });
+  }
+
+  //
+  // 3. Fetch track using the REAL flight ID
+  //
   const trackRes = await fetch(
-    `https://aeroapi.flightaware.com/aeroapi/flights/${ident}/track`,
+    `https://aeroapi.flightaware.com/aeroapi/flights/${flightId}/track`,
     { headers }
   );
 
@@ -52,19 +72,37 @@ export async function GET(request: NextRequest) {
   const positions = trackData?.positions ?? [];
   const live = positions.length > 0 ? positions[positions.length - 1] : null;
 
+  //
+  // 4. Return merged data
+  //
   return NextResponse.json({
     ident,
-    scheduled_out: metaData?.flights?.[0]?.scheduled_out ?? null,
-    estimated_out: metaData?.flights?.[0]?.estimated_out ?? null,
-    scheduled_in: metaData?.flights?.[0]?.scheduled_in ?? null,
-    estimated_in: metaData?.flights?.[0]?.estimated_in ?? null,
-    status: metaData?.flights?.[0]?.status ?? "Unknown",
-    gate_out: metaData?.flights?.[0]?.gate_out ?? null,
-    gate_in: metaData?.flights?.[0]?.gate_in ?? null,
-    aircraft_type: metaData?.flights?.[0]?.aircraft_type ?? null,
-    origin: metaData?.flights?.[0]?.origin ?? null,
-    destination: metaData?.flights?.[0]?.destination ?? null,
+    fa_flight_id: flightId,
 
+    scheduled_out: flight.scheduled_out ?? null,
+    estimated_out: flight.estimated_out ?? null,
+    actual_out: flight.actual_out ?? null,
+
+    scheduled_off: flight.scheduled_off ?? null,
+    estimated_off: flight.estimated_off ?? null,
+    actual_off: flight.actual_off ?? null,
+
+    scheduled_on: flight.scheduled_on ?? null,
+    estimated_on: flight.estimated_on ?? null,
+    actual_on: flight.actual_on ?? null,
+
+    scheduled_in: flight.scheduled_in ?? null,
+    estimated_in: flight.estimated_in ?? null,
+    actual_in: flight.actual_in ?? null,
+
+    status: flight.status ?? "Unknown",
+    aircraft_type: flight.aircraft_type ?? null,
+    origin: flight.origin ?? null,
+    destination: flight.destination ?? null,
+    gate_origin: flight.gate_origin ?? null,
+    gate_destination: flight.gate_destination ?? null,
+
+    // Live telemetry
     live_altitude: live?.altitude ?? null,
     live_groundspeed: live?.groundspeed ?? null,
     live_heading: live?.heading ?? null,
