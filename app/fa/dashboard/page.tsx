@@ -1,199 +1,101 @@
 "use client";
-import { RadarSkybox } from "@/components/RadarSkybox";
-import { Button } from "@/components/ui/buttonfly";
-import { useState } from "react";
+// app\fa\dashboard\page.tsx
+import { useEffect, useState } from "react";
+import Skybox from "@/components/skybox";
+import { getConfig } from "@/lib/runtime/config";
 
-function formatET(dateString: string | null) {
-  if (!dateString) return "—";
-
-  return new Intl.DateTimeFormat("en-US", {
-    timeZone: "America/New_York",
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(new Date(dateString));
-}
-
-function getDelayMinutes(scheduled: string | null, estimated: string | null) {
-  if (!scheduled || !estimated) return 0;
-
-  const sched = new Date(scheduled).getTime();
-  const est = new Date(estimated).getTime();
-
-  const diff = est - sched;
-  return Math.max(0, Math.round(diff / 60000));
-}
-
-function formatDelay(minutes: number) {
-  if (minutes <= 0) return null;
-
-  const h = Math.floor(minutes / 60);
-  const m = minutes % 60;
-
-  if (h > 0) return `+${h}h ${m}m delay`;
-  return `+${m}m delay`;
-}
-
-function DelayBadge({ minutes }: { minutes: number }) {
-  if (minutes <= 0) return null;
-
-  return (
-    <span
-      style={{
-        display: "inline-block",
-        backgroundColor: "#dc2626",
-        color: "white",
-        padding: "4px 10px",
-        borderRadius: "6px",
-        fontSize: "13px",
-        fontWeight: 600,
-        marginLeft: "8px",
-      }}
-    >
-      {formatDelay(minutes)}
-    </span>
-  );
-}
-function FlightTable({ planes }: { planes: any[] }) {
-  if (!planes || planes.length === 0) {
-    return <p>No planes in your skybox.</p>;
-  }
-
-  return (
-    <table
-      style={{
-        width: "100%",
-        marginTop: 24,
-        borderCollapse: "collapse",
-        fontSize: 14,
-      }}
-    >
-      <thead>
-        <tr>
-          <th>Ident</th>
-          <th>From → To</th>
-          <th>Aircraft</th>
-          <th>Alt</th>
-          <th>GS</th>
-          <th>Status</th>
-          <th>Scheduled</th>
-          <th>Estimated</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        {planes.map((p, i) => {
-          const originAirport = p.origin || {};
-          const destAirport = p.destination || {};
-
-          const origin =
-            originAirport.code_iata ||
-            originAirport.code ||
-            originAirport.city ||
-            originAirport.name ||
-            "—";
-
-          const destination =
-            destAirport.code_iata ||
-            destAirport.code ||
-            destAirport.city ||
-            destAirport.name ||
-            "—";
-
-          const altitude = p.last_position?.altitude ?? "—";
-          const groundspeed = p.last_position?.groundspeed ?? "—";
-
-          const status =
-            typeof altitude === "number" && altitude > 0
-              ? "Enroute"
-              : "On Ground";
-
-          const scheduled = p.scheduled_out
-            ? formatET(p.scheduled_out)
-            : "—";
-
-          const estimated = p.estimated_out
-            ? formatET(p.estimated_out)
-            : "—";
-
-          return (
-            <tr key={i}>
-              <td>{p.ident}</td>
-              <td>
-                {origin} → {destination}
-              </td>
-              <td>{p.aircraft_type || p.aircrafttype || "—"}</td>
-              <td>{altitude}</td>
-              <td>{groundspeed}</td>
-              <td>{status}</td>
-              <td>{scheduled}</td>
-              <td>{estimated}</td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
-  );
-}
-
-
-
-
-export default function Dashboard() {
+export default function FlightDashboard() {
   const [data, setData] = useState<any>(null);
+  const [identInput, setIdentInput] = useState("");
 
   async function load() {
-    const res = await fetch("/api/fa/dashboard");
+    const ident = await getConfig("flight-ID", "ident");
+    console.log("IDENT:", ident);
+    if (!ident) return;
+
+    const res = await fetch(`/api/fa/flight/`);
     const json = await res.json();
     setData(json);
   }
 
-  const delay = data
-    ? getDelayMinutes(data.flight?.scheduled_out, data.flight?.estimated_out)
-    : 0;
+  useEffect(() => {
+    load();
+  }, []);
+
+  async function updateFlight() {
+    if (!identInput) return;
+
+    await fetch("/api/set-flight-id", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ident: identInput }),
+    });
+
+    window.location.href = "/fa/dashboard";
+  }
 
   return (
-    <div style={{ padding: 24 }}>
-      <h1>✈️ Flight Dashboard</h1>
-      <Button onClick={load}>Update Flight Data</Button>
-      <p>Flight data will be displayed here.</p>
+    <div className="p-6 text-white space-y-8">
 
-      {data && (
-        <div style={{ marginTop: 24, lineHeight: 1.6 }}>
-          <h2>{data.flight?.ident_iata || "Unknown"} Status</h2>
+      <h1 className="text-3xl font-bold">✈️ Flight Dashboard</h1>
 
-          {data.flight ? (
-            <>
-              <p>
-                <strong>{data.flight.ident_iata}</strong> — {data.flight.status}
-                <DelayBadge minutes={delay} />
-              </p>
+      <button
+        onClick={load}
+        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white"
+      >
+        Update Flight Data
+      </button>
 
-              <p>Scheduled: {formatET(data.flight.scheduled_out)}</p>
+<div suppressHydrationWarning>
+  {data ? (
+    <div className="bg-slate-800 border border-slate-700 rounded-lg p-6 shadow-lg">
+      <h2 className="text-2xl font-semibold mb-2">{data.ident} Status</h2>
+      <p className="text-lg mb-4">{data.ident} — {data.status}</p>
 
-              <p>Estimated: {formatET(data.flight.estimated_out)}</p>
+      <div className="space-y-1 text-slate-300">
+        <p><strong className="text-white">Scheduled:</strong> {data.scheduled_out ? new Date(data.scheduled_out).toLocaleString() : "—"}</p>
+        <p><strong className="text-white">Estimated:</strong> {data.estimated_out ? new Date(data.estimated_out).toLocaleString() : "—"}</p>
+        <p><strong className="text-white">Gate:</strong> {data.gate_out || "—"} → {data.gate_in || "—"}</p>
+      </div>
 
-              <p>
-                Gate: {data.flight.gate_origin ?? "TBD"} →{" "}
-                {data.flight.gate_destination ?? "TBD"}
-              </p>
-              <h2 style={{ marginTop: 32 }}>📡 Skybox Radar</h2>
-              <RadarSkybox count={data.count} />
+      <h3 className="text-xl font-semibold mt-6 mb-2">📡 Live Telemetry</h3>
 
-              <h2 style={{ marginTop: 32 }}>🛩️ Skybox Flights</h2>
-              <FlightTable planes={data.planes} />
+      <div className="grid grid-cols-2 gap-2 text-slate-300">
+        <p><strong className="text-white">Altitude:</strong> {data.live_altitude ?? "—"} ft</p>
+        <p><strong className="text-white">Groundspeed:</strong> {data.live_groundspeed ?? "—"} kts</p>
+        <p><strong className="text-white">Heading:</strong> {data.live_heading ?? "—"}°</p>
+        <p><strong className="text-white">Latitude:</strong> {data.live_latitude ?? "—"}</p>
+        <p><strong className="text-white">Longitude:</strong> {data.live_longitude ?? "—"}</p>
+      </div>
+    </div>
+  ) : (
+    <p className="text-slate-400">Loading flight data…</p>
+  )}
+</div>
 
-            </>
-          ) : (
-            <p>No flight found for today.</p>
-          )}
 
-          <h2 style={{ marginTop: 24 }}>📡 Flight Count</h2>
-          <p>Flights in your skybox: {data.count}</p>
+      <div className="bg-slate-800 border border-slate-700 rounded-lg p-6 shadow-lg">
+        <h3 className="text-xl font-semibold mb-4">Select Flight</h3>
+
+        <div className="flex gap-3">
+          <input
+            type="text"
+            placeholder="Enter flight ident (e.g., UAL607)"
+            value={identInput}
+            onChange={(e) => setIdentInput(e.target.value.toUpperCase())}
+            className="px-3 py-2 rounded-md bg-slate-700 border border-slate-600 text-white w-64"
+          />
+
+          <button
+            onClick={updateFlight}
+            className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-md text-white"
+          >
+            Load Flight
+          </button>
         </div>
-      )}
+      </div>
+
+      <Skybox />
     </div>
   );
 }
