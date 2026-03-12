@@ -2,10 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getConfig } from "@/lib/runtime/config";
 
 export async function GET(request: NextRequest) {
-  // 1. Load ident from config
   const identRaw = await getConfig("flight-ID", "ident");
-
-  // Safely convert runtime value → string
   const identStr = identRaw != null ? String(identRaw) : "";
   const identUpper = identStr.toUpperCase();
 
@@ -20,11 +17,11 @@ export async function GET(request: NextRequest) {
   };
 
   //
-  // 2. Fetch metadata for the ident
+  // 1. Fetch metadata for the ident
   //
   const metaRes = await fetch(
     `https://aeroapi.flightaware.com/aeroapi/flights/${ident}`,
-    { headers },
+    { headers }
   );
 
   const metaText = await metaRes.text();
@@ -43,20 +40,31 @@ export async function GET(request: NextRequest) {
   }
 
   //
-  // 3. Pick the correct flight
+  // 2. Helper: detect active flights
   //
+  function isActive(f: any) {
+    const s = (f.status ?? "").toLowerCase();
 
-  // Helper: check if scheduled_out is today in origin's local timezone
+    return (
+      s.includes("en route") ||
+      s.includes("enroute") ||
+      s.includes("airborne") ||
+      s.includes("departed") ||
+      f.actual_off != null ||
+      (typeof f.progress_percent === "number" && f.progress_percent > 0)
+    );
+  }
+
+  //
+  // 3. Helper: detect today's flight in origin's local timezone
+  //
   function isTodayLocal(flight: any) {
     const tz = flight.origin?.timezone;
     if (!tz || !flight.scheduled_out) return false;
 
-    const localDate = new Date(flight.scheduled_out).toLocaleDateString(
-      "en-US",
-      {
-        timeZone: tz,
-      },
-    );
+    const localDate = new Date(flight.scheduled_out).toLocaleDateString("en-US", {
+      timeZone: tz,
+    });
 
     const todayLocal = new Date().toLocaleDateString("en-US", {
       timeZone: tz,
@@ -65,55 +73,64 @@ export async function GET(request: NextRequest) {
     return localDate === todayLocal;
   }
 
-  // 3a. Active flights first
-  const active = flights.find(
-    (f: any) =>
-      f.status?.includes("En Route") ||
-      f.status?.includes("Departed") ||
-      f.actual_off != null ||
-      (typeof f.progress_percent === "number" && f.progress_percent > 0),
+  //
+  // 4. Fetch track for each flight (in parallel)
+  //
+  async function getTrack(flightId: string) {
+    const res = await fetch(
+      `https://aeroapi.flightaware.com/aeroapi/flights/${flightId}/track`,
+      { headers }
+    );
+    const text = await res.text();
+    console.log("FA TRACK RESPONSE:", text);
+
+    try {
+      const json = JSON.parse(text);
+      return json.positions ?? [];
+    } catch {
+      return [];
+    }
+  }
+
+  const tracks = await Promise.all(
+    flights.map((f: any) => getTrack(f.fa_flight_id))
   );
 
-  // 3b. If no active flight, pick today's flight
-  const todayFlight = flights.find(isTodayLocal);
+  //
+  // 5. Pick the flight with the freshest telemetry
+  //
+  let bestIndex = 0;
+  let bestTimestamp = 0;
 
-  // 3c. Else fallback to next scheduled
+  tracks.forEach((positions, i) => {
+    const last = positions[positions.length - 1];
+    if (last && last.timestamp > bestTimestamp) {
+      bestTimestamp = last.timestamp;
+      bestIndex = i;
+    }
+  });
+
+  const freshestFlight = flights[bestIndex];
+  const freshestTrack = tracks[bestIndex];
+  const freshestLive = freshestTrack[freshestTrack.length - 1] ?? null;
+
+  //
+  // 6. Fallback logic (metadata-based)
+  //
+  const active = flights.find(isActive);
+  const todayFlight = flights.find(isTodayLocal);
   const nextScheduled = flights[0];
 
-  const flight = active ?? todayFlight ?? nextScheduled;
+  // Final selection: telemetry freshness wins
+  const flight = freshestFlight ?? active ?? todayFlight ?? nextScheduled;
+  const live = freshestLive;
 
   //
-  // 4. Fetch track using the REAL flight ID
-  //
-  const flightId = flight.fa_flight_id;
-  if (!flightId) {
-    return NextResponse.json({ error: "No fa_flight_id available" });
-  }
-
-  const trackRes = await fetch(
-    `https://aeroapi.flightaware.com/aeroapi/flights/${flightId}/track`,
-    { headers },
-  );
-
-  const trackText = await trackRes.text();
-  console.log("FA TRACK RESPONSE:", trackText);
-
-  let trackData: any = null;
-  try {
-    trackData = JSON.parse(trackText);
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON from FlightAware TRACK" });
-  }
-
-  const positions = trackData?.positions ?? [];
-  const live = positions.length > 0 ? positions[positions.length - 1] : null;
-
-  //
-  // 5. Return merged data
+  // 7. Return merged data
   //
   return NextResponse.json({
     ident,
-    fa_flight_id: flightId,
+    fa_flight_id: flight.fa_flight_id,
 
     scheduled_out: flight.scheduled_out ?? null,
     estimated_out: flight.estimated_out ?? null,
@@ -138,8 +155,8 @@ export async function GET(request: NextRequest) {
     gate_origin: flight.gate_origin ?? null,
     gate_destination: flight.gate_destination ?? null,
 
-    // Live telemetry
-    live_altitude: live?.altitude ?? null,
+    // Live telemetry (altitude in *feet*)
+    live_altitude: live ? live.altitude * 100 : null,
     live_groundspeed: live?.groundspeed ?? null,
     live_heading: live?.heading ?? null,
     live_latitude: live?.latitude ?? null,

@@ -27,7 +27,7 @@ async function findRoutes(dir, routes = []) {
     if (entry.isDirectory()) {
       // Skip Next.js special folders and node_modules
       if (
-        ["node_modules", "_components", "_lib", "_hooks", "api"].includes(
+        ["node_modules", "_components", "_lib", "_hooks"].includes(
           entry.name,
         )
       )

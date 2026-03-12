@@ -1,67 +1,59 @@
 // app/ping/page.tsx
 
+import crypto from "crypto";
 import { refreshLogRowEstimateForToday } from "@/lib/db/refreshLogRowEstimateForToday";
 import { logit } from "@/lib/log/logit";
-import { request } from "node:http";
 
 export default async function AxiomTestPage() {
-  const res = await fetch("https://www.kraus.my.id/api/ping", {
-    cache: "no-store",
-  });
-  const count = await refreshLogRowEstimateForToday();
-  const data = await res.json();
-  const rows = data.rows ?? []; // astronomy rows from your API
   const requestId = crypto.randomUUID();
   const userId = "JK";
   const eventIndex = 22;
+
+  // --- Fetch two APIs in parallel -----------------------------------------
+  const [pingRes, secondRes] = await Promise.all([
+    fetch("https://www.kraus.my.id/api/ping", { cache: "no-store" }),
+    fetch("https://www.kraus.my.id/api/deployments", { cache: "no-store" }), // <— replace with your second API
+  ]);
+
+  const pingData = await pingRes.json();
+  const secondData = await secondRes.json();
+
+  // --- Optional: your Neon row estimate -----------------------------------
+  const count = await refreshLogRowEstimateForToday();
+
+  // --- Log the combined result --------------------------------------------
   await logit(
     "jonathan",
-    { level: "info", message: "this is a message" },
+    { level: "info", message: "Fetched two APIs" },
     {
-      data: data,
+      pingData,
+      secondData,
+      count,
     },
     {
       page: "page.tsx",
       requestId,
       userId,
       eventIndex,
-    },
+    }
   );
+
+  // --- Render both API results --------------------------------------------
   return (
     <div className="p-6 space-y-8">
       <h1 className="text-xl font-bold mb-4">Result</h1>
 
-      {/* Raw JSON (debug) */}
       <pre className="bg-black/40 p-4 rounded text-green-300 text-sm overflow-auto">
-        count: {count}
-        {JSON.stringify(data, null, 2)}
+        {JSON.stringify(
+          {
+            count,
+            pingData,
+            secondData,
+          },
+          null,
+          2
+        )}
       </pre>
-
-      {/* Render Astronomy Data */}
-      <div className="space-y-4">
-        {rows.map((row: any, i: number) => (
-          <div
-            key={row._rowId ?? i}
-            className="p-4 rounded-lg bg-blue-900/40 border border-blue-700"
-          >
-            <div className="font-semibold text-blue-200">
-              Snapshot at {row._time}
-            </div>
-
-            <div className="grid grid-cols-2 gap-2 text-sm mt-2">
-              <div>A: {userId}</div>
-              <div>B: {eventIndex}</div>
-              <div>C: {row.data?.dataj_sunrisec}</div>
-              <div>D: {row.data?.dataj_sunrised}</div>
-              <div>E: {row.data?.dataj_sunrisee}</div>
-              <div>F: {row.data?.dataj_sunrisef}</div>
-              <div>G: {row.data?.dataj_sunriseg}</div>
-              <div>H: {row.data?.dataj_sunriseh}</div>
-              <div>Fetched: {row.data?.dataj_fetchedAt}</div>
-            </div>
-          </div>
-        ))}
-      </div>
     </div>
   );
 }
