@@ -3,45 +3,68 @@ import { NextRequest, NextResponse } from "next/server";
 
 
 export async function GET(request: NextRequest) {
-  const ident = await getConfig("flight-ID", "ident");
-  if (!ident) return NextResponse.json({ error: "Missing ident" }, { status: 400 });
-  const headers = { "x-apikey": process.env.FLIGHTAWARE_API_KEY! };
+  const identRaw = await getConfig("flight-ID", "ident");
+  const identStr = identRaw != null ? String(identRaw) : "";
+  const identUpper = identStr.toUpperCase();
 
-  // Scheduled metadata
+  // Convert AA#### → AAL####
+  let ident = identUpper;
+  if (/^AA\d+$/.test(identUpper)) {
+    ident = "AAL" + identUpper.slice(2);
+  }
+
+  const headers = {
+    "x-apikey": process.env.FLIGHTAWARE_API_KEY!,
+  };
+
+  // --- Fetch metadata ---
   const metaRes = await fetch(
     `https://aeroapi.flightaware.com/aeroapi/flights/${ident}`,
     { headers }
   );
-  const metaData = await metaRes.json();
-  const meta = metaData.flights?.[0] ?? null;
 
-  // Live telemetry
+  const metaText = await metaRes.text();
+  console.log("FA META RESPONSE:", metaText);
+
+  let metaData: any = null;
+  try {
+    metaData = JSON.parse(metaText);
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON from FlightAware META" });
+  }
+
+  // --- Fetch track ---
   const trackRes = await fetch(
     `https://aeroapi.flightaware.com/aeroapi/flights/${ident}/track`,
     { headers }
   );
-  const trackData = await trackRes.json();
-  const positions = trackData.positions ?? [];
+
+  const trackText = await trackRes.text();
+  console.log("FA TRACK RESPONSE:", trackText);
+
+  let trackData: any = null;
+  try {
+    trackData = JSON.parse(trackText);
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON from FlightAware TRACK" });
+  }
+
+  const positions = trackData?.positions ?? [];
   const live = positions.length > 0 ? positions[positions.length - 1] : null;
 
   return NextResponse.json({
     ident,
-    // Scheduled
-    scheduled_out: meta?.scheduled_out ?? null,
-    estimated_out: meta?.estimated_out ?? null,
-    scheduled_in: meta?.scheduled_in ?? null,
-    estimated_in: meta?.estimated_in ?? null,
-    status: meta?.status ?? "Unknown",
-    gate_out: meta?.gate_out ?? null,
-    gate_in: meta?.gate_in ?? null,
-    terminal_out: meta?.terminal_out ?? null,
-    terminal_in: meta?.terminal_in ?? null,
-    delays: meta?.delays ?? null,
-    aircraft_type: meta?.aircraft_type ?? null,
-    origin: meta?.origin ?? null,
-    destination: meta?.destination ?? null,
+    scheduled_out: metaData?.flights?.[0]?.scheduled_out ?? null,
+    estimated_out: metaData?.flights?.[0]?.estimated_out ?? null,
+    scheduled_in: metaData?.flights?.[0]?.scheduled_in ?? null,
+    estimated_in: metaData?.flights?.[0]?.estimated_in ?? null,
+    status: metaData?.flights?.[0]?.status ?? "Unknown",
+    gate_out: metaData?.flights?.[0]?.gate_out ?? null,
+    gate_in: metaData?.flights?.[0]?.gate_in ?? null,
+    aircraft_type: metaData?.flights?.[0]?.aircraft_type ?? null,
+    origin: metaData?.flights?.[0]?.origin ?? null,
+    destination: metaData?.flights?.[0]?.destination ?? null,
 
-    // Live
     live_altitude: live?.altitude ?? null,
     live_groundspeed: live?.groundspeed ?? null,
     live_heading: live?.heading ?? null,
