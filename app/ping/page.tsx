@@ -49,8 +49,8 @@ export default async function AxiomTestPage() {
             </div>
 
             <div className="grid grid-cols-2 gap-2 text-sm mt-2">
-              <div>A: {row.data?.dataj_sunrisea}</div>
-              <div>B: {row.data?.dataj_sunriseb}</div>
+              <div>A: {userId}</div>
+              <div>B: {eventIndex}</div>
               <div>C: {row.data?.dataj_sunrisec}</div>
               <div>D: {row.data?.dataj_sunrised}</div>
               <div>E: {row.data?.dataj_sunrisee}</div>
