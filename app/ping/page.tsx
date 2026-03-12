@@ -1,6 +1,8 @@
 // app/ping/page.tsx
 
 import { refreshLogRowEstimateForToday } from "@/lib/db/refreshLogRowEstimateForToday";
+import { logit } from "@/lib/log/logit";
+import { request } from "node:http";
 
 export default async function AxiomTestPage() {
   const res = await fetch("https://www.kraus.my.id/api/ping", {
@@ -9,7 +11,22 @@ export default async function AxiomTestPage() {
   const count = await refreshLogRowEstimateForToday();
   const data = await res.json();
   const rows = data.rows ?? []; // astronomy rows from your API
-
+  const requestId = crypto.randomUUID();
+  const userId = "JK";
+  const eventIndex = 22;
+  await logit(
+    "jonathan",
+    { level: "info", message: "this is a message" },
+    {
+      data: data,
+    },
+    {
+      page: "page.tsx",
+      requestId,
+      userId,
+      eventIndex,
+    },
+  );
   return (
     <div className="p-6 space-y-8">
       <h1 className="text-xl font-bold mb-4">Result</h1>
