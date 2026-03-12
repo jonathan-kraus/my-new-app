@@ -1,7 +1,8 @@
-import { NextResponse } from "next/server";
 import { getConfig } from "@/lib/runtime/config";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: Request, { params }: { params: { ident: string } }) {
+
+export async function GET(request: NextRequest) {
   const ident = await getConfig("flight-ID", "ident");
   if (!ident) return NextResponse.json({ error: "Missing ident" }, { status: 400 });
   const headers = { "x-apikey": process.env.FLIGHTAWARE_API_KEY! };
