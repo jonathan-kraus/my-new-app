@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
   //
   const metaRes = await fetch(
     `https://aeroapi.flightaware.com/aeroapi/flights/${ident}`,
-    { headers }
+    { headers },
   );
 
   const metaText = await metaRes.text();
@@ -63,9 +63,12 @@ export async function GET(request: NextRequest) {
     const tz = flight.origin?.timezone;
     if (!tz || !flight.scheduled_out) return false;
 
-    const localDate = new Date(flight.scheduled_out).toLocaleDateString("en-US", {
-      timeZone: tz,
-    });
+    const localDate = new Date(flight.scheduled_out).toLocaleDateString(
+      "en-US",
+      {
+        timeZone: tz,
+      },
+    );
 
     const todayLocal = new Date().toLocaleDateString("en-US", {
       timeZone: tz,
@@ -80,7 +83,7 @@ export async function GET(request: NextRequest) {
   async function getTrack(flightId: string) {
     const res = await fetch(
       `https://aeroapi.flightaware.com/aeroapi/flights/${flightId}/track`,
-      { headers }
+      { headers },
     );
     const text = await res.text();
     console.log("FA TRACK RESPONSE:", text);
@@ -94,7 +97,7 @@ export async function GET(request: NextRequest) {
   }
 
   const tracks = await Promise.all(
-    flights.map((f: any) => getTrack(f.fa_flight_id))
+    flights.map((f: any) => getTrack(f.fa_flight_id)),
   );
 
   //

@@ -35,7 +35,7 @@ export default async function AxiomTestPage() {
       requestId,
       userId,
       eventIndex,
-    }
+    },
   );
 
   // --- Render both API results --------------------------------------------
@@ -51,7 +51,7 @@ export default async function AxiomTestPage() {
             secondData,
           },
           null,
-          2
+          2,
         )}
       </pre>
     </div>
