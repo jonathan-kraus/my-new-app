@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\logs\live\route.ts
- * @LastEditTime: 2026-03-12 22:26:09
+ * @LastEditTime: 2026-03-13 13:57:25
  */
 import { NextResponse } from "next/server";
 import { queryAxiom } from "@/lib/axiom/query";
@@ -11,7 +11,8 @@ export async function GET() {
 | extend meta = parse_json(meta_json)
 | extend payload = parse_json(payload_json)
 | project
-    timestamp = @timestamp,
+    id = tostring(@timestamp),   // ← stable unique key
+    timestamp = @timestamp,      // ← readable timestamp
     domain,
     level,
     message,

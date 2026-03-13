@@ -7,6 +7,7 @@ import { peek } from "@/lib/log/queue";
 
 type LogRecord = {
   id: string;
+  timestamp: string;
   level: string;
   message: string;
   created_at: string;
@@ -233,7 +234,7 @@ export default function LogsPage() {
 
                 return (
                   <li
-                    key={log.id}
+                    key={log.timestamp}
                     className="p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition"
                   >
                     {/* Top row: icon, message, time */}
