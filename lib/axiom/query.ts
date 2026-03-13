@@ -5,7 +5,7 @@ const client = new Axiom({
   token: process.env.AXIOM_TOKEN!,
 });
 
-export async function queryAxiom(query: string, startTime = "24h") {
+export async function queryAxiom(query: string, startTime = "30 minutes") {
   const res = await client.query(process.env.AXIOM_DATASET!, {
     query,
     startTime,
@@ -13,3 +13,4 @@ export async function queryAxiom(query: string, startTime = "24h") {
 
   return res.matches;
 }
+

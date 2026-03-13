@@ -22,6 +22,6 @@ export async function GET() {
     | limit 50
   `;
 
-  const logs = await queryAxiom(q, "30m");
+  const logs = await queryAxiom(q);
   return NextResponse.json({ logs });
 }
