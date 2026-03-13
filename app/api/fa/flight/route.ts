@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getConfig } from "@/lib/runtime/config";
+import { detectFlightPhase } from "@/lib/flight/phase";
 
 export async function GET(request: NextRequest) {
   const identRaw = await getConfig("flight-ID", "ident");
@@ -124,6 +125,11 @@ export async function GET(request: NextRequest) {
   // Final selection: telemetry freshness wins
   const flight = freshestFlight ?? active ?? todayFlight ?? nextScheduled;
   const live = freshestLive;
+  const phase = detectFlightPhase(live);
+
+  console.log("FA FLIGHT:", flight);
+  console.log("FA LIVE:", live);
+  console.log("FA PHASE:", phase);
 
   //
   // 7. Return merged data
@@ -162,5 +168,7 @@ export async function GET(request: NextRequest) {
     live_latitude: live?.latitude ?? null,
     live_longitude: live?.longitude ?? null,
     live_timestamp: live?.timestamp ?? null,
+
+    phase,
   });
 }
