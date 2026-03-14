@@ -16,5 +16,3 @@ export async function queryAxiom(query: string, minutes = 30) {
 
   return res.matches;
 }
-
-

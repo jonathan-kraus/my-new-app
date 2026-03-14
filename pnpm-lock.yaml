@@ -186,6 +186,9 @@ importers:
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      openmeteo:
+        specifier: ^1.2.3
+        version: 1.2.3
       pg:
         specifier: ^8.20.0
         version: 8.20.0
@@ -1321,6 +1324,10 @@ packages:
     peerDependenciesMeta:
       rolldown:
         optional: true
+
+  '@openmeteo/sdk@1.25.0':
+    resolution: {integrity: sha512-tpX2d/HOPn95NIU+/IU1VFFzOM3m/PqSpPSJnWuGQGEW5GogB50xUOUMrsD2N/6LCMy12e3cZEQd6c3Gb0lmtA==}
+    engines: {node: '>=12.0'}
 
   '@oxc-minify/binding-android-arm-eabi@0.112.0':
     resolution: {integrity: sha512-m7TGBR2hjsBJIN9UJ909KBoKsuogo6CuLsHKvUIBXdjI0JVHP8g4ZHeB+BJpGn5LJdeSGDfz9MWiuXrZDRzunw==}
@@ -4486,6 +4493,9 @@ packages:
     resolution: {integrity: sha512-f7ccFPK3SXFHpx15UIGyRJ/FJQctuKZ0zVuN3frBo4HnK3cay9VEW0R6yPYFHC0AgqhukPzKjq22t5DmAyqGyw==}
     engines: {node: '>=16'}
 
+  flatbuffers@25.9.23:
+    resolution: {integrity: sha512-MI1qs7Lo4Syw0EOzUl0xjs2lsoeqFku44KpngfIduHBYvzm8h2+7K8YMQh1JtVVVrUvhLpNwqVi4DERegUJhPQ==}
+
   flatted@3.4.1:
     resolution: {integrity: sha512-IxfVbRFVlV8V/yRaGzk0UVIcsKKHMSfYw66T/u4nTwlWteQePsxe//LjudR1AMX4tZW3WFCh3Zqa/sjlqpbURQ==}
 
@@ -5577,6 +5587,10 @@ packages:
   open@8.4.2:
     resolution: {integrity: sha512-7x81NCL719oNbsq/3mh+hVrAWmFuEYUqrq/Iw3kUzH8ReypT9QQ0BLoJS7/G9k6N81XjW4qHWtjWwe/9eLy1EQ==}
     engines: {node: '>=12'}
+
+  openmeteo@1.2.3:
+    resolution: {integrity: sha512-3updmgCMnCAAjAgV3RfhMdIBPi/43RtbjQ4CizHGn52RP9SpgmVCDRpun+Ex75NG3jTF3pZp+d1BPlP9DWMHiQ==}
+    engines: {node: '>=12.0'}
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -8333,6 +8347,10 @@ snapshots:
       - vue-tsc
       - yaml
     optional: true
+
+  '@openmeteo/sdk@1.25.0':
+    dependencies:
+      flatbuffers: 25.9.23
 
   '@oxc-minify/binding-android-arm-eabi@0.112.0':
     optional: true
@@ -11596,6 +11614,8 @@ snapshots:
       flatted: 3.4.1
       keyv: 4.5.4
 
+  flatbuffers@25.9.23: {}
+
   flatted@3.4.1: {}
 
   for-each@0.3.5:
@@ -12983,6 +13003,11 @@ snapshots:
       is-docker: 2.2.1
       is-wsl: 2.2.0
     optional: true
+
+  openmeteo@1.2.3:
+    dependencies:
+      '@openmeteo/sdk': 1.25.0
+      flatbuffers: 25.9.23
 
   optionator@0.9.4:
     dependencies:
