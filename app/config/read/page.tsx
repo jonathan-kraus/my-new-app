@@ -1,11 +1,24 @@
-/*
- * @FilePath: \my-new-app\app\config\read\page.tsx
- * @LastEditTime: 2026-03-15 00:17:41
- */
-import { readConfigFromAxiom } from "./actions";
+import { queryAxiom } from "@/lib/axiom/query";
 
 export default async function ConfigReadPage() {
-  const data = await readConfigFromAxiom();
+  const q = `
+['github-events']
+| where reason == "Flight"
+| sort by _time desc
+| project
+    Variable01,
+    Variable02,
+    Variable03
+| take 1
+`;
+
+  const rows = await queryAxiom(q) as Array<{
+    Variable01: string
+    Variable02: string
+    Variable03: string
+  }>;
+
+  const data = rows[0];
 
   return (
     <div className="p-6 space-y-4 text-green-300 text-sm">
@@ -17,7 +30,7 @@ export default async function ConfigReadPage() {
           <div>{data.Variable02}</div>
           <div>{data.Variable03}</div>
 
-          {/* If you want secondData too, add them here */}
+          {/* placeholders for secondData if you want later */}
           <div>—</div>
           <div>—</div>
           <div>—</div>
