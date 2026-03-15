@@ -1,6 +1,9 @@
 import { queryAxiom } from "@/lib/axiom/query";
+export const dynamic = "force-dynamic";
+
 
 export default async function ConfigReadPage() {
+    console.log("In config read");
   // Query 1: Flight
   const qFlight = `
 ['github-events']
@@ -12,7 +15,7 @@ export default async function ConfigReadPage() {
     Variable03 = firstData.Variable03
 | take 1
 `;
-
+console.log("QUERY:", qFlight);
   const flightRows = (await queryAxiom(qFlight)) as unknown as Array<{
     Variable01: string
     Variable02: string
