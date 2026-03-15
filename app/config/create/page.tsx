@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\config\create\page.tsx
- * @LastEditTime: 2026-03-14 23:36:36
+ * @LastEditTime: 2026-03-14 23:57:07
  */
 
 
@@ -60,7 +60,7 @@ await fetch("https://www.kraus.my.id/api/config/create", {
   // --- Log the combined result --------------------------------------------
   await logit(
     "jonathan",
-    { level: "info", message: "Fetched two APIs" },
+    { level: "info", message: "Config Create" },
     {
       firstData: firstData,
       secondData: secondData,

@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\config\read\actions.ts
- * @LastEditTime: 2026-03-14 23:44:43
+ * @LastEditTime: 2026-03-15 00:16:21
  */
 "use server";
 
@@ -13,20 +13,25 @@ export async function readConfigFromAxiom() {
   const userId = "JK";
   const eventIndex = 22;
 
+
   const q = `
 ['github-events']
-| where firstData.reason == "Flight"
+| where reason == "Flight"
 | sort by _time desc
-| project firstData.Variable01, firstData.Variable02, firstData.Variable03
+| project
+    Variable01,
+    Variable02,
+    Variable03
 | take 1
 `;
 
-  const res = await queryAxiom(q);
+    const rows = await queryAxiom(q);
+
 
   await logit(
     "jonathan",
     { level: "info", message: "Read config data from Axiom" },
-    { res },
+    { rows },
     {
       page: "config/read",
       requestId,
@@ -35,6 +40,6 @@ export async function readConfigFromAxiom() {
     }
   );
 
-  return res;
+    return rows![0] ?? null;
 }
 
