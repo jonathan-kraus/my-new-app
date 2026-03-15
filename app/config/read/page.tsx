@@ -1,5 +1,4 @@
 import { queryAxiom } from "@/lib/axiom/query";
-import { logit } from "@/lib/log/logit";
 
 export const dynamic = "force-dynamic";
 
@@ -15,14 +14,8 @@ export default async function ConfigReadPage() {
 | take 1
 `;
 
-  let flightRows: any[] = [];
-  try {
-    flightRows = await queryAxiom(qFlight, 15000);
-  } catch (err) {
-    console.error("Error querying flight config:", err);
-  }
-
-  const flight = flightRows?.[0] ?? null;
+  const flightRows = (await queryAxiom(qFlight, 15000)) ?? [];
+  const flight = flightRows[0] ?? null;
 
   // -----------------------------
   // Query 2: Weather
@@ -33,14 +26,8 @@ export default async function ConfigReadPage() {
 | take 1
 `;
 
-  let weatherRows: any[] = [];
-  try {
-    weatherRows = await queryAxiom(qWeather, 15000);
-  } catch (err) {
-    console.error("Error querying weather config:", err);
-  }
-
-  const weather = weatherRows?.[0] ?? null;
+  const weatherRows = (await queryAxiom(qWeather, 15000)) ?? [];
+  const weather = weatherRows[0] ?? null;
 
   // -----------------------------
   // ALWAYS RETURN JSX
