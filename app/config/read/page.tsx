@@ -66,7 +66,7 @@ export default async function ConfigReadPage() {
   );
   let flightRows: any = [];
   try {
-    flightRows = await queryAxiom(qFlight, 999930, "config_control");
+    flightRows = await queryAxiom(qFlight, 15000);
     console.log("AFTER QUERY AXIOM (FLIGHT)");
     console.log("FLIGHT ROWS:", flightRows);
 
@@ -168,7 +168,7 @@ export default async function ConfigReadPage() {
     );
     let weatherRows: any = [];
     try {
-      weatherRows = await queryAxiom(qWeather, 999930, "config_control");
+      weatherRows = await queryAxiom(qWeather, 15000);
       console.log("AFTER QUERY AXIOM (WEATHER)");
       console.log("WEATHER ROWS:", weatherRows);
 

@@ -26,7 +26,7 @@ export async function GET() {
   };
 
   try {
-    await axiomIngest(process.env.AXIOM_DATASET!, [event]);
+    await axiomIngest([event]);
     return NextResponse.json({ ok: true, sent: event });
   } catch (err) {
     console.error("AXIOM INGEST ERROR", err);

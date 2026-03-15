@@ -1,7 +1,7 @@
 export async function axiomIngest(events: any[]) {
   const token = process.env.AXIOM_TOKEN!;
   const orgId = process.env.AXIOM_ORG_ID!;
-  const dataset = process.env.AXIOM_DATASET!
+  const dataset = process.env.AXIOM_DATASET!;
   const url = `https://api.axiom.co/v1/datasets/${dataset}/ingest`;
 
   const res = await fetch(url, {

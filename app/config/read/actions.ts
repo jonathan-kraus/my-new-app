@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\config\read\actions.ts
- * @LastEditTime: 2026-03-15 13:17:25
+ * @LastEditTime: 2026-03-15 17:58:14
  */
 "use server";
 
@@ -14,7 +14,7 @@ export async function readConfigFromAxiom() {
   const eventIndex = 22;
 
   const q = `
-['config_control']
+
 | where reason == "Flight"
 | sort by _time desc
 

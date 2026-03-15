@@ -6,7 +6,7 @@ export async function flush(batch: any[]) {
   const events = batch.map((e) => e.dataj);
 
   try {
-    await axiomIngest(process.env.AXIOM_DATASET!, events);
+    await axiomIngest(events);
     console.log(`FLUSHED ${events.length} events`);
   } catch (err) {
     console.error("Axiom flush failed", err);

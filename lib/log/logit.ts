@@ -99,7 +99,7 @@ export async function logit(
   };
 
   try {
-    await axiomIngest(process.env.AXIOM_DATASET!, [axiomEvent]);
+    await axiomIngest([axiomEvent]);
   } catch (err) {
     console.error("AXIOM INGEST ERROR:", err);
   }
