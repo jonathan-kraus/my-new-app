@@ -26,7 +26,7 @@ export async function readConfigFromAxiom() {
 `;
 
     const rows = await queryAxiom(q);
-
+console.log("ROWS:", rows);
 
   await logit(
     "jonathan",
