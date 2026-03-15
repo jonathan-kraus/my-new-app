@@ -1,4 +1,4 @@
-// app/api/db-tables/route.ts
+// app/api/ping/route.ts
 import { NextResponse, NextRequest } from "next/server";
 import { logit } from "@/lib/log/logit";
 import { enrichContext } from "@/lib/log/context";
