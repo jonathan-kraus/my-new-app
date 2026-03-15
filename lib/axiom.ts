@@ -18,4 +18,7 @@ export async function axiomIngest(events: any[]) {
     const text = await res.text();
     throw new Error(`Axiom ingest failed: ${res.status} ${text}`);
   }
+
+  const json = await res.json(); // <- parse response body
+  return json;                   // <- return it to caller
 }
