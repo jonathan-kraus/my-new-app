@@ -27,7 +27,7 @@ export default async function ConfigReadPage() {
   // Query 1: Flight
   // -----------------------------
   const qFlight = `
-  from "github-events"
+['github-events']
 | where reason == "Flight"
 | sort by _time desc
 | project
@@ -139,7 +139,7 @@ flightQuery: flight,
   // Query 2: Weather
   // -----------------------------
   const qWeather = `
-  from github-events
+['github-events']
 | where reason == "Weather"
 | sort by _time desc
 | project
