@@ -24,9 +24,8 @@ export default async function ConfigReadPage() {
   // Query 1: Flight
   // -----------------------------
   const qFlight = `
-| where reason == "Flight"
+| where parsed.payload.data1.reason == "Flight"
 | sort by _time desc
-
 | take 1
 `;
 
@@ -127,7 +126,7 @@ export default async function ConfigReadPage() {
     // Query 2: Weather
     // -----------------------------
     const qWeather = `
-| where reason == "Weather"
+| where parsed.payload.data1.reason == "Weather"
 | sort by _time desc
 | take 1
 `;
