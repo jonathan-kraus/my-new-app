@@ -3,24 +3,21 @@
  * @LastEditTime: 2026-03-14 23:57:07
  */
 
-
 import crypto from "crypto";
 import { logit } from "@/lib/log/logit";
 
 export type config = {
-  id: string,
-  reason: string,
-  message: string,
-  Variable01: string,
-  Variable02: string,
-  Variable03: string,
-}
+  id: string;
+  reason: string;
+  message: string;
+  Variable01: string;
+  Variable02: string;
+  Variable03: string;
+};
 export default async function AxiomTestPage() {
   const requestId = crypto.randomUUID();
   const userId = "JK";
   const eventIndex = 22;
-
-
 
   const firstData = {
     id: crypto.randomUUID(),
@@ -29,34 +26,34 @@ export default async function AxiomTestPage() {
     Variable01: "AA1976",
     Variable02: "AA607",
     Variable03: "AA1211",
-  }
+  };
   const secondData = {
     id: crypto.randomUUID(),
     reason: "Weather",
     message: "Config for favorite cities",
     Variable01: "KOP",
     Variable02: "Brookline",
-    Variable03: "Williamstown"
-  }
-await fetch("https://www.kraus.my.id/api/config/create", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    firstData
-  }),
-});
+    Variable03: "Williamstown",
+  };
+  await fetch("https://www.kraus.my.id/api/config/create", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      firstData,
+    }),
+  });
 
-await fetch("https://www.kraus.my.id/api/config/create", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    secondData
-  }),
-});
+  await fetch("https://www.kraus.my.id/api/config/create", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      secondData,
+    }),
+  });
   // --- Log the combined result --------------------------------------------
   await logit(
     "jonathan",
@@ -64,7 +61,6 @@ await fetch("https://www.kraus.my.id/api/config/create", {
     {
       firstData: firstData,
       secondData: secondData,
-
     },
     {
       page: "page.tsx",
@@ -94,4 +90,3 @@ await fetch("https://www.kraus.my.id/api/config/create", {
     </div>
   );
 }
-

@@ -13,7 +13,6 @@ export async function readConfigFromAxiom() {
   const userId = "JK";
   const eventIndex = 22;
 
-
   const q = `
 ['github-events']
 | where reason == "Flight"
@@ -25,8 +24,8 @@ export async function readConfigFromAxiom() {
 | take 1
 `;
 
-    const rows = await queryAxiom(q);
-console.log("ROWS:", rows);
+  const rows = await queryAxiom(q);
+  console.log("ROWS:", rows);
 
   await logit(
     "jonathan",
@@ -37,9 +36,8 @@ console.log("ROWS:", rows);
       requestId,
       userId,
       eventIndex,
-    }
+    },
   );
 
-    return rows![0] ?? null;
+  return rows![0] ?? null;
 }
-

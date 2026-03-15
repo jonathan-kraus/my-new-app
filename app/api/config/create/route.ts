@@ -5,7 +5,7 @@
 import { axiomIngest } from "@/lib/axiom";
 import { NextResponse } from "next/server";
 
-export async function  POST(request: Request) {
+export async function POST(request: Request) {
   const data = await request.json();
   const response = await axiomIngest("github-events", data);
   return NextResponse.json(response);
