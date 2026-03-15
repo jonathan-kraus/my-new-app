@@ -1,4 +1,3 @@
-"use client";
 /*
  * @FilePath: \my-new-app\app\config\create\page.tsx
  * @LastEditTime: 2026-03-14 23:36:36
