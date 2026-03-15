@@ -5,7 +5,23 @@ export const dynamic = "force-dynamic";
 
 export default async function ConfigReadPage() {
   console.log("=== PAGE START ===");
-  await logit("info", "config-read", "PAGE START");
+   await logit(
+    "jonathan",
+    {
+      level: "info",
+      message: "PAGE START",
+    },
+    {
+
+          },
+    {
+
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
 
   // -----------------------------
   // Query 1: Flight
@@ -22,30 +38,103 @@ export default async function ConfigReadPage() {
 `;
 
   console.log("FLIGHT QUERY STRING:", qFlight);
-  await logit("info", "config-read", "FLIGHT QUERY STRING", { qFlight });
 
+ await logit(
+    "jonathan",
+    {
+      level: "info",
+      message: "FLIGHT QUERY STRING",
+    },
+    {
+      flightQuery: qFlight,
+          },
+    {
+
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
   console.log("ABOUT TO QUERY AXIOM (FLIGHT)");
-  await logit("info", "config-read", "ABOUT TO QUERY AXIOM (FLIGHT)");
 
+ await logit(
+    "jonathan",
+    {
+      level: "info",
+      message: "about to query axiom (flight)",
+    },
+    {
+
+          },
+    {
+
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
   let flightRows: any = [];
   try {
     flightRows = await queryAxiom(qFlight);
     console.log("AFTER QUERY AXIOM (FLIGHT)");
     console.log("FLIGHT ROWS:", flightRows);
-    await logit("info", "config-read", "AFTER QUERY AXIOM (FLIGHT)", {
-      flightRows,
-    });
+
+     await logit(
+    "jonathan",
+    {
+      level: "info",
+      message: "after query axiom (flight)",
+    },
+    {
+      weatherQuery: flightRows,
+          },
+    {
+
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
   } catch (err) {
     console.log("ERROR QUERYING AXIOM (FLIGHT):", err);
-    await logit("error", "config-read", "ERROR QUERYING AXIOM (FLIGHT)", {
-      err,
-    });
-  }
+    await logit("jonathan",
+      {
+      level:"info",
+      message: "ERROR QUERYING AXIOM (FLIGHT)",  err,
+    },
+    {},
+  {
+
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
 
   const flight = flightRows?.[0];
   console.log("FLIGHT DATA:", flight);
-  await logit("info", "config-read", "FLIGHT DATA", { flight });
 
+  await logit(
+    "jonathan",
+    {
+      level: "info",
+      message: "Flight data",
+    },
+    {
+flightQuery: flight,
+    },
+    {
+
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
   // -----------------------------
   // Query 2: Weather
   // -----------------------------
@@ -61,32 +150,126 @@ export default async function ConfigReadPage() {
 `;
 
   console.log("WEATHER QUERY STRING:", qWeather);
-  await logit("info", "config-read", "WEATHER QUERY STRING", { qWeather });
+    await logit(
+    "jonathan",
+    {
+      level: "info",
+      message: "WEATHER QUERY STRING",
+    },
+    {
+      weatherQuery: qWeather,
+          },
+    {
+
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
+
 
   console.log("ABOUT TO QUERY AXIOM (WEATHER)");
-  await logit("info", "config-read", "ABOUT TO QUERY AXIOM (WEATHER)");
 
+ await logit(
+    "jonathan",
+    {
+      level: "info",
+      message: "ABOUT TO QUERY AXIOM (WEATHER)",
+    },
+    {
+
+          },
+    {
+
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
   let weatherRows: any = [];
   try {
     weatherRows = await queryAxiom(qWeather);
     console.log("AFTER QUERY AXIOM (WEATHER)");
     console.log("WEATHER ROWS:", weatherRows);
-    await logit("info", "config-read", "AFTER QUERY AXIOM (WEATHER)", {
-      weatherRows,
-    });
+
+     await logit(
+    "jonathan",
+    {
+      level: "info",
+      message: "AFTER QUERY AXIOM (WEATHER)",
+    },
+    {
+      weatherRows: weatherRows,
+          },
+    {
+
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
   } catch (err) {
     console.log("ERROR QUERYING AXIOM (WEATHER):", err);
-    await logit("error", "config-read", "ERROR QUERYING AXIOM (WEATHER)", {
-      err,
-    });
-  }
 
+ await logit(
+    "jonathan",
+    {
+      level: "info",
+      message: "ERROR QUERYING AXIOM (WEATHER)",
+    },
+    {
+      err: err,
+          },
+    {
+
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
   const weather = weatherRows?.[0];
   console.log("WEATHER DATA:", weather);
-  await logit("info", "config-read", "WEATHER DATA", { weather });
+
+   await logit(
+    "jonathan",
+    {
+      level: "info",
+      message: "WEATHER DATA",
+    },
+    {
+      weatherQuery: weather,
+          },
+    {
+
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
 
   console.log("=== PAGE END ===");
-  await logit("info", "config-read", "PAGE END");
+   await logit(
+    "jonathan",
+    {
+      level: "info",
+      message: "PAGE END",
+    },
+    {
+
+          },
+    {
+
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
 
   // -----------------------------
   // Render raw data for debugging
@@ -102,4 +285,6 @@ export default async function ConfigReadPage() {
       <div className="mt-6 text-white">End</div>
     </div>
   );
+}
+}
 }
