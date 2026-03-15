@@ -9,7 +9,7 @@ const client = new Axiom({
 export async function queryAxiom(
   query: string,
   minutes = 30,
-  dataset = process.env.AXIOM_DATASET! // default stays myapp_logs
+  dataset = process.env.AXIOM_DATASET!, // default stays myapp_logs
 ) {
   const start = subMinutes(new Date(), minutes).toISOString();
 

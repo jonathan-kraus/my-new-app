@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\config\read\actions.ts
- * @LastEditTime: 2026-03-15 00:16:21
+ * @LastEditTime: 2026-03-15 12:59:35
  */
 "use server";
 
@@ -14,7 +14,7 @@ export async function readConfigFromAxiom() {
   const eventIndex = 22;
 
   const q = `
-['github-events']
+['config_control']
 | where reason == "Flight"
 | sort by _time desc
 | project
