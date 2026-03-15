@@ -1,3 +1,7 @@
+/*
+ * @FilePath: \my-new-app\app\config\read\page.tsx
+ * @LastEditTime: 2026-03-15 19:12:32
+ */
 import { queryAxiom } from "@/lib/axiom/query";
 
 export const dynamic = "force-dynamic";
