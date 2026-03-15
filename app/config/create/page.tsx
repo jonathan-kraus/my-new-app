@@ -95,4 +95,3 @@ await fetch("https://www.kraus.my.id/api/config/create", {
   );
 }
 
-
