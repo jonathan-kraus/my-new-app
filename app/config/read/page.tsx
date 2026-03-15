@@ -10,7 +10,7 @@ export default async function AxiomTestPage() {
   const requestId = crypto.randomUUID();
   const userId = "JK";
   const eventIndex = 22;
-
+console.log("In config read");
 
   // --- Log the combined result --------------------------------------------
   await logit(
@@ -54,6 +54,9 @@ async function GET() {
       eventIndex,
     },
   );
+  console.log("In config read", res);
+
+
   return Response.json(res);
 }
 
