@@ -1,5 +1,6 @@
 import { sql, excludeTables } from "@/lib/db/utils";
 import { NextResponse } from "next/server";
+import { logit } from "@/lib/log/logit";
 
 export const dynamic = "force-dynamic";
 
@@ -9,6 +10,18 @@ export async function GET(
 ) {
   const { name } = await params;
 
+  await logit(
+    "jonathan",
+    { level: "info", message: "In db table detail for ${ name }", name },
+    { moreinfo: "more info here", eventIndex: 22 },
+    {
+      requestId: crypto.randomUUID(),
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
   if (excludeTables.includes(name)) {
     return NextResponse.json({ error: "Table excluded" }, { status: 403 });
   }
