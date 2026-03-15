@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\config\create\page.tsx
- * @LastEditTime: 2026-03-14 23:57:07
+ * @LastEditTime: 2026-03-15 13:20:17
  */
 
 import crypto from "crypto";
@@ -19,7 +19,7 @@ export default async function AxiomTestPage() {
   const userId = "JK";
   const eventIndex = 22;
 
-  const firstData = {
+  const data1 = {
     id: crypto.randomUUID(),
     reason: "Flight",
     message: "Config for favorite flights",
@@ -27,7 +27,7 @@ export default async function AxiomTestPage() {
     Variable02: "AA607",
     Variable03: "AA1211",
   };
-  const secondData = {
+  const data2 = {
     id: crypto.randomUUID(),
     reason: "Weather",
     message: "Config for favorite cities",
@@ -41,7 +41,7 @@ export default async function AxiomTestPage() {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      firstData,
+      data1,
     }),
   });
 
@@ -51,7 +51,7 @@ export default async function AxiomTestPage() {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      secondData,
+      data2,
     }),
   });
   // --- Log the combined result --------------------------------------------
@@ -59,8 +59,8 @@ export default async function AxiomTestPage() {
     "jonathan",
     { level: "info", message: "Config Create" },
     {
-      firstData: firstData,
-      secondData: secondData,
+      data1: data1,
+      data2: data2,
     },
     {
       page: "page.tsx",
@@ -80,8 +80,8 @@ export default async function AxiomTestPage() {
           {
             requestId,
 
-            firstData,
-            secondData,
+            data1,
+            data2,
           },
           null,
           2,

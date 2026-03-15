@@ -26,10 +26,7 @@ export default async function ConfigReadPage() {
   const qFlight = `
 | where reason == "Flight"
 | sort by _time desc
-| project
-    Variable01 = firstData.Variable01,
-    Variable02 = firstData.Variable02,
-    Variable03 = firstData.Variable03
+
 | take 1
 `;
 
@@ -132,10 +129,6 @@ export default async function ConfigReadPage() {
     const qWeather = `
 | where reason == "Weather"
 | sort by _time desc
-| project
-    Variable01 = secondData.Variable01,
-    Variable02 = secondData.Variable02,
-    Variable03 = secondData.Variable03
 | take 1
 `;
 
