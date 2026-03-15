@@ -12,13 +12,13 @@ export default async function ConfigReadPage() {
 | take 1
 `;
 
-  const rows = await queryAxiom(q) as Array<{
+  const rows = (await queryAxiom(q)) as unknown as Array<{
     Variable01: string
     Variable02: string
     Variable03: string
   }>;
 
-  const data = rows[0];
+  const data = rows?.[0];
 
   return (
     <div className="p-6 space-y-4 text-green-300 text-sm">
