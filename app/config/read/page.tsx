@@ -17,8 +17,9 @@ export default async function ConfigReadPage() {
     Variable02: string
     Variable03: string
   }>;
-
+console.log("ROWS:", rows);
   const data = rows?.[0];
+console.log("DATA:", data);
 
   return (
     <div className="p-6 space-y-4 text-green-300 text-sm">
