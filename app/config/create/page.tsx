@@ -1,8 +1,9 @@
+"use client";
 /*
  * @FilePath: \my-new-app\app\config\create\page.tsx
- * @LastEditTime: 2026-03-14 22:34:46
+ * @LastEditTime: 2026-03-14 23:36:36
  */
-// app/ping/page.tsx
+
 
 import crypto from "crypto";
 import { logit } from "@/lib/log/logit";
