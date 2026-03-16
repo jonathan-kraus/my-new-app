@@ -25,7 +25,7 @@ export async function GET() {
 `;
     const statsRows = (await queryAxiom(statsQuery)) ?? [];
     const statsAny: any = statsRows[0] ?? { count: 0, last_time: null };
-    console.log("statsRows", JSON.stringify(statsRows));
+    console.log("statsRows count", JSON.stringify(statsRows));
 
     return NextResponse.json({
       flight,
