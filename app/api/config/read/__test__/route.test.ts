@@ -15,12 +15,22 @@ describe("GET /api/config/read", () => {
   it("returns latest flight and weather rows with new stats shape", async () => {
     // First call → Flight rows
     vi.mocked(queryAxiom).mockResolvedValueOnce([
-      { id: "f1", reason: "Flight", message: "flight", _time: "2026-03-16T00:00:00Z" } as any,
+      {
+        id: "f1",
+        reason: "Flight",
+        message: "flight",
+        _time: "2026-03-16T00:00:00Z",
+      } as any,
     ]);
 
     // Second call → Weather rows
     vi.mocked(queryAxiom).mockResolvedValueOnce([
-      { id: "w1", reason: "Weather", message: "weather", _time: "2026-03-16T00:00:00Z" } as any,
+      {
+        id: "w1",
+        reason: "Weather",
+        message: "weather",
+        _time: "2026-03-16T00:00:00Z",
+      } as any,
     ]);
 
     const res = await GET();

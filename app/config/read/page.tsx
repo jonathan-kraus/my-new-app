@@ -48,10 +48,10 @@ export default function ConfigReadPage() {
   const [flight, setFlight] = useState<Record<string, any> | null>(null);
   const [weather, setWeather] = useState<Record<string, any> | null>(null);
   const [stats, setStats] = useState<{
-  total: number;
-  flights: number;
-  weather: number;
-  lastUpdated: string | null;
+    total: number;
+    flights: number;
+    weather: number;
+    lastUpdated: string | null;
   } | null>(null);
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState<string | null>(null);
@@ -104,13 +104,13 @@ export default function ConfigReadPage() {
         Dataset: <strong>config</strong>
       </div>
       <div className="text-sm text-slate-300">
-        Count: <strong>{status === "loaded" ? (stats?.total ?? "-") : "-"}</strong>
-{stats?.lastUpdated ? (
-  <span className="ml-2">
-    Last: {new Date(stats.lastUpdated).toLocaleString()}
-  </span>
-) : null}
-
+        Count:{" "}
+        <strong>{status === "loaded" ? (stats?.total ?? "-") : "-"}</strong>
+        {stats?.lastUpdated ? (
+          <span className="ml-2">
+            Last: {new Date(stats.lastUpdated).toLocaleString()}
+          </span>
+        ) : null}
       </div>
       <div className="grid md:grid-cols-2 gap-4">
         <section className="bg-slate-900 p-4 rounded border border-slate-700">

@@ -31,10 +31,7 @@ export async function GET() {
       flights: flightRows.length,
       weather: weatherRows.length,
       lastUpdated: (() => {
-        const times = [
-          flight?._time,
-          weather?._time,
-        ].filter(Boolean);
+        const times = [flight?._time, weather?._time].filter(Boolean);
 
         return times.length ? times.sort().at(-1) : null;
       })(),
@@ -45,7 +42,6 @@ export async function GET() {
       weather,
       stats,
     });
-
   } catch (error) {
     console.error("/api/config/read error", error);
     return NextResponse.json({ error: String(error) }, { status: 500 });
