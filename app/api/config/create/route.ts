@@ -6,16 +6,23 @@ import { axiomIngest } from "@/lib/axiom";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
-	const body = await request.json();
-	const dataset = body.dataset ?? process.env.AXIOM_DATASET;
-	const events = Array.isArray(body.events) ? body.events : [body];
+  const body = await request.json();
+  const dataset = body.dataset ?? process.env.AXIOM_DATASET;
+  const events = Array.isArray(body.events) ? body.events : [body];
 
-	try {
-		const response = await axiomIngest(events, dataset);
-		console.log("AXIOM INGEST RESPONSE", response);
-		return NextResponse.json({ ok: true, dataset, count: events.length });
-	} catch (error) {
-		console.error("axiom ingestion failed", error);
-		return NextResponse.json({ ok: false, error: String(error) }, { status: 500 });
-	}
+  console.log("[api/config/create] body", JSON.stringify(body));
+  console.log("[api/config/create] dataset", dataset);
+  console.log("[api/config/create] events", events.length, events[0]);
+
+  try {
+    const response = await axiomIngest(events, dataset);
+    console.log("AXIOM INGEST RESPONSE", response);
+    return NextResponse.json({ ok: true, dataset, count: events.length });
+  } catch (error) {
+    console.error("axiom ingestion failed", error);
+    return NextResponse.json(
+      { ok: false, error: String(error) },
+      { status: 500 },
+    );
+  }
 }

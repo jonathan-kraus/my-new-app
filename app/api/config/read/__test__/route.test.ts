@@ -2,42 +2,50 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { GET } from "../route";
 
 vi.mock("@/lib/axiom/query", () => ({
-	queryAxiom: vi.fn(),
+  queryAxiom: vi.fn(),
 }));
 
 const { queryAxiom } = await import("@/lib/axiom/query");
 
 describe("GET /api/config/read", () => {
-	beforeEach(() => {
-		vi.clearAllMocks();
-	});
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
 
-	it("returns latest flight and weather rows", async () => {
-		vi.mocked(queryAxiom).mockResolvedValueOnce([
-			{ id: "f1", reason: "Flight", message: "flight" } as any,
-		] as any);
-		vi.mocked(queryAxiom).mockResolvedValueOnce([
-			{ id: "w1", reason: "Weather", message: "weather" } as any,
-		] as any);
-		vi.mocked(queryAxiom).mockResolvedValueOnce([
-			{ count: 2, last_time: "2026-03-16T00:00:00Z" } as any,
-		] as any);
+  it("returns latest flight and weather rows", async () => {
+    vi.mocked(queryAxiom).mockResolvedValueOnce([
+      { id: "f1", reason: "Flight", message: "flight" } as any,
+    ] as any);
+    vi.mocked(queryAxiom).mockResolvedValueOnce([
+      { id: "w1", reason: "Weather", message: "weather" } as any,
+    ] as any);
+    vi.mocked(queryAxiom).mockResolvedValueOnce([
+      { count: 2, last_time: "2026-03-16T00:00:00Z" } as any,
+    ] as any);
 
-		const res = await GET();
-		expect(res.status).toBe(200);
-		const json = await res.json();
-		expect(json.flight).toEqual({ id: "f1", reason: "Flight", message: "flight" });
-		expect(json.weather).toEqual({ id: "w1", reason: "Weather", message: "weather" });
-		expect(json.stats).toEqual({ count: 2, lastTime: "2026-03-16T00:00:00Z" });
-		expect(queryAxiom).toHaveBeenCalledTimes(3);
-	});
+    const res = await GET();
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json.flight).toEqual({
+      id: "f1",
+      reason: "Flight",
+      message: "flight",
+    });
+    expect(json.weather).toEqual({
+      id: "w1",
+      reason: "Weather",
+      message: "weather",
+    });
+    expect(json.stats).toEqual({ count: 2, lastTime: "2026-03-16T00:00:00Z" });
+    expect(queryAxiom).toHaveBeenCalledTimes(3);
+  });
 
-	it("returns 500 on query failure", async () => {
-		vi.mocked(queryAxiom).mockRejectedValueOnce(new Error("fail"));
+  it("returns 500 on query failure", async () => {
+    vi.mocked(queryAxiom).mockRejectedValueOnce(new Error("fail"));
 
-		const res = await GET();
-		expect(res.status).toBe(500);
-		const json = await res.json();
-		expect(json.error).toContain("fail");
-	});
+    const res = await GET();
+    expect(res.status).toBe(500);
+    const json = await res.json();
+    expect(json.error).toContain("fail");
+  });
 });
