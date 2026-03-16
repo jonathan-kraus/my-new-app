@@ -21,7 +21,7 @@ export async function GET() {
     console.log("flight row", flight?.data?.reason, flight?.data?.id);
     console.log("weather row", weather?.data?.reason, weather?.data?.id);
     const statsQuery = `
-["config"] | summarize count(), last_time=max(_time)
+["config"] | summarize count()
 `;
     const statsRows = (await queryAxiom(statsQuery)) ?? [];
     const statsAny: any = statsRows[0] ?? { count: 0, last_time: null };
