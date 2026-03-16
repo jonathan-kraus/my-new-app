@@ -3,75 +3,133 @@
 import { useEffect, useState } from "react";
 
 function formatRow(row: Record<string, any> | null) {
-  if (!row) return <div className="text-slate-400">No data</div>;
-  return (
-    <div className="space-y-1 text-xs bg-slate-950 p-3 rounded">
-      <div><strong>ID:</strong> {row.id ?? "-"}</div>
-      <div><strong>Reason:</strong> {row.reason ?? "-"}</div>
-      <div><strong>Message:</strong> {row.message ?? "-"}</div>
-      <div><strong>Variable01:</strong> {row.Variable01 ?? "-"}</div>
-      <div><strong>Variable02:</strong> {row.Variable02 ?? "-"}</div>
-      <div><strong>Variable03:</strong> {row.Variable03 ?? "-"}</div>
-      <div><strong>Raw:</strong> <pre className="overflow-auto">{JSON.stringify(row, null, 2)}</pre></div>
-    </div>
-  );
+	if (!row) return <div className="text-slate-400">No data</div>;
+
+	const direct = {
+		id: row.id ?? row.data?.id ?? "-",
+		reason:
+			row.reason ?? row.data?.reason ?? row.data?.data1?.reason ?? row.data?.data2?.reason ?? "-",
+		message:
+			row.message ??
+			row.data?.message ??
+			row.data?.data1?.message ??
+			row.data?.data2?.message ??
+			"-",
+		Variable01:
+			row.Variable01 ??
+			row.data?.Variable01 ??
+			row.data?.data1?.Variable01 ??
+			row.data?.data2?.Variable01 ??
+			"-",
+		Variable02:
+			row.Variable02 ??
+			row.data?.Variable02 ??
+			row.data?.data1?.Variable02 ??
+			row.data?.data2?.Variable02 ??
+			"-",
+		Variable03:
+			row.Variable03 ??
+			row.data?.Variable03 ??
+			row.data?.data1?.Variable03 ??
+			row.data?.data2?.Variable03 ??
+			"-",
+	};
+
+	return (
+		<div className="space-y-1 text-xs bg-slate-950 p-3 rounded">
+			<div>
+				<strong>ID:</strong> {direct.id}
+			</div>
+			<div>
+				<strong>Reason:</strong> {direct.reason}
+			</div>
+			<div>
+				<strong>Message:</strong> {direct.message}
+			</div>
+			<div>
+				<strong>Variable01:</strong> {direct.Variable01}
+			</div>
+			<div>
+				<strong>Variable02:</strong> {direct.Variable02}
+			</div>
+			<div>
+				<strong>Variable03:</strong> {direct.Variable03}
+			</div>
+			<div>
+				<strong>Raw:</strong> <pre className="overflow-auto">{JSON.stringify(row, null, 2)}</pre>
+			</div>
+		</div>
+	);
 }
 
 export default function ConfigReadPage() {
-  const [flight, setFlight] = useState<Record<string, any> | null>(null);
-  const [weather, setWeather] = useState<Record<string, any> | null>(null);
-  const [status, setStatus] = useState("idle");
-  const [error, setError] = useState<string | null>(null);
-  const [updatedAt, setUpdatedAt] = useState<string>(new Date().toLocaleTimeString());
+	const [flight, setFlight] = useState<Record<string, any> | null>(null);
+	const [weather, setWeather] = useState<Record<string, any> | null>(null);
+	const [stats, setStats] = useState<{ count: number; lastTime: string | null } | null>(null);
+	const [status, setStatus] = useState("idle");
+	const [error, setError] = useState<string | null>(null);
+	const [updatedAt, setUpdatedAt] = useState<string>(new Date().toLocaleTimeString());
 
-  const loadData = async () => {
-    setStatus("loading...");
-    setError(null);
-    try {
-      const res = await fetch("/api/config/read");
-      if (!res.ok) throw new Error(`status ${res.status}`);
-      const json = await res.json();
-      setFlight(json.flight ?? null);
-      setWeather(json.weather ?? null);
-      setUpdatedAt(new Date().toLocaleTimeString());
-      setStatus("loaded");
-    } catch (err) {
-      setStatus("error");
-      setError(err instanceof Error ? err.message : String(err));
-    }
-  };
+	const loadData = async () => {
+		setStatus("loading...");
+		setError(null);
+		try {
+			const res = await fetch("/api/config/read");
+			if (!res.ok) throw new Error(`status ${res.status}`);
+			const json = await res.json();
+			setFlight(json.flight ?? null);
+			setWeather(json.weather ?? null);
+			setStats(json.stats ?? null);
+			setUpdatedAt(new Date().toLocaleTimeString());
+			setStatus("loaded");
+		} catch (err) {
+			setStatus("error");
+			setError(err instanceof Error ? err.message : String(err));
+		}
+	};
 
-  useEffect(() => {
-    loadData();
-  }, []);
+	useEffect(() => {
+		loadData();
+	}, []);
 
-  return (
-    <div className="p-6 space-y-4 text-slate-100">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold">Latest Config Data</h1>
-          <p className="text-xs text-slate-300">Last refreshed: {updatedAt}</p>
-        </div>
-        <button onClick={loadData} className="rounded bg-sky-600 px-3 py-1 text-sm font-medium hover:bg-sky-500">
-          Refresh
-        </button>
-      </div>
+	return (
+		<div className="p-6 space-y-4 text-slate-100">
+			<div className="flex items-start justify-between gap-3">
+				<div>
+					<h1 className="text-2xl font-bold">Latest Config Data</h1>
+					<p className="text-xs text-slate-300">Last refreshed: {updatedAt}</p>
+				</div>
+				<button
+					onClick={loadData}
+					className="rounded bg-sky-600 px-3 py-1 text-sm font-medium hover:bg-sky-500"
+				>
+					Refresh
+				</button>
+			</div>
 
-      <div className="text-sm">
-        Status: <strong>{status}</strong>
-        {error ? <span className="ml-2 text-red-300">{error}</span> : null}
-      </div>
-
-      <div className="grid md:grid-cols-2 gap-4">
-        <section className="bg-slate-900 p-4 rounded border border-slate-700">
-          <h2 className="text-lg font-semibold text-cyan-300">Last Flight entry</h2>
-          {formatRow(flight)}
-        </section>
-        <section className="bg-slate-900 p-4 rounded border border-slate-700">
-          <h2 className="text-lg font-semibold text-emerald-300">Last Weather entry</h2>
-          {formatRow(weather)}
-        </section>
-      </div>
-    </div>
-  );
+			<div className="text-sm">
+				Status: <strong>{status}</strong>
+				{error ? <span className="ml-2 text-red-300">{error}</span> : null}
+			</div>
+			<div className="text-sm text-emerald-200">
+				Dataset: <strong>config</strong>
+			</div>
+			<div className="text-sm text-slate-300">
+				Count: <strong>{status === "loaded" ? (stats?.count ?? "-") : "-"}</strong>
+				{stats?.lastTime ? (
+					<span className="ml-2">Last: {new Date(stats.lastTime).toLocaleString()}</span>
+				) : null}
+			</div>
+			<div className="grid md:grid-cols-2 gap-4">
+				<section className="bg-slate-900 p-4 rounded border border-slate-700">
+					<h2 className="text-lg font-semibold text-cyan-300">Last Flight entry</h2>
+					{formatRow(flight)}
+				</section>
+				<section className="bg-slate-900 p-4 rounded border border-slate-700">
+					<h2 className="text-lg font-semibold text-emerald-300">Last Weather entry</h2>
+					{formatRow(weather)}
+				</section>
+			</div>
+		</div>
+	);
 }
