@@ -1,59 +1,77 @@
-import { queryAxiom } from "@/lib/axiom/query";
+"use client";
 
-export const dynamic = "force-dynamic";
+import { useEffect, useState } from "react";
 
-export default async function ConfigReadPage() {
-  console.log("=== PAGE START ===");
+function formatRow(row: Record<string, any> | null) {
+  if (!row) return <div className="text-slate-400">No data</div>;
+  return (
+    <div className="space-y-1 text-xs bg-slate-950 p-3 rounded">
+      <div><strong>ID:</strong> {row.id ?? "-"}</div>
+      <div><strong>Reason:</strong> {row.reason ?? "-"}</div>
+      <div><strong>Message:</strong> {row.message ?? "-"}</div>
+      <div><strong>Variable01:</strong> {row.Variable01 ?? "-"}</div>
+      <div><strong>Variable02:</strong> {row.Variable02 ?? "-"}</div>
+      <div><strong>Variable03:</strong> {row.Variable03 ?? "-"}</div>
+      <div><strong>Raw:</strong> <pre className="overflow-auto">{JSON.stringify(row, null, 2)}</pre></div>
+    </div>
+  );
+}
 
-  // -----------------------------
-  // Query 1: Flight (last 4 hours)
-  // -----------------------------
-  const qFlight = `
-| where _time > ago(4h)
-| where parsed.payload.data1.reason == "Flight"
-| sort by _time desc
-| take 1
-`;
+export default function ConfigReadPage() {
+  const [flight, setFlight] = useState<Record<string, any> | null>(null);
+  const [weather, setWeather] = useState<Record<string, any> | null>(null);
+  const [status, setStatus] = useState("idle");
+  const [error, setError] = useState<string | null>(null);
+  const [updatedAt, setUpdatedAt] = useState<string>(new Date().toLocaleTimeString());
 
-  const flightRows = (await queryAxiom(qFlight, 15000)) ?? [];
-  const flight = flightRows[0] ?? null;
+  const loadData = async () => {
+    setStatus("loading...");
+    setError(null);
+    try {
+      const res = await fetch("/api/config/read");
+      if (!res.ok) throw new Error(`status ${res.status}`);
+      const json = await res.json();
+      setFlight(json.flight ?? null);
+      setWeather(json.weather ?? null);
+      setUpdatedAt(new Date().toLocaleTimeString());
+      setStatus("loaded");
+    } catch (err) {
+      setStatus("error");
+      setError(err instanceof Error ? err.message : String(err));
+    }
+  };
 
-  // -----------------------------
-  // Query 2: Weather (last 4 hours)
-  // -----------------------------
-  const qWeather = `
-| where _time > ago(4h)
-| where parsed.payload.data2.reason == "Weather"
-| sort by _time desc
-| take 1
-`;
-
-  const weatherRows = (await queryAxiom(qWeather, 15000)) ?? [];
-  const weather = weatherRows[0] ?? null;
+  useEffect(() => {
+    loadData();
+  }, []);
 
   return (
-    <div className="p-6 space-y-4 text-green-300 text-sm">
-      <h1 className="text-xl font-bold mb-4 text-white">Config Data</h1>
+    <div className="p-6 space-y-4 text-slate-100">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h1 className="text-2xl font-bold">Latest Config Data</h1>
+          <p className="text-xs text-slate-300">Last refreshed: {updatedAt}</p>
+        </div>
+        <button onClick={loadData} className="rounded bg-sky-600 px-3 py-1 text-sm font-medium hover:bg-sky-500">
+          Refresh
+        </button>
+      </div>
 
-      <h2 className="text-white font-semibold">Flight Config</h2>
-      {flight ? (
-        <pre className="bg-black/40 p-4 rounded text-xs text-white">
-          {JSON.stringify(flight, null, 2)}
-        </pre>
-      ) : (
-        <div>No Flight config found in last 4 hours.</div>
-      )}
+      <div className="text-sm">
+        Status: <strong>{status}</strong>
+        {error ? <span className="ml-2 text-red-300">{error}</span> : null}
+      </div>
 
-      <h2 className="text-white font-semibold mt-6">Weather Config</h2>
-      {weather ? (
-        <pre className="bg-black/40 p-4 rounded text-xs text-white">
-          {JSON.stringify(weather, null, 2)}
-        </pre>
-      ) : (
-        <div>No Weather config found in last 4 hours.</div>
-      )}
-
-      <div className="mt-6 text-white">End</div>
+      <div className="grid md:grid-cols-2 gap-4">
+        <section className="bg-slate-900 p-4 rounded border border-slate-700">
+          <h2 className="text-lg font-semibold text-cyan-300">Last Flight entry</h2>
+          {formatRow(flight)}
+        </section>
+        <section className="bg-slate-900 p-4 rounded border border-slate-700">
+          <h2 className="text-lg font-semibold text-emerald-300">Last Weather entry</h2>
+          {formatRow(weather)}
+        </section>
+      </div>
     </div>
   );
 }
