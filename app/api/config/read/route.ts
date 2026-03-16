@@ -21,7 +21,10 @@ export async function GET() {
 
     const flight  = flightRows.at(-1) ?? null;  // latest Flight
     const weather = weatherRows.at(-1) ?? null; // latest Weather
-
+    console.log("flightRows", flightRows);
+    console.log("weatherRows", weatherRows);
+    console.log("flight row", flight?.data?.reason, flight?.data?.id);
+    console.log("weather row", weather?.data?.reason, weather?.data?.id);
     const statsQuery = `
 ['config']
 | summarize count(), last_time = max(_time)
