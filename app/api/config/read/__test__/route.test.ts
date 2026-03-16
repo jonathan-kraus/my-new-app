@@ -14,12 +14,14 @@ describe("GET /api/config/read", () => {
 
 	it("returns latest flight and weather rows", async () => {
 		vi.mocked(queryAxiom).mockResolvedValueOnce([
-			{ id: "f1", reason: "Flight", message: "flight" },
-		]);
+			{ id: "f1", reason: "Flight", message: "flight" } as any,
+		] as any);
 		vi.mocked(queryAxiom).mockResolvedValueOnce([
-			{ id: "w1", reason: "Weather", message: "weather" },
-		]);
-		vi.mocked(queryAxiom).mockResolvedValueOnce([{ count: 2, last_time: "2026-03-16T00:00:00Z" }]);
+			{ id: "w1", reason: "Weather", message: "weather" } as any,
+		] as any);
+		vi.mocked(queryAxiom).mockResolvedValueOnce([
+			{ count: 2, last_time: "2026-03-16T00:00:00Z" } as any,
+		] as any);
 
 		const res = await GET();
 		expect(res.status).toBe(200);

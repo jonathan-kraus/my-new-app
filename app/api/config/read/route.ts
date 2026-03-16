@@ -22,14 +22,14 @@ export async function GET() {
 | summarize count(), last_time=max(_time)
 `;
 		const statsRows = (await queryAxiom(statsQuery, 60, "config")) ?? [];
-		const stats = statsRows[0] ?? { count: 0, last_time: null };
+		const stats: any = statsRows[0] ?? { count: 0, last_time: null };
 
 		return NextResponse.json({
 			flight: flightRows[0] ?? null,
 			weather: weatherRows[0] ?? null,
 			stats: {
-				count: Number(stats.count ?? 0),
-				lastTime: stats.last_time ?? null,
+				count: Number(stats.count ?? stats["count()"] ?? 0),
+				lastTime: stats.last_time ?? stats.last_time_ ?? null,
 			},
 		});
 	} catch (error) {
