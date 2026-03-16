@@ -5,38 +5,15 @@ import { useEffect, useState } from "react";
 function formatRow(row: Record<string, any> | null) {
   if (!row) return <div className="text-slate-400">No data</div>;
 
+  const d = row.data ?? {};
+
   const direct = {
-    id: row.id ?? row.data?.id ?? "-",
-    reason:
-      row.reason ??
-      row.data?.reason ??
-      row.data?.data1?.reason ??
-      row.data?.data2?.reason ??
-      "-",
-    message:
-      row.message ??
-      row.data?.message ??
-      row.data?.data1?.message ??
-      row.data?.data2?.message ??
-      "-",
-    Variable01:
-      row.Variable01 ??
-      row.data?.Variable01 ??
-      row.data?.data1?.Variable01 ??
-      row.data?.data2?.Variable01 ??
-      "-",
-    Variable02:
-      row.Variable02 ??
-      row.data?.Variable02 ??
-      row.data?.data1?.Variable02 ??
-      row.data?.data2?.Variable02 ??
-      "-",
-    Variable03:
-      row.Variable03 ??
-      row.data?.Variable03 ??
-      row.data?.data1?.Variable03 ??
-      row.data?.data2?.Variable03 ??
-      "-",
+    id: d.id ?? "-",
+    reason: d.reason ?? "-",
+    message: d.message ?? "-",
+    Variable01: d.Variable01 ?? "-",
+    Variable02: d.Variable02 ?? "-",
+    Variable03: d.Variable03 ?? "-",
   };
 
   return (
@@ -66,6 +43,7 @@ function formatRow(row: Record<string, any> | null) {
     </div>
   );
 }
+
 
 export default function ConfigReadPage() {
   const [flight, setFlight] = useState<Record<string, any> | null>(null);
