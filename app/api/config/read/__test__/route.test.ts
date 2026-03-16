@@ -12,32 +12,46 @@ describe("GET /api/config/read", () => {
     vi.clearAllMocks();
   });
 
-  it("returns latest flight and weather rows", async () => {
+  it("returns latest flight and weather rows with new stats shape", async () => {
+    // First call → Flight rows
     vi.mocked(queryAxiom).mockResolvedValueOnce([
-      { id: "f1", reason: "Flight", message: "flight" } as any,
-    ] as any);
+      { id: "f1", reason: "Flight", message: "flight", _time: "2026-03-16T00:00:00Z" } as any,
+    ]);
+
+    // Second call → Weather rows
     vi.mocked(queryAxiom).mockResolvedValueOnce([
-      { id: "w1", reason: "Weather", message: "weather" } as any,
-    ] as any);
-    vi.mocked(queryAxiom).mockResolvedValueOnce([
-      { count: 2, last_time: "2026-03-16T00:00:00Z" } as any,
-    ] as any);
+      { id: "w1", reason: "Weather", message: "weather", _time: "2026-03-16T00:00:00Z" } as any,
+    ]);
 
     const res = await GET();
     expect(res.status).toBe(200);
+
     const json = await res.json();
+
     expect(json.flight).toEqual({
       id: "f1",
       reason: "Flight",
       message: "flight",
+      _time: "2026-03-16T00:00:00Z",
     });
+
     expect(json.weather).toEqual({
       id: "w1",
       reason: "Weather",
       message: "weather",
+      _time: "2026-03-16T00:00:00Z",
     });
-    expect(json.stats).toEqual({ count: 2, lastTime: "2026-03-16T00:00:00Z" });
-    expect(queryAxiom).toHaveBeenCalledTimes(3);
+
+    // New stats shape
+    expect(json.stats).toEqual({
+      total: 2,
+      flights: 1,
+      weather: 1,
+      lastUpdated: "2026-03-16T00:00:00Z",
+    });
+
+    // Only 2 calls now (Flight + Weather)
+    expect(queryAxiom).toHaveBeenCalledTimes(2);
   });
 
   it("returns 500 on query failure", async () => {
@@ -45,6 +59,7 @@ describe("GET /api/config/read", () => {
 
     const res = await GET();
     expect(res.status).toBe(500);
+
     const json = await res.json();
     expect(json.error).toContain("fail");
   });
