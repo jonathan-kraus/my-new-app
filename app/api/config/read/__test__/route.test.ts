@@ -28,10 +28,6 @@ describe("GET /api/config/read", () => {
 		expect(json.weather).toEqual({ id: "w1", reason: "Weather", message: "weather" });
 		expect(json.stats).toEqual({ count: 2, lastTime: "2026-03-16T00:00:00Z" });
 		expect(queryAxiom).toHaveBeenCalledTimes(3);
-		expect(res.status).toBe(200);
-		const json = await res.json();
-		expect(json.flight).toBeNull();
-		expect(json.weather).toBeNull();
 	});
 
 	it("returns 500 on query failure", async () => {
