@@ -5,40 +5,48 @@ import { getConfig } from "@/lib/runtime/config";
 export async function GET() {
   const lookback = await getConfig("lookback", "22d");
 
-	const qFlight = `
+  const qFlight = `
+['config']
 | where _time > ago(${lookback})
 | where data.reason == "Flight"
 | sort by _time desc
 | take 1
 `;
 
-	const qWeather = `
+  const qWeather = `
+['config']
 | where _time > ago(${lookback})
 | where data.reason == "Weather"
 | sort by _time desc
 | take 1
 `;
 
-	try {
-		const flightRows = (await queryAxiom(qFlight, 60, "config")) ?? [];
-		const weatherRows = (await queryAxiom(qWeather, 60, "config")) ?? [];
+  try {
+    const flightRows = (await queryAxiom(qFlight, 60, "config")) ?? [];
+    const weatherRows = (await queryAxiom(qWeather, 60, "config")) ?? [];
 
-		const statsQuery = `
-| summarize count(), last_time=max(_time)
+    console.log("flightRows", flightRows);
+    console.log("weatherRows", weatherRows);
+
+    const statsQuery = `
+['config']
+| summarize count(), last_time = max(_time)
 `;
-		const statsRows = (await queryAxiom(statsQuery, 60, "config")) ?? [];
-		const stats: any = statsRows[0] ?? { count: 0, last_time: null };
+    const statsRows = (await queryAxiom(statsQuery, 60, "config")) ?? [];
+    const stats: any = statsRows[0] ?? { count: 0, last_time: null };
 
-		return NextResponse.json({
-			flight: flightRows[0] ?? null,
-			weather: weatherRows[0] ?? null,
-			stats: {
-				count: Number(stats.count ?? stats["count()"] ?? 0),
-				lastTime: stats.last_time ?? stats.last_time_ ?? null,
-			},
-		});
-	} catch (error) {
-		console.error("/api/config/read error", error);
-		return NextResponse.json({ error: String(error) }, { status: 500 });
-	}
+    return NextResponse.json({
+      flight: flightRows[0] ?? null,
+      weather: weatherRows[0] ?? null,
+      stats: {
+        count: Number(stats.count ?? stats["count()"] ?? 0),
+        lastTime: stats.last_time ?? stats.last_time_ ?? null,
+      },
+    });
+  } catch (error) {
+    console.error("/api/config/read error", error);
+    return NextResponse.json({ error: String(error) }, { status: 500 });
+  }
+}
+
 }
