@@ -6,13 +6,13 @@ export async function GET() {
   try {
     const qFlight = `
 ["config"]
-| where data.reason == "Flight"
+| where reason == "Flight"
 | sort by _time desc
 | take 1
 `;
     const qWeather = `
 ["config"]
-| where data.reason == "Weather"
+| where reason == "Weather"
 | sort by _time asc
 | take 1
 `;
