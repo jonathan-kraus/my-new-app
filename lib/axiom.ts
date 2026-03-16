@@ -1,7 +1,7 @@
-export async function axiomIngest(events: any[]) {
+export async function axiomIngest(events: any[], datasetOverride?: string) {
   const token = process.env.AXIOM_TOKEN!;
   const orgId = process.env.AXIOM_ORG_ID!;
-  const dataset = process.env.AXIOM_DATASET!;
+  const dataset = datasetOverride ?? process.env.AXIOM_DATASET!;
   const url = `https://api.axiom.co/v1/datasets/${dataset}/ingest`;
 
   const res = await fetch(url, {
@@ -19,6 +19,5 @@ export async function axiomIngest(events: any[]) {
     throw new Error(`Axiom ingest failed: ${res.status} ${text}`);
   }
 
-  // Axiom returns 204 No Content — nothing to parse
   return { ok: true };
 }

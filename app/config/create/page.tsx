@@ -1,9 +1,9 @@
 /*
  * @FilePath: \my-new-app\app\config\create\page.tsx
- * @LastEditTime: 2026-03-15 13:20:17
+ * @LastEditTime: 2026-03-15 20:11:43
  */
 
-import crypto from "crypto";
+import { axiomIngest } from "@/lib/axiom";
 import { logit } from "@/lib/log/logit";
 
 export type config = {
@@ -14,53 +14,91 @@ export type config = {
   Variable02: string;
   Variable03: string;
 };
-export default async function AxiomTestPage() {
+export default async function AxiomConfig() {
   const requestId = crypto.randomUUID();
   const userId = "JK";
   const eventIndex = 22;
+await logit(
+  "jonathan",
+  { level: "info", message: "In AxiomConfig" },
+  {
+    userid: userId,
+    requestId: requestId,
+    eventIndex: eventIndex
+  },
+  {
+    page: "page.tsx",
+    zulu: new Date().toISOString(),
+    local: new Date().toLocaleString("en-US", {
 
-  const data1 = {
-    id: crypto.randomUUID(),
-    reason: "Flight",
-    message: "Config for favorite flights",
-    Variable01: "AA1976",
-    Variable02: "AA607",
-    Variable03: "AA1211",
-  };
-  const data2 = {
-    id: crypto.randomUUID(),
-    reason: "Weather",
-    message: "Config for favorite cities",
-    Variable01: "KOP",
-    Variable02: "Brookline",
-    Variable03: "Williamstown",
-  };
-  await fetch("https://www.kraus.my.id/api/config/create", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      data1,
-    }),
-  });
+    })
 
-  await fetch("https://www.kraus.my.id/api/config/create", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      data2,
-    }),
-  });
+  }
+);
+//-------------------------------------------------------------------------
+await axiomIngest(
+  [
+    {
+      id: crypto.randomUUID(),
+      reason: "Flight",
+      message: "Config for favorite flights",
+      Variable01: "AA1976",
+      Variable02: "AA607",
+      Variable03: "AA1211",
+
+    }
+  ],
+  "config"
+);
+await logit(
+  "jonathan",
+  { level: "info", message: "Flight call complete" },
+  {
+configmessage: "Config for favorite flights"
+  },
+  {
+    page: "page.tsx",
+    requestId,
+    userId,
+    eventIndex,
+
+  }
+);
+
+await axiomIngest(
+  [
+    {
+      id: crypto.randomUUID(),
+      reason: "Weather",
+      message: "Config for favorite cities",
+      Variable01: "KOP",
+      Variable02: "Brookline",
+      Variable03: "Williamstown"
+    }
+  ],
+  "config"
+
+);
+await logit(
+  "jonathan",
+  { level: "info",
+    message: "Weather call complete" },
+  {configmessage: "Config for favorite cities"},
+  {
+    page: "page.tsx",
+    requestId,
+    userId,
+    eventIndex,
+
+  }
+);
+
   // --- Log the combined result --------------------------------------------
   await logit(
     "jonathan",
-    { level: "info", message: "Config Create" },
+    { level: "info", message: "Config Complete" },
     {
-      data1: data1,
-      data2: data2,
+
     },
     {
       page: "page.tsx",
@@ -80,8 +118,7 @@ export default async function AxiomTestPage() {
           {
             requestId,
 
-            data1,
-            data2,
+
           },
           null,
           2,
