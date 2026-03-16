@@ -5,21 +5,22 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
     const qFlight = `
-['config']
+["config"]
 | where data.reason == "Flight"
-| sort by _time asc
+| sort by _time desc
+| take 1
 `;
-
     const qWeather = `
-['config']
+["config"]
 | where data.reason == "Weather"
 | sort by _time asc
+| take 1
 `;
 
-    const flightRows  = (await queryAxiom(qFlight, 60, "config")) ?? [];
-    const weatherRows = (await queryAxiom(qWeather, 60, "config")) ?? [];
+    const flightRows = (await queryAxiom(qFlight)) ?? [];
+    const weatherRows = (await queryAxiom(qWeather)) ?? [];
 
-    const flight  = flightRows.at(-1) ?? null;  // latest Flight
+    const flight = flightRows.at(-1) ?? null; // latest Flight
     const weather = weatherRows.at(-1) ?? null; // latest Weather
     console.log("flightRows", flightRows);
     console.log("weatherRows", weatherRows);
@@ -29,7 +30,7 @@ export async function GET() {
 ['config']
 | summarize count(), last_time = max(_time)
 `;
-    const statsRows = (await queryAxiom(statsQuery, 60, "config")) ?? [];
+    const statsRows = (await queryAxiom(statsQuery)) ?? [];
     const statsAny: any = statsRows[0] ?? { count: 0, last_time: null };
 
     return NextResponse.json({

@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\logs\live\route.ts
- * @LastEditTime: 2026-03-13 13:57:25
+ * @LastEditTime: 2026-03-16 01:14:08
  */
 import { NextResponse } from "next/server";
 import { queryAxiom } from "@/lib/axiom/query";
@@ -24,6 +24,6 @@ export async function GET() {
 | limit 50
   `;
 
-  const logs = await queryAxiom(q, 30); // last 30 minutes
+  const logs = await queryAxiom(q);
   return NextResponse.json({ logs });
 }

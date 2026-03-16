@@ -1,22 +1,11 @@
-// lib/axiom/query.ts
 import { Axiom } from "@axiomhq/js";
-import { subMinutes } from "date-fns";
 
 const client = new Axiom({
   token: process.env.AXIOM_TOKEN!,
+  orgId: process.env.AXIOM_ORG_ID!,
 });
 
-export async function queryAxiom(
-  query: string,
-  minutes = 30,
-  dataset = process.env.AXIOM_DATASET!, // default stays myapp_logs
-) {
-  const start = subMinutes(new Date(), minutes).toISOString();
-
-  const res = await client.query(dataset, {
-    query,
-    startTime: start,
-  });
-
-  return res.matches;
+export async function queryAxiom(apl: string) {
+  const res = await client.query(apl);
+  return res.matches ?? [];
 }

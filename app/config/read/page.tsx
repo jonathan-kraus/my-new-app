@@ -44,7 +44,6 @@ function formatRow(row: Record<string, any> | null) {
   );
 }
 
-
 export default function ConfigReadPage() {
   const [flight, setFlight] = useState<Record<string, any> | null>(null);
   const [weather, setWeather] = useState<Record<string, any> | null>(null);
