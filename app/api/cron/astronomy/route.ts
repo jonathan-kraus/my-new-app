@@ -27,17 +27,9 @@ export async function GET(req: NextRequest) {
       route: "cron",
       rebuild: true,
     },
-    { eventIndex },
-    {
-      requestId: ctx.requestId,
-      route: ctx.page,
-      userId: ctx.userId,
-      zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
-    },
-  );
+  {  },
+  ctx
+);
 
   await runDbTableStats({
     requestId: ctx.requestId,
@@ -50,20 +42,13 @@ export async function GET(req: NextRequest) {
     {
       level: "info",
       message: "astronomy.cron.dbtables.completed",
-      Db: "Db",
-      Table: "Table",
     },
-    { eventIndex },
-    {
-      requestId: ctx.requestId,
-      route: ctx.page,
-      userId: ctx.userId,
-      zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
-    },
-  );
+  {
+    Db: "Db",
+    Table: "Table",
+  },
+  ctx
+);
 
   const locations = await db.location.findMany();
 
