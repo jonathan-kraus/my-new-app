@@ -82,20 +82,7 @@ export default function ConfigReadPage() {
     page: "workflow",
     userId: "JK",
   };
-  logit(
-    "jonathan",
-    { level: "info", message: "In config read" },
-    { Flight: flight, Weather: weather, Stats: stats },
-    {
-      requestId: ctx.requestId,
-      route: ctx.page,
-      userId: ctx.userId,
-      zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
-    },
-  );
+
   useEffect(() => {
     loadData();
   }, []);
