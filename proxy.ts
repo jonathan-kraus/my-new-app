@@ -19,10 +19,10 @@ export async function proxy(req: NextRequest) {
   // --- 0) Filter out ALL noise -----------------------------------
   const isInternal =
     pathname.startsWith("/_next") || pathname.startsWith("/favicon");
-  //pathname.startsWith("/admin") ||
-  //pathname.startsWith("/dashboard") ||
-  //pathname === "/" ||
-  //pathname.startsWith("/logs");
+  pathname.startsWith("/admin") ||
+    pathname.startsWith("/dashboard") ||
+    pathname === "/" ||
+    pathname.startsWith("/logs");
 
   if (isInternal) {
     return NextResponse.next();
@@ -40,25 +40,25 @@ export async function proxy(req: NextRequest) {
   // --- 1) Normalize path segments (you want to keep this) --------
   const { last, lastTwo } = normalizePath(pathname);
 
-  await logit(
-    "middleware",
-    {
-      level: "info",
-      message: "Normalized path segments pathname: " + pathname,
-      last,
-      lastTwo,
-    },
-    {},
-    {
-      requestId: getRequestId(req.url),
-      route: pathname,
-      userId: undefined,
-      zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
-    },
-  );
+  // await logit(
+  //   "middleware",
+  //   {
+  //     level: "info",
+  //     message: "Normalized path segments pathname: " + pathname,
+  //     last,
+  //     lastTwo,
+  //   },
+  //   {},
+  //   {
+  //     requestId: getRequestId(req.url),
+  //     route: pathname,
+  //     userId: undefined,
+  //     zulu: new Date().toISOString(),
+  //     local: new Date().toLocaleString("en-US", {
+  //       timeZone: "America/New_York",
+  //     }),
+  //   },
+  // );
 
   // --- 2) Start timing -------------------------------------------
   markRequestStart(req.url);

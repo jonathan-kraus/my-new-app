@@ -23,28 +23,19 @@
 
     {
       "groupName": "Prisma",
-      "matchPackagePatterns": [
-        "^prisma$",
-        "^@prisma/"
-      ],
+      "matchPackagePatterns": ["^prisma$", "^@prisma/"],
       "matchUpdateTypes": ["major"],
       "enabled": false
     },
 
     {
       "groupName": "Vitest",
-      "matchPackagePatterns": [
-        "^vitest$",
-        "^@vitest/"
-      ]
+      "matchPackagePatterns": ["^vitest$", "^@vitest/"]
     },
 
     {
       "groupName": "Tailwind",
-      "matchPackagePatterns": [
-        "^tailwindcss$",
-        "^@tailwindcss/"
-      ]
+      "matchPackagePatterns": ["^tailwindcss$", "^@tailwindcss/"]
     },
 
     {
