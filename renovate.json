@@ -3,34 +3,53 @@
   "prCreation": "immediate",
   "rebaseWhen": "behind-base-branch",
   "ignoreTests": false,
+
   "packageRules": [
     {
       "matchManagers": ["npm", "pnpm"],
-      "automerge": true
-    },
-    {
-      "matchManagers": ["npm"],
-      "automergeType": "pr",
-      "automergeStrategy": "merge-commit"
-    },
-    {
-      "matchManagers": ["pnpm"],
+      "automerge": true,
       "automergeType": "branch"
     },
+
     {
-      "automerge": true,
-      "schedule": ["* 01-23 * * 0"],
-      "matchPackageNames": ["/next/", "/neon/"]
+      "groupName": "Next.js ecosystem",
+      "matchPackagePatterns": [
+        "^next$",
+        "^eslint-config-next$",
+        "^@next/",
+        "^@vercel/"
+      ]
     },
+
+    {
+      "groupName": "Prisma",
+      "matchPackagePatterns": [
+        "^prisma$",
+        "^@prisma/"
+      ],
+      "matchUpdateTypes": ["major"],
+      "enabled": false
+    },
+
+    {
+      "groupName": "Vitest",
+      "matchPackagePatterns": [
+        "^vitest$",
+        "^@vitest/"
+      ]
+    },
+
+    {
+      "groupName": "Tailwind",
+      "matchPackagePatterns": [
+        "^tailwindcss$",
+        "^@tailwindcss/"
+      ]
+    },
+
     {
       "matchUpdateTypes": ["minor", "patch"],
-      "automerge": true,
-      "matchPackageNames": ["*"]
-    },
-    {
-      "matchUpdateTypes": ["major"],
-      "enabled": false,
-      "matchPackageNames": ["/prisma/", "/@prisma/client/"]
+      "automerge": true
     }
   ]
 }
