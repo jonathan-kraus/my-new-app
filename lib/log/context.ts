@@ -1,7 +1,9 @@
 import type { NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { markRequestStart } from "@/lib/log/timing";
+import versionInfo from "@/version.json";
 
+export const version = versionInfo.version;
 let eventCounter = 0;
 
 export async function enrichContext(req: NextRequest) {
@@ -37,5 +39,6 @@ export async function enrichContext(req: NextRequest) {
     userAgent,
     sessionEmail,
     userId,
+    version: versionInfo.version,
   };
 }

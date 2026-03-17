@@ -60,6 +60,7 @@ export async function GET(req: Request) {
         requestId: ctx.requestId,
         route: ctx.page,
         userId: ctx.userId,
+        version: ctx.version,
         zulu: new Date().toISOString(),
         local: new Date().toLocaleString("en-US", {
           timeZone: "America/New_York",

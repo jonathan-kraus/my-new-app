@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { NextEventCard } from "@/app/components/astronomy/NextEventCard";
 import { useSideNavActivationCounter } from "@/app/hooks/useSideNavActivationCounter";
 import { EmailSideNavLink } from "@/app/components/sidenav/EmailLink";
-import { logit } from "@/lib/log/logit.client";
 
 type SideNavClientProps = {
   nextEventLabel: string;
@@ -42,18 +41,6 @@ export default function SideNavClient({
 
     loadVersion();
   }, []);
-
-  // --- Log once version is available ---
-  useEffect(() => {
-    if (!formattedVersion) return;
-
-    logit(
-      "jonathan",
-      { level: "info", message: "SideNav mounted" },
-      { version: formattedVersion, activations },
-      { route: "/dashboard" }
-    );
-  }, [formattedVersion, activations]);
 
   const navItems = [
     { href: "/", label: "Home", icon: "🏠" },
