@@ -5,6 +5,7 @@ import { logit } from "@/lib/log/logit";
 import { Button } from "@/components/ui/button";
 import CurrentWeatherCard from "@/app/components/dashboard/current-weather-card";
 import Link from "next/link";
+import { NextRequest } from "next/server";
 import { enrichContext } from "@/lib/log/context";
 import { db } from "@/lib/db";
 import { RecentActivity } from "@/components/activity/RecentActivity";
@@ -21,12 +22,12 @@ function getGreeting(): string {
   return "Good evening";
 }
 
-export default async function HomePage() {
+export default async function HomePage(req: NextRequest) {
   const h = await headers(); // ✅ await the Promise
   const session = await auth();
 
 
-  const ctx = await enrichContext(h);
+  const ctx = await enrichContext(req);
   await logit(
     "jonathan",
     {

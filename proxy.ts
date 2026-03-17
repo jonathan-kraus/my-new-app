@@ -37,9 +37,6 @@ export async function proxy(req: NextRequest) {
   if (isPrefetch) {
     return NextResponse.next();
   }
-  const ctx = await enrichContext(req);
-  // --- 1) Normalize path segments (you want to keep this) --------
-  const { last, lastTwo } = normalizePath(pathname);
 
   // await logit(
   //   "middleware",
@@ -89,7 +86,7 @@ async function end(req: NextRequest, res: NextResponse) {
   const durationMs = getRequestDuration(req.url);
   const pathname = req.nextUrl.pathname;
   const { last, lastTwo } = normalizePath(pathname);
-
+  const ctx = await enrichContext(req);
   await logit(
     "middleware",
     {
@@ -104,8 +101,7 @@ async function end(req: NextRequest, res: NextResponse) {
       status: res.status,
       requestId: getRequestId(req.url),
       eventIndex: nextEventIndex(req.url),
-      last,
-      lastTwo,},
+      },
     {
     ctx
     },
