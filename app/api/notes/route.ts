@@ -8,8 +8,9 @@ import { withLogging } from "@/lib/logging/withLogging";
 // -------------------------
 // GET /api/notes
 // -------------------------
-const eventIndex = 22;
+
 const requestId = crypto.randomUUID();
+
 export const GET = withLogging(async (req: Request) => {
   await logit(
     "notes",
@@ -18,7 +19,7 @@ export const GET = withLogging(async (req: Request) => {
       message: "Notes GET started",
       requestId: "REQ",
     },
-    { eventIndex },
+    { route: "api/notes" },
     {
       requestId: requestId,
       zulu: new Date().toISOString(),
@@ -39,7 +40,7 @@ export const GET = withLogging(async (req: Request) => {
           message: "Unauthorized Notes GET",
           requestId: "REQ",
         },
-        { eventIndex },
+        { route: "api/notes" },
         {
           requestId: requestId,
           zulu: new Date().toISOString(),
@@ -71,7 +72,7 @@ export const GET = withLogging(async (req: Request) => {
         message: `Notes GET completed ${notes.length}`,
         count: notes.length,
       },
-      { eventIndex },
+      { route: "api/notes" },
       {
         requestId: requestId,
         zulu: new Date().toISOString(),
@@ -90,7 +91,7 @@ export const GET = withLogging(async (req: Request) => {
         message: "Notes GET failed",
         error: err.message,
       },
-      { eventIndex },
+      { route: "api/notes" },
       {
         requestId: requestId,
         zulu: new Date().toISOString(),
@@ -117,15 +118,14 @@ export const POST = withLogging(async (req: Request) => {
       level: "info",
       message: "Notes POST started",
     },
-    { eventIndex },
-    {
-      requestId: requestId,
+    {},
+      {
       zulu: new Date().toISOString(),
       local: new Date().toLocaleString("en-US", {
         timeZone: "America/New_York",
       }),
-    },
-  );
+      },
+    );
 
   try {
     const session = await auth();
@@ -137,7 +137,7 @@ export const POST = withLogging(async (req: Request) => {
           level: "warn",
           message: "Unauthorized Notes POST",
         },
-        { eventIndex },
+        { route: "api/notes" },
         {
           requestId: requestId,
           zulu: new Date().toISOString(),
@@ -179,7 +179,7 @@ export const POST = withLogging(async (req: Request) => {
         action: "created",
         userEmail: email,
       },
-      { eventIndex },
+      { route: "api/notes" },
       {
         requestId: requestId,
         zulu: new Date().toISOString(),
@@ -196,7 +196,7 @@ export const POST = withLogging(async (req: Request) => {
         message: "Notes POST completed",
         noteId: note.id,
       },
-      { eventIndex },
+      { route: "api/notes" },
       {
         requestId: requestId,
         zulu: new Date().toISOString(),
@@ -314,7 +314,7 @@ export const PUT = withLogging(async (req: Request) => {
           isArchived,
         },
       },
-      { eventIndex },
+      { route: "api/notes" },
       {
         requestId: requestId,
         zulu: new Date().toISOString(),
@@ -333,7 +333,7 @@ export const PUT = withLogging(async (req: Request) => {
         message: "Notes PUT failed",
         error: err.message,
       },
-      { eventIndex },
+      { route: "api/notes" },
       {
         requestId: requestId,
         zulu: new Date().toISOString(),
@@ -398,7 +398,7 @@ export const DELETE = withLogging(async (req: Request) => {
         action: "deleted",
         userEmail: email,
       },
-      { eventIndex },
+      { route: "api/notes" },
       {
         requestId: requestId,
         zulu: new Date().toISOString(),
@@ -417,7 +417,7 @@ export const DELETE = withLogging(async (req: Request) => {
         message: "Notes DELETE failed",
         error: err.message,
       },
-      { eventIndex },
+      { route: "api/notes" },
       {
         requestId: requestId,
         zulu: new Date().toISOString(),

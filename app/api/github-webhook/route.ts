@@ -171,15 +171,11 @@ export const POST = withLogging(async (req: Request) => {
       message: "GitHub webhook received -- new post code",
       event,
     },
-    { eventIndex },
-    {
-      requestId: requestId,
-      zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
-    },
-  );
+    {event: event},
+      {
+      ctx
+      },
+    );
 
   const normalized = {
     eventId: deliveryId!,

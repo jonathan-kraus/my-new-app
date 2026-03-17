@@ -17,7 +17,6 @@ function atLocalMidnight(d: Date) {
 export async function GET(req: NextRequest) {
   const start = Date.now();
   const ctx = await enrichContext(req);
-  const eventIndex = 22;
 
   await logit(
     "ephemeris",
