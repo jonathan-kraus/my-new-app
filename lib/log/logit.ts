@@ -70,7 +70,6 @@ export async function logit(
         meta: safeForNeon(flatMeta),
         page: flatMeta.page,
         userId: flatMeta.userId,
-        data: safeForNeon(flatPayload),
       },
     });
   } catch (err) {
