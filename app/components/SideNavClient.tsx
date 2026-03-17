@@ -5,7 +5,8 @@ import { NextEventCard } from "@/app/components/astronomy/NextEventCard";
 import { useSideNavActivationCounter } from "@/app/hooks/useSideNavActivationCounter";
 import { EmailSideNavLink } from "@/app/components/sidenav/EmailLink";
 import versionInfo from "../../version.json";
-
+import { logit } from "@/lib/log/logit.client";
+import { useEffect } from "react";
 
 type SideNavClientProps = {
   nextEventLabel: string;
@@ -38,7 +39,14 @@ export default function SideNavClient({
     minor.padStart(2, "0"),
     patch.padStart(2, "0"),
   ].join(".");
-  
+  useEffect(() => {
+    logit(
+      "jonathan",
+      { level: "info", message: "SideNav mounted" },
+      {version: formattedVersion, activations: activations},
+      { route: "/dashboard" }
+    );
+  }, []);
   return (
     <aside className="w-64 h-screen flex flex-col bg-slate-950 text-white shadow-xl">
       {/* Scrollable content with gradient */}

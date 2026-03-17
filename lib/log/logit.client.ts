@@ -3,20 +3,21 @@ export async function logit(
   domain: string,
   event: any = {},
   payload: any = {},
-  meta: any = {},
+  meta: any = {}
 ) {
   console.log("logit.client called");
 
+  const isServer = typeof window === "undefined";
+
+  const url = isServer
+    ? `${process.env.NEXT_PUBLIC_SITE_URL}/api/logs`
+    : "/api/logs";
+
   try {
-    const res = await fetch("/api/logs", {
+    const res = await fetch(url, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        domain,
-        event,
-        payload,
-        meta,
-      }),
+      body: JSON.stringify({ domain, event, payload, meta })
     });
 
     if (!res.ok) {
