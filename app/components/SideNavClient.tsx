@@ -5,7 +5,7 @@ import { NextEventCard } from "@/app/components/astronomy/NextEventCard";
 import { useSideNavActivationCounter } from "@/app/hooks/useSideNavActivationCounter";
 import { EmailSideNavLink } from "@/app/components/sidenav/EmailLink";
 import versionInfo from "../../version.json";
-import { logit } from "@/lib/log/logit";
+import { logit } from "@/lib/log/logit.client";
 
 type SideNavClientProps = {
 	nextEventLabel: string;
