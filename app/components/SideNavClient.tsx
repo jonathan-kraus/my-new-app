@@ -5,7 +5,7 @@ import { NextEventCard } from "@/app/components/astronomy/NextEventCard";
 import { useSideNavActivationCounter } from "@/app/hooks/useSideNavActivationCounter";
 import { EmailSideNavLink } from "@/app/components/sidenav/EmailLink";
 import versionInfo from "../../version.json";
-import { logit } from "@/lib/log/logit.client";
+
 
 type SideNavClientProps = {
   nextEventLabel: string;
@@ -38,29 +38,7 @@ export default function SideNavClient({
     minor.padStart(2, "0"),
     patch.padStart(2, "0"),
   ].join(".");
-  const ctx = {
-    requestId: crypto.randomUUID(),
-    route: "Github Webhook",
-    page: "workflow",
-    userId: "JK",
-  };
-  logit(
-    "Sidenav",
-    {
-      level: "Info",
-      message: `In SidenavClient using version ${formattedVersion}`,
-    },
-    { Version: formattedVersion },
-    {
-      page: "SideNavClient.tsx",
-      requestId: ctx.requestId,
-      userId: ctx.userId,
-      zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
-    },
-  );
+  
   return (
     <aside className="w-64 h-screen flex flex-col bg-slate-950 text-white shadow-xl">
       {/* Scrollable content with gradient */}
