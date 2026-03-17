@@ -136,8 +136,6 @@ model Log {
   domain       String
   payload      Json
   meta         Json?
-  env          String?
-  host         String?
   page         String?
   userId       String?
   sessionEmail String?
