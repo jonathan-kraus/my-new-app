@@ -59,3 +59,71 @@ export type InternalEvent = {
   meta: Meta;
   timestamp: number;
 };
+
+export type Ctx = {
+  requestId: string;
+  eventIndex: number;
+
+  route: string;
+  page: string; // temporary compatibility field
+
+  method: string;
+  url: string;
+
+  ip?: string;
+  userAgent?: string;
+
+  sessionEmail?: string;
+  userId?: string;
+
+  version: string;
+
+  zulu: string;  // ISO timestamp
+  local: string; // localized timestamp
+
+  deploymentId: string;
+  buildTimestamp: string;
+  gitCommit: string;
+  gitBranch: string;
+
+  runtime: {
+    node: string;
+    region: string;
+  };
+};
+
+import { z } from "zod";
+
+export const CtxSchema = z.object({
+  requestId: z.string(),
+  eventIndex: z.number(),
+
+  route: z.string(),
+  page: z.string(),
+
+  method: z.string(),
+  url: z.string(),
+
+  ip: z.string().optional(),
+  userAgent: z.string().optional(),
+
+  sessionEmail: z.string().optional(),
+  userId: z.string().optional(),
+
+  version: z.string(),
+
+  zulu: z.string(),  // ISO timestamp
+  local: z.string(), // localized timestamp
+
+  deploymentId: z.string(),
+  buildTimestamp: z.string(),
+  gitCommit: z.string(),
+  gitBranch: z.string(),
+
+  runtime: z.object({
+    node: z.string(),
+    region: z.string(),
+  }),
+});
+
+export type CtxSchema = z.infer<typeof CtxSchema>;

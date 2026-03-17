@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
 
   await runDbTableStats({
     requestId: ctx.requestId,
-    route: ctx.page,
+    route: ctx.route,
     userId: ctx.userId,
   });
 
@@ -61,15 +61,9 @@ export async function GET(req: NextRequest) {
         locationId: location.id,
         name: location.name,
       },
-      { eventIndex },
+      {},
       {
-        requestId: ctx.requestId,
-        route: ctx.page,
-        userId: ctx.userId,
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", {
-          timeZone: "America/New_York",
-        }),
+      ctx
       },
     );
 
@@ -87,17 +81,11 @@ export async function GET(req: NextRequest) {
           locationId: location.id,
           targetDate: dateString,
         },
-        { eventIndex },
-        {
-          requestId: ctx.requestId,
-          route: ctx.page,
-          userId: ctx.userId,
-          zulu: new Date().toISOString(),
-          local: new Date().toLocaleString("en-US", {
-            timeZone: "America/New_York",
-          }),
-        },
-      );
+        {},
+      {
+      ctx
+      },
+    );
 
       // Build the full solar/lunar snapshot
       const snapshot = await buildAstronomySnapshot(location, targetDate);
@@ -129,17 +117,11 @@ export async function GET(req: NextRequest) {
           dateString,
           snapshot: row,
         },
-        { eventIndex },
-        {
-          requestId: ctx.requestId,
-          route: ctx.page,
-          userId: ctx.userId,
-          zulu: new Date().toISOString(),
-          local: new Date().toLocaleString("en-US", {
-            timeZone: "America/New_York",
-          }),
-        },
-      );
+        {},
+      {
+      ctx
+      },
+    );
     }
   }
 
@@ -152,17 +134,11 @@ export async function GET(req: NextRequest) {
       message: "astronomy.cron.completed",
       durationMs,
     },
-    { eventIndex },
-    {
-      requestId: ctx.requestId,
-      route: ctx.page,
-      userId: ctx.userId,
-      zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
-    },
-  );
+    {},
+      {
+      ctx
+      },
+    );
 
   return NextResponse.json({ ok: true, durationMs });
 }

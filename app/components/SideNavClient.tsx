@@ -1,7 +1,7 @@
 "use client";
 /*
  * @FilePath: \my-new-app\app\components\SideNavClient.tsx
- * @LastEditTime: 2026-03-17 13:04:54
+ * @LastEditTime: 2026-03-17 17:02:39
  */
 
 import Link from "next/link";
@@ -44,18 +44,6 @@ export default function SideNavClient({ nextEventLabel, nextEventTime }: SideNav
 		loadVersion();
 	}, []);
 
-	// --- Log once version is available ---
-	useEffect(() => {
-		if (!formattedVersion) return;
-
-		logit(
-			"jonathan",
-			{ level: "info", message: "SideNav mounted" },
-			{ version: formattedVersion, activations },
-			{ route: "/dashboard" },
-		);
-	}, [formattedVersion, activations]);
-
 	const navItems = [
 		{ href: "/", label: "Home", icon: "🏠" },
 		{ href: "/dashboard", label: "Dashboard", icon: "📊" },
@@ -73,7 +61,18 @@ export default function SideNavClient({ nextEventLabel, nextEventTime }: SideNav
 		{ href: "/admin/db", label: "Tables", icon: "🛢️" },
 		{ href: "/database-explorer", label: "Database Explorer", icon: "🛢️" },
 	];
+	// --- Log once version is available ---
+	useEffect(() => {
+		if (!formattedVersion) return;
 
+		logit(
+			"jonathan",
+			{ level: "info", message: "SideNav mounted" },
+			{ version: formattedVersion, activations },
+			{ route: "/dashboard" },
+		);
+	}, [formattedVersion, activations, navItems]);
+  
 	return (
 		<aside className="w-64 h-screen flex flex-col bg-slate-950 text-white shadow-xl">
 			<nav className="flex-1 p-4 space-y-2 overflow-y-auto bg-gradient-to-b from-blue-600 via-blue-700 to-transparent">

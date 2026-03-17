@@ -35,22 +35,11 @@ export default async function HomePage() {
       level: "info",
       message: "Visited dashboard",
     },
-    {
-      sessionUser: session?.user?.name ?? null,
-      sessionEmail: session?.user?.email ?? null,
-      userId: session?.user?.id ?? null,
-      session: session ?? null,
-    },
-    {
-      requestId: ctx.requestId,
-      route: ctx.page,
-      userId: ctx.userId,
-      zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
-    },
-  );
+    {},
+      {
+      ctx
+      },
+    );
 
   const location = await db.location.findFirst({
     where: { isDefault: true },
@@ -69,22 +58,11 @@ export default async function HomePage() {
       level: "info",
       message: "Visited dashboard 2",
     },
-    {
-      weatherData: weatherData,
-      sessionEmail: session?.user?.email ?? null,
-      userId: session?.user?.id ?? null,
-      session: session ?? null,
-    },
-    {
-      requestId: ctx.requestId,
-      route: ctx.page,
-      userId: ctx.userId,
-      zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
-    },
-  );
+{weatherData: weatherData, location: location},
+      {
+      ctx
+      },
+    );
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-600 to-sky-900 text-white p-8">
       <div className="max-w-5xl mx-auto bg-sky-800/60 backdrop-blur-md rounded-2xl p-8 shadow-xl border border-white/10">

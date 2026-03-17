@@ -68,7 +68,6 @@ export async function enrichContext(req: NextRequest) {
     requestId,
     eventIndex,
     route,
-      page: route,
     method,
     url,
     ip,

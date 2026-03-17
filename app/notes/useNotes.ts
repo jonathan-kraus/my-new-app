@@ -33,17 +33,10 @@ export function useNotes(): NotesState {
       {
         level: "info",
         message: "Notes page mounted",
-        loc: "/notes",
       },
-      { eventIndex },
+      {loc: "/notes"},
       {
-        requestId: ctx.requestId ?? undefined,
-        route: ctx.page ?? undefined,
-        userId: ctx.userId ?? undefined,
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", {
-          timeZone: "America/New_York",
-        }),
+      ctx
       },
     );
 
@@ -73,17 +66,10 @@ export function useNotes(): NotesState {
           {
             level: "info",
             message: "Notes page mounted",
-            loc: "/notes",
           },
-          { eventIndex },
+          { loc: "/notes" },
           {
-            requestId: ctx.requestId ?? undefined,
-            route: ctx.page ?? undefined,
-            userId: ctx.userId ?? undefined,
-            zulu: new Date().toISOString(),
-            local: new Date().toLocaleString("en-US", {
-              timeZone: "America/New_York",
-            }),
+           ctx
           },
         );
       }
