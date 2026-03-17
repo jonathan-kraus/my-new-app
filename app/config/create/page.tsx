@@ -49,12 +49,12 @@ export default function AxiomConfig() {
     <div className="p-6 space-y-4">
       <h1 className="text-xl font-bold">Config Ingest</h1>
       <p>Trigger config ingest to Axiom (same API used by cron).</p>
-      <button
+      {/* <button
         onClick={handleIngest}
         className="rounded bg-sky-600 px-4 py-2 text-white hover:bg-sky-500"
       >
         Ingest Config Now
-      </button>
+      </button> */}
       <div className="mt-2 text-sm">
         {status === "saving..." && (
           <span className="text-yellow-300">Saving...</span>
