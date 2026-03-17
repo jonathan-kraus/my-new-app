@@ -1,15 +1,10 @@
 "use client";
-// app\config\read\page.tsx
+
 import { useEffect, useState } from "react";
 import { logit } from "@/lib/log/logit.client";
-
-async function formatRow(row: Record<string, any> | null) {
+function formatRow(row: Record<string, any> | null) {
   if (!row) return <div className="text-slate-400">No data</div>;
-const ctx = {
-  requestId: crypto.randomUUID(),
-  page: "config-read",
-  userId: "JK",
-};
+
   const d = row.data ?? {};
 
   const direct = {
@@ -20,23 +15,7 @@ const ctx = {
     Variable02: d.Variable02 ?? "-",
     Variable03: d.Variable03 ?? "-",
   };
-await logit(
-  "jonathan",
-  { level: "info", message: "In config read" },
-  {
-    reason: d.reason
-  },
-    {
-    page: "config/read/page.tsx",
-    file: "page.tsx",
-        requestId: ctx.requestId,
-        route: ctx.page,
-        userId: ctx.userId,
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", {
-          timeZone: "America/New_York"}),
-}
-);
+
   return (
     <div className="space-y-1 text-xs bg-slate-950 p-3 rounded">
       <div>
@@ -92,27 +71,31 @@ export default function ConfigReadPage() {
       setStats(json.stats ?? null);
       setUpdatedAt(new Date().toLocaleTimeString());
       setStatus("loaded");
-      await logit(
-  "jonathan",
-  { level: "info", message: "In config read" },
-  {
-    Flight: setFlight
-  },
-
-    {
-    page: "config/read/page.tsx",
-    file: "page.tsx",
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", {
-          timeZone: "America/New_York"}),
-}
-);
     } catch (err) {
       setStatus("error");
       setError(err instanceof Error ? err.message : String(err));
     }
   };
-
+  const ctx = {
+    requestId: crypto.randomUUID(),
+    route: "Github Webhook",
+    page: "workflow",
+    userId: "JK",
+  };
+  logit(
+    "jonathan",
+    { level: "info", message: "In config read" },
+    { Flight: flight, Weather: weather, Stats: stats },
+    {
+      requestId: ctx.requestId,
+      route: ctx.page,
+      userId: ctx.userId,
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
   useEffect(() => {
     loadData();
   }, []);

@@ -38,10 +38,9 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { domain, payload, meta } = body ?? {};
+    const { domain, event, payload, meta } = body ?? {};
 
-    // Use server-side logit to write to DB & queue
-    await logit(domain ?? "client", payload ?? {}, event ?? {}, meta ?? {});
+    await logit(domain ?? "client", event ?? {}, payload ?? {}, meta ?? {});
 
     return NextResponse.json({ ok: true });
   } catch (err) {

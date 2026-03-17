@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { toast } from "react-hot-toast";
-import { parseLocalTimestamp } from "@/lib/time";
+import { logit } from "@/lib/log/logit.client";
 type CurrentWeatherCardProps = {
   location: {
     id: string;
@@ -19,14 +19,20 @@ type CurrentWeatherCardProps = {
 const ctx = {
   requestId: crypto.randomUUID(),
   page: "current-weather-card",
-  userId: null,
+  userId: "JK",
 };
 export default function CurrentWeatherCard({
   location,
 }: CurrentWeatherCardProps) {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-
+  logit(
+    // not working
+    "jonathan",
+    { level: "info", message: "current-weather-card" },
+    { someClientContext: true },
+    { route: "/dashboard" },
+  );
   // Prevent duplicate toasts on re-renders
   const hasToasted = useRef(false);
 

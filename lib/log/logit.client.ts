@@ -1,21 +1,28 @@
 // lib/log/logit.client.ts
 export async function logit(
-
   domain: string,
-  payload: any = {},
   event: any = {},
+  payload: any = {},
   meta: any = {},
 ) {
+  console.log("logit.client called");
+
   try {
-      console.log("logit.client called");
-    await fetch("/api/logs", {
+    const res = await fetch("/api/logs", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ domain, payload, meta }),
+      body: JSON.stringify({
+        domain,
+        event,
+        payload,
+        meta,
+      }),
     });
+
+    if (!res.ok) {
+      console.error("Client log failed with status", res.status);
+    }
   } catch (err) {
-    // swallow errors on client - avoid throwing
-    // eslint-disable-next-line no-console
     console.error("Client-side log failed", err);
   }
 }
