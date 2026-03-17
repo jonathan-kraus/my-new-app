@@ -1,11 +1,13 @@
 // lib/log/logit.client.ts
 export async function logit(
+
   domain: string,
   payload: any = {},
   event: any = {},
   meta: any = {},
 ) {
   try {
+      console.log("logit.client called");
     await fetch("/api/logs", {
       method: "POST",
       headers: { "content-type": "application/json" },
