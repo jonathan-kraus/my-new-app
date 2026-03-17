@@ -28,7 +28,7 @@
     ]
   },
   "scripts": {
-    "build": "next build",
+    "build": "pnpm next build",
     "dev": "next dev",
     "lint": "eslint",
     "genmsg": "node scripts/gen-commit-msg.js",
