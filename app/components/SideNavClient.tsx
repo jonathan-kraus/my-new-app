@@ -1,22 +1,59 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { NextEventCard } from "@/app/components/astronomy/NextEventCard";
 import { useSideNavActivationCounter } from "@/app/hooks/useSideNavActivationCounter";
 import { EmailSideNavLink } from "@/app/components/sidenav/EmailLink";
-import versionInfo from "../../version.json";
 import { logit } from "@/lib/log/logit.client";
-import { useEffect } from "react";
 
 type SideNavClientProps = {
   nextEventLabel: string;
   nextEventTime: Date | null;
 };
+
 export default function SideNavClient({
   nextEventLabel,
   nextEventTime,
 }: SideNavClientProps) {
   const activations = useSideNavActivationCounter();
+
+  // --- NEW: state for formatted version ---
+  const [formattedVersion, setFormattedVersion] = useState<string | null>(null);
+
+  // --- Load version.json on client only ---
+  useEffect(() => {
+    async function loadVersion() {
+      try {
+        const v = await import("../../version.json");
+        const [major, minor, patch] = v.version.split(".");
+
+        const formatted = [
+          major.padStart(2, "0"),
+          minor.padStart(2, "0"),
+          patch.padStart(2, "0"),
+        ].join(".");
+
+        setFormattedVersion(formatted);
+      } catch (err) {
+        console.error("Failed to load version.json", err);
+      }
+    }
+
+    loadVersion();
+  }, []);
+
+  // --- Log once version is available ---
+  useEffect(() => {
+    if (!formattedVersion) return;
+
+    logit(
+      "jonathan",
+      { level: "info", message: "SideNav mounted" },
+      { version: formattedVersion, activations },
+      { route: "/dashboard" }
+    );
+  }, [formattedVersion, activations]);
 
   const navItems = [
     { href: "/", label: "Home", icon: "🏠" },
@@ -27,29 +64,16 @@ export default function SideNavClient({
     { href: "/notes", label: "Notes", icon: "📝" },
     { href: "/github", label: "GitHub", icon: "🐙" },
     { href: "/ping", label: "Ping", icon: "🛠️" },
-    { href: "/travel/next", label: "Travel", icon: "✈️" }, // ← NEW
-    { href: "/fa/dashboard", label: "Flight Dashboard", icon: "✈️" }, // ← NEW
+    { href: "/travel/next", label: "Travel", icon: "✈️" },
+    { href: "/fa/dashboard", label: "Flight Dashboard", icon: "✈️" },
     { href: "/admin/runtime", label: "Runtime", icon: "🛠️" },
+    { href: "/config/read", label: "Config", icon: "🛠️" },
     { href: "/admin/db", label: "Tables", icon: "🛢️" },
     { href: "/database-explorer", label: "Database Explorer", icon: "🛢️" },
   ];
-  const [major, minor, patch] = versionInfo.version.split(".");
-  const formattedVersion = [
-    major.padStart(2, "0"),
-    minor.padStart(2, "0"),
-    patch.padStart(2, "0"),
-  ].join(".");
-  useEffect(() => {
-    logit(
-      "jonathan",
-      { level: "info", message: "SideNav mounted" },
-      {version: formattedVersion, activations: activations},
-      { route: "/dashboard" }
-    );
-  }, []);
+
   return (
     <aside className="w-64 h-screen flex flex-col bg-slate-950 text-white shadow-xl">
-      {/* Scrollable content with gradient */}
       <nav className="flex-1 p-4 space-y-2 overflow-y-auto bg-gradient-to-b from-blue-600 via-blue-700 to-transparent">
         {navItems.map((item) => (
           <Link
@@ -64,7 +88,6 @@ export default function SideNavClient({
 
         <div className="mt-6">
           <div className="flex items-center gap-2">
-            {/* email icon */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -80,6 +103,7 @@ export default function SideNavClient({
             </svg>
             <EmailSideNavLink />
           </div>
+
           <NextEventCard
             nextEvent={nextEventLabel}
             nextEventTime={nextEventTime}
@@ -91,7 +115,7 @@ export default function SideNavClient({
         </div>
 
         <div className="text-xs opacity-75 text-yellow-300 mt-1">
-          Version: {formattedVersion}
+          Version: {formattedVersion ?? "…"}
         </div>
       </nav>
     </aside>
