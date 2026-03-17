@@ -5,6 +5,7 @@ import { logit } from "@/lib/log/logit";
 import { Button } from "@/components/ui/button";
 import CurrentWeatherCard from "@/app/components/dashboard/current-weather-card";
 import Link from "next/link";
+import { enrichContext } from "@/lib/log/context";
 import { db } from "@/lib/db";
 import { RecentActivity } from "@/components/activity/RecentActivity";
 
@@ -24,11 +25,8 @@ export default async function HomePage() {
   const h = await headers(); // ✅ await the Promise
   const session = await auth();
 
-  const ctx = {
-    requestId: crypto.randomUUID(),
-    page: "Home Page",
-    userId: "JK",
-  };
+
+  const ctx = await enrichContext(h);
   await logit(
     "jonathan",
     {

@@ -12,6 +12,7 @@ import {
 } from "@/lib/log/timing";
 
 import { logit } from "@/lib/log/logit";
+import { enrichContext } from "@/lib/log/context";
 
 export async function proxy(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
@@ -36,7 +37,7 @@ export async function proxy(req: NextRequest) {
   if (isPrefetch) {
     return NextResponse.next();
   }
-
+  const ctx = await enrichContext(req);
   // --- 1) Normalize path segments (you want to keep this) --------
   const { last, lastTwo } = normalizePath(pathname);
 
@@ -94,7 +95,8 @@ async function end(req: NextRequest, res: NextResponse) {
     {
       level: "info",
       message: "REQUEST END " + pathname,
-      page: pathname,
+    },
+    {page: pathname,
       file: "proxy.ts",
       durationMs,
       method: req.method,
@@ -103,17 +105,9 @@ async function end(req: NextRequest, res: NextResponse) {
       requestId: getRequestId(req.url),
       eventIndex: nextEventIndex(req.url),
       last,
-      lastTwo,
-    },
-    {},
+      lastTwo,},
     {
-      requestId: getRequestId(req.url),
-      route: pathname,
-      userId: undefined,
-      zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
+    ctx
     },
   );
 
