@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\page.tsx
- * @LastEditTime: 2026-03-18 14:51:32
+ * @LastEditTime: 2026-03-18 15:16:57
  */
 // app/page.tsx
 import { auth } from "@/auth";
@@ -11,120 +11,123 @@ import CurrentWeatherCard from "@/app/components/dashboard/current-weather-card"
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { RecentActivity } from "@/components/activity/RecentActivity";
-import { SessionSchema, LocationSchema, WeatherSchema } from "@/lib/schemas/page-schemas";
+import {
+  SessionSchema,
+  LocationSchema,
+  WeatherSchema,
+} from "@/lib/schemas/page-schemas";
 
 function getGreeting(): string {
-	const hour = new Date().getHours();
-	if (hour < 5) return "Good evening";
-	if (hour < 12) return "Good morning";
-	if (hour < 17) return "Good afternoon";
-	return "Good evening";
+  const hour = new Date().getHours();
+  if (hour < 5) return "Good evening";
+  if (hour < 12) return "Good morning";
+  if (hour < 17) return "Good afternoon";
+  return "Good evening";
 }
 
 export default async function HomePage() {
-	// Build a universal context for this page (includes userId, route, etc.)
-	const built = await buildUniversalContext("Home Page");
+  // Build a universal context for this page (includes userId, route, etc.)
+  const built = await buildUniversalContext("Home Page");
 
-	// Ensure we have a stable requestId and page label
-	const requestId = built.requestId ?? crypto.randomUUID();
-	const pageLabel = built.route ?? "Home Page";
+  // If you still need the full session object for richer logging, fetch it here
+  const session = await auth();
+  SessionSchema.parse(session); // throws if shape is unexpected
+  // Use userId from the universal context if available, otherwise fall back to session
+  const userId = built.userId ?? session?.user?.id ?? null;
 
-	// If you still need the full session object for richer logging, fetch it here
-	const session = await auth();
-	SessionSchema.parse(session); // throws if shape is unexpected
-	// Use userId from the universal context if available, otherwise fall back to session
-	const userId = built.userId ?? session?.user?.id ?? null;
+  await logit(
+    "jonathan",
+    {
+      level: "info",
+      message: "Visited dashboard",
+    },
+    {
+      sessionUser: session?.user?.name ?? null,
+      sessionEmail: session?.user?.email ?? null,
+      userId: built.userId ?? "me",
+      session: session ?? null,
+      route: built.route,
+    },
+    {
+      built,
+    },
+  );
 
-	await logit(
-		"jonathan",
-		{
-			level: "info",
-			message: "Visited dashboard",
-		},
-		{
-			sessionUser: session?.user?.name ?? null,
-			sessionEmail: session?.user?.email ?? null,
-			userId: userId,
-			session: session ?? null,
-		},
-		{
-			built,
-		},
-	);
+  const location = await db.location.findFirst({
+    where: { isDefault: true },
+  });
+  LocationSchema.parse(location);
+  if (!location) {
+    return <div>No default location configured.</div>;
+  }
+  const weatherRes = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/weather?locationId=${location?.id}`,
+    { cache: "no-store" },
+  );
+  const weatherData = await weatherRes.json();
+  WeatherSchema.parse(weatherData);
+  await logit(
+    "jonathan",
+    {
+      level: "info",
+      message: "Visited dashboard 2",
+    },
+    {
+      weatherData: weatherData,
+      sessionEmail: session?.user?.email ?? null,
+      userId,
+      session: session ?? null,
+    },
+    {
+      built,
+    },
+  );
 
-	const location = await db.location.findFirst({
-		where: { isDefault: true },
-	});
-	LocationSchema.parse(location);
-	if (!location) {
-		return <div>No default location configured.</div>;
-	}
-	const weatherRes = await fetch(
-		`${process.env.NEXT_PUBLIC_BASE_URL}/api/weather?locationId=${location?.id}`,
-		{ cache: "no-store" },
-	);
-	const weatherData = await weatherRes.json();
-	WeatherSchema.parse(weatherData);
-	await logit(
-		"jonathan",
-		{
-			level: "info",
-			message: "Visited dashboard 2",
-		},
-		{
-			weatherData: weatherData,
-			sessionEmail: session?.user?.email ?? null,
-			userId,
-			session: session ?? null,
-		},
-		{
-			requestId,
-			route: pageLabel,
-			userId,
-			zulu: new Date().toISOString(),
-			local: new Date().toLocaleString("en-US", {
-				timeZone: "America/New_York",
-			}),
-		},
-	);
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-sky-600 to-sky-900 text-white p-8">
+      <div className="max-w-5xl mx-auto bg-sky-800/60 backdrop-blur-md rounded-2xl p-8 shadow-xl border border-white/10">
+        {/* Header */}
+        <section className="mb-8">
+          <h1 className="text-4xl font-semibold mb-1">
+            {getGreeting()}, Jonathan.
+          </h1>
+          <p className="text-sky-200">
+            Your weather system is online and running smoothly.
+          </p>
+        </section>
 
-	return (
-		<div className="min-h-screen bg-gradient-to-b from-sky-600 to-sky-900 text-white p-8">
-			<div className="max-w-5xl mx-auto bg-sky-800/60 backdrop-blur-md rounded-2xl p-8 shadow-xl border border-white/10">
-				{/* Header */}
-				<section className="mb-8">
-					<h1 className="text-4xl font-semibold mb-1">{getGreeting()}, Jonathan.</h1>
-					<p className="text-sky-200">Your weather system is online and running smoothly.</p>
-				</section>
+        {/* Current Weather */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <CurrentWeatherCard location={location} />
+        </section>
 
-				{/* Current Weather */}
-				<section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-					<CurrentWeatherCard location={location} />
-				</section>
+        {/* System Health */}
+        <section className="mt-10">
+          <h2 className="text-xl font-medium mb-2 text-sky-200">
+            System Health
+          </h2>
+        </section>
 
-				{/* System Health */}
-				<section className="mt-10">
-					<h2 className="text-xl font-medium mb-2 text-sky-200">System Health</h2>
-				</section>
+        {/* Recent Activity */}
+        <section className="mt-6">
+          <h2 className="text-xl font-medium mb-2 text-sky-200">
+            {<RecentActivity />}
+          </h2>
+        </section>
 
-				{/* Recent Activity */}
-				<section className="mt-6">
-					<h2 className="text-xl font-medium mb-2 text-sky-200">{<RecentActivity />}</h2>
-				</section>
-
-				{/* Quick Actions */}
-				<section className="mt-8 flex gap-4">
-					<Button asChild>
-						<Link href="/forecast">Full Forecast</Link>
-					</Button>
-					<Button asChild>
-						<Link href="/logs">Logs</Link>
-					</Button>
-					<Button asChild>
-						<Link href="/api/prisma-test">Prisma Test</Link>
-					</Button>
-				</section>
-			</div>
-		</div>
-	);
+        {/* Quick Actions */}
+        <section className="mt-8 flex gap-4">
+          <Button asChild>
+            <Link href="/forecast">Full Forecast</Link>
+          </Button>
+          <Button asChild>
+            <Link href="/logs">Logs</Link>
+          </Button>
+          <Button asChild>
+            <Link href="/api/prisma-test">Prisma Test</Link>
+          </Button>
+        </section>
+      </div>
+    </div>
+  );
 }
