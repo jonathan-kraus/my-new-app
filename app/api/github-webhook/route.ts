@@ -8,9 +8,20 @@ import { getConfig } from "@/lib/runtime/config";
 import { getSha } from "@/lib/github/parse";
 import { getCommitMessage } from "@/lib/github";
 import { db } from "@/lib/db";
+import { z } from "zod";
 
 const gw = Number(await getConfig("github_webhook", "0"));
 const axiom = new Axiom({ token: process.env.AXIOM_TOKEN! });
+export const GitHubWebhookSchema = z.object({
+  repository: z.object({
+    name: z.string(),
+  }),
+  action: z.string(),
+  sender: z.object({
+    login: z.string(),
+  }),
+});
+
 
 const ctx = {
   requestId: crypto.randomUUID(),
@@ -161,8 +172,10 @@ export const POST = withLogging(async (req: Request) => {
   const deliveryId = req.headers.get("x-github-delivery");
   const commitMessage = await getCommitMessage(payload); // FIX #1 const sha = getSha(payload);
   const sha = getSha(payload);
-  const eventIndex = 22;
-  const requestId = crypto.randomUUID();
+const parsed = GitHubWebhookSchema.safeParse(payload);
+  if (!parsed.success) {
+    console.error("Invalid GitHub webhook", parsed.error.format());
+  }
 
   await logit(
     "github",

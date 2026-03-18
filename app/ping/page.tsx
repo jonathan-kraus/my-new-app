@@ -1,13 +1,17 @@
 // app/ping/page.tsx
 
-import crypto from "crypto";
 import { refreshLogRowEstimateForToday } from "@/lib/db/refreshLogRowEstimateForToday";
 import { logit } from "@/lib/log/logit";
 
 export default async function AxiomTestPage() {
-  const requestId = crypto.randomUUID();
-  const userId = "JK";
-  const eventIndex = 22;
+const ctx = {requestId: crypto.randomUUID(),
+                page: "ping",
+                userId: "JK",
+              zulu: new Date().toISOString(),
+              local: new Date().toLocaleString("en-US", {
+                timeZone: "America/New_York",
+              })
+              };
 
   // --- Fetch two APIs in parallel -----------------------------------------
   const [pingRes, secondRes] = await Promise.all([
@@ -31,10 +35,7 @@ export default async function AxiomTestPage() {
       count,
     },
     {
-      page: "page.tsx",
-      requestId,
-      userId,
-      eventIndex,
+    ctx
     },
   );
 
