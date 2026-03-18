@@ -41,42 +41,62 @@ export async function logit(
     ? `#${eventIndex} ${originalMessage}`
     : `#${eventIndex} JMSG`;
 
+  // --- Canonical user/session fields ----------------------------------------
+const canonicalUserId =
+  payload.userId ??
+  payload.session?.user?.id ??
+  meta.built?.userId ??
+  null;
+
+const canonicalSessionEmail =
+  payload.sessionEmail ??
+  payload.session?.user?.email ??
+  meta.built?.sessionEmail ??
+  null;
+
+const canonicalSessionUser =
+  payload.sessionUser ??
+  payload.session?.user?.name ??
+  meta.built?.sessionUser ??
+  null;
+
   // --- Flatten payload -----------------------------------------------------
-  const flatPayload = {
-    eventIndex,
-    level: event.level ?? "info",
-    message: originalMessage,
-    ...payload,
-  };
+ const flatPayload = {
+  eventIndex,
+  level: event.level ?? "info",
+  message: originalMessage,
+  ...payload,
+  userId: canonicalUserId,
+  sessionEmail: canonicalSessionEmail,
+  sessionUser: canonicalSessionUser,
+};
 
   // --- Flatten meta (remove meta.userId entirely) --------------------------
-  const flatMeta = {
-    requestId,
-    page: meta.page ?? null,
-    built: meta.built ?? null,
-    ...meta,
-    userId: undefined, // ensure meta.userId never pollutes logs
-  };
-
-  // --- Canonical userId (payload wins, then built) -------------------------
-  const canonicalUserId =
-    payload.userId ??
-    meta.built?.userId ??
-    null;
+const flatMeta = {
+  requestId,
+  page: meta.page ?? null,
+  built: meta.built ?? null,
+  ...meta,
+  userId: canonicalUserId,
+  sessionEmail: canonicalSessionEmail,
+  sessionUser: canonicalSessionUser,
+};
 
   // --- Neon ingestion ------------------------------------------------------
   try {
-    await db.log.create({
-      data: {
-        domain,
-        level: event.level ?? "info",
-        message,
-        requestId,
-        payload: safeForNeon(flatPayload),
-        meta: safeForNeon(flatMeta),
-        page: flatMeta.page,
-        userId: canonicalUserId, // <-- FIXED: always correct
-      },
+await db.log.create({
+  data: {
+    domain,
+    level: event.level ?? "info",
+    message,
+    requestId,
+    payload: safeForNeon(flatPayload),
+    meta: safeForNeon(flatMeta),
+    page: flatMeta.page,
+    userId: canonicalUserId,
+    sessionEmail: canonicalSessionEmail,
+    sessionUser: canonicalSessionUser,
+  },
     });
   } catch (err) {
     const now = Date.now();
