@@ -5,8 +5,6 @@ import { logit } from "@/lib/log/logit";
 import { Button } from "@/components/ui/button";
 import CurrentWeatherCard from "@/app/components/dashboard/current-weather-card";
 import Link from "next/link";
-import { NextRequest } from "next/server";
-import { enrichContext } from "@/lib/log/context";
 import { db } from "@/lib/db";
 import { RecentActivity } from "@/components/activity/RecentActivity";
 
@@ -22,23 +20,37 @@ function getGreeting(): string {
   return "Good evening";
 }
 
-export default async function HomePage(req: NextRequest) {
+export default async function HomePage() {
   const h = await headers(); // ✅ await the Promise
   const session = await auth();
 
-
-  const ctx = await enrichContext(req);
+  const ctx = {
+    requestId: crypto.randomUUID(),
+    page: "Home Page",
+    userId: "JK",
+  };
   await logit(
     "jonathan",
     {
       level: "info",
       message: "Visited dashboard",
     },
-    {},
-      {
-      ctx
-      },
-    );
+    {
+      sessionUser: session?.user?.name ?? null,
+      sessionEmail: session?.user?.email ?? null,
+      userId: session?.user?.id ?? null,
+      session: session ?? null,
+    },
+    {
+      requestId: ctx.requestId,
+      route: ctx.page,
+      userId: ctx.userId,
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
 
   const location = await db.location.findFirst({
     where: { isDefault: true },
@@ -57,11 +69,22 @@ export default async function HomePage(req: NextRequest) {
       level: "info",
       message: "Visited dashboard 2",
     },
-{weatherData: weatherData, location: location},
-      {
-      ctx
-      },
-    );
+    {
+      weatherData: weatherData,
+      sessionEmail: session?.user?.email ?? null,
+      userId: session?.user?.id ?? null,
+      session: session ?? null,
+    },
+    {
+      requestId: ctx.requestId,
+      route: ctx.page,
+      userId: ctx.userId,
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-600 to-sky-900 text-white p-8">
       <div className="max-w-5xl mx-auto bg-sky-800/60 backdrop-blur-md rounded-2xl p-8 shadow-xl border border-white/10">
