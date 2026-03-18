@@ -41,24 +41,30 @@ export async function logit(
     ? `#${eventIndex} ${originalMessage}`
     : `#${eventIndex} JMSG`;
 
-  // --- Internal structures (your new format) -------------------------------
+  // --- Flatten payload -----------------------------------------------------
   const flatPayload = {
     eventIndex,
     level: event.level ?? "info",
     message: originalMessage,
-    payload,
+    ...payload,
   };
 
+  // --- Flatten meta (remove meta.userId entirely) --------------------------
   const flatMeta = {
     requestId,
     page: meta.page ?? null,
-    userId: meta.userId ?? null,
-
-    // any additional fields you want are safe here
+    built: meta.built ?? null,
     ...meta,
+    userId: undefined, // ensure meta.userId never pollutes logs
   };
 
-  // --- DB write (unchanged) ------------------------------------------------
+  // --- Canonical userId (payload wins, then built) -------------------------
+  const canonicalUserId =
+    payload.userId ??
+    meta.built?.userId ??
+    null;
+
+  // --- Neon ingestion ------------------------------------------------------
   try {
     await db.log.create({
       data: {
@@ -69,7 +75,7 @@ export async function logit(
         payload: safeForNeon(flatPayload),
         meta: safeForNeon(flatMeta),
         page: flatMeta.page,
-        userId: flatMeta.userId,
+        userId: canonicalUserId, // <-- FIXED: always correct
       },
     });
   } catch (err) {
@@ -80,21 +86,14 @@ export async function logit(
     }
   }
 
-  // --- Axiom ingestion (schema‑compatible) --------------------------------
+  // --- Axiom ingestion -----------------------------------------------------
   const axiomEvent = {
     domain,
     eventIndex,
     level: event.level ?? "info",
     message,
-
-    // These two fields are ALWAYS allowed because they are strings
     meta_json: safeString(flatMeta),
     payload_json: safeString(flatPayload),
-
-    // You may add ANY additional fields here *if they already exist in your schema*
-    // or if you want to expand your schema intentionally.
-    // Example:
-    // jzulu: new Date().toISOString()
   };
 
   try {
