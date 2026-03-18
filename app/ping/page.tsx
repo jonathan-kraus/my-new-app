@@ -4,14 +4,15 @@ import { refreshLogRowEstimateForToday } from "@/lib/db/refreshLogRowEstimateFor
 import { logit } from "@/lib/log/logit";
 
 export default async function AxiomTestPage() {
-const ctx = {requestId: crypto.randomUUID(),
-                page: "ping",
-                userId: "JK",
-              zulu: new Date().toISOString(),
-              local: new Date().toLocaleString("en-US", {
-                timeZone: "America/New_York",
-              })
-              };
+  const ctx = {
+    requestId: crypto.randomUUID(),
+    page: "ping",
+    userId: "JK",
+    zulu: new Date().toISOString(),
+    local: new Date().toLocaleString("en-US", {
+      timeZone: "America/New_York",
+    }),
+  };
 
   // --- Fetch two APIs in parallel -----------------------------------------
   const [pingRes, secondRes] = await Promise.all([
@@ -35,7 +36,7 @@ const ctx = {requestId: crypto.randomUUID(),
       count,
     },
     {
-    ctx
+      ctx,
     },
   );
 

@@ -78,7 +78,7 @@ export type Ctx = {
 
   version: string;
 
-  zulu: string;  // ISO timestamp
+  zulu: string; // ISO timestamp
   local: string; // localized timestamp
 
   deploymentId: string;
@@ -112,7 +112,7 @@ export const CtxSchema = z.object({
 
   version: z.string(),
 
-  zulu: z.string(),  // ISO timestamp
+  zulu: z.string(), // ISO timestamp
   local: z.string(), // localized timestamp
 
   deploymentId: z.string(),

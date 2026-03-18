@@ -119,13 +119,13 @@ export const POST = withLogging(async (req: Request) => {
       message: "Notes POST started",
     },
     {},
-      {
+    {
       zulu: new Date().toISOString(),
       local: new Date().toLocaleString("en-US", {
         timeZone: "America/New_York",
       }),
-      },
-    );
+    },
+  );
 
   try {
     const session = await auth();

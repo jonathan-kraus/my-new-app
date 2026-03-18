@@ -26,9 +26,9 @@ export async function GET(req: NextRequest) {
       route: "cron",
       rebuild: true,
     },
-  {  },
-  ctx
-);
+    {},
+    ctx,
+  );
 
   await runDbTableStats({
     requestId: ctx.requestId,
@@ -42,12 +42,12 @@ export async function GET(req: NextRequest) {
       level: "info",
       message: "astronomy.cron.dbtables.completed",
     },
-  {
-    Db: "Db",
-    Table: "Table",
-  },
-  ctx
-);
+    {
+      Db: "Db",
+      Table: "Table",
+    },
+    ctx,
+  );
 
   const locations = await db.location.findMany();
 
@@ -62,7 +62,7 @@ export async function GET(req: NextRequest) {
       },
       {},
       {
-      ctx
+        ctx,
       },
     );
 
@@ -81,10 +81,10 @@ export async function GET(req: NextRequest) {
           targetDate: dateString,
         },
         {},
-      {
-      ctx
-      },
-    );
+        {
+          ctx,
+        },
+      );
 
       // Build the full solar/lunar snapshot
       const snapshot = await buildAstronomySnapshot(location, targetDate);
@@ -117,10 +117,10 @@ export async function GET(req: NextRequest) {
           snapshot: row,
         },
         {},
-      {
-      ctx
-      },
-    );
+        {
+          ctx,
+        },
+      );
     }
   }
 
@@ -134,10 +134,10 @@ export async function GET(req: NextRequest) {
       durationMs,
     },
     {},
-      {
-      ctx
-      },
-    );
+    {
+      ctx,
+    },
+  );
 
   return NextResponse.json({ ok: true, durationMs });
 }

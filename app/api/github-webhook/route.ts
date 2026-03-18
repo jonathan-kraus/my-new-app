@@ -22,7 +22,6 @@ export const GitHubWebhookSchema = z.object({
   }),
 });
 
-
 const ctx = {
   requestId: crypto.randomUUID(),
   route: "Github Webhook",
@@ -172,7 +171,7 @@ export const POST = withLogging(async (req: Request) => {
   const deliveryId = req.headers.get("x-github-delivery");
   const commitMessage = await getCommitMessage(payload); // FIX #1 const sha = getSha(payload);
   const sha = getSha(payload);
-const parsed = GitHubWebhookSchema.safeParse(payload);
+  const parsed = GitHubWebhookSchema.safeParse(payload);
   if (!parsed.success) {
     console.error("Invalid GitHub webhook", parsed.error.format());
   }
@@ -184,11 +183,11 @@ const parsed = GitHubWebhookSchema.safeParse(payload);
       message: "GitHub webhook received -- new post code",
       event,
     },
-    {event: event},
-      {
-      ctx
-      },
-    );
+    { event: event },
+    {
+      ctx,
+    },
+  );
 
   const normalized = {
     eventId: deliveryId!,

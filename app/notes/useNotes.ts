@@ -34,9 +34,9 @@ export function useNotes(): NotesState {
         level: "info",
         message: "Notes page mounted",
       },
-      {loc: "/notes"},
+      { loc: "/notes" },
       {
-      ctx
+        ctx,
       },
     );
 
@@ -69,7 +69,7 @@ export function useNotes(): NotesState {
           },
           { loc: "/notes" },
           {
-           ctx
+            ctx,
           },
         );
       }

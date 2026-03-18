@@ -8,8 +8,7 @@ export const version = versionInfo.version;
 let eventCounter = 0;
 
 export async function enrichContext(req: NextRequest) {
-  const requestId =
-    req.headers.get("x-request-id") ?? crypto.randomUUID();
+  const requestId = req.headers.get("x-request-id") ?? crypto.randomUUID();
 
   // Start timing for this request
   markRequestStart(requestId);
@@ -46,17 +45,13 @@ export async function enrichContext(req: NextRequest) {
   });
 
   // Deployment metadata
-  const deploymentId =
-    process.env.VERCEL_DEPLOYMENT_ID ?? "local-dev";
+  const deploymentId = process.env.VERCEL_DEPLOYMENT_ID ?? "local-dev";
 
-  const buildTimestamp =
-    process.env.NEXT_PUBLIC_BUILD_TIMESTAMP ?? "unknown";
+  const buildTimestamp = process.env.NEXT_PUBLIC_BUILD_TIMESTAMP ?? "unknown";
 
-  const gitCommit =
-    process.env.NEXT_PUBLIC_GIT_COMMIT ?? "unknown";
+  const gitCommit = process.env.NEXT_PUBLIC_GIT_COMMIT ?? "unknown";
 
-  const gitBranch =
-    process.env.NEXT_PUBLIC_GIT_BRANCH ?? "unknown";
+  const gitBranch = process.env.NEXT_PUBLIC_GIT_BRANCH ?? "unknown";
 
   // Runtime metadata
   const runtime = {

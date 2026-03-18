@@ -93,7 +93,8 @@ async function end(req: NextRequest, res: NextResponse) {
       level: "info",
       message: "REQUEST END " + pathname,
     },
-    {page: pathname,
+    {
+      page: pathname,
       file: "proxy.ts",
       durationMs,
       method: req.method,
@@ -101,9 +102,9 @@ async function end(req: NextRequest, res: NextResponse) {
       status: res.status,
       requestId: getRequestId(req.url),
       eventIndex: nextEventIndex(req.url),
-      },
+    },
     {
-    ctx
+      ctx,
     },
   );
 
