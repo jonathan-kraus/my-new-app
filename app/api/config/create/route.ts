@@ -1,11 +1,27 @@
 /*
  * @FilePath: \my-new-app\app\api\config\create\route.ts
- * @LastEditTime: 2026-03-15 20:27:36
+ * @LastEditTime: 2026-03-18 23:12:48
  */
 import { axiomIngest } from "@/lib/axiom";
 import { NextResponse } from "next/server";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { logit } from "@/lib/log/logit";
 
 export async function POST(request: Request) {
+  const built = await buildUniversalContext("api\config\create\route.ts");
+    await logit(
+      "jonathan",
+      {
+        level: "info",
+        message: "In api\config\create\route.ts",
+      },
+      {
+      somedata: "some data",
+      },
+      {
+        built,
+      },
+    );
   const body = await request.json();
   const dataset = body.dataset ?? process.env.AXIOM_DATASET;
   const events = Array.isArray(body.events) ? body.events : [body];
