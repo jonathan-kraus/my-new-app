@@ -86,17 +86,9 @@ export async function logit(
   // --- Automatic file + line capture ----------------------------------------
   const { file: rawFile, line: rawLine } = extractCaller();
 
-  const canonicalFile =
-    payload.file ??
-    meta.file ??
-    rawFile ??
-    null;
+  const canonicalFile = payload.file ?? meta.file ?? rawFile ?? null;
 
-  const canonicalLine =
-    payload.line ??
-    meta.line ??
-    rawLine ??
-    null;
+  const canonicalLine = payload.line ?? meta.line ?? rawLine ?? null;
 
   // --- Request + eventIndex -------------------------------------------------
   const requestId = meta.requestId ?? crypto.randomUUID();
@@ -109,10 +101,7 @@ export async function logit(
 
   // --- Canonical user/session extraction -----------------------------------
   const canonicalUserId =
-    payload.userId ??
-    payload.session?.user?.id ??
-    meta.built?.userId ??
-    null;
+    payload.userId ?? payload.session?.user?.id ?? meta.built?.userId ?? null;
 
   const canonicalSessionEmail =
     payload.sessionEmail ??
