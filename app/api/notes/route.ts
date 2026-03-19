@@ -1,162 +1,49 @@
 // app/api/notes/route.ts
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
-import { logit } from "@/lib/log/logit";
+import { log } from "@/lib/log/logger";
 import { withLogging } from "@/lib/logging/withLogging";
 
-// -------------------------
-// GET /api/notes
-// -------------------------
-
-const requestId = crypto.randomUUID();
-
 export const GET = withLogging(async (req: Request) => {
-  await logit(
-    "notes",
-    {
-      level: "info",
-      message: "Notes GET started",
-      requestId: "REQ",
-    },
-    { route: "api/notes" },
-    {
-      requestId: requestId,
-      zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
-    },
-  );
+  await log.api("notes", "Notes GET started");
 
   try {
     const session = await auth();
-
     if (!session?.user) {
-      await logit(
-        "notes",
-        {
-          level: "warn",
-          message: "Unauthorized Notes GET",
-          requestId: "REQ",
-        },
-        { route: "api/notes" },
-        {
-          requestId: requestId,
-          zulu: new Date().toISOString(),
-          local: new Date().toLocaleString("en-US", {
-            timeZone: "America/New_York",
-          }),
-        },
-      );
-
+      await log.api("notes", "Unauthorized Notes GET");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const email = session?.user?.email;
-    if (!email) {
-      return new Response("Unauthorized", { status: 401 });
-    }
+    const email = session.user.email!;
     const notes = await db.note.findMany({
-      where: {
-        userEmail: email,
-        isArchived: false,
-      },
+      where: { userEmail: email, isArchived: false },
       orderBy: { createdAt: "desc" },
     });
 
-    await logit(
-      "notes",
-      {
-        level: "info",
-        message: `Notes GET completed ${notes.length}`,
-        count: notes.length,
-      },
-      { route: "api/notes" },
-      {
-        requestId: requestId,
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", {
-          timeZone: "America/New_York",
-        }),
-      },
-    );
+    await log.api("notes", "Notes GET completed", {
+      count: notes.length,
+    });
 
     return NextResponse.json({ notes });
   } catch (err: any) {
-    await logit(
-      "notes",
-      {
-        level: "error",
-        message: "Notes GET failed",
-        error: err.message,
-      },
-      { route: "api/notes" },
-      {
-        requestId: requestId,
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", {
-          timeZone: "America/New_York",
-        }),
-      },
-    );
-
-    return NextResponse.json(
-      { error: "Failed to load notes" },
-      { status: 500 },
-    );
+    await log.api("notes", "Notes GET failed", { error: err.message });
+    return NextResponse.json({ error: "Failed to load notes" }, { status: 500 });
   }
 });
-
-// -------------------------
-// POST /api/notes
-// -------------------------
 export const POST = withLogging(async (req: Request) => {
-  await logit(
-    "notes",
-    {
-      level: "info",
-      message: "Notes POST started",
-    },
-    {},
-    {
-      zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
-    },
-  );
+  await log.api("notes", "Notes POST started");
 
   try {
     const session = await auth();
-
     if (!session?.user) {
-      await logit(
-        "notes",
-        {
-          level: "warn",
-          message: "Unauthorized Notes POST",
-        },
-        { route: "api/notes" },
-        {
-          requestId: requestId,
-          zulu: new Date().toISOString(),
-          local: new Date().toLocaleString("en-US", {
-            timeZone: "America/New_York",
-          }),
-        },
-      );
-
+      await log.api("notes", "Unauthorized Notes POST");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const email = session.user.email!;
+    const userId = session.user.id!;
     const body = await req.json();
-    const userId = session?.user?.id;
-    const email = session?.user?.email;
-
-    if (!userId || !email) {
-      return new Response("Unauthorized", { status: 401 });
-    }
 
     const note = await db.note.create({
       data: {
@@ -169,67 +56,33 @@ export const POST = withLogging(async (req: Request) => {
       },
     });
 
-    await logit(
-      "notes",
-      {
-        level: "info",
-        message: `Note created: ${note.title || "Untitled"} by ${email}`,
-        noteId: note.id,
-        title: note.title,
-        action: "created",
-        userEmail: email,
-      },
-      { route: "api/notes" },
-      {
-        requestId: requestId,
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", {
-          timeZone: "America/New_York",
-        }),
-      },
-    );
+    await log.api("notes", "Note created", {
+      noteId: note.id,
+      title: note.title,
+      userEmail: email,
+    });
 
-    await logit(
-      "notes",
-      {
-        level: "info",
-        message: "Notes POST completed",
-        noteId: note.id,
-      },
-      { route: "api/notes" },
-      {
-        requestId: requestId,
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", {
-          timeZone: "America/New_York",
-        }),
-      },
-    );
+    await log.api("notes", "Notes POST completed", {
+      noteId: note.id,
+    });
 
     return NextResponse.json({ note });
   } catch (err: any) {
-    return NextResponse.json(
-      { error: "Failed to create note" },
-      { status: 500 },
-    );
+    await log.api("notes", "Notes POST failed", { error: err.message });
+    return NextResponse.json({ error: "Failed to create note" }, { status: 500 });
   }
 });
-// -------------------------
-// PUT /api/notes/[id]
-// -------------------------
 export const PUT = withLogging(async (req: Request) => {
+  await log.api("notes", "Notes PUT started");
+
   try {
     const session = await auth();
-
     if (!session?.user) {
+      await log.api("notes", "Unauthorized Notes PUT");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const email = session?.user?.email;
-    if (!email) {
-      return new Response("Unauthorized", { status: 401 });
-    }
-
+    const email = session.user.email!;
     const body = await req.json();
     const { id, title, content, followUpAt, isArchived, color } = body;
 
@@ -237,16 +90,10 @@ export const PUT = withLogging(async (req: Request) => {
       return NextResponse.json({ error: "Note ID required" }, { status: 400 });
     }
 
-    // Get the original note for logging changes
-    const originalNote = await db.note.findUnique({
-      where: { id },
-    });
+    const original = await db.note.findUnique({ where: { id } });
 
-    const note = await db.note.updateMany({
-      where: {
-        id,
-        userEmail: email,
-      },
+    const updated = await db.note.updateMany({
+      where: { id, userEmail: email },
       data: {
         ...(title !== undefined && { title }),
         ...(content !== undefined && { content }),
@@ -258,113 +105,36 @@ export const PUT = withLogging(async (req: Request) => {
       },
     });
 
-    if (note.count === 0) {
+    if (updated.count === 0) {
       return NextResponse.json({ error: "Note not found" }, { status: 404 });
     }
 
-    const updatedNote = await db.note.findUnique({
-      where: { id },
+    const updatedNote = await db.note.findUnique({ where: { id } });
+
+    await log.api("notes", "Note updated", {
+      noteId: id,
+      originalTitle: original?.title,
+      newTitle: updatedNote?.title,
+      isArchived,
     });
-
-    // Log the specific action taken
-    let actionMessage = "";
-    if (isArchived) {
-      actionMessage = `Note archived: ${originalNote?.title || "Untitled"} by ${email}`;
-    } else {
-      const changes = [];
-      if (title !== undefined && title !== originalNote?.title) {
-        changes.push(`title: "${originalNote?.title}" → "${title}"`);
-      }
-      if (content !== undefined && content !== originalNote?.content) {
-        changes.push(`content updated`);
-      }
-      if (followUpAt !== undefined) {
-        const oldFollowUp = originalNote?.followUpAt
-          ? new Date(originalNote.followUpAt).toLocaleString()
-          : "none";
-        const newFollowUp = followUpAt
-          ? new Date(followUpAt).toLocaleString()
-          : "none";
-        changes.push(`followUp: ${oldFollowUp} → ${newFollowUp}`);
-      }
-      if (color !== undefined && color !== originalNote?.color) {
-        changes.push(
-          `color: ${originalNote?.color || "none"} → ${color || "none"}`,
-        );
-      }
-
-      actionMessage = `Note edited: ${originalNote?.title || "Untitled"} by ${email} - ${changes.join(", ")}`;
-    }
-
-    await logit(
-      "notes",
-      {
-        level: "info",
-        message: actionMessage,
-        noteId: id,
-        title: originalNote?.title,
-        action: isArchived ? "archived" : "edited",
-        userEmail: email,
-
-        changes: {
-          title: title !== originalNote?.title,
-          content: content !== originalNote?.content,
-          followUpAt: followUpAt !== originalNote?.followUpAt,
-          color: color !== originalNote?.color,
-          isArchived,
-        },
-      },
-      { route: "api/notes" },
-      {
-        requestId: requestId,
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", {
-          timeZone: "America/New_York",
-        }),
-      },
-    );
 
     return NextResponse.json({ note: updatedNote });
   } catch (err: any) {
-    await logit(
-      "notes",
-      {
-        level: "error",
-        message: "Notes PUT failed",
-        error: err.message,
-      },
-      { route: "api/notes" },
-      {
-        requestId: requestId,
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", {
-          timeZone: "America/New_York",
-        }),
-      },
-    );
-
-    return NextResponse.json(
-      { error: "Failed to update note" },
-      { status: 500 },
-    );
+    await log.api("notes", "Notes PUT failed", { error: err.message });
+    return NextResponse.json({ error: "Failed to update note" }, { status: 500 });
   }
 });
-// -------------------------
-// DELETE /api/notes/[id]
-// -------------------------
 export const DELETE = withLogging(async (req: Request) => {
+  await log.api("notes", "Notes DELETE started");
+
   try {
     const session = await auth();
-
     if (!session?.user) {
+      await log.api("notes", "Unauthorized Notes DELETE");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const email = session?.user?.email;
-    if (!email) {
-      return new Response("Unauthorized", { status: 401 });
-    }
-
+    const email = session.user.email!;
     const url = new URL(req.url);
     const id = url.searchParams.get("id");
 
@@ -372,64 +142,25 @@ export const DELETE = withLogging(async (req: Request) => {
       return NextResponse.json({ error: "Note ID required" }, { status: 400 });
     }
 
-    // Get the note before deletion for logging
-    const noteToDelete = await db.note.findUnique({
-      where: { id },
+    const noteToDelete = await db.note.findUnique({ where: { id } });
+
+    const deleted = await db.note.deleteMany({
+      where: { id, userEmail: email },
     });
 
-    const note = await db.note.deleteMany({
-      where: {
-        id,
-        userEmail: email,
-      },
-    });
-
-    if (note.count === 0) {
+    if (deleted.count === 0) {
       return NextResponse.json({ error: "Note not found" }, { status: 404 });
     }
 
-    await logit(
-      "notes",
-      {
-        level: "info",
-        message: `Note deleted: ${noteToDelete?.title || "Untitled"} by ${email}`,
-        noteId: id,
-        title: noteToDelete?.title,
-        action: "deleted",
-        userEmail: email,
-      },
-      { route: "api/notes" },
-      {
-        requestId: requestId,
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", {
-          timeZone: "America/New_York",
-        }),
-      },
-    );
+    await log.api("notes", "Note deleted", {
+      noteId: id,
+      title: noteToDelete?.title,
+      userEmail: email,
+    });
 
     return NextResponse.json({ success: true });
   } catch (err: any) {
-    await logit(
-      "notes",
-      {
-        level: "error",
-        message: "Notes DELETE failed",
-        error: err.message,
-      },
-      { route: "api/notes" },
-      {
-        requestId: requestId,
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", {
-          timeZone: "America/New_York",
-        }),
-      },
-    );
-
-    return NextResponse.json(
-      { error: "Failed to delete note" },
-      { status: 500 },
-    );
+    await log.api("notes", "Notes DELETE failed", { error: err.message });
+    return NextResponse.json({ error: "Failed to delete note" }, { status: 500 });
   }
 });
