@@ -6,6 +6,7 @@ import { enrichContext } from "@/lib/log/context";
 import { addDays, format } from "date-fns";
 import { buildAstronomySnapshot } from "@/lib/buildAstronomySnapshot";
 import { runDbTableStats } from "@/lib/cron/runDbTableStats";
+import { count } from "node:console";
 
 export const runtime = "nodejs";
 
@@ -16,8 +17,8 @@ function atLocalMidnight(d: Date) {
 
 export async function GET(req: NextRequest) {
   const start = Date.now();
-const ctx = await enrichContext(req);
- await log.api("ephemeris", "astronomy.cron.started DB-tables first");
+  const ctx = await enrichContext(req);
+  await log.api("ephemeris", "astronomy.cron.started DB-tables first");
 
   await runDbTableStats({
     requestId: ctx.requestId,
@@ -38,7 +39,12 @@ const ctx = await enrichContext(req);
       const targetDate = addDays(base, i);
       const dateString = format(targetDate, "yyyy-MM-dd");
 
-      await log.api("ephemeris", "astronomy.cron.day.started");
+      await log.api("ephemeris", "astronomy.cron.day.started", {
+        locationId: location.id,
+        dateString: dateString,
+        targetDate: targetDate.toISOString(),
+        count: i,
+      });
 
       // Build the full solar/lunar snapshot
       const snapshot = await buildAstronomySnapshot(location, targetDate);
@@ -62,12 +68,11 @@ const ctx = await enrichContext(req);
       });
     }
 
-    await log.api("ephemeris", "astronomy.cron.location.iterate.completed");
+    await log.api("ephemeris", "astronomy.cron.location.upsert.completed");
 
+    const durationMs = Date.now() - start;
+    await log.api("ephemeris", "astronomy.cron.completed");
 
-  const durationMs = Date.now() - start;
-await log.api("ephemeris", "astronomy.cron.completed");
-
-  return NextResponse.json({ ok: true, durationMs });
-}
+    return NextResponse.json({ ok: true, durationMs });
+  }
 }

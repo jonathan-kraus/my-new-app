@@ -90,7 +90,7 @@ export async function logit(
 
   const canonicalLineRaw = payload.line ?? meta.line ?? rawLine ?? null;
   const canonicalLine =
-  canonicalLineRaw != null ? Number(canonicalLineRaw) : null;
+    canonicalLineRaw != null ? Number(canonicalLineRaw) : null;
   // --- Request + eventIndex -------------------------------------------------
   const requestId = meta.requestId ?? crypto.randomUUID();
   const eventIndex = meta.eventIndex ?? 1;
