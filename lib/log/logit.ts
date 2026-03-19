@@ -1,3 +1,7 @@
+/*
+ * @FilePath: \my-new-app\lib\log\logit.ts
+ * @LastEditTime: 2026-03-19 17:18:55
+ */
 import crypto from "crypto";
 import { db } from "@/lib/db";
 import { axiomIngest } from "@/lib/axiom";
@@ -6,6 +10,9 @@ const NEON_MAX_JSON = 200_000;
 const ERROR_COOLDOWN_MS = 5000;
 let lastErrorTime = 0;
 
+// ---------------------------------------------------------------------------
+// Safe JSON helpers
+// ---------------------------------------------------------------------------
 function safeForNeon(obj: any) {
   try {
     const json = JSON.stringify(obj);
@@ -26,6 +33,50 @@ function safeString(obj: any) {
   }
 }
 
+// ---------------------------------------------------------------------------
+// File + line extraction (robust, userland only)
+// ---------------------------------------------------------------------------
+function normalizeFilePath(file: string | null) {
+  if (!file) return null;
+  return file.replace(process.cwd(), "");
+}
+
+function extractCaller() {
+  const stack = new Error().stack?.split("\n") ?? [];
+
+  for (const line of stack) {
+    const cleaned = line.trim();
+
+    // Skip internal Node frames
+    if (cleaned.includes("node:internal")) continue;
+
+    // Skip node_modules
+    if (cleaned.includes("node_modules")) continue;
+
+    // Skip logger internals
+    if (cleaned.includes("lib/log/logit")) continue;
+    if (cleaned.includes("lib/log/logger")) continue;
+    if (cleaned.includes("lib/log/build-universal-context")) continue;
+
+    // Extract file + line
+    const match =
+      cleaned.match(/\((.*):(\d+):(\d+)\)/) ??
+      cleaned.match(/at (.*):(\d+):(\d+)/);
+
+    if (match) {
+      return {
+        file: normalizeFilePath(match[1]),
+        line: match[2],
+      };
+    }
+  }
+
+  return { file: null, line: null };
+}
+
+// ---------------------------------------------------------------------------
+// Main logit()
+// ---------------------------------------------------------------------------
 export async function logit(
   domain: string,
   event: Record<string, any>,
@@ -33,28 +84,21 @@ export async function logit(
   meta: Record<string, any>,
 ) {
   // --- Automatic file + line capture ----------------------------------------
-  const stack = new Error().stack?.split("\n") ?? [];
-  // stack[0] = "Error"
-  // stack[1] = logit() internal
-  // stack[2] = caller → we want this one
-  const callerLine = stack[2] ?? null;
+  const { file: rawFile, line: rawLine } = extractCaller();
 
-  // Example format: "    at /app/src/app/api/weather/route.ts:42:15"
-  let file = null;
-  let line = null;
+  const canonicalFile =
+    payload.file ??
+    meta.file ??
+    rawFile ??
+    null;
 
-  if (callerLine) {
-    const match =
-      callerLine.match(/\((.*):(\d+):(\d+)\)/) ??
-      callerLine.match(/at (.*):(\d+):(\d+)/);
+  const canonicalLine =
+    payload.line ??
+    meta.line ??
+    rawLine ??
+    null;
 
-    if (match) {
-      file = match[1] ?? null;
-      line = match[2] ?? null;
-    }
-  }
-
-  // --- Automatic file + line capture ----------------------------------------
+  // --- Request + eventIndex -------------------------------------------------
   const requestId = meta.requestId ?? crypto.randomUUID();
   const eventIndex = meta.eventIndex ?? 1;
 
@@ -63,9 +107,12 @@ export async function logit(
     ? `#${eventIndex} ${originalMessage}`
     : `#${eventIndex} JMSG`;
 
-  // --- Canonical extraction -----------------------------------------------
+  // --- Canonical user/session extraction -----------------------------------
   const canonicalUserId =
-    payload.userId ?? payload.session?.user?.id ?? meta.built?.userId ?? null;
+    payload.userId ??
+    payload.session?.user?.id ??
+    meta.built?.userId ??
+    null;
 
   const canonicalSessionEmail =
     payload.sessionEmail ??
@@ -79,7 +126,7 @@ export async function logit(
     meta.built?.sessionUser ??
     null;
 
-  // --- Flatten payload -----------------------------------------------------
+  // --- Flatten payload ------------------------------------------------------
   const flatPayload = {
     eventIndex,
     level: event.level ?? "info",
@@ -88,9 +135,11 @@ export async function logit(
     userId: canonicalUserId,
     sessionEmail: canonicalSessionEmail,
     sessionUser: canonicalSessionUser,
+    file: canonicalFile,
+    line: canonicalLine,
   };
 
-  // --- Flatten meta --------------------------------------------------------
+  // --- Flatten meta ---------------------------------------------------------
   const flatMeta = {
     requestId,
     page: meta.page ?? null,
@@ -99,9 +148,13 @@ export async function logit(
     userId: canonicalUserId,
     sessionEmail: canonicalSessionEmail,
     sessionUser: canonicalSessionUser,
+    file: canonicalFile,
+    line: canonicalLine,
   };
 
-  // --- Neon write ----------------------------------------------------------
+  // ---------------------------------------------------------------------------
+  // Neon write
+  // ---------------------------------------------------------------------------
   try {
     await db.log.create({
       data: {
@@ -115,6 +168,8 @@ export async function logit(
         userId: canonicalUserId,
         sessionEmail: canonicalSessionEmail,
         sessionUser: canonicalSessionUser,
+        file: canonicalFile,
+        line: canonicalLine,
       },
     });
   } catch (err) {
@@ -125,12 +180,16 @@ export async function logit(
     }
   }
 
-  // --- Axiom ingestion -----------------------------------------------------
+  // ---------------------------------------------------------------------------
+  // Axiom ingestion
+  // ---------------------------------------------------------------------------
   const axiomEvent = {
     domain,
     eventIndex,
     level: event.level ?? "info",
     message,
+    file: canonicalFile,
+    line: canonicalLine,
     meta_json: safeString(flatMeta),
     payload_json: safeString(flatPayload),
   };
