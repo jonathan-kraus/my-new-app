@@ -9,8 +9,7 @@
       "matchManagers": ["npm", "pnpm"],
       "automerge": true,
       "automergeType": "pr",
-      "platformAutomerge": true,
-      "prCreation": "not-pending"
+      "platformAutomerge": true
     },
 
     {
