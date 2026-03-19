@@ -15,7 +15,10 @@ export async function buildUniversalContext(route: string) {
     };
 
     // Convert ReadonlyHeaders → plain object for NextRequest
-    const plainHeaders = Object.fromEntries(h.entries()) as Record<string, string>;
+    const plainHeaders = Object.fromEntries(h.entries()) as Record<
+      string,
+      string
+    >;
 
     // Build a real NextRequest so enrichContext receives the expected type
     const req = new NextRequest("http://local", { headers: plainHeaders });

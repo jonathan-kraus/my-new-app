@@ -14,15 +14,15 @@ export function withLogging(handler: (req: Request) => Promise<Response>) {
       const res = await handler(req);
 
       await log.api("system", "Request completed", {
-        durationMs: Math.round(performance.now() - start),
         status: res.status,
+        durationMs: Math.round(performance.now() - start),
       });
 
       return res;
     } catch (err: any) {
       await log.api("system", "Request failed", {
-        durationMs: Math.round(performance.now() - start),
         error: err.message,
+        durationMs: Math.round(performance.now() - start),
       });
 
       throw err;

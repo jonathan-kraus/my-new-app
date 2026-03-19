@@ -9,19 +9,19 @@ import { logit } from "@/lib/log/logit";
 
 export async function POST(request: Request) {
   const built = await buildUniversalContext("api\config\create\route.ts");
-    await logit(
-      "jonathan",
-      {
-        level: "info",
-        message: "In api\config\create\route.ts",
-      },
-      {
+  await logit(
+    "jonathan",
+    {
+      level: "info",
+      message: "In api\config\create\route.ts",
+    },
+    {
       somedata: "some data",
-      },
-      {
-        built,
-      },
-    );
+    },
+    {
+      built,
+    },
+  );
   const body = await request.json();
   const dataset = body.dataset ?? process.env.AXIOM_DATASET;
   const events = Array.isArray(body.events) ? body.events : [body];

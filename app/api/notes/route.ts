@@ -1,4 +1,8 @@
-// app/api/notes/route.ts
+/*
+ * @FilePath: \my-new-app\app\api\notes\route.ts
+ * @LastEditTime: 2026-03-19 17:01:53
+ */
+
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
@@ -21,14 +25,17 @@ export const GET = withLogging(async (req: Request) => {
       orderBy: { createdAt: "desc" },
     });
 
-    await log.api("notes", "Notes GET completed", {
+    await log.api("notes", "Notes GET completed with ${notes.length} notes", {
       count: notes.length,
     });
 
     return NextResponse.json({ notes });
   } catch (err: any) {
     await log.api("notes", "Notes GET failed", { error: err.message });
-    return NextResponse.json({ error: "Failed to load notes" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to load notes" },
+      { status: 500 },
+    );
   }
 });
 export const POST = withLogging(async (req: Request) => {
@@ -69,7 +76,10 @@ export const POST = withLogging(async (req: Request) => {
     return NextResponse.json({ note });
   } catch (err: any) {
     await log.api("notes", "Notes POST failed", { error: err.message });
-    return NextResponse.json({ error: "Failed to create note" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to create note" },
+      { status: 500 },
+    );
   }
 });
 export const PUT = withLogging(async (req: Request) => {
@@ -121,7 +131,10 @@ export const PUT = withLogging(async (req: Request) => {
     return NextResponse.json({ note: updatedNote });
   } catch (err: any) {
     await log.api("notes", "Notes PUT failed", { error: err.message });
-    return NextResponse.json({ error: "Failed to update note" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to update note" },
+      { status: 500 },
+    );
   }
 });
 export const DELETE = withLogging(async (req: Request) => {
@@ -161,6 +174,9 @@ export const DELETE = withLogging(async (req: Request) => {
     return NextResponse.json({ success: true });
   } catch (err: any) {
     await log.api("notes", "Notes DELETE failed", { error: err.message });
-    return NextResponse.json({ error: "Failed to delete note" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to delete note" },
+      { status: 500 },
+    );
   }
 });

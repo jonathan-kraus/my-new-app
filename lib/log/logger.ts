@@ -27,7 +27,12 @@ function getCallerInfo() {
   return { file, line };
 }
 
-async function baseLog(domain: string, message: string, payload: any, route: string) {
+async function baseLog(
+  domain: string,
+  message: string,
+  payload: any,
+  route: string,
+) {
   const built = await buildUniversalContext(route);
   const { file, line } = getCallerInfo();
 
@@ -35,7 +40,7 @@ async function baseLog(domain: string, message: string, payload: any, route: str
     domain,
     { level: "info", message },
     { ...payload, file, line },
-    { built }
+    { built },
   );
 }
 
@@ -90,12 +95,13 @@ export const log = {
             region: "client",
           },
           requestId: crypto.randomUUID(),
-          userAgent: typeof navigator !== "undefined" ? navigator.userAgent : null,
+          userAgent:
+            typeof navigator !== "undefined" ? navigator.userAgent : null,
           eventIndex: 0,
           deploymentId: "client",
           buildTimestamp: "client",
         },
-      }
+      },
     );
   },
 };

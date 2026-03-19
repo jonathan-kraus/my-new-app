@@ -7,7 +7,6 @@ const ERROR_COOLDOWN_MS = 5000;
 let lastErrorTime = 0;
 
 function safeForNeon(obj: any) {
-
   try {
     const json = JSON.stringify(obj);
     if (json.length > NEON_MAX_JSON) {
@@ -33,28 +32,29 @@ export async function logit(
   payload: Record<string, any>,
   meta: Record<string, any>,
 ) {
-    // --- Automatic file + line capture ----------------------------------------
-const stack = new Error().stack?.split("\n") ?? [];
-// stack[0] = "Error"
-// stack[1] = logit() internal
-// stack[2] = caller → we want this one
-const callerLine = stack[2] ?? null;
+  // --- Automatic file + line capture ----------------------------------------
+  const stack = new Error().stack?.split("\n") ?? [];
+  // stack[0] = "Error"
+  // stack[1] = logit() internal
+  // stack[2] = caller → we want this one
+  const callerLine = stack[2] ?? null;
 
-// Example format: "    at /app/src/app/api/weather/route.ts:42:15"
-let file = null;
-let line = null;
+  // Example format: "    at /app/src/app/api/weather/route.ts:42:15"
+  let file = null;
+  let line = null;
 
-if (callerLine) {
-  const match = callerLine.match(/\((.*):(\d+):(\d+)\)/)
-             ?? callerLine.match(/at (.*):(\d+):(\d+)/);
+  if (callerLine) {
+    const match =
+      callerLine.match(/\((.*):(\d+):(\d+)\)/) ??
+      callerLine.match(/at (.*):(\d+):(\d+)/);
 
-  if (match) {
-    file = match[1] ?? null;
-    line = match[2] ?? null;
+    if (match) {
+      file = match[1] ?? null;
+      line = match[2] ?? null;
+    }
   }
-}
 
-// --- Automatic file + line capture ----------------------------------------
+  // --- Automatic file + line capture ----------------------------------------
   const requestId = meta.requestId ?? crypto.randomUUID();
   const eventIndex = meta.eventIndex ?? 1;
 
@@ -65,10 +65,7 @@ if (callerLine) {
 
   // --- Canonical extraction -----------------------------------------------
   const canonicalUserId =
-    payload.userId ??
-    payload.session?.user?.id ??
-    meta.built?.userId ??
-    null;
+    payload.userId ?? payload.session?.user?.id ?? meta.built?.userId ?? null;
 
   const canonicalSessionEmail =
     payload.sessionEmail ??
