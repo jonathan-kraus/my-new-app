@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\lib\log\logit.ts
- * @LastEditTime: 2026-03-19 17:18:55
+ * @LastEditTime: 2026-03-19 17:27:14
  */
 import crypto from "crypto";
 import { db } from "@/lib/db";
@@ -88,8 +88,9 @@ export async function logit(
 
   const canonicalFile = payload.file ?? meta.file ?? rawFile ?? null;
 
-  const canonicalLine = payload.line ?? meta.line ?? rawLine ?? null;
-
+  const canonicalLineRaw = payload.line ?? meta.line ?? rawLine ?? null;
+  const canonicalLine =
+  canonicalLineRaw != null ? Number(canonicalLineRaw) : null;
   // --- Request + eventIndex -------------------------------------------------
   const requestId = meta.requestId ?? crypto.randomUUID();
   const eventIndex = meta.eventIndex ?? 1;
