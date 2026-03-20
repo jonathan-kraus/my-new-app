@@ -1,11 +1,11 @@
 /*
  * @FilePath: \my-new-app\app\page.tsx
- * @LastEditTime: 2026-03-18 15:16:57
+ * @LastEditTime: 2026-03-20 09:55:35
  */
 // app/page.tsx
 import { auth } from "@/auth";
-import { logit } from "@/lib/log/logit";
-import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { log } from "@/lib/log/logger";
+import { setLogFile } from "@/lib/log/set-logfile";
 import { Button } from "@/components/ui/button";
 import CurrentWeatherCard from "@/app/components/dashboard/current-weather-card";
 import Link from "next/link";
@@ -26,32 +26,16 @@ function getGreeting(): string {
 }
 
 export default async function HomePage() {
-  // Build a universal context for this page (includes userId, route, etc.)
-  const built = await buildUniversalContext("Home Page");
 
   // If you still need the full session object for richer logging, fetch it here
   const session = await auth();
   SessionSchema.parse(session); // throws if shape is unexpected
   // Use userId from the universal context if available, otherwise fall back to session
-  const userId = built.userId ?? session?.user?.id ?? null;
+  const userId = session?.user?.id ?? "JK";
 
-  await logit(
-    "jonathan",
-    {
-      level: "info",
-      message: "Visited dashboard",
-    },
-    {
-      sessionUser: session?.user?.name ?? null,
-      sessionEmail: session?.user?.email ?? null,
-      userId: built.userId ?? "me",
-      session: session ?? null,
-      route: built.route,
-    },
-    {
-      built,
-    },
-  );
+  setLogFile("app/page.tsx");
+          log.action("jonathan", "** Dashboard Start **", {
+        });
 
   const location = await db.location.findFirst({
     where: { isDefault: true },
@@ -66,22 +50,16 @@ export default async function HomePage() {
   );
   const weatherData = await weatherRes.json();
   WeatherSchema.parse(weatherData);
-  await logit(
-    "jonathan",
-    {
-      level: "info",
-      message: "Visited dashboard 2",
-    },
-    {
-      weatherData: weatherData,
-      sessionEmail: session?.user?.email ?? null,
-      userId,
-      session: session ?? null,
-    },
-    {
-      built,
-    },
+
+  const forecastRes = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/weather/forecast?locationId=${location?.id}`,
+    { cache: "no-store" },
   );
+  const forecastData = await forecastRes.json();
+  log.action("jonathan", "** Dashboard End **", {
+    location: location,
+    weatherData: weatherData,
+    forecastData: forecastData });
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-600 to-sky-900 text-white p-8">
