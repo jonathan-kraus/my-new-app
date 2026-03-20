@@ -1,6 +1,8 @@
+// lib/buildAstronomySnapshot.ts
 import { combineDateTime } from "@/lib/ephemeris/utils/combineDateTime";
 import { format } from "date-fns";
 import { log } from "@/lib/log/logger";
+import { setLogFile } from "@/lib/log/set-logfile";
 import { DateTime } from "luxon";
 
 function computeSolarNoon(sunrise: Date, sunset: Date): Date {
@@ -35,7 +37,9 @@ export async function buildAstronomySnapshot(
     timezone?: string;
   },
   targetDate: Date,
+
 ) {
+    setLogFile("lib/buildAstronomySnapshot.ts");
         await log.action("ephemeris", "Starting buildAstronomySnapshot", {
         location: location,
         targetDate: targetDate.toISOString(),
@@ -253,6 +257,6 @@ export async function buildAstronomySnapshot(
         location: location,
         targetDate: targetDate.toISOString(),
       });
-  
+
   return snapshot;
 }

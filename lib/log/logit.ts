@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\lib\log\logit.ts
- * @LastEditTime: 2026-03-19 17:27:14
+ * @LastEditTime: 2026-03-20 04:39:15
  */
 import crypto from "crypto";
 import { db } from "@/lib/db";
@@ -85,12 +85,19 @@ export async function logit(
 ) {
   // --- Automatic file + line capture ----------------------------------------
   const { file: rawFile, line: rawLine } = extractCaller();
-
-  const canonicalFile = payload.file ?? meta.file ?? rawFile ?? null;
+  const declaredFile = (globalThis as any).__logfile ?? null; //provided by calling file
+  const canonicalFile =
+    payload.file ??
+    meta.file ??
+    declaredFile ??   // <— NEW, highest priority after explicit overrides
+    rawFile ??
+    null;
 
   const canonicalLineRaw = payload.line ?? meta.line ?? rawLine ?? null;
   const canonicalLine =
-    canonicalLineRaw != null ? Number(canonicalLineRaw) : null;
+  canonicalLineRaw != null ? Number(canonicalLineRaw) : null;
+
+
   // --- Request + eventIndex -------------------------------------------------
   const requestId = meta.requestId ?? crypto.randomUUID();
   const eventIndex = meta.eventIndex ?? 1;

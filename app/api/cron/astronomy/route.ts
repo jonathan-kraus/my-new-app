@@ -6,7 +6,7 @@ import { enrichContext } from "@/lib/log/context";
 import { addDays, format } from "date-fns";
 import { buildAstronomySnapshot } from "@/lib/buildAstronomySnapshot";
 import { runDbTableStats } from "@/lib/cron/runDbTableStats";
-import { count } from "node:console";
+
 
 export const runtime = "nodejs";
 

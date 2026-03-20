@@ -1,7 +1,7 @@
 "use client";
-
+// app/config/read/page.tsx
 import { useEffect, useState } from "react";
-import { logit } from "@/lib/log/logit.client";
+
 function formatRow(row: Record<string, any> | null) {
   if (!row) return <div className="text-slate-400">No data</div>;
 
