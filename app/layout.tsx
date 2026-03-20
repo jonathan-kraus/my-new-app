@@ -3,11 +3,12 @@ import SideNav from "@/app/components/SideNav";
 import ClientLayout from "@/app/ClientLayout";
 import { WebVitals } from "@/lib/axiom/client";
 import "./globals.css";
+import { setLogFile } from "@/lib/log/set-logfile";
 import { Toaster } from "react-hot-toast";
 interface RootLayoutProps {
   children: React.ReactNode;
 }
-
+setLogFile("app/layout.tsx");
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" className="dark">
