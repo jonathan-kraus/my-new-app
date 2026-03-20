@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\page.tsx
- * @LastEditTime: 2026-03-20 09:55:35
+ * @LastEditTime: 2026-03-20 10:09:00
  */
 // app/page.tsx
 import { auth } from "@/auth";
@@ -24,7 +24,7 @@ function getGreeting(): string {
   if (hour < 17) return "Good afternoon";
   return "Good evening";
 }
-
+  setLogFile("app/page.tsx");
 export default async function HomePage() {
 
   // If you still need the full session object for richer logging, fetch it here
@@ -33,9 +33,7 @@ export default async function HomePage() {
   // Use userId from the universal context if available, otherwise fall back to session
   const userId = session?.user?.id ?? "JK";
 
-  setLogFile("app/page.tsx");
-          log.action("jonathan", "** Dashboard Start **", {
-        });
+        log.action("jonathan", "** Dashboard Start **", {});
 
   const location = await db.location.findFirst({
     where: { isDefault: true },
