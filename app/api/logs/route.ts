@@ -21,7 +21,13 @@ export async function GET(req: NextRequest) {
     : undefined;
 
   const logs = await db.log.findMany({
-    where,
+     where: {
+       NOT: {
+      message: {
+        startsWith: "#1 REQUEST END",
+        },
+       },
+    },
     orderBy: { created_at: "desc" },
     skip,
     take: limit,
