@@ -1,27 +1,16 @@
 /*
  * @FilePath: \my-new-app\app\api\config\create\route.ts
- * @LastEditTime: 2026-03-18 23:12:48
+ * @LastEditTime: 2026-03-20 13:14:30
  */
 import { axiomIngest } from "@/lib/axiom";
 import { NextResponse } from "next/server";
-import { buildUniversalContext } from "@/lib/log/build-universal-context";
-import { logit } from "@/lib/log/logit";
+import { log } from "@/lib/log/logger";
+import { setLogFile } from "@/lib/log/set-logfile";
 
+setLogFile("app\api\config\create\route.ts");
 export async function POST(request: Request) {
-  const built = await buildUniversalContext("api\config\create\route.ts");
-  await logit(
-    "jonathan",
-    {
-      level: "info",
-      message: "In api\config\create\route.ts",
-    },
-    {
-      somedata: "some data",
-    },
-    {
-      built,
-    },
-  );
+  await log.api("jonathan", "In api\config\create\route.ts");
+
   const body = await request.json();
   const dataset = body.dataset ?? process.env.AXIOM_DATASET;
   const events = Array.isArray(body.events) ? body.events : [body];
@@ -29,7 +18,12 @@ export async function POST(request: Request) {
   console.log("[api/config/create] body", JSON.stringify(body));
   console.log("[api/config/create] dataset", dataset);
   console.log("[api/config/create] events", events.length, events[0]);
-
+  (await log.api("jonathan", "api/config/ got some data"),
+    {
+      body: JSON.stringify(body),
+      dataset: JSON.stringify(dataset),
+      events: JSON.stringify(events),
+    });
   try {
     const response = await axiomIngest(events, dataset);
     console.log("AXIOM INGEST RESPONSE", response);

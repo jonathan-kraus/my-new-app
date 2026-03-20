@@ -7,7 +7,6 @@ import { addDays, format } from "date-fns";
 import { buildAstronomySnapshot } from "@/lib/buildAstronomySnapshot";
 import { runDbTableStats } from "@/lib/cron/runDbTableStats";
 
-
 export const runtime = "nodejs";
 
 // Force a date to local midnight

@@ -24,16 +24,15 @@ function getGreeting(): string {
   if (hour < 17) return "Good afternoon";
   return "Good evening";
 }
-  setLogFile("app/page.tsx");
+setLogFile("app/page.tsx");
 export default async function HomePage() {
-
   // If you still need the full session object for richer logging, fetch it here
   const session = await auth();
   SessionSchema.parse(session); // throws if shape is unexpected
   // Use userId from the universal context if available, otherwise fall back to session
   const userId = session?.user?.id ?? "JK";
 
-        log.action("jonathan", "** Dashboard Start **", {});
+  log.action("jonathan", "** Dashboard Start **", {});
 
   const location = await db.location.findFirst({
     where: { isDefault: true },
@@ -57,7 +56,8 @@ export default async function HomePage() {
   log.action("jonathan", "** Dashboard End **", {
     location: location,
     weatherData: weatherData,
-    forecastData: forecastData });
+    forecastData: forecastData,
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-600 to-sky-900 text-white p-8">

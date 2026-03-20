@@ -23,10 +23,10 @@ export const GitHubWebhookSchema = z.object({
   }),
 });
 
-  setLogFile("app/api/github-webhook/route.ts");
-          log.action("github", "Starting Github webhook", {
-            enabled: gw,
-        });
+setLogFile("app/api/github-webhook/route.ts");
+log.action("github", "Starting Github webhook", {
+  enabled: gw,
+});
 
 /* -------------------------------------------------------------------------- */
 /*                               DB EVENT WRITER                              */
@@ -174,7 +174,7 @@ export const POST = withLogging(async (req: Request) => {
   if (!parsed.success) {
     console.error("Invalid GitHub webhook", parsed.error.format());
   }
-    log.action("github", "GitHub webhook received ---", {
+  log.action("github", "GitHub webhook received ---", {
     event: event,
   });
 

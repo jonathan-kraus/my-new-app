@@ -84,33 +84,31 @@ export async function logit(
   meta: Record<string, any>,
 ) {
   // --- Automatic file + line capture ----------------------------------------
-// 1. Extract declared file from global override
-const declaredFile = (globalThis as any).__logfile ?? null;
+  // 1. Extract declared file from global override
+  const declaredFile = (globalThis as any).__logfile ?? null;
 
-// 2. Extract raw file/line from stack trace
-const { file: rawFile, line: rawLine } = extractCaller();
+  // 2. Extract raw file/line from stack trace
+  const { file: rawFile, line: rawLine } = extractCaller();
 
-// 3. Canonicalize file
-//    Priority:
-//    - explicit payload override
-//    - explicit meta override
-//    - declared file (module-level override)
-//    - raw stack trace (only if not internal)
-//    - fallback "unknown"
-const canonicalFile =
-  payload.file ??
-  meta.file ??
-  declaredFile ??
-  (rawFile && !rawFile.startsWith("node:internal") ? rawFile : null) ??
-  "unknown";
+  // 3. Canonicalize file
+  //    Priority:
+  //    - explicit payload override
+  //    - explicit meta override
+  //    - declared file (module-level override)
+  //    - raw stack trace (only if not internal)
+  //    - fallback "unknown"
+  const canonicalFile =
+    payload.file ??
+    meta.file ??
+    declaredFile ??
+    (rawFile && !rawFile.startsWith("node:internal") ? rawFile : null) ??
+    "unknown";
 
-// 4. Canonicalize line
-const canonicalLine =
-  payload.line ??
-  meta.line ??
-  (rawLine && !isNaN(Number(rawLine)) ? Number(rawLine) : null);
-
-
+  // 4. Canonicalize line
+  const canonicalLine =
+    payload.line ??
+    meta.line ??
+    (rawLine && !isNaN(Number(rawLine)) ? Number(rawLine) : null);
 
   // --- Request + eventIndex -------------------------------------------------
   const requestId = meta.requestId ?? crypto.randomUUID();
