@@ -1,7 +1,7 @@
 // app/api/ping/route.ts
 import { NextResponse, NextRequest } from "next/server";
-import { logit } from "@/lib/log/logit";
-import { enrichContext } from "@/lib/log/context";
+import { log } from "@/lib/log/logger";
+import { setLogFile } from "@/lib/log/set-logfile";
 import { auth } from "@/auth";
 import { headers } from "next/headers";
 import { fetchWeatherApi } from "openmeteo";
@@ -109,31 +109,13 @@ export async function GET(req: NextRequest) {
 
   console.log("\nDaily data:\n", weatherData.daily);
 
-  const ctx = await enrichContext(req as any);
   const h = await headers(); // ✅ await the Promise
   const session = await auth();
-  const eventIndex = 22;
-  const requestId = crypto.randomUUID();
-  await logit(
-    "ephemeris",
+  (await log.api("ephemeris", "Called Ping"),
     {
-      level: "info",
-      message: "Called Ping",
-      sessionUser: session?.user?.name ?? null,
-      sessionEmail: session?.user?.email ?? null,
-      userId: session?.user?.id ?? null,
-      session: session ?? null,
-    },
-    { eventIndex },
-    {
-      ...ctx,
-      requestId: requestId,
-      zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
-    },
-  );
+      Dailydata: weatherData.daily,
+    });
+
   return NextResponse.json({
     daily,
     current,

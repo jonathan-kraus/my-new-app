@@ -2,10 +2,11 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { z } from "zod";
-import { logit } from "@/lib/log/logit";
+import { log } from "@/lib/log/logger";
+import { setLogFile } from "@/lib/log/set-logfile";
 
 const API_KEY = process.env.TOMORROWIO_APIKEY!;
-
+setLogFile("app\api\weather\route.ts");
 // Zod schemas
 const TomorrowRealtimeSchema = z.object({
   data: z.object({
@@ -72,22 +73,11 @@ export async function GET(req: Request) {
     : null;
 
   if (currentCached) {
-    await logit(
-      "weather",
+    (log.api("weather", "Using cached current weather data"),
       {
-        level: "info",
-        message: `Using cached current weather data`,
-        locationId,
-        currentAge,
-      },
-      { eventIndex },
-      {
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", {
-          timeZone: "America/New_York",
-        }),
-      },
-    );
+        locationId: locationId,
+        currentAge: currentAge,
+      });
 
     return NextResponse.json({
       location,

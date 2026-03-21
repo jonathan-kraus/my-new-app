@@ -15,9 +15,6 @@ export async function POST(request: Request) {
   const dataset = body.dataset ?? process.env.AXIOM_DATASET;
   const events = Array.isArray(body.events) ? body.events : [body];
 
-  console.log("[api/config/create] body", JSON.stringify(body));
-  console.log("[api/config/create] dataset", dataset);
-  console.log("[api/config/create] events", events.length, events[0]);
   (await log.api("jonathan", "api/config/ got some data"),
     {
       body: JSON.stringify(body),
