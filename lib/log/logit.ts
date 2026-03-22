@@ -1,7 +1,8 @@
 /*
  * @FilePath: \my-new-app\lib\log\logit.ts
- * @LastEditTime: 2026-03-21 20:13:57
+ * @LastEditTime: 2026-03-21 20:26:27
  */
+
 import crypto from "crypto";
 import { db } from "@/lib/db";
 import { axiomIngest } from "@/lib/axiom";
@@ -14,153 +15,208 @@ let lastErrorTime = 0;
 // Safe JSON helpers
 // ---------------------------------------------------------------------------
 function safeForNeon(obj: any) {
-	try {
-		const json = JSON.stringify(obj);
-		if (json.length > NEON_MAX_JSON) {
-			return { truncated: true, originalSize: json.length };
-		}
-		return obj;
-	} catch {
-		return { truncated: true, error: "serialization_failed" };
-	}
+  try {
+    const json = JSON.stringify(obj);
+    if (json.length > NEON_MAX_JSON) {
+      return { truncated: true, originalSize: json.length };
+    }
+    return obj;
+  } catch {
+    return { truncated: true, error: "serialization_failed" };
+  }
 }
 
 function safeString(obj: any) {
-	try {
-		return JSON.stringify(obj ?? {});
-	} catch {
-		return "{}";
-	}
+  try {
+    return JSON.stringify(obj ?? {});
+  } catch {
+    return "{}";
+  }
 }
 
 // ---------------------------------------------------------------------------
 // File + line extraction (robust, userland only)
 // ---------------------------------------------------------------------------
 function normalizeFilePath(file: string | null) {
-	if (!file) return null;
-	return file.replace(process.cwd(), "");
+  if (!file) return null;
+  return file.replace(process.cwd(), "");
 }
 
 function extractCaller() {
-	const stack = new Error().stack?.split("\n") ?? [];
+  const stack = new Error().stack?.split("\n") ?? [];
 
-	for (const line of stack) {
-		const cleaned = line.trim();
+  for (const line of stack) {
+    const cleaned = line.trim();
 
-		// Skip internal Node frames
-		if (cleaned.includes("node:internal")) continue;
+    // Skip internal Node frames
+    if (cleaned.includes("node:internal")) continue;
 
-		// Skip node_modules
-		if (cleaned.includes("node_modules")) continue;
+    // Skip node_modules
+    if (cleaned.includes("node_modules")) continue;
 
-		// Skip logger internals
-		if (cleaned.includes("lib/log/logit")) continue;
-		if (cleaned.includes("lib/log/logger")) continue;
-		if (cleaned.includes("lib/log/build-universal-context")) continue;
+    // Skip logger internals
+    if (cleaned.includes("lib/log/logit")) continue;
+    if (cleaned.includes("lib/log/logger")) continue;
+    if (cleaned.includes("lib/log/build-universal-context")) continue;
 
-		// Extract file + line
-		const match = cleaned.match(/\((.*):(\d+):(\d+)\)/) ?? cleaned.match(/at (.*):(\d+):(\d+)/);
+    // Extract file + line
+    const match =
+      cleaned.match(/\((.*):(\d+):(\d+)\)/) ??
+      cleaned.match(/at (.*):(\d+):(\d+)/);
 
-		if (match) {
-			return {
-				file: normalizeFilePath(match[1]),
-				line: match[2],
-			};
-		}
-	}
+    if (match) {
+      return {
+        file: normalizeFilePath(match[1]),
+        line: match[2],
+      };
+    }
+  }
 
-	return { file: null, line: null };
+  return { file: null, line: null };
 }
 
 // ---------------------------------------------------------------------------
 // Main logit()
 // ---------------------------------------------------------------------------
 export async function logit(
-	domain: string,
-	file: string | null,
-	line: number | string | null,
-	event: Record<string, any> = {},
-	payload: Record<string, any> = {},
-	meta: Record<string, any> = {},
+  domain: string,
+  event: Record<string, any>,
+  payload: Record<string, any>,
+  meta: Record<string, any>,
 ) {
-	try {
-		// --- Normalizers --------------------------------------------------------
-		const normalizeLine = (value: any) => {
-			if (value == null) return null;
-			const n = Number(value);
-			return Number.isFinite(n) ? n : null;
-		};
+  // --- Automatic file + line capture ----------------------------------------
+  // 1. Extract declared file from global override
+  const declaredFile = (globalThis as any).__logfile ?? null;
 
-		const normalizeString = (value: any) => {
-			if (value == null) return null;
-			return typeof value === "string" ? value : String(value);
-		};
+  // 2. Extract raw file/line from stack trace
+  const { file: rawFile, line: rawLine } = extractCaller();
 
-		// --- Canonical fields ---------------------------------------------------
-		const canonicalFile = normalizeString(file);
-		const canonicalLine = normalizeLine(line);
+  // 3. Canonicalize file
+  //    Priority:
+  //    - explicit payload override
+  //    - explicit meta override
+  //    - declared file (module-level override)
+  //    - raw stack trace (only if not internal)
+  //    - fallback "unknown"
+  const canonicalFile =
+    payload.file ??
+    meta.file ??
+    declaredFile ??
+    (rawFile && !rawFile.startsWith("node:internal") ? rawFile : null) ??
+    "unknown";
 
-		const canonicalUserId = meta.userId ?? payload.userId ?? event.userId ?? null;
+  // 4. Canonicalize line
+  const normalizeLine = (value: any) => {
+    if (value == null) return null;
+    const n = Number(value);
+    return Number.isFinite(n) ? n : null;
+  };
+  const canonicalLine =
+    normalizeLine(payload.line) ??
+    normalizeLine(meta.line) ??
+    normalizeLine(rawLine) ??
+    payload.line ??
+    meta.line ??
+    (rawLine && !isNaN(Number(rawLine)) ? Number(rawLine) : null);
 
-		const canonicalSessionEmail =
-			meta.sessionEmail ?? payload.sessionEmail ?? event.sessionEmail ?? null;
+  // --- Request + eventIndex -------------------------------------------------
+  const requestId = meta.requestId ?? crypto.randomUUID();
+  const eventIndex = meta.eventIndex ?? 1;
 
-		const canonicalSessionUser =
-			meta.sessionUser ?? payload.sessionUser ?? event.sessionUser ?? null;
+  const originalMessage = (event.message ?? "").toString().trim();
+  const message = originalMessage
+    ? `#${eventIndex} ${originalMessage}`
+    : `#${eventIndex} JMSG`;
 
-		// --- Flatten + sanitize -------------------------------------------------
-		const flatPayload = safeForNeon(payload);
-		const flatMeta = safeForNeon({
-			...meta,
-			file: canonicalFile,
-			line: canonicalLine,
-		});
+  // --- Canonical user/session extraction -----------------------------------
+  const canonicalUserId =
+    payload.userId ?? payload.session?.user?.id ?? meta.built?.userId ?? null;
 
-		// --- Message ------------------------------------------------------------
-		const message = event.message ?? payload.message ?? meta.message ?? "(no message)";
+  const canonicalSessionEmail =
+    payload.sessionEmail ??
+    payload.session?.user?.email ??
+    meta.built?.sessionEmail ??
+    null;
 
-		const requestId = meta.requestId ?? payload.requestId ?? event.requestId ?? null;
+  const canonicalSessionUser =
+    payload.sessionUser ??
+    payload.session?.user?.name ??
+    meta.built?.sessionUser ??
+    null;
 
-		// --- Write to Neon ------------------------------------------------------
-		await db.log.create({
-			data: {
-				domain,
-				level: event.level ?? "info",
-				message,
-				requestId,
-				payload: flatPayload,
-				meta: flatMeta,
-				page: flatMeta.page ?? null,
-				userId: canonicalUserId,
-				sessionEmail: canonicalSessionEmail,
-				sessionUser: canonicalSessionUser,
-				file: canonicalFile,
-				line: canonicalLine,
-			},
-		});
+  // --- Flatten payload ------------------------------------------------------
+  const flatPayload = {
+    eventIndex,
+    level: event.level ?? "info",
+    message: originalMessage,
+    ...payload,
+    userId: canonicalUserId,
+    sessionEmail: canonicalSessionEmail,
+    sessionUser: canonicalSessionUser,
+    file: canonicalFile,
+    line: canonicalLine,
+  };
 
-		// --- Axiom ingestion (INSIDE function!) --------------------------------
-		const axiomEvent = {
-			domain,
-			eventIndex: event.eventIndex ?? 0,
-			level: event.level ?? "info",
-			message,
-			meta_json: safeString(flatMeta),
-			payload_json: safeString(flatPayload),
-		};
+  // --- Flatten meta ---------------------------------------------------------
+  const flatMeta = {
+    requestId,
+    page: meta.page ?? null,
+    built: meta.built ?? null,
+    ...meta,
+    userId: canonicalUserId,
+    sessionEmail: canonicalSessionEmail,
+    sessionUser: canonicalSessionUser,
+    file: canonicalFile,
+    line: canonicalLine,
+  };
 
-		try {
-			await axiomIngest([axiomEvent]);
-		} catch (err) {
-			console.error("AXIOM INGEST ERROR:", err);
-		}
+  // ---------------------------------------------------------------------------
+  // Neon write
+  // ---------------------------------------------------------------------------
+  try {
+    await db.log.create({
+      data: {
+        domain,
+        level: event.level ?? "info",
+        message,
+        requestId,
+        payload: safeForNeon(flatPayload),
+        meta: safeForNeon(flatMeta),
+        page: flatMeta.page,
+        userId: canonicalUserId,
+        sessionEmail: canonicalSessionEmail,
+        sessionUser: canonicalSessionUser,
+        file: canonicalFile,
+        line: canonicalLine,
+      },
+    });
+  } catch (err) {
+    const now = Date.now();
+    if (now - lastErrorTime > ERROR_COOLDOWN_MS) {
+      console.error("NEON LOG ERROR (suppressed after this)", err);
+      lastErrorTime = now;
+    }
+  }
 
-		return axiomEvent;
-	} catch (err) {
-		const now = Date.now();
-		if (now - lastErrorTime > ERROR_COOLDOWN_MS) {
-			console.error("NEON LOG ERROR (suppressed after this)", err);
-			lastErrorTime = now;
-		}
-	}
+  // ---------------------------------------------------------------------------
+  // Axiom ingestion
+  // ---------------------------------------------------------------------------
+  const axiomEvent = {
+    domain,
+    eventIndex,
+    level: event.level ?? "info",
+    message,
+    file: canonicalFile,
+    line: canonicalLine,
+    meta_json: safeString(flatMeta),
+    payload_json: safeString(flatPayload),
+  };
+
+  try {
+    await axiomIngest([axiomEvent]);
+  } catch (err) {
+    console.error("AXIOM INGEST ERROR:", err);
+  }
+
+  return axiomEvent;
 }
