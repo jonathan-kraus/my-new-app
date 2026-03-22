@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\lib\log\logj.ts
- * @LastEditTime: 2026-03-21 20:22:47
+ * @LastEditTime: 2026-03-21 20:31:04
  */
 
 import { db } from "@/lib/db";
@@ -54,7 +54,7 @@ function extractCaller() {
 		if (cleaned.includes("node_modules")) continue;
 
 		// Skip logger internals
-		if (cleaned.includes("lib/log/logit")) continue;
+		if (cleaned.includes("lib/log/logj")) continue;
 		if (cleaned.includes("lib/log/logger")) continue;
 		if (cleaned.includes("lib/log/build-universal-context")) continue;
 
@@ -73,9 +73,9 @@ function extractCaller() {
 }
 
 // ---------------------------------------------------------------------------
-// Main logit()
+// Main logj()
 // ---------------------------------------------------------------------------
-export async function logit(
+export async function logj(
 	domain: string,
 	file: string | null,
 	line: number | string | null,

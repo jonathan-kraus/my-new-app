@@ -1,12 +1,12 @@
 // app/api/test-error/route.ts
 import { NextResponse } from "next/server";
-import { logit } from "@/lib/log/logit";
+import { logj } from "@/lib/log/logj";
 
 const eventIndex = 22;
 const requestId = crypto.randomUUID();
 export async function GET() {
   // Log the intentional failure
-  await logit(
+  await logj(
     "test_account_triggered",
     "app/api/test-account/route.ts",
     9,
