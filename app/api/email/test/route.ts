@@ -1,33 +1,31 @@
+// app\api\email\test\route.ts
 import { withLogging } from "@/lib/logging/withLogging";
 import { sendTestEmail } from "@/lib/server/email/sendTestEmail";
-import { logit } from "@/lib/log/logit";
+import { logj } from "@/lib/log/logj";
 import { NextResponse } from "next/server";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 export const POST = withLogging(async () => {
   const test_msg1 = "This is a test email sent from the Next.js API route.";
   const test_subject = "Test Email Subject";
   const result = await sendTestEmail(test_msg1, test_subject);
-  const eventIndex = 22;
-  const requestId = crypto.randomUUID();
-  await logit(
-    "jonathan",
-    {
-      level: "info",
-      message: `Sent test email with message "${test_msg1}". Result: ${JSON.stringify(result, null, 2)}`,
-      result: result,
-      b: "b",
-    },
-    { eventIndex },
-    {
-      requestId: requestId,
-      route: "api/email/test",
-      userId: "JK",
-      zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
-    },
-  );
+  const built = await buildUniversalContext("EMAILTEST");
+
+    await logj(
+      "jonathan",
+      "app/api/email/test/route.ts",
+      13,
+      {
+        level: "info",
+        message: 'Sent test email with message "${test_msg1}". Result: ${JSON.stringify(result, null, 2)',
+        test_msg1: test_msg1,
+      },
+      {
+somedata: "123456",
+      },
+      built,
+    );
+  
 
   return NextResponse.json(result);
 });

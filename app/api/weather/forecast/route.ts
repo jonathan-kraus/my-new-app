@@ -104,7 +104,7 @@ export async function GET(req: Request) {
   await logj(
     "weather",
     "app/api/weather/forecast/route.ts",
-    107,
+    104,
     {
       level: "info",
       message: "Forecast API response",
