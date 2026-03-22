@@ -1,9 +1,9 @@
 // app/api/test-error/route.ts
 import { NextResponse } from "next/server";
 import { logj } from "@/lib/log/logj";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
-const eventIndex = 22;
-const requestId = crypto.randomUUID();
+const built = await buildUniversalContext("JKR");
 export async function GET() {
   // Log the intentional failure
   await logj(
@@ -16,11 +16,7 @@ export async function GET() {
     },
     { somedata: "1234" },
     {
-      requestId: requestId,
-      zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
+      built,
     },
   );
 
