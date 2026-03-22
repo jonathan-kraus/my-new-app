@@ -1,18 +1,20 @@
 // app/api/test-error/route.ts
 import { NextResponse } from "next/server";
 import { logit } from "@/lib/log/logit";
-import { request } from "node:http";
+
 const eventIndex = 22;
 const requestId = crypto.randomUUID();
 export async function GET() {
   // Log the intentional failure
   await logit(
     "test_account_triggered",
+    "app/api/test-account/route.ts",
+    9,
     {
       message: "Intentional 500 test route hit -- returning okay now",
       route: "/api/test-account",
     },
-    { eventIndex },
+    { somedata: "1234" },
     {
       requestId: requestId,
       zulu: new Date().toISOString(),
