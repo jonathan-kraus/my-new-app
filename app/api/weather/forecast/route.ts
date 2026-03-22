@@ -2,12 +2,14 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auth } from "@/auth";
-import { logit } from "@/lib/log/logit";
+import { logj } from "@/lib/log/logj";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { enrichContext } from "@/lib/log/context";
 import { ForecastResponseSchema } from "@/lib/weather/zodschema";
 import { getConfig } from "@/lib/runtime/config";
 const fcm = Number(await getConfig("FORECAST_CACHE_MINUTES", "10"));
 const FORECAST_CACHE_MINUTES = fcm;
+const built = await buildUniversalContext("FORECAST");
 console.log("Forecast cache duration (minutes):", FORECAST_CACHE_MINUTES);
 export async function GET(req: Request) {
   const session = await auth();
@@ -41,23 +43,20 @@ export async function GET(req: Request) {
   if (cached) {
     const age = Math.round((Date.now() - cached.fetchedAt.getTime()) / 60000);
     console.log("age", age);
-    await logit(
+    await logj(
       "weather",
+      "app/api/weather/forecast/route.ts",
+      46,
       {
-        level: "warn",
+        level: "info",
         message: `Forecast cache hit ${age}/${FORECAST_CACHE_MINUTES}`,
-        file: "app/api/weather/forecast/route.ts",
-        page: "/api/weather/forecast",
       },
       {
         locationId,
         cacheWindowMinutes: FORECAST_CACHE_MINUTES,
         actualAgeMinutes: age,
-        sessionUser: session?.user?.name ?? null,
-        sessionEmail: session?.user?.email ?? null,
-        userId: session?.user?.id ?? null,
       },
-      ctx,
+      built,
     );
 
     const weather = cached.payload as {
@@ -76,17 +75,18 @@ export async function GET(req: Request) {
   // ----------------------------------------
   // CACHE MISS → FETCH EXTERNAL API
   // ----------------------------------------
-  await logit(
+  await logj(
     "weather",
+    "app/api/weather/forecast/route.ts",
+    78,
     {
       level: "info",
       message: "Forecast cache miss → fetching external API",
-      file: "app/api/weather/forecast/route.ts",
     },
     {
       locationId,
     },
-    ctx,
+    built,
   );
 
   const weatherRes = await fetch(
@@ -101,8 +101,10 @@ export async function GET(req: Request) {
 
   const raw = await weatherRes.json();
   const parsed = ForecastResponseSchema.safeParse(raw);
-  await logit(
+  await logj(
     "weather",
+    "app/api/weather/forecast/route.ts",
+    107,
     {
       level: "info",
       message: "Forecast API response",
@@ -112,15 +114,14 @@ export async function GET(req: Request) {
       raw,
       locationId,
       cacheWindowMinutes: FORECAST_CACHE_MINUTES,
-      sessionUser: session?.user?.name ?? null,
-      sessionEmail: session?.user?.email ?? null,
-      userId: session?.user?.id ?? null,
     },
-    ctx,
+    built,
   );
   if (!parsed.success) {
-    await logit(
+    await logj(
       "weather",
+      "app/api/weather/forecast/route.ts",
+      121,
       {
         level: "error",
         message: "Invalid forecast API response",
@@ -129,11 +130,8 @@ export async function GET(req: Request) {
         payload: parsed.error.flatten(),
         locationId,
         cacheWindowMinutes: FORECAST_CACHE_MINUTES,
-        sessionUser: session?.user?.name ?? null,
-        sessionEmail: session?.user?.email ?? null,
-        userId: session?.user?.id ?? null,
       },
-      ctx,
+      built,
     );
 
     return NextResponse.json(
@@ -157,8 +155,10 @@ export async function GET(req: Request) {
     },
   });
 
-  await logit(
+  await logj(
     "weather",
+    "app/api/weather/forecast/route.ts",
+    158,
     {
       level: "info",
       message: `Forecast snapshot stored, ${Math.round(weather.current_weather.temperature)}°F`,
@@ -166,11 +166,8 @@ export async function GET(req: Request) {
     {
       snapshotId: snapshot.id,
       cacheWindowMinutes: FORECAST_CACHE_MINUTES,
-      sessionUser: session?.user?.name ?? null,
-      sessionEmail: session?.user?.email ?? null,
-      userId: session?.user?.id ?? null,
     },
-    ctx,
+    built,
   );
 
   // ----------------------------------------
