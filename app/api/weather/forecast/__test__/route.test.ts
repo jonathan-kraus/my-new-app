@@ -20,7 +20,7 @@ vi.mock("@/auth", () => ({
   }),
 }));
 
-vi.mock("@/lib/log/logit", () => ({ logit: vi.fn() }));
+vi.mock("@/lib/log/logj", () => ({ logj: vi.fn() }));
 
 vi.mock("@/lib/log/context", () => ({
   enrichContext: vi.fn().mockResolvedValue({
@@ -38,7 +38,7 @@ global.fetch = vi.fn();
 // ---------------------------------------------------------------------------
 
 const { db } = await import("@/lib/db");
-const { logit } = await import("@/lib/log/logit");
+const { logj } = await import("@/lib/log/logj");
 
 // ---------------------------------------------------------------------------
 // TYPED MOCK HELPERS
@@ -46,7 +46,7 @@ const { logit } = await import("@/lib/log/logit");
 
 const mockedDb = vi.mocked(db, true);
 const mockedFetch = global.fetch as Mock;
-const mockedLog = vi.mocked(logit, true);
+const mockedLog = vi.mocked(logj, true);
 
 // ---------------------------------------------------------------------------
 // FACTORY HELPERS (MATCH REAL PRISMA TYPES)
