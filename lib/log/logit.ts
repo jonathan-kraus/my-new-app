@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\lib\log\logit.ts
- * @LastEditTime: 2026-03-21 20:26:27
+ * @LastEditTime: 2026-03-23 18:42:51
  */
 
 import crypto from "crypto";
@@ -130,19 +130,19 @@ export async function logit(
 
   // --- Canonical user/session extraction -----------------------------------
   const canonicalUserId =
-    payload.userId ?? payload.session?.user?.id ?? meta.built?.userId ?? null;
+    payload.userId ?? payload.session?.user?.id ?? meta.built?.userId ?? "cmkt5";
 
   const canonicalSessionEmail =
     payload.sessionEmail ??
     payload.session?.user?.email ??
     meta.built?.sessionEmail ??
-    null;
+    "jonathan@kraus.my.id";
 
   const canonicalSessionUser =
     payload.sessionUser ??
     payload.session?.user?.name ??
     meta.built?.sessionUser ??
-    null;
+    "Jonathan";
 
   // --- Flatten payload ------------------------------------------------------
   const flatPayload = {
