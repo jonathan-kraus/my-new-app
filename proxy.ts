@@ -1,7 +1,5 @@
 import { Logger } from "next-axiom";
-import { auth } from "@/auth";
 import { NextResponse, NextRequest } from "next/server";
-import normalizePath from "@/lib/normalizePath";
 
 import {
   markRequestStart,
@@ -12,7 +10,10 @@ import {
 } from "@/lib/log/timing";
 
 import { logj } from "@/lib/log/logj";
-import { buildUniversalContext } from "@/lib/log/build-universal-context";
+
+// ❗ IMPORTANT: middleware cannot read session in NextAuth v5
+// ❗ IMPORTANT: middleware cannot call buildUniversalContext()
+// So we remove both from middleware.
 
 export async function proxy(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
@@ -20,6 +21,7 @@ export async function proxy(req: NextRequest) {
   // --- 0) Filter out ALL noise -----------------------------------
   const isInternal =
     pathname.startsWith("/_next") || pathname.startsWith("/favicon");
+
   pathname.startsWith("/admin") ||
     pathname.startsWith("/dashboard") ||
     pathname === "/" ||
@@ -38,26 +40,6 @@ export async function proxy(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // await logit(
-  //   "middleware",
-  //   {
-  //     level: "info",
-  //     message: "Normalized path segments pathname: " + pathname,
-  //     last,
-  //     lastTwo,
-  //   },
-  //   {},
-  //   {
-  //     requestId: getRequestId(req.url),
-  //     route: pathname,
-  //     userId: undefined,
-  //     zulu: new Date().toISOString(),
-  //     local: new Date().toLocaleString("en-US", {
-  //       timeZone: "America/New_York",
-  //     }),
-  //   },
-  // );
-
   // --- 2) Start timing -------------------------------------------
   markRequestStart(req.url);
   const logger = new Logger({ source: "middleware" });
@@ -68,9 +50,15 @@ export async function proxy(req: NextRequest) {
     return end(req, NextResponse.next());
   }
 
-  // --- 4) Auth check ---------------------------------------------
-  const session = await auth();
-  if (!session) {
+  // --- 4) Auth check (middleware cannot read session in v5) ------
+  // We cannot do:
+  // const session = await auth(req);
+  // So we only enforce redirect based on cookies.
+
+  const hasSessionCookie = req.cookies.get("next-auth.session-token") ||
+                           req.cookies.get("__Secure-next-auth.session-token");
+
+  if (!hasSessionCookie) {
     return end(
       req,
       NextResponse.redirect(new URL("/api/auth/signin", req.url)),
@@ -85,12 +73,14 @@ export async function proxy(req: NextRequest) {
 async function end(req: NextRequest, res: NextResponse) {
   const durationMs = getRequestDuration(req.url);
   const pathname = req.nextUrl.pathname;
-  const built = await buildUniversalContext("PROXY");
+
+  // ❗ DO NOT call buildUniversalContext() here.
+  // It must run inside the route handler where auth() works.
 
   await logj(
     "middleware",
     "proxy.ts",
-    90,
+    80,
     {
       level: "info",
       message: "REQUEST END " + pathname,
@@ -102,7 +92,7 @@ async function end(req: NextRequest, res: NextResponse) {
       status: res.status,
     },
     {
-      built: built,
+      built: null, // middleware cannot build context
     },
   );
 
