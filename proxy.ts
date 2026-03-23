@@ -87,7 +87,7 @@ async function end(req: NextRequest, res: NextResponse) {
   const pathname = req.nextUrl.pathname;
   const built = await buildUniversalContext("PROXY");
 
-  await logit(
+  await logj(
     "middleware",
     "proxy.ts",
     90,
