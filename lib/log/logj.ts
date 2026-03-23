@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\lib\log\logj.ts
- * @LastEditTime: 2026-03-23 01:20:42
+ * @LastEditTime: 2026-03-23 18:45:02
  */
 
 import { db } from "@/lib/db";
@@ -102,26 +102,22 @@ export async function logj(
     const canonicalFile = normalizeString(file);
     const canonicalLine = normalizeLine(line);
 
-const canonicalUserId =
-  meta.userId ??
-  meta.built?.userId ??
-  payload.userId ??
-  event.userId ??
-  null;
+// --- Canonical user/session extraction -----------------------------------
+  const canonicalUserId =
+    payload.userId ?? payload.session?.user?.id ?? meta.built?.userId ?? "cmkt5";
 
-const canonicalSessionEmail =
-  meta.sessionEmail ??
-  meta.built?.sessionEmail ??
-  payload.sessionEmail ??
-  event.sessionEmail ??
-  null;
+  const canonicalSessionEmail =
+    payload.sessionEmail ??
+    payload.session?.user?.email ??
+    meta.built?.sessionEmail ??
+    "jonathan@kraus.my.id";
 
-const canonicalSessionUser =
-  meta.sessionUser ??
-  meta.built?.sessionUser ??
-  payload.sessionUser ??
-  event.sessionUser ??
-  null;
+  const canonicalSessionUser =
+    payload.sessionUser ??
+    payload.session?.user?.name ??
+    meta.built?.sessionUser ??
+    "Jonathan";
+
 
     // --- Flatten + sanitize -------------------------------------------------
     const flatPayload = safeForNeon(payload);
