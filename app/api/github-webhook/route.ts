@@ -2,8 +2,8 @@ export const runtime = "nodejs";
 
 import crypto from "crypto";
 import { Axiom } from "@axiomhq/js";
-import { log } from "@/lib/log/logger";
-import { setLogFile } from "@/lib/log/set-logfile";
+import { logj } from "@/lib/log/logj";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { withLogging } from "@/lib/logging/withLogging";
 import { getConfig } from "@/lib/runtime/config";
 import { getSha } from "@/lib/github/parse";
@@ -23,10 +23,22 @@ export const GitHubWebhookSchema = z.object({
   }),
 });
 
-setLogFile("app/api/github-webhook/route.ts");
-log.action("github", "Starting Github webhook", {
-  enabled: gw,
-});
+  const built = await buildUniversalContext("GITHUBWEBHOOK");
+  await logj(
+    "github",
+    "app/api/github-webhook/route.ts",
+    27,
+    {
+      level: "info",
+      message: "Starting Github Webhook ",
+    },
+    {
+      gw: gw,
+    },
+    {
+      built: built,
+    },
+  );
 
 /* -------------------------------------------------------------------------- */
 /*                               DB EVENT WRITER                              */
@@ -174,9 +186,21 @@ export const POST = withLogging(async (req: Request) => {
   if (!parsed.success) {
     console.error("Invalid GitHub webhook", parsed.error.format());
   }
-  log.action("github", "GitHub webhook received ---", {
-    event: event,
-  });
+  await logj(
+    "github",
+    "api/github-webhook/route.ts",
+    189,
+    {
+      level: "info",
+      message: "Github webhook processed " + event,
+    },
+    {
+      event: event ?? "unknown",
+    },
+    {
+      built: built,
+    },
+  );
 
   const normalized = {
     eventId: deliveryId!,
