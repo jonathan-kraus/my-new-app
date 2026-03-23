@@ -11,8 +11,8 @@ import {
   clearRequest,
 } from "@/lib/log/timing";
 
-import { logit } from "@/lib/log/logit";
-import { enrichContext } from "@/lib/log/context";
+import { logj } from "@/lib/log/logj";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 export async function proxy(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
@@ -85,26 +85,24 @@ export async function proxy(req: NextRequest) {
 async function end(req: NextRequest, res: NextResponse) {
   const durationMs = getRequestDuration(req.url);
   const pathname = req.nextUrl.pathname;
-  const { last, lastTwo } = normalizePath(pathname);
-  const ctx = await enrichContext(req);
+  const built = await buildUniversalContext("PROXY");
+
   await logit(
     "middleware",
+    "proxy.ts",
+    90,
     {
       level: "info",
       message: "REQUEST END " + pathname,
     },
     {
-      page: pathname,
-      file: "proxy.ts",
       durationMs,
       method: req.method,
       url: req.url,
       status: res.status,
-      requestId: getRequestId(req.url),
-      eventIndex: nextEventIndex(req.url),
     },
     {
-      ctx,
+      built: built,
     },
   );
 

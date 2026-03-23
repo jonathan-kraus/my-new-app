@@ -11,21 +11,21 @@ export const POST = withLogging(async () => {
   const result = await sendTestEmail(test_msg1, test_subject);
   const built = await buildUniversalContext("EMAILTEST");
 
-    await logj(
-      "jonathan",
-      "app/api/email/test/route.ts",
-      13,
-      {
-        level: "info",
-        message: 'Sent test email with message "${test_msg1}". Result: ${JSON.stringify(result, null, 2)',
-        test_msg1: test_msg1,
-      },
-      {
-somedata: "123456",
-      },
-      built,
-    );
-  
+  await logj(
+    "jonathan",
+    "app/api/email/test/route.ts",
+    13,
+    {
+      level: "info",
+      message:
+        'Sent test email with message "${test_msg1}". Result: ${JSON.stringify(result, null, 2)',
+      test_msg1: test_msg1,
+    },
+    {
+      somedata: "123456",
+    },
+    built,
+  );
 
   return NextResponse.json(result);
 });
