@@ -2,8 +2,8 @@
 import { withLogging } from "@/lib/logging/withLogging";
 import { sendTestEmail } from "@/lib/server/email/sendTestEmail";
 import { logj } from "@/lib/log/logj";
-import { NextResponse } from "next/server";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { NextResponse } from "next/server";
 
 export const POST = withLogging(async () => {
   const test_msg1 = "This is a test email sent from the Next.js API route.";

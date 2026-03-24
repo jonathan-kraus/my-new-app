@@ -2,11 +2,11 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { z } from "zod";
-import { log } from "@/lib/log/logger";
-import { setLogFile } from "@/lib/log/set-logfile";
+import { logj } from "@/lib/log/logj";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 const API_KEY = process.env.TOMORROWIO_APIKEY!;
-setLogFile("app\api\weather\route.ts");
+const built = await buildUniversalContext("WEATHER");
 // Zod schemas
 const TomorrowRealtimeSchema = z.object({
   data: z.object({
@@ -73,11 +73,23 @@ export async function GET(req: Request) {
     : null;
 
   if (currentCached) {
-    (log.api("weather", "Using cached current weather data"),
-      {
+      await logj(
+    "jonathan",
+    "app/api/weather/route.ts",
+    76,
+    {
+      level: "info",
+      message:
+        'Using cached current weather data',
+
+    },
+    {
         locationId: locationId,
         currentAge: currentAge,
-      });
+    },
+    built,
+  );
+
 
     return NextResponse.json({
       location,
@@ -111,7 +123,22 @@ export async function GET(req: Request) {
 
   const json = await res.json();
   const validated = TomorrowRealtimeSchema.safeParse(json);
+      await logj(
+    "jonathan",
+    "app/api/weather/route.ts",
+    126,
+    {
+      level: "info",
+      message:
+        'Fetched current weather data',
 
+    },
+    {
+        validated: validated,
+        currentAge: currentAge,
+    },
+    built,
+  );
   if (!validated.success) {
     return NextResponse.json(
       { error: "Invalid weather data" },
