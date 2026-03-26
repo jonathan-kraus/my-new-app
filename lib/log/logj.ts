@@ -102,22 +102,24 @@ export async function logj(
     const canonicalFile = normalizeString(file);
     const canonicalLine = normalizeLine(line);
 
-// --- Canonical user/session extraction -----------------------------------
-  const canonicalUserId =
-    payload.userId ?? payload.session?.user?.id ?? meta.built?.userId ?? "cmkt5";
+    // --- Canonical user/session extraction -----------------------------------
+    const canonicalUserId =
+      payload.userId ??
+      payload.session?.user?.id ??
+      meta.built?.userId ??
+      "cmkt5";
 
-  const canonicalSessionEmail =
-    payload.sessionEmail ??
-    payload.session?.user?.email ??
-    meta.built?.sessionEmail ??
-    "jonathan@kraus.my.id";
+    const canonicalSessionEmail =
+      payload.sessionEmail ??
+      payload.session?.user?.email ??
+      meta.built?.sessionEmail ??
+      "jonathan@kraus.my.id";
 
-  const canonicalSessionUser =
-    payload.sessionUser ??
-    payload.session?.user?.name ??
-    meta.built?.sessionUser ??
-    "Jonathan";
-
+    const canonicalSessionUser =
+      payload.sessionUser ??
+      payload.session?.user?.name ??
+      meta.built?.sessionUser ??
+      "Jonathan";
 
     // --- Flatten + sanitize -------------------------------------------------
     const flatPayload = safeForNeon(payload);

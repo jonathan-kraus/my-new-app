@@ -23,22 +23,22 @@ export const GitHubWebhookSchema = z.object({
   }),
 });
 
-  const built = await buildUniversalContext("GITHUBWEBHOOK");
-  await logj(
-    "github",
-    "app/api/github-webhook/route.ts",
-    27,
-    {
-      level: "info",
-      message: "Starting Github Webhook ",
-    },
-    {
-      gw: gw,
-    },
-    {
-      built: built,
-    },
-  );
+const built = await buildUniversalContext("GITHUBWEBHOOK");
+await logj(
+  "github",
+  "app/api/github-webhook/route.ts",
+  27,
+  {
+    level: "info",
+    message: "Starting Github Webhook ",
+  },
+  {
+    gw: gw,
+  },
+  {
+    built: built,
+  },
+);
 
 /* -------------------------------------------------------------------------- */
 /*                               DB EVENT WRITER                              */

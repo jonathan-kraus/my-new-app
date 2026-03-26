@@ -73,23 +73,20 @@ export async function GET(req: Request) {
     : null;
 
   if (currentCached) {
-      await logj(
-    "jonathan",
-    "app/api/weather/route.ts",
-    76,
-    {
-      level: "info",
-      message:
-        'Using cached current weather data',
-
-    },
-    {
+    await logj(
+      "jonathan",
+      "app/api/weather/route.ts",
+      76,
+      {
+        level: "info",
+        message: "Using cached current weather data",
+      },
+      {
         locationId: locationId,
         currentAge: currentAge,
-    },
-    built,
-  );
-
+      },
+      built,
+    );
 
     return NextResponse.json({
       location,
@@ -123,19 +120,17 @@ export async function GET(req: Request) {
 
   const json = await res.json();
   const validated = TomorrowRealtimeSchema.safeParse(json);
-      await logj(
+  await logj(
     "jonathan",
     "app/api/weather/route.ts",
     126,
     {
       level: "info",
-      message:
-        'Fetched current weather data',
-
+      message: "Fetched current weather data",
     },
     {
-        validated: validated,
-        currentAge: currentAge,
+      validated: validated,
+      currentAge: currentAge,
     },
     built,
   );

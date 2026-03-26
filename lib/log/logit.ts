@@ -130,7 +130,10 @@ export async function logit(
 
   // --- Canonical user/session extraction -----------------------------------
   const canonicalUserId =
-    payload.userId ?? payload.session?.user?.id ?? meta.built?.userId ?? "cmkt5";
+    payload.userId ??
+    payload.session?.user?.id ??
+    meta.built?.userId ??
+    "cmkt5";
 
   const canonicalSessionEmail =
     payload.sessionEmail ??
