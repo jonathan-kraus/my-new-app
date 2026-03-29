@@ -121,8 +121,8 @@ export async function logj(input: LogjInput) {
       userId: canonicalUserId,
       sessionEmail: canonicalSessionEmail,
       sessionUser: canonicalSessionUser,
-      payload: safeForNeon(payload) as Prisma.InputJsonValue,
-      meta: safeForNeon(meta) as Prisma.InputJsonValue,
+      payload: safeForNeon(payload) as any,
+      meta: safeForNeon(meta) as any,
     };
 
     // --- Validate canonical record -------------------------------------------
