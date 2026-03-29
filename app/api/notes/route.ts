@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\notes\route.ts
- * @LastEditTime: 2026-03-29 00:40:17
+ * @LastEditTime: 2026-03-29 00:47:23
  */
 
 import { NextResponse } from "next/server";
@@ -16,8 +16,8 @@ export const GET = withLogging(async (req: Request) => {
   await logj({
     domain: "notes",
     level: "info",
-    message: "Notes GET started",
-    file: "app\api\notes\route.ts",
+    message: "🎶 Notes GET started 🎶",
+    file: "app/api/notes/route.ts",
     line: 16,
     payload: {
       some: "data",
@@ -43,7 +43,19 @@ export const GET = withLogging(async (req: Request) => {
     // await log.api("notes", `Notes GET completed with ${notes.length} notes`, {
     //   count: notes.length,
     // });
-
+    await logj({
+    domain: "notes",
+    level: "info",
+    message: `Notes GET completed with ${notes.length} notes`,
+    file: "app/api/notes/route.ts",
+    line: 46,
+    payload: {
+      count: notes.length,
+    },
+    meta: {
+      built,
+    },
+  });
     return NextResponse.json({ notes });
   } catch (err: any) {
     // await log.api("notes", "Notes GET failed", { error: err.message });
