@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\lib\log\logger.ts
- * @LastEditTime: 2026-03-18 23:15:33
+ * @LastEditTime: 2026-03-28 23:39:06
  */
 import { buildUniversalContext } from "./build-universal-context";
 import { logit } from "./logit";
@@ -28,12 +28,13 @@ function getCallerInfo() {
 }
 
 async function baseLog(
+  req: Request,
   domain: string,
   message: string,
   payload: any,
   route: string,
 ) {
-  const built = await buildUniversalContext(route);
+  const built = await buildUniversalContext(req as any, route);
   const { file, line } = getCallerInfo();
 
   return logit(
@@ -46,26 +47,37 @@ async function baseLog(
 
 export const log = {
   // For API route handlers
-  async api(domain: string, message: string, payload: any = {}) {
-    return baseLog(domain, message, payload, `api:${domain}`);
+  async api(req: Request, domain: string, message: string, payload: any = {}) {
+    return baseLog(req, domain, message, payload, `api:${domain}`);
   },
 
-  // For server components / pages
+  // For server components / pages (no req available)
   async page(message: string, payload: any = {}) {
-    return baseLog("page", message, payload, "page");
+    const { file, line } = getCallerInfo();
+    return logit(
+      "page",
+      { level: "info", message },
+      { ...payload, file, line },
+      { built: { route: "page" } },
+    );
   },
 
   // For server actions
-  async action(domain: string, message: string, payload: any = {}) {
-    return baseLog(domain, message, payload, `action:${domain}`);
+  async action(
+    req: Request,
+    domain: string,
+    message: string,
+    payload: any = {},
+  ) {
+    return baseLog(req, domain, message, payload, `action:${domain}`);
   },
 
-  // For middleware
-  async middleware(message: string, payload: any = {}) {
-    return baseLog("middleware", message, payload, "middleware");
+  // For middleware (middleware generates its own context)
+  async middleware(req: Request, message: string, payload: any = {}) {
+    return baseLog(req, "middleware", message, payload, "middleware");
   },
 
-  // For client components (no session, no headers)
+  // For client components (no req, no headers)
   client(domain: string, message: string, payload: any = {}) {
     const now = new Date();
     const { file, line } = getCallerInfo();

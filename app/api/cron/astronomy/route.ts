@@ -17,7 +17,7 @@ function atLocalMidnight(d: Date) {
 export async function GET(req: NextRequest) {
   const start = Date.now();
   const ctx = await enrichContext(req);
-  await log.api("ephemeris", "astronomy.cron.started DB-tables first");
+  // await log.api("ephemeris", "astronomy.cron.started DB-tables first");
 
   await runDbTableStats({
     requestId: ctx.requestId,
@@ -25,12 +25,12 @@ export async function GET(req: NextRequest) {
     userId: ctx.userId,
   });
 
-  await log.api("ephemeris", "astronomy.cron.dbtables.completed");
+  // await log.api("ephemeris", "astronomy.cron.dbtables.completed");
 
   const locations = await db.location.findMany();
 
   for (const location of locations) {
-    await log.api("ephemeris", "astronomy.cron.location.started");
+    // await log.api("ephemeris", "astronomy.cron.location.started");
 
     const base = atLocalMidnight(new Date());
 
@@ -38,12 +38,12 @@ export async function GET(req: NextRequest) {
       const targetDate = addDays(base, i);
       const dateString = format(targetDate, "yyyy-MM-dd");
 
-      await log.api("ephemeris", "astronomy.cron.day.started", {
-        locationId: location.id,
-        dateString: dateString,
-        targetDate: targetDate.toISOString(),
-        count: i,
-      });
+      // await log.api("ephemeris", "astronomy.cron.day.started", {
+      //   locationId: location.id,
+      //   dateString: dateString,
+      //   targetDate: targetDate.toISOString(),
+      //   count: i,
+      // });
 
       // Build the full solar/lunar snapshot
       const snapshot = await buildAstronomySnapshot(location, targetDate);
@@ -67,10 +67,10 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    await log.api("ephemeris", "astronomy.cron.location.upsert.completed");
+    // await log.api("ephemeris", "astronomy.cron.location.upsert.completed");
 
     const durationMs = Date.now() - start;
-    await log.api("ephemeris", "astronomy.cron.completed");
+    // await log.api("ephemeris", "astronomy.cron.completed");
 
     return NextResponse.json({ ok: true, durationMs });
   }

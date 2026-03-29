@@ -111,10 +111,10 @@ export async function GET(req: NextRequest) {
 
   const h = await headers(); // ✅ await the Promise
   const session = await auth();
-  (await log.api("ephemeris", "Called Ping"),
-    {
-      Dailydata: weatherData.daily,
-    });
+  // (await log.api("ephemeris", "Called Ping"),
+  //   {
+  //     Dailydata: weatherData.daily,
+  //   });
 
   return NextResponse.json({
     daily,

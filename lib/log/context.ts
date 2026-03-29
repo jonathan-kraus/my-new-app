@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 import { auth } from "@/auth";
-import { markRequestStart } from "@/lib/log/timing";
+import { startRequest, getDuration } from "@/lib/log/timing";
 import versionInfo from "@/version.json";
 
 export const version = versionInfo.version;
@@ -11,7 +11,7 @@ export async function enrichContext(req: NextRequest) {
   const requestId = req.headers.get("x-request-id") ?? crypto.randomUUID();
 
   // Start timing for this request
-  markRequestStart(requestId);
+  startRequest(requestId);
 
   // Basic request metadata
   const route = req.nextUrl.pathname ?? undefined;

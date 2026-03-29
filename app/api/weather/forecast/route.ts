@@ -4,17 +4,16 @@ import { db } from "@/lib/db";
 import { auth } from "@/auth";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
-import { enrichContext } from "@/lib/log/context";
 import { ForecastResponseSchema } from "@/lib/weather/zodschema";
 import { getConfig } from "@/lib/runtime/config";
 const fcm = Number(await getConfig("FORECAST_CACHE_MINUTES", "10"));
 const FORECAST_CACHE_MINUTES = fcm;
-const built = await buildUniversalContext("FORECAST");
+
 console.log("Forecast cache duration (minutes):", FORECAST_CACHE_MINUTES);
 export async function GET(req: Request) {
   const session = await auth();
+  const built = await buildUniversalContext(req as any, "FORECAST");
 
-  const ctx = await enrichContext(req as any);
   const { searchParams } = new URL(req.url);
   const locationId = searchParams.get("locationId");
 
@@ -43,21 +42,19 @@ export async function GET(req: Request) {
   if (cached) {
     const age = Math.round((Date.now() - cached.fetchedAt.getTime()) / 60000);
     console.log("age", age);
-    await logj(
-      "weather",
-      "app/api/weather/forecast/route.ts",
-      46,
-      {
-        level: "info",
-        message: `Forecast cache hit ${age}/${FORECAST_CACHE_MINUTES}`,
+    await logj({
+      domain: "weather",
+      level: "info",
+      message: `Forecast cache hit ${age}/${FORECAST_CACHE_MINUTES}`,
+      file: "app/api/weather/forecast/route.ts",
+      line: 45,
+      payload: {
+        some: "data",
       },
-      {
-        locationId,
-        cacheWindowMinutes: FORECAST_CACHE_MINUTES,
-        actualAgeMinutes: age,
+      meta: {
+        built, // optional
       },
-      built,
-    );
+    });
 
     const weather = cached.payload as {
       current: any;
@@ -75,19 +72,19 @@ export async function GET(req: Request) {
   // ----------------------------------------
   // CACHE MISS → FETCH EXTERNAL API
   // ----------------------------------------
-  await logj(
-    "weather",
-    "app/api/weather/forecast/route.ts",
-    78,
-    {
-      level: "info",
-      message: "Forecast cache miss → fetching external API",
+  await logj({
+    domain: "weather",
+    level: "info",
+    message: "Forecast cache miss → fetching external API",
+    file: "app/api/weather/forecast/route.ts",
+    line: 75,
+    payload: {
+      some: "data",
     },
-    {
-      locationId,
+    meta: {
+      built,
     },
-    built,
-  );
+  });
 
   const weatherRes = await fetch(
     `https://api.open-meteo.com/v1/forecast` +
@@ -101,38 +98,40 @@ export async function GET(req: Request) {
 
   const raw = await weatherRes.json();
   const parsed = ForecastResponseSchema.safeParse(raw);
-  await logj(
-    "weather",
-    "app/api/weather/forecast/route.ts",
-    104,
-    {
-      level: "info",
-      message: "Forecast API response",
-    },
-    {
-      payload: parsed,
+  await logj({
+    domain: "weather",
+    level: "info",
+    message: "Forecast API response",
+    file: "app/api/weather/forecast/route.ts",
+    line: 101,
+    payload: {
+      parsed,
       raw,
       locationId,
       cacheWindowMinutes: FORECAST_CACHE_MINUTES,
     },
-    built,
-  );
+    meta: {
+      built,
+    },
+  });
+
   if (!parsed.success) {
-    await logj(
-      "weather",
-      "app/api/weather/forecast/route.ts",
-      121,
-      {
-        level: "error",
-        message: "Invalid forecast API response",
-      },
-      {
-        payload: parsed.error.flatten(),
+    await logj({
+      domain: "weather",
+      level: "error",
+      message: "Invalid forecast API response",
+      file: "app/api/weather/forecast/route.ts",
+      line: 119,
+      payload: {
+        parsed,
+        raw,
         locationId,
         cacheWindowMinutes: FORECAST_CACHE_MINUTES,
       },
-      built,
-    );
+      meta: {
+        built,
+      },
+    });
 
     return NextResponse.json(
       { error: "Forecast unavailable" },
@@ -155,20 +154,34 @@ export async function GET(req: Request) {
     },
   });
 
-  await logj(
-    "weather",
-    "app/api/weather/forecast/route.ts",
-    158,
-    {
-      level: "info",
-      message: `Forecast snapshot stored, ${Math.round(weather.current_weather.temperature)}°F`,
+  await logj({
+    domain: "weather",
+    level: "info",
+    message: "Forecast cache miss → fetching external API",
+    file: "app/api/weather/forecast/route.ts",
+    line: 157,
+    payload: {
+      some: "data",
     },
-    {
+    meta: {
+      built,
+    },
+  });
+  await logj({
+    domain: "weather",
+    level: "info",
+    message: `Forecast snapshot stored, ${Math.round(weather.current_weather.temperature)}°F`,
+    file: "app/api/weather/forecast/route.ts",
+    line: 170,
+
+    payload: {
       snapshotId: snapshot.id,
       cacheWindowMinutes: FORECAST_CACHE_MINUTES,
     },
-    built,
-  );
+    meta: {
+      built,
+    },
+  });
 
   // ----------------------------------------
   // RETURN FRESH DATA

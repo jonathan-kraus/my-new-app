@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
     where: {
       NOT: {
         message: {
-          startsWith: "#1 REQUEST END",
+          startsWith: "REQUEST END",
         },
       },
     },

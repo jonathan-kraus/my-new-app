@@ -39,10 +39,10 @@ export async function buildAstronomySnapshot(
   targetDate: Date,
 ) {
   setLogFile("lib/buildAstronomySnapshot.ts");
-  await log.action("ephemeris", "Starting buildAstronomySnapshot", {
-    location: location,
-    targetDate: targetDate.toISOString(),
-  });
+  // await log.action("ephemeris", "Starting buildAstronomySnapshot", {
+  //   location: location,
+  //   targetDate: targetDate.toISOString(),
+  // });
 
   const { latitude, longitude } = location;
 
@@ -51,10 +51,10 @@ export async function buildAstronomySnapshot(
     targetDate.getMonth(),
     targetDate.getDate(),
   );
-  await log.action("ephemeris", "bas - Normalized target date", {
-    location: location,
-    targetDate: targetDate.toISOString(),
-  });
+  // await log.action("ephemeris", "bas - Normalized target date", {
+  //   location: location,
+  //   targetDate: targetDate.toISOString(),
+  // });
 
   async function fetchIPGeoAstronomy(lat: number, lon: number, date: Date) {
     const day = format(date, "yyyy-MM-dd");
@@ -64,35 +64,35 @@ export async function buildAstronomySnapshot(
     url.searchParams.set("lat", lat.toString());
     url.searchParams.set("long", lon.toString());
     url.searchParams.set("date", day);
-    await log.action(
-      "ephemeris",
-      "bas - Fetching IPGeolocation astronomy data",
-      {
-        location: location,
-        targetDate: targetDate.toISOString(),
-      },
-    );
+    // await log.action(
+    //   "ephemeris",
+    //   "bas - Fetching IPGeolocation astronomy data",
+    //   {
+    //     location: location,
+    //     targetDate: targetDate.toISOString(),
+    //   },
+    // );
 
     const res = await fetch(url.toString());
     if (!res.ok) {
-      await log.action(
-        "ephemeris",
-        "bas - Fetching IPGeolocation astronomy data failed",
-        {
-          location: location,
-          targetDate: targetDate.toISOString(),
-        },
-      );
+      // await log.action(
+      //   "ephemeris",
+      //   "bas - Fetching IPGeolocation astronomy data failed",
+      //   {
+      //     location: location,
+      //     targetDate: targetDate.toISOString(),
+      //   },
+      // );
 
       throw new Error(`IPGeolocation error: ${res.status}`);
     }
 
     const json = await res.json();
-    await log.action("ephemeris", "DEBUG: astronomy payload", {
-      data: { data: json.astronomy },
-      location: location,
-      targetDate: targetDate.toISOString(),
-    });
+    // await log.action("ephemeris", "DEBUG: astronomy payload", {
+    //   data: { data: json.astronomy },
+    //   location: location,
+    //   targetDate: targetDate.toISOString(),
+    // });
 
     return json.astronomy;
   }
@@ -106,48 +106,48 @@ export async function buildAstronomySnapshot(
 
   // Fallback: convert IANA zone (e.g., "America/New_York") to numeric offset
   if (!offset && location.timezone) {
-    await log.action(
-      "ephemeris",
-      "bas - Astronomy API missing timezone; converting IANA zone to offset",
-      {
-        location: location,
-        targetDate: targetDate.toISOString(),
-      },
-    );
+    // await log.action(
+    //   "ephemeris",
+    //   "bas - Astronomy API missing timezone; converting IANA zone to offset",
+    //   {
+    //     location: location,
+    //     targetDate: targetDate.toISOString(),
+    //   },
+    // );
 
     try {
       const dt = DateTime.now().setZone(location.timezone);
       offset = dt.toFormat("ZZ"); // "-05:00" or "-04:00"
     } catch (err) {
-      await log.action(
-        "ephemeris",
-        "bas - Failed to convert IANA timezone to offset",
-        {
-          location: location,
-          targetDate: targetDate.toISOString(),
-        },
-      );
+      // await log.action(
+      //   "ephemeris",
+      //   "bas - Failed to convert IANA timezone to offset",
+      //   {
+      //     location: location,
+      //     targetDate: targetDate.toISOString(),
+      //   },
+      // );
     }
   }
 
   // Final validation
   if (!offset || !/[+-]\d{2}:\d{2}/.test(offset)) {
-    await log.action(
-      "ephemeris",
-      "bas - Astronomy API missing timezone field",
-      {
-        apiTimezone: astro.timezone,
-        locationTimezone: location.timezone,
-        resolvedOffset: offset,
-      },
-    );
+    // await log.action(
+    //   "ephemeris",
+    //   "bas - Astronomy API missing timezone field",
+    //   {
+    //     apiTimezone: astro.timezone,
+    //     locationTimezone: location.timezone,
+    //     resolvedOffset: offset,
+    //   },
+    //);
 
     throw new Error("Astronomy API missing timezone field");
   }
-  await log.action("ephemeris", "bas - Using timezone offset", {
-    location: location,
-    targetDate: targetDate.toISOString(),
-  });
+  // await log.action("ephemeris", "bas - Using timezone offset", {
+  //   location: location,
+  //   targetDate: targetDate.toISOString(),
+  // });
 
   //
   // --- NORMALIZE ALL TIME STRINGS ---
@@ -191,23 +191,23 @@ export async function buildAstronomySnapshot(
 
   const moonriseNorm = normalizeTimeString(astro.moonrise, offset);
   const moonsetNorm = normalizeTimeString(astro.moonset, offset);
-  await log.action("ephemeris", "bas - Normalized all time strings", {
-    location: location,
-    targetDate: targetDate.toISOString(),
-  });
+  // await log.action("ephemeris", "bas - Normalized all time strings", {
+  //   location: location,
+  //   targetDate: targetDate.toISOString(),
+  // });
 
   //
   // --- REQUIRED FIELDS ---
   //
   if (!sunriseNorm || !sunsetNorm) {
-    await log.action(
-      "ephemeris",
-      "bas - Missing required sunrise/sunset after normalization",
-      {
-        location: location,
-        targetDate: targetDate.toISOString(),
-      },
-    );
+    // await log.action(
+    //   "ephemeris",
+    //   "bas - Missing required sunrise/sunset after normalization",
+    //   {
+    //     location: location,
+    //     targetDate: targetDate.toISOString(),
+    //   },
+    // );
 
     throw new Error("Missing required sunrise/sunset after normalization");
   }
@@ -277,10 +277,10 @@ export async function buildAstronomySnapshot(
     phaseName: astro.moon_phase ?? null,
     moonPhase: astro.moon_angle ?? null,
   };
-  await log.action("ephemeris", "bas - Astronomy snapshot built successfully", {
-    location: location,
-    targetDate: targetDate.toISOString(),
-  });
+  // await log.action("ephemeris", "bas - Astronomy snapshot built successfully", {
+  //   location: location,
+  //   targetDate: targetDate.toISOString(),
+  // });
 
   return snapshot;
 }

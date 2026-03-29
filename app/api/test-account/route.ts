@@ -1,26 +1,28 @@
-// app/api/test-error/route.ts
+// app/api/test-account/route.ts
 import { NextResponse } from "next/server";
 import { logj } from "@/lib/log/logj";
+import { withLogging } from "@/lib/logging/withLogging";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
-const built = await buildUniversalContext("JKR");
-export async function GET() {
+export const GET = withLogging(async (req: Request) => {
+  // Build context INSIDE the request handler
+  const built = await buildUniversalContext(req as any, "JONATHAN");
   // Log the intentional failure
-  await logj(
-    "test_account_triggered",
-    "app/api/test-account/route.ts",
-    9,
-    {
-      message: "Intentional 500 test route hit -- returning okay now",
-      route: "/api/test-account",
+  await logj({
+    domain: "jonathan",
+    level: "info",
+    message: "test-account message",
+    file: "app/api/test-account/route.ts",
+    line: 11,
+    payload: {
+      some: "data",
     },
-    { somedata: "1234" },
-    {
-      built,
+    meta: {
+      built, // optional
     },
-  );
+  });
 
   // Return a real 500 to trigger your Axiom monitor
   //change to 200 after test
   return NextResponse.json({ error: "Intentional test 200" }, { status: 200 });
-}
+});

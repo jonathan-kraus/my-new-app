@@ -5,25 +5,25 @@ export function withLogging(handler: (req: Request) => Promise<Response>) {
   return async function wrapped(req: Request) {
     const start = performance.now();
 
-    await log.api("system", "Request started", {
-      url: req.url,
-      method: req.method,
-    });
+    // await log.api("system", "Request started", {
+    //   url: req.url,
+    //   method: req.method,
+    // });
 
     try {
       const res = await handler(req);
 
-      await log.api("jonathan", "Request completed", {
-        status: res.status,
-        durationMs: Math.round(performance.now() - start),
-      });
+      // await log.api("jonathan", "Request completed", {
+      //   status: res.status,
+      //   durationMs: Math.round(performance.now() - start),
+      // });
 
       return res;
     } catch (err: any) {
-      await log.api("jonathan", "Request failed", {
-        error: err.message,
-        durationMs: Math.round(performance.now() - start),
-      });
+      // await log.api("jonathan", "Request failed", {
+      //   error: err.message,
+      //   durationMs: Math.round(performance.now() - start),
+      // });
 
       throw err;
     }

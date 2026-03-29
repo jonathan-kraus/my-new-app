@@ -1,31 +1,32 @@
-// app\api\email\test\route.ts
+// app/api/email/test/route.ts
 import { withLogging } from "@/lib/logging/withLogging";
 import { sendTestEmail } from "@/lib/server/email/sendTestEmail";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export const POST = withLogging(async () => {
+export const POST = withLogging(async (req: Request) => {
   const test_msg1 = "This is a test email sent from the Next.js API route.";
   const test_subject = "Test Email Subject";
-  const result = await sendTestEmail(test_msg1, test_subject);
-  const built = await buildUniversalContext("EMAILTEST");
 
-  await logj(
-    "jonathan",
-    "app/api/email/test/route.ts",
-    13,
-    {
-      level: "info",
-      message:
-        'Sent test email with message "${test_msg1}". Result: ${JSON.stringify(result, null, 2)',
-      test_msg1: test_msg1,
+  const result = await sendTestEmail(test_msg1, test_subject);
+
+  // FIXED: buildUniversalContext now requires (req, routeName)
+  const built = await buildUniversalContext(req as any, "EMAILTEST");
+
+  await logj({
+    domain: "jonathan",
+    level: "info",
+    message: `Sent test email with message "${test_msg1}". Result: ${JSON.stringify(result)}`,
+    file: "app/api/email/test/route.ts",
+    line: 17,
+    payload: {
+      some: "data",
     },
-    {
-      somedata: "123456",
+    meta: {
+      built, // optional
     },
-    built,
-  );
+  });
 
   return NextResponse.json(result);
 });

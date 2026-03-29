@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\page.tsx
- * @LastEditTime: 2026-03-20 10:09:00
+ * @LastEditTime: 2026-03-28 23:50:42
  */
 // app/page.tsx
 import { auth } from "@/auth";
@@ -32,7 +32,7 @@ export default async function HomePage() {
   // Use userId from the universal context if available, otherwise fall back to session
   const userId = session?.user?.id ?? "JK";
 
-  log.action("jonathan", "** Dashboard Start **", {});
+  // log.action("jonathan", "** Dashboard Start **", {});
 
   const location = await db.location.findFirst({
     where: { isDefault: true },
@@ -53,11 +53,11 @@ export default async function HomePage() {
     { cache: "no-store" },
   );
   const forecastData = await forecastRes.json();
-  log.action("jonathan", "** Dashboard End **", {
-    location: location,
-    weatherData: weatherData,
-    forecastData: forecastData,
-  });
+  // log.action("jonathan", "** Dashboard End **", {
+  //   location: location,
+  //   weatherData: weatherData,
+  //   forecastData: forecastData,
+  // });
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-600 to-sky-900 text-white p-8">

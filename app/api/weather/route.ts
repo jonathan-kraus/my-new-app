@@ -1,12 +1,12 @@
 // app/api/weather/route.ts
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { z } from "zod";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 const API_KEY = process.env.TOMORROWIO_APIKEY!;
-const built = await buildUniversalContext("WEATHER");
+
 // Zod schemas
 const TomorrowRealtimeSchema = z.object({
   data: z.object({
@@ -45,7 +45,8 @@ const TomorrowTimelineSchema = z.object({
 const CURRENT_CACHE_MIN = 30;
 const FORECAST_CACHE_MINUTES = 30;
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
+  const built = await buildUniversalContext(req, "WEATHER");
   const { searchParams } = new URL(req.url);
   const locationId = searchParams.get("locationId");
 
@@ -73,20 +74,20 @@ export async function GET(req: Request) {
     : null;
 
   if (currentCached) {
-    await logj(
-      "jonathan",
-      "app/api/weather/route.ts",
-      76,
-      {
-        level: "info",
-        message: "Using cached current weather data",
+    await logj({
+      domain: "weather",
+      level: "info",
+      message: "Using cached current weather data",
+      file: "app/api/weather/route.ts",
+      line: 76,
+      payload: {
+        some: "data",
       },
-      {
-        locationId: locationId,
-        currentAge: currentAge,
+      meta: {
+        built,
+        eventIndex,
       },
-      built,
-    );
+    });
 
     return NextResponse.json({
       location,
@@ -120,20 +121,21 @@ export async function GET(req: Request) {
 
   const json = await res.json();
   const validated = TomorrowRealtimeSchema.safeParse(json);
-  await logj(
-    "jonathan",
-    "app/api/weather/route.ts",
-    126,
-    {
-      level: "info",
-      message: "Fetched current weather data",
-    },
-    {
+  await logj({
+    domain: "weather",
+    level: "info",
+    message: "Fetched current weather data",
+    file: "app/api/weather/route.ts",
+    line: 124,
+    payload: {
+      some: res.status,
       validated: validated,
-      currentAge: currentAge,
     },
-    built,
-  );
+    meta: {
+      built,
+      eventIndex,
+    },
+  });
   if (!validated.success) {
     return NextResponse.json(
       { error: "Invalid weather data" },

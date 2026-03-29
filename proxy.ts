@@ -4,9 +4,8 @@ import { NextResponse, NextRequest } from "next/server";
 import normalizePath from "@/lib/normalizePath";
 
 import {
-  markRequestStart,
-  getRequestDuration,
-  getRequestId,
+  startRequest,
+  getDuration,
   nextEventIndex,
   clearRequest,
 } from "@/lib/log/timing";
@@ -48,7 +47,7 @@ export async function proxy(req: NextRequest) {
   //   },
   //   {},
   //   {
-  //     requestId: getRequestId(req.url),
+
   //     route: pathname,
   //     userId: undefined,
   //     zulu: new Date().toISOString(),
@@ -59,7 +58,7 @@ export async function proxy(req: NextRequest) {
   // );
 
   // --- 2) Start timing -------------------------------------------
-  markRequestStart(req.url);
+  startRequest(req.url);
   const logger = new Logger({ source: "middleware" });
   logger.middleware(req);
 
@@ -83,28 +82,28 @@ export async function proxy(req: NextRequest) {
 
 // --- END helper ---------------------------------------------------
 async function end(req: NextRequest, res: NextResponse) {
-  const durationMs = getRequestDuration(req.url);
+  const durationMs = getDuration(req.url);
   const pathname = req.nextUrl.pathname;
-  const built = await buildUniversalContext("PROXY");
+  const built = await buildUniversalContext(req, "PROXY");
 
-  await logj(
-    "middleware",
-    "proxy.ts",
-    90,
-    {
-      level: "info",
-      message: "REQUEST END " + pathname,
-    },
-    {
-      durationMs,
-      method: req.method,
-      url: req.url,
-      status: res.status,
-    },
-    {
-      built: built,
-    },
-  );
+  // await logj(
+  //   "middleware",
+  //   "proxy.ts",
+  //   90,
+  //   {
+  //     level: "info",
+  //     message: "REQUEST END " + pathname,
+  //   },
+  //   {
+  //     durationMs,
+  //     method: req.method,
+  //     url: req.url,
+  //     status: res.status,
+  //   },
+  //   {
+  //     built: built,
+  //   },
+  // );
 
   clearRequest(req.url);
   return res;

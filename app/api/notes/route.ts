@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\notes\route.ts
- * @LastEditTime: 2026-03-19 17:34:49
+ * @LastEditTime: 2026-03-28 23:48:13
  */
 
 import { NextResponse } from "next/server";
@@ -10,12 +10,12 @@ import { log } from "@/lib/log/logger";
 import { withLogging } from "@/lib/logging/withLogging";
 
 export const GET = withLogging(async (req: Request) => {
-  await log.api("notes", "Notes GET started");
+  // await log.api("notes", "Notes GET started");
 
   try {
     const session = await auth();
     if (!session?.user) {
-      await log.api("notes", "Unauthorized Notes GET");
+      // await log.api("notes", "Unauthorized Notes GET");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -25,13 +25,13 @@ export const GET = withLogging(async (req: Request) => {
       orderBy: { createdAt: "desc" },
     });
 
-    await log.api("notes", `Notes GET completed with ${notes.length} notes`, {
-      count: notes.length,
-    });
+    // await log.api("notes", `Notes GET completed with ${notes.length} notes`, {
+    //   count: notes.length,
+    // });
 
     return NextResponse.json({ notes });
   } catch (err: any) {
-    await log.api("notes", "Notes GET failed", { error: err.message });
+    // await log.api("notes", "Notes GET failed", { error: err.message });
     return NextResponse.json(
       { error: "Failed to load notes" },
       { status: 500 },
@@ -39,12 +39,12 @@ export const GET = withLogging(async (req: Request) => {
   }
 });
 export const POST = withLogging(async (req: Request) => {
-  await log.api("notes", "Notes POST started");
+  // await log.api("notes", "Notes POST started");
 
   try {
     const session = await auth();
     if (!session?.user) {
-      await log.api("notes", "Unauthorized Notes POST");
+      // await log.api("notes", "Unauthorized Notes POST");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -63,19 +63,19 @@ export const POST = withLogging(async (req: Request) => {
       },
     });
 
-    await log.api("notes", "Note created", {
-      noteId: note.id,
-      title: note.title,
-      userEmail: email,
-    });
+    // await log.api("notes", "Note created", {
+    //   noteId: note.id,
+    //   title: note.title,
+    //   userEmail: email,
+    // });
 
-    await log.api("notes", "Notes POST completed", {
-      noteId: note.id,
-    });
+    // await log.api("notes", "Notes POST completed", {
+    //   noteId: note.id,
+    // });
 
     return NextResponse.json({ note });
   } catch (err: any) {
-    await log.api("notes", "Notes POST failed", { error: err.message });
+    // await log.api("notes", "Notes POST failed", { error: err.message });
     return NextResponse.json(
       { error: "Failed to create note" },
       { status: 500 },
@@ -83,12 +83,12 @@ export const POST = withLogging(async (req: Request) => {
   }
 });
 export const PUT = withLogging(async (req: Request) => {
-  await log.api("notes", "Notes PUT started");
+  // await log.api("notes", "Notes PUT started");
 
   try {
     const session = await auth();
     if (!session?.user) {
-      await log.api("notes", "Unauthorized Notes PUT");
+      // await log.api("notes", "Unauthorized Notes PUT");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -121,16 +121,16 @@ export const PUT = withLogging(async (req: Request) => {
 
     const updatedNote = await db.note.findUnique({ where: { id } });
 
-    await log.api("notes", "Note updated", {
-      noteId: id,
-      originalTitle: original?.title,
-      newTitle: updatedNote?.title,
-      isArchived,
-    });
+    // await log.api("notes", "Note updated", {
+    //   noteId: id,
+    //   originalTitle: original?.title,
+    //   newTitle: updatedNote?.title,
+    //   isArchived,
+    // });
 
     return NextResponse.json({ note: updatedNote });
   } catch (err: any) {
-    await log.api("notes", "Notes PUT failed", { error: err.message });
+    // await log.api("notes", "Notes PUT failed", { error: err.message });
     return NextResponse.json(
       { error: "Failed to update note" },
       { status: 500 },
@@ -138,12 +138,12 @@ export const PUT = withLogging(async (req: Request) => {
   }
 });
 export const DELETE = withLogging(async (req: Request) => {
-  await log.api("notes", "Notes DELETE started");
+  // await log.api("notes", "Notes DELETE started");
 
   try {
     const session = await auth();
     if (!session?.user) {
-      await log.api("notes", "Unauthorized Notes DELETE");
+      // await log.api("notes", "Unauthorized Notes DELETE");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -165,15 +165,15 @@ export const DELETE = withLogging(async (req: Request) => {
       return NextResponse.json({ error: "Note not found" }, { status: 404 });
     }
 
-    await log.api("notes", "Note deleted", {
-      noteId: id,
-      title: noteToDelete?.title,
-      userEmail: email,
-    });
+    // await log.api("notes", "Note deleted", {
+    //   noteId: id,
+    //   title: noteToDelete?.title,
+    //   userEmail: email,
+    // });
 
     return NextResponse.json({ success: true });
   } catch (err: any) {
-    await log.api("notes", "Notes DELETE failed", { error: err.message });
+    // await log.api("notes", "Notes DELETE failed", { error: err.message });
     return NextResponse.json(
       { error: "Failed to delete note" },
       { status: 500 },
