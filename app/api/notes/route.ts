@@ -1,16 +1,31 @@
 /*
  * @FilePath: \my-new-app\app\api\notes\route.ts
- * @LastEditTime: 2026-03-28 23:48:13
+ * @LastEditTime: 2026-03-29 00:40:17
  */
 
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
-import { log } from "@/lib/log/logger";
+import { logj } from "@/lib/log/logj";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { withLogging } from "@/lib/logging/withLogging";
 
 export const GET = withLogging(async (req: Request) => {
-  // await log.api("notes", "Notes GET started");
+  // Build context INSIDE the request handler
+  const built = await buildUniversalContext(req as any, "NOTES");
+  await logj({
+    domain: "notes",
+    level: "info",
+    message: "Notes GET started",
+    file: "app\api\notes\route.ts",
+    line: 16,
+    payload: {
+      some: "data",
+    },
+    meta: {
+      built,
+    },
+  });
 
   try {
     const session = await auth();
