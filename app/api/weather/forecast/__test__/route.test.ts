@@ -165,7 +165,7 @@ describe("GET /api/weather/forecast", () => {
     expect(json.source).toBe("api");
     expect(json.current.temperature).toBe(32);
 
-    expect(mockedLog).toHaveBeenCalledTimes(3);
+    expect(mockedLog).toHaveBeenCalledTimes(4);
     expect(mockedDb.forecastSnapshot.create).toHaveBeenCalled();
   });
 
