@@ -1,7 +1,6 @@
 import { db } from "@/lib/db";
 import { axiomIngest } from "@/lib/axiom";
 import { z } from "zod";
-import type { Prisma } from "@prisma/client";
 
 const NEON_MAX_JSON = 200_000;
 
@@ -139,8 +138,8 @@ export async function logj(input: LogjInput) {
     await db.log.create({
       data: {
         ...record,
-      payload: record.payload as Prisma.JsonValue,
-      meta: record.meta as Prisma.JsonValue,
+      payload: record.payload as any,
+      meta: record.meta as any,
       },
     });
 
