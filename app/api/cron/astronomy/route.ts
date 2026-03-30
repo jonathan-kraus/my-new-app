@@ -6,7 +6,6 @@ import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { addDays, format } from "date-fns";
 import { buildAstronomySnapshot } from "@/lib/buildAstronomySnapshot";
 
-
 export const runtime = "nodejs";
 
 // Force a date to local midnight
@@ -22,37 +21,37 @@ export async function GET(req: NextRequest) {
 
   for (const location of locations) {
     await logj({
-    domain: "ephemeris",
-    level: "info",
-    message: `astronomy.cron.location.started for ${location.name}`,
-    file: "app/api/cron/astronomy/route.ts",
-    line: 24,
-    payload: {
-      name: location.name,
-    },
-    meta: {
-      built,
-    },
-  });
+      domain: "ephemeris",
+      level: "info",
+      message: `astronomy.cron.location.started for ${location.name}`,
+      file: "app/api/cron/astronomy/route.ts",
+      line: 24,
+      payload: {
+        name: location.name,
+      },
+      meta: {
+        built,
+      },
+    });
     const base = atLocalMidnight(new Date());
 
     for (let i = 0; i < 7; i++) {
       const targetDate = addDays(base, i);
       const dateString = format(targetDate, "yyyy-MM-dd");
 
-await logj({
-    domain: "ephemeris",
-    level: "info",
-    message: `astronomy.cron.day.started count ${i} `,
-    file: "app/api/cron/astronomy/route.ts",
-    line: 43,
-    payload: {
-      count: i,
-    },
-    meta: {
-      built,
-    },
-  });
+      await logj({
+        domain: "ephemeris",
+        level: "info",
+        message: `astronomy.cron.day.started count ${i} `,
+        file: "app/api/cron/astronomy/route.ts",
+        line: 43,
+        payload: {
+          count: i,
+        },
+        meta: {
+          built,
+        },
+      });
 
       // Build the full solar/lunar snapshot
       const snapshot = await buildAstronomySnapshot(location, targetDate);
@@ -75,20 +74,20 @@ await logj({
         create: row,
       });
     }
-        const durationMs = Date.now() - start;
-await logj({
-    domain: "ephemeris",
-    level: "info",
-    message: `astronomy.cron.location.upsert.completed`,
-    file: "app/api/cron/astronomy/route.ts",
-    line: 78,
-    payload: {
-      duration: durationMs,
-    },
-    meta: {
-      built,
-    },
-  });
+    const durationMs = Date.now() - start;
+    await logj({
+      domain: "ephemeris",
+      level: "info",
+      message: `astronomy.cron.location.upsert.completed`,
+      file: "app/api/cron/astronomy/route.ts",
+      line: 78,
+      payload: {
+        duration: durationMs,
+      },
+      meta: {
+        built,
+      },
+    });
 
     return NextResponse.json({ ok: true, durationMs });
   }

@@ -1,12 +1,24 @@
 // app/api/ping/route.ts
 import { NextResponse, NextRequest } from "next/server";
-import { log } from "@/lib/log/logger";
-import { setLogFile } from "@/lib/log/set-logfile";
+import { logj } from "@/lib/log/logj";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { auth } from "@/auth";
 import { headers } from "next/headers";
 import { fetchWeatherApi } from "openmeteo";
 
 export async function GET(req: NextRequest) {
+  const built = await buildUniversalContext(req, "PING");
+  await logj({
+    domain: "jonathan",
+    level: "info",
+    message: "Starting ping request for weather fetch",
+    file: "app/api/ping/route.ts",
+    line: 11,
+    payload: {},
+    meta: {
+      built,
+    },
+  });
   const params = {
     latitude: 40.15,
     longitude: -75.1,
@@ -48,7 +60,24 @@ export async function GET(req: NextRequest) {
     `\nTimezone: ${timezone} ${timezoneAbbreviation}`,
     `\nTimezone difference to GMT+0: ${utcOffsetSeconds}s`,
   );
-
+  await logj({
+    domain: "jonathan",
+    level: "info",
+    message: "Starting ping request for weather fetch",
+    file: "app/api/ping/route.ts",
+    line: 11,
+    payload: {
+      latitude: latitude,
+      longitude: longitude,
+      Elevation: elevation,
+      Timezone: timezone,
+      timezoneAbbreviation: timezoneAbbreviation,
+      utcOffsetSeconds: utcOffsetSeconds,
+    },
+    meta: {
+      built,
+    },
+  });
   const current = response.current()!;
 
   const daily = response.daily()!;
@@ -106,7 +135,23 @@ export async function GET(req: NextRequest) {
     `\nCurrent weather_code: ${weatherData.current.weather_code}`,
     `\nCurrent cloud_cover: ${weatherData.current.cloud_cover}`,
   );
-
+  await logj({
+    domain: "jonathan",
+    level: "info",
+    message: "Starting ping request for weather fetch",
+    file: "app/api/ping/route.ts",
+    line: 11,
+    payload: {
+      Currenttime: weatherData.current.time,
+      Currenttemperature_2m: weatherData.current.temperature_2m,
+      Currentprecipitation: weatherData.current.precipitation,
+      Currentweather_code: weatherData.current.weather_code,
+      Currentcloud_cover: weatherData.current.cloud_cover,
+    },
+    meta: {
+      built,
+    },
+  });
   console.log("\nDaily data:\n", weatherData.daily);
 
   const h = await headers(); // ✅ await the Promise
