@@ -31,7 +31,7 @@ export const GitHubWebhookSchema = z.object({
 
 export const POST = withLogging(async (req: Request) => {
   // Build context INSIDE the request handler
-  const built = await buildUniversalContext(req as any, "GITHUBWEBHOOK");
+  const built = await buildUniversalContext(req as any, "GITHUB");
 
   const raw = await req.text();
   if (!(await verifySignature(req, raw))) {

@@ -65,7 +65,7 @@ export async function GET(req: NextRequest) {
     level: "info",
     message: "Starting ping request for weather fetch",
     file: "app/api/ping/route.ts",
-    line: 11,
+    line: 63,
     payload: {
       latitude: latitude,
       longitude: longitude,
@@ -138,9 +138,9 @@ export async function GET(req: NextRequest) {
   await logj({
     domain: "jonathan",
     level: "info",
-    message: "Starting ping request for weather fetch",
+    message: "Retrieved ping weather fetch",
     file: "app/api/ping/route.ts",
-    line: 11,
+    line: 138,
     payload: {
       Currenttime: weatherData.current.time,
       Currenttemperature_2m: weatherData.current.temperature_2m,
