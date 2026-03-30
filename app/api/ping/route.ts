@@ -8,10 +8,16 @@ import { fetchWeatherApi } from "openmeteo";
 
 export const runtime = "nodejs";
 
-export async function GET(req: NextRequest) {
 
-  const h = await headers(); // ✅ await the Promise
+export async function GET(req: NextRequest) {
+    const h = await headers(); // ✅ await the Promise
   const session = await auth();
+  console.log("PING session:", session);
+  console.log("PING req:", req);
+console.log("PING cookies:", req.cookies.getAll());
+console.log("PING headers:", await headers());
+console.log("PING cookie header:", h.get("cookie"));
+
   const built = await buildUniversalContext(req, "PING");
   await logj({
     domain: "jonathan",
