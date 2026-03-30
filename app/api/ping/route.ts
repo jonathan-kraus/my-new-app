@@ -63,7 +63,7 @@ export async function GET(req: NextRequest) {
   await logj({
     domain: "jonathan",
     level: "info",
-    message: "Starting ping request for weather fetch",
+    message: "Ping retrieved open-meteo weather forecast",
     file: "app/api/ping/route.ts",
     line: 63,
     payload: {
@@ -138,7 +138,7 @@ export async function GET(req: NextRequest) {
   await logj({
     domain: "jonathan",
     level: "info",
-    message: "Retrieved ping weather fetch",
+    message: "ping processed weather data",
     file: "app/api/ping/route.ts",
     line: 138,
     payload: {
