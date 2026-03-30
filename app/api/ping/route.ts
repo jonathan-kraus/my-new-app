@@ -6,6 +6,8 @@ import { auth } from "@/auth";
 import { headers } from "next/headers";
 import { fetchWeatherApi } from "openmeteo";
 
+export const runtime = "nodejs";
+
 export async function GET(req: NextRequest) {
   const built = await buildUniversalContext(req, "PING");
   await logj({
