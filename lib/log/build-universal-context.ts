@@ -1,3 +1,7 @@
+/*
+ * @FilePath: \my-new-app\lib\log\build-universal-context.ts
+ * @LastEditTime: 2026-03-30 02:32:19
+ */
 import crypto from "crypto";
 import { NextRequest } from "next/server";
 import { auth } from "@/auth";
@@ -7,8 +11,11 @@ export async function buildUniversalContext(req: NextRequest, route: string) {
   const now = new Date();
 
   try {
-    const session = await auth(); // v5-safe inside route handlers
+    // Always attempt to load the session
+    // NextAuth v5-safe: returns null if no session
+    const session = await auth();
 
+    // Always enrich request context
     const ctx = await enrichContext(req);
 
     return {
@@ -19,7 +26,8 @@ export async function buildUniversalContext(req: NextRequest, route: string) {
       sessionUser: session?.user?.name ?? null,
       route,
     };
-  } catch {
+  } catch (err) {
+    // Fallback for pages, client-contaminated files, or edge failures
     return {
       ip: null,
       url: null,
