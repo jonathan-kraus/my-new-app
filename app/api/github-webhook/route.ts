@@ -92,7 +92,7 @@ const parsed = GitHubWebhookSchema.safeParse({
     repository: body.repository,
     sender: body.sender,
     installation: body.installation,
-    payload: body,
+
   });
 
   if (!parsed.success) {
