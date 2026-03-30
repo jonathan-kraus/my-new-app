@@ -69,6 +69,8 @@ export type GitHubWebhook = z.infer<typeof GitHubWebhookSchema>;
 
 export const POST = withLogging(async (req: Request) => {
   // Build context INSIDE the request handler
+  console.log("BODY USED?", req.bodyUsed);
+
   const built = await buildUniversalContext(req as any, "GITHUB");
 
   const raw = await req.text();
