@@ -163,7 +163,6 @@ export async function logit(
   // --- Flatten meta ---------------------------------------------------------
   const flatMeta = {
     requestId,
-    page: meta.page ?? null,
     built: meta.built ?? null,
     ...meta,
     userId: canonicalUserId,
@@ -185,7 +184,6 @@ export async function logit(
         requestId,
         payload: safeForNeon(flatPayload),
         meta: safeForNeon(flatMeta),
-        page: flatMeta.page,
         userId: canonicalUserId,
         sessionEmail: canonicalSessionEmail,
         sessionUser: canonicalSessionUser,
