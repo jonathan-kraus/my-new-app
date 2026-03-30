@@ -136,13 +136,11 @@ model Log {
   domain       String
   payload      Json
   meta         Json?
-  page         String?
   userId       String?
   sessionEmail String?
   sessionUser  String?
   file         String?
   line         Int?
-  data         Json?
   created_at   DateTime @default(now())
 
   @@index([created_at])
@@ -150,7 +148,6 @@ model Log {
   @@index([file])
   @@index([level])
   @@index([meta], type: Gin)
-  @@index([page])
   @@index([payload], type: Gin)
   @@index([requestId])
   @@index([sessionEmail])
