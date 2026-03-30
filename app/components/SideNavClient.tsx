@@ -10,7 +10,6 @@ import { NextEventCard } from "@/app/components/astronomy/NextEventCard";
 import { useSideNavActivationCounter } from "@/app/hooks/useSideNavActivationCounter";
 import { EmailSideNavLink } from "@/app/components/sidenav/EmailLink";
 
-
 type SideNavClientProps = {
   nextEventLabel: string;
   nextEventTime: Date | null;

@@ -9,17 +9,15 @@ import { cookies } from "next/headers";
 
 export const runtime = "nodejs";
 
-
 export async function GET(req: NextRequest) {
-    const h = await headers(); // ✅ await the Promise
+  const h = await headers(); // ✅ await the Promise
   const session = await auth();
   const c = await cookies();
-console.log("PING cookies:", c.getAll());
+  console.log("PING cookies:", c.getAll());
   console.log("PING session:", session);
   console.log("PING req:", req);
 
-
-console.log("PING cookie header:", h.get("cookie"));
+  console.log("PING cookie header:", h.get("cookie"));
 
   const built = await buildUniversalContext(req, "PING");
   await logj({

@@ -20,41 +20,42 @@ const axiom = new Axiom({ token: process.env.AXIOM_TOKEN! });
 /* -------------------------------------------------------------------------- */
 
 // Validates the *body* payload only — headers are read separately
-export const GitHubWebhookBodySchema = z.object({
-  action: z.string().optional(),
+export const GitHubWebhookBodySchema = z
+  .object({
+    action: z.string().optional(),
 
-  repository: z
-    .object({
-      name: z.string().optional(),
-      full_name: z.string().optional(),
-      id: z.number().optional(),
-      private: z.boolean().optional(),
-      owner: z
-        .object({
-          login: z.string().optional(),
-          id: z.number().optional(),
-          type: z.string().optional(),
-        })
-        .optional(),
-    })
-    .optional(),
+    repository: z
+      .object({
+        name: z.string().optional(),
+        full_name: z.string().optional(),
+        id: z.number().optional(),
+        private: z.boolean().optional(),
+        owner: z
+          .object({
+            login: z.string().optional(),
+            id: z.number().optional(),
+            type: z.string().optional(),
+          })
+          .optional(),
+      })
+      .optional(),
 
-  sender: z
-    .object({
-      login: z.string().optional(),
-      id: z.number().optional(),
-      type: z.string().optional(),
-    })
-    .optional(),
+    sender: z
+      .object({
+        login: z.string().optional(),
+        id: z.number().optional(),
+        type: z.string().optional(),
+      })
+      .optional(),
 
-  installation: z
-    .object({
-      id: z.number().optional(),
-    })
-    .optional(),
-})
-// Allow any extra fields GitHub may send for event types you don't explicitly model
-.passthrough();
+    installation: z
+      .object({
+        id: z.number().optional(),
+      })
+      .optional(),
+  })
+  // Allow any extra fields GitHub may send for event types you don't explicitly model
+  .passthrough();
 
 // Validates the full parsed webhook including headers
 export const GitHubWebhookSchema = z.object({

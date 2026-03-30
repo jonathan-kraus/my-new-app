@@ -1,5 +1,7 @@
 import * as cheerio from "cheerio";
-import { logit } from "@/lib/log/logit";
+import { logj } from "@/lib/log/logj";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { buildTestEmail } from "../../buildTestEmail";
 
 // -----------------------------
 // TYPES
@@ -88,6 +90,9 @@ export function parseAAEmail(
   html: string,
   receivedAt: Date,
 ): ParsedTravelSnapshot {
+  // -----------------------------
+  // HTML PARSING
+  // -----------------------------
   const fullyDecoded = decodeQuotedPrintable(html);
   const $ = cheerio.load(fullyDecoded);
 
@@ -241,36 +246,44 @@ export function parseAAEmail(
     // -----------------------------
     // LOGGING (shape you requested)
     // -----------------------------
-    logit(
-      "jonathan",
-      {
-        level: "info",
-        message: "aa-segment-debugging",
+    const built = {
+      ip: "34.228.247.225",
+      url: "https://www.kraus.my.id/api/ping",
+      zulu: "2026-03-30T17:45:12.421Z",
+      local: "3/30/2026, 1:45:12 PM",
+      route: "PING",
+      method: "GET",
+      userId: "UID-1234",
+      sessionEmail: "sessionEmail-1234",
+      sessionUser: "sessionUser-1234",
+    };
+    logj({
+      domain: "travel",
+      level: "info",
+      message: "aa-segment-debugging",
+      file: "lib/travel/parser/aa.ts",
+      line: 245,
+      payload: {
         i: segmentIndex,
-        date,
-        departureAirport,
-        departureCity,
-        departureTime,
-        arrivalAirport,
-        arrivalCity,
-        arrivalTime,
-        flightNumber,
-        operatedBy,
-        seats,
+        date: date,
+        departureAirport: departureAirport,
+        departureCity: departureCity,
+        departureTime: departureTime,
+        arrivalAirport: arrivalAirport,
+        arrivalCity: arrivalCity,
+        arrivalTime: arrivalTime,
+        flightNumber: flightNumber,
+        operatedBy: operatedBy,
+        seats: seats,
         depTree: debugTree($(depEl), $),
         arrTree: debugTree($(arrEl), $),
         rawSeatRow: clean(seatRow.text()),
         rawFlightCell: clean(flightCell.text()),
       },
-      { eventIndex },
-      {
-        requestId: requestId,
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", {
-          timeZone: "America/New_York",
-        }),
+      meta: {
+        built,
       },
-    );
+    });
 
     segments.push({
       date,
