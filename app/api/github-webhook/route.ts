@@ -1,4 +1,4 @@
-// app\api\github-webhook\route.ts
+// app/api/github-webhook/route.ts
 export const runtime = "nodejs";
 
 import crypto from "crypto";
@@ -15,10 +15,12 @@ import { z } from "zod";
 const gw = Number(await getConfig("github_webhook", "0"));
 const axiom = new Axiom({ token: process.env.AXIOM_TOKEN! });
 
-export const GitHubWebhookSchema = z.object({
-  event: z.string(),
-  delivery: z.string(),
+/* -------------------------------------------------------------------------- */
+/*                               ZOD SCHEMA                                   */
+/* -------------------------------------------------------------------------- */
 
+// Validates the *body* payload only — headers are read separately
+export const GitHubWebhookBodySchema = z.object({
   action: z.string().optional(),
 
   repository: z
@@ -50,18 +52,24 @@ export const GitHubWebhookSchema = z.object({
       id: z.number().optional(),
     })
     .optional(),
+})
+// Allow any extra fields GitHub may send for event types you don't explicitly model
+.passthrough();
 
-  // FIXED: Zod v3.21-compatible
-  payload: z.record(z.string(), z.unknown()).optional(),
+// Validates the full parsed webhook including headers
+export const GitHubWebhookSchema = z.object({
+  event: z.string(),
+  delivery: z.string(),
+  body: GitHubWebhookBodySchema,
 });
 
+export type GitHubWebhook = z.infer<typeof GitHubWebhookSchema>;
 
 /* -------------------------------------------------------------------------- */
 /*                                POST HANDLER                                */
 /* -------------------------------------------------------------------------- */
 
 export const POST = withLogging(async (req: Request) => {
-  // Build context INSIDE the request handler
   const built = await buildUniversalContext(req as any, "GITHUB");
 
   const raw = await req.text();
@@ -69,17 +77,27 @@ export const POST = withLogging(async (req: Request) => {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  const payload = JSON.parse(raw);
+  // Read headers first — these come from HTTP, not the JSON body
   const event = req.headers.get("x-github-event");
   const deliveryId = req.headers.get("x-github-delivery");
 
-  const commitMessage = await getCommitMessage(payload);
-  const sha = getSha(payload);
+  const payload = JSON.parse(raw);
 
-  const parsed = GitHubWebhookSchema.safeParse(payload);
+  // Validate by composing headers + body together
+  const parsed = GitHubWebhookSchema.safeParse({
+    event,
+    delivery: deliveryId,
+    body: payload,
+  });
+
   if (!parsed.success) {
     console.error("Invalid GitHub webhook", parsed.error.format());
+    // Optionally return early if you want strict validation:
+    // return new Response("Bad Request", { status: 400 });
   }
+
+  const commitMessage = await getCommitMessage(payload);
+  const sha = getSha(payload);
 
   await logj({
     domain: "jonathan",
