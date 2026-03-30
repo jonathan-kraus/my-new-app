@@ -138,8 +138,8 @@ export async function logj(input: LogjInput) {
     await db.log.create({
       data: {
         ...record,
-      payload: record.payload as any,
-      meta: record.meta as any,
+        payload: record.payload as any,
+        meta: record.meta as any,
       },
     });
 

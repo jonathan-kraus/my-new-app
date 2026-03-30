@@ -1,11 +1,11 @@
 /*
  * @FilePath: \my-new-app\app\page.tsx
- * @LastEditTime: 2026-03-28 23:50:42
+ * @LastEditTime: 2026-03-29 23:02:16
  */
 // app/page.tsx
 import { auth } from "@/auth";
-import { log } from "@/lib/log/logger";
-import { setLogFile } from "@/lib/log/set-logfile";
+import { logj } from "@/lib/log/logj";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { Button } from "@/components/ui/button";
 import CurrentWeatherCard from "@/app/components/dashboard/current-weather-card";
 import Link from "next/link";
@@ -24,15 +24,27 @@ function getGreeting(): string {
   if (hour < 17) return "Good afternoon";
   return "Good evening";
 }
-setLogFile("app/page.tsx");
-export default async function HomePage() {
+
+export default async function HomePage(req: Request) {
   // If you still need the full session object for richer logging, fetch it here
   const session = await auth();
   SessionSchema.parse(session); // throws if shape is unexpected
   // Use userId from the universal context if available, otherwise fall back to session
-  const userId = session?.user?.id ?? "JK";
+  const built = await buildUniversalContext(req as any, "DASHBOARD");
 
-  // log.action("jonathan", "** Dashboard Start **", {});
+  await logj({
+    domain: "jonathan",
+    level: "info",
+    message: `** Dashboard Start **`,
+    file: "app/page.tsx",
+    line: 31,
+    payload: {
+      some: "data",
+    },
+    meta: {
+      built,
+    },
+  });
 
   const location = await db.location.findFirst({
     where: { isDefault: true },
@@ -53,11 +65,21 @@ export default async function HomePage() {
     { cache: "no-store" },
   );
   const forecastData = await forecastRes.json();
-  // log.action("jonathan", "** Dashboard End **", {
-  //   location: location,
-  //   weatherData: weatherData,
-  //   forecastData: forecastData,
-  // });
+  await logj({
+    domain: "jonathan",
+    level: "info",
+    message: `** Dashboard End **`,
+    file: "app/page.tsx",
+    line: 64,
+    payload: {
+      location: location,
+      weatherData: weatherData,
+      forecastData: forecastData,
+    },
+    meta: {
+      built,
+    },
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-sky-600 to-sky-900 text-white p-8">
@@ -67,8 +89,8 @@ export default async function HomePage() {
           <h1 className="text-4xl font-semibold mb-1">
             {getGreeting()}, Jonathan.
           </h1>
-          <p className="text-sky-200">
-            Your weather system is online and running smoothly.
+          <p className="text-sky-400">
+            Your system is online and running smoothly.
           </p>
         </section>
 

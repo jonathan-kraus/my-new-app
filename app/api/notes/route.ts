@@ -44,18 +44,18 @@ export const GET = withLogging(async (req: Request) => {
     //   count: notes.length,
     // });
     await logj({
-    domain: "notes",
-    level: "info",
-    message: `Notes GET completed with ${notes.length} notes`,
-    file: "app/api/notes/route.ts",
-    line: 46,
-    payload: {
-      count: notes.length,
-    },
-    meta: {
-      built,
-    },
-  });
+      domain: "notes",
+      level: "info",
+      message: `Notes GET completed with ${notes.length} notes`,
+      file: "app/api/notes/route.ts",
+      line: 46,
+      payload: {
+        count: notes.length,
+      },
+      meta: {
+        built,
+      },
+    });
     return NextResponse.json({ notes });
   } catch (err: any) {
     // await log.api("notes", "Notes GET failed", { error: err.message });
