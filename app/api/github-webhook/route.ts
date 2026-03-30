@@ -1,3 +1,4 @@
+// app\api\github-webhook\route.ts
 export const runtime = "nodejs";
 
 import crypto from "crypto";
@@ -53,13 +54,11 @@ export const POST = withLogging(async (req: Request) => {
     domain: "jonathan",
     level: "info",
     message: "Github webhook processed " + event,
-    file: "app/api/email/test/route.ts",
-    line: 17,
-    payload: {
-      some: "data",
-    },
+    file: "app/api/github-webhook/route.ts",
+    line: 53,
+    payload: {},
     meta: {
-      built, // optional
+      built,
     },
   });
 
