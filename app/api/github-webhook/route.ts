@@ -16,14 +16,52 @@ const gw = Number(await getConfig("github_webhook", "0"));
 const axiom = new Axiom({ token: process.env.AXIOM_TOKEN! });
 
 export const GitHubWebhookSchema = z.object({
-  repository: z.object({
-    name: z.string(),
-  }),
-  action: z.string(),
-  sender: z.object({
-    login: z.string(),
-  }),
+  // GitHub always sends these headers (you pass them in)
+  event: z.string(),
+  delivery: z.string(),
+
+  // Optional for many events
+  action: z.string().optional(),
+
+  // Optional repository block
+  repository: z
+    .object({
+      name: z.string().optional(),
+      full_name: z.string().optional(),
+      id: z.number().optional(),
+      private: z.boolean().optional(),
+      owner: z
+        .object({
+          login: z.string().optional(),
+          id: z.number().optional(),
+          type: z.string().optional(),
+        })
+        .optional(),
+    })
+    .optional(),
+
+  // Optional sender block
+  sender: z
+    .object({
+      login: z.string().optional(),
+      id: z.number().optional(),
+      type: z.string().optional(),
+    })
+    .optional(),
+
+  // Optional installation block
+  installation: z
+    .object({
+      id: z.number().optional(),
+    })
+    .optional(),
+
+  // Catch‑all for event‑specific fields
+  payload: z.record(z.string(), z.unknown()).optional(),
+
 });
+
+export type GitHubWebhook = z.infer<typeof GitHubWebhookSchema>;
 
 /* -------------------------------------------------------------------------- */
 /*                                POST HANDLER                                */
@@ -38,25 +76,37 @@ export const POST = withLogging(async (req: Request) => {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  const payload = JSON.parse(raw);
+  const body = await req.json();
   const event = req.headers.get("x-github-event");
   const deliveryId = req.headers.get("x-github-delivery");
 
-  const commitMessage = await getCommitMessage(payload);
-  const sha = getSha(payload);
+  const commitMessage = await getCommitMessage(body);
+  const sha = getSha(body);
 
-  const parsed = GitHubWebhookSchema.safeParse(payload);
+const parsed = GitHubWebhookSchema.safeParse({
+    event,
+    deliveryId,
+    action: body.action,
+    repository: body.repository,
+    sender: body.sender,
+    installation: body.installation,
+    payload: body,
+  });
+
   if (!parsed.success) {
     console.error("Invalid GitHub webhook", parsed.error.format());
+    return new Response("Invalid payload", { status: 400 });
   }
+
+  const webhook = parsed.data;
 
   await logj({
     domain: "jonathan",
     level: "info",
     message: "Github webhook processed " + event,
     file: "app/api/github-webhook/route.ts",
-    line: 53,
-    payload: {},
+    line: 102,
+    payload: {webhook: webhook, commitMessage, sha, deliveryId, event},
     meta: {
       built,
     },
@@ -65,14 +115,14 @@ export const POST = withLogging(async (req: Request) => {
   const normalized = {
     eventId: deliveryId!,
     type: event ?? "unknown",
-    repo: payload.repository?.full_name ?? "unknown",
-    actor: payload.sender?.login ?? null,
-    status: payload.workflow_run?.status ?? payload.status ?? null,
-    conclusion: payload.workflow_run?.conclusion ?? null,
+    repo: body.repository?.full_name ?? "unknown",
+    actor: body.sender?.login ?? null,
+    status: body.workflow_run?.status ?? body.status ?? null,
+    conclusion: body.workflow_run?.conclusion ?? null,
     commitSha: sha ?? null,
     commitMessage: commitMessage ?? null,
-    url: payload.workflow_run?.html_url ?? null,
-    raw: payload,
+    url: body.workflow_run?.html_url ?? null,
+    raw: body,
   };
 
   await db.githubEvent.upsert({
