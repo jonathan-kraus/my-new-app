@@ -9,13 +9,16 @@ import { fetchWeatherApi } from "openmeteo";
 export const runtime = "nodejs";
 
 export async function GET(req: NextRequest) {
+
+  const h = await headers(); // ✅ await the Promise
+  const session = await auth();
   const built = await buildUniversalContext(req, "PING");
   await logj({
     domain: "jonathan",
     level: "info",
     message: "Starting ping request for weather fetch",
     file: "app/api/ping/route.ts",
-    line: 11,
+    line: 16,
     payload: {},
     meta: {
       built,
@@ -67,7 +70,7 @@ export async function GET(req: NextRequest) {
     level: "info",
     message: "Ping retrieved open-meteo weather forecast",
     file: "app/api/ping/route.ts",
-    line: 63,
+    line: 68,
     payload: {
       latitude: latitude,
       longitude: longitude,
@@ -142,7 +145,7 @@ export async function GET(req: NextRequest) {
     level: "info",
     message: "ping processed weather data",
     file: "app/api/ping/route.ts",
-    line: 138,
+    line: 143,
     payload: {
       Currenttime: weatherData.current.time,
       Currenttemperature_2m: weatherData.current.temperature_2m,
@@ -156,8 +159,6 @@ export async function GET(req: NextRequest) {
   });
   console.log("\nDaily data:\n", weatherData.daily);
 
-  const h = await headers(); // ✅ await the Promise
-  const session = await auth();
   // (await log.api("ephemeris", "Called Ping"),
   //   {
   //     Dailydata: weatherData.daily,
