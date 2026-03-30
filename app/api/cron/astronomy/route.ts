@@ -40,12 +40,19 @@ export async function GET(req: NextRequest) {
       const targetDate = addDays(base, i);
       const dateString = format(targetDate, "yyyy-MM-dd");
 
-      // await log.api("ephemeris", "astronomy.cron.day.started", {
-      //   locationId: location.id,
-      //   dateString: dateString,
-      //   targetDate: targetDate.toISOString(),
-      //   count: i,
-      // });
+await logj({
+    domain: "ephemeris",
+    level: "info",
+    message: `astronomy.cron.day.started count ${i} `,
+    file: "app/api/cron/astronomy/route.ts",
+    line: 43,
+    payload: {
+      count: i,
+    },
+    meta: {
+      built,
+    },
+  });
 
       // Build the full solar/lunar snapshot
       const snapshot = await buildAstronomySnapshot(location, targetDate);
@@ -68,11 +75,20 @@ export async function GET(req: NextRequest) {
         create: row,
       });
     }
-
-    // await log.api("ephemeris", "astronomy.cron.location.upsert.completed");
-
-    const durationMs = Date.now() - start;
-    // await log.api("ephemeris", "astronomy.cron.completed");
+        const durationMs = Date.now() - start;
+await logj({
+    domain: "ephemeris",
+    level: "info",
+    message: `astronomy.cron.location.upsert.completed`,
+    file: "app/api/cron/astronomy/route.ts",
+    line: 78,
+    payload: {
+      duration: durationMs,
+    },
+    meta: {
+      built,
+    },
+  });
 
     return NextResponse.json({ ok: true, durationMs });
   }
