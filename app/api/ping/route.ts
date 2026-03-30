@@ -5,6 +5,7 @@ import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { auth } from "@/auth";
 import { headers } from "next/headers";
 import { fetchWeatherApi } from "openmeteo";
+import { cookies } from "next/headers";
 
 export const runtime = "nodejs";
 
@@ -12,10 +13,12 @@ export const runtime = "nodejs";
 export async function GET(req: NextRequest) {
     const h = await headers(); // ✅ await the Promise
   const session = await auth();
+  const c = await cookies();
+console.log("PING cookies:", c.getAll());
   console.log("PING session:", session);
   console.log("PING req:", req);
-console.log("PING cookies:", req.cookies.getAll());
-console.log("PING headers:", await headers());
+
+
 console.log("PING cookie header:", h.get("cookie"));
 
   const built = await buildUniversalContext(req, "PING");
