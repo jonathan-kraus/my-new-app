@@ -1,7 +1,7 @@
 "use client";
 /*
  * @FilePath: \my-new-app\app\components\SideNavClient.tsx
- * @LastEditTime: 2026-03-17 17:02:39
+ * @LastEditTime: 2026-03-30 02:51:56
  */
 
 import Link from "next/link";
@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { NextEventCard } from "@/app/components/astronomy/NextEventCard";
 import { useSideNavActivationCounter } from "@/app/hooks/useSideNavActivationCounter";
 import { EmailSideNavLink } from "@/app/components/sidenav/EmailLink";
-import { logit } from "@/lib/log/logit.client";
+
 
 type SideNavClientProps = {
   nextEventLabel: string;
@@ -68,12 +68,7 @@ export default function SideNavClient({
   useEffect(() => {
     if (!formattedVersion) return;
 
-    logit(
-      "jonathan",
-      { level: "info", message: "SideNav mounted" },
-      { version: formattedVersion, activations },
-      { route: "/dashboard" },
-    );
+    console.log("SideNavClient loaded with version:", formattedVersion);
   }, [formattedVersion, activations, navItems]);
 
   return (
