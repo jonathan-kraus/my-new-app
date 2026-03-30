@@ -1,11 +1,11 @@
 // app/api/cron/astronomy/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { log } from "@/lib/log/logger";
-import { enrichContext } from "@/lib/log/context";
+import { logj } from "@/lib/log/logj";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { addDays, format } from "date-fns";
 import { buildAstronomySnapshot } from "@/lib/buildAstronomySnapshot";
-import { runDbTableStats } from "@/lib/cron/runDbTableStats";
+
 
 export const runtime = "nodejs";
 
@@ -16,22 +16,24 @@ function atLocalMidnight(d: Date) {
 
 export async function GET(req: NextRequest) {
   const start = Date.now();
-  const ctx = await enrichContext(req);
-  // await log.api("ephemeris", "astronomy.cron.started DB-tables first");
-
-  await runDbTableStats({
-    requestId: ctx.requestId,
-    route: ctx.route,
-    userId: ctx.userId,
-  });
-
-  // await log.api("ephemeris", "astronomy.cron.dbtables.completed");
+  const built = await buildUniversalContext(req, "ASTRONOMY");
 
   const locations = await db.location.findMany();
 
   for (const location of locations) {
-    // await log.api("ephemeris", "astronomy.cron.location.started");
-
+    await logj({
+    domain: "ephemeris",
+    level: "info",
+    message: `astronomy.cron.location.started for ${location.name}`,
+    file: "app/api/cron/astronomy/route.ts",
+    line: 24,
+    payload: {
+      name: location.name,
+    },
+    meta: {
+      built,
+    },
+  });
     const base = atLocalMidnight(new Date());
 
     for (let i = 0; i < 7; i++) {
