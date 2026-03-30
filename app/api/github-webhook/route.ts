@@ -16,14 +16,45 @@ const gw = Number(await getConfig("github_webhook", "0"));
 const axiom = new Axiom({ token: process.env.AXIOM_TOKEN! });
 
 export const GitHubWebhookSchema = z.object({
-  repository: z.object({
-    name: z.string(),
-  }),
-  action: z.string(),
-  sender: z.object({
-    login: z.string(),
-  }),
+  event: z.string(),
+  delivery: z.string(),
+
+  action: z.string().optional(),
+
+  repository: z
+    .object({
+      name: z.string().optional(),
+      full_name: z.string().optional(),
+      id: z.number().optional(),
+      private: z.boolean().optional(),
+      owner: z
+        .object({
+          login: z.string().optional(),
+          id: z.number().optional(),
+          type: z.string().optional(),
+        })
+        .optional(),
+    })
+    .optional(),
+
+  sender: z
+    .object({
+      login: z.string().optional(),
+      id: z.number().optional(),
+      type: z.string().optional(),
+    })
+    .optional(),
+
+  installation: z
+    .object({
+      id: z.number().optional(),
+    })
+    .optional(),
+
+  // FIXED: Zod v3.21-compatible
+  payload: z.record(z.string(), z.unknown()).optional(),
 });
+
 
 /* -------------------------------------------------------------------------- */
 /*                                POST HANDLER                                */
