@@ -71,7 +71,7 @@ export type GitHubWebhook = z.infer<typeof GitHubWebhookSchema>;
 /* -------------------------------------------------------------------------- */
 
 export const POST = withLogging(async (req: Request) => {
-  const built = await staticUniversalContext("GITHUB");
+  const built = staticUniversalContext("GITHUB");
 
   const raw = await req.text();
   if (!(await verifySignature(req, raw))) {
@@ -99,19 +99,6 @@ export const POST = withLogging(async (req: Request) => {
 
   const commitMessage = await getCommitMessage(payload);
   const sha = getSha(payload);
-
-  await logj({
-    domain: "jonathan",
-    level: "info",
-    message: "Github webhook processed " + event,
-    file: "app/api/github-webhook/route.ts",
-    line: 53,
-    payload: {},
-    meta: {
-      built,
-    },
-  });
-
   const normalized = {
     eventId: deliveryId!,
     type: event ?? "unknown",
@@ -124,7 +111,17 @@ export const POST = withLogging(async (req: Request) => {
     url: payload.workflow_run?.html_url ?? null,
     raw: payload,
   };
-
+  await logj({
+    domain: "jonathan",
+    level: "info",
+    message: "Github webhook processed " + event,
+    file: "app/api/github-webhook/route.ts",
+    line: 103,
+    payload: { event: event, type: normalized.type },
+    meta: {
+      built,
+    },
+  });
   await db.githubEvent.upsert({
     where: { eventId: normalized.eventId },
     update: normalized,
