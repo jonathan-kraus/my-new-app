@@ -1,8 +1,8 @@
 // lib/cron/runDbTableStats.ts
 import { db } from "@/lib/db";
-import { logit } from "@/lib/log/logit";
+import { logj } from "@/lib/log/logj";
+import { staticUniversalContext } from "@/lib/log/build-universal-context";
 
-const eventIndex = 22;
 const requestId = crypto.randomUUID();
 function atLocalMidnight(d: Date) {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate());
@@ -15,19 +15,21 @@ export async function runDbTableStats(ctx: {
 }) {
   const start = Date.now();
   const snapshotDate = atLocalMidnight(new Date());
-
-  await logit(
-    "db",
-    { level: "info", message: "dbTables.cron.started" },
-    { eventIndex },
-    {
-      requestId: requestId,
-      zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
+  const built = staticUniversalContext("runstats");
+    await logj({
+    domain: "jonathan",
+    level: "info",
+    message: "dbTables cron started",
+    file: "lib\cron\runDbTableStats.ts",
+    line: 19,
+    payload: {
+      date: snapshotDate.toISOString(),
     },
-  );
+    meta: {
+      built,
+    },
+  });
+
 
   const stats = await db.$queryRawUnsafe(`
     SELECT
@@ -81,22 +83,17 @@ export async function runDbTableStats(ctx: {
 
     tablesProcessed++;
   }
-
-  await logit(
-    "db",
-    {
-      level: "info",
-      message: "dbTables.cron.completed",
-      tablesProcessed,
-      durationMs: Date.now() - start,
+    await logj({
+    domain: "jonathan",
+    level: "info",
+    message: "dbTables cron completed",
+    file: "lib\cron\runDbTableStats.ts",
+    line: 86,
+    payload: {
+      tables: tablesProcessed,
     },
-    { eventIndex },
-    {
-      requestId: requestId,
-      zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
+    meta: {
+      built,
     },
-  );
+  });
 }
