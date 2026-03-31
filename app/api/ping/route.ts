@@ -77,7 +77,7 @@ export async function GET(req: NextRequest) {
     level: "info",
     message: "Ping retrieved open-meteo weather forecast",
     file: "app/api/ping/route.ts",
-    line: 68,
+    line: 75,
     payload: {
       latitude: latitude,
       longitude: longitude,
