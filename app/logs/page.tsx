@@ -87,15 +87,14 @@ export default function LogsPage() {
         const res = await fetch(`/api/logs?${params.toString()}`);
         const json = await res.json();
         try {
-          const result = await logFromClient("jonathan", {
-            level: "info",
-            message: "in log page",
-            Payload: {
-              scheduler: isSchedulerRunning(),
-              queueSize: peek().length,
-              name: "log page info",
-            },
-          });
+          const result = await logFromClient(
+            "jonathan",
+            "in log page",
+            "app/logs/page.tsx",
+            91,
+            { scheduler: isSchedulerRunning() },
+          );
+
           console.log("logFromClient result:", result);
         } catch (err) {
           console.error("logFromClient failed:", err);

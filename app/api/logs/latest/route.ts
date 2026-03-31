@@ -42,20 +42,17 @@ export async function GET(req: NextRequest) {
     });
   } catch (err: any) {
     try {
-      const result = await logFromClient("jonathan", {
-        level: "info",
-        message: "in log latest",
-      });
+      const result = await logFromClient(
+        "logs",
+        "Failed to fetch latest logs",
+        "app/api/logs/latest/route.ts",
+        45,
+        { error: err.message },
+      );
       console.log("logFromClient result:", result);
     } catch (err) {
       console.error("logFromClient failed:", err);
     }
-    // await logit({
-    //   level: "error",
-    //   message: "Failed to fetch latest logs",
-    //   file: "app/api/logs/latest/route.ts",
-    //   data: { error: err.message },
-    // });
 
     return NextResponse.json(
       { logs: [], error: "Internal Server Error" },

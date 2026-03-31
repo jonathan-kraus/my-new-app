@@ -16,7 +16,7 @@ export async function runDbTableStats(ctx: {
   const start = Date.now();
   const snapshotDate = atLocalMidnight(new Date());
   const built = staticUniversalContext("runstats");
-    await logj({
+  await logj({
     domain: "jonathan",
     level: "info",
     message: "dbTables cron started",
@@ -29,7 +29,6 @@ export async function runDbTableStats(ctx: {
       built,
     },
   });
-
 
   const stats = await db.$queryRawUnsafe(`
     SELECT
@@ -83,7 +82,7 @@ export async function runDbTableStats(ctx: {
 
     tablesProcessed++;
   }
-    await logj({
+  await logj({
     domain: "jonathan",
     level: "info",
     message: "dbTables cron completed",

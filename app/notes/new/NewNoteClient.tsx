@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { logFromClient } from "@/app/actions/log";
 
 type Props = {
   authorized: boolean;
@@ -30,8 +29,6 @@ export default function NewNoteClient({ authorized, userId }: Props) {
   ];
   const ctx = {
     requestId: crypto.randomUUID(),
-    page: "note",
-    userId: "JK",
   };
 
   async function handleSave() {
@@ -70,11 +67,6 @@ export default function NewNoteClient({ authorized, userId }: Props) {
         }, 1500);
       }
     } catch (err: any) {
-      await logFromClient("notes", {
-        level: "error",
-        message: "Failed to create note",
-      });
-
       console.error("NOTES API ERROR", err);
       setError("Unexpected error");
     } finally {

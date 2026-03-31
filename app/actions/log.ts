@@ -1,22 +1,25 @@
 "use server";
 // app/actions/log.ts
-import { logit } from "@/lib/log/logit";
+import { logj } from "@/lib/log/logj";
+import { staticUniversalContext } from "@/lib/log/build-universal-context";
 
-let eventIndex = 22;
-export async function logFromClient(domain: string, payload: any) {
-  return await logit(
-    domain,
-    {
-      level: payload?.level ?? "info",
-      message: payload?.message ?? "client log",
+export async function logFromClient(
+  domain: string,
+  message: string,
+  file: string,
+  line: number,
+  payload: any,
+) {
+  const built = await staticUniversalContext(domain);
+  return await logj({
+    domain: domain,
+    level: "info",
+    message: message,
+    file: file,
+    line: line,
+    payload: { payload },
+    meta: {
+      built,
     },
-    { eventIndex },
-    {
-      requestId: undefined,
-      zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
-    },
-  );
+  });
 }
