@@ -111,13 +111,14 @@ export const POST = withLogging(async (req: Request) => {
     url: payload.workflow_run?.html_url ?? null,
     raw: payload,
   };
+
   await logj({
     domain: "jonathan",
     level: "info",
     message: "Github webhook processed " + event,
     file: "app/api/github-webhook/route.ts",
-    line: 103,
-    payload: { event: event, type: normalized.type },
+    line: 115,
+    payload: { event: event, type: normalized.type, gw: gw },
     meta: {
       built,
     },
