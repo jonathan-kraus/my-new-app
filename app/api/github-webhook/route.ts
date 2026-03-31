@@ -4,7 +4,7 @@ export const runtime = "nodejs";
 import crypto from "crypto";
 import { Axiom } from "@axiomhq/js";
 import { logj } from "@/lib/log/logj";
-import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { staticUniversalContext } from "@/lib/log/build-universal-context";
 import { withLogging } from "@/lib/logging/withLogging";
 import { getConfig } from "@/lib/runtime/config";
 import { getSha } from "@/lib/github/parse";
@@ -71,7 +71,7 @@ export type GitHubWebhook = z.infer<typeof GitHubWebhookSchema>;
 /* -------------------------------------------------------------------------- */
 
 export const POST = withLogging(async (req: Request) => {
-  const built = await buildUniversalContext(req as any, "GITHUB");
+  const built = await staticUniversalContext("GITHUB");
 
   const raw = await req.text();
   if (!(await verifySignature(req, raw))) {
