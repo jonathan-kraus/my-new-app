@@ -3,7 +3,6 @@
 import { useEffect, useState, useRef } from "react";
 import { toast } from "react-hot-toast";
 
-
 type CurrentWeatherCardProps = {
   location: {
     id: string;
@@ -104,7 +103,7 @@ export default function CurrentWeatherCard({
 
   // Final log
   console.log(`Weather summary for ${location?.name ?? "null"}`);
- 
+
   return (
     <div className="p-4 rounded-xl bg-gradient-to-br from-indigo-700 to-sky-800 border border-white/10 shadow-md">
       <h3 className="text-lg font-semibold mb-2 text-white">Current Weather</h3>

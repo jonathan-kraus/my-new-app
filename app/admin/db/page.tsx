@@ -9,17 +9,17 @@ export default async function DashboardPage() {
   const [tables, history] = await Promise.all([getOverview(), getHistory()]);
   const built = await staticUniversalContext("DB");
 
-    await logj({
-      domain: "jonathan",
-      level: "info",
-      message: "Fetched DB overview and history",
-      file: "app/admin/db/page.tsx",
-      line: 12,
-      payload: { tablesCount: tables.length, historyCount: history.length, },
-      meta: {
-        built,
-      },
-    });
+  await logj({
+    domain: "jonathan",
+    level: "info",
+    message: "Fetched DB overview and history",
+    file: "app/admin/db/page.tsx",
+    line: 12,
+    payload: { tablesCount: tables.length, historyCount: history.length },
+    meta: {
+      built,
+    },
+  });
 
   return <DbDashboard tables={tables} history={history} />;
 }

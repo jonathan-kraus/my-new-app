@@ -61,18 +61,46 @@ export type LogjInput = {
 // ---------------------------------------------------------------------------
 // Safe JSON helpers
 // ---------------------------------------------------------------------------
-function safeForNeon(obj: any) {
+function safeForNeon(value: unknown): unknown {
   try {
-    const json = JSON.stringify(obj);
-    if (json.length > NEON_MAX_JSON) {
-      return { truncated: true, originalSize: json.length };
+    if (
+      value instanceof Request ||
+      value instanceof Response ||
+      value instanceof Headers ||
+      value instanceof ReadableStream
+    ) {
+      return { unsupported: true, type: value.constructor.name };
     }
-    if (obj === undefined) return null;
-    return obj;
+
+    if (typeof value === "object" && value !== null) {
+      const plain: Record<string, unknown> = {};
+      for (const [k, v] of Object.entries(value)) {
+        if (
+          v instanceof Request ||
+          v instanceof Response ||
+          v instanceof Headers ||
+          v instanceof ReadableStream
+        ) {
+          plain[k] = { unsupported: true, type: v.constructor.name };
+        } else {
+          plain[k] = v;
+        }
+      }
+
+      const json = JSON.stringify(plain);
+      if (json.length > NEON_MAX_JSON) {
+        return { truncated: true, originalSize: json.length };
+      }
+
+      return plain;
+    }
+
+    return value;
   } catch {
     return { truncated: true, error: "serialization_failed" };
   }
 }
+
 
 // ---------------------------------------------------------------------------
 // Main logj()
@@ -89,43 +117,45 @@ export async function logj(input: LogjInput) {
       meta = {},
     } = input;
 
-    // --- Canonical user/session extraction -----------------------------------
-    const canonicalUserId = (payload.userId ??
+    const canonicalUserId = (
+      payload.userId ??
       payload.session?.user?.id ??
       meta.built?.userId ??
-      null) as string | null;
+      "canu" ) as string
 
-    const canonicalSessionEmail = (payload.sessionEmail ??
+    const canonicalSessionEmail = (
+      payload.sessionEmail ??
       payload.session?.user?.email ??
       meta.built?.sessionEmail ??
-      null) as string | null;
+      "canse" ) as string
 
-    const canonicalSessionUser = (payload.sessionUser ??
+    const canonicalSessionUser = (
+      payload.sessionUser ??
       payload.session?.user?.name ??
       meta.built?.sessionUser ??
-      null) as string | null;
+      "cansu" ) as string
 
-    const requestId = (payload.requestId ??
+    const requestId = (
+      payload.requestId ??
       meta.requestId ??
       meta.built?.requestId ??
-      null) as string | null;
+      "canr" ) as string
 
-    // --- Build canonical record ----------------------------------------------
-    const canonical: CanonicalLogRecord = {
-      domain,
-      level,
-      message,
-      file,
-      line,
-      requestId,
-      userId: canonicalUserId,
-      sessionEmail: canonicalSessionEmail,
-      sessionUser: canonicalSessionUser,
-      payload: safeForNeon(payload) as any,
-      meta: safeForNeon(meta) as any,
-    };
+const canonical: CanonicalLogRecord = {
+  domain,
+  level,
+  message,
+  file,
+  line,
+  requestId,
+  userId: canonicalUserId,
+  sessionEmail: canonicalSessionEmail,
+  sessionUser: canonicalSessionUser,
+  payload: safeForNeon(payload) as Record<string, unknown>,
+  meta: safeForNeon(meta) as Record<string, unknown>,
+};
 
-    // --- Validate canonical record -------------------------------------------
+
     const parsed = CanonicalLogRecordSchema.safeParse(canonical);
     if (!parsed.success) {
       console.error("Invalid log record", parsed.error.flatten());
@@ -134,7 +164,6 @@ export async function logj(input: LogjInput) {
 
     const record = parsed.data;
 
-    // --- Write to Neon -------------------------------------------------------
     await db.log.create({
       data: {
         ...record,
@@ -143,7 +172,6 @@ export async function logj(input: LogjInput) {
       },
     });
 
-    // --- Axiom ingestion -----------------------------------------------------
     await axiomIngest([
       {
         domain,
@@ -158,3 +186,4 @@ export async function logj(input: LogjInput) {
     console.error("LOG ERROR:", err);
   }
 }
+
