@@ -1,7 +1,7 @@
 "use client";
 /*
  * @FilePath: \my-new-app\app\components\SideNavClient.tsx
- * @LastEditTime: 2026-03-30 02:51:56
+ * @LastEditTime: 2026-04-01 11:10:13
  */
 
 import Link from "next/link";
@@ -9,7 +9,8 @@ import { useEffect, useState } from "react";
 import { NextEventCard } from "@/app/components/astronomy/NextEventCard";
 import { useSideNavActivationCounter } from "@/app/hooks/useSideNavActivationCounter";
 import { EmailSideNavLink } from "@/app/components/sidenav/EmailLink";
-
+//import { logFromClient } from "@/app/actions/log";
+//import { staticUniversalContext } from "@/lib/log/build-universal-context";
 type SideNavClientProps = {
   nextEventLabel: string;
   nextEventTime: Date | null;
@@ -67,6 +68,8 @@ export default function SideNavClient({
   useEffect(() => {
     if (!formattedVersion) return;
 
+    //const built = staticUniversalContext("side-nav");
+    //logFromClient("jonathan", "Starting side-nav client", "components\SideNavClient.tsx", 16, {});
     console.log("SideNavClient loaded with version:", formattedVersion);
   }, [formattedVersion, activations, navItems]);
 
