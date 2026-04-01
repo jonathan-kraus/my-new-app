@@ -61,7 +61,7 @@ export type LogjInput = {
 // ---------------------------------------------------------------------------
 // Safe JSON helpers
 // ---------------------------------------------------------------------------
-function safeForNeon(value: unknown): unknown {
+export function safeForNeon(value: unknown): unknown {
   try {
     if (
       value instanceof Request ||
@@ -101,7 +101,6 @@ function safeForNeon(value: unknown): unknown {
   }
 }
 
-
 // ---------------------------------------------------------------------------
 // Main logj()
 // ---------------------------------------------------------------------------
@@ -117,44 +116,39 @@ export async function logj(input: LogjInput) {
       meta = {},
     } = input;
 
-    const canonicalUserId = (
-      payload.userId ??
+    const canonicalUserId = (payload.userId ??
       payload.session?.user?.id ??
       meta.built?.userId ??
-      "canu" ) as string
+      "canu") as string;
 
-    const canonicalSessionEmail = (
-      payload.sessionEmail ??
+    const canonicalSessionEmail = (payload.sessionEmail ??
       payload.session?.user?.email ??
       meta.built?.sessionEmail ??
-      "canse" ) as string
+      "canse") as string;
 
-    const canonicalSessionUser = (
-      payload.sessionUser ??
+    const canonicalSessionUser = (payload.sessionUser ??
       payload.session?.user?.name ??
       meta.built?.sessionUser ??
-      "cansu" ) as string
+      "cansu") as string;
 
-    const requestId = (
-      payload.requestId ??
+    const requestId = (payload.requestId ??
       meta.requestId ??
       meta.built?.requestId ??
-      "canr" ) as string
+      "canr") as string;
 
-const canonical: CanonicalLogRecord = {
-  domain,
-  level,
-  message,
-  file,
-  line,
-  requestId,
-  userId: canonicalUserId,
-  sessionEmail: canonicalSessionEmail,
-  sessionUser: canonicalSessionUser,
-  payload: safeForNeon(payload) as Record<string, unknown>,
-  meta: safeForNeon(meta) as Record<string, unknown>,
-};
-
+    const canonical: CanonicalLogRecord = {
+      domain,
+      level,
+      message,
+      file,
+      line,
+      requestId,
+      userId: canonicalUserId,
+      sessionEmail: canonicalSessionEmail,
+      sessionUser: canonicalSessionUser,
+      payload: safeForNeon(payload) as Record<string, unknown>,
+      meta: safeForNeon(meta) as Record<string, unknown>,
+    };
 
     const parsed = CanonicalLogRecordSchema.safeParse(canonical);
     if (!parsed.success) {
@@ -186,4 +180,3 @@ const canonical: CanonicalLogRecord = {
     console.error("LOG ERROR:", err);
   }
 }
-

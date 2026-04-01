@@ -3,7 +3,6 @@
 import { logFromClient } from "@/app/actions/log";
 import { useEffect, useMemo, useState } from "react";
 import { isSchedulerRunning } from "@/lib/log/scheduler";
-import { peek } from "@/lib/log/queue";
 
 type LogRecord = {
   id: string;
@@ -89,7 +88,7 @@ export default function LogsPage() {
         try {
           const result = await logFromClient(
             "jonathan",
-            "in log page",
+            "🌟 in log page",
             "app/logs/page.tsx",
             91,
             { scheduler: isSchedulerRunning() },
