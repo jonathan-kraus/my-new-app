@@ -63,7 +63,7 @@ const levelStyles: Record<
 };
 
 export default function LogsPage() {
-   const built =  staticUniversalContext("jonathan");
+  const built =  staticUniversalContext("jonathan");
   const [newCount, setNewCount] = useState(0);
 
   const [logs, setLogs] = useState<LogRecord[]>([]);
@@ -86,7 +86,10 @@ export default function LogsPage() {
         params.set("page", page.toString());
         if (search) params.set("q", search);
 
-
+        const res = await fetch(`/api/logs?${params.toString()}`);
+        const json = await res.json();
+        try {
+          const result = 111;
 // new log below
 await fetch("/api/log", {
   method: "POST",
@@ -96,14 +99,14 @@ await fetch("/api/log", {
     domain: "jonathan",
     message: "🌟 in log page",
     file: "app/logs/page.tsx",
-    line: 91,
+    line: 94,
     level: "info",
-    payload: { some: "data" },
+    payload: { noteId: "123" },
     meta: { built },
   }),
 });
 // new log above
-          console.log("logFromClient result:", load);
+          console.log("logFromClient result:", result);
         } catch (err) {
           console.error("logFromClient failed:", err);
         }
