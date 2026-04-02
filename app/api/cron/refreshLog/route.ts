@@ -1,79 +1,67 @@
 // app/api/cron/refreshLog/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { runDbTableStats } from "@/lib/cron/runDbTableStats";
-import { logit } from "@/lib/log/logit";
+import { logj } from "@/lib/log/logj";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 export const runtime = "nodejs";
-const eventIndex = 22;
+
 export async function GET(req: NextRequest) {
-  const requestId = crypto.randomUUID();
+  const built = await buildUniversalContext(req, "REFRESHLOG");
 
   try {
-    await logit(
-      "jonathan",
-      {
-        level: "info",
-        message: "cron.dbTableStats.started",
+    await logj({
+      domain: "jonathan",
+      level: "info",
+      message: `API cron refrehlog started`,
+      file: "app/api/cron/refreshLog/route.ts",
+      line: 13,
+      payload: {
+        some: "data",
       },
-      { eventIndex },
-      {
-        requestId,
-        route: "cron/dbTableStats",
-        userId: "JK",
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", {
-          timeZone: "America/New_York",
-        }),
+      meta: {
+        built,
       },
-    );
+    });
 
     await runDbTableStats({
-      requestId,
+      requestId: built.requestId,
       route: "cron/dbTableStats",
       userId: "JK",
     });
 
-    await logit(
-      "jonathan",
-      {
-        level: "info",
-        message: "cron.dbTableStats.completed",
+    await logj({
+      domain: "jonathan",
+      level: "info",
+      message: "API cron refreshlog completed",
+      file: "app/api/cron/refreshLog/route.ts",
+      line: 33,
+      payload: {
+        some: "data",
       },
-      { eventIndex },
-      {
-        requestId,
-        route: "cron/dbTableStats",
-        userId: "JK",
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", {
-          timeZone: "America/New_York",
-        }),
+      meta: {
+        built,
       },
-    );
+    });
 
     return NextResponse.json({
       ok: true,
       executedAt: new Date().toISOString(),
     });
   } catch (error: any) {
-    await logit(
-      "jonathan",
-      {
-        level: "error",
-        message: "cron.dbTableStats.error",
-        error: String(error?.message || error),
+    await logj({
+      domain: "jonathan",
+      level: "error",
+      message: "API cron refreshlog error",
+      file: "app/api/cron/refreshLog/route.ts",
+      line: 52,
+      payload: {
+        some: "data",
       },
-      { eventIndex },
-      {
-        requestId,
-        route: "cron/dbTableStats",
-        userId: "JK",
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", {
-          timeZone: "America/New_York",
-        }),
+      meta: {
+        built,
       },
-    );
+    });
 
     return NextResponse.json(
       { ok: false, error: "Error executing runDbTableStats" },
