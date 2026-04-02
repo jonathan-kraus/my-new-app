@@ -86,16 +86,7 @@ export default function LogsPage() {
         params.set("page", page.toString());
         if (search) params.set("q", search);
 
-        const res = await fetch(`/api/logs?${params.toString()}`);
-        const json = await res.json();
-        try {
-          const result = await logFromClient(
-            "jonathan",
-            "🌟 in log page",
-            "app/logs/page.tsx",
-            92,
-            { scheduler: isSchedulerRunning() },
-          );
+
 // new log below
 await fetch("/api/log", {
   method: "POST",
@@ -103,16 +94,16 @@ await fetch("/api/log", {
   keepalive: true,
   body: JSON.stringify({
     domain: "jonathan",
-    message: "new in log page new",
+    message: "🌟 in log page",
     file: "app/logs/page.tsx",
-    line: 100,
+    line: 91,
     level: "info",
-    payload: { noteId: "123" },
+    payload: { some: "data" },
     meta: { built },
   }),
 });
 // new log above
-          console.log("logFromClient result:", result);
+          console.log("logFromClient result:", load);
         } catch (err) {
           console.error("logFromClient failed:", err);
         }
