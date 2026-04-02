@@ -121,7 +121,8 @@ export const POST = withLogging(async (req: Request) => {
       "Github webhook processed " + event + " - " + normalized.displayTitle,
     file: "app/api/github-webhook/route.ts",
     line: 117,
-    payload: { event: event, type: normalized.type, gw: gw },
+    payload: { event: event, type: normalized.type,
+      displayTitle: normalized.displayTitle, gw: gw },
     meta: {
       built,
     },

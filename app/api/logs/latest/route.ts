@@ -1,6 +1,6 @@
 // app/api/logs/latest/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db"; // or your prisma import
+import { db } from "@/lib/db";
 import { logFromClient } from "@/app/actions/log";
 
 export const dynamic = "force-dynamic";
@@ -26,13 +26,7 @@ export async function GET(req: NextRequest) {
     }
 
     const logs = await db.log.findMany({
-      where: {
-        NOT: {
-          message: {
-            startsWith: "#1 REQUEST END",
-          },
-        },
-      },
+      where,                     // ⭐ THIS is the fix
       orderBy: { created_at: "desc" },
       take: 75,
     });
