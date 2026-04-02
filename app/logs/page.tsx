@@ -63,7 +63,7 @@ const levelStyles: Record<
 };
 
 export default function LogsPage() {
-  const built =  staticUniversalContext("jonathan");
+  const built = staticUniversalContext("jonathan");
   const [newCount, setNewCount] = useState(0);
 
   const [logs, setLogs] = useState<LogRecord[]>([]);
@@ -90,22 +90,22 @@ export default function LogsPage() {
         const json = await res.json();
         try {
           const result = 111;
-// new log below
-await fetch("/api/log", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  keepalive: true,
-  body: JSON.stringify({
-    domain: "jonathan",
-    message: "🌟 in log page",
-    file: "app/logs/page.tsx",
-    line: 94,
-    level: "info",
-    payload: { noteId: "123" },
-    meta: { built },
-  }),
-});
-// new log above
+          // new log below
+          await fetch("/api/log", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            keepalive: true,
+            body: JSON.stringify({
+              domain: "jonathan",
+              message: "🌟 in log page",
+              file: "app/logs/page.tsx",
+              line: 94,
+              level: "info",
+              payload: { noteId: "123" },
+              meta: { built },
+            }),
+          });
+          // new log above
           console.log("logFromClient result:", result);
         } catch (err) {
           console.error("logFromClient failed:", err);

@@ -36,7 +36,11 @@ export async function log(input: LogjInput): Promise<void> {
   }
 }
 
-log.info = (input: Omit<LogjInput, "level">) => log({ ...input, level: "info" });
-log.warn = (input: Omit<LogjInput, "level">) => log({ ...input, level: "warn" });
-log.error = (input: Omit<LogjInput, "level">) => log({ ...input, level: "error" });
-log.debug = (input: Omit<LogjInput, "level">) => log({ ...input, level: "debug" });
+log.info = (input: Omit<LogjInput, "level">) =>
+  log({ ...input, level: "info" });
+log.warn = (input: Omit<LogjInput, "level">) =>
+  log({ ...input, level: "warn" });
+log.error = (input: Omit<LogjInput, "level">) =>
+  log({ ...input, level: "error" });
+log.debug = (input: Omit<LogjInput, "level">) =>
+  log({ ...input, level: "debug" });

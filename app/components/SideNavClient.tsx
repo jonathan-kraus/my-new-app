@@ -1,7 +1,7 @@
 "use client";
 /*
  * @FilePath: \my-new-app\app\components\SideNavClient.tsx
- * @LastEditTime: 2026-04-01 11:10:13
+ * @LastEditTime: 2026-04-02 05:18:17
  */
 
 import Link from "next/link";
@@ -9,8 +9,7 @@ import { useEffect, useState } from "react";
 import { NextEventCard } from "@/app/components/astronomy/NextEventCard";
 import { useSideNavActivationCounter } from "@/app/hooks/useSideNavActivationCounter";
 import { EmailSideNavLink } from "@/app/components/sidenav/EmailLink";
-//import { logFromClient } from "@/app/actions/log";
-//import { staticUniversalContext } from "@/lib/log/build-universal-context";
+import { staticUniversalContext } from "@/lib/log/buildj";
 type SideNavClientProps = {
   nextEventLabel: string;
   nextEventTime: Date | null;
@@ -68,8 +67,23 @@ export default function SideNavClient({
   useEffect(() => {
     if (!formattedVersion) return;
 
-    //const built = staticUniversalContext("side-nav");
-    //logFromClient("jonathan", "Starting side-nav client", "components\SideNavClient.tsx", 16, {});
+    const built = staticUniversalContext("side-nav");
+    // new log below
+    fetch("/api/log", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      keepalive: true,
+      body: JSON.stringify({
+        domain: "jonathan",
+        message: "🌟 in log page",
+        file: "app\components\SideNavClient.tsx",
+        line: 69,
+        level: "info",
+        payload: { label: navItems[0].label, Version: formattedVersion },
+        meta: { built },
+      }),
+    });
+    // new log above
     console.log("SideNavClient loaded with version:", formattedVersion);
   }, [formattedVersion, activations, navItems]);
 
