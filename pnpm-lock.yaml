@@ -12,7 +12,7 @@ overrides:
   hono: ^4.12.7
   h3: ^1.15.9
   '@hono/node-server': ^1.19.10
-  lodash: ^4.17.23
+  lodash: ^4.18.0
   minimatch: ^10.2.3
   picomatch: ^4.0.4
   qs: ^6.14.2
@@ -5105,8 +5105,8 @@ packages:
   lodash.uniq@4.5.0:
     resolution: {integrity: sha512-xfBaXQd9ryd9dlSDvnvI0lvxfLJlYAZzXomUYzLKtUeOQvOP5piqAWuGtrhWeqaXK9hhoM/iyJc5AV+XfsX3HQ==}
 
-  lodash@4.17.23:
-    resolution: {integrity: sha512-LgVTMpQtIopCi79SJeDiP0TfWi5CNEc/L/aRdTh3yIvmZXTnheWpKjSZhnvMl8iXbC1tFg9gdHHDMLoV7CnG+w==}
+  lodash@4.18.1:
+    resolution: {integrity: sha512-dMInicTPVE8d1e5otfwmmjlxkZoUpiVLwyeTdUsi/Caj/gfzzblBcCE5sRHV/AsjuCmxWrte2TNGSYuCeCq+0Q==}
 
   long@5.3.2:
     resolution: {integrity: sha512-mNAgZ1GmyNhD7AuqnTG3/VQ26o760+ZYBPKjPvugO8+nLbYfX6TVpJPseBvopbdY+qpZ/lKUnmEc1LeZYS3QAA==}
@@ -10174,7 +10174,7 @@ snapshots:
       graceful-fs: 4.2.11
       is-stream: 2.0.1
       lazystream: 1.0.1
-      lodash: 4.17.23
+      lodash: 4.18.1
       normalize-path: 3.0.0
       readable-stream: 4.7.0
     optional: true
@@ -12267,7 +12267,7 @@ snapshots:
   lodash.uniq@4.5.0:
     optional: true
 
-  lodash@4.17.23:
+  lodash@4.18.1:
     optional: true
 
   long@5.3.2: {}
