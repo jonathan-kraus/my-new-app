@@ -1,3 +1,4 @@
+import "server-only";
 import { db } from "@/lib/db";
 import { axiomIngest } from "@/lib/axiom";
 import { z } from "zod";

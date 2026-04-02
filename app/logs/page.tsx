@@ -1,6 +1,8 @@
 "use client";
 // app/logs/page.tsx
 import { logFromClient } from "@/app/actions/log";
+import { log } from "@/lib/log";
+import { staticUniversalContext } from "@/lib/log/buildj";
 import { useEffect, useMemo, useState } from "react";
 import { isSchedulerRunning } from "@/lib/log/scheduler";
 
@@ -61,6 +63,7 @@ const levelStyles: Record<
 };
 
 export default function LogsPage() {
+   const built =  staticUniversalContext("jonathan");
   const [newCount, setNewCount] = useState(0);
 
   const [logs, setLogs] = useState<LogRecord[]>([]);
@@ -90,10 +93,25 @@ export default function LogsPage() {
             "jonathan",
             "🌟 in log page",
             "app/logs/page.tsx",
-            91,
+            92,
             { scheduler: isSchedulerRunning() },
           );
-
+// new log below
+await fetch("/api/log", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  keepalive: true,
+  body: JSON.stringify({
+    domain: "jonathan",
+    message: "new in log page new",
+    file: "app/logs/page.tsx",
+    line: 100,
+    level: "info",
+    payload: { noteId: "123" },
+    meta: { built },
+  }),
+});
+// new log above
           console.log("logFromClient result:", result);
         } catch (err) {
           console.error("logFromClient failed:", err);
