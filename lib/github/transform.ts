@@ -4,7 +4,7 @@ export function transformGitHubRun(payload: any) {
 
   return {
     id: wr.id,
-
+    displayTitle: wr.display_title ?? "no title",
     // Workflow metadata
     name: wr.name,
     repo: payload.repository?.full_name ?? null,

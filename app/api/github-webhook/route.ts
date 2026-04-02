@@ -98,6 +98,7 @@ export const POST = withLogging(async (req: Request) => {
   }
 
   const commitMessage = await getCommitMessage(payload);
+
   const sha = getSha(payload);
   const normalized = {
     eventId: deliveryId!,
@@ -108,6 +109,7 @@ export const POST = withLogging(async (req: Request) => {
     conclusion: payload.workflow_run?.conclusion ?? null,
     commitSha: sha ?? null,
     commitMessage: commitMessage ?? null,
+    displayTitle: payload.workflow_run?.display_title ?? "no title",
     url: payload.workflow_run?.html_url ?? null,
     raw: payload,
   };
@@ -115,9 +117,10 @@ export const POST = withLogging(async (req: Request) => {
   await logj({
     domain: "jonathan",
     level: "info",
-    message: "Github webhook processed " + event,
+    message:
+      "Github webhook processed " + event + " - " + normalized.displayTitle,
     file: "app/api/github-webhook/route.ts",
-    line: 115,
+    line: 117,
     payload: { event: event, type: normalized.type, gw: gw },
     meta: {
       built,
