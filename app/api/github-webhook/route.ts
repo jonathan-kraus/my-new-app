@@ -36,7 +36,7 @@ export const POST = withLogging(async (req: Request) => {
       event +
       (normalized.title ? ` - ${JSON.stringify(normalized.title)}` : ""),
     file: "app/api/github-webhook/route.ts",
-    line: 75,
+    line: 31,
     payload: { event, type: normalized.type, gw },
     meta: { built },
   });
