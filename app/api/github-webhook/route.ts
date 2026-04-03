@@ -41,11 +41,16 @@ export const POST = withLogging(async (req: Request) => {
     meta: { built },
   });
 
+try {
   await db.githubEvent.upsert({
     where: { eventId: deliveryId },
     update: normalized,
     create: { eventId: deliveryId, ...normalized },
   });
+} catch (err) {
+  console.error("DB ERROR:", err);
+  throw err;
+}
 
   return new Response("OK");
 });
