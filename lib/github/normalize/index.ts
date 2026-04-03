@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\lib\github\normalize\index.ts
- * @LastEditTime: 2026-04-02 23:09:46
+ * @LastEditTime: 2026-04-03 03:07:24
  */
 // lib/github/normalize/index.ts
 import { BaseNormalizedGitHubEvent, NormalizedGitHubEvent } from "./types";
@@ -11,7 +11,8 @@ import { normalizePush } from "./push";
 import { normalizePullRequest } from "./pullRequest";
 import { normalizeIssueComment } from "./issueComment";
 import { normalizeGeneric } from "./generic";
-
+import { logj } from "@/lib/log/logj";
+import { staticUniversalContext } from "@/lib/log/build-universal-context";
 export function normalizeGitHubEvent(
   event: string,
   payload: any,
@@ -19,7 +20,17 @@ export function normalizeGitHubEvent(
   const repo = payload.repository?.full_name ?? "unknown";
 
   let base: BaseNormalizedGitHubEvent;
-
+  const built = staticUniversalContext("GITHUB");
+  logj({
+    domain: "jonathan",
+    level: "info",
+    message:
+      "Github normalize processed ",
+    file: "app/api/github-webhook/route.ts",
+    line: 24,
+    payload: { repo: repo, event: event },
+    meta: { built },
+  });
   switch (event) {
     case "workflow_run":
       base = normalizeWorkflowRun(payload);
