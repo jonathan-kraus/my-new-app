@@ -7,68 +7,11 @@ import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/build-universal-context";
 import { withLogging } from "@/lib/logging/withLogging";
 import { getConfig } from "@/lib/runtime/config";
-import { getSha } from "@/lib/github/parse";
-import { getCommitMessage } from "@/lib/github";
+import { normalizeGitHubEvent } from "@/lib/github/normalize";
 import { db } from "@/lib/db";
-import { z } from "zod";
 
 const gw = Number(await getConfig("github_webhook", "0"));
 const axiom = new Axiom({ token: process.env.AXIOM_TOKEN! });
-
-/* -------------------------------------------------------------------------- */
-/*                               ZOD SCHEMA                                   */
-/* -------------------------------------------------------------------------- */
-
-// Validates the *body* payload only — headers are read separately
-export const GitHubWebhookBodySchema = z
-  .object({
-    action: z.string().optional(),
-
-    repository: z
-      .object({
-        name: z.string().optional(),
-        full_name: z.string().optional(),
-        id: z.number().optional(),
-        private: z.boolean().optional(),
-        owner: z
-          .object({
-            login: z.string().optional(),
-            id: z.number().optional(),
-            type: z.string().optional(),
-          })
-          .optional(),
-      })
-      .optional(),
-
-    sender: z
-      .object({
-        login: z.string().optional(),
-        id: z.number().optional(),
-        type: z.string().optional(),
-      })
-      .optional(),
-
-    installation: z
-      .object({
-        id: z.number().optional(),
-      })
-      .optional(),
-  })
-  // Allow any extra fields GitHub may send for event types you don't explicitly model
-  .passthrough();
-
-// Validates the full parsed webhook including headers
-export const GitHubWebhookSchema = z.object({
-  event: z.string(),
-  delivery: z.string(),
-  body: GitHubWebhookBodySchema,
-});
-
-export type GitHubWebhook = z.infer<typeof GitHubWebhookSchema>;
-
-/* -------------------------------------------------------------------------- */
-/*                                POST HANDLER                                */
-/* -------------------------------------------------------------------------- */
 
 export const POST = withLogging(async (req: Request) => {
   const built = staticUniversalContext("GITHUB");
@@ -78,67 +21,34 @@ export const POST = withLogging(async (req: Request) => {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  // Read headers first — these come from HTTP, not the JSON body
-  const event = req.headers.get("x-github-event");
-  const deliveryId = req.headers.get("x-github-delivery");
-
+  const event = req.headers.get("x-github-event") ?? "unknown";
+  const deliveryId =
+    req.headers.get("x-github-delivery") ?? crypto.randomUUID();
   const payload = JSON.parse(raw);
 
-  // Validate by composing headers + body together
-  const parsed = GitHubWebhookSchema.safeParse({
-    event,
-    delivery: deliveryId,
-    body: payload,
-  });
-
-  if (!parsed.success) {
-    console.error("Invalid GitHub webhook", parsed.error.format());
-    // Optionally return early if you want strict validation:
-    // return new Response("Bad Request", { status: 400 });
-  }
-
-  const commitMessage = await getCommitMessage(payload);
-
-  const sha = getSha(payload);
-  const normalized = {
-    eventId: deliveryId!,
-    type: event ?? "unknown",
-    repo: payload.repository?.full_name ?? "unknown",
-    actor: payload.sender?.login ?? null,
-    status: payload.workflow_run?.status ?? payload.status ?? null,
-    conclusion: payload.workflow_run?.conclusion ?? null,
-    commitSha: sha ?? null,
-    commitMessage: commitMessage ?? null,
-    displayTitle: payload.workflow_run?.display_title ?? "no title",
-    url: payload.workflow_run?.html_url ?? null,
-    raw: payload,
-  };
+  const normalized = normalizeGitHubEvent(event, payload);
 
   await logj({
     domain: "jonathan",
     level: "info",
     message:
-      "Github webhook processed " + event + " - " + normalized.displayTitle,
+      "Github webhook processed " +
+      event +
+      (normalized.title ? ` - ${JSON.stringify(normalized.title)}` : ""),
     file: "app/api/github-webhook/route.ts",
-    line: 117,
-    payload: { event: event, type: normalized.type,
-      displayTitle: normalized.displayTitle, gw: gw },
-    meta: {
-      built,
-    },
+    line: 75,
+    payload: { event, type: normalized.type, gw },
+    meta: { built },
   });
+
   await db.githubEvent.upsert({
-    where: { eventId: normalized.eventId },
+    where: { eventId: deliveryId },
     update: normalized,
-    create: normalized,
+    create: { eventId: deliveryId, ...normalized },
   });
 
   return new Response("OK");
 });
-
-/* -------------------------------------------------------------------------- */
-/*                         SIGNATURE VERIFICATION                             */
-/* -------------------------------------------------------------------------- */
 
 async function verifySignature(req: Request, body: string) {
   const signature = req.headers.get("x-hub-signature-256");

@@ -26,7 +26,7 @@ export async function GET(req: NextRequest) {
     }
 
     const logs = await db.log.findMany({
-      where,                     // ⭐ THIS is the fix
+      where, // ⭐ THIS is the fix
       orderBy: { created_at: "desc" },
       take: 75,
     });

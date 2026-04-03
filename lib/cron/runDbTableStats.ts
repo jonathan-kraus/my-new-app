@@ -54,20 +54,25 @@ export async function runDbTableStats(ctx: {
     );
 
     const count = result[0]?.count ?? 0;
-  await logj({
-    domain: "jonathan",
-    level: "info",
-    message: "dbTables update started for table " + row.table_name + " with " + count + " rows",
-    file: "lib\cron\runDbTableStats.ts",
-    line: 57,
-    payload: {
-      name: row.table_name,
-      count: count,
-    },
-    meta: {
-      built,
-    },
-  });
+    await logj({
+      domain: "jonathan",
+      level: "info",
+      message:
+        "dbTables update started for table " +
+        row.table_name +
+        " with " +
+        count +
+        " rows",
+      file: "lib\cron\runDbTableStats.ts",
+      line: 57,
+      payload: {
+        name: row.table_name,
+        count: count,
+      },
+      meta: {
+        built,
+      },
+    });
     await db.dbTableStats.upsert({
       where: {
         tableName_snapshotDate: {
