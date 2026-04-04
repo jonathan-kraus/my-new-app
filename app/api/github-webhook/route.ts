@@ -4,7 +4,7 @@ export const runtime = "nodejs";
 import crypto from "crypto";
 import { Axiom } from "@axiomhq/js";
 import { logj } from "@/lib/log/logj";
-import { staticUniversalContext } from "@/lib/log/build-universal-context";
+import { staticUniversalContext } from "@/lib/log/buildj";
 import { withLogging } from "@/lib/logging/withLogging";
 import { getConfig } from "@/lib/runtime/config";
 import { normalizeGitHubEvent } from "@/lib/github/normalize";

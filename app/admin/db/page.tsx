@@ -2,7 +2,7 @@
 import { getOverview, getHistory } from "@/lib/db/overview";
 import { DbDashboard } from "@/components/db-dashboard";
 import { logj } from "@/lib/log/logj";
-import { staticUniversalContext } from "@/lib/log/build-universal-context";
+import { staticUniversalContext } from "@/lib/log/buildj";
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {

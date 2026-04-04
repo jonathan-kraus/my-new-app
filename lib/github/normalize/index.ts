@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\lib\github\normalize\index.ts
- * @LastEditTime: 2026-04-03 03:14:29
+ * @LastEditTime: 2026-04-04 00:49:54
  */
 // lib/github/normalize/index.ts
 import { BaseNormalizedGitHubEvent, NormalizedGitHubEvent } from "./types";
@@ -12,7 +12,7 @@ import { normalizePullRequest } from "./pullRequest";
 import { normalizeIssueComment } from "./issueComment";
 import { normalizeGeneric } from "./generic";
 import { logj } from "@/lib/log/logj";
-import { staticUniversalContext } from "@/lib/log/build-universal-context";
+import { staticUniversalContext } from "@/lib/log/buildj";
 export function normalizeGitHubEvent(
   event: string,
   payload: any,
@@ -25,7 +25,7 @@ export function normalizeGitHubEvent(
     domain: "jonathan",
     level: "info",
     message: "Github normalize event - " + event,
-    file: "lib\github\normalize\index.ts",
+    file: "lib/github/normalize/index.ts",
     line: 24,
     payload: { repo: repo, event: event },
     meta: { built },

@@ -1,7 +1,7 @@
 "use server";
 // app/actions/log.ts
 import { logj } from "@/lib/log/logj";
-import { staticUniversalContext } from "@/lib/log/build-universal-context";
+import { staticUniversalContext } from "@/lib/log/buildj";
 
 export async function logFromClient(
   domain: string,

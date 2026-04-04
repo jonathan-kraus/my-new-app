@@ -1,7 +1,7 @@
 // lib/cron/runDbTableStats.ts
 import { db } from "@/lib/db";
 import { logj } from "@/lib/log/logj";
-import { staticUniversalContext } from "@/lib/log/build-universal-context";
+import { staticUniversalContext } from "@/lib/log/buildj";
 
 const requestId = crypto.randomUUID();
 function atLocalMidnight(d: Date) {
