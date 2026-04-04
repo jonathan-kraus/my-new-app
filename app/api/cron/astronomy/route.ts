@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { logj } from "@/lib/log/logj";
-import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { staticUniversalContext } from "@/lib/log/buildj";
 import { addDays, format } from "date-fns";
 import { buildAstronomySnapshot } from "@/lib/buildAstronomySnapshot";
 
@@ -15,7 +15,7 @@ function atLocalMidnight(d: Date) {
 
 export async function GET(req: NextRequest) {
   const start = Date.now();
-  const built = await buildUniversalContext(req, "ASTRONOMY");
+  const built = staticUniversalContext("ASTRONOMY");
 
   const locations = await db.location.findMany();
 
@@ -23,9 +23,9 @@ export async function GET(req: NextRequest) {
     await logj({
       domain: "ephemeris",
       level: "info",
-      message: `astronomy.cron.location.started for ${location.name}`,
+      message: `Astronomy cron location started for ${location.name}`,
       file: "app/api/cron/astronomy/route.ts",
-      line: 24,
+      line: 23,
       payload: {
         name: location.name,
       },
@@ -42,9 +42,9 @@ export async function GET(req: NextRequest) {
       await logj({
         domain: "ephemeris",
         level: "info",
-        message: `astronomy.cron.day.started count ${i} `,
+        message: `Astronomy cron day started for ${location.name} count ${i} `,
         file: "app/api/cron/astronomy/route.ts",
-        line: 43,
+        line: 42,
         payload: {
           count: i,
         },
@@ -78,7 +78,7 @@ export async function GET(req: NextRequest) {
     await logj({
       domain: "ephemeris",
       level: "info",
-      message: `astronomy.cron.location.upsert.completed`,
+      message: `Astronomy cron location upsert for ${location.name} completed`,
       file: "app/api/cron/astronomy/route.ts",
       line: 78,
       payload: {
