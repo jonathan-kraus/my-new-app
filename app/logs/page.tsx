@@ -89,9 +89,9 @@ export default function LogsPage() {
         const res = await fetch(`/api/logs?${params.toString()}`);
         const json = await res.json();
         try {
-          const result = 111;
+
           // new log below
-          await fetch("/api/log", {
+          const result = await fetch("/api/log", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             keepalive: true,
@@ -101,7 +101,7 @@ export default function LogsPage() {
               file: "app/logs/page.tsx",
               line: 94,
               level: "info",
-              payload: { noteId: "123" },
+              payload: { params: params },
               meta: { built },
             }),
           });
