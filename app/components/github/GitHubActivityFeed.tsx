@@ -1,8 +1,9 @@
 "use client";
-
+// app\components\github\GitHubActivityFeed.tsx
 import { useEffect, useState } from "react";
 import { GitHubActivityCard } from "./GitHubActivityCard";
 import { GitHubActivityEvent } from "@/lib/types";
+import { staticUniversalContext } from "@/lib/log/buildj";
 
 export default function GitHubActivityFeed() {
   const [activities, setActivities] = useState<GitHubActivityEvent[]>([]);
@@ -81,7 +82,20 @@ export default function GitHubActivityFeed() {
               source: "github" as const,
             };
           }
-
+          const built = staticUniversalContext("side-nav");
+    fetch("/api/log", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      keepalive: true,
+      body: JSON.stringify({
+        domain: "jonathan",
+        message: "🌟 in SideNav",
+        file: "app/components/github/GitHubActivityFeed.tsx",
+        line: 84,
+        level: "info",
+        payload: { name: item.name, url: item.html_url },
+        meta: { built },
+      })});
           // Handle commits (repositories and user activity)
           return {
             id: item.sha || `${item.repo}-${index}`,
