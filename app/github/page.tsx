@@ -1,38 +1,50 @@
 // app/github/page.tsx
 import { GitHubActivityCard } from "@/app/components/github/GitHubActivityCard";
 import { GitHubActivityEvent } from "@/lib/types";
+import { staticUniversalContext } from "@/lib/log/buildj";
 
 export const dynamic = "force-dynamic";
 console.log("🌟 Rendering GitHub activity page");
 async function fetchGitHubEvents(): Promise<GitHubActivityEvent[]> {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/activity/github`,
-    {
-      cache: "no-store",
-    },
-  );
+	const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/activity/github`, {
+		cache: "no-store",
+	});
 
-  if (!res.ok) return [];
-  const data = await res.json();
-  return data.activity ?? [];
+	if (!res.ok) return [];
+	const data = await res.json();
+	return data.activity ?? [];
 }
 
 export default async function GitHubPage() {
-  const events = await fetchGitHubEvents();
+	const events = await fetchGitHubEvents();
+	const built = staticUniversalContext("GitHubPage");
+	// new log below
+	fetch("/api/log", {
+		method: "POST",
+		headers: { "Content-Type": "application/json" },
+		keepalive: true,
+		body: JSON.stringify({
+			domain: "github",
+			message: "🌟 Rendering GitHub activity page",
+			file: "app/github/page.tsx",
+			line: 22,
+			level: "info",
+			payload: { eventsCount: events.length },
+			meta: { built },
+		}),
+	});
+	// new log above
+	return (
+		<div className="p-6 space-y-6">
+			<h1 className="text-2xl font-bold text-white">GitHub Activity</h1>
 
-  return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold text-white">GitHub Activity</h1>
+			{events.length === 0 && <p className="text-gray-400"> No recent GitHub events found. </p>}
 
-      {events.length === 0 && (
-        <p className="text-gray-400"> No recent GitHub events found. </p>
-      )}
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {events.map((event, i) => (
-          <GitHubActivityCard key={i} event={event} />
-        ))}
-      </div>
-    </div>
-  );
+			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+				{events.map((event, i) => (
+					<GitHubActivityCard key={i} event={event} />
+				))}
+			</div>
+		</div>
+	);
 }
