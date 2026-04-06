@@ -3,7 +3,7 @@ import { GitHubActivityCard } from "@/app/components/github/GitHubActivityCard";
 import { GitHubActivityEvent } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
-
+console.log("🌟 Rendering GitHub activity page");
 async function fetchGitHubEvents(): Promise<GitHubActivityEvent[]> {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/activity/github`,
