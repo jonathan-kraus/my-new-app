@@ -46,4 +46,3 @@ export async function buildUniversalContext(req: NextRequest, route: string) {
     };
   }
 }
-

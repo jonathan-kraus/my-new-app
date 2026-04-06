@@ -89,7 +89,6 @@ export default function LogsPage() {
         const res = await fetch(`/api/logs?${params.toString()}`);
         const json = await res.json();
         try {
-
           // new log below
           const result = await fetch("/api/log", {
             method: "POST",

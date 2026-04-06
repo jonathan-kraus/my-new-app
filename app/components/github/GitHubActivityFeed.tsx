@@ -83,20 +83,21 @@ export default function GitHubActivityFeed() {
             };
           }
           const built = staticUniversalContext("github-activity-feed");
-          console.log("🌟 Logging GitHub activity fetch"),
-    fetch("/api/log", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      keepalive: true,
-      body: JSON.stringify({
-        domain: "jonathan",
-        message: "Starting GitHub activity fetch",
-        file: "app/components/github/GitHubActivityFeed.tsx",
-        line: 87,
-        level: "info",
-        payload: { name: item.name, url: item.html_url },
-        meta: { built },
-      })});
+          (console.log("🌟 Logging GitHub activity fetch"),
+            fetch("/api/log", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              keepalive: true,
+              body: JSON.stringify({
+                domain: "jonathan",
+                message: "Starting GitHub activity fetch",
+                file: "app/components/github/GitHubActivityFeed.tsx",
+                line: 87,
+                level: "info",
+                payload: { name: item.name, url: item.html_url },
+                meta: { built },
+              }),
+            }));
           // Handle commits (repositories and user activity)
           return {
             id: item.sha || `${item.repo}-${index}`,

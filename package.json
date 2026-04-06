@@ -104,7 +104,7 @@
     "js-yaml": "^4.1.1",
     "lucide-react": "^1.7.0",
     "luxon": "^3.7.2",
-    "mailersend": "^2.7.0",
+    "mailersend": "^2.8.0",
     "mailparser": "^3.9.6",
     "next": "16.2.2",
     "next-auth": "5.0.0-beta.30",
