@@ -90,9 +90,9 @@ export default function GitHubActivityFeed() {
       keepalive: true,
       body: JSON.stringify({
         domain: "jonathan",
-        message: "🌟 in SideNav",
+        message: "Starting GitHub activity fetch",
         file: "app/components/github/GitHubActivityFeed.tsx",
-        line: 84,
+        line: 87,
         level: "info",
         payload: { name: item.name, url: item.html_url },
         meta: { built },
