@@ -82,7 +82,8 @@ export default function GitHubActivityFeed() {
               source: "github" as const,
             };
           }
-          const built = staticUniversalContext("side-nav");
+          const built = staticUniversalContext("github-activity-feed");
+          console.log("🌟 Logging GitHub activity fetch"),
     fetch("/api/log", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
