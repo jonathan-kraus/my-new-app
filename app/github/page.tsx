@@ -25,7 +25,7 @@ export default async function GitHubPage() {
       <h1 className="text-2xl font-bold text-white">GitHub Activity</h1>
 
       {events.length === 0 && (
-        <p className="text-gray-400"> No recent GitHub events found.</p>
+        <p className="text-gray-400"> No recent GitHub events found. </p>
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
