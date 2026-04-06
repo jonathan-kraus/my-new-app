@@ -108,7 +108,7 @@ model GithubEvent {
   commitSha     String?
   commitMessage String?
   title         String?
-  jobname       String?
+  jobName       String?
   url           String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
