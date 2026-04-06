@@ -2,6 +2,7 @@
 import { GitHubActivityCard } from "@/app/components/github/GitHubActivityCard";
 import { GitHubActivityEvent } from "@/lib/types";
 import { staticUniversalContext } from "@/lib/log/buildj";
+import { logj } from "@/lib/log/logj";
 
 export const dynamic = "force-dynamic";
 console.log("🌟 Rendering GitHub activity page");
@@ -19,20 +20,20 @@ export default async function GitHubPage() {
 	const events = await fetchGitHubEvents();
 	const built = staticUniversalContext("GitHubPage");
 	// new log below
-	fetch("/api/log", {
-		method: "POST",
-		headers: { "Content-Type": "application/json" },
-		keepalive: true,
-		body: JSON.stringify({
-			domain: "github",
-			message: "🌟 Rendering GitHub activity page",
-			file: "app/github/page.tsx",
-			line: 22,
-			level: "info",
-			payload: { eventsCount: events.length },
-			meta: { built },
-		}),
-	});
+	await logj({
+    domain: "github",
+    level: "info",
+    message: `fetchGitHubEvents returned ${events.length} events`,
+    file: "app/github/page.tsx",
+    line: 23,
+    payload: {
+      eventCount: events.length,
+    },
+    meta: {
+          built,
+        },
+      });
+
 	// new log above
 	return (
 		<div className="p-6 space-y-6">
