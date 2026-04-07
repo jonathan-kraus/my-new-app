@@ -107,6 +107,7 @@ export default function NotesClient() {
         body: JSON.stringify({
           id,
           isArchived: true,
+          isCompleted: true,
         }),
       });
 
