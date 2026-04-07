@@ -121,7 +121,7 @@ export const PUT = withLogging(async (req: Request) => {
 
     const email = session.user.email!;
     const body = await req.json();
-    const { id, title, content, followUpAt, isArchived, color } = body;
+    const { id, title, content, followUpAt, isArchived, isCompleted, color } = body;
 
     if (!id) {
       return NextResponse.json({ error: "Note ID required" }, { status: 400 });
@@ -138,6 +138,7 @@ export const PUT = withLogging(async (req: Request) => {
           followUpAt: followUpAt ? new Date(followUpAt) : null,
         }),
         ...(isArchived !== undefined && { isArchived }),
+        ...(isCompleted !== undefined && { isCompleted }),
         ...(color !== undefined && { color }),
       },
     });
