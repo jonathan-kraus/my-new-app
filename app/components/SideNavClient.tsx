@@ -1,7 +1,7 @@
 "use client";
 /*
  * @FilePath: \my-new-app\app\components\SideNavClient.tsx
- * @LastEditTime: 2026-04-06 23:19:04
+ * @LastEditTime: 2026-04-06 23:26:06
  */
 
 
@@ -73,7 +73,7 @@ export default function SideNavClient({
         domain: "jonathan",
         message: "🌟 in SideNav",
         file: "app/components/SideNavClient.tsx",
-        line: 72,
+        line: 68,
         level: "info",
         payload: { label: navItems[0].label, Version: formattedVersion },
         meta: { built },
@@ -92,18 +92,15 @@ export default function SideNavClient({
             : pathname.startsWith(item.href);
 
           return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-all ${
-                isActive
-                  ? "bg-white/20 font-semibold border-l-2 border-white"
-                  : "hover:bg-white/10"
-              }`}
-            >
-              <span className="text-xl">{item.icon}</span>
-              <span>{item.label}</span>
-            </Link>
+  <Link
+    key={item.href}
+    href={item.href}
+    className="flex items-center gap-3 px-4 py-2 rounded-lg transition-all hover:bg-white/10"
+    style={isActive ? { backgroundColor: 'rgba(255,255,255,0.2)', borderLeft: '2px solid white', fontWeight: '600' } : {}}
+  >
+    <span className="text-xl">{item.icon}</span>
+    <span>{item.label}</span>
+  </Link>
           );
         })}
 
