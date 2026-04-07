@@ -1,8 +1,9 @@
 "use client";
 /*
  * @FilePath: \my-new-app\app\components\SideNavClient.tsx
- * @LastEditTime: 2026-04-02 14:43:46
+ * @LastEditTime: 2026-04-06 23:19:04
  */
+
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -10,6 +11,8 @@ import { NextEventCard } from "@/app/components/astronomy/NextEventCard";
 import { useSideNavActivationCounter } from "@/app/hooks/useSideNavActivationCounter";
 import { EmailSideNavLink } from "@/app/components/sidenav/EmailLink";
 import { staticUniversalContext } from "@/lib/log/buildj";
+import { usePathname } from "next/navigation";
+
 type SideNavClientProps = {
   nextEventLabel: string;
   nextEventTime: Date | null;
@@ -20,29 +23,24 @@ export default function SideNavClient({
   nextEventTime,
 }: SideNavClientProps) {
   const activations = useSideNavActivationCounter();
-
-  // --- NEW: state for formatted version ---
+  const pathname = usePathname();
   const [formattedVersion, setFormattedVersion] = useState<string | null>(null);
 
-  // --- Load version.json on client only ---
   useEffect(() => {
     async function loadVersion() {
       try {
         const v = await import("../../version.json");
         const [major, minor, patch] = v.version.split(".");
-
         const formatted = [
           major.padStart(2, "0"),
           minor.padStart(2, "0"),
           patch.padStart(2, "0"),
         ].join(".");
-
         setFormattedVersion(formatted);
       } catch (err) {
         console.error("Failed to load version.json", err);
       }
     }
-
     loadVersion();
   }, []);
 
@@ -63,12 +61,10 @@ export default function SideNavClient({
     { href: "/admin/db", label: "Tables", icon: "🛢️" },
     { href: "/database-explorer", label: "Database Explorer", icon: "🛢️" },
   ];
-  // --- Log once version is available ---
+
   useEffect(() => {
     if (!formattedVersion) return;
-
     const built = staticUniversalContext("side-nav");
-    // new log below
     fetch("/api/log", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -83,23 +79,33 @@ export default function SideNavClient({
         meta: { built },
       }),
     });
-    // new log above
     console.log("SideNavClient loaded with version:", formattedVersion);
   }, [formattedVersion, activations, navItems]);
 
   return (
     <aside className="w-64 h-screen flex flex-col bg-slate-950 text-white shadow-xl">
       <nav className="flex-1 p-4 space-y-2 overflow-y-auto bg-gradient-to-b from-blue-600 via-blue-700 to-transparent">
-        {navItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-white/10 transition-all"
-          >
-            <span className="text-xl">{item.icon}</span>
-            <span>{item.label}</span>
-          </Link>
-        ))}
+
+        {navItems.map((item) => {
+          const isActive = item.href === "/"
+            ? pathname === "/"
+            : pathname.startsWith(item.href);
+
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-all ${
+                isActive
+                  ? "bg-white/20 font-semibold border-l-2 border-white"
+                  : "hover:bg-white/10"
+              }`}
+            >
+              <span className="text-xl">{item.icon}</span>
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
 
         <div className="mt-6">
           <div className="flex items-center gap-2">
