@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\notes\route.ts
- * @LastEditTime: 2026-03-29 00:47:23
+ * @LastEditTime: 2026-04-08 01:05:35
  */
 
 import { NextResponse } from "next/server";
@@ -9,6 +9,7 @@ import { db } from "@/lib/db";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { withLogging } from "@/lib/logging/withLogging";
+import { log } from "@/lib/log";
 
 export const GET = withLogging(async (req: Request) => {
   // Build context INSIDE the request handler
@@ -40,15 +41,12 @@ export const GET = withLogging(async (req: Request) => {
       orderBy: { createdAt: "desc" },
     });
 
-    // await log.api("notes", `Notes GET completed with ${notes.length} notes`, {
-    //   count: notes.length,
-    // });
     await logj({
       domain: "notes",
       level: "info",
       message: `Notes GET completed with ${notes.length} notes`,
       file: "app/api/notes/route.ts",
-      line: 46,
+      line: 43,
       payload: {
         count: notes.length,
       },
@@ -66,7 +64,20 @@ export const GET = withLogging(async (req: Request) => {
   }
 });
 export const POST = withLogging(async (req: Request) => {
-  // await log.api("notes", "Notes POST started");
+    const built = await buildUniversalContext(req as any, "NOTES");
+  await logj({
+    domain: "notes",
+    level: "info",
+    message: "🎶 Notes POST started 🎶",
+    file: "app/api/notes/route.ts",
+    line: 66,
+    payload: {
+      some: "data",
+    },
+    meta: {
+      built,
+    },
+  });
 
   try {
     const session = await auth();
@@ -89,16 +100,22 @@ export const POST = withLogging(async (req: Request) => {
         color: body.color ?? null,
       },
     });
-
-    // await log.api("notes", "Note created", {
-    //   noteId: note.id,
-    //   title: note.title,
-    //   userEmail: email,
-    // });
-
-    // await log.api("notes", "Notes POST completed", {
-    //   noteId: note.id,
-    // });
+  const built = await buildUniversalContext(req as any, "NOTES");
+  await logj({
+    domain: "notes",
+    level: "info",
+    message: "🎶 Note created 🎶",
+    file: "app/api/notes/route.ts",
+    line: 103,
+    payload: {
+       noteId: note.id,
+       title: note.title,
+       userEmail: email,
+    },
+    meta: {
+      built,
+    },
+  });
 
     return NextResponse.json({ note });
   } catch (err: any) {
@@ -148,14 +165,20 @@ export const PUT = withLogging(async (req: Request) => {
     }
 
     const updatedNote = await db.note.findUnique({ where: { id } });
-
-    // await log.api("notes", "Note updated", {
-    //   noteId: id,
-    //   originalTitle: original?.title,
-    //   newTitle: updatedNote?.title,
-    //   isArchived,
-    // });
-
+logj({
+      domain: "notes",
+      level: "info",
+      message: "🎶 Note updated 🎶",
+      file: "app/api/notes/route.ts",
+      line: 168,
+      payload: {
+        noteId: id,
+        title: updatedNote?.title,
+        isArchived,
+        isCompleted,
+        userEmail: email,
+      },
+    });
     return NextResponse.json({ note: updatedNote });
   } catch (err: any) {
     // await log.api("notes", "Notes PUT failed", { error: err.message });
@@ -166,7 +189,16 @@ export const PUT = withLogging(async (req: Request) => {
   }
 });
 export const DELETE = withLogging(async (req: Request) => {
-  // await log.api("notes", "Notes DELETE started");
+  logj({
+      domain: "notes",
+      level: "info",
+      message: "🎶 Notes DELETE started 🎶",
+      file: "app/api/notes/route.ts",
+      line: 192,
+      payload: {
+        some: "data",
+      },
+    });
 
   try {
     const session = await auth();
