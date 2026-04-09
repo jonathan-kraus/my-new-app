@@ -26,15 +26,6 @@ export default async function DashboardAstronomyPage() {
     solar!.sunrise.dateObj,
     solar!.sunset.dateObj,
   );
-  console.log("sunrise raw", solar!.sunrise.timestamp);
-  console.log("sunrise date", DateTime.fromISO(solar!.sunrise.timestamp));
-  console.log("sunset raw", solar!.sunset.timestamp);
-  console.log("sunset date", DateTime.fromISO(solar!.sunset.timestamp));
-  console.log("solarNoon", solarNoon);
-  const jnow = new Date();
-  console.log("now", jnow);
-  console.log("solarNoon > now?", solarNoon.getTime() > jnow.getTime());
-  console.log("COUNTDOWN COMPUTED AT:", new Date());
 
   return (
     <div className="p-6 space-y-10">
