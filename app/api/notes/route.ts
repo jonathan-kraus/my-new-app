@@ -64,7 +64,7 @@ export const GET = withLogging(async (req: Request) => {
   }
 });
 export const POST = withLogging(async (req: Request) => {
-    const built = await buildUniversalContext(req as any, "NOTES");
+  const built = await buildUniversalContext(req as any, "NOTES");
   await logj({
     domain: "notes",
     level: "info",
@@ -100,22 +100,22 @@ export const POST = withLogging(async (req: Request) => {
         color: body.color ?? null,
       },
     });
-  const built = await buildUniversalContext(req as any, "NOTES");
-  await logj({
-    domain: "notes",
-    level: "info",
-    message: "🎶 Note created 🎶",
-    file: "app/api/notes/route.ts",
-    line: 103,
-    payload: {
-       noteId: note.id,
-       title: note.title,
-       userEmail: email,
-    },
-    meta: {
-      built,
-    },
-  });
+    const built = await buildUniversalContext(req as any, "NOTES");
+    await logj({
+      domain: "notes",
+      level: "info",
+      message: "🎶 Note created 🎶",
+      file: "app/api/notes/route.ts",
+      line: 103,
+      payload: {
+        noteId: note.id,
+        title: note.title,
+        userEmail: email,
+      },
+      meta: {
+        built,
+      },
+    });
 
     return NextResponse.json({ note });
   } catch (err: any) {
@@ -138,7 +138,8 @@ export const PUT = withLogging(async (req: Request) => {
 
     const email = session.user.email!;
     const body = await req.json();
-    const { id, title, content, followUpAt, isArchived, isCompleted, color } = body;
+    const { id, title, content, followUpAt, isArchived, isCompleted, color } =
+      body;
 
     if (!id) {
       return NextResponse.json({ error: "Note ID required" }, { status: 400 });
@@ -165,7 +166,7 @@ export const PUT = withLogging(async (req: Request) => {
     }
 
     const updatedNote = await db.note.findUnique({ where: { id } });
-logj({
+    logj({
       domain: "notes",
       level: "info",
       message: "🎶 Note updated 🎶",
@@ -190,15 +191,15 @@ logj({
 });
 export const DELETE = withLogging(async (req: Request) => {
   logj({
-      domain: "notes",
-      level: "info",
-      message: "🎶 Notes DELETE started 🎶",
-      file: "app/api/notes/route.ts",
-      line: 192,
-      payload: {
-        some: "data",
-      },
-    });
+    domain: "notes",
+    level: "info",
+    message: "🎶 Notes DELETE started 🎶",
+    file: "app/api/notes/route.ts",
+    line: 192,
+    payload: {
+      some: "data",
+    },
+  });
 
   try {
     const session = await auth();
