@@ -12,20 +12,58 @@ export const runtime = "nodejs";
 function atLocalMidnight(d: Date) {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate());
 }
+async function cleanupOldLogs(days: number, built: any) {
+  const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+
+  // Count before
+  const beforeCount = await db.log.count();
+
+  // Delete
+  const result = await db.log.deleteMany({
+    where: {
+      created_at: {
+        lt: cutoff,
+      },
+    },
+  });
+
+  // Count after
+  const afterCount = await db.log.count();
+
+  // Log the cleanup
+  await logj({
+    domain: "logs",
+    level: "info",
+    message: `Log cleanup completed`,
+    file: "app/api/cron/astronomy/route.ts",
+    line: 34,
+    payload: {
+      beforeCount,
+      deleted: result.count,
+      afterCount,
+      cutoff: cutoff.toISOString(),
+    },
+    meta: {
+      built,
+    },
+  });
+
+  return result.count;
+}
 
 export async function GET(req: NextRequest) {
   const start = Date.now();
   const built = staticUniversalContext("ASTRONOMY");
 
   const locations = await db.location.findMany();
-
+  const durationMs = Date.now() - start;
   for (const location of locations) {
     await logj({
       domain: "ephemeris",
       level: "info",
       message: `Astronomy cron location started for ${location.name}`,
       file: "app/api/cron/astronomy/route.ts",
-      line: 23,
+      line: 61,
       payload: {
         name: location.name,
       },
@@ -44,7 +82,7 @@ export async function GET(req: NextRequest) {
         level: "info",
         message: `Astronomy cron day started for ${location.name} count ${i} `,
         file: "app/api/cron/astronomy/route.ts",
-        line: 42,
+        line: 80,
         payload: {
           count: i,
         },
@@ -74,13 +112,13 @@ export async function GET(req: NextRequest) {
         create: row,
       });
     }
-    const durationMs = Date.now() - start;
+
     await logj({
       domain: "ephemeris",
       level: "info",
       message: `Astronomy cron location upsert for ${location.name} completed`,
       file: "app/api/cron/astronomy/route.ts",
-      line: 78,
+      line: 116,
       payload: {
         duration: durationMs,
       },
@@ -88,7 +126,22 @@ export async function GET(req: NextRequest) {
         built,
       },
     });
+  const deleted = await cleanupOldLogs(60, built);
 
+  await logj({
+    domain: "ephemeris",
+    level: "info",
+    message: `Astronomy cron completed`,
+    file: "app/api/cron/astronomy/route.ts",
+    line: 131,
+    payload: {
+      durationMs,
+      logsDeleted: deleted,
+    },
+    meta: {
+      built,
+    },
+  });
     return NextResponse.json({ ok: true, durationMs });
   }
 }
