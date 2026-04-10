@@ -1,7 +1,6 @@
 // /api/config/read/route.ts
 import { queryAxiom } from "@/lib/axiom/query";
 import { NextResponse } from "next/server";
-import { logj } from '@/lib/log/logj';
 import { staticUniversalContext } from '@/lib/log/buildj';
 
 export async function GET() {
@@ -22,19 +21,21 @@ const built = staticUniversalContext("CONFIG");
     // Fetch rows
     const flightRows = (await queryAxiom(qFlight)) ?? [];
     const weatherRows = (await queryAxiom(qWeather)) ?? [];
-      await logj({
-        domain: "config",
-        level: "info",
+
+    fetch("/api/log", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      keepalive: true,
+      body: JSON.stringify({
+        domain: "jonathan",
         message: `reading config with ${flightRows.length} flight rows and ${weatherRows.length} weather rows`,
-        file: "app/api/config/read/route.ts",
+        file: "app/components/SideNavClient.tsx",
         line: 25,
-        payload: {
-          qweather: qWeather,
-        },
-        meta: {
-          built,
-        },
-      });
+        level: "info",
+        payload: { flightRows: flightRows.length, weatherRows: weatherRows.length },
+        meta: { built },
+      }),
+    });
     // Latest entries
     const flight = flightRows.at(-1) ?? null;
     const weather = weatherRows.at(-1) ?? null;
