@@ -9,7 +9,6 @@ import { getConfig } from "@/lib/runtime/config";
 const fcm = Number(await getConfig("FORECAST_CACHE_MINUTES", "10"));
 const FORECAST_CACHE_MINUTES = fcm;
 
-
 export async function GET(req: Request) {
   const session = await auth();
   const built = await buildUniversalContext(req as any, "FORECAST");
