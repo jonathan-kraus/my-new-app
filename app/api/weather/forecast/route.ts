@@ -9,7 +9,7 @@ import { getConfig } from "@/lib/runtime/config";
 const fcm = Number(await getConfig("FORECAST_CACHE_MINUTES", "10"));
 const FORECAST_CACHE_MINUTES = fcm;
 
-console.log("Forecast cache duration (minutes):", FORECAST_CACHE_MINUTES);
+
 export async function GET(req: Request) {
   const session = await auth();
   const built = await buildUniversalContext(req as any, "FORECAST");
@@ -33,7 +33,6 @@ export async function GET(req: Request) {
   // CACHE CHECK
   // ----------------------------------------
   const cutoff = new Date(Date.now() - FORECAST_CACHE_MINUTES * 60_000);
-  const eventIndex = 22;
   const cached = await db.forecastSnapshot.findFirst({
     where: { locationId, fetchedAt: { gte: cutoff } },
     orderBy: { fetchedAt: "desc" },
@@ -47,12 +46,12 @@ export async function GET(req: Request) {
       level: "info",
       message: `Forecast cache hit ${age}/${FORECAST_CACHE_MINUTES}`,
       file: "app/api/weather/forecast/route.ts",
-      line: 45,
+      line: 44,
       payload: {
         some: "data",
       },
       meta: {
-        built, // optional
+        built,
       },
     });
 
@@ -77,7 +76,7 @@ export async function GET(req: Request) {
     level: "info",
     message: "Forecast cache miss → fetching external API",
     file: "app/api/weather/forecast/route.ts",
-    line: 75,
+    line: 74,
     payload: {
       some: "data",
     },
@@ -103,7 +102,7 @@ export async function GET(req: Request) {
     level: "info",
     message: "Forecast API response",
     file: "app/api/weather/forecast/route.ts",
-    line: 101,
+    line: 100,
     payload: {
       parsed,
       raw,
@@ -121,7 +120,7 @@ export async function GET(req: Request) {
       level: "error",
       message: "Invalid forecast API response",
       file: "app/api/weather/forecast/route.ts",
-      line: 119,
+      line: 118,
       payload: {
         parsed,
         raw,
@@ -159,7 +158,7 @@ export async function GET(req: Request) {
     level: "info",
     message: "Forecast cache miss → fetching external API",
     file: "app/api/weather/forecast/route.ts",
-    line: 157,
+    line: 156,
     payload: {
       some: "data",
     },
@@ -172,7 +171,7 @@ export async function GET(req: Request) {
     level: "info",
     message: `Forecast snapshot stored, ${Math.round(weather.current_weather.temperature)}°F`,
     file: "app/api/weather/forecast/route.ts",
-    line: 170,
+    line: 169,
 
     payload: {
       snapshotId: snapshot.id,
