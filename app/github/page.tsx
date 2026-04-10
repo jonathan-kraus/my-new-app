@@ -5,7 +5,7 @@ import { staticUniversalContext } from "@/lib/log/buildj";
 import { logj } from "@/lib/log/logj";
 
 export const dynamic = "force-dynamic";
-console.log("🌟 Rendering GitHub activity page");
+
 async function fetchGitHubEvents(): Promise<GitHubActivityEvent[]> {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/activity/github`,
