@@ -5,20 +5,18 @@ import { withLogging } from "@/lib/logging/withLogging";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 export const GET = withLogging(async (req: Request) => {
-  // Build context INSIDE the request handler
   const built = await buildUniversalContext(req as any, "JONATHAN");
-  // Log the intentional failure
   await logj({
     domain: "jonathan",
     level: "info",
     message: "test-account message",
     file: "app/api/test-account/route.ts",
-    line: 11,
+    line: 9,
     payload: {
       some: "data",
     },
     meta: {
-      built, // optional
+      built,
     },
   });
 
