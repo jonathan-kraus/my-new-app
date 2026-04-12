@@ -1,19 +1,16 @@
 /*
  * @FilePath: \my-new-app\lib\server\travel\getNextTravelSnapshot.ts
- * @LastEditTime: 2026-04-12 03:03:56
+ * @LastEditTime: 2026-04-12 03:08:58
  */
 
 import { db } from "@/lib/db";
 import type { ParsedTravelSnapshot } from "@/lib/travel/parser/aa";
 
 export async function getNextTravelSnapshot(): Promise<ParsedTravelSnapshot | null> {
-	// 1. Fetch all snapshots with all related data
+	// 1. Fetch all snapshots with segments (the only relation)
 	const snapshots = await db.travelSnapshot.findMany({
 		include: {
 			segments: true,
-			passengers: true,
-			payment: true,
-			bags: true,
 		},
 	});
 
