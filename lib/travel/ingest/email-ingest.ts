@@ -2,59 +2,35 @@
 
 import fs from "fs";
 import path from "path";
+import { simpleParser } from "mailparser";
 import { db } from "@/lib/db";
 import { parseAAEmail } from "@/lib/travel/parser/aa";
 import { logit } from "@/lib/log/logit";
 
-
-// 1. Decode quoted-printable BEFORE extracting HTML
-function decodeQuotedPrintable(input: string): string {
-  return (
-    input
-      // remove soft line breaks
-      .replace(/=\r?\n/g, "")
-      // decode =XX hex escapes
-      .replace(/=([A-Fa-f0-9]{2})/g, (_, hex) =>
-        String.fromCharCode(parseInt(hex, 16)),
-      )
-  );
-}
-
-// 2. Extract only the HTML portion AFTER decoding
-function extractHtmlPart(eml: string): string {
-  const idx = eml.indexOf("<!DOCTYPE html>");
-  if (idx === -1) {
-    console.warn("WARNING: <!DOCTYPE html> not found — using full file");
-    return eml;
-  }
-  return eml.slice(idx);
-}
-
 export async function ingestTravelEmails() {
   console.log("INGEST: starting travel email ingestion");
 
-  // Dynamically detect .eml files in the folder
   const dir = path.join(process.cwd(), "travel-emails");
   const files = fs.readdirSync(dir).filter((f) => f.endsWith(".eml"));
   const eventIndex = 22;
   const requestId = crypto.randomUUID();
+
   if (files.length === 0) {
     throw new Error("No .eml files found in travel-emails/");
   }
 
-  // Sort by modified time descending
+  // Sort newest first
   const sorted = files
     .map((name) => {
       const full = path.join(dir, name);
       const stat = fs.statSync(full);
-      console.log("candidate=%s mtime=%s", full, stat.mtime.toISOString());
 
       logit(
         "jonathan",
         {
           level: "info",
           message: "Pick email: " + full,
-          full: full,
+          full,
           lastTwo: name.split("-").slice(-2).join("-") + ".eml",
         },
         { eventIndex },
@@ -62,35 +38,46 @@ export async function ingestTravelEmails() {
           file: "email-ingest.ts",
           route: "N/A",
           userId: undefined,
-          requestId: requestId,
+          requestId,
           zulu: new Date().toISOString(),
           local: new Date().toLocaleString("en-US", {
             timeZone: "America/New_York",
           }),
-        },
+        }
       );
+
       return { name, full, mtime: stat.mtime };
     })
     .sort((a, b) => b.mtime.getTime() - a.mtime.getTime());
 
   const { full: filePath } = sorted[0];
   console.log("INGEST: selected file =", filePath);
+
   const raw = fs.readFileSync(filePath, "utf8");
 
-  // *** CRITICAL FIX ***
-  // Decode BEFORE extracting HTML
-  const decodedEml = decodeQuotedPrintable(raw);
+  // ⭐ REAL MIME PARSING — this is the fix
+  const parsedMime = await simpleParser(raw);
 
-  // Extract HTML AFTER decoding
-  const html = extractHtmlPart(decodedEml);
+  let html: string | null = null;
+
+  if (parsedMime.html) {
+    html = parsedMime.html.toString();
+  } else if (parsedMime.textAsHtml) {
+    html = parsedMime.textAsHtml.toString();
+  }
+
+  if (!html) {
+    console.error("INGEST ERROR: No HTML part found in email");
+    throw new Error("No HTML part found in email");
+  }
 
   console.log("INGEST: extracted HTML length =", html.length);
 
-  // Parse the HTML
+  // ⭐ Parse AA itinerary from HTML
   const parsed = parseAAEmail(html, new Date());
   console.log("INGEST: parsed snapshot =", parsed);
 
-  // Write to DB
+  // ⭐ Write to DB
   const created = await db.travelSnapshot.create({
     data: {
       source: parsed.source,
@@ -110,8 +97,7 @@ export async function ingestTravelEmails() {
           arrivalTime: seg.arrivalTime,
           flightNumber: seg.flightNumber,
           operatedBy: seg.operatedBy,
-
-          seats: seg.seats, // String[]? in Prisma
+          seats: seg.seats,
         })),
       },
 
