@@ -120,7 +120,7 @@ export async function ingestTravelEmails() {
     },
   });
 
-  console.log(" INGEST: created DB row id =", created.id);
+  console.log("INGEST: created DB row id =", created.id);
 
   return created;
 }
