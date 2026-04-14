@@ -43,7 +43,7 @@ export async function ingestTravelEmails() {
           local: new Date().toLocaleString("en-US", {
             timeZone: "America/New_York",
           }),
-        }
+        },
       );
 
       return { name, full, mtime: stat.mtime };

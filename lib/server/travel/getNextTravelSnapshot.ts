@@ -7,38 +7,38 @@ import { db } from "@/lib/db";
 import type { ParsedTravelSnapshot } from "@/lib/travel/parser/aa";
 
 export async function getNextTravelSnapshot(): Promise<ParsedTravelSnapshot | null> {
-	// 1. Fetch all snapshots with segments (the only relation)
-	const snapshots = await db.travelSnapshot.findMany({
-		include: {
-			segments: true,
-		},
-	});
+  // 1. Fetch all snapshots with segments (the only relation)
+  const snapshots = await db.travelSnapshot.findMany({
+    include: {
+      segments: true,
+    },
+  });
 
-	if (snapshots.length === 0) return null;
+  if (snapshots.length === 0) return null;
 
-	// 2. Compute each trip's earliest segment date
-	const enriched = snapshots.map((snap) => {
-		const sortedSegments = [...snap.segments].sort(
-			(a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-		);
+  // 2. Compute each trip's earliest segment date
+  const enriched = snapshots.map((snap) => {
+    const sortedSegments = [...snap.segments].sort(
+      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+    );
 
-		return {
-			...snap,
-			sortedSegments,
-			startDate: new Date(sortedSegments[0].date),
-		};
-	});
+    return {
+      ...snap,
+      sortedSegments,
+      startDate: new Date(sortedSegments[0].date),
+    };
+  });
 
-	const now = new Date();
+  const now = new Date();
 
-	// 3. Filter to only future trips
-	const futureTrips = enriched.filter((t) => t.startDate >= now);
+  // 3. Filter to only future trips
+  const futureTrips = enriched.filter((t) => t.startDate >= now);
 
-	if (futureTrips.length === 0) return null;
+  if (futureTrips.length === 0) return null;
 
-	// 4. Sort future trips by start date
-	futureTrips.sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
+  // 4. Sort future trips by start date
+  futureTrips.sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
 
-	// 5. Return the soonest upcoming trip
-	return futureTrips[0] as unknown as ParsedTravelSnapshot;
+  // 5. Return the soonest upcoming trip
+  return futureTrips[0] as unknown as ParsedTravelSnapshot;
 }

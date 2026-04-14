@@ -126,22 +126,22 @@ export async function GET(req: NextRequest) {
         built,
       },
     });
-  const deleted = await cleanupOldLogs(60, built);
+    const deleted = await cleanupOldLogs(60, built);
 
-  await logj({
-    domain: "ephemeris",
-    level: "info",
-    message: `Astronomy cron completed`,
-    file: "app/api/cron/astronomy/route.ts",
-    line: 131,
-    payload: {
-      durationMs,
-      logsDeleted: deleted,
-    },
-    meta: {
-      built,
-    },
-  });
+    await logj({
+      domain: "ephemeris",
+      level: "info",
+      message: `Astronomy cron completed`,
+      file: "app/api/cron/astronomy/route.ts",
+      line: 131,
+      payload: {
+        durationMs,
+        logsDeleted: deleted,
+      },
+      meta: {
+        built,
+      },
+    });
     return NextResponse.json({ ok: true, durationMs });
   }
 }
