@@ -1,22 +1,22 @@
-/*
- * @FilePath: \my-new-app\.github\scripts\audit.js
- * @LastEditTime: 2026-04-15 17:14:40
- */
 
 import fs from "fs";
+import yaml from "js-yaml";
 
-const lock = JSON.parse(fs.readFileSync("pnpm-lock.yaml", "utf8")
-  .replace(/^\s*#.*$/gm, "") // strip comments
-  .replace(/:$/gm, ": null") // YAML edge cases
-);
+const lock = yaml.load(fs.readFileSync("pnpm-lock.yaml", "utf8"));
 
-const deps = lock.packages || {};
+const deps = lock.snapshots || {};
 const payload = {};
 
-for (const [key, pkg] of Object.entries(deps)) {
-  if (!pkg.version) continue;
-  const name = key.replace(/^node_modules\//, "");
-  payload[name] = [pkg.version];
+for (const key of Object.keys(deps)) {
+  // keys look like: "next@15.1.0" or "@auth/prisma-adapter@1.0.0(next@15.1.0)"
+  // strip peer dep suffix in parens first
+  const clean = key.replace(/\(.*\)$/, "");
+  const atIndex = clean.lastIndexOf("@");
+  if (atIndex <= 0) continue;
+  const name = clean.slice(0, atIndex);
+  const version = clean.slice(atIndex + 1);
+  if (!name || !version) continue;
+  payload[name] = [version];
 }
 
 console.log("🔍 Auditing", Object.keys(payload).length, "packages…");
