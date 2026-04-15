@@ -1,8 +1,7 @@
 /*
  * @FilePath: \my-new-app\.github\scripts\audit.js
- * @LastEditTime: 2026-04-15 16:21:40
+ * @LastEditTime: 2026-04-15 16:40:11
  */
-#!/usr/bin/env node
 
 import fs from "fs";
 import fetch from "node-fetch";
