@@ -2,10 +2,10 @@
 import { NextResponse } from "next/server";
 import { logj } from "@/lib/log/logj";
 import { withLogging } from "@/lib/logging/withLogging";
-import { staticUniversalContext } from "@/lib/log/buildj";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 export const GET = withLogging(async (req: Request) => {
-  const built = staticUniversalContext("JONATHAN");
+  const built = await buildUniversalContext(req as any, "JONATHAN");
   await logj({
     domain: "jonathan",
     level: "info",
