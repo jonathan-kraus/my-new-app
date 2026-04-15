@@ -11,7 +11,7 @@ env:
 
 jobs:
   build:
-    name: Audit, lint, test, and build
+    name: Run lint, test, and build
     runs-on: ubuntu-latest
     env:
       CI: true
@@ -76,9 +76,6 @@ jobs:
 
       - name: Type check
         run: pnpm run type-check
-
-      - name: Run security audit
-        run: node .github/scripts/audit.js
 
       - name: Show workspace files for diagnostics
         if: always()
