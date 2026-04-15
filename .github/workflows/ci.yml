@@ -76,6 +76,11 @@ jobs:
 
       - name: Type check
         run: pnpm run type-check
+        
+      - name: Run security audit
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: node .github/scripts/audit.js
 
       - name: Show workspace files for diagnostics
         if: always()
