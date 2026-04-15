@@ -110,7 +110,7 @@
     "mailersend": "^2.8.0",
     "mailparser": "^3.9.8",
     "next": "16.2.3",
-    "next-auth": "5.0.0-beta.30",
+    "next-auth": "5.0.0-beta.31",
     "next-axiom": "^1.10.0",
     "next-themes": "^0.4.6",
     "openmeteo": "^1.2.3",
