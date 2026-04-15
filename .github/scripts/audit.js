@@ -1,10 +1,9 @@
 /*
  * @FilePath: \my-new-app\.github\scripts\audit.js
- * @LastEditTime: 2026-04-15 16:40:11
+ * @LastEditTime: 2026-04-15 16:43:41
  */
 
 import fs from "fs";
-import fetch from "node-fetch";
 
 const lock = JSON.parse(fs.readFileSync("pnpm-lock.yaml", "utf8")
   .replace(/^\s*#.*$/gm, "") // strip comments
