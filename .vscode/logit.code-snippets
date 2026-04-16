@@ -1,23 +1,20 @@
 {
-  "Insert logit call": {
-    "prefix": "logit",
+  "Insert logj call": {
+    "prefix": "logj",
     "body": [
-      "await logit(",
-      "  \"$1\",",
-      "  { level: \"$2\", message: \"$3\" },",
-      "  {",
-      "    $4",
-      "  },",
-      "  {",
-      "    page: \"$TM_FILENAME\",",
-      "    requestId,",
-      "    userId,",
-      "    eventIndex,",
-      "    $5",
-      "  }",
-      ");",
-    ],
-    "description": "Insert a structured logit() call with domain, event, payload, and meta.",
+      "await logj({",
+    "domain: 'jonathan',"
+    "level: 'info',"
+    "message: \"$1\",",
+    "file: \"$TM_FILENAME\",",
+    "line: $2,",
+    "payload: { some: 'data' },"
+    "meta: {"
+      " built,",
+      "},",
+      "});",
+    ]
+    "description": "Insert a structured logj() call ",
   },
   "Set Log File (auto path)": {
     "prefix": "//s",

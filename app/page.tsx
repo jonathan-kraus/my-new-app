@@ -59,6 +59,18 @@ export default async function HomePage(req: Request) {
   );
   const weatherData = await weatherRes.json();
   WeatherSchema.parse(weatherData);
+await logj({
+domain: 'jonathan',
+level: 'info',
+message: "weatherData retrieved",
+file: "page.tsx",
+line: 62,
+payload: { some: 'data' },
+
+meta: {
+ built,
+},
+});
 
   const forecastRes = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/weather/forecast?locationId=${location?.id}`,
