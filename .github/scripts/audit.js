@@ -31,7 +31,7 @@ const res = await fetch(
 );
 
 if (!res.ok) {
-  console.error("❌ Audit API error:", res.status, await res.text());
+  console.error("❌ Audit API error: ", res.status, await res.text());
   process.exit(1);
 }
 
