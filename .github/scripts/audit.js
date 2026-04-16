@@ -19,7 +19,7 @@ for (const key of Object.keys(deps)) {
   payload[name] = [version];
 }
 
-console.log("🔍 Auditing", Object.keys(payload).length, "packages…");
+console.log("🔍 Auditing ", Object.keys(payload).length, "packages…");
 
 const res = await fetch(
   "https://registry.npmjs.org/-/npm/v1/security/advisories/bulk",
