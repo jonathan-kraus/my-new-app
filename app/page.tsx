@@ -80,7 +80,7 @@ export default async function HomePage(req: Request) {
   await logj({
     domain: "jonathan",
     level: "info",
-    message: `** Dashboard End **`,
+    message: `*** Dashboard End ***`,
     file: "app/page.tsx",
     line: 68,
     payload: {
