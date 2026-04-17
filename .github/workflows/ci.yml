@@ -76,6 +76,11 @@ jobs:
 
       - name: Type check
         run: pnpm run type-check
+      - name: Run security audit
+        env:
+          AXIOM_TOKEN: ${{ secrets.AXIOM_TOKEN }}
+          AXIOM_DATASET: ${{ secrets.AXIOM_DATASET }}
+        run: node .github/scripts/audit.js
 
       - name: Show workspace files for diagnostics
         run: |
