@@ -8,7 +8,7 @@ import { Axiom } from "@axiomhq/js";
 
 export async function GET(req: NextRequest) {
   const H21 = Date.now();
-
+  console.log(H21);
 
   console.log("DB TEST", H21, req);
   return NextResponse.json({ ok: true, time: H21 });
