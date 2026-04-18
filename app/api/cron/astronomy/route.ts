@@ -80,7 +80,7 @@ export async function GET(req: NextRequest) {
       await logj({
         domain: "ephemeris",
         level: "info",
-        message: `Astronomy cron day started for ${location.name} count ${i} `,
+        message: `Astronomy cron day started for ${location.name} count: ${i} `,
         file: "app/api/cron/astronomy/route.ts",
         line: 80,
         payload: {
