@@ -157,7 +157,7 @@ importers:
         version: 1.1.1(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       corepack:
         specifier: ^0.34.6
-        version: 0.34.6
+        version: 0.34.7
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
@@ -2566,8 +2566,8 @@ packages:
   convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
 
-  corepack@0.34.6:
-    resolution: {integrity: sha512-gvylq9kzJB09mSsiOnKOnhg0YdCWNy2aGaeGbYF4HlyGd/v4moxEonQjJPYI45/K4zP7q1hW9qCVvaYYKK5nkA==}
+  corepack@0.34.7:
+    resolution: {integrity: sha512-d5OLuTNh4zeJK8+u+G10KScqrnHKNNm6NvR4XO28FZyBFMGE60SNCrBetJLyKR9H1xGCG6U2LyswsyPNdO6kxw==}
     engines: {node: ^20.10.0 || ^22.11.0 || >=24.0.0}
     hasBin: true
 
@@ -6785,7 +6785,7 @@ snapshots:
 
   convert-source-map@2.0.0: {}
 
-  corepack@0.34.6: {}
+  corepack@0.34.7: {}
 
   create-require@1.1.1: {}
 
