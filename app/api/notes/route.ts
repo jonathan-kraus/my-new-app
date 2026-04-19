@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\notes\route.ts
- * @LastEditTime: 2026-04-08 01:05:35
+ * @LastEditTime: 2026-04-19 00:49:40
  */
 
 import { NextResponse } from "next/server";
@@ -225,7 +225,18 @@ export const DELETE = withLogging(async (req: Request) => {
     if (deleted.count === 0) {
       return NextResponse.json({ error: "Note not found" }, { status: 404 });
     }
-
+    const built = await buildUniversalContext(req as any, "NOTES");
+    await logj({
+      domain: 'jonathan',
+      level: 'info',
+      message: "Note deleted",
+      file: "route.ts",
+      line: 229,
+      payload: { title: noteToDelete?.title, userEmail: email },
+      meta: {
+        built,
+      },
+    });
     // await log.api("notes", "Note deleted", {
     //   noteId: id,
     //   title: noteToDelete?.title,
