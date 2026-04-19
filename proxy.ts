@@ -38,7 +38,7 @@ export async function proxy(req: NextRequest) {
   }
 
   // --- 1) Normalize path segments ---------------------------------
-    const normalizedPath = normalizePath(pathname);
+   const normalizedPath = normalizePath(pathname);
    const built = await buildUniversalContext(req, "PROXY");
     await logj({
       domain: 'jonathan',

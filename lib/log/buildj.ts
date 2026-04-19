@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\lib\log\buildj.ts
- * @LastEditTime: 2026-04-02 00:24:43
+ * @LastEditTime: 2026-04-19 18:35:24
  */
 export function staticUniversalContext(route: string) {
   const now = new Date();
@@ -15,7 +15,9 @@ export function staticUniversalContext(route: string) {
     sessionEmail: "static@kraus.my.id",
     sessionUser: "Jonathan Static",
     zulu: now.toISOString(),
-    local: now.toLocaleString(),
+    local: new Date().toLocaleString("en-US", {
+      timeZone: "America/New_York",
+      hour12: true,}),
     runtime: {
       node: process.version,
       region: process.env.VERCEL_REGION ?? "local",
