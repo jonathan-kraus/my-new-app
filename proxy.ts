@@ -10,8 +10,8 @@ import {
   clearRequest,
 } from "@/lib/log/timing";
 
-import { logj } from "@/lib/log/logj";
-import { buildUniversalContext } from "@/lib/log/build-universal-context";
+// import { logj } from "@/lib/log/logj";
+// import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 export async function proxy(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
@@ -38,19 +38,19 @@ export async function proxy(req: NextRequest) {
   }
 
   // --- 1) Normalize path segments ---------------------------------
-   const normalizedPath = normalizePath(pathname);
-   const built = await buildUniversalContext(req, "PROXY");
-    await logj({
-      domain: 'jonathan',
-      level: 'info',
-      message: "Normalize path segments pathname: " + normalizedPath,
-      file: "proxy.ts",
-      line: 41,
-      payload: { some: 'data' },
-      meta: {
-        built,
-      },
-    });
+  //  const normalizedPath = normalizePath(pathname);
+  //  const built = await buildUniversalContext(req, "PROXY");
+  //   await logj({
+  //     domain: 'jonathan',
+  //     level: 'info',
+  //     message: "Normalize path segments pathname: " + normalizedPath,
+  //     file: "proxy.ts",
+  //     line: 41,
+  //     payload: { some: 'data' },
+  //     meta: {
+  //       built,
+  //     },
+  //   });
   // await logit(
   //   "middleware",
   //   {
@@ -98,7 +98,7 @@ export async function proxy(req: NextRequest) {
 async function end(req: NextRequest, res: NextResponse) {
   const durationMs = getDuration(req.url);
   const pathname = req.nextUrl.pathname;
-  const built = await buildUniversalContext(req, "PROXY");
+  // const built = await buildUniversalContext(req, "PROXY");
 
   // await logj(
   //   "middleware",
