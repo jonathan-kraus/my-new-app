@@ -7,8 +7,8 @@ import { StatCard } from "@/components/stat-card";
 import { Rows3, HardDrive, Columns3, Calendar, Package2 } from "lucide-react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { logit } from "@/lib/log/logit";
-
+import { logj } from "@/lib/log/logj";
+import { staticUniversalContext } from "@/lib/log/buildj";
 export const dynamic = "force-dynamic";
 
 interface PageProps {
@@ -18,28 +18,18 @@ interface PageProps {
 
 async function getTableData(name: string, page: number) {
   // Validate table exists and is not excluded
-  await logit(
-    "jonathan",
-    {
-      level: "info",
-      message: "Checking table existence",
-    },
-    {
-      page: `/admin/db/${name}`,
-      file: "page.tsx",
-      method: "GET",
-      page2: `page ${page}`,
-      requestId: crypto.randomUUID(),
-      tableName: name,
-    },
-    {
-      userId: "JK",
-      zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
-    },
-  );
+  const built = staticUniversalContext("TablePage");
+await logj({
+  domain: 'jonathan',
+  level: 'info',
+  message: "Validating Table existence",
+  file: "page.tsx",
+  line: 22,
+  payload: { name: name, page: page },
+  meta: {
+    built,
+  },
+});
   const tableCheck = await sql`
     SELECT table_name FROM information_schema.tables
     WHERE table_schema = 'public' AND table_name = ${name}
