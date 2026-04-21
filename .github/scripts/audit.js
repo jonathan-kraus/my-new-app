@@ -1,11 +1,13 @@
 /*
  * @FilePath: \my-new-app\.github\scripts\audit.js
- * @LastEditTime: 2026-04-18 01:19:07
+ * @LastEditTime: 2026-04-21 12:14:55
  */
 import fs from "fs";
 import yaml from "js-yaml";
 import semver from "semver";
 import { Axiom } from "@axiomhq/js";
+import { config } from "dotenv";
+config({ path: ".env.local" });
 
 // -----------------------------
 // Axiom client
@@ -109,6 +111,7 @@ await axiom.ingest(DATASET, {
 // -----------------------------
 if (realFindings.length === 0) {
   console.log("✅ No vulnerabilities found");
+  await axiom.flush();
   process.exit(0);
 }
 
@@ -118,5 +121,5 @@ for (const f of realFindings) {
     `- ${f.pkg}@${f.installed} is within ${f.vulnerableRange}: ${f.title} (severity: ${f.severity})`
   );
 }
-
+await axiom.flush();
 process.exit(1);
