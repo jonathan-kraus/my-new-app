@@ -1,12 +1,16 @@
 /*
  * @FilePath: \my-new-app\.github\scripts\audit.js
- * @LastEditTime: 2026-04-21 12:18:24
+ * @LastEditTime: 2026-04-21 12:54:55
  */
 import fs from "fs";
 import yaml from "js-yaml";
 import semver from "semver";
 import { Axiom } from "@axiomhq/js";
+import { config } from "dotenv";
+config({ path: ".env.local", quiet: true });
 
+console.log("TOKEN exists:", !!process.env.AXIOM_TOKEN);
+console.log("DATASET:", process.env.AXIOM_DATASET);
 // -----------------------------
 // Axiom client
 // -----------------------------
@@ -110,6 +114,12 @@ await axiom.ingest(DATASET, {
 if (realFindings.length === 0) {
   console.log("✅ No vulnerabilities found");
   // await axiom.flush();
+  try {
+  await axiom.flush();
+  console.log("✅ Axiom flush successful");
+} catch (err) {
+  console.error("❌ Axiom flush failed:", err.message);
+}
   process.exit(0);
 }
 

@@ -65,11 +65,13 @@ jobs:
 
       - name: Run tests with coverage
         run: pnpm coverage
+
       - name: Upload coverage report
         uses: actions/upload-artifact@v7
         with:
           name: coverage
           path: coverage/
+
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v6
         with:
@@ -79,7 +81,8 @@ jobs:
 
       - name: Type check
         run: pnpm run type-check
-      - name: Run security audit2
+
+      - name: Run security audit3
         env:
           AXIOM_TOKEN: ${{ secrets.AXIOM_TOKEN }}
           AXIOM_DATASET: ${{ secrets.AXIOM_DATASET }}
