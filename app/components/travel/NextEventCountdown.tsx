@@ -15,7 +15,7 @@ export function NextEventCountdown({ snapshot }: Props) {
     const target = parse(
       `${next.date} ${next.departureTime}`,
       "EEEE, MMMM d, yyyy h:mm a",
-      new Date()
+      new Date(),
     );
 
     const update = () => {
@@ -28,7 +28,7 @@ export function NextEventCountdown({ snapshot }: Props) {
       setCountdown(
         formatDuration(duration, {
           format: ["days", "hours", "minutes", "seconds"],
-        })
+        }),
       );
     };
 
@@ -44,7 +44,9 @@ export function NextEventCountdown({ snapshot }: Props) {
         <div className="font-medium text-gray-100">
           {next.departureAirport} → {next.arrivalAirport}
         </div>
-        <div>{next.date} {next.departureTime}</div>
+        <div>
+          {next.date} {next.departureTime}
+        </div>
         <div className="mt-2 text-yellow-300 font-mono text-base">
           {countdown || "Calculating…"}
         </div>

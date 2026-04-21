@@ -227,8 +227,8 @@ export const DELETE = withLogging(async (req: Request) => {
     }
     const built = await buildUniversalContext(req as any, "NOTES");
     await logj({
-      domain: 'jonathan',
-      level: 'info',
+      domain: "jonathan",
+      level: "info",
       message: "Note deleted",
       file: "route.ts",
       line: 229,

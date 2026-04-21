@@ -30,14 +30,14 @@ export default function VercelCard({ deployments }: Props) {
       <ul className="space-y-3">
         {deployments.slice(0, 5).map((d) => {
           const created = new Date(d.createdAt).toLocaleString("en-US", {
-          timeZone: "America/New_York",
-          month: "numeric",
-          day: "numeric",
-          year: "numeric",
-          hour: "numeric",
-          minute: "2-digit",
-          hour12: true,
-        });
+            timeZone: "America/New_York",
+            month: "numeric",
+            day: "numeric",
+            year: "numeric",
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+          });
           const sha = d.meta.githubCommitSha?.slice(0, 7) ?? "unknown";
 
           return (

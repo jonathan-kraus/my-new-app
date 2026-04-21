@@ -17,7 +17,8 @@ export function staticUniversalContext(route: string) {
     zulu: now.toISOString(),
     local: new Date().toLocaleString("en-US", {
       timeZone: "America/New_York",
-      hour12: true,}),
+      hour12: true,
+    }),
     runtime: {
       node: process.version,
       region: process.env.VERCEL_REGION ?? "local",

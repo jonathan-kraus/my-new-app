@@ -2,6 +2,7 @@
 
 import { logit } from "@/lib/log/logit";
 import { getConfig } from "@/lib/runtime/config";
+import { formatEastern } from "@/lib/utils/global";
 
 let dl: number | null = null;
 
@@ -55,9 +56,7 @@ export function combineDateTime(date: Date, timeString: string): string {
       {
         requestId: requestId,
         zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", {
-          timeZone: "America/New_York",
-        }),
+        local: formatEastern(new Date()),
       },
     );
   }

@@ -19,17 +19,17 @@ interface PageProps {
 async function getTableData(name: string, page: number) {
   // Validate table exists and is not excluded
   const built = staticUniversalContext("TablePage");
-await logj({
-  domain: 'jonathan',
-  level: 'info',
-  message: "Validating Table existence",
-  file: "page.tsx",
-  line: 22,
-  payload: { name: name, page: page },
-  meta: {
-    built,
-  },
-});
+  await logj({
+    domain: "jonathan",
+    level: "info",
+    message: "Validating Table existence",
+    file: "page.tsx",
+    line: 22,
+    payload: { name: name, page: page },
+    meta: {
+      built,
+    },
+  });
   const tableCheck = await sql`
     SELECT table_name FROM information_schema.tables
     WHERE table_schema = 'public' AND table_name = ${name}

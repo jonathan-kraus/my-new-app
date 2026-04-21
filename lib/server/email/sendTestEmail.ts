@@ -9,34 +9,33 @@ import { staticUniversalContext } from "@/lib/log/buildj";
 const built = staticUniversalContext("Jonathan");
 
 logj({
-  domain: 'jonathan',
-  level: 'info',
+  domain: "jonathan",
+  level: "info",
   message: "Checked email_enabled message",
   file: "lib/server/email/sendTestEmail.ts",
   line: 11,
-  payload: { some: 'data' },
+  payload: { some: "data" },
   meta: {
     built,
   },
 });
-
 
 export async function sendTestEmail(message: string, subject: string) {
   // --- 1. Read flag ---------------------------------------------------------
   const enabled = await getConfig("email_enabled", "1");
 
-    if (String(enabled) !== "1") {
-await logj({
-  domain: 'jonathan',
-  level: 'info',
-  message: "Email disabled by flag",
-  file: "lib/server/email/sendTestEmail.ts",
-  line: 29,
-  payload: { some: 'data' },
-  meta: {
-    built,
-  },
-});
+  if (String(enabled) !== "1") {
+    await logj({
+      domain: "jonathan",
+      level: "info",
+      message: "Email disabled by flag",
+      file: "lib/server/email/sendTestEmail.ts",
+      line: 29,
+      payload: { some: "data" },
+      meta: {
+        built,
+      },
+    });
   }
   const throttleMinutes = Number(
     await getConfig("email.throttle.minutes", "0"),
@@ -71,12 +70,12 @@ await logj({
   // --- 3. Throttle ----------------------------------------------------------
 
   await logj({
-    domain: 'jonathan',
-    level: 'info',
+    domain: "jonathan",
+    level: "info",
     message: "Throttle check starting",
     file: "lib/server/email/sendTestEmail.ts",
     line: 73,
-    payload: { some: 'data' },
+    payload: { some: "data" },
     meta: {
       built,
     },
@@ -88,15 +87,16 @@ await logj({
     const diffMinutes = (now.getTime() - last.getTime()) / 1000 / 60;
 
     await logj({
-      domain: 'jonathan',
-      level: 'info',
+      domain: "jonathan",
+      level: "info",
       message: "Computed throttle minutes",
       file: "lib/server/email/sendTestEmail.ts",
       line: 90,
       payload: {
-          diffminutes: diffMinutes,
-          throttleMinutes: throttleMinutes,
-          nextAllowedInMinutes: throttleMinutes - diffMinutes, },
+        diffminutes: diffMinutes,
+        throttleMinutes: throttleMinutes,
+        nextAllowedInMinutes: throttleMinutes - diffMinutes,
+      },
       meta: {
         built,
       },
@@ -104,12 +104,12 @@ await logj({
 
     if (diffMinutes < throttleMinutes) {
       await logj({
-        domain: 'jonathan',
-        level: 'info',
+        domain: "jonathan",
+        level: "info",
         message: "Throttled",
         file: "lib/server/email/sendTestEmail.ts",
         line: 106,
-        payload: { diffminutes: diffMinutes, },
+        payload: { diffminutes: diffMinutes },
         meta: {
           built,
         },
@@ -127,12 +127,12 @@ await logj({
     await mailerSend.email.send(emailParams);
 
     await logj({
-      domain: 'jonathan',
-      level: 'info',
+      domain: "jonathan",
+      level: "info",
       message: "Test email sent",
       file: "lib/server/email/sendTestEmail.ts",
       line: 129,
-      payload: { some: 'data' },
+      payload: { some: "data" },
       meta: {
         built,
       },
@@ -142,12 +142,12 @@ await logj({
     const newTimestamp = new Date().toISOString();
     const saved = await setConfig("email.last_sent_at", newTimestamp);
     await logj({
-      domain: 'jonathan',
-      level: 'info',
+      domain: "jonathan",
+      level: "info",
       message: "Updated last_sent_at",
       file: "lib/server/email/sendTestEmail.ts",
       line: 144,
-      payload: { some: 'data' },
+      payload: { some: "data" },
       meta: {
         built,
       },
@@ -156,12 +156,12 @@ await logj({
     return { ok: true, sent: true };
   } catch (err: any) {
     await logj({
-      domain: 'jonathan',
-      level: 'info',
+      domain: "jonathan",
+      level: "info",
       message: "Mailersend error",
       file: "lib/server/email/sendTestEmail.ts",
       line: 158,
-      payload: { some: 'data' },
+      payload: { some: "data" },
       meta: {
         built,
       },

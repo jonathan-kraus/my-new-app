@@ -1,21 +1,21 @@
 {
-"Insert logj call": {
-  "prefix": "logj",
-  "body": [
-    "await logj({",
-    "  domain: 'jonathan',",
-    "  level: 'info',",
-    "  message: \"$1\",",
-    "  file: \"$TM_FILENAME\",",
-    "  line: $2,",
-    "  payload: { some: 'data' },",
-    "  meta: {",
-    "    built,",
-    "  },",
-    "});"
-  ],
-  "description": "Insert a structured logj() call"
-},
+  "Insert logj call": {
+    "prefix": "logj",
+    "body": [
+      "await logj({",
+      "  domain: 'jonathan',",
+      "  level: 'info',",
+      "  message: \"$1\",",
+      "  file: \"$TM_FILENAME\",",
+      "  line: $2,",
+      "  payload: { some: 'data' },",
+      "  meta: {",
+      "    built,",
+      "  },",
+      "});",
+    ],
+    "description": "Insert a structured logj() call",
+  },
   "Set Log File (auto path)": {
     "prefix": "//s",
     "body": ["setLogFile(\"${RELATIVE_FILEPATH}\");"],
