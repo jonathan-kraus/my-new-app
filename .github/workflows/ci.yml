@@ -79,7 +79,7 @@ jobs:
 
       - name: Type check
         run: pnpm run type-check
-      - name: Run security audit
+      - name: Run security audit2
         env:
           AXIOM_TOKEN: ${{ secrets.AXIOM_TOKEN }}
           AXIOM_DATASET: ${{ secrets.AXIOM_DATASET }}
