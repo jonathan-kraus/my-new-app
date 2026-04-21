@@ -128,7 +128,7 @@
     "swr": "^2.4.1",
     "tailwind-merge": "^3.5.0",
     "vaul": "^1.1.2",
-    "vite": "^8.0.7",
+    "vite": "^8.0.9",
     "zod": "^4.3.6"
   },
   "devDependencies": {
