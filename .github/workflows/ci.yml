@@ -97,7 +97,7 @@ jobs:
         run: |
           echo "Working directory: $(pwd)"
           echo "List root files:"; ls -la
-          echo "Process environment CI:"; process.env.CI
+          echo "Process environment CI: $CI"
           echo "List coverage dir (if present):"; ls -la coverage || true
 
       - name: Build
