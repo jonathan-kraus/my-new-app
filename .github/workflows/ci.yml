@@ -94,7 +94,7 @@ jobs:
         env:
           AXIOM_TOKEN: ${{ secrets.AXIOM_TOKEN }}
           AXIOM_DATASET: ${{ secrets.AXIOM_DATASET }}
-        run: node .github/scripts/audit.js
+        run: AXIOM_TOKEN=$AXIOM_TOKEN AXIOM_DATASET=$AXIOM_DATASET node .github/scripts/audit.js
 
       - name: Show workspace files for diagnostics
         run: |
