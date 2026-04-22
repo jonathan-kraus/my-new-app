@@ -1,4 +1,5 @@
 "use client";
+import { formatEastern } from "@/lib/utils/global";
 // app/config/read/page.tsx
 import { useEffect, useState } from "react";
 
@@ -114,7 +115,7 @@ export default function ConfigReadPage() {
         <strong>{status === "loaded" ? (stats?.total ?? "-") : "-"}</strong>
         {stats?.lastUpdated ? (
           <span className="ml-2">
-            Last: {new Date(stats.lastUpdated).toLocaleString()}
+            Last: {formatEastern(stats.lastUpdated)}
           </span>
         ) : null}
       </div>
