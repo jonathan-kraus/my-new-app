@@ -61,7 +61,7 @@ export function combineDateTime(date: Date, timeString: string): string {
     );
   }
 
-  // --- VALIDATION: Reject UTC timestamps ---
+  // -- VALIDATION: Reject UTC timestamps --
   if (timeString.endsWith("Z")) {
     logit(
       domain,
