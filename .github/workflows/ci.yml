@@ -89,11 +89,6 @@ jobs:
         run: |
           echo "TOKEN length: ${#AXIOM_TOKEN}"
           echo "DATASET length: ${#AXIOM_DATASET}"
-          echo "TOKEN raw: '${AXIOM_TOKEN}'"
-          echo "TOKEN bytes:"
-          printf '%s' "$AXIOM_TOKEN" | od -An -t x1
-
-
 
       - name: Run security audit
         env:
