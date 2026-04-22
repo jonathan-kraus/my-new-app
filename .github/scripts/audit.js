@@ -7,6 +7,10 @@ import yaml from "js-yaml";
 import semver from "semver";
 import { Axiom } from "@axiomhq/js";
 import { config } from "dotenv";
+
+// Add this BEFORE dotenv
+console.log("PRE-DOTENV TOKEN:", !!process.env.AXIOM_TOKEN);
+console.log("PRE-DOTENV CI:", process.env.CI);
 // Only load .env.local if NOT in CI
 if (!process.env.CI) {
   config({ path: ".env.local" });
