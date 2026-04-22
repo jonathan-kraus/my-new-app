@@ -84,10 +84,13 @@ jobs:
 
       - name: Debug env
         run: |
-          echo "AXIOM_TOKEN exists: ${{ secrets.AXIOM_TOKEN != '' }}"
-          echo "AXIOM_DATASET exists: ${{ secrets.AXIOM_DATASET != '' }}"
+          echo "TOKEN length: ${#AXIOM_TOKEN}"
+          echo "DATASET length: ${#AXIOM_DATASET}"
+        env:
+          AXIOM_TOKEN: ${{ secrets.AXIOM_TOKEN }}
+          AXIOM_DATASET: ${{ secrets.AXIOM_DATASET }}
 
-      - name: Run security audit2
+      - name: Run security audit4
         env:
           AXIOM_TOKEN: ${{ secrets.AXIOM_TOKEN }}
           AXIOM_DATASET: ${{ secrets.AXIOM_DATASET }}
