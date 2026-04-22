@@ -1,13 +1,16 @@
 /*
  * @FilePath: \my-new-app\.github\scripts\audit.js
- * @LastEditTime: 2026-04-21 12:54:55
+ * @LastEditTime: 2026-04-21 20:16:58
  */
 import fs from "fs";
 import yaml from "js-yaml";
 import semver from "semver";
 import { Axiom } from "@axiomhq/js";
 import { config } from "dotenv";
-config({ path: ".env.local", quiet: true });
+// Only load .env.local if NOT in CI
+if (!process.env.CI) {
+  config({ path: ".env.local" });
+}
 
 console.log("TOKEN exists:", !!process.env.AXIOM_TOKEN);
 console.log("DATASET:", process.env.AXIOM_DATASET);
