@@ -1,5 +1,6 @@
 "use client";
 
+import { formatEasternTime } from "@/lib/utils/global";
 import { useEffect, useState, useRef } from "react";
 import { toast } from "react-hot-toast";
 
@@ -99,7 +100,7 @@ export default function CurrentWeatherCard({
 
   const source = sources.current?.toUpperCase() ?? "UNKNOWN";
 
-  const formattedTime = new Date().toLocaleTimeString();
+  const formattedTime = formatEasternTime(Date.now());
 
   // Final log
   console.log(`Weather summary for ${location?.name ?? "null"}`);
