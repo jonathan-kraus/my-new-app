@@ -92,11 +92,12 @@ jobs:
           AXIOM_TOKEN: ${{ secrets.AXIOM_TOKEN }}
           AXIOM_DATASET: ${{ secrets.AXIOM_DATASET }}
         run: node .github/scripts/audit.js
-         console.log("CI env:", process.env.CI);
+
       - name: Show workspace files for diagnostics
         run: |
           echo "Working directory: $(pwd)"
           echo "List root files:"; ls -la
+          echo "Process environment CI:"; process.env.CI
           echo "List coverage dir (if present):"; ls -la coverage || true
 
       - name: Build
