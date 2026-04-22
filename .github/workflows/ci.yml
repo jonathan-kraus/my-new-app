@@ -89,12 +89,15 @@ jobs:
         run: |
           echo "TOKEN length: ${#AXIOM_TOKEN}"
           echo "DATASET length: ${#AXIOM_DATASET}"
+          echo "TOKEN raw: '${AXIOM_TOKEN}'"
+          printf '%s' "$AXIOM_TOKEN" | od -An -t x1
 
       - name: Run security audit
         env:
           AXIOM_TOKEN: ${{ secrets.AXIOM_TOKEN }}
           AXIOM_DATASET: ${{ secrets.AXIOM_DATASET }}
-        run: node .github/scripts/audit.js
+        run: |
+          node .github/scripts/audit.js
 
       - name: Show workspace files for diagnostics
         run: |
