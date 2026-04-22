@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\.github\scripts\audit.js
- * @LastEditTime: 2026-04-21 20:16:58
+ * @LastEditTime: 2026-04-21 20:26:30
  */
 import fs from "fs";
 import yaml from "js-yaml";
@@ -28,8 +28,7 @@ const DATASET = process.env.AXIOM_DATASET;
 // -----------------------------
 const file = fs.readFileSync("pnpm-lock.yaml", "utf8");
 const docs = yaml.loadAll(file);
-const lock = docs[0]; // pnpm v9+ stores the lockfile in the first document
-
+const lock = docs[0]; // pnpm v9+ stores the main lockfile here
 const deps = lock.snapshots || {};
 const payload = {};
 
