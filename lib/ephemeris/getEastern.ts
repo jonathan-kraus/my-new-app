@@ -1,11 +1,12 @@
+import { formatEastern } from "@/lib/utils/global";
+
 // Always compute "today" in America/New_York
 function getEasternDate() {
   const now = new Date();
 
   // Convert to Eastern time by formatting then re-parsing
-  const easternString = now.toLocaleString("en-US", {
-    timeZone: "America/New_York",
-  });
+  const easternString = formatEastern(now);
+  ;
 
   return new Date(easternString);
 }
