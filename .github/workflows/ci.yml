@@ -87,7 +87,7 @@ jobs:
           echo "AXIOM_TOKEN exists: ${{ secrets.AXIOM_TOKEN != '' }}"
           echo "AXIOM_DATASET exists: ${{ secrets.AXIOM_DATASET != '' }}"
 
-      - name: Run security audit
+      - name: Run security audit2
         env:
           AXIOM_TOKEN: ${{ secrets.AXIOM_TOKEN }}
           AXIOM_DATASET: ${{ secrets.AXIOM_DATASET }}
