@@ -82,6 +82,11 @@ jobs:
       - name: Type check
         run: pnpm run type-check
 
+      - name: Debug env
+        run: |
+          echo "AXIOM_TOKEN exists: ${{ secrets.AXIOM_TOKEN != '' }}"
+          echo "AXIOM_DATASET exists: ${{ secrets.AXIOM_DATASET != '' }}"
+
       - name: Run security audit3
         env:
           AXIOM_TOKEN: ${{ secrets.AXIOM_TOKEN }}
