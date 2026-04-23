@@ -11,13 +11,15 @@ import { staticUniversalContext } from "@/lib/log/buildj";
 
 export const revalidate = 60;
 const built = staticUniversalContext("ASTRONOMY");
+const jnow = DateTime.now();
+const result = format(jnow.toJSDate(), 'yyyy-MM-dd');
 await logj({
   domain: 'jonathan',
   level: 'info',
   message: "In Dashboard/Astronomy",
   file: "app/dashboard/astronomy/page.tsx",
   line: 14,
-  payload: { some: 'data' },
+  payload: { some: result },
   meta: {
     built,
   },
