@@ -7,7 +7,7 @@ import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
 
 const built = staticUniversalContext("Jonathan");
-const message_begin = "SendTestEmail";
+const message_begin = "SendTestEmail -- ";
 logj({
   domain: "jonathan",
   level: "info",
