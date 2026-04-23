@@ -6,8 +6,22 @@ import { NextEventCard } from "@/components/astronomy/NextEventCard";
 import { format } from "date-fns";
 import { SolarArcBar } from "@/app/components/SolarArcBar";
 import { DateTime } from "luxon";
+import { logj } from "@/lib/log/logj";
+import { staticUniversalContext } from "@/lib/log/buildj";
 
 export const revalidate = 60;
+const built = staticUniversalContext("ASTRONOMY");
+await logj({
+  domain: 'jonathan',
+  level: 'info',
+  message: "In Dashboard/Astronomy",
+  file: "app/dashboard/astronomy/page.tsx",
+  line: 14,
+  payload: { some: 'data' },
+  meta: {
+    built,
+  },
+});
 
 export default async function DashboardAstronomyPage() {
   const snapshot = await getEphemerisSnapshot("KOP");
