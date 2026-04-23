@@ -131,7 +131,7 @@ export async function GET(req: NextRequest) {
     await logj({
       domain: "ephemeris",
       level: "info",
-      message: `Astronomy cron completed`,
+      message: `Astronomy cron completed deleted ${deleted} logs`,
       file: "app/api/cron/astronomy/route.ts",
       line: 131,
       payload: {

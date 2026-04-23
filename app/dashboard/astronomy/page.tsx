@@ -12,7 +12,7 @@ import { staticUniversalContext } from "@/lib/log/buildj";
 export const revalidate = 60;
 const built = staticUniversalContext("ASTRONOMY");
 const jnow = DateTime.now();
-const result = format(jnow.toJSDate(), 'yyyy-MM-dd');
+const result = format(jnow.toJSDate(), 'yyyy-MM-dd HH:mm:ss');
 await logj({
   domain: 'jonathan',
   level: 'info',
