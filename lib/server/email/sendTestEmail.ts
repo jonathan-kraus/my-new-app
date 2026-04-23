@@ -7,11 +7,11 @@ import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
 
 const built = staticUniversalContext("Jonathan");
-
+const message_begin = "SendTestEmail";
 logj({
   domain: "jonathan",
   level: "info",
-  message: "Checked email_enabled message",
+  message: message_begin + "Checked email_enabled message",
   file: "lib/server/email/sendTestEmail.ts",
   line: 11,
   payload: { some: "data" },
@@ -28,7 +28,7 @@ export async function sendTestEmail(message: string, subject: string) {
     await logj({
       domain: "jonathan",
       level: "info",
-      message: "Email disabled by flag",
+      message: message_begin + "Email disabled by flag",
       file: "lib/server/email/sendTestEmail.ts",
       line: 29,
       payload: { some: "data" },
@@ -72,7 +72,7 @@ export async function sendTestEmail(message: string, subject: string) {
   await logj({
     domain: "jonathan",
     level: "info",
-    message: "Throttle check starting",
+    message: message_begin + "Throttle check starting",
     file: "lib/server/email/sendTestEmail.ts",
     line: 73,
     payload: { some: "data" },
@@ -89,7 +89,7 @@ export async function sendTestEmail(message: string, subject: string) {
     await logj({
       domain: "jonathan",
       level: "info",
-      message: "Computed throttle minutes",
+      message: message_begin + "Computed throttle minutes",
       file: "lib/server/email/sendTestEmail.ts",
       line: 90,
       payload: {
@@ -106,7 +106,7 @@ export async function sendTestEmail(message: string, subject: string) {
       await logj({
         domain: "jonathan",
         level: "info",
-        message: "Throttled",
+        message: message_begin + "Throttled",
         file: "lib/server/email/sendTestEmail.ts",
         line: 106,
         payload: { diffminutes: diffMinutes },
@@ -129,7 +129,7 @@ export async function sendTestEmail(message: string, subject: string) {
     await logj({
       domain: "jonathan",
       level: "info",
-      message: "Test email sent",
+      message: message_begin + "Test email sent",
       file: "lib/server/email/sendTestEmail.ts",
       line: 129,
       payload: { some: "data" },
@@ -144,7 +144,7 @@ export async function sendTestEmail(message: string, subject: string) {
     await logj({
       domain: "jonathan",
       level: "info",
-      message: "Updated last_sent_at",
+      message: message_begin + "Updated last_sent_at",
       file: "lib/server/email/sendTestEmail.ts",
       line: 144,
       payload: { some: "data" },
@@ -158,7 +158,7 @@ export async function sendTestEmail(message: string, subject: string) {
     await logj({
       domain: "jonathan",
       level: "info",
-      message: "Mailersend error",
+      message: message_begin + "Mailersend error",
       file: "lib/server/email/sendTestEmail.ts",
       line: 158,
       payload: { some: "data" },
