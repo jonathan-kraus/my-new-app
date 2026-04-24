@@ -1,6 +1,6 @@
 /*
- * @FilePath: \my-new-app\app\logs\axiom\liveLogs.tsx
- * @LastEditTime: 2026-03-13 14:17:17
+ * @FilePath: \my-new-app\app\logs\axiom\LiveLogs.tsx
+ * @LastEditTime: 2026-04-24 17:36:44
  */
 "use client";
 
@@ -13,6 +13,7 @@ export default function LiveLogs() {
   async function fetchLogs() {
     const res = await fetch("/api/logs/live", { cache: "no-store" });
     const json = await res.json();
+    console.log("logs response:", json);
     setLogs(json.logs ?? []);
     setLoading(false);
   }
