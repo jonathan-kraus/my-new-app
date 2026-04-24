@@ -7,5 +7,5 @@ const client = new Axiom({
 
 export async function queryAxiom(apl: string) {
   const res = await client.query(apl);
-  return res.matches ?? [];
+  return (res.matches ?? []).map((match: any) => match.data);
 }
