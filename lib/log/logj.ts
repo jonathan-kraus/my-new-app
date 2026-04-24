@@ -172,6 +172,8 @@ export async function logj(input: LogjInput) {
         domain,
         level,
         message,
+        file,
+        line,
         eventIndex: meta.eventIndex ?? 0,
         meta_json: JSON.stringify(record.meta),
         payload_json: JSON.stringify(record.payload),

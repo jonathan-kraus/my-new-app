@@ -1,63 +1,49 @@
 /*
  * @FilePath: \my-new-app\app\logs\axiom\LiveLogs.tsx
- * @LastEditTime: 2026-04-24 18:13:51
+ * @LastEditTime: 2026-04-24 18:35:28
  */
 "use client";
 
 import { useEffect, useState } from "react";
 
 export default function LiveLogs() {
-  const [logs, setLogs] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+	const [logs, setLogs] = useState<any[]>([]);
+	const [loading, setLoading] = useState(true);
 
-  async function fetchLogs() {
-    const res = await fetch("/api/logs/live", { cache: "no-store" });
-    const json = await res.json();
-    console.log("logs response:", json);
-    setLogs(json.logs ?? []);
-    setLoading(false);
-  }
+	async function fetchLogs() {
+		const res = await fetch("/api/logs/live", { cache: "no-store" });
+		const json = await res.json();
+		console.log("logs response:", json);
+		setLogs(json.logs ?? []);
+		setLoading(false);
+	}
 
-  useEffect(() => {
-    fetchLogs();
-    const id = setInterval(fetchLogs, 222222);
-    return () => clearInterval(id);
-  }, []);
+	useEffect(() => {
+		fetchLogs();
+		const id = setInterval(fetchLogs, 22222);
+		return () => clearInterval(id);
+	}, []);
 
-  if (loading) {
-    return <div className="text-gray-400">Loading logs…</div>;
-  }
+	if (loading) {
+		return <div className="text-gray-400">Loading logs…</div>;
+	}
 
-  return (
-    <div className="space-y-3">
-      {logs.map((log, i) => (
-        <div
-          key={i}
-          className="p-4 rounded-lg bg-black/40 border border-white/10 text-sm"
-        >
-          <div className="flex justify-between">
-            <span className="font-semibold text-blue-300">{log.domain}</span>
-            <span className="text-gray-400">
-              {new Date(log.timestamp).toLocaleTimeString()}
-            </span>
-          </div>
-
-          <div className="mt-1 text-white">{log.message}</div>
-
-          <div className="mt-2 grid grid-cols-2 gap-2 text-xs text-gray-400">
-            <div>Level: {log.level}</div>
-            <div>Page: {log.page}</div>
-            <div>User: {log.userId}</div>
-            <div>Event: {log.eventIndex}</div>
-          </div>
-
-          {log.data && (
-            <pre className="mt-2 bg-black/30 p-2 rounded text-green-300 text-xs overflow-auto">
-              {JSON.stringify(log.data, null, 2)}
-            </pre>
-          )}
-        </div>
-      ))}
-    </div>
-  );
+	return (
+		<div className="space-y-3">
+			{logs.map((log, i) => (
+				<div key={i} className="p-4 rounded-lg bg-black/40 border border-white/10 text-sm">
+					<div className="flex justify-between">
+						<span className="font-semibold text-blue-300">{log.domain}</span>
+						<span className="text-gray-400">
+							{log._time ? new Date(log._time).toLocaleTimeString() : ""}
+						</span>
+					</div>
+					<div className="mt-1 text-white">{log.message}</div>
+					<div className="mt-1 text-white">{log.file}</div>
+					<div className="mt-1 text-white">{log.line}</div>
+					<div className="mt-1 text-xs text-gray-500">{log.level}</div>
+				</div>
+			))}
+		</div>
+	);
 }
