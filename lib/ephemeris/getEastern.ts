@@ -6,8 +6,6 @@ function getEasternDate() {
 
   // Convert to Eastern time by formatting then re-parsing
   const easternString = formatEastern(now);
-  ;
-
   return new Date(easternString);
 }
 

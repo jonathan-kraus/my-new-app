@@ -114,9 +114,7 @@ export default function ConfigReadPage() {
         Count:{" "}
         <strong>{status === "loaded" ? (stats?.total ?? "-") : "-"}</strong>
         {stats?.lastUpdated ? (
-          <span className="ml-2">
-            Last: {formatEastern(stats.lastUpdated)}
-          </span>
+          <span className="ml-2">Last: {formatEastern(stats.lastUpdated)}</span>
         ) : null}
       </div>
       <div className="grid md:grid-cols-2 gap-4">
