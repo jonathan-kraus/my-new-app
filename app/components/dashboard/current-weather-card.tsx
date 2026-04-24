@@ -97,7 +97,6 @@ export default function CurrentWeatherCard({
   const feelsLike = Math.round(current.feelsLike);
   const humidity = current.humidity;
   const wind = current.windSpeed;
-
   const source = sources.current?.toUpperCase() ?? "UNKNOWN";
 
   const formattedTime = formatEasternTime(Date.now());
