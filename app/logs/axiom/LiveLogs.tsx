@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\logs\axiom\LiveLogs.tsx
- * @LastEditTime: 2026-04-25 02:10:15
+ * @LastEditTime: 2026-04-25 02:16:06
  */
 "use client";
 
@@ -30,7 +30,7 @@ export default function LiveLogs() {
 	}
 const isInfo = (log: any) => log.level === 'info';
 const jdate = formatEastern(new Date())
-
+console.log("jdate:", jdate)
 	return (
 		<div className="space-y-3">
 			{logs.map((log, i) => (
