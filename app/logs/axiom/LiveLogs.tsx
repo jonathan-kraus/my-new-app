@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\logs\axiom\LiveLogs.tsx
- * @LastEditTime: 2026-04-25 02:06:46
+ * @LastEditTime: 2026-04-25 02:10:15
  */
 "use client";
 
@@ -29,6 +29,7 @@ export default function LiveLogs() {
 		return <div className="text-gray-400">Loading logs…</div>;
 	}
 const isInfo = (log: any) => log.level === 'info';
+const jdate = formatEastern(new Date())
 
 	return (
 		<div className="space-y-3">
@@ -40,7 +41,7 @@ const isInfo = (log: any) => log.level === 'info';
 							{log._time ? new Date(log._time).toLocaleTimeString() : ""}
 						</span>
 					</div>
-          <div className="mt-1 text-white">time: {formatEastern(new Date())}</div>
+          <div className="mt-1 text-white">time: {jdate}</div>
 					<div className="mt-1 text-white">Msg: {log.message}</div>
 					<div className="mt-1 text-white">File: {log.file}</div>
 					<div className="mt-1 text-white">Line: {log.line}</div>
