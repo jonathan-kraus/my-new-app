@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\logs\axiom\LiveLogs.tsx
- * @LastEditTime: 2026-04-25 01:43:15
+ * @LastEditTime: 2026-04-25 01:55:18
  */
 "use client";
 
@@ -27,6 +27,7 @@ export default function LiveLogs() {
 	if (loading) {
 		return <div className="text-gray-400">Loading logs…</div>;
 	}
+const isInfo = (log: any) => log.level === 'info';
 
 	return (
 		<div className="space-y-3">
@@ -41,9 +42,11 @@ export default function LiveLogs() {
 					<div className="mt-1 text-white">Msg: {log.message}</div>
 					<div className="mt-1 text-white">File: {log.file}</div>
 					<div className="mt-1 text-white">Line: {log.line}</div>
-					if (log.level !== 'info') {
-					<div className="mt-1 text-xs text-gray-500">Level: {log.level}</div>
-					}
+					{!isInfo && (
+              <div className="mt-1 text-xs text-sky-200/80">
+                Level: {log.level}
+              </div>
+            )}
 				</div>
 			))}
 		</div>
