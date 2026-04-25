@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\logs\axiom\LiveLogs.tsx
- * @LastEditTime: 2026-04-24 18:35:28
+ * @LastEditTime: 2026-04-25 01:43:15
  */
 "use client";
 
@@ -38,10 +38,12 @@ export default function LiveLogs() {
 							{log._time ? new Date(log._time).toLocaleTimeString() : ""}
 						</span>
 					</div>
-					<div className="mt-1 text-white">{log.message}</div>
-					<div className="mt-1 text-white">{log.file}</div>
-					<div className="mt-1 text-white">{log.line}</div>
-					<div className="mt-1 text-xs text-gray-500">{log.level}</div>
+					<div className="mt-1 text-white">Msg: {log.message}</div>
+					<div className="mt-1 text-white">File: {log.file}</div>
+					<div className="mt-1 text-white">Line: {log.line}</div>
+					if (log.level !== 'info') {
+					<div className="mt-1 text-xs text-gray-500">Level: {log.level}</div>
+					}
 				</div>
 			))}
 		</div>
