@@ -1,9 +1,10 @@
 /*
  * @FilePath: \my-new-app\app\logs\axiom\LiveLogs.tsx
- * @LastEditTime: 2026-04-25 01:55:18
+ * @LastEditTime: 2026-04-25 02:06:46
  */
 "use client";
 
+import { formatEastern } from "@/lib/utils/global";
 import { useEffect, useState } from "react";
 
 export default function LiveLogs() {
@@ -39,6 +40,7 @@ const isInfo = (log: any) => log.level === 'info';
 							{log._time ? new Date(log._time).toLocaleTimeString() : ""}
 						</span>
 					</div>
+          <div className="mt-1 text-white">time: {formatEastern(new Date())}</div>
 					<div className="mt-1 text-white">Msg: {log.message}</div>
 					<div className="mt-1 text-white">File: {log.file}</div>
 					<div className="mt-1 text-white">Line: {log.line}</div>

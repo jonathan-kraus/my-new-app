@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\.github\scripts\audit.js
- * @LastEditTime: 2026-04-21 20:26:30
+ * @LastEditTime: 2026-04-25 02:05:47
  */
 import fs from "fs";
 import yaml from "js-yaml";
@@ -107,6 +107,8 @@ await axiom.ingest(DATASET, {
   domain: "audit",
   level: realFindings.length === 0 ? "info" : "warn",
   message: "Dependency audit completed",
+  line: 106,
+  file: "audit.js",
   packages_checked: Object.keys(payload).length,
   vulnerabilities_count: realFindings.length,
   vulnerabilities_json: JSON.stringify(realFindings),
