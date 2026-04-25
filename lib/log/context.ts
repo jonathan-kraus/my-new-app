@@ -5,7 +5,7 @@ import versionInfo from "@/version.json";
 
 export const version = versionInfo.version;
 
-let eventCounter = 0;
+const requestCounters = new Map<string, number>();
 
 export async function enrichContext(req: NextRequest) {
   const requestId = req.headers.get("x-request-id") ?? crypto.randomUUID();
@@ -26,7 +26,16 @@ export async function enrichContext(req: NextRequest) {
   const userAgent = req.headers.get("user-agent") ?? undefined;
 
   // Increment per-request event index
-  const eventIndex = eventCounter++;
+  const eventIndex = (requestCounters.get(requestId) ?? 0) + 1;
+requestCounters.set(requestId, eventIndex);
+
+// Clean up old entries to avoid memory leak
+if (requestCounters.size > 100) {
+  const firstKey = requestCounters.keys().next().value;
+  if (firstKey !== undefined) {
+    requestCounters.delete(firstKey);
+  }
+}
 
   // Session info
   let sessionEmail: string | undefined = undefined;
