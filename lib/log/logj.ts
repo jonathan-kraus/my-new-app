@@ -4,7 +4,7 @@ import { axiomIngest } from "@/lib/axiom";
 import { z } from "zod";
 
 const NEON_MAX_JSON = 200_000;
-
+const logCounters = new Map<string, number>();
 // ---------------------------------------------------------------------------
 // Zod schema for the *canonical* log record
 // ---------------------------------------------------------------------------
@@ -158,6 +158,15 @@ export async function logj(input: LogjInput) {
     }
 
     const record = parsed.data;
+    const reqId = (meta.built?.requestId ?? "unknown") as string;
+    const eventIndex = (logCounters.get(reqId) ?? 0) + 1;
+    logCounters.set(reqId, eventIndex);
+
+    // cleanup
+    if (logCounters.size > 100) {
+      const firstKey = logCounters.keys().next().value;
+      if (firstKey !== undefined) logCounters.delete(firstKey);
+    }
 
     await db.log.create({
       data: {
