@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\notes\route.ts
- * @LastEditTime: 2026-04-19 00:49:40
+ * @LastEditTime: 2026-04-25 20:10:33
  */
 
 import { NextResponse } from "next/server";
@@ -14,6 +14,7 @@ import { log } from "@/lib/log";
 export const GET = withLogging(async (req: Request) => {
   // Build context INSIDE the request handler
   const built = await buildUniversalContext(req as any, "NOTES");
+  let ei = 0;
   await logj({
     domain: "notes",
     level: "info",
@@ -23,9 +24,7 @@ export const GET = withLogging(async (req: Request) => {
     payload: {
       some: "data",
     },
-    meta: {
-      built,
-    },
+    meta: { built: { ...built, eventIndex: ++ei } },
   });
 
   try {
@@ -50,9 +49,7 @@ export const GET = withLogging(async (req: Request) => {
       payload: {
         count: notes.length,
       },
-      meta: {
-        built,
-      },
+      meta: { built: { ...built, eventIndex: ++ei } },
     });
     return NextResponse.json({ notes });
   } catch (err: any) {
