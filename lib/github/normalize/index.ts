@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\lib\github\normalize\index.ts
- * @LastEditTime: 2026-04-04 00:49:54
+ * @LastEditTime: 2026-04-26 22:38:56
  */
 // lib/github/normalize/index.ts
 import { BaseNormalizedGitHubEvent, NormalizedGitHubEvent } from "./types";
@@ -19,6 +19,7 @@ export function normalizeGitHubEvent(
 ): NormalizedGitHubEvent {
   const repo = payload.repository?.full_name ?? "unknown";
 
+  let jei = 0;
   let base: BaseNormalizedGitHubEvent;
   const built = staticUniversalContext("GITHUB");
   logj({
@@ -28,7 +29,7 @@ export function normalizeGitHubEvent(
     file: "lib/github/normalize/index.ts",
     line: 24,
     payload: { repo: repo, event: event },
-    meta: { built },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
   switch (event) {
     case "workflow_run":
