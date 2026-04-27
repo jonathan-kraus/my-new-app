@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\notes\route.ts
- * @LastEditTime: 2026-04-26 22:17:13
+ * @LastEditTime: 2026-04-27 19:21:45
  */
 
 import { NextResponse } from "next/server";
@@ -121,7 +121,19 @@ export const POST = withLogging(async (req: Request) => {
   }
 });
 export const PUT = withLogging(async (req: Request) => {
-  // await log.api("notes", "Notes PUT started");
+  let jei = 40;
+  const built = await buildUniversalContext(req as any, "NOTES");
+  await logj({
+    domain: "notes",
+    level: "info",
+    message: "🎶 Notes PUT started 🎶",
+    file: "app/api/notes/route.ts",
+    line: 126,
+    payload: {
+      some: "data",
+    },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
 
   try {
     const session = await auth();
@@ -165,7 +177,7 @@ export const PUT = withLogging(async (req: Request) => {
       level: "info",
       message: "🎶 Note updated 🎶",
       file: "app/api/notes/route.ts",
-      line: 168,
+      line: 175,
       payload: {
         noteId: id,
         title: updatedNote?.title,
@@ -173,6 +185,7 @@ export const PUT = withLogging(async (req: Request) => {
         isCompleted,
         userEmail: email,
       },
+      meta: { built: { ...built, eventIndex: ++jei } },
     });
     return NextResponse.json({ note: updatedNote });
   } catch (err: any) {
@@ -184,7 +197,9 @@ export const PUT = withLogging(async (req: Request) => {
   }
 });
 export const DELETE = withLogging(async (req: Request) => {
-  logj({
+  let jei = 60;
+  const built = await buildUniversalContext(req as any, "NOTES");
+   await logj({
     domain: "notes",
     level: "info",
     message: "🎶 Notes DELETE started 🎶",
@@ -193,6 +208,7 @@ export const DELETE = withLogging(async (req: Request) => {
     payload: {
       some: "data",
     },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
 
   try {
@@ -227,9 +243,7 @@ export const DELETE = withLogging(async (req: Request) => {
       file: "route.ts",
       line: 229,
       payload: { title: noteToDelete?.title, userEmail: email },
-      meta: {
-        built,
-      },
+      meta: { built: { ...built, eventIndex: ++jei } },
     });
     // await log.api("notes", "Note deleted", {
     //   noteId: id,
