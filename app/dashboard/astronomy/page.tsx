@@ -12,6 +12,7 @@ export const revalidate = 60;
 const built = staticUniversalContext("ASTRONOMY");
 const jnow = Date.now();
 const result = format(jnow, "yyyy-MM-dd HH:mm:ss");
+let jei = 0;
 await logj({
   domain: "jonathan",
   level: "info",
@@ -19,9 +20,7 @@ await logj({
   file: "app/dashboard/astronomy/page.tsx",
   line: 14,
   payload: { some: result },
-  meta: {
-    built,
-  },
+  meta: { built: { ...built, eventIndex: ++jei } },
 });
 
 export default async function DashboardAstronomyPage() {

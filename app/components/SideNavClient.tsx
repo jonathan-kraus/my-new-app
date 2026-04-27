@@ -1,7 +1,7 @@
 "use client";
 /*
  * @FilePath: \my-new-app\app\components\SideNavClient.tsx
- * @LastEditTime: 2026-04-07 00:15:10
+ * @LastEditTime: 2026-04-26 22:31:14
  */
 
 import Link from "next/link";
@@ -61,6 +61,7 @@ export default function SideNavClient({
     { href: "/database-explorer", label: "Database Explorer", icon: "🛢️" },
   ];
 
+  let jei = 0;
   useEffect(() => {
     if (!formattedVersion) return;
     const built = staticUniversalContext("side-nav");
@@ -75,7 +76,7 @@ export default function SideNavClient({
         line: 68,
         level: "info",
         payload: { label: navItems[0].label, Version: formattedVersion },
-        meta: { built },
+        meta: { built: { ...built, eventIndex: ++jei } },
       }),
     });
     console.log("SideNavClient loaded with version:", formattedVersion);

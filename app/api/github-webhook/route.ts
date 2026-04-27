@@ -15,7 +15,7 @@ const axiom = new Axiom({ token: process.env.AXIOM_TOKEN! });
 
 export const POST = withLogging(async (req: Request) => {
   const built = staticUniversalContext("GITHUB");
-
+  let jei = 0;
   const raw = await req.text();
   if (!(await verifySignature(req, raw))) {
     return new Response("Unauthorized", { status: 401 });
@@ -25,7 +25,6 @@ export const POST = withLogging(async (req: Request) => {
   const deliveryId =
     req.headers.get("x-github-delivery") ?? crypto.randomUUID();
   const payload = JSON.parse(raw);
-
   const normalized = normalizeGitHubEvent(event, payload);
 
   await logj({
@@ -38,7 +37,7 @@ export const POST = withLogging(async (req: Request) => {
     file: "app/api/github-webhook/route.ts",
     line: 31,
     payload: { event, type: normalized.type, gw },
-    meta: { built },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
 
   try {
