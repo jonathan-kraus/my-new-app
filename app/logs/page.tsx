@@ -65,7 +65,7 @@ const levelStyles: Record<
 export default function LogsPage() {
   const built = staticUniversalContext("jonathan");
   const [newCount, setNewCount] = useState(0);
-
+  let jei = 0;
   const [logs, setLogs] = useState<LogRecord[]>([]);
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
@@ -101,7 +101,7 @@ export default function LogsPage() {
               line: 94,
               level: "info",
               payload: { params: params },
-              meta: { built },
+              meta: { built: { ...built, eventIndex: ++jei } },
             }),
           });
           // new log above

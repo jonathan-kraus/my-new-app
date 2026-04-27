@@ -7,6 +7,7 @@ import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
 
 const built = staticUniversalContext("Jonathan");
+let jei = 0;
 const message_begin = "SendTestEmail -- ";
 logj({
   domain: "jonathan",
@@ -15,15 +16,13 @@ logj({
   file: "lib/server/email/sendTestEmail.ts",
   line: 11,
   payload: { some: "data" },
-  meta: {
-    built,
-  },
+  meta: { built: { ...built, eventIndex: ++jei } },
 });
 
 export async function sendTestEmail(message: string, subject: string) {
   // --- 1. Read flag ---------------------------------------------------------
   const enabled = await getConfig("email_enabled", "1");
-  let jei = 0;
+  let jei = 1;
   if (String(enabled) !== "1") {
     await logj({
       domain: "jonathan",

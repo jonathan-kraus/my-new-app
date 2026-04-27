@@ -47,9 +47,7 @@ export async function proxy(req: NextRequest) {
   //     file: "proxy.ts",
   //     line: 41,
   //     payload: { some: 'data' },
-  //     meta: {
-  //       built,
-  //     },
+  //     meta: { built: { ...built, eventIndex: ++jei } },
   //   });
   // await logit(
   //   "middleware",
