@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\notes\route.ts
- * @LastEditTime: 2026-04-25 20:10:33
+ * @LastEditTime: 2026-04-26 22:17:13
  */
 
 import { NextResponse } from "next/server";
@@ -14,7 +14,7 @@ import { log } from "@/lib/log";
 export const GET = withLogging(async (req: Request) => {
   // Build context INSIDE the request handler
   const built = await buildUniversalContext(req as any, "NOTES");
-  let ei = 0;
+  let jei = 0;
   await logj({
     domain: "notes",
     level: "info",
@@ -24,7 +24,7 @@ export const GET = withLogging(async (req: Request) => {
     payload: {
       some: "data",
     },
-    meta: { built: { ...built, eventIndex: ++ei } },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
 
   try {
@@ -49,7 +49,7 @@ export const GET = withLogging(async (req: Request) => {
       payload: {
         count: notes.length,
       },
-      meta: { built: { ...built, eventIndex: ++ei } },
+      meta: { built: { ...built, eventIndex: ++jei } },
     });
     return NextResponse.json({ notes });
   } catch (err: any) {
@@ -62,6 +62,7 @@ export const GET = withLogging(async (req: Request) => {
 });
 export const POST = withLogging(async (req: Request) => {
   const built = await buildUniversalContext(req as any, "NOTES");
+  let jei = 20;
   await logj({
     domain: "notes",
     level: "info",
@@ -71,9 +72,7 @@ export const POST = withLogging(async (req: Request) => {
     payload: {
       some: "data",
     },
-    meta: {
-      built,
-    },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
 
   try {
@@ -109,9 +108,7 @@ export const POST = withLogging(async (req: Request) => {
         title: note.title,
         userEmail: email,
       },
-      meta: {
-        built,
-      },
+      meta: { built: { ...built, eventIndex: ++jei } },
     });
 
     return NextResponse.json({ note });

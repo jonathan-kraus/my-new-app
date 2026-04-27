@@ -27,15 +27,15 @@ export async function enrichContext(req: NextRequest) {
 
   // Increment per-request event index
   const eventIndex = (requestCounters.get(requestId) ?? 0) + 1;
-requestCounters.set(requestId, eventIndex);
+  requestCounters.set(requestId, eventIndex);
 
-// Clean up old entries to avoid memory leak
-if (requestCounters.size > 100) {
-  const firstKey = requestCounters.keys().next().value;
-  if (firstKey !== undefined) {
-    requestCounters.delete(firstKey);
+  // Clean up old entries to avoid memory leak
+  if (requestCounters.size > 100) {
+    const firstKey = requestCounters.keys().next().value;
+    if (firstKey !== undefined) {
+      requestCounters.delete(firstKey);
+    }
   }
-}
 
   // Session info
   let sessionEmail: string | undefined = undefined;

@@ -22,7 +22,7 @@ async function fetchGitHubEvents(): Promise<GitHubActivityEvent[]> {
 export default async function GitHubPage() {
   const events = await fetchGitHubEvents();
   const built = staticUniversalContext("GitHubPage");
-  // new log below
+  let jei = 0;
   await logj({
     domain: "github",
     level: "info",
@@ -32,9 +32,7 @@ export default async function GitHubPage() {
     payload: {
       eventCount: events.length,
     },
-    meta: {
-      built,
-    },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
 
   // new log above

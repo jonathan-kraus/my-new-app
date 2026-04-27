@@ -180,7 +180,7 @@ export async function logj(input: LogjInput) {
       {
         domain,
         level,
-        message: `#${(meta.built?.eventIndex ?? 0)} ${message}`,
+        message: `#${meta.built?.eventIndex ?? 0} ${message}`,
         file,
         line,
         eventIndex: meta.eventIndex ?? 0,

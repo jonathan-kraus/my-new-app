@@ -31,7 +31,7 @@ export default async function HomePage(req: Request) {
   SessionSchema.parse(session); // throws if shape is unexpected
   // Use userId from the universal context if available, otherwise fall back to session
   const built = await buildUniversalContext(req as any, "DASHBOARD");
-
+  let jei = 0;
   await logj({
     domain: "jonathan",
     level: "info",
@@ -41,9 +41,7 @@ export default async function HomePage(req: Request) {
     payload: {
       some: "data",
     },
-    meta: {
-      built,
-    },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
 
   const location = await db.location.findFirst({
@@ -67,9 +65,7 @@ export default async function HomePage(req: Request) {
     line: 62,
     payload: { some: "data" },
 
-    meta: {
-      built,
-    },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
 
   const forecastRes = await fetch(
@@ -88,9 +84,7 @@ export default async function HomePage(req: Request) {
       weatherData: weatherData,
       forecastData: forecastData,
     },
-    meta: {
-      built,
-    },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
 
   return (

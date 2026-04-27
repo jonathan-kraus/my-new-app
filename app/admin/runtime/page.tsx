@@ -13,6 +13,8 @@ export default async function RuntimeAdminPage(req: NextRequest) {
   const configs = await db.runtimeConfig.findMany({
     orderBy: { key: "asc" },
   });
+
+  let jei = 0;
   const lastSent =
     configs.find((c) => c.key === "email.last_sent_at")?.value ?? null;
   const throttle = Number(
@@ -30,9 +32,7 @@ export default async function RuntimeAdminPage(req: NextRequest) {
       lastsent: lastSent,
       throttle: throttle,
     },
-    meta: {
-      built,
-    },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
   return (
     <div className="max-w-3xl mx-auto py-10 space-y-6">

@@ -23,7 +23,7 @@ logj({
 export async function sendTestEmail(message: string, subject: string) {
   // --- 1. Read flag ---------------------------------------------------------
   const enabled = await getConfig("email_enabled", "1");
-
+  let jei = 0;
   if (String(enabled) !== "1") {
     await logj({
       domain: "jonathan",
@@ -32,9 +32,7 @@ export async function sendTestEmail(message: string, subject: string) {
       file: "lib/server/email/sendTestEmail.ts",
       line: 29,
       payload: { some: "data" },
-      meta: {
-        built,
-      },
+      meta: { built: { ...built, eventIndex: ++jei } },
     });
   }
   const throttleMinutes = Number(
@@ -76,9 +74,7 @@ export async function sendTestEmail(message: string, subject: string) {
     file: "lib/server/email/sendTestEmail.ts",
     line: 73,
     payload: { some: "data" },
-    meta: {
-      built,
-    },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
 
   if (typeof lastSentRaw === "string" && lastSentRaw.length > 0) {

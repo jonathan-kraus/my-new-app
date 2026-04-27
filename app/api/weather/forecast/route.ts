@@ -12,7 +12,7 @@ const FORECAST_CACHE_MINUTES = fcm;
 export async function GET(req: Request) {
   const session = await auth();
   const built = await buildUniversalContext(req as any, "FORECAST");
-
+  let jei = 0;
   const { searchParams } = new URL(req.url);
   const locationId = searchParams.get("locationId");
 
@@ -49,9 +49,7 @@ export async function GET(req: Request) {
       payload: {
         some: "data",
       },
-      meta: {
-        built,
-      },
+      meta: { built: { ...built, eventIndex: ++jei } },
     });
 
     const weather = cached.payload as {
@@ -79,9 +77,7 @@ export async function GET(req: Request) {
     payload: {
       some: "data",
     },
-    meta: {
-      built,
-    },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
 
   const weatherRes = await fetch(
@@ -108,9 +104,7 @@ export async function GET(req: Request) {
       locationId,
       cacheWindowMinutes: FORECAST_CACHE_MINUTES,
     },
-    meta: {
-      built,
-    },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
 
   if (!parsed.success) {
@@ -161,9 +155,7 @@ export async function GET(req: Request) {
     payload: {
       some: "data",
     },
-    meta: {
-      built,
-    },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
   await logj({
     domain: "weather",
@@ -176,9 +168,7 @@ export async function GET(req: Request) {
       snapshotId: snapshot.id,
       cacheWindowMinutes: FORECAST_CACHE_MINUTES,
     },
-    meta: {
-      built,
-    },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
 
   // ----------------------------------------

@@ -11,6 +11,7 @@ export async function logFromClient(
   payload: any,
 ) {
   const built = await staticUniversalContext(domain);
+  let jei = 0;
   return await logj({
     domain: domain,
     level: "info",
@@ -18,8 +19,6 @@ export async function logFromClient(
     file: file,
     line: line,
     payload: { payload },
-    meta: {
-      built,
-    },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
 }

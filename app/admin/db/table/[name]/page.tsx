@@ -19,6 +19,7 @@ interface PageProps {
 async function getTableData(name: string, page: number) {
   // Validate table exists and is not excluded
   const built = staticUniversalContext("TablePage");
+  let jei = 0;
   await logj({
     domain: "jonathan",
     level: "info",
@@ -26,9 +27,7 @@ async function getTableData(name: string, page: number) {
     file: "page.tsx",
     line: 22,
     payload: { name: name, page: page },
-    meta: {
-      built,
-    },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
   const tableCheck = await sql`
     SELECT table_name FROM information_schema.tables

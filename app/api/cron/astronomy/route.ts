@@ -14,7 +14,7 @@ function atLocalMidnight(d: Date) {
 }
 async function cleanupOldLogs(days: number, built: any) {
   const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
-
+  let jei = 0;
   // Count before
   const beforeCount = await db.log.count();
 
@@ -43,9 +43,7 @@ async function cleanupOldLogs(days: number, built: any) {
       afterCount,
       cutoff: cutoff.toISOString(),
     },
-    meta: {
-      built,
-    },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
 
   return result.count;

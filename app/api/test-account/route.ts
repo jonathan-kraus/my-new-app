@@ -6,6 +6,7 @@ import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 export const GET = withLogging(async (req: Request) => {
   const built = await buildUniversalContext(req as any, "JONATHAN");
+  let jei = 0;
   await logj({
     domain: "jonathan",
     level: "info",
@@ -15,9 +16,7 @@ export const GET = withLogging(async (req: Request) => {
     payload: {
       ip: built.ip,
     },
-    meta: {
-      built,
-    },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
 
   // Return a real 500 to trigger your Axiom monitor

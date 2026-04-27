@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 import { queryAxiom } from "@/lib/axiom/query";
 
 export async function GET() {
-const q = `
+  const q = `
   ['myapp_logs']
   | where isnotnull(domain) and isnotnull(meta_json)
   | sort by _time desc

@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export default async function DashboardPage() {
   const [tables, history] = await Promise.all([getOverview(), getHistory()]);
   const built = await staticUniversalContext("DB");
-
+  let jei = 0;
   await logj({
     domain: "jonathan",
     level: "info",
@@ -16,9 +16,7 @@ export default async function DashboardPage() {
     file: "app/admin/db/page.tsx",
     line: 12,
     payload: { tablesCount: tables.length, historyCount: history.length },
-    meta: {
-      built,
-    },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
 
   return <DbDashboard tables={tables} history={history} />;

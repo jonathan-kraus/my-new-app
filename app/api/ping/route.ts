@@ -13,6 +13,7 @@ export async function GET(req: NextRequest) {
   const h = await headers(); // ✅ await the Promise
   const session = await auth();
   const c = await cookies();
+  let jei = 0;
   console.log("PING cookies:", c.getAll());
   console.log("PING session:", session);
   console.log("PING req:", req);
@@ -27,9 +28,7 @@ export async function GET(req: NextRequest) {
     file: "app/api/ping/route.ts",
     line: 16,
     payload: {},
-    meta: {
-      built,
-    },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
   const params = {
     latitude: 40.15,
@@ -86,9 +85,7 @@ export async function GET(req: NextRequest) {
       timezoneAbbreviation: timezoneAbbreviation,
       utcOffsetSeconds: utcOffsetSeconds,
     },
-    meta: {
-      built,
-    },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
   const current = response.current()!;
 
@@ -160,9 +157,7 @@ export async function GET(req: NextRequest) {
       Currentweather_code: weatherData.current.weather_code,
       Currentcloud_cover: weatherData.current.cloud_cover,
     },
-    meta: {
-      built,
-    },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
   console.log("\nDaily data:\n", weatherData.daily);
 

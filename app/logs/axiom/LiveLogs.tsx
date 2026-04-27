@@ -8,50 +8,53 @@ import { formatEastern } from "@/lib/utils/global";
 import { useEffect, useState } from "react";
 
 export default function LiveLogs() {
-	const [logs, setLogs] = useState<any[]>([]);
-	const [loading, setLoading] = useState(true);
+  const [logs, setLogs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-	async function fetchLogs() {
-		const res = await fetch("/api/logs/live", { cache: "no-store" });
-		const json = await res.json();
-		console.log("logs response:", json);
-		setLogs(json.logs ?? []);
-		setLoading(false);
-	}
+  async function fetchLogs() {
+    const res = await fetch("/api/logs/live", { cache: "no-store" });
+    const json = await res.json();
+    console.log("logs response:", json);
+    setLogs(json.logs ?? []);
+    setLoading(false);
+  }
 
-	useEffect(() => {
-		fetchLogs();
-		const id = setInterval(fetchLogs, 22222);
-		return () => clearInterval(id);
-	}, []);
+  useEffect(() => {
+    fetchLogs();
+    const id = setInterval(fetchLogs, 22222);
+    return () => clearInterval(id);
+  }, []);
 
-	if (loading) {
-		return <div className="text-gray-400">Loading logs…</div>;
-	}
-const isInfo = (log: any) => log.level === 'info';
-const jdate = formatEastern(new Date())
-console.log("jdate:", jdate)
-	return (
-		<div className="space-y-3">
-			{logs.map((log, i) => (
-				<div key={i} className="p-4 rounded-lg bg-black/40 border border-white/10 text-sm">
-					<div className="flex justify-between">
-						<span className="font-semibold text-blue-300">{log.domain}</span>
-						<span className="text-gray-400">
-							{log._time ? new Date(log._time).toLocaleTimeString() : ""}
-						</span>
-					</div>
+  if (loading) {
+    return <div className="text-gray-400">Loading logs…</div>;
+  }
+  const isInfo = (log: any) => log.level === "info";
+  const jdate = formatEastern(new Date());
+  console.log("jdate:", jdate);
+  return (
+    <div className="space-y-3">
+      {logs.map((log, i) => (
+        <div
+          key={i}
+          className="p-4 rounded-lg bg-black/40 border border-white/10 text-sm"
+        >
+          <div className="flex justify-between">
+            <span className="font-semibold text-blue-300">{log.domain}</span>
+            <span className="text-gray-400">
+              {log._time ? new Date(log._time).toLocaleTimeString() : ""}
+            </span>
+          </div>
           <div className="mt-1 text-white">time: {jdate}</div>
-					<div className="mt-1 text-white">Msg: {log.message}</div>
-					<div className="mt-1 text-white">File: {log.file}</div>
-					<div className="mt-1 text-white">Line: {log.line}</div>
-					{!isInfo && (
-              <div className="mt-1 text-xs text-sky-200/80">
-                Level: {log.level}
-              </div>
-            )}
-				</div>
-			))}
-		</div>
-	);
+          <div className="mt-1 text-white">Msg: {log.message}</div>
+          <div className="mt-1 text-white">File: {log.file}</div>
+          <div className="mt-1 text-white">Line: {log.line}</div>
+          {!isInfo && (
+            <div className="mt-1 text-xs text-sky-200/80">
+              Level: {log.level}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
 }

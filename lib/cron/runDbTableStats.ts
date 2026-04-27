@@ -16,6 +16,7 @@ export async function runDbTableStats(ctx: {
   const start = Date.now();
   const snapshotDate = atLocalMidnight(new Date());
   const built = staticUniversalContext("runstats");
+  let jei = 0;
   await logj({
     domain: "jonathan",
     level: "info",
@@ -25,9 +26,7 @@ export async function runDbTableStats(ctx: {
     payload: {
       date: snapshotDate.toISOString(),
     },
-    meta: {
-      built,
-    },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
 
   const stats = await db.$queryRawUnsafe(`
@@ -109,8 +108,6 @@ export async function runDbTableStats(ctx: {
     payload: {
       tables: tablesProcessed,
     },
-    meta: {
-      built,
-    },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
 }
