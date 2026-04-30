@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\fa\dashboard\route.ts
- * @LastEditTime: 2026-03-11 18:54:19
+ * @LastEditTime: 2026-04-30 01:18:38
  */
 // app/api/fa/dashboard/route.ts
 import { getConfig } from "@/lib/runtime/config";
@@ -88,7 +88,7 @@ export async function GET() {
   );
 
   const planesData = await planesRes.json();
-  console.log("PLANES DATA", planesData);
+  console.log("PLANE DATA", planesData);
 
   // 2. Fetch AA877 status
   const ident = await getConfig("flight-ID", "flight-ID");
