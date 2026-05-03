@@ -5,6 +5,8 @@ import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
 import { addDays, format } from "date-fns";
 import { buildAstronomySnapshot } from "@/lib/buildAstronomySnapshot";
+import { getConfig, setConfig } from "@/lib/runtime/config";
+import { log } from '../../../../lib/log/logger';
 
 export const runtime = "nodejs";
 
@@ -124,7 +126,10 @@ export async function GET(req: NextRequest) {
         built,
       },
     });
-    const deleted = await cleanupOldLogs(60, built);
+    const logDays = await getConfig("logDays", "61");
+    const logDaysNum = logDays?.toString() ?? "61";
+    const cleanupDays = Number.isNaN(logDaysNum) ? 61 : parseInt(logDaysNum, 10);
+    const deleted = await cleanupOldLogs(cleanupDays, built);
 
     await logj({
       domain: "ephemeris",
@@ -134,6 +139,9 @@ export async function GET(req: NextRequest) {
       line: 131,
       payload: {
         durationMs,
+        logDays: logDays,
+        logDaysNum: logDaysNum,
+        cleanupDays: cleanupDays,
         logsDeleted: deleted,
       },
       meta: {
