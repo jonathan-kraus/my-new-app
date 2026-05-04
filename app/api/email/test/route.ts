@@ -8,7 +8,7 @@ import { NextRequest, NextResponse } from "next/server";
 export const POST = withLogging(async (req: Request) => {
   const test_msg1 = "This is a test email sent from the Next.js API route.";
   const test_subject = "Test Email Subject";
-
+  let jei = 0;
   const result = await sendTestEmail(test_msg1, test_subject);
 
   // FIXED: buildUniversalContext now requires (req, routeName)
@@ -23,9 +23,7 @@ export const POST = withLogging(async (req: Request) => {
     payload: {
       some: "data",
     },
-    meta: {
-      built, // optional
-    },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
 
   return NextResponse.json(result);

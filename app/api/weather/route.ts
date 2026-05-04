@@ -60,15 +60,13 @@ export async function GET(req: NextRequest) {
   }
 
   const currentCacheMin = 30;
-  const forecastCacheMin = 30;
-
+  let jei = 0;
   const currentCutoff = new Date(Date.now() - currentCacheMin * 60_000);
 
   const currentCached = await db.weatherSnapshot.findFirst({
     where: { locationId, fetchedAt: { gte: currentCutoff } },
     orderBy: { fetchedAt: "desc" },
   });
-  const eventIndex = 22;
   const currentAge = currentCached
     ? Math.round((Date.now() - currentCached.fetchedAt.getTime()) / 60000)
     : null;
@@ -79,14 +77,11 @@ export async function GET(req: NextRequest) {
       level: "info",
       message: "Using cached current weather data",
       file: "app/api/weather/route.ts",
-      line: 76,
+      line: 75,
       payload: {
         some: "data",
       },
-      meta: {
-        built,
-        eventIndex,
-      },
+    meta: { built: { ...built, eventIndex: ++jei } },
     });
 
     return NextResponse.json({
@@ -126,15 +121,12 @@ export async function GET(req: NextRequest) {
     level: "info",
     message: "Fetched current weather data",
     file: "app/api/weather/route.ts",
-    line: 124,
+    line: 119,
     payload: {
       some: res.status,
       validated: validated,
     },
-    meta: {
-      built,
-      eventIndex,
-    },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
   if (!validated.success) {
     return NextResponse.json(

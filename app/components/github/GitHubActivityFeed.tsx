@@ -60,7 +60,7 @@ export default function GitHubActivityFeed() {
       }
 
       const data = await response.json();
-
+      let jei = 0;
       // Transform the data to match the expected format for GitHubActivityCard
       const transformedActivities: GitHubActivityEvent[] = data.data.map(
         (item: any, index: number) => {
@@ -95,7 +95,7 @@ export default function GitHubActivityFeed() {
                 line: 87,
                 level: "info",
                 payload: { name: item.name, url: item.html_url },
-                meta: { built },
+                    meta: { built: { ...built, eventIndex: ++jei } },
               }),
             }));
           // Handle commits (repositories and user activity)

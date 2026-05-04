@@ -8,7 +8,7 @@ export const runtime = "nodejs";
 
 export async function GET(req: NextRequest) {
   const built = await buildUniversalContext(req, "REFRESHLOG");
-
+  let jei = 0;
   try {
     await logj({
       domain: "jonathan",
@@ -19,9 +19,7 @@ export async function GET(req: NextRequest) {
       payload: {
         some: "data",
       },
-      meta: {
-        built,
-      },
+    meta: { built: { ...built, eventIndex: ++jei } },
     });
 
     await runDbTableStats({
@@ -35,13 +33,11 @@ export async function GET(req: NextRequest) {
       level: "info",
       message: "API cron refreshlog completed",
       file: "app/api/cron/refreshLog/route.ts",
-      line: 33,
+      line: 31,
       payload: {
         some: "data",
       },
-      meta: {
-        built,
-      },
+    meta: { built: { ...built, eventIndex: ++jei } },
     });
 
     return NextResponse.json({
@@ -54,13 +50,11 @@ export async function GET(req: NextRequest) {
       level: "error",
       message: "API cron refreshlog error",
       file: "app/api/cron/refreshLog/route.ts",
-      line: 52,
+      line: 48,
       payload: {
         some: "data",
       },
-      meta: {
-        built,
-      },
+    meta: { built: { ...built, eventIndex: ++jei } },
     });
 
     return NextResponse.json(

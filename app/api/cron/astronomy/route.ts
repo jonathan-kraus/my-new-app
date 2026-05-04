@@ -54,7 +54,7 @@ async function cleanupOldLogs(days: number, built: any) {
 export async function GET(req: NextRequest) {
   const start = Date.now();
   const built = staticUniversalContext("ASTRONOMY");
-
+  let jei = 10;
   const locations = await db.location.findMany();
   const durationMs = Date.now() - start;
   for (const location of locations) {
@@ -67,9 +67,7 @@ export async function GET(req: NextRequest) {
       payload: {
         name: location.name,
       },
-      meta: {
-        built,
-      },
+    meta: { built: { ...built, eventIndex: ++jei } },
     });
     const base = atLocalMidnight(new Date());
 
@@ -86,9 +84,7 @@ export async function GET(req: NextRequest) {
         payload: {
           count: i,
         },
-        meta: {
-          built,
-        },
+            meta: { built: { ...built, eventIndex: ++jei } },
       });
 
       // Build the full solar/lunar snapshot
@@ -122,9 +118,7 @@ export async function GET(req: NextRequest) {
       payload: {
         duration: durationMs,
       },
-      meta: {
-        built,
-      },
+    meta: { built: { ...built, eventIndex: ++jei } },
     });
     const logDays = await getConfig("logDays", "61");
     const logDaysNum = logDays?.toString() ?? "61";
@@ -144,9 +138,7 @@ export async function GET(req: NextRequest) {
         cleanupDays: cleanupDays,
         logsDeleted: deleted,
       },
-      meta: {
-        built,
-      },
+    meta: { built: { ...built, eventIndex: ++jei } },
     });
     return NextResponse.json({ ok: true, durationMs });
   }
