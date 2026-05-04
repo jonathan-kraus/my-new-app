@@ -174,7 +174,7 @@ export default function LogsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white p-6">
-      <div className="max-w-5xl mx-auto space-y-4">
+      <div className="max-w-5xl space-y-4">
         {/* Header */}
         <div className="flex items-center justify-between gap-4">
           {newCount > 0 && (
