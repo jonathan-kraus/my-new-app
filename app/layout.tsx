@@ -13,7 +13,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en" className="dark">
       <WebVitals />
-      <body className="bg-blue-200 text-[#0C0D0D] dark:bg-black dark:text-white min-h-screen antialiased">
+      <body className="bg-blue-950 text-white min-h-screen antialiased">
         <div className="flex shrink-0 min-h-screen">
           <SideNav />
           <ClientLayout>
