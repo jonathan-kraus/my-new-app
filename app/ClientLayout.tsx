@@ -15,7 +15,7 @@ export default function ClientLayout({
       {/* Sidebar */}
 
       {/* Main content */}
-      <main className="ml-64 p-6 w-full min-h-screen">
+      <main className="ml-64 p-6 flex-1 min-h-screen">
         <ToastProvider>{children}</ToastProvider>
         <Analytics />
         <SpeedInsights />
