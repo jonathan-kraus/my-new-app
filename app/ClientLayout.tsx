@@ -10,16 +10,13 @@ export default function ClientLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <div className="flex min-h-screen bg-blue-950 text-white">
-      {/* Sidebar */}
-
-      {/* Main content */}
-      <main className="ml-64 p-6 flex-1 min-h-screen">
-        <ToastProvider>{children}</ToastProvider>
-        <Analytics />
-        <SpeedInsights />
-      </main>
-    </div>
-  );
+return (
+  <>
+    <main className="ml-64 p-6 flex-1 min-h-screen">
+      <ToastProvider>{children}</ToastProvider>
+      <Analytics />
+      <SpeedInsights />
+    </main>
+  </>
+);
 }
