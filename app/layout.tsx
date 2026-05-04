@@ -17,7 +17,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <div className="flex shrink-0 min-h-screen">
           <SideNav />
           <ClientLayout>
-            <main className="flex-1">{children}</main>
+            {children}
           </ClientLayout>
         </div>
 
