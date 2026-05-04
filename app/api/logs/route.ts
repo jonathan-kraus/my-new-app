@@ -20,18 +20,19 @@ export async function GET(req: NextRequest) {
       }
     : undefined;
 
-  const logs = await db.log.findMany({
-    where: {
-      NOT: {
-        message: {
-          startsWith: "REQUEST END",
-        },
+const logs = await db.log.findMany({
+  where: {
+    NOT: {
+      message: {
+        startsWith: "REQUEST END",
       },
     },
-    orderBy: { created_at: "desc" },
-    skip,
-    take: limit,
-  });
+    ...where,
+  },
+  orderBy: { created_at: "desc" },
+  skip,
+  take: limit,
+});
 
   return NextResponse.json({
     logs: logs.map((l) => ({
