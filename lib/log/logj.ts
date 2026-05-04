@@ -158,36 +158,31 @@ export async function logj(input: LogjInput) {
     }
 
     const record = parsed.data;
-    const reqId = (meta.built?.requestId ?? "unknown") as string;
-    const eventIndex = (logCounters.get(reqId) ?? 0) + 1;
-    logCounters.set(reqId, eventIndex);
 
-    // cleanup
-    if (logCounters.size > 100) {
-      const firstKey = logCounters.keys().next().value;
-      if (firstKey !== undefined) logCounters.delete(firstKey);
-    }
+const eventIndex = (meta.built?.eventIndex ?? 0) as number;
+const prefixedMessage = eventIndex > 0 ? `#${eventIndex} ${message}` : message;
 
-    await db.log.create({
-      data: {
-        ...record,
-        payload: record.payload as any,
-        meta: record.meta as any,
-      },
-    });
+await db.log.create({
+  data: {
+    ...record,
+    message: prefixedMessage,
+    payload: record.payload as any,
+    meta: record.meta as any,
+  },
+});
 
-    await axiomIngest([
-      {
-        domain,
-        level,
-        message: `#${meta.built?.eventIndex ?? 0} ${message}`,
-        file,
-        line,
-        eventIndex: meta.eventIndex ?? 0,
-        meta_json: JSON.stringify(record.meta),
-        payload_json: JSON.stringify(record.payload),
-      },
-    ]);
+await axiomIngest([
+  {
+    domain,
+    level,
+    message: prefixedMessage,  // use same variable for consistency
+    file,
+    line,
+    eventIndex: meta.built?.eventIndex ?? 0,  // also fixed to use built
+    meta_json: JSON.stringify(record.meta),
+    payload_json: JSON.stringify(record.payload),
+  },
+]);
   } catch (err) {
     console.error("LOG ERROR:", err);
   }
