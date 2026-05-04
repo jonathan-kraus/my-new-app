@@ -176,11 +176,13 @@ export async function logit(
   // Neon write
   // ---------------------------------------------------------------------------
   try {
+    const eventIndex = (flatMeta?.built?.eventIndex ?? 0) as number;
+    const prefixedMessage = eventIndex > 0 ? `#${eventIndex} ${message}` : message;
     await db.log.create({
       data: {
         domain,
         level: event.level ?? "info",
-        message,
+        message: prefixedMessage,
         requestId,
         payload: safeForNeon(flatPayload),
         meta: safeForNeon(flatMeta),
