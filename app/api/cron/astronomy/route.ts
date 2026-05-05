@@ -6,7 +6,6 @@ import { staticUniversalContext } from "@/lib/log/buildj";
 import { addDays, format } from "date-fns";
 import { buildAstronomySnapshot } from "@/lib/buildAstronomySnapshot";
 import { getConfig, setConfig } from "@/lib/runtime/config";
-import { log } from '../../../../lib/log/logger';
 
 export const runtime = "nodejs";
 
@@ -50,7 +49,42 @@ async function cleanupOldLogs(days: number, built: any) {
 
   return result.count;
 }
+async function cleanupEphem(days: number, built: any) {
+  const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+  let jei = 1;
+  // Count before
+  const beforeCount = await db.ephemerisDebug.count();
 
+  // Delete
+  const result = await db.ephemerisDebug.deleteMany({
+    where: {
+      receivedAt: {
+        lt: cutoff,
+      },
+    },
+  });
+
+  // Count after
+  const afterCount = await db.ephemerisDebug.count();
+
+  // Log the cleanup
+  await logj({
+    domain: "ephemeris",
+    level: "info",
+    message: `Ephemeris cleanup completed`,
+    file: "app/api/cron/astronomy/route.ts",
+    line: 73,
+    payload: {
+      beforeCount,
+      deleted: result.count,
+      afterCount,
+      cutoff: cutoff.toISOString(),
+    },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
+
+  return result.count;
+}
 export async function GET(req: NextRequest) {
   const start = Date.now();
   const built = staticUniversalContext("ASTRONOMY");
@@ -124,6 +158,7 @@ export async function GET(req: NextRequest) {
     const logDaysNum = logDays?.toString() ?? "61";
     const cleanupDays = Number.isNaN(logDaysNum) ? 61 : parseInt(logDaysNum, 10);
     const deleted = await cleanupOldLogs(cleanupDays, built);
+    const deletedE = await cleanupEphem(cleanupDays, built);
 
     await logj({
       domain: "ephemeris",
