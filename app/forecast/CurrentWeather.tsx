@@ -35,9 +35,9 @@ export function CurrentWeather({
         </div>
 
         <div>
-          <p className="text-5xl font-black text-gray-900">
+          {/* <p className="text-5xl font-black text-gray-900">
             {Math.round(temperature)}°
-          </p>
+          </p> */}
           <div className="flex items-center gap-2 mt-1">
             <span
               className={`text-sm text-gray-700 ${
