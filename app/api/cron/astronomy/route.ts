@@ -54,7 +54,7 @@ async function cleanupOldLogs(days: number, built: any) {
 export async function GET(req: NextRequest) {
   const start = Date.now();
   const built = staticUniversalContext("ASTRONOMY");
-  let jei = 10;
+  let jei = 1;
   const locations = await db.location.findMany();
   const durationMs = Date.now() - start;
   for (const location of locations) {
