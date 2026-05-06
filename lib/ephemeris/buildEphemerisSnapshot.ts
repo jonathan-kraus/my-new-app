@@ -159,6 +159,8 @@ export function buildEphemerisSnapshot(
   };
 
   // ⭐ Write debug event (non-blocking)
+  const doit = false; // true;
+  if (doit) {
   try {
     writeEphemerisDebugEvent({
       id: crypto.randomUUID(),
@@ -193,6 +195,6 @@ export function buildEphemerisSnapshot(
   } catch (err) {
     console.error("Failed to write ephemeris debug event:", err);
   }
-
+  }
   return snapshot;
 }
