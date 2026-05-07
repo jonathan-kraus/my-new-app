@@ -34,10 +34,10 @@ importers:
         version: 1.6.1
       '@axiomhq/logging':
         specifier: ^0.2.0
-        version: 0.2.0(@axiomhq/js@1.6.1)
+        version: 0.2.1(@axiomhq/js@1.6.1)
       '@axiomhq/react':
         specifier: ^0.2.0
-        version: 0.2.0(@axiomhq/logging@0.2.0(@axiomhq/js@1.6.1))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 0.2.0(@axiomhq/logging@0.2.1(@axiomhq/js@1.6.1))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@heroicons/react':
         specifier: ^2.2.0
         version: 2.2.0(react@19.2.5)
@@ -357,11 +357,11 @@ packages:
     resolution: {integrity: sha512-iNWOnGvP+R2lIWYk9jkfvRI/rfhOR9hlWJOBJhMKwZ9mfpE0KdnFnG2XPLoMcrbyrOBKj6Jw0hpIH5GhPucLog==}
     engines: {node: '>=20'}
 
-  '@axiomhq/logging@0.2.0':
-    resolution: {integrity: sha512-Ro3GxgBAZQvsbx6Yjor9f6yx2IC7Wvqy0FC7HGcOjdtswl0refGB+gtKs94XyxbfnIo6MbKjHhHHkZOubjE+pQ==}
+  '@axiomhq/logging@0.2.1':
+    resolution: {integrity: sha512-q3qTrXMs0mL5cQwAzjTRXQJiMfsZxBxVU41gNlBVwWhBMgSMpmTyoqqHYMgf0upvrl6Lz8kMo8u5r3ueXSRf1g==}
     engines: {node: '>=20'}
     peerDependencies:
-      '@axiomhq/js': 1.4.0
+      '@axiomhq/js': ^1.0.0
     peerDependenciesMeta:
       '@axiomhq/js':
         optional: true
@@ -4687,13 +4687,13 @@ snapshots:
     dependencies:
       fetch-retry: 6.0.0
 
-  '@axiomhq/logging@0.2.0(@axiomhq/js@1.6.1)':
+  '@axiomhq/logging@0.2.1(@axiomhq/js@1.6.1)':
     optionalDependencies:
       '@axiomhq/js': 1.6.1
 
-  '@axiomhq/react@0.2.0(@axiomhq/logging@0.2.0(@axiomhq/js@1.6.1))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
+  '@axiomhq/react@0.2.0(@axiomhq/logging@0.2.1(@axiomhq/js@1.6.1))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
-      '@axiomhq/logging': 0.2.0(@axiomhq/js@1.6.1)
+      '@axiomhq/logging': 0.2.1(@axiomhq/js@1.6.1)
       react: 19.2.5
       react-dom: 19.2.5(react@19.2.5)
       use-deep-compare: 1.3.0(react@19.2.5)
@@ -7115,7 +7115,7 @@ snapshots:
       eslint: 10.3.0(jiti@2.6.1)
       eslint-import-resolver-node: 0.3.10
       eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.59.1(eslint@10.3.0(jiti@2.6.1))(typescript@6.0.3))(eslint@10.3.0(jiti@2.6.1)))(eslint@10.3.0(jiti@2.6.1))
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.59.1(eslint@10.3.0(jiti@2.6.1))(typescript@6.0.3))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.59.1(eslint@10.3.0(jiti@2.6.1))(typescript@6.0.3))(eslint@10.3.0(jiti@2.6.1)))(eslint@10.3.0(jiti@2.6.1)))(eslint@10.3.0(jiti@2.6.1))
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.59.1(eslint@10.3.0(jiti@2.6.1))(typescript@6.0.3))(eslint-import-resolver-typescript@3.10.1)(eslint@10.3.0(jiti@2.6.1))
       eslint-plugin-jsx-a11y: 6.10.2(eslint@10.3.0(jiti@2.6.1))
       eslint-plugin-react: 7.37.5(eslint@10.3.0(jiti@2.6.1))
       eslint-plugin-react-hooks: 7.1.1(eslint@10.3.0(jiti@2.6.1))
@@ -7152,7 +7152,7 @@ snapshots:
       tinyglobby: 0.2.16
       unrs-resolver: 1.11.1
     optionalDependencies:
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.59.1(eslint@10.3.0(jiti@2.6.1))(typescript@6.0.3))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.59.1(eslint@10.3.0(jiti@2.6.1))(typescript@6.0.3))(eslint@10.3.0(jiti@2.6.1)))(eslint@10.3.0(jiti@2.6.1)))(eslint@10.3.0(jiti@2.6.1))
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.59.1(eslint@10.3.0(jiti@2.6.1))(typescript@6.0.3))(eslint-import-resolver-typescript@3.10.1)(eslint@10.3.0(jiti@2.6.1))
     transitivePeerDependencies:
       - supports-color
 
@@ -7167,7 +7167,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.59.1(eslint@10.3.0(jiti@2.6.1))(typescript@6.0.3))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.59.1(eslint@10.3.0(jiti@2.6.1))(typescript@6.0.3))(eslint@10.3.0(jiti@2.6.1)))(eslint@10.3.0(jiti@2.6.1)))(eslint@10.3.0(jiti@2.6.1)):
+  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.59.1(eslint@10.3.0(jiti@2.6.1))(typescript@6.0.3))(eslint-import-resolver-typescript@3.10.1)(eslint@10.3.0(jiti@2.6.1)):
     dependencies:
       '@rtsao/scc': 1.1.0
       array-includes: 3.1.9
