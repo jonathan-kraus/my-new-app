@@ -158,7 +158,7 @@ export function buildEphemerisSnapshot(
     fetchedAt: new Date().toISOString(),
   };
 
-  // ⭐ Write debug event (non-blocking)
+  // ⭐ Write debug event (non-blocking) add doit
   const doit = false; // true;
   if (doit) {
   try {
