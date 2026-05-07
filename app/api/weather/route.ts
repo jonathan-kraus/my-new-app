@@ -81,7 +81,7 @@ export async function GET(req: NextRequest) {
       payload: {
         some: "data",
       },
-    meta: { built: { ...built, eventIndex: ++jei } },
+      meta: { built: { ...built, eventIndex: ++jei } },
     });
 
     return NextResponse.json({

@@ -92,7 +92,7 @@ export async function sendTestEmail(message: string, subject: string) {
         throttleMinutes: throttleMinutes,
         nextAllowedInMinutes: throttleMinutes - diffMinutes,
       },
-    meta: { built: { ...built, eventIndex: ++jei } },
+      meta: { built: { ...built, eventIndex: ++jei } },
     });
 
     if (diffMinutes < throttleMinutes) {

@@ -199,7 +199,7 @@ export const PUT = withLogging(async (req: Request) => {
 export const DELETE = withLogging(async (req: Request) => {
   let jei = 60;
   const built = await buildUniversalContext(req as any, "NOTES");
-   await logj({
+  await logj({
     domain: "notes",
     level: "info",
     message: "🎶 Notes DELETE started 🎶",

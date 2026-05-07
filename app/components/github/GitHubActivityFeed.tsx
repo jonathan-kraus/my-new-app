@@ -95,7 +95,7 @@ export default function GitHubActivityFeed() {
                 line: 87,
                 level: "info",
                 payload: { name: item.name, url: item.html_url },
-                    meta: { built: { ...built, eventIndex: ++jei } },
+                meta: { built: { ...built, eventIndex: ++jei } },
               }),
             }));
           // Handle commits (repositories and user activity)

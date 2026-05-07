@@ -68,7 +68,7 @@ export async function runDbTableStats(ctx: {
         name: row.table_name,
         count: count,
       },
-    meta: { built: { ...built, eventIndex: ++jei } },
+      meta: { built: { ...built, eventIndex: ++jei } },
     });
     await db.dbTableStats.upsert({
       where: {

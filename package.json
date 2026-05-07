@@ -58,7 +58,7 @@
     "@axiomhq/logging": "^0.2.0",
     "@axiomhq/react": "^0.2.0",
     "@heroicons/react": "^2.2.0",
-    "@neondatabase/postgrest-js": "0.1.0-alpha.2",
+    "@neondatabase/postgrest-js": "0.2.0-beta",
     "@neondatabase/serverless": "^1.1.0",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",

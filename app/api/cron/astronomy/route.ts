@@ -101,7 +101,7 @@ export async function GET(req: NextRequest) {
       payload: {
         name: location.name,
       },
-    meta: { built: { ...built, eventIndex: ++jei } },
+      meta: { built: { ...built, eventIndex: ++jei } },
     });
     const base = atLocalMidnight(new Date());
 
@@ -118,7 +118,7 @@ export async function GET(req: NextRequest) {
         payload: {
           count: i,
         },
-            meta: { built: { ...built, eventIndex: ++jei } },
+        meta: { built: { ...built, eventIndex: ++jei } },
       });
 
       // Build the full solar/lunar snapshot
@@ -152,11 +152,13 @@ export async function GET(req: NextRequest) {
       payload: {
         duration: durationMs,
       },
-    meta: { built: { ...built, eventIndex: ++jei } },
+      meta: { built: { ...built, eventIndex: ++jei } },
     });
     const logDays = await getConfig("logDays", "61");
     const logDaysNum = logDays?.toString() ?? "61";
-    const cleanupDays = Number.isNaN(logDaysNum) ? 61 : parseInt(logDaysNum, 10);
+    const cleanupDays = Number.isNaN(logDaysNum)
+      ? 61
+      : parseInt(logDaysNum, 10);
     const deleted = await cleanupOldLogs(cleanupDays, built);
     const deletedE = await cleanupEphem(cleanupDays, built);
 
@@ -173,7 +175,7 @@ export async function GET(req: NextRequest) {
         cleanupDays: cleanupDays,
         logsDeleted: deleted,
       },
-    meta: { built: { ...built, eventIndex: ++jei } },
+      meta: { built: { ...built, eventIndex: ++jei } },
     });
     return NextResponse.json({ ok: true, durationMs });
   }

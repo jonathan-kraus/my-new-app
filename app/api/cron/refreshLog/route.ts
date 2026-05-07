@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
       payload: {
         some: "data",
       },
-    meta: { built: { ...built, eventIndex: ++jei } },
+      meta: { built: { ...built, eventIndex: ++jei } },
     });
 
     await runDbTableStats({
@@ -37,7 +37,7 @@ export async function GET(req: NextRequest) {
       payload: {
         some: "data",
       },
-    meta: { built: { ...built, eventIndex: ++jei } },
+      meta: { built: { ...built, eventIndex: ++jei } },
     });
 
     return NextResponse.json({
@@ -54,7 +54,7 @@ export async function GET(req: NextRequest) {
       payload: {
         some: "data",
       },
-    meta: { built: { ...built, eventIndex: ++jei } },
+      meta: { built: { ...built, eventIndex: ++jei } },
     });
 
     return NextResponse.json(

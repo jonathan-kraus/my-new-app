@@ -159,30 +159,31 @@ export async function logj(input: LogjInput) {
 
     const record = parsed.data;
 
-const eventIndex = (meta.built?.eventIndex ?? 0) as number;
-const prefixedMessage = eventIndex > 0 ? `#${eventIndex} ${message}` : message;
+    const eventIndex = (meta.built?.eventIndex ?? 0) as number;
+    const prefixedMessage =
+      eventIndex > 0 ? `#${eventIndex} ${message}` : message;
 
-await db.log.create({
-  data: {
-    ...record,
-    message: prefixedMessage,
-    payload: record.payload as any,
-    meta: record.meta as any,
-  },
-});
+    await db.log.create({
+      data: {
+        ...record,
+        message: prefixedMessage,
+        payload: record.payload as any,
+        meta: record.meta as any,
+      },
+    });
 
-await axiomIngest([
-  {
-    domain,
-    level,
-    message: prefixedMessage,  // use same variable for consistency
-    file,
-    line,
-    eventIndex: meta.built?.eventIndex ?? 0,  // also fixed to use built
-    meta_json: JSON.stringify(record.meta),
-    payload_json: JSON.stringify(record.payload),
-  },
-]);
+    await axiomIngest([
+      {
+        domain,
+        level,
+        message: prefixedMessage, // use same variable for consistency
+        file,
+        line,
+        eventIndex: meta.built?.eventIndex ?? 0, // also fixed to use built
+        meta_json: JSON.stringify(record.meta),
+        payload_json: JSON.stringify(record.payload),
+      },
+    ]);
   } catch (err) {
     console.error("LOG ERROR:", err);
   }

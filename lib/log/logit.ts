@@ -177,7 +177,8 @@ export async function logit(
   // ---------------------------------------------------------------------------
   try {
     const eventIndex = (flatMeta?.built?.eventIndex ?? 0) as number;
-    const prefixedMessage = eventIndex > 0 ? `#${eventIndex} ${message}` : message;
+    const prefixedMessage =
+      eventIndex > 0 ? `#${eventIndex} ${message}` : message;
     await db.log.create({
       data: {
         domain,

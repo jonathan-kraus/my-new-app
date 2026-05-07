@@ -160,41 +160,42 @@ export function buildEphemerisSnapshot(
 
   // ⭐ Write debug event (non-blocking) add doit
   const doit = false; // true;
+  console.log("buildEphemerisSnapshot: doit =", doit);
   if (doit) {
-  try {
-    writeEphemerisDebugEvent({
-      id: crypto.randomUUID(),
-      locationId: todayRow.locationId ?? null,
-      fetchedAt: snapshot.fetchedAt,
-      createdAt: new Date().toISOString(),
-      date: todayStr,
+    try {
+      writeEphemerisDebugEvent({
+        id: crypto.randomUUID(),
+        locationId: todayRow.locationId ?? null,
+        fetchedAt: snapshot.fetchedAt,
+        createdAt: new Date().toISOString(),
+        date: todayStr,
 
-      sunrise: todayRow.sunrise,
-      sunset: todayRow.sunset,
+        sunrise: todayRow.sunrise,
+        sunset: todayRow.sunset,
 
-      moonrise: todayRow.moonrise,
-      moonset: todayRow.moonset,
-      moonPhase: todayRow.illumination ?? null,
+        moonrise: todayRow.moonrise,
+        moonset: todayRow.moonset,
+        moonPhase: todayRow.illumination ?? null,
 
-      sunriseBlueStart: todayRow.sunriseBlueStart,
-      sunriseBlueEnd: todayRow.sunriseBlueEnd,
-      sunriseGoldenStart: todayRow.sunriseGoldenStart,
-      sunriseGoldenEnd: todayRow.sunriseGoldenEnd,
-      sunsetGoldenStart: todayRow.sunsetGoldenStart,
-      sunsetGoldenEnd: todayRow.sunsetGoldenEnd,
-      sunsetBlueStart: todayRow.sunsetBlueStart,
-      sunsetBlueEnd: todayRow.sunsetBlueEnd,
+        sunriseBlueStart: todayRow.sunriseBlueStart,
+        sunriseBlueEnd: todayRow.sunriseBlueEnd,
+        sunriseGoldenStart: todayRow.sunriseGoldenStart,
+        sunriseGoldenEnd: todayRow.sunriseGoldenEnd,
+        sunsetGoldenStart: todayRow.sunsetGoldenStart,
+        sunsetGoldenEnd: todayRow.sunsetGoldenEnd,
+        sunsetBlueStart: todayRow.sunsetBlueStart,
+        sunsetBlueEnd: todayRow.sunsetBlueEnd,
 
-      raw: {
-        todayRow,
-        tomorrowRow,
-        snapshot,
-        events,
-      },
-    });
-  } catch (err) {
-    console.error("Failed to write ephemeris debug event:", err);
-  }
+        raw: {
+          todayRow,
+          tomorrowRow,
+          snapshot,
+          events,
+        },
+      });
+    } catch (err) {
+      console.error("Failed to write ephemeris debug event:", err);
+    }
   }
   return snapshot;
 }
