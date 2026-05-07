@@ -37,7 +37,7 @@ importers:
         version: 0.2.1(@axiomhq/js@1.6.1)
       '@axiomhq/react':
         specifier: ^0.2.0
-        version: 0.2.0(@axiomhq/logging@0.2.1(@axiomhq/js@1.6.1))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+        version: 0.2.1(@axiomhq/logging@0.2.1(@axiomhq/js@1.6.1))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@heroicons/react':
         specifier: ^2.2.0
         version: 2.2.0(react@19.2.5)
@@ -366,11 +366,11 @@ packages:
       '@axiomhq/js':
         optional: true
 
-  '@axiomhq/react@0.2.0':
-    resolution: {integrity: sha512-PrvX/y7UEJp/WTcKQqSk1CoZVJeo1tGVnE6ekTZ5JRlv7E9pmewlig3Saxs4g9Bd/I9jMGQvEjy61J6x/QOMSg==}
+  '@axiomhq/react@0.2.1':
+    resolution: {integrity: sha512-3aqbx87Y1jpoQAXXKS50IbDUn4uDFVlwILlAFl4sDB5Rhf5Zrep1fpz/UuKnL2aFf6ARUfkL56iZ/tGu4ExTvw==}
     engines: {node: '>=20'}
     peerDependencies:
-      '@axiomhq/logging': 0.2.0
+      '@axiomhq/logging': 0.2.1
       react: ^18 || ^19
       react-dom: ^18 || ^19
 
@@ -4691,7 +4691,7 @@ snapshots:
     optionalDependencies:
       '@axiomhq/js': 1.6.1
 
-  '@axiomhq/react@0.2.0(@axiomhq/logging@0.2.1(@axiomhq/js@1.6.1))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
+  '@axiomhq/react@0.2.1(@axiomhq/logging@0.2.1(@axiomhq/js@1.6.1))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)':
     dependencies:
       '@axiomhq/logging': 0.2.1(@axiomhq/js@1.6.1)
       react: 19.2.5
