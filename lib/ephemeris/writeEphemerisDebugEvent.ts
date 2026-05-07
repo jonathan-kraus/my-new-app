@@ -1,10 +1,7 @@
 // lib/ephemeris/writeEphemerisDebugEvent.ts
 
 import { db } from "@/lib/db";
-import { logj } from "@/lib/log/logj";
-import { staticUniversalContext } from "@/lib/log/buildj";
 
-const built = staticUniversalContext("writeEphemerisDebugEvent");
 
 // -----------------------------
 // Exported helpers for tests
@@ -50,17 +47,7 @@ export type DebugEventInput = {
 
 export async function writeEphemerisDebugEvent(data: DebugEventInput) {
   const now = new Date();
-   await logj({
-  domain: 'jonathan',
-  level: 'info',
-  message: "Ephemeris debug event written",
-  file: "writeEphemerisDebugEvent.ts",
-  line: 53,
-  payload: { some: 'data' },
-  meta: {
-    built,
-  },
-});
+
   try {
     const row = await db.ephemerisDebug.create({
       data: {
@@ -89,17 +76,7 @@ export async function writeEphemerisDebugEvent(data: DebugEventInput) {
 
     return row;
   } catch (err) {
-await logj({
-  domain: 'jonathan',
-  level: 'error',
-  message: "writeEphemerisDebugEvent failed",
-  file: "writeEphemerisDebugEvent.ts",
-  line: 92,
-  payload: { some: 'data' },
-  meta: {
-    built,
-  },
-});
+
     throw err;
   }
 }
