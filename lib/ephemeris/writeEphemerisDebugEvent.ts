@@ -1,11 +1,11 @@
 // lib/ephemeris/writeEphemerisDebugEvent.ts
 
 import { db } from "@/lib/db";
-import { logit } from "@/lib/log/logit";
+import { logj } from "@/lib/log/logj";
+import { staticUniversalContext } from "@/lib/log/buildj";
 
-const domain = "ephemeris";
-const eventIndex = 22;
-const requestId = crypto.randomUUID();
+const built = staticUniversalContext("writeEphemerisDebugEvent");
+
 // -----------------------------
 // Exported helpers for tests
 // -----------------------------
@@ -50,7 +50,17 @@ export type DebugEventInput = {
 
 export async function writeEphemerisDebugEvent(data: DebugEventInput) {
   const now = new Date();
-
+   await logj({
+  domain: 'jonathan',
+  level: 'info',
+  message: "Ephemeris debug event written",
+  file: "writeEphemerisDebugEvent.ts",
+  line: 53,
+  payload: { some: 'data' },
+  meta: {
+    built,
+  },
+});
   try {
     const row = await db.ephemerisDebug.create({
       data: {
@@ -79,22 +89,17 @@ export async function writeEphemerisDebugEvent(data: DebugEventInput) {
 
     return row;
   } catch (err) {
-    logit(
-      domain,
-      {
-        level: "error",
-        message: "writeEphemerisDebugEvent failed",
-        data: { error: String(err) },
-      },
-      { eventIndex },
-      {
-        requestId: requestId,
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", {
-          timeZone: "America/New_York",
-        }),
-      },
-    );
+await logj({
+  domain: 'jonathan',
+  level: 'error',
+  message: "writeEphemerisDebugEvent failed",
+  file: "writeEphemerisDebugEvent.ts",
+  line: 92,
+  payload: { some: 'data' },
+  meta: {
+    built,
+  },
+});
     throw err;
   }
 }
