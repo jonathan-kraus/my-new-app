@@ -1,8 +1,6 @@
 // lib/ephemeris/writeEphemerisDebugEvent.ts
 
 import { db } from "@/lib/db";
-import { logj } from "@/lib/log/logj";
-import { staticUniversalContext } from "@/lib/log/buildj";
 
 // -----------------------------
 // Exported helpers for tests
@@ -22,8 +20,31 @@ export function toJsonSafe(value: unknown): any {
 }
 
 // -----------------------------
-// Main function
+// Logging helper (dynamic import to avoid server-only issues in tests)
 // -----------------------------
+async function logEphemerisEvent(level: "info" | "error", message: string, payload: any) {
+	try {
+		const { logj } = await import("@/lib/log/logj");
+		const { staticUniversalContext } = await import("@/lib/log/buildj");
+
+		const built = staticUniversalContext("EPHEMERIS");
+		const jei = 0; // Reset for each call
+
+		await logj({
+			domain: "EPHEMERIS",
+			level,
+			message,
+			file: "lib/ephemeris/writeEphemerisDebugEvent.ts",
+			line: level === "info" ? 55 : 75,
+			payload,
+			meta: { built: { ...built, eventIndex: jei } },
+		});
+	} catch (logErr) {
+		// Silently fail logging to avoid breaking the main functionality
+		console.warn("Failed to log ephemeris event:", logErr);
+	}
+}
+
 export type DebugEventInput = {
 	raw: unknown;
 	id: string;
@@ -48,8 +69,6 @@ export type DebugEventInput = {
 
 export async function writeEphemerisDebugEvent(data: DebugEventInput) {
 	const now = new Date();
-	const built = staticUniversalContext("EPHEMERIS");
-	let jei = 0;
 
 	try {
 		const row = await db.ephemerisDebug.create({
@@ -77,26 +96,19 @@ export async function writeEphemerisDebugEvent(data: DebugEventInput) {
 			},
 		});
 
-		await logj({
-			domain: "EPHEMERIS",
-			level: "info",
-			message: "Wrote ephemeris debug event",
-			file: "lib/ephemeris/writeEphemerisDebugEvent.ts",
-			line: 55,
-			payload: { id: data.id, locationId: data.locationId },
-			meta: { built: { ...built, eventIndex: ++jei } },
+		// Log success asynchronously (don't await to avoid blocking)
+		logEphemerisEvent("info", "Wrote ephemeris debug event", {
+			id: data.id,
+			locationId: data.locationId,
 		});
 
 		return row;
 	} catch (err) {
-		await logj({
-			domain: "EPHEMERIS",
-			level: "error",
-			message: "Failed to write ephemeris debug event",
-			file: "lib/ephemeris/writeEphemerisDebugEvent.ts",
-			line: 92,
-			payload: { id: data.id, locationId: data.locationId, error: err },
-			meta: { built: { ...built, eventIndex: ++jei } },
+		// Log error asynchronously (don't await to avoid blocking)
+		logEphemerisEvent("error", "Failed to write ephemeris debug event", {
+			id: data.id,
+			locationId: data.locationId,
+			error: err,
 		});
 
 		throw err;
