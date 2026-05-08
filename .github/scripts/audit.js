@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\.github\scripts\audit.js
- * @LastEditTime: 2026-04-25 02:05:47
+ * @LastEditTime: 2026-05-07 20:06:04
  */
 import fs from "fs";
 import yaml from "js-yaml";
@@ -67,7 +67,7 @@ if (!res.ok) {
   await axiom.ingest(DATASET, {
     domain: "audit",
     level: "error",
-    message: "Audit API error",
+    message: "Audit API error ",
     status: res.status,
     packages_checked: Object.keys(payload).length,
   });
