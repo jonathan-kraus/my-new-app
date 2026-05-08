@@ -4,7 +4,7 @@ import { DashboardHeader } from "@/components/dashboard-header";
 import { TableDetailView } from "@/components/table-detail-view";
 import { TableHistoryChart } from "@/components/table-history-chart";
 import { StatCard } from "@/components/stat-card";
-import { Rows3, HardDrive, Columns3, Calendar, Package2 } from "lucide-react";
+import { Rows3, HardDrive, Columns3 } from "lucide-react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { logj } from "@/lib/log/logj";
