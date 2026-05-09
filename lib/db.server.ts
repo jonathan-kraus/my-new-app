@@ -1,9 +1,9 @@
 /*
  * @FilePath: \my-new-app\lib\db.server.ts
- * @LastEditTime: 2026-05-09 11:36:19
+ * @LastEditTime: 2026-05-09 14:05:03
  */
 // lib/db.server.ts
-import { PrismaClient } from "@/lib/generated/prisma/client";
+import { PrismaClient } from "@/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 const globalForPrisma = globalThis as unknown as {

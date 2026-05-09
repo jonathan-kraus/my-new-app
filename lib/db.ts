@@ -1,6 +1,6 @@
 // lib\db.ts
 // lib/db.server.ts -- matches this file
-import { PrismaClient } from "@/lib/generated/prisma/client";
+import { PrismaClient } from "@/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 const globalForPrisma = globalThis as unknown as {
