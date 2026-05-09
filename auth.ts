@@ -1,8 +1,10 @@
 // auth.ts
+export const runtime = "nodejs";
+
 import NextAuth from "next-auth";
 import GitHub from "next-auth/providers/github";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { db } from "@/lib/db";
+import { db } from "@/lib/db.server";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(db),
@@ -18,6 +20,5 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     strategy: "database",
   },
 
-  // ⭐ REQUIRED FOR NEXTAUTH v5 IN NEXT.JS 14/15/16
   trustHost: true,
 });

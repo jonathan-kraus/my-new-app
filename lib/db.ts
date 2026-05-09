@@ -1,4 +1,5 @@
-// lib/db.ts
+// lib\db.ts
+// lib/db.server.ts -- matches this file
 import { PrismaClient } from "@/lib/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 
@@ -17,4 +18,6 @@ export const db =
     log: ["error", "warn"],
   });
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.db = db;
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.db = db;
+}
