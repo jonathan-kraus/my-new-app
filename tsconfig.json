@@ -1,14 +1,20 @@
 {
   "compilerOptions": {
     "moduleResolution": "bundler",
-    "paths": {
-      "@/*": ["./src/*"],
-      "@/app/*": ["./src/app/*"],
-      "@/components/*": ["./src/app/components/*"],
-      "@/hooks/*": ["./src/hooks/*"],
-      "@/lib/*": ["./src/lib/*"],
-      "@/types/*": ["./src/types/*"]
-    },
+"paths": {
+  "@/*": ["./*"],
+
+  "@/app/*": ["./app/*"],
+  "@/components/*": ["./app/components/*"],
+  "@/hooks/*": ["./hooks/*"],
+  "@/lib/*": ["./lib/*"],
+  "@/types/*": ["./types/*"],
+
+  "@/version.json": ["./version.json"],
+
+  // Prisma output only
+  "@/generated/*": ["./src/lib/generated/*"]
+},
     "types": ["vitest/globals", "node"],
     "strict": true,
     "jsx": "react-jsx",

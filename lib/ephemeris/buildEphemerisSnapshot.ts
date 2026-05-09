@@ -4,6 +4,9 @@ import { EphemerisEvent, EphemerisSnapshot } from "./types";
 import { getPhaseName } from "@/lib/astronomy/getPhaseName";
 import { writeEphemerisDebugEvent } from "@/lib/ephemeris/writeEphemerisDebugEvent";
 
+// Debug flag — silent unless explicitly enabled
+const EPHEM_DEBUG = process.env.EPHEM_DEBUG === "true";
+
 function buildEvent(
   name: string,
   ts: string | null,
@@ -53,51 +56,21 @@ export function buildEphemerisSnapshot(
     buildEvent("Sunset Blue End", todayRow.sunsetBlueEnd, "solar", false),
 
     // Today — Golden Hour
-    buildEvent(
-      "Sunrise Golden Start",
-      todayRow.sunriseGoldenStart,
-      "solar",
-      false,
-    ),
+    buildEvent("Sunrise Golden Start", todayRow.sunriseGoldenStart, "solar", false),
     buildEvent("Sunrise Golden End", todayRow.sunriseGoldenEnd, "solar", false),
-    buildEvent(
-      "Sunset Golden Start",
-      todayRow.sunsetGoldenStart,
-      "solar",
-      false,
-    ),
+    buildEvent("Sunset Golden Start", todayRow.sunsetGoldenStart, "solar", false),
     buildEvent("Sunset Golden End", todayRow.sunsetGoldenEnd, "solar", false),
 
     // Tomorrow — Blue Hour
-    buildEvent(
-      "Sunrise Blue Start",
-      tomorrowRow.sunriseBlueStart,
-      "solar",
-      true,
-    ),
+    buildEvent("Sunrise Blue Start", tomorrowRow.sunriseBlueStart, "solar", true),
     buildEvent("Sunrise Blue End", tomorrowRow.sunriseBlueEnd, "solar", true),
     buildEvent("Sunset Blue Start", tomorrowRow.sunsetBlueStart, "solar", true),
     buildEvent("Sunset Blue End", tomorrowRow.sunsetBlueEnd, "solar", true),
 
     // Tomorrow — Golden Hour
-    buildEvent(
-      "Sunrise Golden Start",
-      tomorrowRow.sunriseGoldenStart,
-      "solar",
-      true,
-    ),
-    buildEvent(
-      "Sunrise Golden End",
-      tomorrowRow.sunriseGoldenEnd,
-      "solar",
-      true,
-    ),
-    buildEvent(
-      "Sunset Golden Start",
-      tomorrowRow.sunsetGoldenStart,
-      "solar",
-      true,
-    ),
+    buildEvent("Sunrise Golden Start", tomorrowRow.sunriseGoldenStart, "solar", true),
+    buildEvent("Sunrise Golden End", tomorrowRow.sunriseGoldenEnd, "solar", true),
+    buildEvent("Sunset Golden Start", tomorrowRow.sunsetGoldenStart, "solar", true),
     buildEvent("Sunset Golden End", tomorrowRow.sunsetGoldenEnd, "solar", true),
   ]
     .filter((e): e is EphemerisEvent => e !== null)
@@ -114,9 +87,7 @@ export function buildEphemerisSnapshot(
     throw new Error("No upcoming astronomy events found.");
   }
 
-  // IMPORTANT: you are switching to dateString, so use that
   const todayStr = todayRow.dateString;
-  // const todayStr = format(now, "yyyy-MM-dd");
 
   const solar: SolarSnapshot = {
     sunrise: find("Sunrise", todayStr ?? ""),
@@ -158,44 +129,38 @@ export function buildEphemerisSnapshot(
     fetchedAt: new Date().toISOString(),
   };
 
-  // ⭐ Write debug event (non-blocking) add doit
-  const doit = false; // true;
-  console.log("buildEphemerisSnapshot: doit =", doit);
-  if (doit) {
-    try {
-      writeEphemerisDebugEvent({
-        id: crypto.randomUUID(),
-        locationId: todayRow.locationId ?? null,
-        fetchedAt: snapshot.fetchedAt,
-        createdAt: new Date().toISOString(),
-        date: todayStr,
+  // ⭐ Debug logging (silent unless EPHEM_DEBUG=true)
+  if (EPHEM_DEBUG) {
+    console.log("buildEphemerisSnapshot: debug enabled");
 
-        sunrise: todayRow.sunrise,
-        sunset: todayRow.sunset,
+    writeEphemerisDebugEvent({
+      id: crypto.randomUUID(),
+      locationId: todayRow.locationId ?? null,
+      fetchedAt: snapshot.fetchedAt,
+      createdAt: new Date().toISOString(),
+      date: todayStr,
 
-        moonrise: todayRow.moonrise,
-        moonset: todayRow.moonset,
-        moonPhase: todayRow.illumination ?? null,
+      sunrise: todayRow.sunrise,
+      sunset: todayRow.sunset,
 
-        sunriseBlueStart: todayRow.sunriseBlueStart,
-        sunriseBlueEnd: todayRow.sunriseBlueEnd,
-        sunriseGoldenStart: todayRow.sunriseGoldenStart,
-        sunriseGoldenEnd: todayRow.sunriseGoldenEnd,
-        sunsetGoldenStart: todayRow.sunsetGoldenStart,
-        sunsetGoldenEnd: todayRow.sunsetGoldenEnd,
-        sunsetBlueStart: todayRow.sunsetBlueStart,
-        sunsetBlueEnd: todayRow.sunsetBlueEnd,
+      moonrise: todayRow.moonrise,
+      moonset: todayRow.moonset,
+      moonPhase: todayRow.illumination ?? null,
 
-        raw: {
-          todayRow,
-          tomorrowRow,
-          snapshot,
-          events,
-        },
-      });
-    } catch (err) {
+      sunriseBlueStart: todayRow.sunriseBlueStart,
+      sunriseBlueEnd: todayRow.sunriseBlueEnd,
+      sunriseGoldenStart: todayRow.sunriseGoldenStart,
+      sunriseGoldenEnd: todayRow.sunriseGoldenEnd,
+      sunsetGoldenStart: todayRow.sunsetGoldenStart,
+      sunsetGoldenEnd: todayRow.sunsetGoldenEnd,
+      sunsetBlueStart: todayRow.sunsetBlueStart,
+      sunsetBlueEnd: todayRow.sunsetBlueEnd,
+
+      raw: { todayRow, tomorrowRow, snapshot, events },
+    }).catch((err) => {
       console.error("Failed to write ephemeris debug event:", err);
-    }
+    });
   }
+
   return snapshot;
 }
