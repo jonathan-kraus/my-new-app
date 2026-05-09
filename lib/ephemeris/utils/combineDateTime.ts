@@ -1,6 +1,6 @@
 // lib/ephemeris/utils/combineDateTime.ts
 
-import { logit } from "@/lib/log/logit";
+
 import { getConfig } from "@/lib/runtime/config";
 import { formatEastern } from "@/lib/utils/global";
 
@@ -45,39 +45,16 @@ export function combineDateTime(date: Date, timeString: string): string {
   const debugLevel = loadDebugLevelSync();
 
   if (debugLevel === 1) {
-    logit(
-      domain,
-      {
-        level: "debug",
-        message: "combineDateTime called",
-        data: { date: date.toString(), timeString },
-      },
-      { eventIndex },
-      {
-        requestId: requestId,
-        zulu: new Date().toISOString(),
-        local: formatEastern(new Date()),
-      },
-    );
+console.log(
+      ` XUTC combineDateTime called with date: ${date.toString()} and timeString: ${timeString}`,
+)
   }
 
   // -- VALIDATION: Reject UTC timestamps --
   if (timeString.endsWith("Z")) {
-    logit(
-      domain,
-      {
-        level: "error",
-        message: "UTC timestamp detected in combineDateTime",
-        data: { timeString },
-      },
-      { eventIndex },
-      {
-        requestId: requestId,
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", {
-          timeZone: "America/New_York",
-        }),
-      },
+console.warn(
+      `combineDateTime received a UTC timestamp (${timeString}). ` +
+        `All ephemeris times must include a local offset.`,
     );
 
     throw new Error(
@@ -89,21 +66,10 @@ export function combineDateTime(date: Date, timeString: string): string {
   // --- VALIDATION: Ensure offset exists ---
   const offsetMatch = timeString.match(/([+-]\d{2}:\d{2})$/);
   if (!offsetMatch) {
-    logit(
-      domain,
-      {
-        level: "error",
-        message: "Time string missing timezone offset",
-        data: { timeString },
-      },
-      { eventIndex },
-      {
-        requestId: requestId,
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", {
-          timeZone: "America/New_York",
-        }),
-      },
+    (
+      console.warn(
+        `combineDateTime expected a time string with offset (e.g. "07:09:00-05:00"), got: ${timeString}`,
+      )
     );
 
     throw new Error(
@@ -124,21 +90,8 @@ export function combineDateTime(date: Date, timeString: string): string {
   const final = `${yyyy}-${mm}-${dd}T${timePart}${offset}`;
 
   if (debugLevel === 1) {
-    logit(
-      domain,
-      {
-        level: "debug",
-        message: "combineDateTime produced final timestamp",
-        data: { final },
-      },
-      { eventIndex },
-      {
-        requestId: requestId,
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", {
-          timeZone: "America/New_York",
-        }),
-      },
+    console.log(
+      `combineDateTime result: ${final} (constructed from date: ${date.toString()} and timeString: ${timeString})`,
     );
   }
 
