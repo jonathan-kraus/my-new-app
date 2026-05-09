@@ -73,7 +73,7 @@ export type DebugEventInput = {
 
 export async function writeEphemerisDebugEvent(data: DebugEventInput) {
   const now = new Date();
-
+  console.log("writeEphemerisDebugEvent: called with data:", data);
   try {
     const row = await db.ephemerisDebug.create({
       data: {

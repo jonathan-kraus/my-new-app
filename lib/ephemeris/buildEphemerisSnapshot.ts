@@ -159,7 +159,7 @@ export function buildEphemerisSnapshot(
   };
 
   // ⭐ Write debug event (non-blocking) add doit
-  const doit = false; // true;
+  const doit = true; // true;
   console.log("buildEphemerisSnapshot: doit =", doit);
   if (doit) {
     try {
