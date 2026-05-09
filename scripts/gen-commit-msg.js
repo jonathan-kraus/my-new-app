@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\scripts\gen-commit-msg.js
- * @LastEditTime: 2026-03-06 23:22:36
+ * @LastEditTime: 2026-05-09 12:25:14
  */
 import fs from "fs";
 import path from "path";
@@ -27,7 +27,7 @@ async function main() {
   const file = path.join(process.cwd(), ".git", "COMMIT_MSG");
   fs.writeFileSync(file, msg.trim() + "\n");
 
-  console.log("Commit message written to .git/COMMIT_MSG");
+  console.log("Commit message written to .git/COMMIT_MSG ");
 }
 
 main();
