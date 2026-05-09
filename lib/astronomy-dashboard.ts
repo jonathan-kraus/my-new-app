@@ -1,4 +1,5 @@
-import type { AstronomySnapshot } from "./generated/prisma/client";
+import type { AstronomySnapshot } from "@/generated/prisma/client";
+
 import { getAstronomyForDashboard } from "@/lib/astronomy";
 
 export interface AstronomyDashboardResponse {
