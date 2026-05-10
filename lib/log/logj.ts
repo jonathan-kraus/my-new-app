@@ -2,6 +2,7 @@ import "server-only";
 import { db } from "@/lib/db";
 import { axiomIngest } from "@/lib/axiom";
 import { z } from "zod";
+import type { LogjInput, LogjPayload, LogjMeta } from "@/lib/log/types";
 
 const NEON_MAX_JSON = 200_000;
 const logCounters = new Map<string, number>();
@@ -30,35 +31,6 @@ export type CanonicalLogRecord = z.infer<typeof CanonicalLogRecordSchema>;
 // ---------------------------------------------------------------------------
 // Input types
 // ---------------------------------------------------------------------------
-type LogjPayload = Record<string, unknown> & {
-  userId?: string;
-  sessionEmail?: string;
-  sessionUser?: string;
-  requestId?: string;
-  session?: {
-    user?: {
-      id?: string;
-      email?: string;
-      name?: string;
-    };
-  };
-};
-
-type LogjMeta = Record<string, unknown> & {
-  requestId?: string | null;
-  built?: Record<string, unknown>;
-};
-
-export type LogjInput = {
-  domain: string;
-  level: "info" | "warn" | "error" | "debug";
-  message: string;
-  file?: string | null;
-  line?: number | null;
-  payload?: LogjPayload;
-  meta?: LogjMeta;
-};
-
 // ---------------------------------------------------------------------------
 // Safe JSON helpers
 // ---------------------------------------------------------------------------

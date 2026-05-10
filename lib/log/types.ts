@@ -60,6 +60,35 @@ export type InternalEvent = {
   timestamp: number;
 };
 
+export type LogjPayload = Record<string, unknown> & {
+  userId?: string;
+  sessionEmail?: string;
+  sessionUser?: string;
+  requestId?: string;
+  session?: {
+    user?: {
+      id?: string;
+      email?: string;
+      name?: string;
+    };
+  };
+};
+
+export type LogjMeta = Record<string, unknown> & {
+  requestId?: string | null;
+  built?: Record<string, unknown>;
+};
+
+export type LogjInput = {
+  domain: string;
+  level: "info" | "warn" | "error" | "debug";
+  message: string;
+  file?: string | null;
+  line?: number | null;
+  payload?: LogjPayload;
+  meta?: LogjMeta;
+};
+
 export type Ctx = {
   requestId: string;
   eventIndex: number;

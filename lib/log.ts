@@ -8,7 +8,7 @@
 // On the client it POSTs to /api/log so the server can write to Neon + Axiom.
 
 // lib/log.ts
-import type { LogjInput } from "@/lib/log/logj";
+import type { LogjInput } from "@/lib/log/types";
 
 async function clientLog(input: LogjInput): Promise<void> {
   try {
