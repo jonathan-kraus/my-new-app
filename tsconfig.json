@@ -30,6 +30,7 @@
       "@/generated/*": ["./src/lib/generated/*"],
       "@/hooks/*": ["./hooks/*"],
       "@/lib/*": ["./lib/*"],
+      "@/tests/*": ["./tests/*"],
       "@/types/*": ["./types/*"],
       "@/version.json": ["./version.json"]
     },
