@@ -1,10 +1,10 @@
 /*
- * @FilePath     : \my-new-app\lib\db\refreshLogRowEstimateForToday.ts
+ * @FilePath: \my-new-app\lib\db\refreshLogRowEstimateForToday.ts
  * @Author       : Jonathan
  * @Date         : 2026-02-09 13:00:11
  * @Description  :
- * @LastEditors  : Jonathan
- * @LastEditTime : 2026-02-09 13:00:11
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2026-05-11 15:35:33
  */
 import { neon } from "@neondatabase/serverless";
 
@@ -12,7 +12,7 @@ const sql = neon(process.env.DATABASE_URL!);
 export async function refreshLogRowEstimateForToday() {
   try {
     const rows = await sql`select count(*) from "Log"`;
-    const count = Number(rows[0].count);
+    const count = Number(rows[0]!.count);
 
     const result = await sql`
       update "DbTableStats"

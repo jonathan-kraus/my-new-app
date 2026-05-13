@@ -1,8 +1,5 @@
 import { db } from "@/lib/db";
-import type {
-  TravelSegment,
-  TravelSnapshot,
-} from "@/generated/prisma/client";
+import type { TravelSegment, TravelSnapshot } from "@/generated/prisma/client";
 
 // Parse a combined date + time into a JS Date
 function parseSegmentDateTime(segment: TravelSegment): Date | null {

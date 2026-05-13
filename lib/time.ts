@@ -9,15 +9,19 @@ export function parseLocalTimestamp(ts: string | null | undefined) {
 
   if (parts.length !== 2) return null;
 
-  const [date, time] = parts;
+  const [date, time] = parts as [string, string];
 
   const dateParts = date.split("-");
   const timeParts = time.split(":");
 
   if (dateParts.length !== 3 || timeParts.length < 2) return null;
 
-  const [year, month, day] = dateParts.map(Number);
-  const [hour, minute, second = 0] = timeParts.map(Number);
+  const [year, month, day] = dateParts.map(Number) as [number, number, number];
+  const [hour, minute, second = 0] = timeParts.map(Number) as [
+    number,
+    number,
+    number?,
+  ];
 
   return new Date(year, month - 1, day, hour, minute, second);
 }

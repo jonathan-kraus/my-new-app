@@ -11,6 +11,10 @@ export function NextEventCountdown({ snapshot }: Props) {
   const next = snapshot.segments[0];
   const [countdown, setCountdown] = useState<string>("");
 
+  if (!next) {
+    return null; // or a fallback UI
+  }
+
   useEffect(() => {
     const target = parse(
       `${next.date} ${next.departureTime}`,
@@ -35,7 +39,7 @@ export function NextEventCountdown({ snapshot }: Props) {
     update();
     const interval = setInterval(update, 10000);
     return () => clearInterval(interval);
-  }, [next.date, next.departureTime]);
+  }, [next]);
 
   return (
     <div className="bg-gray-900 rounded-lg p-4 shadow">

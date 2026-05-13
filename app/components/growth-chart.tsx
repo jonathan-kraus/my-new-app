@@ -48,8 +48,24 @@ export function GrowthChart({
   // Aggregate across all tables per date
   const dateMap = new Map<string, number>();
   for (const entry of history) {
-    const date = new Date(entry.snapshotDate).toISOString().split("T")[0];
-    dateMap.set(date, (dateMap.get(date) || 0) + entry[dataKey]);
+    const raw = entry.snapshotDate;
+    if (!raw) {
+      continue; // or throw
+    }
+
+    const [date] = new Date(raw).toISOString().split("T") as [
+      string,
+      ...string[],
+    ];
+
+    const current = dateMap.get(date) ?? 0;
+
+    const value = entry[dataKey];
+    if (typeof value !== "number") {
+      continue; // or throw
+    }
+
+    dateMap.set(date, current + value);
   }
 
   const chartData = Array.from(dateMap.entries())

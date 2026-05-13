@@ -2,6 +2,7 @@
 import { neon } from "@neondatabase/serverless";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import type { TableStat } from "@/db/table-stats";
 
 const sql = neon(process.env.DATABASE_URL!);
 
@@ -58,10 +59,11 @@ export default async function DatabaseExplorerPage() {
 
   const { tables, columns } = await getTableStats();
 
-  const columnsByTable: Record<string, typeof columns> = {};
-  for (const col of columns) {
-    if (!columnsByTable[col.table_name]) columnsByTable[col.table_name] = [];
-    columnsByTable[col.table_name].push(col);
+  const columnsByTable: Record<string, TableStat[]> = {};
+
+  for (const col of columns as TableStat[]) {
+    const key = col.table_name;
+    (columnsByTable[key] ??= [] as TableStat[]).push(col);
   }
 
   const totalSize = tables.reduce(

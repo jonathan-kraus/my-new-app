@@ -41,7 +41,7 @@ export default async function TravelNextPage() {
 
         {/* RIGHT COLUMN: weather + email action */}
         <div className="space-y-6">
-          <WeatherCard snapshot={snapshot} weather={weather} />
+          {weather && <WeatherCard snapshot={snapshot} weather={weather} />}
 
           <div className="pt-2">
             <SendWeatherEmailButton />

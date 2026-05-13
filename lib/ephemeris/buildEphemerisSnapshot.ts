@@ -56,21 +56,51 @@ export function buildEphemerisSnapshot(
     buildEvent("Sunset Blue End", todayRow.sunsetBlueEnd, "solar", false),
 
     // Today — Golden Hour
-    buildEvent("Sunrise Golden Start", todayRow.sunriseGoldenStart, "solar", false),
+    buildEvent(
+      "Sunrise Golden Start",
+      todayRow.sunriseGoldenStart,
+      "solar",
+      false,
+    ),
     buildEvent("Sunrise Golden End", todayRow.sunriseGoldenEnd, "solar", false),
-    buildEvent("Sunset Golden Start", todayRow.sunsetGoldenStart, "solar", false),
+    buildEvent(
+      "Sunset Golden Start",
+      todayRow.sunsetGoldenStart,
+      "solar",
+      false,
+    ),
     buildEvent("Sunset Golden End", todayRow.sunsetGoldenEnd, "solar", false),
 
     // Tomorrow — Blue Hour
-    buildEvent("Sunrise Blue Start", tomorrowRow.sunriseBlueStart, "solar", true),
+    buildEvent(
+      "Sunrise Blue Start",
+      tomorrowRow.sunriseBlueStart,
+      "solar",
+      true,
+    ),
     buildEvent("Sunrise Blue End", tomorrowRow.sunriseBlueEnd, "solar", true),
     buildEvent("Sunset Blue Start", tomorrowRow.sunsetBlueStart, "solar", true),
     buildEvent("Sunset Blue End", tomorrowRow.sunsetBlueEnd, "solar", true),
 
     // Tomorrow — Golden Hour
-    buildEvent("Sunrise Golden Start", tomorrowRow.sunriseGoldenStart, "solar", true),
-    buildEvent("Sunrise Golden End", tomorrowRow.sunriseGoldenEnd, "solar", true),
-    buildEvent("Sunset Golden Start", tomorrowRow.sunsetGoldenStart, "solar", true),
+    buildEvent(
+      "Sunrise Golden Start",
+      tomorrowRow.sunriseGoldenStart,
+      "solar",
+      true,
+    ),
+    buildEvent(
+      "Sunrise Golden End",
+      tomorrowRow.sunriseGoldenEnd,
+      "solar",
+      true,
+    ),
+    buildEvent(
+      "Sunset Golden Start",
+      tomorrowRow.sunsetGoldenStart,
+      "solar",
+      true,
+    ),
     buildEvent("Sunset Golden End", tomorrowRow.sunsetGoldenEnd, "solar", true),
   ]
     .filter((e): e is EphemerisEvent => e !== null)

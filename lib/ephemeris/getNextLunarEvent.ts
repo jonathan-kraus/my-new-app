@@ -33,11 +33,25 @@ export function getNextLunarEvent(snapshot: {
   // Filter out events that already happened
   const upcoming = events.filter((e) => e.time.getTime() > now.getTime());
 
+  // If there are no events, return a fallback value.
+  if (events.length === 0) {
+    return {
+      name: "No lunar event",
+      timeISO: now.toISOString(),
+      timeFormatted: now.toLocaleTimeString([], {
+        hour: "numeric",
+        minute: "2-digit",
+        second: "2-digit",
+      }),
+      countdown: "Now",
+    };
+  }
+
   // If no events remain, pick the earliest one tomorrow (rare but possible)
   const next =
     upcoming.length > 0
-      ? upcoming.sort((a, b) => a.time.getTime() - b.time.getTime())[0]
-      : events.sort((a, b) => a.time.getTime() - b.time.getTime())[0];
+      ? upcoming.sort((a, b) => a.time.getTime() - b.time.getTime())[0]!
+      : events.sort((a, b) => a.time.getTime() - b.time.getTime())[0]!;
 
   const diffMs = next.time.getTime() - now.getTime();
   const countdown = formatCountdown(diffMs);

@@ -26,7 +26,7 @@ export async function fetchSolarForDate(lat: number, lon: number, date: Date) {
 
   return {
     date,
-    sunrise: new Date(json.daily.sunrise[0]),
-    sunset: new Date(json.daily.sunset[0]),
+    sunrise: new Date(json.daily.sunrise[0]!),
+    sunset: new Date(json.daily.sunset[0]!),
   };
 }

@@ -34,8 +34,8 @@ export default async function Page() {
 
   // ✅ Group rows by table name
   const byTable = filteredRows.reduce<Record<string, Row[]>>((acc, row) => {
-    acc[row.tableName] ??= [];
-    acc[row.tableName].push(row);
+    const key = row.tableName;
+    (acc[key] ??= []).push(row);
     return acc;
   }, {});
 

@@ -66,7 +66,7 @@ function extractCaller() {
 
     if (match) {
       return {
-        file: normalizeFilePath(match[1]),
+        file: normalizeFilePath(match[1]!),
         line: match[2],
       };
     }

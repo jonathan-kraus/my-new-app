@@ -1,16 +1,28 @@
 /*
  * @FilePath: \my-new-app\app\components\travel\TripSummaryCard.tsx
- * @LastEditTime: 2026-02-24 19:13:37
+ * @LastEditTime: 2026-05-11 05:29:45
  */
 import type { ParsedTravelSnapshot } from "@/lib/travel/parser/aa";
+import type { Prisma } from "../../../src/lib/generated/prisma/client";
+
+type TravelSegment = Prisma.TravelSegmentGetPayload<{}>;
 
 type Props = {
   snapshot: ParsedTravelSnapshot;
 };
 
 export function TripSummaryCard({ snapshot }: Props) {
-  const seg0 = snapshot.segments[0];
-  const seg1 = snapshot.segments[1];
+  const segments = snapshot.segments;
+
+  if (segments.length < 2) {
+    throw new Error("TripSummaryCard requires at least 2 segments");
+  }
+
+  const [seg0, seg1] = segments as [
+    TravelSegment,
+    TravelSegment,
+    ...TravelSegment[],
+  ];
 
   return (
     <div className="bg-gray-900 rounded-lg p-4 shadow">

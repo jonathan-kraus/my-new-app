@@ -125,7 +125,7 @@ export function parseAAEmail(
     const text = clean($(el).text());
     if (!/AAdvantage/i.test(text)) return;
 
-    const name = clean(text.split("-")[0]);
+    const name = clean(text.split("-")[0] || "");
     if (!seen.has(name)) {
       seen.add(name);
       passengers.push({ name });
