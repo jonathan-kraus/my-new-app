@@ -10,7 +10,9 @@ export default function normalizePath(url: string): {
     const u = new URL(url);
 
     // Remove empty segments caused by leading/trailing slashes
-    const parts = u.pathname.split("/").filter(Boolean);
+    const parts = u.pathname
+      .split("/")
+      .filter((segment): segment is string => Boolean(segment));
 
     // Root → return "base"
     if (parts.length === 0) {
@@ -21,12 +23,12 @@ export default function normalizePath(url: string): {
     }
 
     // Last segment
-    const last = parts[parts.length - 1];
+    const last = parts[parts.length - 1]!;
 
     // Last two segments (or one if only one exists)
     const lastTwo =
       parts.length >= 2
-        ? `${parts[parts.length - 2]}/${parts[parts.length - 1]}`
+        ? `${parts[parts.length - 2]!}/${parts[parts.length - 1]!}`
         : last;
 
     return { last, lastTwo };

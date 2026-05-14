@@ -53,7 +53,7 @@ export default function ForecastClient({
   // Fallback to second location if nothing saved
   useEffect(() => {
     if (!selectedId && locations.length > 0) {
-      setSelectedId(locations[1].id);
+      setSelectedId(locations[1]?.id ?? null);
     }
   }, [locations, selectedId]);
 

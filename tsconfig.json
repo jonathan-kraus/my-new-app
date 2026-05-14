@@ -1,49 +1,61 @@
 {
   "compilerOptions": {
-    "moduleResolution": "bundler",
-"paths": {
-  "@/*": ["./*"],
-
-  "@/app/*": ["./app/*"],
-  "@/components/*": ["./app/components/*"],
-  "@/hooks/*": ["./hooks/*"],
-  "@/lib/*": ["./lib/*"],
-  "@/types/*": ["./types/*"],
-
-  "@/version.json": ["./version.json"],
-
-  // Prisma output only
-  "@/generated/*": ["./src/lib/generated/*"]
-},
-    "types": ["vitest/globals", "node"],
+    /* Core strictness */
     "strict": true,
-    "jsx": "react-jsx",
+    "ignoreDeprecations": "6.0",
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    /* Module + resolution */
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "types": ["vitest/globals"],
     "allowJs": false,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true,
-    "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "noEmit": true,
-    "incremental": true,
-    "module": "esnext",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    /* JSX */
+    "jsx": "react-jsx",
+    /* Paths (clean + deterministic) */
+    "baseUrl": ".",
+    "paths": {
+      "@/app/*": ["./app/*"],
+      "@/auth": ["./auth"],
+      "@/components/*": ["./app/components/*"],
+      "@/db/*": ["./src/db/*"],
+      "@/generated/*": ["./src/lib/generated/*"],
+      "@/hooks/*": ["./hooks/*"],
+      "@/lib/*": ["./lib/*"],
+      "@/tests/*": ["./tests/*"],
+      "@/types/*": ["./types/*"],
+      "@/version.json": ["./version.json"]
+    },
+    "noEmit": true,
+    "incremental": true,
     "plugins": [
       {
         "name": "next"
       }
     ]
   },
+  /* Next.js required include */
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts",
-    "scripts/test-db.js",
-    "lib/travel/ingest/email-ingest.ts",
-    "lib/ephemeris/__tests__/snapshot.bad.tst.tst"
+    ".next/dev/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  /* Exclude build artifacts + generated code */
+  "exclude": [
+    "node_modules",
+    ".next",
+    "dist",
+    "coverage",
+    "src/lib/generated/prisma"
+  ]
 }

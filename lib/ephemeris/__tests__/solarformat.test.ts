@@ -13,7 +13,7 @@ describe("getSolarTimeline formatting", () => {
       blueHourPM: null,
     });
 
-    expect(typeof timeline[0].timeFormatted).toBe("string");
-    expect(timeline[0].timeFormatted.length).toBeGreaterThan(0);
+    expect(typeof timeline[0]!.timeFormatted).toBe("string");
+    expect(timeline[0]!.timeFormatted.length).toBeGreaterThan(0);
   });
 });

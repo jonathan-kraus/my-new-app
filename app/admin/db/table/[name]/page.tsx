@@ -8,6 +8,7 @@ import { Rows3, HardDrive, Columns3 } from "lucide-react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { logj } from "@/lib/log/logj";
+import { assertNonEmptyArray, firstRow } from "@/lib/db/safe";
 import { staticUniversalContext } from "@/lib/log/buildj";
 export const dynamic = "force-dynamic";
 
@@ -47,7 +48,8 @@ async function getTableData(name: string, page: number) {
   const countResult = await sql.query(
     `SELECT COUNT(*)::int AS count FROM "${name}"`,
   );
-  const totalRows = countResult[0].count;
+  const row = firstRow(countResult, `count query for table ${name}`);
+  const totalRows = row.count ?? 0;
 
   const limit = 50;
   const offset = (page - 1) * limit;
@@ -135,7 +137,8 @@ export default async function TablePage({ params, searchParams }: PageProps) {
   }
 
   // Find first and last snapshot dates
-  const firstSnapshot = history.length > 0 ? history[0].snapshotDate : null;
+  const rows = assertNonEmptyArray(history, "history snapshots");
+  const firstSnapshot = rows[0].snapshotDate;
 
   return (
     <div className="min-h-screen bg-background">

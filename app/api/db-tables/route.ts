@@ -1,7 +1,7 @@
 // app/api/db-tables/route.ts
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-
+import { assertNonEmptyArray } from "@/lib/db/safe";
 export const runtime = "nodejs";
 
 function sanitizeBigInt(obj: any) {
@@ -22,12 +22,15 @@ export async function GET() {
 
   for (const { table_name } of tables) {
     // Exact row count
-    const [{ exact_count }] = await db.$queryRawUnsafe<
-      { exact_count: number }[]
-    >(`
-      SELECT COUNT(*)::bigint AS exact_count FROM "${table_name}";
-    `);
+    const [row] = assertNonEmptyArray(
+      await db.$queryRawUnsafe<{ exact_count: number }[]>(`
+    SELECT COUNT(*)::bigint AS exact_count FROM "${table_name}";
+  `),
+      `exact count for table ${table_name}`,
+    );
 
+    const exactCount = row.exact_count;
+    console.log(`Table: ${table_name}, Exact Row Count: ${exactCount}`);
     // Size metrics
     const [sizes] = await db.$queryRawUnsafe<any[]>(`
       SELECT
@@ -41,7 +44,7 @@ export async function GET() {
 
     results.push({
       table_name,
-      exact_rows: exact_count,
+      exact_rows: exactCount,
       ...sizes,
     });
   }

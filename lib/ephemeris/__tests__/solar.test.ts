@@ -17,12 +17,12 @@ describe("getSolarTimeline", () => {
     expect(timeline.length).toBe(2);
 
     // Validate structure
-    expect(timeline[0].name).toBeDefined();
-    expect(typeof timeline[0].timeISO).toBe("string");
-    expect(typeof timeline[0].timeFormatted).toBe("string");
+    expect(timeline[0]!.name).toBeDefined();
+    expect(typeof timeline[0]!.timeISO).toBe("string");
+    expect(typeof timeline[0]!.timeFormatted).toBe("string");
 
     // Validate chronological order
     const timestamps = timeline.map((e) => new Date(e.timeISO).getTime());
-    expect(timestamps[0]).toBeLessThan(timestamps[1]);
+    expect(timestamps[0]!).toBeLessThan(timestamps[1]!);
   });
 });

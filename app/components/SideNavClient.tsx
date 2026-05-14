@@ -1,7 +1,7 @@
 "use client";
 /*
  * @FilePath: \my-new-app\app\components\SideNavClient.tsx
- * @LastEditTime: 2026-04-26 22:31:14
+ * @LastEditTime: 2026-05-11 04:42:03
  */
 
 import Link from "next/link";
@@ -11,7 +11,7 @@ import { useSideNavActivationCounter } from "@/app/hooks/useSideNavActivationCou
 import { EmailSideNavLink } from "@/app/components/sidenav/EmailLink";
 import { staticUniversalContext } from "@/lib/log/buildj";
 import { usePathname } from "next/navigation";
-
+import { assertNonEmptyArray } from "@/lib/db/safe";
 type SideNavClientProps = {
   nextEventLabel: string;
   nextEventTime: Date | null;
@@ -29,12 +29,18 @@ export default function SideNavClient({
     async function loadVersion() {
       try {
         const v = await import("../../version.json");
-        const [major, minor, patch] = v.version.split(".");
+        const [major, minor, patch] = v.version.split(".") as [
+          string,
+          string,
+          string,
+        ];
+
         const formatted = [
           major.padStart(2, "0"),
           minor.padStart(2, "0"),
           patch.padStart(2, "0"),
         ].join(".");
+
         setFormattedVersion(formatted);
       } catch (err) {
         console.error("Failed to load version.json", err);
@@ -62,6 +68,8 @@ export default function SideNavClient({
   ];
 
   let jei = 0;
+  const [first] = assertNonEmptyArray(navItems, "navItems");
+
   useEffect(() => {
     if (!formattedVersion) return;
     const built = staticUniversalContext("side-nav");
@@ -75,7 +83,7 @@ export default function SideNavClient({
         file: "app/components/SideNavClient.tsx",
         line: 68,
         level: "info",
-        payload: { label: navItems[0].label, Version: formattedVersion },
+        payload: { label: first.label, Version: formattedVersion },
         meta: { built: { ...built, eventIndex: ++jei } },
       }),
     });

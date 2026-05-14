@@ -56,7 +56,9 @@ export async function GET(req: NextRequest) {
 
   // Process first location. Add a for-loop for multiple locations or weather models
   const response = responses[0];
-
+  if (!response) {
+    throw new Error("Expected response to be defined");
+  }
   // Attributes for timezone and location
   const latitude = response.latitude();
   const longitude = response.longitude();

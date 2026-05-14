@@ -63,8 +63,8 @@ export async function buildSendWeatherEmail() {
 
   const [outbound, inbound] = segments;
 
-  const outWeather = weatherByCity[outbound.arrivalCity];
-  const inWeather = weatherByCity[inbound.arrivalCity];
+  const outWeather = weatherByCity[outbound!.arrivalCity];
+  const inWeather = weatherByCity[inbound!.arrivalCity];
 
   const formatTemp = (t: number | null | undefined) =>
     t != null ? `${t}°F` : "—";
@@ -83,10 +83,10 @@ export async function buildSendWeatherEmail() {
     <!-- OUTBOUND -->
     <h2 style="margin-bottom: 5px;">Outbound Flight</h2>
     <p style="margin: 0 0 10px 0;">
-      <strong>${outbound.departureCity} → ${outbound.arrivalCity}</strong><br/>
-      ${outbound.date}<br/>
-      ${outbound.departureTime} → ${outbound.arrivalTime}<br/>
-      Seats: ${outbound.seats.join(", ")}
+      <strong>${outbound!.departureCity} → ${outbound!.arrivalCity}</strong><br/>
+      ${outbound!.date}<br/>
+      ${outbound!.departureTime} → ${outbound!.arrivalTime}<br/>
+      Seats: ${outbound!.seats.join(", ")}
     </p>
 
     <h3 style="margin: 10px 0 5px;">Weather on Arrival</h3>
@@ -112,10 +112,10 @@ export async function buildSendWeatherEmail() {
     <!-- RETURN -->
     <h2 style="margin-bottom: 5px;">Return Flight</h2>
     <p style="margin: 0 0 10px 0;">
-      <strong>${inbound.departureCity} → ${inbound.arrivalCity}</strong><br/>
-      ${inbound.date}<br/>
-      ${inbound.departureTime} → ${inbound.arrivalTime}<br/>
-      Seats: ${inbound.seats.join(", ")}
+      <strong>${inbound!.departureCity} → ${inbound!.arrivalCity}</strong><br/>
+      ${inbound!.date}<br/>
+      ${inbound!.departureTime} → ${inbound!.arrivalTime}<br/>
+      Seats: ${inbound!.seats.join(", ")}
     </p>
 
     <h3 style="margin: 10px 0 5px;">Weather on Return</h3>
@@ -145,7 +145,7 @@ export async function buildSendWeatherEmail() {
   `;
 
   return {
-    subject: `Your Upcoming Trip: ${outbound.departureCity} → ${outbound.arrivalCity}`,
+    subject: `Your Upcoming Trip: ${outbound!.departureCity} → ${outbound!.arrivalCity}`,
     text: `Your upcoming trip details are ready.`,
     html,
   };

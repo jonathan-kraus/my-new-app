@@ -1,6 +1,7 @@
 import { getEphemerisSnapshot } from "@/lib/ephemeris/getEphemerisSnapshot";
 import SolarCard from "@/app/components/ephemeris/solarCard";
-import LunarCard from "@/app/components/ephemeris/lunarCard";
+import { LunarCard } from "@/app/components/ephemeris/lunarCard";
+import { toLunarCardEvent } from "@/lib/ephemeris/events/toLunarCardEvent";
 
 export default async function AstronomyPage() {
   const ephemeris = await getEphemerisSnapshot("KOP");
@@ -15,7 +16,7 @@ export default async function AstronomyPage() {
           <>
             {" "}
             <SolarCard snapshot={ephemeris.snapshot.solar} />{" "}
-            <LunarCard snapshot={ephemeris.snapshot.lunar} />{" "}
+            <LunarCard next={toLunarCardEvent(ephemeris.snapshot.lunar)} />
           </>
         ) : (
           <div className="p-4 text-gray-500 col-span-2">

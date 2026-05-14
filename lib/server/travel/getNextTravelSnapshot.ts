@@ -17,17 +17,19 @@ export async function getNextTravelSnapshot(): Promise<ParsedTravelSnapshot | nu
   if (snapshots.length === 0) return null;
 
   // 2. Compute each trip's earliest segment date
-  const enriched = snapshots.map((snap) => {
-    const sortedSegments = [...snap.segments].sort(
-      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-    );
+  const enriched = snapshots
+    .filter((snap) => snap.segments.length > 0)
+    .map((snap) => {
+      const sortedSegments = [...snap.segments].sort(
+        (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
+      );
 
-    return {
-      ...snap,
-      sortedSegments,
-      startDate: new Date(sortedSegments[0].date),
-    };
-  });
+      return {
+        ...snap,
+        sortedSegments,
+        startDate: new Date(sortedSegments[0]!.date),
+      };
+    });
 
   const now = new Date();
 

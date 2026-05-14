@@ -1,6 +1,5 @@
 // lib/ephemeris/utils/combineDateTime.ts
 
-
 import { getConfig } from "@/lib/runtime/config";
 import { formatEastern } from "@/lib/utils/global";
 
@@ -45,14 +44,14 @@ export function combineDateTime(date: Date, timeString: string): string {
   const debugLevel = loadDebugLevelSync();
 
   if (debugLevel === 1) {
-console.log(
+    console.log(
       ` XUTC combineDateTime called with date: ${date.toString()} and timeString: ${timeString}`,
-)
+    );
   }
 
   // -- VALIDATION: Reject UTC timestamps --
   if (timeString.endsWith("Z")) {
-console.warn(
+    console.warn(
       `combineDateTime received a UTC timestamp (${timeString}). ` +
         `All ephemeris times must include a local offset.`,
     );
@@ -66,10 +65,8 @@ console.warn(
   // --- VALIDATION: Ensure offset exists ---
   const offsetMatch = timeString.match(/([+-]\d{2}:\d{2})$/);
   if (!offsetMatch) {
-    (
-      console.warn(
-        `combineDateTime expected a time string with offset (e.g. "07:09:00-05:00"), got: ${timeString}`,
-      )
+    console.warn(
+      `combineDateTime expected a time string with offset (e.g. "07:09:00-05:00"), got: ${timeString}`,
     );
 
     throw new Error(
@@ -77,7 +74,7 @@ console.warn(
     );
   }
 
-  const offset = offsetMatch[1];
+  const offset = offsetMatch[1]!;
 
   // Extract HH:mm:ss
   const timePart = timeString.replace(offset, "");

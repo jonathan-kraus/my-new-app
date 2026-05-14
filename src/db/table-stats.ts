@@ -1,7 +1,6 @@
-// db/table-stats.ts
-import { neon } from "@neondatabase/serverless";
+// src/db/table-stats.ts
 
-const sql = neon(process.env.DATABASE_URL!);
+import { neon } from "@neondatabase/serverless";
 
 export type TableStat = {
   table_name: string;
@@ -12,8 +11,13 @@ export type TableStat = {
   estimated_rows: number;
 };
 
-export async function getTableStats(): Promise<TableStat[]> {
-  const rows = await sql`
+const sql = neon(process.env.DATABASE_URL!);
+
+export async function getTableStats(): Promise<{
+  tables: TableStat[];
+  columns: TableStat[];
+}> {
+  const rows = (await sql`
     SELECT
       c.relname AS table_name,
       pg_total_relation_size(c.oid) AS total_bytes,
@@ -27,7 +31,10 @@ export async function getTableStats(): Promise<TableStat[]> {
     JOIN pg_namespace n ON n.oid = c.relnamespace
     WHERE c.relkind = 'r'
       AND n.nspname = 'public';
-  `;
+  `) as TableStat[];
 
-  return rows as TableStat[];
+  return {
+    tables: rows,
+    columns: rows,
+  };
 }

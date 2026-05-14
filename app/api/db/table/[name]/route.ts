@@ -1,7 +1,8 @@
 import { sql, excludeTables } from "@/lib/db/utils";
 import { NextResponse } from "next/server";
 import { logit } from "@/lib/log/logit";
-
+import { db } from "@/lib/db";
+import { assertNonEmptyArray } from "@/lib/db/safe";
 export const dynamic = "force-dynamic";
 
 export async function GET(
@@ -50,10 +51,15 @@ export async function GET(
     `;
 
     // Get row count
-    const countResult = await sql.query(
-      `SELECT COUNT(*)::int AS count FROM "${name}"`,
+
+    const [row] = assertNonEmptyArray(
+      await db.$queryRawUnsafe<{ count: number }[]>(`
+    SELECT COUNT(*)::int AS count FROM "${name}"
+  `),
+      `count query for table ${name}`,
     );
-    const totalRows = countResult[0].count;
+
+    const totalRows = row.count;
 
     // Get rows with pagination - order by first column
     const firstCol = columns[0]?.column_name || "id";
