@@ -1,4 +1,4 @@
-// lib/neon.ts
+//  lib/neon.ts
 import { NeonPostgrestClient } from "@neondatabase/postgrest-js";
 
 export function neon() {
