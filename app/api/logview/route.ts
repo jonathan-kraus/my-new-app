@@ -1,3 +1,4 @@
+// app\api\logview\route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { Pool } from "@neondatabase/serverless";
 
