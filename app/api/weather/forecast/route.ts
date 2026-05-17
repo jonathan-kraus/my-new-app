@@ -70,7 +70,7 @@ export async function GET(req: Request) {
   // ----------------------------------------
   await logj({
     domain: "weather",
-    level: "info",
+    level: "warn",
     message: "Forecast cache miss → fetching external API",
     file: "app/api/weather/forecast/route.ts",
     line: 74,
@@ -148,7 +148,7 @@ export async function GET(req: Request) {
 
   await logj({
     domain: "weather",
-    level: "info",
+    level: "warn",
     message: "Forecast cache miss → fetching external API",
     file: "app/api/weather/forecast/route.ts",
     line: 156,
