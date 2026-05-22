@@ -42,9 +42,7 @@ export default function NotesClient() {
 
 	const refreshFollowupsDueCount = async () => {
 		try {
-			const dueRes = await fetch("/api/notes-due?days=7");
-			if (dueRes.ok) {
-				const dueData = await dueRes.json();
+      const dueRes = await fetch("/api/notes/due?days=7");
 				setFollowupsDueCount(dueData.total ?? 0);
 			} else {
 				setFollowupsDueCount(0);
