@@ -6,13 +6,13 @@ import { NextResponse } from "next/server";
 import { queryAxiom } from "@/lib/axiom/query";
 
 export async function GET() {
-  const q = `
+  const q2 = `
   ['myapp_logs']
   | where isnotnull(domain) and isnotnull(meta_json)
   | sort by _time desc
   | limit 50
 `;
 
-  const logs = await queryAxiom(q);
+  const logs = await queryAxiom(q2);
   return NextResponse.json({ logs });
 }
