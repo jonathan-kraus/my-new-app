@@ -25,7 +25,7 @@ importers:
         version: 2.2.0(react@19.2.6)
       '@hono/node-server':
         specifier: 2.0.3
-        version: 2.0.3(hono@4.12.21)
+        version: 2.0.3(hono@4.12.22)
       '@neondatabase/postgrest-js':
         specifier: 0.2.0-beta
         version: 0.2.0-beta
@@ -2469,8 +2469,8 @@ packages:
     resolution: {integrity: sha512-BLrgEcRTwX2o6gGxGOCNyMvGSp35YofuYzw9h1IMTRmKqttAZZVU67bdb9Pr2vUHA8+j3i2tJfjO6C6+4myGTA==}
     engines: {node: 18 || 20 || >=22}
 
-  baseline-browser-mapping@2.10.31:
-    resolution: {integrity: sha512-MujYO3eP72uvmSE0i4wltsodRfIpZATP3jvzRNRGGxgzId7aVocVJJV3nf01qnzzKFGxQVC9bpWxl5cjxTr/7Q==}
+  baseline-browser-mapping@2.10.32:
+    resolution: {integrity: sha512-wbPvpyjJPC0zdfdKXxqEL3Ea+bOMD/87X4lftiJkkaBiuG6ALQy1SLmEd7BSmVCuwCQsBrCamgBoLyfFDD1EPg==}
     engines: {node: '>=6.0.0'}
     hasBin: true
 
@@ -2671,9 +2671,6 @@ packages:
     peerDependencies:
       date-fns: ^3.0.0 || ^4.0.0
 
-  date-fns@4.2.1:
-    resolution: {integrity: sha512-37RhSdxaG1suen6VDCza6rNrQfooyQh57HFVPwQGEq2QWliVLzPQZ8Oa017weOu+HZCnzI7N3Pf/wyoBKfEqrA==}
-
   date-fns@4.3.0:
     resolution: {integrity: sha512-OYcL+3N/jyWbYdFGqoMAhytDgxP9pbYPUUiRCOgn4Fewaadk9l/Wam4Avciiyp2BgkpfQyBV9B+ehnVJych+eQ==}
 
@@ -2769,8 +2766,8 @@ packages:
   effect@3.20.0:
     resolution: {integrity: sha512-qMLfDJscrNG8p/aw+IkT9W7fgj50Z4wG5bLBy0Txsxz8iUHjDIkOgO3SV0WZfnQbNG2VJYb0b+rDLMrhM4+Krw==}
 
-  electron-to-chromium@1.5.360:
-    resolution: {integrity: sha512-GkcBt6YYAw9SxFWn+xVar4cLVGlXVuswwtRLBozi2zp0GjXs4ZnOrqV4zbXzg35n7w81hCkyJNYicgXlVHAmBA==}
+  electron-to-chromium@1.5.361:
+    resolution: {integrity: sha512-Q6Hts7N9FnJc5LeGRINFvLhCI9xZmNtTDe5ZbcVezQz7cU4a8Aua3GH1b8J2XY8Al9PF+OCwYqhgsOOheMdvkA==}
 
   embla-carousel-react@8.6.0:
     resolution: {integrity: sha512-0/PjqU7geVmo6F734pmPqpyHqiM99olvyecY7zdweCw+6tKEXnrE90pBiBbMMU8s5tICemzpQ3hi5EpxzGW+JA==}
@@ -2799,8 +2796,8 @@ packages:
   encoding-sniffer@0.2.1:
     resolution: {integrity: sha512-5gvq20T6vfpekVtqrYQsSCFZ1wEg5+wW0/QaZMWkFr6BqD3NfKs0rLCx4rrVlSWJeZb5NBJgVLswK/w2MWU+Gw==}
 
-  enhanced-resolve@5.21.6:
-    resolution: {integrity: sha512-aNnGCvbJ/RIyWo1IuhNdVjnNF+EjH9wpzpNHt+ci/m9He9LJvUN8wrCcXjp9cWsGNAuvSpVFTx/vraAFQ8qGjQ==}
+  enhanced-resolve@5.22.0:
+    resolution: {integrity: sha512-xYcDWrpELkFzz9SpZ3PlI6Eu6eD93Yf0WLDRxikGhWJ3MAir2SNZTIVCVZqZ/NUyx8AdMc2gT9C0gPiw18kG+A==}
     engines: {node: '>=10.13.0'}
 
   entities@4.5.0:
@@ -2838,8 +2835,8 @@ packages:
   es-module-lexer@2.1.0:
     resolution: {integrity: sha512-n27zTYMjYu1aj4MjCWzSP7G9r75utsaoc8m61weK+W8JMBGGQybd43GstCXZ3WNmSFtGT9wi59qQTW6mhTR5LQ==}
 
-  es-object-atoms@1.1.1:
-    resolution: {integrity: sha512-FGgH2h8zKNim9ljj7dankFPcICIK9Cp5bm+c2gQSYePhpaG5+esrLODihIorn+Pe6FGJzWhXQotPv73jTaldXA==}
+  es-object-atoms@1.1.2:
+    resolution: {integrity: sha512-HWcBoN6NileqtSydK2FqHbS/LoDd2pqrnQHLyJzBj4kOp/ky2MWMN694xOfkK8/SnUsW2DH7EfyVlydKCsm1Zw==}
     engines: {node: '>= 0.4'}
 
   es-set-tostringtag@2.1.0:
@@ -3222,8 +3219,8 @@ packages:
   hermes-parser@0.25.1:
     resolution: {integrity: sha512-6pEjquH3rqaI6cYAXYPcz9MS4rY6R4ngRgrgfDshRptUZIc3lw0MCIJIGDj9++mfySOuPTHB4nrSW99BCvOPIA==}
 
-  hono@4.12.21:
-    resolution: {integrity: sha512-uV63apnb0kyPtAUwoWgaGh9HyIFcv8lgmzPZSiTBQAFOFGIzka5EZ1dZocmGnn0XdX0+XTqJ6Tqv7selMuGLRQ==}
+  hono@4.12.22:
+    resolution: {integrity: sha512-7fvVPbB92zNRsQke+uiRGwtTuef0tB2Dg4hWxYfFNvkQhIltWoyi0ONReM5LWA+jJWS3nfT5lTq+qbsIpX0IQw==}
     engines: {node: '>=16.9.0'}
 
   html-escaper@2.0.2:
@@ -3755,8 +3752,8 @@ packages:
     resolution: {integrity: sha512-dRB78srN/l6gqWulah9SrxeYnxeddIG30+GOqK/9OlLVyLg3HPnr6SqOWTWOXKRwC2eGYCkZ59NNuSgvSrpgOA==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
-  node-releases@2.0.45:
-    resolution: {integrity: sha512-iIbHXV9eBB2nB0wa7oTsrrXq+qQt+9SIlx9AX3T96YgobtEQfis5n6TJ6vV+3QP8DwdriEAcGhARaFCu37peBg==}
+  node-releases@2.0.46:
+    resolution: {integrity: sha512-GYVXHE2KnrzAfsAjl4uP++evGFCrAU1jta4ubEjIG7YWt/64Gqv66a30yKwWczVjA6j3bM4nBwH7Pk1JmDHaxQ==}
     engines: {node: '>=18'}
 
   nodemailer@8.0.5:
@@ -4363,8 +4360,8 @@ packages:
   tinybench@2.9.0:
     resolution: {integrity: sha512-0+DUvqWMValLmha6lr4kD8iAMK1HzV0/aKnCtWb9v9641TnP/MFb7Pc2bxoxQjTXAErryXVgUOfv2YqNllqGeg==}
 
-  tinyexec@1.1.2:
-    resolution: {integrity: sha512-dAqSqE/RabpBKI8+h26GfLq6Vb3JVXs30XYQjdMjaj/c2tS8IYYMbIzP599KtRj7c57/wYApb3QjgRgXmrCukA==}
+  tinyexec@1.2.2:
+    resolution: {integrity: sha512-M/Q0B2cp4K7kynaT/vnED1j8TlLY+Pp7C6Wl2bl/7u/F0mUVwdyOpwomQb8JpYLitHUssAJRmLZdMCGsrx7i+g==}
     engines: {node: '>=18'}
 
   tinyglobby@0.2.16:
@@ -5010,13 +5007,13 @@ snapshots:
     dependencies:
       react: 19.2.6
 
-  '@hono/node-server@1.19.11(hono@4.12.21)':
+  '@hono/node-server@1.19.11(hono@4.12.22)':
     dependencies:
-      hono: 4.12.21
+      hono: 4.12.22
 
-  '@hono/node-server@2.0.3(hono@4.12.21)':
+  '@hono/node-server@2.0.3(hono@4.12.22)':
     dependencies:
-      hono: 4.12.21
+      hono: 4.12.22
 
   '@humanfs/core@0.19.2':
     dependencies:
@@ -5287,13 +5284,13 @@ snapshots:
       '@electric-sql/pglite': 0.4.1
       '@electric-sql/pglite-socket': 0.1.1(@electric-sql/pglite@0.4.1)
       '@electric-sql/pglite-tools': 0.3.1(@electric-sql/pglite@0.4.1)
-      '@hono/node-server': 1.19.11(hono@4.12.21)
+      '@hono/node-server': 1.19.11(hono@4.12.22)
       '@prisma/get-platform': 7.2.0
       '@prisma/query-plan-executor': 7.2.0
       '@prisma/streams-local': 0.1.2
       foreground-child: 3.3.1
       get-port-please: 3.2.0
-      hono: 4.12.21
+      hono: 4.12.22
       http-status-codes: 2.3.0
       pathe: 2.0.3
       proper-lockfile: 4.1.2
@@ -6132,7 +6129,7 @@ snapshots:
   '@tailwindcss/node@4.3.0':
     dependencies:
       '@jridgewell/remapping': 2.3.5
-      enhanced-resolve: 5.21.6
+      enhanced-resolve: 5.22.0
       jiti: 2.7.0
       lightningcss: 1.32.0
       magic-string: 0.30.21
@@ -6615,7 +6612,7 @@ snapshots:
       call-bound: 1.0.4
       define-properties: 1.2.1
       es-abstract: 1.24.2
-      es-object-atoms: 1.1.1
+      es-object-atoms: 1.1.2
       get-intrinsic: 1.3.0
       is-string: 1.1.1
       math-intrinsics: 1.1.0
@@ -6626,7 +6623,7 @@ snapshots:
       define-properties: 1.2.1
       es-abstract: 1.24.2
       es-errors: 1.3.0
-      es-object-atoms: 1.1.1
+      es-object-atoms: 1.1.2
       es-shim-unscopables: 1.1.0
 
   array.prototype.findlastindex@1.2.6:
@@ -6636,7 +6633,7 @@ snapshots:
       define-properties: 1.2.1
       es-abstract: 1.24.2
       es-errors: 1.3.0
-      es-object-atoms: 1.1.1
+      es-object-atoms: 1.1.2
       es-shim-unscopables: 1.1.0
 
   array.prototype.flat@1.3.3:
@@ -6697,7 +6694,7 @@ snapshots:
 
   balanced-match@4.0.4: {}
 
-  baseline-browser-mapping@2.10.31: {}
+  baseline-browser-mapping@2.10.32: {}
 
   better-result@2.9.2: {}
 
@@ -6718,10 +6715,10 @@ snapshots:
 
   browserslist@4.28.2:
     dependencies:
-      baseline-browser-mapping: 2.10.31
+      baseline-browser-mapping: 2.10.32
       caniuse-lite: 1.0.30001793
-      electron-to-chromium: 1.5.360
-      node-releases: 2.0.45
+      electron-to-chromium: 1.5.361
+      node-releases: 2.0.46
       update-browserslist-db: 1.2.3(browserslist@4.28.2)
 
   c12@3.3.4(magicast@0.5.3):
@@ -6920,8 +6917,6 @@ snapshots:
     dependencies:
       date-fns: 4.3.0
 
-  date-fns@4.2.1: {}
-
   date-fns@4.3.0: {}
 
   debug@3.2.7:
@@ -7001,7 +6996,7 @@ snapshots:
       '@standard-schema/spec': 1.1.0
       fast-check: 3.23.2
 
-  electron-to-chromium@1.5.360: {}
+  electron-to-chromium@1.5.361: {}
 
   embla-carousel-react@8.6.0(react@19.2.6):
     dependencies:
@@ -7026,7 +7021,7 @@ snapshots:
       iconv-lite: 0.6.3
       whatwg-encoding: 3.1.1
 
-  enhanced-resolve@5.21.6:
+  enhanced-resolve@5.22.0:
     dependencies:
       graceful-fs: 4.2.11
       tapable: 2.3.3
@@ -7051,7 +7046,7 @@ snapshots:
       data-view-byte-offset: 1.0.1
       es-define-property: 1.0.1
       es-errors: 1.3.0
-      es-object-atoms: 1.1.1
+      es-object-atoms: 1.1.2
       es-set-tostringtag: 2.1.0
       es-to-primitive: 1.3.0
       function.prototype.name: 1.1.8
@@ -7121,7 +7116,7 @@ snapshots:
 
   es-module-lexer@2.1.0: {}
 
-  es-object-atoms@1.1.1:
+  es-object-atoms@1.1.2:
     dependencies:
       es-errors: 1.3.0
 
@@ -7514,7 +7509,7 @@ snapshots:
       call-bind-apply-helpers: 1.0.2
       es-define-property: 1.0.1
       es-errors: 1.3.0
-      es-object-atoms: 1.1.1
+      es-object-atoms: 1.1.2
       function-bind: 1.1.2
       get-proto: 1.0.1
       gopd: 1.2.0
@@ -7529,7 +7524,7 @@ snapshots:
   get-proto@1.0.1:
     dependencies:
       dunder-proto: 1.0.1
-      es-object-atoms: 1.1.1
+      es-object-atoms: 1.1.2
 
   get-symbol-description@1.1.0:
     dependencies:
@@ -7602,7 +7597,7 @@ snapshots:
     dependencies:
       hermes-estree: 0.25.1
 
-  hono@4.12.21: {}
+  hono@4.12.22: {}
 
   html-escaper@2.0.2: {}
 
@@ -7804,7 +7799,7 @@ snapshots:
   iterator.prototype@1.1.5:
     dependencies:
       define-data-property: 1.1.4
-      es-object-atoms: 1.1.1
+      es-object-atoms: 1.1.2
       get-intrinsic: 1.3.0
       get-proto: 1.0.1
       has-symbols: 1.1.0
@@ -8105,7 +8100,7 @@ snapshots:
     dependencies:
       '@next/env': 16.2.6
       '@swc/helpers': 0.5.15
-      baseline-browser-mapping: 2.10.31
+      baseline-browser-mapping: 2.10.32
       caniuse-lite: 1.0.30001793
       postcss: 8.4.31
       react: 19.2.6
@@ -8140,7 +8135,7 @@ snapshots:
       fetch-blob: 3.2.0
       formdata-polyfill: 4.0.10
 
-  node-releases@2.0.45: {}
+  node-releases@2.0.46: {}
 
   nodemailer@8.0.5: {}
 
@@ -8161,7 +8156,7 @@ snapshots:
       call-bind: 1.0.9
       call-bound: 1.0.4
       define-properties: 1.2.1
-      es-object-atoms: 1.1.1
+      es-object-atoms: 1.1.2
       has-symbols: 1.1.0
       object-keys: 1.1.1
 
@@ -8170,14 +8165,14 @@ snapshots:
       call-bind: 1.0.9
       call-bound: 1.0.4
       define-properties: 1.2.1
-      es-object-atoms: 1.1.1
+      es-object-atoms: 1.1.2
 
   object.fromentries@2.0.8:
     dependencies:
       call-bind: 1.0.9
       define-properties: 1.2.1
       es-abstract: 1.24.2
-      es-object-atoms: 1.1.1
+      es-object-atoms: 1.1.2
 
   object.groupby@1.0.3:
     dependencies:
@@ -8190,7 +8185,7 @@ snapshots:
       call-bind: 1.0.9
       call-bound: 1.0.4
       define-properties: 1.2.1
-      es-object-atoms: 1.1.1
+      es-object-atoms: 1.1.2
 
   obug@2.1.1: {}
 
@@ -8401,7 +8396,7 @@ snapshots:
   react-day-picker@10.0.1(@types/react@19.2.15)(react@19.2.6):
     dependencies:
       '@date-fns/tz': 1.5.0
-      date-fns: 4.2.1
+      date-fns: 4.3.0
       react: 19.2.6
     optionalDependencies:
       '@types/react': 19.2.15
@@ -8505,7 +8500,7 @@ snapshots:
       define-properties: 1.2.1
       es-abstract: 1.24.2
       es-errors: 1.3.0
-      es-object-atoms: 1.1.1
+      es-object-atoms: 1.1.2
       get-intrinsic: 1.3.0
       get-proto: 1.0.1
       which-builtin-type: 1.2.1
@@ -8620,7 +8615,7 @@ snapshots:
     dependencies:
       dunder-proto: 1.0.1
       es-errors: 1.3.0
-      es-object-atoms: 1.1.1
+      es-object-atoms: 1.1.2
 
   sharp@0.34.5:
     dependencies:
@@ -8743,7 +8738,7 @@ snapshots:
       define-properties: 1.2.1
       es-abstract: 1.24.2
       es-errors: 1.3.0
-      es-object-atoms: 1.1.1
+      es-object-atoms: 1.1.2
       get-intrinsic: 1.3.0
       gopd: 1.2.0
       has-symbols: 1.1.0
@@ -8764,7 +8759,7 @@ snapshots:
       define-data-property: 1.1.4
       define-properties: 1.2.1
       es-abstract: 1.24.2
-      es-object-atoms: 1.1.1
+      es-object-atoms: 1.1.2
       has-property-descriptors: 1.0.2
 
   string.prototype.trimend@1.0.9:
@@ -8772,13 +8767,13 @@ snapshots:
       call-bind: 1.0.9
       call-bound: 1.0.4
       define-properties: 1.2.1
-      es-object-atoms: 1.1.1
+      es-object-atoms: 1.1.2
 
   string.prototype.trimstart@1.0.8:
     dependencies:
       call-bind: 1.0.9
       define-properties: 1.2.1
-      es-object-atoms: 1.1.1
+      es-object-atoms: 1.1.2
 
   strip-bom@3.0.0: {}
 
@@ -8811,7 +8806,7 @@ snapshots:
 
   tinybench@2.9.0: {}
 
-  tinyexec@1.1.2: {}
+  tinyexec@1.2.2: {}
 
   tinyglobby@0.2.16:
     dependencies:
@@ -9075,7 +9070,7 @@ snapshots:
       picomatch: 4.0.4
       std-env: 4.1.0
       tinybench: 2.9.0
-      tinyexec: 1.1.2
+      tinyexec: 1.2.2
       tinyglobby: 0.2.16
       tinyrainbow: 3.1.0
       vite: 8.0.14(@types/node@25.9.1)(esbuild@0.28.0)(jiti@2.7.0)(tsx@4.22.3)
