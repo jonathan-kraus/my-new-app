@@ -10,7 +10,6 @@ on:
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-  PNPM_MINIMUM_RELEASE_AGE: 0
 
 
 jobs:
@@ -55,6 +54,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-v3-
 
+      - name: Disable pnpm minimum release age policy
+        run: pnpm config set minimumReleaseAge 0
+        
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
