@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\log\route.ts
- * @LastEditTime: 2026-04-02 00:06:14
+ * @LastEditTime: 2026-05-23 22:31:29
  */
 // app/api/log/route.ts
 import { NextRequest, NextResponse } from "next/server";
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error("Client log route error:", err);
+    console.error("Client log route error:  ", err);
     return NextResponse.json({ ok: false }, { status: 500 });
   }
 }
