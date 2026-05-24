@@ -74,7 +74,13 @@ export default async function DashboardAstronomyPage() {
             <div className="flex justify-between">
               <span>Solar Noon</span>
 
-              <span>{format(solarNoon, "yyyy-MM-dd HH:mm:ss")};</span>
+              <span>
+                {solarNoon.toLocaleTimeString("en-US", {
+                  hour: "numeric",
+                  minute: "2-digit",
+                  timeZone: "America/New_York",
+                })}
+              </span>
             </div>
             <div className="flex justify-between">
               <span>Sunset</span>

@@ -46,6 +46,8 @@ export function SolarArcBar({
       {Object.entries(events).map(([label, time]) => {
         const left =
           ((time.getTime() - events.Sunrise.getTime()) / totalSpan) * 100;
+        const labelText = label.replace(/([A-Z])/g, " $1").trim();
+
         return (
           <div
             key={label}
@@ -54,7 +56,7 @@ export function SolarArcBar({
           >
             <div className="w-px h-full bg-white/60" />
             <div className="text-xs text-white absolute top-full mt-1 whitespace-nowrap">
-              {label.replace(/([A-Z])/g, " $1")}
+              {labelText}
               <br />
               {format(time, "h:mm a")}
             </div>

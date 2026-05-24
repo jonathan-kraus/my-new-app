@@ -201,6 +201,14 @@ export function AstronomyTimeline({
           />
         )}
 
+        {/* Solar Noon */}
+        {solarNoon && (
+          <div
+            className="absolute top-0 bottom-0 w-1 bg-yellow-300"
+            style={{ left: `${pct(solarNoon)}%` }}
+          />
+        )}
+
         {/* Now Marker */}
         {nowPct !== null && (
           <div
