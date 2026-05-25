@@ -20,7 +20,7 @@ logj({
 });
 
 export async function sendTestEmail(message: string, subject: string) {
-  // --- 1. Read flag ---------------------------------------------------------
+  // --- 1. Read flag -----------
   const enabled = await getConfig("email_enabled", "1");
   let jei = 1;
   if (String(enabled) !== "1") {
