@@ -1,5 +1,5 @@
 {
-  "extends": ["config:recommended"],
+  "extends": [":dependencyDashboard"],
   "prCreation": "immediate",
   "rebaseWhen": "behind-base-branch",
   "ignoreTests": false,
