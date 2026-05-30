@@ -1,7 +1,7 @@
 "use client";
 /*
  * @FilePath: \my-new-app\app\components\SideNavClient.tsx
- * @LastEditTime: 2026-05-17 01:49:29
+ * @LastEditTime: 2026-05-30 09:45:54
  */
 
 import Link from "next/link";
@@ -80,7 +80,7 @@ export default function SideNavClient({
       keepalive: true,
       body: JSON.stringify({
         domain: "jonathan",
-        message: "🌟 in SideNav",
+        message: "🧭 in SideNav",
         file: "app/components/SideNavClient.tsx",
         line: 68,
         level: "info",
