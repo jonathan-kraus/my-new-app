@@ -43,9 +43,9 @@ export async function GET(req: Request) {
     await logj({
       domain: "weather",
       level: "info",
-      message: `Forecast cache hit ${age}/${FORECAST_CACHE_MINUTES}`,
+      message: `🌟 Forecast cache hit ${age}/${FORECAST_CACHE_MINUTES}`,
       file: "app/api/weather/forecast/route.ts",
-      line: 44,
+      line: 43,
       payload: {
         some: "data",
       },
@@ -71,9 +71,9 @@ export async function GET(req: Request) {
   await logj({
     domain: "weather",
     level: "warn",
-    message: "Forecast cache miss → fetching external API",
+    message: "🌟 Forecast cache miss → fetching external API",
     file: "app/api/weather/forecast/route.ts",
-    line: 74,
+    line: 71,
     payload: {
       some: "data",
     },
@@ -95,9 +95,9 @@ export async function GET(req: Request) {
   await logj({
     domain: "weather",
     level: "info",
-    message: "Forecast API response",
+    message: "🌟 Forecast API response",
     file: "app/api/weather/forecast/route.ts",
-    line: 100,
+    line: 95,
     payload: {
       parsed,
       raw,
@@ -111,9 +111,9 @@ export async function GET(req: Request) {
     await logj({
       domain: "weather",
       level: "error",
-      message: "Invalid forecast API response",
+      message: "🌟 Invalid forecast API response",
       file: "app/api/weather/forecast/route.ts",
-      line: 118,
+      line: 111,
       payload: {
         parsed,
         raw,
@@ -149,9 +149,9 @@ export async function GET(req: Request) {
   await logj({
     domain: "weather",
     level: "warn",
-    message: "Forecast cache miss → fetching external API",
+    message: "🌟 Forecast cache miss → fetching external API",
     file: "app/api/weather/forecast/route.ts",
-    line: 156,
+    line: 149,
     payload: {
       some: "data",
     },
@@ -160,9 +160,9 @@ export async function GET(req: Request) {
   await logj({
     domain: "weather",
     level: "info",
-    message: `Forecast snapshot stored, ${Math.round(weather.current_weather.temperature)}°F`,
+    message: `🌟 Forecast snapshot stored, ${Math.round(weather.current_weather.temperature)}°F`,
     file: "app/api/weather/forecast/route.ts",
-    line: 169,
+    line: 160,
 
     payload: {
       snapshotId: snapshot.id,
