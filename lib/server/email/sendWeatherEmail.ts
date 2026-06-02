@@ -8,7 +8,7 @@ import { logit } from "@/lib/log/logit";
 export async function sendWeatherEmail(message?: string, subject?: string) {
   // --- 1. Read flag ---------------------------------------------------------
   const enabled = await getConfig("email_enabled", "1");
-  const eventIndex = 22;
+  const eventIndex = 212;
   const requestId = crypto.randomUUID();
   await logit(
     "email",
