@@ -3,10 +3,11 @@
 import { formatDistanceToNow } from "date-fns";
 import { useForecastTimeline } from "@/hooks/useForecastTimeline";
 import { WEATHER_ICONS } from "../../lib/ephemeris/weatherIcons";
+import { logFromClient } from "@/app/actions/log";
 export function iconFor(code: number): string {
   return WEATHER_ICONS[code] ?? "❓";
 }
-export function ForecastCard({
+export async function ForecastCard({
   location,
   current,
   forecast,
@@ -23,6 +24,18 @@ export function ForecastCard({
     addSuffix: true,
   });
 
+try {
+      const result = await logFromClient(
+        "FC",
+        "Forecast Card rendered",
+        "app/forecast/ForecastCard.tsx",
+        28,
+        { error: "Emessage", data: "Edata" },
+      );
+      console.log("logFromClient result:", result);
+    } catch (err) {
+      console.error("logFromClient failed:", err);
+    }
   const t = useForecastTimeline(forecast);
 
   return (
