@@ -24,7 +24,6 @@ export function ForecastCard({
     addSuffix: true,
   });
 
-
   const t = useForecastTimeline(forecast);
 
   return (
