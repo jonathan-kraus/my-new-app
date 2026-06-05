@@ -28,7 +28,7 @@ export const POST = withLogging(async (req: Request) => {
   const normalized = normalizeGitHubEvent(event, payload);
 
   await logj({
-    domain: "jonathan",
+    domain: "github",
     level: "info",
     message:
       "Github webhook processed " +

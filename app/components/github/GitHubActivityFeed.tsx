@@ -89,7 +89,7 @@ export default function GitHubActivityFeed() {
               headers: { "Content-Type": "application/json" },
               keepalive: true,
               body: JSON.stringify({
-                domain: "jonathan",
+                domain: "github",
                 message: "Starting GitHub activity fetch",
                 file: "app/components/github/GitHubActivityFeed.tsx",
                 line: 87,
