@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\notes\route.ts
- * @LastEditTime: 2026-04-27 19:21:45
+ * @LastEditTime: 2026-06-06 12:04:03
  */
 
 import { NextResponse } from "next/server";
@@ -175,7 +175,7 @@ export const PUT = withLogging(async (req: Request) => {
     logj({
       domain: "notes",
       level: "info",
-      message: "🎶 Note updated 🎶",
+      message: "🎶 Note updated updatedNote?.title 🎶",
       file: "app/api/notes/route.ts",
       line: 175,
       payload: {
