@@ -56,7 +56,7 @@ jobs:
 
       - name: Disable pnpm minimum release age policy
         run: pnpm config set minimumReleaseAge 0
-        
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -69,11 +69,14 @@ jobs:
       - name: Run tests with coverage
         run: pnpm coverage
 
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v7
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
         with:
-          name: coverage
-          path: coverage/
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/coverage-final.json
+          fail_ci_if_error: true
+          verbose: true
+
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v6
