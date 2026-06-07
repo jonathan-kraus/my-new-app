@@ -13,10 +13,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
   ]),
 
-  // Disable React rules for Node scripts
   {
     files: [".github/scripts/**/*.js"],
-    plugins: [],
     rules: {
       "react/display-name": "off",
       "react/no-direct-mutation-state": "off",
