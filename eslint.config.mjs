@@ -5,14 +5,14 @@ import nextTs from "eslint-config-next/typescript";
 
 export default defineConfig([
 
-  // 1. Node scripts (NO React rules)
+  // 1. Disable React plugin globally BEFORE Next.js loads it
   {
-    files: [".github/scripts/**/*.js"],
-    languageOptions: {
-      sourceType: "script",
+    settings: {
+      react: {
+        version: "999.999.999", // disables eslint-plugin-react internally
+      },
     },
     rules: {
-      // Disable ALL React rules that crash on ESLint 10
       "react/display-name": "off",
       "react/no-direct-mutation-state": "off",
       "react/no-render-return-value": "off",
@@ -22,7 +22,7 @@ export default defineConfig([
     },
   },
 
-  // 2. Next.js + TypeScript (React rules apply here)
+  // 2. Load Next.js configs
   ...nextVitals,
   ...nextTs,
 
@@ -34,4 +34,3 @@ export default defineConfig([
     "next-env.d.ts",
   ]),
 ]);
-
