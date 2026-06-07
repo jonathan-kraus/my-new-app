@@ -5,20 +5,26 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
-  // Override default ignores of eslint-config-next.
+
   globalIgnores([
-    // Default ignores of eslint-config-next:
     ".next/**",
     "out/**",
     "build/**",
     "next-env.d.ts",
   ]),
+
+  // Disable React rules for Node scripts
   {
-  files: [".github/scripts/*.js"],
-  rules: {
-    "react/display-name": "off",
+    files: [".github/scripts/**/*.js"],
+    plugins: [],
+    rules: {
+      "react/display-name": "off",
+      "react/no-direct-mutation-state": "off",
+      "react/react-in-jsx-scope": "off",
+      "react/jsx-uses-react": "off",
+      "react/jsx-uses-vars": "off",
+    },
   },
-},
 ]);
 
 export default eslintConfig;
