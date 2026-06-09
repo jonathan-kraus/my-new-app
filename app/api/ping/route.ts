@@ -151,7 +151,7 @@ export async function GET(req: NextRequest) {
     level: "info",
     message: "ping processed weather data",
     file: "app/api/ping/route.ts",
-    line: 143,
+    line: 149,
     payload: {
       Currenttime: weatherData.current.time,
       Currenttemperature_2m: weatherData.current.temperature_2m,
