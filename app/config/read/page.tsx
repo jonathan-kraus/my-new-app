@@ -41,12 +41,12 @@ function ConfigCard({ title, row }: { title: string; row: ConfigRow | null }) {
       <div><strong>Variable02:</strong> {row.Variable02 ?? "-"}</div>
       <div><strong>Variable03:</strong> {row.Variable03 ?? "-"}</div>
 
-      <div className="pt-2">
+      {/* <div className="pt-2">
         <strong>Raw:</strong>
         <pre className="overflow-auto mt-1 bg-slate-950 p-2 rounded">
           {JSON.stringify(row, null, 2)}
         </pre>
-      </div>
+      </div> */}
     </div>
   );
 }
