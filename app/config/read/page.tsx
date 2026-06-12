@@ -34,12 +34,24 @@ function ConfigCard({ title, row }: { title: string; row: ConfigRow | null }) {
     <div className="space-y-2 text-xs bg-slate-900 p-4 rounded border border-slate-700">
       <h2 className="text-lg font-semibold text-cyan-300">{title}</h2>
 
-      <div><strong>ID:</strong> {row.id ?? "-"}</div>
-      <div><strong>Reason:</strong> {row.reason ?? "-"}</div>
-      <div><strong>Message:</strong> {row.message ?? "-"}</div>
-      <div><strong>Variable01:</strong> {row.Variable01 ?? "-"}</div>
-      <div><strong>Variable02:</strong> {row.Variable02 ?? "-"}</div>
-      <div><strong>Variable03:</strong> {row.Variable03 ?? "-"}</div>
+      <div>
+        <strong>ID:</strong> {row.id ?? "-"}
+      </div>
+      <div>
+        <strong>Reason:</strong> {row.reason ?? "-"}
+      </div>
+      <div>
+        <strong>Message:</strong> {row.message ?? "-"}
+      </div>
+      <div>
+        <strong>Variable01:</strong> {row.Variable01 ?? "-"}
+      </div>
+      <div>
+        <strong>Variable02:</strong> {row.Variable02 ?? "-"}
+      </div>
+      <div>
+        <strong>Variable03:</strong> {row.Variable03 ?? "-"}
+      </div>
 
       {/* <div className="pt-2">
         <strong>Raw:</strong>
@@ -58,7 +70,7 @@ export default function ConfigReadPage() {
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState<string | null>(null);
   const [updatedAt, setUpdatedAt] = useState<string>(
-    new Date().toLocaleTimeString()
+    new Date().toLocaleTimeString(),
   );
 
   async function loadData() {
