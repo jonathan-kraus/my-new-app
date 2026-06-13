@@ -1,52 +1,82 @@
-// app/(dashboard)/travel/next/page.tsx
-
-import { TripSummaryCard } from "@/components/travel/TripSummaryCard";
-import { WeatherCard } from "@/components/travel/WeatherCard";
-import { NextEventCountdown } from "@/components/travel/NextEventCountdown";
-import { SendWeatherEmailButton } from "@/components/travel/SendWeatherEmailButton";
-
+// app/travel/next/page.tsx
 import { getNextTravelSnapshot } from "@/lib/server/travel/getNextTravelSnapshot";
-import { getWeatherForTrip } from "@/lib/server/weather/getWeatherForTrip";
+import { DateTime } from "luxon";
 
 export default async function TravelNextPage() {
-  const snapshot = await getNextTravelSnapshot();
+  const trip = await getNextTravelSnapshot();
 
-  // If no upcoming trip, render a gentle empty state
-  if (!snapshot) {
+  // 1. Null-safe: no upcoming trips
+  if (!trip || !trip.segments || trip.segments.length === 0) {
     return (
-      <div className="p-6 space-y-6">
-        <h1 className="text-2xl font-semibold text-gray-100">Your Next Trip</h1>
-        <div className="bg-gray-900 rounded-lg p-4 text-gray-300">
-          No upcoming trips found. Once a new AA email is parsed, your next trip
-          will appear here.
-        </div>
+      <div className="p-6 text-slate-200">
+        <h1 className="text-2xl font-bold mb-2">Your Next Trip</h1>
+        <p className="text-slate-400">No upcoming trips found.</p>
       </div>
     );
   }
 
-  const weather = await getWeatherForTrip(snapshot);
+  // 2. Safely extract first segment
+  const first = trip.segments[0];
+  if (!first) {
+    return (
+      <div className="p-6 text-slate-200">
+        <h1 className="text-2xl font-bold mb-2">Your Next Trip</h1>
+        <p className="text-slate-400">Trip found, but no segments available.</p>
+      </div>
+    );
+  }
+
+  // 3. Parse date safely with Luxon
+  const dt = DateTime.fromFormat(first.date, "EEEE, LLLL d, yyyy");
+  const now = DateTime.now();
+
+  const daysUntil = Math.ceil(dt.diff(now, "days").days);
 
   return (
-    <div className="p-6 space-y-8">
-      {/* Page title */}
-      <h1 className="text-2xl font-semibold text-gray-100">Your Next Trip</h1>
+    <div className="p-6 text-slate-100 space-y-6">
+      <h1 className="text-2xl font-bold">Your Next Trip</h1>
 
-      {/* Two-column responsive layout */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* LEFT COLUMN: trip + countdown */}
-        <div className="space-y-6">
-          <TripSummaryCard snapshot={snapshot} />
-          <NextEventCountdown snapshot={snapshot} />
-        </div>
+      {/* Countdown */}
+      <div className="bg-slate-900 p-4 rounded border border-slate-700">
+        <p className="text-xl font-semibold text-cyan-300">
+          {daysUntil} days until your trip
+        </p>
+        <p className="text-slate-400">{first.date}</p>
+      </div>
 
-        {/* RIGHT COLUMN: weather + email action */}
-        <div className="space-y-6">
-          {weather && <WeatherCard snapshot={snapshot} weather={weather} />}
+      {/* Trip Summary */}
+      <div className="bg-slate-900 p-4 rounded border border-slate-700 space-y-2">
+        <h2 className="text-lg font-semibold text-emerald-300">Flight Details</h2>
 
-          <div className="pt-2">
-            <SendWeatherEmailButton />
-          </div>
-        </div>
+        <p>
+          <strong>From:</strong> {first.departureCity} ({first.departureAirport})
+        </p>
+        <p>
+          <strong>To:</strong> {first.arrivalCity} ({first.arrivalAirport})
+        </p>
+        <p>
+          <strong>Flight:</strong> {first.flightNumber}
+        </p>
+        <p>
+          <strong>Departure:</strong> {first.departureTime}
+        </p>
+        <p>
+          <strong>Arrival:</strong> {first.arrivalTime}
+        </p>
+
+        {first.seats?.length > 0 && (
+          <p>
+            <strong>Seats:</strong> {first.seats.join(", ")}
+          </p>
+        )}
+      </div>
+
+      {/* Raw Debug */}
+      <div className="bg-slate-950 p-4 rounded border border-slate-800 text-xs">
+        <strong>Raw Snapshot:</strong>
+        <pre className="overflow-auto mt-2">
+          {JSON.stringify(trip, null, 2)}
+        </pre>
       </div>
     </div>
   );
