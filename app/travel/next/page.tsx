@@ -46,10 +46,13 @@ export default async function TravelNextPage() {
 
       {/* Trip Summary */}
       <div className="bg-slate-900 p-4 rounded border border-slate-700 space-y-2">
-        <h2 className="text-lg font-semibold text-emerald-300">Flight Details</h2>
+        <h2 className="text-lg font-semibold text-emerald-300">
+          Flight Details
+        </h2>
 
         <p>
-          <strong>From:</strong> {first.departureCity} ({first.departureAirport})
+          <strong>From:</strong> {first.departureCity} ({first.departureAirport}
+          )
         </p>
         <p>
           <strong>To:</strong> {first.arrivalCity} ({first.arrivalAirport})
