@@ -2,7 +2,7 @@ import { auth, signIn, signOut } from "@/auth";
 
 export default async function ProfilePage() {
   const session = await auth();
-
+  let userInfo = null;
   return (
     <div className="p-8 space-y-4">
       <h1 className="text-3xl font-bold">Profile</h1>
@@ -27,7 +27,7 @@ export default async function ProfilePage() {
         <div className="space-y-4">
           <div className="space-y-2">
             <p>
-              <strong>Name:</strong> {session.user?.name}
+              <strong>Name:</strong> {session.user?.name} {userInfo}
             </p>
             <p>
               <strong>User ID:</strong> {session.user?.id}
