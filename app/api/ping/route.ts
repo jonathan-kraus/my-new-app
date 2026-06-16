@@ -169,8 +169,8 @@ export async function GET(req: NextRequest) {
   //   });
 
   return NextResponse.json({
-    daily,
-    current,
+    //daily,
+    //current,
     ok: true,
     local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" }),
   });
