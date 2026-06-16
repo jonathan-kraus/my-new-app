@@ -40,6 +40,7 @@ export default defineConfig([
     extends: [
       ...next,
       "plugin:@typescript-eslint/recommended",
+      "eslint-config-prettier",   // ← Prettier integration
     ],
     rules: {
       "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
