@@ -1,9 +1,11 @@
 // app/ping/page.tsx
 
 import { refreshLogRowEstimateForToday } from "@/lib/db/refreshLogRowEstimateForToday";
-import { logit } from "@/lib/log/logit";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { NextRequest } from "next/server";
+import { logj } from "@/lib/log/logj";
 
-export default async function AxiomTestPage() {
+export default async function AxiomTestPage(req: NextRequest) {
   const ctx = {
     requestId: crypto.randomUUID(),
     page: "ping",
@@ -13,7 +15,19 @@ export default async function AxiomTestPage() {
       timeZone: "America/New_York",
     }),
   };
-
+  let jei = 0;
+  const built = await buildUniversalContext(req as any, "PING");
+  await logj({
+    domain: "jonathan",
+    level: "info",
+    message: `** PING ** `,
+    file: "app/ping/page.tsx",
+    line: 20,
+    payload: {
+      some: "payload",
+    },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
   // --- Fetch two APIs in parallel -----------------------------------------
   const [pingRes, secondRes] = await Promise.all([
     fetch("https://www.kraus.my.id/api/ping", { cache: "no-store" }),
@@ -27,18 +41,17 @@ export default async function AxiomTestPage() {
   const count = await refreshLogRowEstimateForToday();
 
   // --- Log the combined result --------------------------------------------
-  await logit(
-    "jonathan",
-    { level: "info", message: "Fetched two APIs" },
-    {
-      pingData,
-      data2,
-      count,
+  await logj({
+    domain: "jonathan",
+    level: "info",
+    message: `"Fetched two APIs"`,
+    file: "app/ping/page.tsx",
+    line: 20,
+    payload: {
+      some: "payload",
     },
-    {
-      ctx,
-    },
-  );
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
 
   // --- Render both API results --------------------------------------------
   return (
