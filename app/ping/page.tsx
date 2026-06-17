@@ -55,20 +55,21 @@ export default async function AxiomTestPage(req: NextRequest) {
 
   // --- Render both API results --------------------------------------------
   return (
-    <div className="p-6 space-y-8">
-      <h1 className="text-xl font-bold mb-4">Result</h1>
 
-      <pre className="bg-black/40 p-4 rounded text-green-300 text-sm overflow-auto">
-        {JSON.stringify(
-          {
-            count,
-            pingData,
-            data22,
-          },
-          null,
-          2,
-        )}
-      </pre>
-    </div>
+
+      <div>
+        count: {count}
+
+        <h2>Ping API Result:</h2>
+        <pre>{JSON.stringify(pingData, null, 2)}</pre>
+        
+        <h2>Second API Result:</h2>
+    {data2.map(d => (
+      <div key={d.id}> {d.count}
+        <p>SHA: {d.sha}</p>
+        <p>Status: {d.status}</p>
+      </div>
+    ))}
+  </div>
   );
 }
