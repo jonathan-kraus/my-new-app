@@ -36,7 +36,7 @@ export default async function AxiomTestPage(req: NextRequest) {
 
   const pingData = await pingRes.json();
   const data2 = await secondRes.json();
-
+  const data22 = data2.id;
   // --- Optional: your Neon row estimate -----------------------------------
   const count = await refreshLogRowEstimateForToday();
 
@@ -63,7 +63,7 @@ export default async function AxiomTestPage(req: NextRequest) {
           {
             count,
             pingData,
-            data2,
+            data22,
           },
           null,
           2,
