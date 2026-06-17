@@ -35,9 +35,7 @@ export default async function AxiomTestPage(req: NextRequest) {
   ]);
 
   const pingData = await pingRes.json();
-  const data2 = await secondRes.json();
-  const data22 = data2.id;
-  // --- Optional: your Neon row estimate -----------------------------------
+  // --- Fetch row estimate for today ----------------------------------------
   const count = await refreshLogRowEstimateForToday();
 
   // --- Log the combined result --------------------------------------------
@@ -54,6 +52,20 @@ export default async function AxiomTestPage(req: NextRequest) {
   });
 
   // --- Render both API results --------------------------------------------
+  type Deployment = {
+  id: number
+  sha: string
+  ref: string
+  environment: string
+  created_at: string
+  creator: string
+  status: string
+  log_url: string
+}
+
+const data2: Deployment[] = await secondRes.json()
+
+  // --- Render both API results --------------------------------------------
   return (
 
 
@@ -62,10 +74,11 @@ export default async function AxiomTestPage(req: NextRequest) {
 
         <h2>Ping API Result:</h2>
         <pre>{JSON.stringify(pingData, null, 2)}</pre>
-        
+
         <h2>Second API Result:</h2>
     {data2.map(d => (
-      <div key={d.id}> {d.count}
+      <div key={d.id}>
+        <p>Created At: {d.created_at}</p>
         <p>SHA: {d.sha}</p>
         <p>Status: {d.status}</p>
       </div>
