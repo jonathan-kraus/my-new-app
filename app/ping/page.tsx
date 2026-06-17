@@ -53,36 +53,32 @@ export default async function AxiomTestPage(req: NextRequest) {
 
   // --- Render both API results --------------------------------------------
   type Deployment = {
-  id: number
-  sha: string
-  ref: string
-  environment: string
-  created_at: string
-  creator: string
-  status: string
-  log_url: string
-}
+    id: number;
+    sha: string;
+    ref: string;
+    environment: string;
+    created_at: string;
+    creator: string;
+    status: string;
+    log_url: string;
+  };
 
-const data2: Deployment[] = await secondRes.json()
+  const data2: Deployment[] = await secondRes.json();
 
   // --- Render both API results --------------------------------------------
   return (
-
-
-      <div>
-        count: {count}
-
-        <h2>Ping API Result:</h2>
-        <pre>{JSON.stringify(pingData, null, 2)}</pre>
-
-        <h2>Second API Result:</h2>
-    {data2.map(d => (
-      <div key={d.id}>
-        <p>Created At: {d.created_at}</p>
-        <p>SHA: {d.sha}</p>
-        <p>Status: {d.status}</p>
-      </div>
-    ))}
-  </div>
+    <div>
+      count: {count}
+      <h2>Ping API Result:</h2>
+      <pre>{JSON.stringify(pingData, null, 2)}</pre>
+      <h2>Second API Result:</h2>
+      {data2.map((d) => (
+        <div key={d.id}>
+          <p>Created At: {d.created_at}</p>
+          <p>SHA: {d.sha}</p>
+          <p>Status: {d.status}</p>
+        </div>
+      ))}
+    </div>
   );
 }
