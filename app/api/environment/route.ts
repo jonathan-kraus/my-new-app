@@ -41,9 +41,9 @@ export async function GET() {
       level: "error",
       domain: "environment",
       message: "right before fetch Neon environment variables",
-      payload: { neonApiKey, neonProjectId },
+      payload: { neonProjectId },
     });
-  const res = await fetch("https://api.neon.tech/v2/projects", {
+  const res = await fetch("https://console.neon.tech/v2/projects", {
     headers: {
       Authorization: `Bearer ${neonApiKey}`,
     },
@@ -52,7 +52,7 @@ export async function GET() {
       level: "error",
       domain: "environment",
       message: "right after fetch Neon environment variables",
-      payload: { neonApiKey, neonProjectId },
+      payload: { neonProjectId },
     });
   const raw = await res.text();
 
