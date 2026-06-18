@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\environment\route.ts
- * @LastEditTime: 2026-06-18 17:38:50
+ * @LastEditTime: 2026-06-18 18:40:49
  */
 // app/api/environment/route.ts
 import { NextResponse } from "next/server";
@@ -28,10 +28,15 @@ export async function GET() {
     const latestDeployment = vercelDeployments.deployments?.[0] ?? null;
 
     // --- 3. NEON PROJECT METADATA (Correct API) ---
-    const neonProject = await fetch(
-      `https://api.neon.tech/v2/projects/${neonProjectId}`,
-      { headers: { Authorization: `Bearer ${neonApiKey}` } },
-    ).then((r) => r.json());
+const neonProject = await fetch(
+  `https://api.neon.tech/v2/projects/${process.env.NEON_PROJECT_ID}`,
+  {
+    headers: {
+      Authorization: `Bearer ${process.env.NEON_API_KEY}`,
+    },
+  }
+).then(r => r.json());
+
 
     const project = neonProject.project;
 
