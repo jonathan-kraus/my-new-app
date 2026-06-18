@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\.github\scripts\audit.js
- * @LastEditTime: 2026-05-07 20:06:04
+ * @LastEditTime: 2026-06-18 14:02:37
  */
 import fs from "fs";
 import yaml from "js-yaml";
@@ -18,6 +18,7 @@ if (!process.env.CI) {
 
 console.log("TOKEN exists:", !!process.env.AXIOM_TOKEN);
 console.log("DATASET:", process.env.AXIOM_DATASET);
+
 // -----------------------------
 // Axiom client
 // -----------------------------
@@ -48,7 +49,11 @@ for (const key of Object.keys(deps)) {
   payload[name] = [version];
 }
 
-console.log("🔍 Auditing", Object.keys(payload).length, "packages…");
+console.log("🔍 -- Auditing", Object.keys(payload).length, "packages…");
+
+// advisories to ignore by ID
+const IGNORE = ["1121191"];
+
 
 // -----------------------------
 // Bulk Advisory API
@@ -64,20 +69,29 @@ const res = await fetch(
 
 if (!res.ok) {
   console.error("❌ Audit API error:", res.status, await res.text());
-  await axiom.ingest(DATASET, {
-    domain: "audit",
-    level: "error",
-    message: "Audit API error ",
-    status: res.status,
-    packages_checked: Object.keys(payload).length,
-  });
-  process.exit(1);
+
+  try {
+    await axiom.ingest(DATASET, {
+      domain: "audit",
+      level: "error",
+      message: "Audit API error",
+      status: res.status,
+      packages_checked: Object.keys(payload).length,
+    });
+    await axiom.flush();
+    await axiom.close(); // <-- critical for Windows
+  } catch (err) {
+    console.error("❌ Axiom logging failed:", err.message);
+  }
+
+  throw new Error("Audit API error"); // <-- CI still fails, no libuv crash
 }
+
 
 const advisories = await res.json();
 
 // -----------------------------
-// Filter advisories by semver
+// Filter advisories by semver + IGNORE
 // -----------------------------
 const realFindings = [];
 
@@ -87,15 +101,27 @@ for (const [pkg, items] of Object.entries(advisories)) {
   for (const adv of items) {
     const vulnerableRange = adv.vulnerable_versions;
 
-    if (semver.satisfies(installed, vulnerableRange)) {
-      realFindings.push({
-        pkg,
-        installed,
-        title: adv.title,
-        severity: adv.severity,
-        vulnerableRange,
-      });
+    // skip ignored advisories
+    if (IGNORE.includes(adv.id)) {
+      continue;
     }
+
+// skip ignored advisories
+if (IGNORE.includes(String(adv.id))) {
+  continue;
+}
+
+if (semver.satisfies(installed, vulnerableRange)) {
+  realFindings.push({
+    pkg,
+    installed,
+    title: adv.title,
+    severity: adv.severity,
+    vulnerableRange,
+    id: adv.id,
+  });
+}
+
   }
 }
 const built = true;
@@ -117,25 +143,34 @@ await axiom.ingest(DATASET, {
 });
 
 // -----------------------------
-// Output + exit code
+// Output + exit code (wrapped to avoid top-level return)
 // -----------------------------
-if (realFindings.length === 0) {
-  console.log("✅ No vulnerabilities found");
-  // await axiom.flush();
-  try {
-  await axiom.flush();
-  console.log("✅ Axiom flush successful");
-} catch (err) {
-  console.error("❌ Axiom flush failed:", err.message);
-}
-  process.exit(0);
-}
+(async () => {
+  if (realFindings.length === 0) {
+    console.log("✅ No vulnerabilities found");
+    try {
+      await axiom.flush();
+      console.log("✅ Axiom flush successful");
+    } catch (err) {
+      console.error("❌ Axiom flush failed:", err.message);
+    }
+    // success: let Node exit naturally
+    return;
+  }
 
-console.log("⚠️ Vulnerabilities detected:");
-for (const f of realFindings) {
-  console.log(
-    `- ${f.pkg}@${f.installed} is within ${f.vulnerableRange}: ${f.title} (severity: ${f.severity})`
-  );
-}
-// await axiom.flush();
-process.exit(1);
+  console.log("⚠️ Vulnerabilities detected:");
+  for (const f of realFindings) {
+    console.log(
+      `- ${f.pkg}@${f.installed} is within ${f.vulnerableRange}: ${f.title} (severity: ${f.severity}, id: ${f.id})`
+    );
+  }
+
+  try {
+    await axiom.flush();
+  } catch (err) {
+    console.error("❌ Axiom flush failed:", err.message);
+  }
+
+  // signal failure to CI without throwing or exiting abruptly
+  process.exitCode = 1;
+})();

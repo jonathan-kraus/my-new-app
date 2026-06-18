@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\environment\route.ts
- * @LastEditTime: 2026-06-18 09:29:58
+ * @LastEditTime: 2026-06-18 17:38:50
  */
 // app/api/environment/route.ts
 import { NextResponse } from "next/server";
@@ -27,21 +27,27 @@ export async function GET() {
 
     const latestDeployment = vercelDeployments.deployments?.[0] ?? null;
 
-    // --- 3. NEON COMPUTE ENDPOINTS ---
-    const neonEndpoints = await fetch(
-      `https://console.neon.tech/api/v2/projects/${neonProjectId}/endpoints`,
-      { headers: { Authorization: `Bearer ${neonApiKey}` } },
-    ).then((r) => r.json());
-
-    const primaryEndpoint = neonEndpoints.endpoints?.find(
-      (e: any) => e.type === "primary",
-    );
-
-    // --- 4. NEON PROJECT INFO ---
+    // --- 3. NEON PROJECT METADATA (Correct API) ---
     const neonProject = await fetch(
-      `https://console.neon.tech/api/v2/projects/${neonProjectId}`,
+      `https://api.neon.tech/v2/projects/${neonProjectId}`,
       { headers: { Authorization: `Bearer ${neonApiKey}` } },
     ).then((r) => r.json());
+
+    const project = neonProject.project;
+
+    // Find the primary compute endpoint
+    const primaryEndpoint =
+      project.endpoints?.find(
+        (e: any) => e.type === "read_write" || e.type === "writer",
+      ) ??
+      project.endpoints?.[0] ??
+      null;
+
+    console.log("SERVER ENV:", {
+      VERCEL_TOKEN: process.env.VERCEL_TOKEN,
+      NEON_DATA_API_KEY: process.env.NEON_DATA_API_KEY,
+      GITHUB_TOKEN: process.env.GITHUB_TOKEN,
+    });
 
     // --- 5. GITHUB LATEST COMMIT ---
     const githubCommit = await fetch(
