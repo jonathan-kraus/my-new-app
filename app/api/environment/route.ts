@@ -1,92 +1,72 @@
-/*
- * @FilePath: \my-new-app\app\api\environment\route.ts
- * @LastEditTime: 2026-06-18 18:40:49
- */
-// app/api/environment/route.ts
-import { NextResponse } from "next/server";
-
-const vercelToken = process.env.VERCEL_API_TOKEN!;
-const vercelProjectId = process.env.VERCEL_PROJECT_ID!;
-const neonApiKey = process.env.NEON_API_KEY!;
-const neonProjectId = process.env.NEON_PROJECT_ID!;
-const githubRepo = process.env.GITHUB_REPO!; // "owner/repo"
+import { logj } from "@/lib/log/logj";
 
 export async function GET() {
-  try {
-    // --- 1. VERCEL PROJECT ---
-    const vercelProject = await fetch(
-      `https://api.vercel.com/v9/projects/${vercelProjectId}`,
-      { headers: { Authorization: `Bearer ${vercelToken}` } },
-    ).then((r) => r.json());
+  const neonApiKey = process.env.NEON_API_KEY;
+  const neonProjectId = process.env.NEON_PROJECT_ID;
 
-    // --- 2. VERCEL LATEST DEPLOYMENT ---
-    const vercelDeployments = await fetch(
-      `https://api.vercel.com/v13/deployments?projectId=${vercelProjectId}&limit=1`,
-      { headers: { Authorization: `Bearer ${vercelToken}` } },
-    ).then((r) => r.json());
-
-    const latestDeployment = vercelDeployments.deployments?.[0] ?? null;
-
-    // --- 3. NEON PROJECT METADATA (Correct API) ---
-const neonProject = await fetch(
-  `https://api.neon.tech/v2/projects/${process.env.NEON_PROJECT_ID}`,
-  {
-    headers: {
-      Authorization: `Bearer ${process.env.NEON_API_KEY}`,
+  // Log what we actually received (safe)
+  await logj({
+    level: "info",
+    domain: "environment",
+    message: "Checking Neon environment variables",
+    payload: {
+      projectId: neonProjectId ?? null,
+      apiKeyPrefix: neonApiKey ? neonApiKey.slice(0, 6) : null,
     },
-  }
-).then(r => r.json());
+  });
 
-
-    const project = neonProject.project;
-
-    // Find the primary compute endpoint
-    const primaryEndpoint =
-      project.endpoints?.find(
-        (e: any) => e.type === "read_write" || e.type === "writer",
-      ) ??
-      project.endpoints?.[0] ??
-      null;
-
-    console.log("SERVER ENV:", {
-      VERCEL_TOKEN: process.env.VERCEL_TOKEN,
-      NEON_DATA_API_KEY: process.env.NEON_DATA_API_KEY,
-      GITHUB_TOKEN: process.env.GITHUB_TOKEN,
+  if (!neonApiKey || !neonProjectId) {
+    await logj({
+      level: "error",
+      domain: "environment",
+      message: "Missing Neon environment variables",
+      payload: { neonApiKey, neonProjectId },
     });
 
-    // --- 5. GITHUB LATEST COMMIT ---
-    const githubCommit = await fetch(
-      `https://api.github.com/repos/${githubRepo}/commits/main`,
-      { headers: { "User-Agent": "env-status" } },
-    ).then((r) => r.json());
-
-    // --- 6. GITHUB WORKFLOW STATUS ---
-    const githubWorkflows = await fetch(
-      `https://api.github.com/repos/${githubRepo}/actions/runs?per_page=1`,
-      { headers: { "User-Agent": "env-status" } },
-    ).then((r) => r.json());
-
-    const latestWorkflow = githubWorkflows.workflow_runs?.[0] ?? null;
-
-    return NextResponse.json({
-      vercel: {
-        project: vercelProject,
-        latestDeployment,
-      },
-      neon: {
-        primaryEndpoint,
-        project: neonProject,
-      },
-      github: {
-        latestCommit: githubCommit,
-        latestWorkflow,
-      },
-      timestamp: new Date().toISOString(),
-    });
-  } catch (err: any) {
-    return NextResponse.json(
-      { error: err.message, stack: err.stack },
-      { status: 500 },
+    return Response.json(
+      { error: "Missing Neon environment variables" },
+      { status: 500 }
     );
   }
+
+  const res = await fetch(
+    `https://api.neon.tech/v2/projects/${neonProjectId}`,
+    {
+      headers: {
+        Authorization: `Bearer ${neonApiKey}`,
+      },
+    }
+  );
+
+  if (!res.ok) {
+    const text = await res.text();
+
+    await logj({
+      level: "error",
+      domain: "environment",
+      message: "Neon API request failed",
+      payload: {
+        status: res.status,
+        body: text,
+      },
+    });
+
+    return Response.json(
+      { error: "Neon API request failed", status: res.status },
+      { status: 500 }
+    );
+  }
+
+  const data = await res.json();
+
+  await logj({
+    level: "info",
+    domain: "environment",
+    message: "Neon API request succeeded",
+    payload: {
+      projectName: data.project?.name ?? null,
+    },
+  });
+
+  return Response.json(data);
 }
