@@ -1897,12 +1897,12 @@ export const GithubEventScalarFieldEnum = {
   conclusion: 'conclusion',
   commitSha: 'commitSha',
   commitMessage: 'commitMessage',
-  title: 'title',
-  jobName: 'jobName',
   url: 'url',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  raw: 'raw'
+  raw: 'raw',
+  title: 'title',
+  jobName: 'jobName'
 } as const
 
 export type GithubEventScalarFieldEnum = (typeof GithubEventScalarFieldEnum)[keyof typeof GithubEventScalarFieldEnum]

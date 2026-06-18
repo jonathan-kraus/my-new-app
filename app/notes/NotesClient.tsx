@@ -63,7 +63,7 @@ export default function NotesClient() {
       }
       if (res.status === 401) {
         toast.error(
-          "🛑 Access denied — authentication required for this mission.",
+          "🛑 Access denied — Authentication required for this mission.",
         );
         setAuthorized(false);
         return;

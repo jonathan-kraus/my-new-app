@@ -1,7 +1,6 @@
 generator client {
   provider = "prisma-client"
-  output = "../src/lib/generated/prisma"
-
+  output   = "../src/lib/generated/prisma"
 }
 
 datasource db {
@@ -108,12 +107,12 @@ model GithubEvent {
   conclusion    String?
   commitSha     String?
   commitMessage String?
-  title         String?
-  jobName       String?
   url           String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   raw           Json?
+  title         String?
+  jobName       String?
 }
 
 model Location {
