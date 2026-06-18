@@ -25,18 +25,23 @@ export async function GET() {
 
     return Response.json(
       { error: "Missing Neon environment variables" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
-  const res = await fetch(
-    `https://api.neon.tech/v2/projects/${neonProjectId}`,
-    {
-      headers: {
-        Authorization: `Bearer ${neonApiKey}`,
-      },
-    }
-  );
+  // const res = await fetch(
+  //   `https://api.neon.tech/v2/projects/${neonProjectId}`,
+  //   {
+  //     headers: {
+  //       Authorization: `Bearer ${neonApiKey}`,
+  //     },
+  //   },
+  // );
+  const res = await fetch("https://api.neon.tech/v2/projects", {
+    headers: {
+      Authorization: `Bearer ${neonApiKey}`,
+    },
+  });
 
   const raw = await res.text();
 
@@ -50,7 +55,7 @@ export async function GET() {
   if (!res.ok) {
     return Response.json(
       { error: "Neon API request failed", status: res.status, raw },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
