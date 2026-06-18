@@ -107,42 +107,42 @@ export async function GET(req: Request) {
     meta: { built: { ...built, eventIndex: ++jei } },
   });
   // ⭐ HARDEN FORECAST: prevent crashes when Open-Meteo returns partial data
-if (!parsed.success) {
-  await logj({
-    domain: "weather",
-    level: "error",
-    message: "Forecast unavailable",
-    file: "app/api/weather/forecast/route.ts",
-    line: 111,
-    payload: { raw, issues: parsed.error.flatten() },
-    meta: { built: { ...built, eventIndex: ++jei } },
-  });
+  if (!parsed.success) {
+    await logj({
+      domain: "weather",
+      level: "error",
+      message: "Forecast unavailable",
+      file: "app/api/weather/forecast/route.ts",
+      line: 111,
+      payload: { raw, issues: parsed.error.flatten() },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
 
-  return NextResponse.json(
-    { error: "Forecast unavailable", raw },
-    { status: 502 }
-  );
-}
+    return NextResponse.json(
+      { error: "Forecast unavailable", raw },
+      { status: 502 },
+    );
+  }
 
   const daily = parsed.data.daily;
 
   // ⭐ Guard against missing daily block or missing fields
   if (!daily || !daily.temperature_2m_max) {
- await logj({
-    domain: "weather",
-    level: "error",
-    message: "Forecast unavailable",
-    file: "app/api/weather/forecast/route.ts",
-    line: 131,
-    payload: { raw },
-    meta: { built: { ...built, eventIndex: ++jei } },
-  });
+    await logj({
+      domain: "weather",
+      level: "error",
+      message: "Forecast unavailable",
+      file: "app/api/weather/forecast/route.ts",
+      line: 131,
+      payload: { raw },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
 
-  return NextResponse.json(
-    { error: "Forecast unavailable", raw },
-    { status: 502 }
-  );
-}
+    return NextResponse.json(
+      { error: "Forecast unavailable", raw },
+      { status: 502 },
+    );
+  }
 
   if (!parsed.success) {
     await logj({
