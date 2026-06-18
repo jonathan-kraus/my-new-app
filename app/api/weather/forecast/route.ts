@@ -110,7 +110,7 @@ export async function GET(req: Request) {
   if (!parsed.success) {
     return NextResponse.json(
       {
-        error: "Invalid forecast response from Open-Meteo",
+        error: "Forecast unavailable",
         issues: parsed.error.flatten(),
         raw,
       },
@@ -124,7 +124,7 @@ export async function GET(req: Request) {
   if (!daily || !daily.temperature_2m_max) {
     return NextResponse.json(
       {
-        error: "Missing daily forecast fields",
+        error: "Forecast unavailable",
         raw,
       },
       { status: 502 },
