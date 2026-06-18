@@ -37,12 +37,23 @@ export async function GET() {
   //     },
   //   },
   // );
+      await logj({
+      level: "error",
+      domain: "environment",
+      message: "right before fetch Neon environment variables",
+      payload: { neonApiKey, neonProjectId },
+    });
   const res = await fetch("https://api.neon.tech/v2/projects", {
     headers: {
       Authorization: `Bearer ${neonApiKey}`,
     },
   });
-
+      await logj({
+      level: "error",
+      domain: "environment",
+      message: "right after fetch Neon environment variables",
+      payload: { neonApiKey, neonProjectId },
+    });
   const raw = await res.text();
 
   await logj({
