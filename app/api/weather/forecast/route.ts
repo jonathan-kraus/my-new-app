@@ -106,30 +106,30 @@ export async function GET(req: Request) {
     },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
-// ⭐ HARDEN FORECAST: prevent crashes when Open-Meteo returns partial data
-if (!parsed.success) {
-  return NextResponse.json(
-    {
-      error: "Invalid forecast response from Open-Meteo",
-      issues: parsed.error.flatten(),
-      raw,
-    },
-    { status: 502 }
-  );
-}
+  // ⭐ HARDEN FORECAST: prevent crashes when Open-Meteo returns partial data
+  if (!parsed.success) {
+    return NextResponse.json(
+      {
+        error: "Invalid forecast response from Open-Meteo",
+        issues: parsed.error.flatten(),
+        raw,
+      },
+      { status: 502 },
+    );
+  }
 
-const daily = parsed.data.daily;
+  const daily = parsed.data.daily;
 
-// ⭐ Guard against missing daily block or missing fields
-if (!daily || !daily.temperature_2m_max) {
-  return NextResponse.json(
-    {
-      error: "Missing daily forecast fields",
-      raw,
-    },
-    { status: 502 }
-  );
-}
+  // ⭐ Guard against missing daily block or missing fields
+  if (!daily || !daily.temperature_2m_max) {
+    return NextResponse.json(
+      {
+        error: "Missing daily forecast fields",
+        raw,
+      },
+      { status: 502 },
+    );
+  }
 
   if (!parsed.success) {
     await logj({
