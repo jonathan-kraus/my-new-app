@@ -38,35 +38,32 @@ export async function GET() {
     }
   );
 
+  const raw = await res.text();
+
+  await logj({
+    level: "info",
+    domain: "environment",
+    message: "Neon API raw response",
+    payload: { raw },
+  });
+
   if (!res.ok) {
-    const text = await res.text();
-
-    await logj({
-      level: "error",
-      domain: "environment",
-      message: "Neon API request failed",
-      payload: {
-        status: res.status,
-        body: text,
-      },
-    });
-
     return Response.json(
-      { error: "Neon API request failed", status: res.status },
+      { error: "Neon API request failed", status: res.status, raw },
       { status: 500 }
     );
   }
 
-  const data = await res.json();
+  const parsed = JSON.parse(raw);
 
   await logj({
     level: "info",
     domain: "environment",
     message: "Neon API request succeeded",
     payload: {
-      projectName: data.project?.name ?? null,
+      projectName: parsed.project?.name ?? null,
     },
   });
 
-  return Response.json(data);
+  return Response.json(parsed);
 }
