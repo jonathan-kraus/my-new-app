@@ -53,6 +53,8 @@ export default function SideNavClient({
     { href: "/", label: "Home", icon: "🏠" },
     { href: "/dashboard", label: "Dashboard", icon: "📊" },
     { href: "/dashboard/astronomy", label: "Astronomy", icon: "🚀" },
+    { href: "/dashboard/environment", label: "Environment", icon: "🌐" },
+    { href: "/dashboard/forecast", label: "Forecast", icon: "🌤️" },
     { href: "/forecast", label: "Forecast", icon: "🌤️" },
     { href: "/logs", label: "Logs", icon: "📘" },
     { href: "/logview", label: "Logview", icon: "📘" },
