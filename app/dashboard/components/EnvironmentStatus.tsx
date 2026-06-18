@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\dashboard\components\EnvironmentStatus.tsx
- * @LastEditTime: 2026-06-18 09:36:51
+ * @LastEditTime: 2026-06-18 13:08:57
  */
 "use client";
 
@@ -31,6 +31,7 @@ export function EnvironmentStatus() {
       try {
         const res = await fetch("/api/environment");
         const json = await res.json();
+        console.log("Environment data:", json);
         setData(json);
       } finally {
         setLoading(false);
