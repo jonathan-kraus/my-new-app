@@ -107,29 +107,42 @@ export async function GET(req: Request) {
     meta: { built: { ...built, eventIndex: ++jei } },
   });
   // ⭐ HARDEN FORECAST: prevent crashes when Open-Meteo returns partial data
-  if (!parsed.success) {
-    return NextResponse.json(
-      {
-        error: "Forecast unavailable",
-        issues: parsed.error.flatten(),
-        raw,
-      },
-      { status: 502 },
-    );
-  }
+if (!parsed.success) {
+  await logj({
+    domain: "weather",
+    level: "error",
+    message: "Forecast unavailable",
+    file: "app/api/weather/forecast/route.ts",
+    line: 111,
+    payload: { raw, issues: parsed.error.flatten() },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
+
+  return NextResponse.json(
+    { error: "Forecast unavailable", raw },
+    { status: 502 }
+  );
+}
 
   const daily = parsed.data.daily;
 
   // ⭐ Guard against missing daily block or missing fields
   if (!daily || !daily.temperature_2m_max) {
-    return NextResponse.json(
-      {
-        error: "Forecast unavailable",
-        raw,
-      },
-      { status: 502 },
-    );
-  }
+ await logj({
+    domain: "weather",
+    level: "error",
+    message: "Forecast unavailable",
+    file: "app/api/weather/forecast/route.ts",
+    line: 131,
+    payload: { raw },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
+
+  return NextResponse.json(
+    { error: "Forecast unavailable", raw },
+    { status: 502 }
+  );
+}
 
   if (!parsed.success) {
     await logj({
@@ -137,7 +150,7 @@ export async function GET(req: Request) {
       level: "error",
       message: "🌟 Invalid forecast API response",
       file: "app/api/weather/forecast/route.ts",
-      line: 111,
+      line: 148,
       payload: {
         parsed,
         raw,
@@ -175,7 +188,7 @@ export async function GET(req: Request) {
     level: "warn",
     message: "🌟 Forecast cache miss → fetching external API",
     file: "app/api/weather/forecast/route.ts",
-    line: 149,
+    line: 186,
     payload: {
       some: "data",
     },
@@ -186,7 +199,7 @@ export async function GET(req: Request) {
     level: "info",
     message: `🌟 Forecast snapshot stored, ${Math.round(weather.current_weather.temperature)}°F`,
     file: "app/api/weather/forecast/route.ts",
-    line: 160,
+    line: 197,
 
     payload: {
       snapshotId: snapshot.id,
