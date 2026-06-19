@@ -95,14 +95,23 @@ export function EnvironmentStatus() {
             {github.latestCommit?.commit?.message}
           </p>
           <p>
-            {" "}
-            <strong>SHA:</strong> {github.latestCommit?.sha}{" "}
+            <strong>SHA:</strong>{" "}
+            <a
+              href={github.latestCommit?.url}
+              target="_blank"
+              className="text-blue-500 underline"
+            >
+              {github.latestCommit?.sha}
+            </a>
           </p>
           <p>
             <strong>Author:</strong> {github.latestCommit?.commit?.author?.name}
           </p>
           <p>
             <strong>Workflow:</strong> {github.latestWorkflow?.name}
+          </p>
+          <p>
+            <strong>Job Name:</strong> {github.latestWorkflow?.jobName}
           </p>
           <p>
             <strong>Workflow Status:</strong>{" "}

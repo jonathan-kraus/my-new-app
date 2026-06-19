@@ -89,6 +89,7 @@ export async function GET(nextReq: Request) {
         ? {
             name:
               latestWorkflow.title ?? latestWorkflow.jobName ?? "workflow_run",
+            jobName: latestWorkflow.jobName,
             conclusion: latestWorkflow.conclusion,
             status: latestWorkflow.status,
             url: latestWorkflow.url,
