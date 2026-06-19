@@ -1,7 +1,3 @@
-/*
- * @FilePath: \my-new-app\app\dashboard\components\EnvironmentStatus.tsx
- * @LastEditTime: 2026-06-18 13:08:57
- */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -12,8 +8,7 @@ type EnvResponse = {
     latestDeployment: any;
   };
   neon: {
-    primaryEndpoint: any;
-    project: any;
+    postgresVersion: string;
   };
   github: {
     latestCommit: any;
@@ -31,7 +26,6 @@ export function EnvironmentStatus() {
       try {
         const res = await fetch("/api/environment");
         const json = await res.json();
-        console.log("Environment data:", json);
         setData(json);
       } finally {
         setLoading(false);
@@ -87,20 +81,7 @@ export function EnvironmentStatus() {
         <h2 className="text-xl font-semibold mb-2">Neon</h2>
         <div className="space-y-1">
           <p>
-            <strong>Compute Endpoint:</strong> {neon.primaryEndpoint?.name}
-          </p>
-          <p>
-            <strong>Attached Branch:</strong>{" "}
-            {neon.primaryEndpoint?.branch?.name}
-          </p>
-          <p>
-            <strong>Status:</strong> {neon.primaryEndpoint?.status}
-          </p>
-          <p>
-            <strong>Region:</strong> {neon.primaryEndpoint?.region_id}
-          </p>
-          <p>
-            <strong>Project:</strong> {neon.project?.project?.name}
+            <strong>Postgres Version:</strong> {neon.postgresVersion}
           </p>
         </div>
       </section>
