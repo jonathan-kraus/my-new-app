@@ -2,9 +2,9 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db"; // your Prisma client
 import { logj } from "@/lib/log/logj";
-import { staticUniversalContext } from "@/lib/log/buildj";
-export async function GET() {
-  const built = staticUniversalContext("DB");
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
+export async function GET(nextReq: Request) {
+  const built = await buildUniversalContext(nextReq as any, "environment");
   let jei = 0;
   await logj({
     domain: "environment",
