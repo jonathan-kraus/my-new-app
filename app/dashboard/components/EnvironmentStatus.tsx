@@ -52,7 +52,6 @@ type EnvResponse = {
   timestamp: string;
 };
 
-
 export function EnvironmentStatus() {
   const [data, setData] = useState<EnvResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -112,32 +111,69 @@ export function EnvironmentStatus() {
         </div>
       </section>
 
-{/* NEON */}
-<section className="border rounded-lg p-4">
-  <h2 className="text-xl font-semibold mb-2">Neon</h2>
+      {/* NEON */}
+      <section className="border rounded-lg p-4">
+        <h2 className="text-xl font-semibold mb-2">Neon</h2>
 
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <div className="space-y-1">
-      <p><strong>Project ID:</strong> {neon.id}</p>
-      <p><strong>Name:</strong> {neon.name}</p>
-      <p><strong>Org ID:</strong> {neon.orgId}</p>
-      <p><strong>Region:</strong> {neon.region}</p>
-      <p><strong>Platform:</strong> {neon.platform}</p>
-      <p><strong>Postgres Version:</strong> {neon.postgresVersion}</p>
-    </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="space-y-1">
+            <p>
+              <strong>Project ID:</strong> {neon.id}
+            </p>
+            <p>
+              <strong>Name:</strong> {neon.name}
+            </p>
+            <p>
+              <strong>Org ID:</strong> {neon.orgId}
+            </p>
+            <p>
+              <strong>Region:</strong> {neon.region}
+            </p>
+            <p>
+              <strong>Platform:</strong> {neon.platform}
+            </p>
+            <p>
+              <strong>Postgres Version:</strong> {neon.postgresVersion}
+            </p>
+          </div>
 
-    <div className="space-y-1">
-      <p><strong>Compute Last Active:</strong> {neon.timestamps.computeLastActiveAt}</p>
-      <p><strong>Created:</strong> {neon.timestamps.createdAt}</p>
-      <p><strong>Updated:</strong> {neon.timestamps.updatedAt}</p>
-      <p><strong>Proxy Host:</strong> {neon.networking.proxyHost}</p>
-      <p><strong>Block Public Connections:</strong> {String(neon.networking.blockPublicConnections)}</p>
-      <p><strong>Allowed IPs:</strong> {neon.networking.allowedIPs.join(", ") || "None"}</p>
-    </div>
-  </div>
-</section>
-
-
+          <div className="space-y-1">
+            <p>
+              <strong>Compute Last Active:</strong>{" "}
+              {neon.timestamps.computeLastActiveAt}
+            </p>
+            <p>
+              <strong>Branch Size Limit:</strong>{" "}
+              {neon.storage.branchLogicalSizeLimit}
+            </p>
+            <p>
+              <strong>Branch Size Limit Bytes:</strong>{" "}
+              {neon.storage.branchLogicalSizeLimitBytes}
+            </p>
+            <p>
+              <strong>Logical Replication:</strong>{" "}
+              {String(neon.replication.logicalReplication)}
+            </p>
+            <p>
+              <strong>Created:</strong> {neon.timestamps.createdAt}
+            </p>
+            <p>
+              <strong>Updated:</strong> {neon.timestamps.updatedAt}
+            </p>
+            <p>
+              <strong>Proxy Host:</strong> {neon.networking.proxyHost}
+            </p>
+            <p>
+              <strong>Block Public Connections:</strong>{" "}
+              {String(neon.networking.blockPublicConnections)}
+            </p>
+            <p>
+              <strong>Allowed IPs:</strong>{" "}
+              {neon.networking.allowedIPs.join(", ") || "None"}
+            </p>
+          </div>
+        </div>
+      </section>
 
       {/* GITHUB */}
       <section className="border rounded-lg p-4">

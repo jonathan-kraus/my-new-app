@@ -24,7 +24,7 @@ export async function GET(nextReq: Request) {
     //
     const versionResult =
       await db.$queryRawUnsafe<{ server_version: string }[]>(
-        `SHOW server_version;`
+        `SHOW server_version;`,
       );
 
     const postgresVersion = versionResult[0]?.server_version ?? "unknown";
@@ -51,8 +51,7 @@ export async function GET(nextReq: Request) {
       url: process.env.VERCEL_URL ?? "unknown",
       state: "active",
       meta: {
-        githubCommitMessage:
-          process.env.VERCEL_GIT_COMMIT_MESSAGE ?? "unknown",
+        githubCommitMessage: process.env.VERCEL_GIT_COMMIT_MESSAGE ?? "unknown",
       },
     };
 
@@ -94,9 +93,7 @@ export async function GET(nextReq: Request) {
       latestWorkflow: latestWorkflow
         ? {
             name:
-              latestWorkflow.title ??
-              latestWorkflow.jobName ??
-              "workflow_run",
+              latestWorkflow.title ?? latestWorkflow.jobName ?? "workflow_run",
             jobName: latestWorkflow.jobName,
             conclusion: latestWorkflow.conclusion,
             status: latestWorkflow.status,
@@ -118,7 +115,7 @@ export async function GET(nextReq: Request) {
           Authorization: `Bearer ${neonApiKey}`,
           Accept: "application/json",
         },
-      }
+      },
     );
 
     const neonJson = await neonRes.json();
@@ -140,8 +137,7 @@ export async function GET(nextReq: Request) {
           },
           networking: {
             proxyHost: project.proxy_host,
-            blockPublicConnections:
-              project.settings.block_public_connections,
+            blockPublicConnections: project.settings.block_public_connections,
             allowedIPs: project.settings.allowed_ips.ips,
           },
           storage: {
@@ -157,8 +153,7 @@ export async function GET(nextReq: Request) {
             end: project.settings.maintenance_window.end_time,
           },
           replication: {
-            logicalReplication:
-              project.settings.enable_logical_replication,
+            logicalReplication: project.settings.enable_logical_replication,
           },
           timestamps: {
             createdAt: project.created_at,
@@ -184,7 +179,7 @@ export async function GET(nextReq: Request) {
   } catch (err) {
     return NextResponse.json(
       { error: "Failed to load environment", details: String(err) },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
