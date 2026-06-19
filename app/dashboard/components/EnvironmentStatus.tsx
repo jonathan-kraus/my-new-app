@@ -115,44 +115,28 @@ export function EnvironmentStatus() {
 {/* NEON */}
 <section className="border rounded-lg p-4">
   <h2 className="text-xl font-semibold mb-2">Neon</h2>
-  <div className="space-y-1">
-    <p><strong>Project ID:</strong> {neon.id}</p>
-    <p><strong>Name:</strong> {neon.name}</p>
-    <p><strong>Org ID:</strong> {neon.orgId}</p>
-    <p><strong>Region:</strong> {neon.region}</p>
-    <p><strong>Platform:</strong> {neon.platform}</p>
-    <p><strong>Postgres Version:</strong> {neon.postgresVersion}</p>
 
-    <h3 className="font-semibold mt-3">Autoscaling</h3>
-    <p><strong>Min CU:</strong> {neon.autoscaling.min}</p>
-    <p><strong>Max CU:</strong> {neon.autoscaling.max}</p>
-    <p><strong>Suspend Timeout:</strong> {neon.autoscaling.suspendTimeout}s</p>
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className="space-y-1">
+      <p><strong>Project ID:</strong> {neon.id}</p>
+      <p><strong>Name:</strong> {neon.name}</p>
+      <p><strong>Org ID:</strong> {neon.orgId}</p>
+      <p><strong>Region:</strong> {neon.region}</p>
+      <p><strong>Platform:</strong> {neon.platform}</p>
+      <p><strong>Postgres Version:</strong> {neon.postgresVersion}</p>
+    </div>
 
-    <h3 className="font-semibold mt-3">Networking</h3>
-    <p><strong>Proxy Host:</strong> {neon.networking.proxyHost}</p>
-    <p><strong>Block Public Connections:</strong> {String(neon.networking.blockPublicConnections)}</p>
-    <p><strong>Allowed IPs:</strong> {neon.networking.allowedIPs.join(", ") || "None"}</p>
-
-    <h3 className="font-semibold mt-3">Storage</h3>
-    <p><strong>Branch Size Limit:</strong> {neon.storage.branchLogicalSizeLimit} MB</p>
-    <p><strong>Branch Size Limit Bytes:</strong> {neon.storage.branchLogicalSizeLimitBytes}</p>
-    <p><strong>Synthetic Storage:</strong> {neon.storage.syntheticStorageSize}</p>
-    <p><strong>Quota Resets:</strong> {neon.storage.quotaResetAt}</p>
-
-    <h3 className="font-semibold mt-3">Maintenance</h3>
-    <p><strong>Weekdays:</strong> {neon.maintenance.weekdays.join(", ")}</p>
-    <p><strong>Start:</strong> {neon.maintenance.start}</p>
-    <p><strong>End:</strong> {neon.maintenance.end}</p>
-
-    <h3 className="font-semibold mt-3">Replication</h3>
-    <p><strong>Logical Replication:</strong> {String(neon.replication.logicalReplication)}</p>
-
-    <h3 className="font-semibold mt-3">Timestamps</h3>
-    <p><strong>Created:</strong> {neon.timestamps.createdAt}</p>
-    <p><strong>Updated:</strong> {neon.timestamps.updatedAt}</p>
-    <p><strong>Compute Last Active:</strong> {neon.timestamps.computeLastActiveAt}</p>
+    <div className="space-y-1">
+      <p><strong>Compute Last Active:</strong> {neon.timestamps.computeLastActiveAt}</p>
+      <p><strong>Created:</strong> {neon.timestamps.createdAt}</p>
+      <p><strong>Updated:</strong> {neon.timestamps.updatedAt}</p>
+      <p><strong>Proxy Host:</strong> {neon.networking.proxyHost}</p>
+      <p><strong>Block Public Connections:</strong> {String(neon.networking.blockPublicConnections)}</p>
+      <p><strong>Allowed IPs:</strong> {neon.networking.allowedIPs.join(", ") || "None"}</p>
+    </div>
   </div>
 </section>
+
 
 
       {/* GITHUB */}
