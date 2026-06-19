@@ -23,7 +23,15 @@ export async function GET(nextReq: Request) {
       );
 
     const postgresVersion = versionResult[0]?.server_version ?? "unknown";
-
+await logj({
+    domain: "environment",
+    level: "info",
+    message: "Retrieved Postgres Version",
+    file: "app/api/environment/route.ts",
+    line: 26,
+    payload: { postgresVersion: postgresVersion },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
     // 2. Vercel project + deployment
     const vercelProject = {
       name: process.env.VERCEL_PROJECT_NAME ?? "unknown",
@@ -37,20 +45,56 @@ export async function GET(nextReq: Request) {
         githubCommitMessage: process.env.VERCEL_GIT_COMMIT_MESSAGE ?? "unknown",
       },
     };
+await logj({
+    domain: "environment",
+    level: "info",
+    message: "Retrieved Vercel Info",
+    file: "app/api/environment/route.ts",
+    line: 48,
+    payload: { vercelDeployment: vercelDeployment },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
+// 3. GitHub info from your GithubEvent table
+const latestCommit = await db.githubEvent.findFirst({
+  where: {
+    type: "push",
+  },
+  orderBy: {
+    createdAt: "desc",
+  },
+});
 
-    // 3. GitHub info (placeholder — you can wire real API later)
-    const github = {
-      latestCommit: {
+const latestWorkflow = await db.githubEvent.findFirst({
+  where: {
+    type: "workflow_run",
+  },
+  orderBy: {
+    createdAt: "desc",
+  },
+});
+
+const github = {
+  latestCommit: latestCommit
+    ? {
         commit: {
-          message: process.env.GITHUB_COMMIT_MESSAGE ?? "unknown",
-          author: { name: process.env.GITHUB_COMMIT_AUTHOR ?? "unknown" },
+          message: latestCommit.commitMessage,
+          author: { name: latestCommit.actor },
         },
-      },
-      latestWorkflow: {
-        name: "N/A",
-        conclusion: "N/A",
-      },
-    };
+        sha: latestCommit.commitSha,
+        url: latestCommit.url,
+      }
+    : null,
+
+  latestWorkflow: latestWorkflow
+    ? {
+        name: latestWorkflow.title ?? latestWorkflow.jobName ?? "workflow_run",
+        conclusion: latestWorkflow.conclusion,
+        status: latestWorkflow.status,
+        url: latestWorkflow.url,
+      }
+    : null,
+};
+
 
     return NextResponse.json({
       vercel: {
