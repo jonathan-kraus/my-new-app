@@ -1,7 +1,20 @@
+// app\api\environment\route.ts
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db"; // your Prisma client
-
+import { logj } from "@/lib/log/logj";
+import { staticUniversalContext } from "@/lib/log/buildj";
 export async function GET() {
+  const built = staticUniversalContext("DB");
+  let jei = 0;
+  await logj({
+    domain: "environment",
+    level: "info",
+    message: "Starting Envionment Status Check",
+    file: "app/api/environment/route.ts",
+    line: 9,
+    payload: { some: "data" },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
   try {
     // 1. Get Postgres version directly from Neon
     const versionResult =
