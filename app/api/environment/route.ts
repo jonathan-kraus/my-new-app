@@ -23,15 +23,15 @@ export async function GET(nextReq: Request) {
       );
 
     const postgresVersion = versionResult[0]?.server_version ?? "unknown";
-await logj({
-    domain: "environment",
-    level: "info",
-    message: "Retrieved Postgres Version",
-    file: "app/api/environment/route.ts",
-    line: 26,
-    payload: { postgresVersion: postgresVersion },
-    meta: { built: { ...built, eventIndex: ++jei } },
-  });
+    await logj({
+      domain: "environment",
+      level: "info",
+      message: "Retrieved Postgres Version",
+      file: "app/api/environment/route.ts",
+      line: 26,
+      payload: { postgresVersion: postgresVersion },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
     // 2. Vercel project + deployment
     const vercelProject = {
       name: process.env.VERCEL_PROJECT_NAME ?? "unknown",
@@ -45,56 +45,56 @@ await logj({
         githubCommitMessage: process.env.VERCEL_GIT_COMMIT_MESSAGE ?? "unknown",
       },
     };
-await logj({
-    domain: "environment",
-    level: "info",
-    message: "Retrieved Vercel Info",
-    file: "app/api/environment/route.ts",
-    line: 48,
-    payload: { vercelDeployment: vercelDeployment },
-    meta: { built: { ...built, eventIndex: ++jei } },
-  });
-// 3. GitHub info from your GithubEvent table
-const latestCommit = await db.githubEvent.findFirst({
-  where: {
-    type: "push",
-  },
-  orderBy: {
-    createdAt: "desc",
-  },
-});
+    await logj({
+      domain: "environment",
+      level: "info",
+      message: "Retrieved Vercel Info",
+      file: "app/api/environment/route.ts",
+      line: 48,
+      payload: { vercelDeployment: vercelDeployment },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
+    // 3. GitHub info from your GithubEvent table
+    const latestCommit = await db.githubEvent.findFirst({
+      where: {
+        type: "push",
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
 
-const latestWorkflow = await db.githubEvent.findFirst({
-  where: {
-    type: "workflow_run",
-  },
-  orderBy: {
-    createdAt: "desc",
-  },
-});
+    const latestWorkflow = await db.githubEvent.findFirst({
+      where: {
+        type: "workflow_run",
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
 
-const github = {
-  latestCommit: latestCommit
-    ? {
-        commit: {
-          message: latestCommit.commitMessage,
-          author: { name: latestCommit.actor },
-        },
-        sha: latestCommit.commitSha,
-        url: latestCommit.url,
-      }
-    : null,
+    const github = {
+      latestCommit: latestCommit
+        ? {
+            commit: {
+              message: latestCommit.commitMessage,
+              author: { name: latestCommit.actor },
+            },
+            sha: latestCommit.commitSha,
+            url: latestCommit.url,
+          }
+        : null,
 
-  latestWorkflow: latestWorkflow
-    ? {
-        name: latestWorkflow.title ?? latestWorkflow.jobName ?? "workflow_run",
-        conclusion: latestWorkflow.conclusion,
-        status: latestWorkflow.status,
-        url: latestWorkflow.url,
-      }
-    : null,
-};
-
+      latestWorkflow: latestWorkflow
+        ? {
+            name:
+              latestWorkflow.title ?? latestWorkflow.jobName ?? "workflow_run",
+            conclusion: latestWorkflow.conclusion,
+            status: latestWorkflow.status,
+            url: latestWorkflow.url,
+          }
+        : null,
+    };
 
     return NextResponse.json({
       vercel: {

@@ -95,6 +95,10 @@ export function EnvironmentStatus() {
             {github.latestCommit?.commit?.message}
           </p>
           <p>
+            {" "}
+            <strong>SHA:</strong> {github.latestCommit?.sha}{" "}
+          </p>
+          <p>
             <strong>Author:</strong> {github.latestCommit?.commit?.author?.name}
           </p>
           <p>
