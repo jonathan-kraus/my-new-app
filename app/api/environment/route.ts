@@ -1,38 +1,47 @@
-// app\api\environment\route.ts
+// app/api/environment/route.ts
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db"; // your Prisma client
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
+
 export async function GET(nextReq: Request) {
   const built = await buildUniversalContext(nextReq as any, "environment");
   let jei = 0;
+
   await logj({
     domain: "environment",
     level: "info",
-    message: "Starting Envionment Status Check",
+    message: "Starting Environment Status Check",
     file: "app/api/environment/route.ts",
     line: 9,
     payload: { some: "data" },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
+
   try {
-    // 1. Get Postgres version directly from Neon
+    //
+    // 1. Get Postgres version directly from Neon (via Prisma)
+    //
     const versionResult =
       await db.$queryRawUnsafe<{ server_version: string }[]>(
-        `SHOW server_version;`,
+        `SHOW server_version;`
       );
 
     const postgresVersion = versionResult[0]?.server_version ?? "unknown";
+
     await logj({
       domain: "environment",
       level: "info",
       message: "Retrieved Postgres Version",
       file: "app/api/environment/route.ts",
       line: 26,
-      payload: { postgresVersion: postgresVersion },
+      payload: { postgresVersion },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
+
+    //
     // 2. Vercel project + deployment
+    //
     const vercelProject = {
       name: process.env.VERCEL_PROJECT_NAME ?? "unknown",
       TeamId: process.env.VERCEL_TEAM_ID ?? "unknown",
@@ -42,35 +51,32 @@ export async function GET(nextReq: Request) {
       url: process.env.VERCEL_URL ?? "unknown",
       state: "active",
       meta: {
-        githubCommitMessage: process.env.VERCEL_GIT_COMMIT_MESSAGE ?? "unknown",
+        githubCommitMessage:
+          process.env.VERCEL_GIT_COMMIT_MESSAGE ?? "unknown",
       },
     };
+
     await logj({
       domain: "environment",
       level: "info",
       message: "Retrieved Vercel Info",
       file: "app/api/environment/route.ts",
       line: 48,
-      payload: { vercelDeployment: vercelDeployment },
+      payload: { vercelDeployment },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
+
+    //
     // 3. GitHub info from your GithubEvent table
+    //
     const latestCommit = await db.githubEvent.findFirst({
-      where: {
-        type: "push",
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
+      where: { type: "push" },
+      orderBy: { createdAt: "desc" },
     });
 
     const latestWorkflow = await db.githubEvent.findFirst({
-      where: {
-        type: "workflow_run",
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
+      where: { type: "workflow_run" },
+      orderBy: { createdAt: "desc" },
     });
 
     const github = {
@@ -88,7 +94,9 @@ export async function GET(nextReq: Request) {
       latestWorkflow: latestWorkflow
         ? {
             name:
-              latestWorkflow.title ?? latestWorkflow.jobName ?? "workflow_run",
+              latestWorkflow.title ??
+              latestWorkflow.jobName ??
+              "workflow_run",
             jobName: latestWorkflow.jobName,
             conclusion: latestWorkflow.conclusion,
             status: latestWorkflow.status,
@@ -97,21 +105,86 @@ export async function GET(nextReq: Request) {
         : null,
     };
 
+    //
+    // 4. NEW: Full Neon project metadata (console API)
+    //
+    const neonApiKey = process.env.NEON_API_KEY!;
+    const neonOrgId = process.env.NEON_ORG_ID!;
+
+    const neonRes = await fetch(
+      `https://console.neon.tech/api/v2/projects?org_id=${neonOrgId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${neonApiKey}`,
+          Accept: "application/json",
+        },
+      }
+    );
+
+    const neonJson = await neonRes.json();
+    const project = neonJson.projects?.[0];
+
+    const neon = project
+      ? {
+          id: project.id,
+          name: project.name,
+          orgId: project.org_id,
+          region: project.region_id,
+          platform: project.platform_id,
+          pgVersion: project.pg_version,
+          autoscaling: {
+            min: project.default_endpoint_settings.autoscaling_limit_min_cu,
+            max: project.default_endpoint_settings.autoscaling_limit_max_cu,
+            suspendTimeout:
+              project.default_endpoint_settings.suspend_timeout_seconds,
+          },
+          networking: {
+            proxyHost: project.proxy_host,
+            blockPublicConnections:
+              project.settings.block_public_connections,
+            allowedIPs: project.settings.allowed_ips.ips,
+          },
+          storage: {
+            branchLogicalSizeLimit: project.branch_logical_size_limit,
+            branchLogicalSizeLimitBytes:
+              project.branch_logical_size_limit_bytes,
+            syntheticStorageSize: project.synthetic_storage_size,
+            quotaResetAt: project.quota_reset_at,
+          },
+          maintenance: {
+            weekdays: project.settings.maintenance_window.weekdays,
+            start: project.settings.maintenance_window.start_time,
+            end: project.settings.maintenance_window.end_time,
+          },
+          replication: {
+            logicalReplication:
+              project.settings.enable_logical_replication,
+          },
+          timestamps: {
+            createdAt: project.created_at,
+            updatedAt: project.updated_at,
+            computeLastActiveAt: project.compute_last_active_at,
+          },
+          postgresVersion, // from Prisma
+        }
+      : { postgresVersion };
+
+    //
+    // Final response
+    //
     return NextResponse.json({
       vercel: {
         project: vercelProject,
         latestDeployment: vercelDeployment,
       },
-      neon: {
-        postgresVersion,
-      },
+      neon,
       github,
       timestamp: new Date().toISOString(),
     });
   } catch (err) {
     return NextResponse.json(
       { error: "Failed to load environment", details: String(err) },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
