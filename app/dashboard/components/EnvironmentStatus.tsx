@@ -61,7 +61,7 @@ export function EnvironmentStatus() {
             <strong>Project:</strong> {vercel.project?.name}
           </p>
           <p>
-            <strong>Framework:</strong> {vercel.project?.framework}
+            <strong>TeamId:</strong> {vercel.project?.TeamId}
           </p>
           <p>
             <strong>Latest Deployment:</strong> {vercel.latestDeployment?.url}
