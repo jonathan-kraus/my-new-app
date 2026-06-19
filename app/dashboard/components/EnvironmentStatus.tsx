@@ -135,13 +135,6 @@ export function EnvironmentStatus() {
             <p>
               <strong>Postgres Version:</strong> {neon.postgresVersion}
             </p>
-          </div>
-
-          <div className="space-y-1">
-            <p>
-              <strong>Compute Last Active:</strong>{" "}
-              {neon.timestamps.computeLastActiveAt}
-            </p>
             <p>
               <strong>Branch Size Limit:</strong>{" "}
               {neon.storage.branchLogicalSizeLimit}
@@ -150,6 +143,14 @@ export function EnvironmentStatus() {
               <strong>Branch Size Limit Bytes:</strong>{" "}
               {neon.storage.branchLogicalSizeLimitBytes}
             </p>
+          </div>
+
+          <div className="space-y-1">
+            <p>
+              <strong>Compute Last Active:</strong>{" "}
+              {neon.timestamps.computeLastActiveAt}
+            </p>
+
             <p>
               <strong>Logical Replication:</strong>{" "}
               {String(neon.replication.logicalReplication)}
