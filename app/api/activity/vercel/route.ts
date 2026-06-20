@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 export async function GET() {
   const token = process.env.VERCEL_TOKEN;
   const projectId = process.env.VERCEL_PROJECT_ID;
-
+  console.log("Started Vercel");
   const res = await fetch(
     `https://api.vercel.com/v6/deployments?projectId=${projectId}&limit=5`,
     {
