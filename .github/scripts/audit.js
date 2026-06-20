@@ -1,9 +1,9 @@
 /*
  * @FilePath: \my-new-app\.github\scripts\audit.js
- * @LastEditTime: 2026-06-18 14:02:37
+ * @LastEditTime: 2026-06-20 15:19:55
  */
 import fs from "fs";
-import yaml from "js-yaml";
+import * as yaml from "js-yaml";
 import semver from "semver";
 import { Axiom } from "@axiomhq/js";
 import { config } from "dotenv";
