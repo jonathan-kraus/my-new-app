@@ -31,7 +31,14 @@ export async function GET(nextReq: Request) {
       message: "Retrieved Postgres Version",
       file: "app/api/environment/route.ts",
       line: 26,
-      payload: { postgresVersion: postgresVersion },
+      payload: {
+        pg: {
+          version: postgresVersion,
+          major: postgresVersion.split(".")[0],
+          raw: postgresVersion,
+        },
+      },
+
       meta: { built: { ...built, eventIndex: ++jei } },
     });
 
@@ -75,8 +82,9 @@ export async function GET(nextReq: Request) {
     });
 
     const github = {
-      latestCommit: latestCommit
-        ? {
+      latestCommit:
+        latestCommit ?
+          {
             commit: {
               message: latestCommit.commitMessage,
               author: { name: latestCommit.actor },
@@ -86,8 +94,9 @@ export async function GET(nextReq: Request) {
           }
         : null,
 
-      latestWorkflow: latestWorkflow
-        ? {
+      latestWorkflow:
+        latestWorkflow ?
+          {
             name:
               latestWorkflow.title ?? latestWorkflow.jobName ?? "workflow_run",
             jobName: latestWorkflow.jobName,
@@ -125,8 +134,9 @@ export async function GET(nextReq: Request) {
     const neonJson = await neonRes.json();
     const project = neonJson.projects?.[0];
 
-    const neon = project
-      ? {
+    const neon =
+      project ?
+        {
           id: project.id,
           name: project.name,
           orgId: project.org_id,
