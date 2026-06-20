@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { log } from "@/lib/log/client";
+import { logj } from "@/lib/log/client";
 
 export default function NotesClient() {
   const [authorized, setAuthorized] = useState<boolean | null>(null);
@@ -81,7 +81,7 @@ export default function NotesClient() {
   }, []);
 
   useEffect(() => {
-    void log.info({
+    void logj.info({
       domain: "notes",
       message: "Notes client loaded",
       file: "NotesClient.tsx",
