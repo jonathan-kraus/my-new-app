@@ -101,7 +101,15 @@ export async function GET(nextReq: Request) {
           }
         : null,
     };
-
+    await logj({
+      domain: "environment",
+      level: "info",
+      message: "Retrieved GithubInfo",
+      file: "app/api/environment/route.ts",
+      line: 104,
+      payload: { github },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
     //
     // 4. NEW: Full Neon project metadata (console API)
     //
@@ -163,7 +171,15 @@ export async function GET(nextReq: Request) {
           postgresVersion, // from Prisma
         }
       : { postgresVersion };
-
+    await logj({
+      domain: "environment",
+      level: "info",
+      message: "Retrieved Neon Info",
+      file: "app/api/environment/route.ts",
+      line: 174,
+      payload: { neon },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
     //
     // Final response
     //
