@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db"; // your Prisma client
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { getPostgresVersion } from "@/app/db/PgVersion";
 
 export async function GET(nextReq: Request) {
   const built = await buildUniversalContext(nextReq as any, "environment");
@@ -22,12 +23,8 @@ export async function GET(nextReq: Request) {
     //
     // 1. Get Postgres version directly from Neon (via Prisma)
     //
-    const versionResult =
-      await db.$queryRawUnsafe<{ server_version: string }[]>(
-        `SHOW server_version;`,
-      );
-
-    const postgresVersion = versionResult[0]?.server_version ?? "unknown";
+    const versionResult = await getPostgresVersion();
+    const postgresVersion = versionResult?.[0] ?? "unknown";
 
     await logj({
       domain: "environment",

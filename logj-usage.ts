@@ -15,7 +15,6 @@ import { logj } from "@/lib/log/logj";
 // logj.warn("Missing GitHub token");
 // logj.error("Neon API failed");
 
-
 // -----------------------------
 // Messages with payload (meta)
 // -----------------------------
@@ -34,7 +33,6 @@ import { logj } from "@/lib/log/logj";
 //   status: 401,
 //   endpoint: "/api/neon",
 // });
-
 
 // -----------------------------
 // Realistic examples from your app
