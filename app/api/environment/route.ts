@@ -23,8 +23,7 @@ export async function GET(nextReq: Request) {
     //
     // 1. Get Postgres version directly from Neon (via Prisma)
     //
-    const versionResult = await getPostgresVersion();
-    const postgresVersion = versionResult?.[0] ?? "unknown";
+    const postgresVersion = await getPostgresVersion();
 
     await logj({
       domain: "environment",
@@ -32,7 +31,7 @@ export async function GET(nextReq: Request) {
       message: "Retrieved Postgres Version",
       file: "app/api/environment/route.ts",
       line: 26,
-      payload: { postgresVersion },
+      payload: { postgresVersion: postgresVersion },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
 
