@@ -138,40 +138,40 @@ export function EnvironmentStatus() {
             </p>
             <p>
               <strong>Branch Size Limit:</strong>{" "}
-              {neon.storage.branchLogicalSizeLimit}
+              {neon.storage?.branchLogicalSizeLimit ?? "N/A"}
             </p>
             <p>
               <strong>Branch Size Limit Bytes:</strong>{" "}
-              {neon.storage.branchLogicalSizeLimitBytes}
+              {neon.storage?.branchLogicalSizeLimitBytes ?? "N/A"}
             </p>
           </div>
 
           <div className="space-y-1">
             <p>
               <strong>Compute Last Active:</strong>{" "}
-              {neon.timestamps.computeLastActiveAt}
+              {neon.timestamps?.computeLastActiveAt ?? "N/A"}
             </p>
 
             <p>
               <strong>Logical Replication:</strong>{" "}
-              {String(neon.replication.logicalReplication)}
+              {String(neon?.replication?.logicalReplication ?? "N/A")}
             </p>
             <p>
-              <strong>Created:</strong> {neon.timestamps.createdAt}
+              <strong>Created:</strong> {neon?.timestamps?.createdAt ?? "N/A"}
             </p>
             <p>
-              <strong>Updated:</strong> {neon.timestamps.updatedAt}
+              <strong>Updated:</strong> {neon?.timestamps?.updatedAt ?? "N/A"}
             </p>
             <p>
-              <strong>Proxy Host:</strong> {neon.networking.proxyHost}
+              <strong>Proxy Host:</strong> {neon.networking?.proxyHost ?? "N/A"}
             </p>
             <p>
               <strong>Block Public Connections:</strong>{" "}
-              {String(neon.networking.blockPublicConnections)}
+              {String(neon.networking?.blockPublicConnections ?? "N/A")}
             </p>
             <p>
               <strong>Allowed IPs:</strong>{" "}
-              {neon.networking.allowedIPs.join(", ") || "None"}
+              {neon.networking?.allowedIPs.join(", ") || "None"}
             </p>
           </div>
         </div>
