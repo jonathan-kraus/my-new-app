@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\db\PgVersion.ts
- * @LastEditTime: 2026-06-20 23:49:25
+ * @LastEditTime: 2026-06-20 23:58:58
  */
 import { neon } from "@neondatabase/serverless";
 import { NextRequest } from "next/server";
@@ -14,10 +14,10 @@ export async function getPostgresVersion(req: Request) {
   await logj({
     domain: "jonathan",
     level: "info",
-    message: "Validating Table existence",
+    message: "Retrieving Postgres version from Neon",
     file: "page.tsx",
     line: 14,
-    payload: { jei: jei, },
+    payload: { jei: jei },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
   // No generics — Neon client in your setup does not accept them
