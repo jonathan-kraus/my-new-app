@@ -9,7 +9,6 @@ import { db } from "@/lib/db";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { withLogging } from "@/lib/logging/withLogging";
-import { log } from "@/lib/log";
 
 export const GET = withLogging(async (req: Request) => {
   // Build context INSIDE the request handler
