@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\db\PgVersion.ts
- * @LastEditTime: 2026-06-20 23:58:58
+ * @LastEditTime: 2026-06-21 16:44:48
  */
 import { neon } from "@neondatabase/serverless";
 import { NextRequest } from "next/server";
@@ -25,7 +25,6 @@ export async function getPostgresVersion(req: Request) {
     SHOW server_version;
 `;
 
-  // result is an array of rows like: [{ server_version: "16.3" }]
   const row = result?.[0] as { server_version?: string } | undefined;
 
   return row?.server_version ?? "unknown";
