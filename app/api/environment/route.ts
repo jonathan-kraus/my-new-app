@@ -82,9 +82,8 @@ export async function GET(nextReq: Request) {
     });
 
     const github = {
-      latestCommit:
-        latestCommit ?
-          {
+      latestCommit: latestCommit
+        ? {
             commit: {
               message: latestCommit.commitMessage,
               author: { name: latestCommit.actor },
@@ -94,9 +93,8 @@ export async function GET(nextReq: Request) {
           }
         : null,
 
-      latestWorkflow:
-        latestWorkflow ?
-          {
+      latestWorkflow: latestWorkflow
+        ? {
             name:
               latestWorkflow.title ?? latestWorkflow.jobName ?? "workflow_run",
             jobName: latestWorkflow.jobName,
@@ -134,9 +132,8 @@ export async function GET(nextReq: Request) {
     const neonJson = await neonRes.json();
     const project = neonJson.projects?.[0];
 
-    const neon =
-      project ?
-        {
+    const neon = project
+      ? {
           id: project.id,
           name: project.name,
           orgId: project.org_id,
@@ -189,6 +186,46 @@ export async function GET(nextReq: Request) {
     //
     // Final response
     //
+    const payload = {
+      pg: {
+        raw: postgresVersion,
+        major: postgresVersion.split(".")[0],
+        version: postgresVersion,
+      },
+      vercel: {
+        env: process.env.VERCEL_ENV ?? "unknown",
+        region: process.env.VERCEL_REGION ?? "unknown",
+        deploymentId: process.env.VERCEL_DEPLOYMENT_ID ?? "unknown",
+        buildId: process.env.VERCEL_BUILD_ID ?? "unknown",
+        gitBranch: process.env.VERCEL_GIT_COMMIT_REF ?? "unknown",
+        gitCommit: process.env.VERCEL_GIT_COMMIT_SHA ?? "unknown",
+      },
+      github: {
+        runId: process.env.GITHUB_RUN_ID ?? null,
+        runAttempt: process.env.GITHUB_RUN_ATTEMPT ?? null,
+        workflow: process.env.GITHUB_WORKFLOW ?? null,
+        sha: process.env.GITHUB_SHA ?? null,
+        ref: process.env.GITHUB_REF ?? null,
+      },
+      node: {
+        version: process.version,
+        platform: process.platform,
+        arch: process.arch,
+      },
+      app: {
+        env: process.env.NODE_ENV,
+        host: process.env.VERCEL_URL ?? "localhost",
+      },
+    };
+
+    await logj({
+      domain: "environment",
+      level: "info",
+      message: "Expanded environment payload",
+      payload,
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
+
     return NextResponse.json({
       vercel: {
         project: vercelProject,
