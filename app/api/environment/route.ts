@@ -109,7 +109,7 @@ export async function GET(nextReq: Request) {
       level: "info",
       message: "Retrieved GithubInfo",
       file: "app/api/environment/route.ts",
-      line: 104,
+      line: 107,
       payload: { github },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -179,7 +179,7 @@ export async function GET(nextReq: Request) {
       level: "info",
       message: "Retrieved Neon Info",
       file: "app/api/environment/route.ts",
-      line: 174,
+      line: 177,
       payload: { neon },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -202,10 +202,11 @@ export async function GET(nextReq: Request) {
       },
       github: {
         runId: process.env.GITHUB_RUN_ID ?? null,
-        runAttempt: process.env.GITHUB_RUN_ATTEMPT ?? null,
+        runAttempt: latestWorkflow?.conclusion ?? null,
         workflow: process.env.GITHUB_WORKFLOW ?? null,
-        sha: process.env.GITHUB_SHA ?? null,
-        ref: process.env.GITHUB_REF ?? null,
+        sha: latestCommit?.commitSha ?? null,
+        url: latestCommit?.url ?? null,
+        status: latestWorkflow?.status ?? null,
       },
       node: {
         version: process.version,
