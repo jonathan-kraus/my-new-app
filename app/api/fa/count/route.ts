@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\fa\count\route.ts
- * @LastEditTime: 2026-03-11 00:17:25
+ * @LastEditTime: 2026-06-21 23:54:11
  */
 // app/api/fa/count/route.ts
 import { NextResponse } from "next/server";
@@ -14,7 +14,7 @@ export async function GET(req: Request) {
   const minLon = await getConfig("minLon", "-105.7435");
   const maxLat = await getConfig("maxLat", "40.7142");
   const maxLon = await getConfig("maxLon", "-104.9679");
-  console.log("FA COUNT QUERY:", {
+  console.log("FlightAware COUNT QUERY:", {
     minLat,
     minLon,
     maxLat,

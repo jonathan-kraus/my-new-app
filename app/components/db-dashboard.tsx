@@ -1,11 +1,11 @@
 "use client";
 /*
- * @FilePath     : \my-new-app\app\components\db-dashboard.tsx
+ * @FilePath: \my-new-app\app\components\db-dashboard.tsx
  * @Author       : Jonathan
  * @Date         : 2026-02-19 18:12:14
  * @Description  :
- * @LastEditors  : Jonathan
- * @LastEditTime : 2026-02-21 02:36:16
+ * @LastEditors: Please set LastEditors
+ * @LastEditTime: 2026-06-21 23:51:09
  */
 import { DashboardHeader } from "./dashboard-header";
 import { StatCard } from "./stat-card";
