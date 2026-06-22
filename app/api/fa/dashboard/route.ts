@@ -1,38 +1,29 @@
 /*
  * @FilePath: \my-new-app\app\api\fa\dashboard\route.ts
- * @LastEditTime: 2026-04-30 01:18:38
+ * @LastEditTime: 2026-06-22 00:57:36
  */
 // app/api/fa/dashboard/route.ts
 import { getConfig } from "@/lib/runtime/config";
 import { NextResponse } from "next/server";
 import { toZonedTime, format } from "date-fns-tz";
-import { logit } from "@/lib/log/logit";
+import { logj } from "@/lib/log/logj";
+import { staticUniversalContext } from "@/lib/log/buildj";
 
 type Flight = {
   scheduled_out?: string | null;
 };
-const eventIndex = 22;
-const requestId = crypto.randomUUID();
+const built = staticUniversalContext("DB");
+let jei = 0;
 export async function GET() {
-  await logit(
-    "jonathan",
-    {
-      level: "info",
-      message: "Loading FA dashboard route",
-      time: format(new Date(), "yyyy-MM-dd HH:mm:ss"),
-    },
-    { eventIndex },
-    {
-      requestId: requestId,
-      route: "app/api/fa/dashboard/route.ts",
-      userId: "JK",
-      zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
-    },
-  );
-
+  await logj({
+    domain: "jonathan",
+    level: "info",
+    message: "Loading FA dashboard route",
+    file: "app/api/fa/dashboard/route.ts",
+    line: 19,
+    payload: { some: "data" },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
   // 1. Fetch flight count
   const minLat = await getConfig("minLat", "40.0893");
   const minLon = await getConfig("minLon", "-105.7435");
@@ -52,31 +43,21 @@ export async function GET() {
   );
 
   const countData = await countRes.json();
-  await logit(
-    "jonathan",
-    {
-      level: "info",
-      message: "Completed FA dashboard route",
-      requestId: crypto.randomUUID(),
+  await logj({
+    domain: "jonathan",
+    level: "info",
+    message: "Completed FA dashboard route",
+    file: "app/api/fa/dashboard/route.ts",
+    line: 47,
+    payload: {
       countData: countData,
       minLat: minLat,
       minLon: minLon,
       maxLat: maxLat,
       maxLon: maxLon,
-      route: "app/api/fa/dashboard/route.ts",
-      userId: "JK",
     },
-    { eventIndex },
-    {
-      requestId: requestId,
-      route: "app/api/fa/dashboard/route.ts",
-      userId: "JK",
-      zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
-    },
-  );
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
   // 1b. Fetch actual planes in the skybox
   const planesRes = await fetch(
     `https://aeroapi.flightaware.com/aeroapi/flights/search?query=${encodeURIComponent(
