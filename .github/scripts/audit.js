@@ -52,7 +52,11 @@ for (const key of Object.keys(deps)) {
 console.log("🔍 -- Auditing", Object.keys(payload).length, "packages…");
 
 // advisories to ignore by ID
-const IGNORE = ["1121191"];
+const IGNORE = [
+  "1121191",                 // your existing ignore
+  "GHSA-92pp-h63x-v22m",     // @hono/node-server (bundled by Prisma)
+  "GHSA-qx2v-qp2m-jg93"      // postcss (bundled by Next.js)
+];
 
 
 // -----------------------------
