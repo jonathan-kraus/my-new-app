@@ -14,29 +14,38 @@
 
     {
       "groupName": "Next.js ecosystem",
-      "matchPackagePatterns": [
-        "^next$",
-        "^eslint-config-next$",
-        "^@next/",
-        "^@vercel/"
+      "matchPackageNames": [
+        "/^next$/",
+        "/^eslint-config-next$/",
+        "/^@next//",
+        "/^@vercel//"
       ]
     },
 
     {
       "groupName": "Prisma",
-      "matchPackagePatterns": ["^prisma$", "^@prisma/"],
       "matchUpdateTypes": ["major"],
-      "enabled": false
+      "enabled": false,
+      "matchPackageNames": [
+        "/^prisma$/",
+        "/^@prisma//"
+      ]
     },
 
     {
       "groupName": "Vitest",
-      "matchPackagePatterns": ["^vitest$", "^@vitest/"]
+      "matchPackageNames": [
+        "/^vitest$/",
+        "/^@vitest//"
+      ]
     },
 
     {
       "groupName": "Tailwind",
-      "matchPackagePatterns": ["^tailwindcss$", "^@tailwindcss/"]
+      "matchPackageNames": [
+        "/^tailwindcss$/",
+        "/^@tailwindcss//"
+      ]
     },
 
     {
