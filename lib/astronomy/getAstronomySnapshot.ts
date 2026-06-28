@@ -20,7 +20,7 @@ export async function getAstronomySnapshot(
       },
     },
   });
-
+  console.log("today", today);
   // Fetch tomorrow's snapshot
   const tomorrow = await db.astronomySnapshot.findUnique({
     where: {
