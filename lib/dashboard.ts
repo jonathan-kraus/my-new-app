@@ -69,8 +69,7 @@ export async function getDashboardData(): Promise<DashboardData> {
 }
 
 export type SafeResult<T> =
-  | { ok: true; data: T }
-  | { ok: false; error: unknown };
+  { ok: true; data: T } | { ok: false; error: unknown };
 
 export async function safe<T>(fn: () => Promise<T>): Promise<SafeResult<T>> {
   try {
