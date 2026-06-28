@@ -103,7 +103,7 @@
     "eslint-config-prettier": "^10.1.8",
     "fast-uri": "^4.0.0",
     "input-otp": "^1.4.2",
-    "lucide-react": "^1.21.0",
+    "lucide-react": "^1.22.0",
     "luxon": "^3.7.2",
     "mailersend": "^3.0.0",
     "mailparser": "^3.9.12",
