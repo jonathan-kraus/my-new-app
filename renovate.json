@@ -26,26 +26,17 @@
       "groupName": "Prisma",
       "matchUpdateTypes": ["major"],
       "enabled": false,
-      "matchPackageNames": [
-        "/^prisma$/",
-        "/^@prisma//"
-      ]
+      "matchPackageNames": ["/^prisma$/", "/^@prisma//"]
     },
 
     {
       "groupName": "Vitest",
-      "matchPackageNames": [
-        "/^vitest$/",
-        "/^@vitest//"
-      ]
+      "matchPackageNames": ["/^vitest$/", "/^@vitest//"]
     },
 
     {
       "groupName": "Tailwind",
-      "matchPackageNames": [
-        "/^tailwindcss$/",
-        "/^@tailwindcss//"
-      ]
+      "matchPackageNames": ["/^tailwindcss$/", "/^@tailwindcss//"]
     },
 
     {
