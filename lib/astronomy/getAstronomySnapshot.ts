@@ -1,6 +1,8 @@
 // lib/astronomy/getAstronomySnapshot.ts
 
 import { db } from "@/lib/db";
+import { logj } from "@/lib/log/logj";
+import { staticUniversalContext } from "@/lib/log/buildj";
 import { format, addDays } from "date-fns";
 
 export async function getAstronomySnapshot(
@@ -20,7 +22,19 @@ export async function getAstronomySnapshot(
       },
     },
   });
-  console.log("today", today);
+  const built = await staticUniversalContext("ASTRONOMY_SNAPSHOT");
+  let jei = 0;
+  await logj({
+    domain: "jonathan",
+    level: "info",
+    message: "Astronomy snapshot fetched",
+    file: "lib/astronomy/getAstronomySnapshot.ts",
+    line: 27,
+    payload: { today: today },
+
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
+
   // Fetch tomorrow's snapshot
   const tomorrow = await db.astronomySnapshot.findUnique({
     where: {
