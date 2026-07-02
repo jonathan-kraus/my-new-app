@@ -35,7 +35,7 @@ section "Checking outdated dependencies"
 pnpm outdated || warn "Some dependencies are outdated"
 
 section "Update dependencies"
-pnpm update || warn "Failed to update dependencies"
+pnpm update --latest || warn "Failed to update dependencies"
 
 section "Running Prettier check"
 if ! pnpm prettier --check .; then
