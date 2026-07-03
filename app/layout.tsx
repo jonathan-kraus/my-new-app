@@ -4,6 +4,7 @@ import ClientLayout from "@/app/ClientLayout";
 import { WebVitals } from "@/lib/axiom/client";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
+import { Analytics } from "@vercel/analytics/next";
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -20,6 +21,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         </div>
 
         <Toaster position="top-right" />
+        <Analytics />
       </body>
     </html>
   );
