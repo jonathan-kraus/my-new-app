@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\.github\scripts\audit.js
- * @LastEditTime: 2026-06-20 15:19:55
+ * @LastEditTime: 2026-07-03 19:24:37
  */
 import fs from "fs";
 import * as yaml from "js-yaml";
@@ -18,13 +18,16 @@ if (!process.env.CI) {
 
 console.log("TOKEN exists:", !!process.env.AXIOM_TOKEN);
 console.log("DATASET:", process.env.AXIOM_DATASET);
+console.log("ORG ID:", process.env.AXIOM_ORG_ID);
 
 // -----------------------------
 // Axiom client
 // -----------------------------
 const axiom = new Axiom({
   token: process.env.AXIOM_TOKEN,
+  orgId: process.env.AXIOM_ORG_ID,
 });
+
 
 const DATASET = process.env.AXIOM_DATASET;
 
