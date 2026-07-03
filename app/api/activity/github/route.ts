@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { logj } from "@/lib/log/logj";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 // GET — return recent GitHub events from the database
 export async function GET(req: NextRequest) {
@@ -52,10 +54,21 @@ export async function GET(req: NextRequest) {
     }
 
     const activity = Array.from(bySha.values());
-
+    const built = await buildUniversalContext(req as any, "GITHUB_ACTIVITY");
+    let jei = 0;
+    await logj({
+      domain: "jonathan",
+      level: "info",
+      message: `** GitHub activity DB error **`,
+      file: "app\api\activity\github\route.ts",
+      line: 59,
+      payload: {
+        some: "data",
+      },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
     return NextResponse.json({ ok: true, activity });
   } catch (err: any) {
-    console.error("GitHub activity DB error:", err);
     return NextResponse.json(
       { ok: false, error: "Failed to fetch GitHub activity" },
       { status: 500 },
