@@ -11,6 +11,7 @@ export async function GET(req: NextRequest) {
       take: 50,
     });
         const built = await buildUniversalContext(req as any, "GITHUB_ACTIVITY");
+        let jei = 0;
     await logj({
       domain: "jonathan",
       level: "info",
@@ -66,7 +67,6 @@ export async function GET(req: NextRequest) {
 
     const activity = Array.from(bySha.values());
 
-    let jei = 0;
     await logj({
       domain: "jonathan",
       level: "info",
