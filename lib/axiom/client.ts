@@ -1,11 +1,12 @@
 "use client";
-
+// lib\axiom\client.ts
 import { Logger, AxiomJSTransport } from "@axiomhq/logging";
 import { Axiom } from "@axiomhq/js";
 import { createUseLogger, createWebVitalsComponent } from "@axiomhq/react";
 
 const axiomClient = new Axiom({
-  token: process.env.NEXT_PUBLIC_AXIOM_TOKEN!,
+  token: process.env.AXIOM_TOKEN!,
+  orgId: process.env.AXIOM_ORG_ID!,
 });
 
 export const logger = new Logger({
