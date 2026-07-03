@@ -24,7 +24,7 @@ export function SunriseCountdown({ sunrise, timezone }: SunriseCountdownProps) {
 
       if (diff <= 0) {
         if (!eventFiredRef.current) {
-          toast.success("🌇 Sunrise is happening now");
+          toast.success("🌇 Sunrise is happening now!");
           eventFiredRef.current = true;
         }
         setRemaining(0);
