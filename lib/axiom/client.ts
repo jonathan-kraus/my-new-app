@@ -1,20 +1,32 @@
 "use client";
-// lib\axiom\client.ts
-import { Logger, AxiomJSTransport } from "@axiomhq/logging";
-import { Axiom } from "@axiomhq/js";
+
+import { Logger } from "@axiomhq/logging";
 import { createUseLogger, createWebVitalsComponent } from "@axiomhq/react";
 
-const axiomClient = new Axiom({
-  token: process.env.AXIOM_TOKEN!,
-  orgId: process.env.AXIOM_ORG_ID!,
-});
+/**
+ * Client-side logging:
+ * - Sends logs to /api/axiom via fetch()
+ * - No API token exposed
+ * - No Axiom client initialized in the browser
+ */
+
+async function sendToServer(log: any) {
+  try {
+    await fetch("/api/axiom", {
+      method: "POST",
+      body: JSON.stringify(log),
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (err) {
+    console.error("Failed to send log to server:", err);
+  }
+}
 
 export const logger = new Logger({
   transports: [
-    new AxiomJSTransport({
-      axiom: axiomClient,
-      dataset: process.env.NEXT_PUBLIC_AXIOM_DATASET!,
-    }),
+    {
+      send: sendToServer,
+    },
   ],
 });
 
