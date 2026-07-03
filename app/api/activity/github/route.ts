@@ -10,7 +10,18 @@ export async function GET(req: NextRequest) {
       orderBy: { updatedAt: "desc" },
       take: 50,
     });
-
+        const built = await buildUniversalContext(req as any, "GITHUB_ACTIVITY");
+    await logj({
+      domain: "jonathan",
+      level: "info",
+      message: `** GitHub activity findmany **`,
+      file: "app\api\activity\github\route.ts",
+      line: 14,
+      payload: {
+        some: "data",
+      },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
     // Normalize to the shape your UI expects
     const normalized = events.map((e) => ({
       id: e.id,
@@ -54,14 +65,14 @@ export async function GET(req: NextRequest) {
     }
 
     const activity = Array.from(bySha.values());
-    const built = await buildUniversalContext(req as any, "GITHUB_ACTIVITY");
+
     let jei = 0;
     await logj({
       domain: "jonathan",
       level: "info",
       message: `** GitHub activity DB error **`,
       file: "app\api\activity\github\route.ts",
-      line: 59,
+      line: 70,
       payload: {
         some: "data",
       },
