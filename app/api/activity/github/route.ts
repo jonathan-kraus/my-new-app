@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
       level: "info",
       message: `** GitHub activity findmany **`,
       file: "app\api\activity\github\route.ts",
-      line: 14,
+      line: 15,
       payload: {
         some: "data",
       },
@@ -70,7 +70,7 @@ export async function GET(req: NextRequest) {
     await logj({
       domain: "jonathan",
       level: "info",
-      message: `** GitHub activity DB error **`,
+      message: `** GitHub activity normalized and deduplicated **`,
       file: "app\api\activity\github\route.ts",
       line: 70,
       payload: {
