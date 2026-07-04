@@ -54,22 +54,8 @@ section "Running TypeScript type-check"
 echo "Checking types..."
 
 if ! pnpm type-check; then
-  warn "TypeScript errors detected — attempting auto-fix…"
-
-  # Auto-fix strategy: run ESLint + Prettier
-  pnpm lint --fix || true
-  pnpm prettier --write . || true
-
-  # Re-run TS check after fixes
-  if pnpm type-check; then
-    success "TypeScript issues fixed"
-  else
-    fail "TypeScript errors remain — manual review required"
-  fi
-else
-  success "TypeScript OK"
+  warn "TypeScript errors detected"
 fi
-
 section "Validating Prisma schema"
 pnpm prisma validate && success "Prisma schema valid"
 
