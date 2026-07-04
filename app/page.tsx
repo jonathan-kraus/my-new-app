@@ -51,61 +51,58 @@ export default async function HomePage(req: Request) {
   if (!location) {
     return <div>No default location configured.</div>;
   }
- const weatherRes = await fetch(
-  `${process.env.NEXT_PUBLIC_BASE_URL}/api/weather?locationId=${location.id}`,
-  { cache: "no-store" },
-);
+  const weatherRes = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/weather?locationId=${location.id}`,
+    { cache: "no-store" },
+  );
 
+  // 1. Handle network errors
+  if (!weatherRes.ok) {
+    await logj({
+      domain: "weather",
+      level: "error",
+      message: "weatherRes not ok",
+      file: "page.tsx",
+      line: 62,
+      payload: { status: weatherRes.status },
+    });
 
-// 1. Handle network errors
-if (!weatherRes.ok) {
-  await logj({
-    domain: "weather",
-    level: "error",
-    message: "weatherRes not ok",
-    file: "page.tsx",
-    line: 62,
-    payload: { status: weatherRes.status },
-  });
+    return <div>Weather service unavailable.</div>;
+  }
 
-  return <div>Weather service unavailable.</div>;
-}
+  let weatherData;
 
-let weatherData;
+  // 2. Handle invalid JSON
+  try {
+    weatherData = await weatherRes.json();
+  } catch (err) {
+    await logj({
+      domain: "weather",
+      level: "error",
+      message: "weatherRes.json() failed",
+      file: "page.tsx",
+      line: 80,
+      payload: { error: String(err) },
+    });
 
-// 2. Handle invalid JSON
-try {
-  weatherData = await weatherRes.json();
-} catch (err) {
-  await logj({
-    domain: "weather",
-    level: "error",
-    message: "weatherRes.json() failed",
-    file: "page.tsx",
-    line: 80,
-    payload: { error: String(err) },
-  });
+    return <div>Weather data could not be parsed.</div>;
+  }
 
-  return <div>Weather data could not be parsed.</div>;
-}
+  // 3. Handle schema validation errors
+  try {
+    WeatherSchema.parse(weatherData);
+  } catch (err) {
+    await logj({
+      domain: "weather",
+      level: "error",
+      message: "WeatherSchema.parse failed",
+      file: "page.tsx",
+      line: 96,
+      payload: { error: String(err) },
+    });
 
-// 3. Handle schema validation errors
-try {
-  WeatherSchema.parse(weatherData);
-} catch (err) {
-  await logj({
-    domain: "weather",
-    level: "error",
-    message: "WeatherSchema.parse failed",
-    file: "page.tsx",
-    line: 96,
-    payload: { error: String(err) },
-  });
-
-  return <div>Weather data is invalid.</div>;
-}
-
-
+    return <div>Weather data is invalid.</div>;
+  }
 
   await logj({
     domain: "jonathan",
