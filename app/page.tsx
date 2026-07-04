@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\page.tsx
- * @LastEditTime: 2026-07-03 21:06:50
+ * @LastEditTime: 2026-07-03 21:15:09
  */
 // app/page.tsx
 import { auth } from "@/auth";
@@ -51,13 +51,23 @@ export default async function HomePage(req: Request) {
   if (!location) {
     return <div>No default location configured.</div>;
   }
-  const weatherRes = await fetch(
+ const weatherRes = await fetch(
   `${process.env.NEXT_PUBLIC_BASE_URL}/api/weather?locationId=${location.id}`,
   { cache: "no-store" },
 );
 
+
 // 1. Handle network errors
 if (!weatherRes.ok) {
+  await logj({
+    domain: "weather",
+    level: "error",
+    message: "weatherRes not ok",
+    file: "page.tsx",
+    line: 62,
+    payload: { status: weatherRes.status },
+  });
+
   return <div>Weather service unavailable.</div>;
 }
 
@@ -66,16 +76,35 @@ let weatherData;
 // 2. Handle invalid JSON
 try {
   weatherData = await weatherRes.json();
-} catch {
+} catch (err) {
+  await logj({
+    domain: "weather",
+    level: "error",
+    message: "weatherRes.json() failed",
+    file: "page.tsx",
+    line: 80,
+    payload: { error: String(err) },
+  });
+
   return <div>Weather data could not be parsed.</div>;
 }
 
 // 3. Handle schema validation errors
 try {
   WeatherSchema.parse(weatherData);
-} catch {
+} catch (err) {
+  await logj({
+    domain: "weather",
+    level: "error",
+    message: "WeatherSchema.parse failed",
+    file: "page.tsx",
+    line: 96,
+    payload: { error: String(err) },
+  });
+
   return <div>Weather data is invalid.</div>;
 }
+
 
 
   await logj({
