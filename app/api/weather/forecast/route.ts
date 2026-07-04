@@ -39,6 +39,15 @@ export async function GET(req: Request) {
   });
 
   if (cached) {
+    await logj({
+  domain: "weather",
+  level: "info",
+  message: `🌟 Forecast cache hit`,
+  file: "app/api/weather/forecast/route.ts",
+  line: 42,
+  payload: { locationId },
+  meta: { built: { ...built, eventIndex: ++jei } },
+});
     const weather = cached.payload as {
       current: any;
       forecast: any;
@@ -101,6 +110,16 @@ export async function GET(req: Request) {
 
     try {
       raw = await weatherRes.json();
+      await logj({
+  domain: "weather",
+  level: "info",
+  message: "🌟 Forecast API response",
+  file: "app/api/weather/forecast/route.ts",
+  line: 113,
+  payload: { raw, locationId },
+  meta: { built: { ...built, eventIndex: ++jei } },
+});
+
     } catch (err) {
       await logj({
         domain: "weather",
@@ -152,7 +171,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json(
       { error: "Forecast unavailable", raw },
-      { status: 502 }
+      { status: 200 }
     );
   }
 
@@ -198,7 +217,7 @@ export async function GET(req: Request) {
       weather.current_weather.temperature
     )}°F`,
     file: "app/api/weather/forecast/route.ts",
-    line: 197,
+    line: 213,
     payload: {
       snapshotId: snapshot.id,
       cacheWindowMinutes: FORECAST_CACHE_MINUTES,
