@@ -99,4 +99,7 @@ jobs:
         env:
           CI: true
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          AXIOM_TOKEN: ${{ secrets.AXIOM_TOKEN }}
+          AXIOM_DATASET: ${{ secrets.AXIOM_DATASET }}
+          AXIOM_ORG_ID: ${{ secrets.AXIOM_ORG_ID }}
         run: pnpm build
