@@ -1,7 +1,16 @@
 export async function axiomIngest(events: any[], datasetOverride?: string) {
-  const token = process.env.AXIOM_TOKEN!;
-  const orgId = process.env.AXIOM_ORG_ID!;
-  const dataset = datasetOverride ?? process.env.AXIOM_DATASET!;
+  const token = process.env.AXIOM_TOKEN;
+  const orgId = process.env.AXIOM_ORG_ID;
+  const dataset = datasetOverride ?? process.env.AXIOM_DATASET;
+
+  // ----------------------------------------
+  // Skip ingest entirely when token is missing
+  // (tests, CI, local dev, preview builds)
+  // ----------------------------------------
+  if (!token || !orgId || !dataset) {
+    return { ok: true, skipped: true };
+  }
+
   const url = `https://api.axiom.co/v1/datasets/${dataset}/ingest`;
 
   const res = await fetch(url, {
