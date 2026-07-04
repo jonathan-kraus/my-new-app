@@ -41,7 +41,7 @@ export async function GET(req: Request) {
     await logj({
       domain: "weather",
       level: "info",
-      message: `🌟 Forecast cache hit`,
+      message: "🌟 Forecast cache hit",
       file: "app/api/weather/forecast/route.ts",
       line: 43,
       payload: { locationId },
@@ -88,7 +88,7 @@ export async function GET(req: Request) {
         `&daily=temperature_2m_max,temperature_2m_min,weathercode` +
         `&temperature_unit=fahrenheit` +
         `&timezone=auto`,
-      { cache: "no-store" },
+      { cache: "no-store" }
     );
 
     if (!weatherRes.ok) {
@@ -104,7 +104,7 @@ export async function GET(req: Request) {
 
       return NextResponse.json(
         { error: "Forecast unavailable" },
-        { status: 502 },
+        { status: 502 }
       );
     }
 
@@ -123,7 +123,7 @@ export async function GET(req: Request) {
 
       return NextResponse.json(
         { error: "Forecast unavailable" },
-        { status: 502 },
+        { status: 502 }
       );
     }
   } catch (err) {
@@ -139,7 +139,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json(
       { error: "Forecast unavailable" },
-      { status: 502 },
+      { status: 502 }
     );
   }
 
@@ -173,8 +173,8 @@ export async function GET(req: Request) {
     });
 
     return NextResponse.json(
-      { error: "Forecast unavailable", raw },
-      { status: 502 },
+      { error: "Forecast unavailable" },
+      { status: 502 }
     );
   }
 
@@ -195,8 +195,8 @@ export async function GET(req: Request) {
     });
 
     return NextResponse.json(
-      { error: "Forecast unavailable", raw },
-      { status: 502 },
+      { error: "Forecast unavailable" },
+      { status: 502 }
     );
   }
 
@@ -216,9 +216,7 @@ export async function GET(req: Request) {
   await logj({
     domain: "weather",
     level: "info",
-    message: `🌟 Forecast snapshot stored, ${Math.round(
-      weather.current_weather.temperature,
-    )}°F`,
+    message: `🌟 Forecast snapshot stored`,
     file: "app/api/weather/forecast/route.ts",
     line: 197,
     payload: {
