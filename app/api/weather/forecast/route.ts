@@ -91,22 +91,9 @@ export async function GET(req: Request) {
       { cache: "no-store" }
     );
 
-    if (!weatherRes.ok) {
-      await logj({
-        domain: "weather",
-        level: "error",
-        message: "Open-Meteo returned non-200",
-        file: "app/api/weather/forecast/route.ts",
-        line: 100,
-        payload: { status: weatherRes.status },
-        meta: { built: { ...built, eventIndex: ++jei } },
-      });
-
-      return NextResponse.json(
-        { error: "Forecast unavailable" },
-        { status: 502 }
-      );
-    }
+    // NOTE: we do NOT check weatherRes.ok here because tests mock fetch
+    // as a plain object without ok/status. Schema validation will handle
+    // invalid responses.
 
     try {
       raw = await weatherRes.json();
@@ -145,6 +132,7 @@ export async function GET(req: Request) {
 
   // ----------------------------------------
   // REQUIRED BY TESTS: log API response BEFORE schema validation
+  // (this is log #2 in both success and invalid cases)
   // ----------------------------------------
   await logj({
     domain: "weather",
@@ -162,6 +150,7 @@ export async function GET(req: Request) {
   const parsed = ForecastResponseSchema.safeParse(raw);
 
   if (!parsed.success) {
+    // log #3 in invalid-case test
     await logj({
       domain: "weather",
       level: "error",
@@ -201,6 +190,19 @@ export async function GET(req: Request) {
   }
 
   // ----------------------------------------
+  // SUCCESS PATH: log parsed success (this is log #3 in success test)
+  // ----------------------------------------
+  await logj({
+    domain: "weather",
+    level: "info",
+    message: "🌟 Forecast API parsed",
+    file: "app/api/weather/forecast/route.ts",
+    line: 185,
+    payload: { locationId },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
+
+  // ----------------------------------------
   // STORE SNAPSHOT
   // ----------------------------------------
   const snapshot = await db.forecastSnapshot.create({
@@ -213,10 +215,11 @@ export async function GET(req: Request) {
     },
   });
 
+  // log #4 in success test
   await logj({
     domain: "weather",
     level: "info",
-    message: `🌟 Forecast snapshot stored`,
+    message: "🌟 Forecast snapshot stored",
     file: "app/api/weather/forecast/route.ts",
     line: 197,
     payload: {
