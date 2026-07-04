@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\page.tsx
- * @LastEditTime: 2026-04-02 15:01:03
+ * @LastEditTime: 2026-07-03 21:06:50
  */
 // app/page.tsx
 import { auth } from "@/auth";
@@ -52,11 +52,32 @@ export default async function HomePage(req: Request) {
     return <div>No default location configured.</div>;
   }
   const weatherRes = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/weather?locationId=${location?.id}`,
-    { cache: "no-store" },
-  );
-  const weatherData = await weatherRes.json();
+  `${process.env.NEXT_PUBLIC_BASE_URL}/api/weather?locationId=${location.id}`,
+  { cache: "no-store" },
+);
+
+// 1. Handle network errors
+if (!weatherRes.ok) {
+  return <div>Weather service unavailable.</div>;
+}
+
+let weatherData;
+
+// 2. Handle invalid JSON
+try {
+  weatherData = await weatherRes.json();
+} catch {
+  return <div>Weather data could not be parsed.</div>;
+}
+
+// 3. Handle schema validation errors
+try {
   WeatherSchema.parse(weatherData);
+} catch {
+  return <div>Weather data is invalid.</div>;
+}
+
+
   await logj({
     domain: "jonathan",
     level: "info",
