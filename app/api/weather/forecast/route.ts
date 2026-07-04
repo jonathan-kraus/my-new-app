@@ -80,6 +80,9 @@ export async function GET(req: Request) {
     meta: { built: { ...built, eventIndex: ++jei } },
   });
 
+let raw;
+
+try {
   const weatherRes = await fetch(
     `https://api.open-meteo.com/v1/forecast` +
       `?latitude=${location.latitude}` +
@@ -88,10 +91,66 @@ export async function GET(req: Request) {
       `&daily=temperature_2m_max,temperature_2m_min,weathercode` +
       `&temperature_unit=fahrenheit` +
       `&timezone=auto`,
+    { cache: "no-store" }
   );
 
-  const raw = await weatherRes.json();
-  const parsed = ForecastResponseSchema.safeParse(raw);
+  if (!weatherRes.ok) {
+    await logj({
+      domain: "weather",
+      level: "error",
+      message: "Open-Meteo returned non-200",
+      file: "app/api/weather/forecast/route.ts",
+      line: 100,
+      payload: { status: weatherRes.status },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
+
+    return Response.json({ error: "external-api-failed" });
+  }
+
+  try {
+    raw = await weatherRes.json();
+  } catch (err) {
+    await logj({
+      domain: "weather",
+      level: "error",
+      message: "Open-Meteo JSON parse failed",
+      file: "app/api/weather/forecast/route.ts",
+      line: 115,
+      payload: { error: String(err) },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
+
+    return Response.json({ error: "invalid-json" });
+  }
+} catch (err) {
+  await logj({
+    domain: "weather",
+    level: "error",
+    message: "Open-Meteo fetch threw",
+    file: "app/api/weather/forecast/route.ts",
+    line: 130,
+    payload: { error: String(err) },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
+
+  return Response.json({ error: "fetch-threw" });
+}
+
+// ⭐ HARDEN FORECAST: prevent crashes when Open-Meteo returns partial data
+const parsed = ForecastResponseSchema.safeParse(raw);
+
+if (!parsed.success) {
+  await logj({
+    domain: "weather",
+    level: "error",
+    message: "Forecast unavailable",
+    file: "app/api/weather/forecast/route.ts",
+    line: 150,
+    payload: { raw, issues: parsed.error.flatten() },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
+
   await logj({
     domain: "weather",
     level: "info",
@@ -122,7 +181,7 @@ export async function GET(req: Request) {
       { error: "Forecast unavailable", raw },
       { status: 502 },
     );
-  }
+  }}
 
   const daily = parsed.data.daily;
 
