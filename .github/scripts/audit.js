@@ -58,7 +58,8 @@ console.log("🔍 -- Auditing", Object.keys(payload).length, "packages…");
 const IGNORE = [
   "1121191",                 // your existing ignore
   "GHSA-92pp-h63x-v22m",     // @hono/node-server (bundled by Prisma)
-  "GHSA-qx2v-qp2m-jg93"      // postcss (bundled by Next.js)
+  "GHSA-qx2v-qp2m-jg93",     // postcss (bundled by Next.js)
+  "1106734"                  // @eslint/plugin-kit low-severity dev tooling advisory
 ];
 
 

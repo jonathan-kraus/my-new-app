@@ -6,6 +6,7 @@
   "private": true,
   "packageManager": "pnpm@11.9.0",
   "overrides": {
+    "@eslint/plugin-kit": "^0.3.4",
     "ajv": "^8.18.0",
     "brace-expansion": "^5.0.5",
     "effect": "^3.20.0",
@@ -133,6 +134,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@eslint/plugin-kit": "0.3.4",
     "@tailwindcss/postcss": "^4.3.2",
     "@types/jest": "^30.0.0",
     "@types/luxon": "^3.7.2",
