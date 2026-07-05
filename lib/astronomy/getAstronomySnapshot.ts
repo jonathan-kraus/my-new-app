@@ -37,17 +37,6 @@ export async function getAstronomySnapshot(
         },
       });
 
-      const built = await staticUniversalContext("ASTRONOMY_SNAPSHOT");
-      await logj({
-        domain: "jonathan",
-        level: "info",
-        message: "Astronomy snapshot fetched",
-        file: "lib/astronomy/getAstronomySnapshot.ts",
-        line: 27,
-        payload: { today },
-        meta: { built: { ...built, eventIndex: 1 } },
-      });
-
       const tomorrow = await db.astronomySnapshot.findUnique({
         where: {
           locationId_dateString: {
