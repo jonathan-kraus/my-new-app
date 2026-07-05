@@ -134,7 +134,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@eslint/plugin-kit": "0.3.4",
+    "@eslint/plugin-kit": "0.7.2",
     "@tailwindcss/postcss": "^4.3.2",
     "@types/jest": "^30.0.0",
     "@types/luxon": "^3.7.2",
@@ -148,7 +148,7 @@
     "@vitest/coverage-v8": "^4.1.9",
     "@vitest/ui": "^4.1.9",
     "dotenv": "^17.4.2",
-    "eslint": "^9.17.0",
+    "eslint": "^10.6.0",
     "husky": "^9.1.7",
     "js-yaml": "^5.2.1",
     "prettier": "^3.9.4",
