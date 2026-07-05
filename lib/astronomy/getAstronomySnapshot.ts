@@ -62,7 +62,7 @@ export async function getAstronomySnapshot(
 
     astronomySnapshotCache.set(cacheKey, snapshotPromise);
 
-    snapshotPromise = snapshotPromise.catch((error) => {
+    snapshotPromise = snapshotPromise.catch((error: unknown) => {
       astronomySnapshotCache.delete(cacheKey);
       throw error;
     });
