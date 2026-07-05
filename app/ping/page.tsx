@@ -6,15 +6,7 @@ import { NextRequest } from "next/server";
 import { logj } from "@/lib/log/logj";
 
 export default async function AxiomTestPage(req: NextRequest) {
-  const ctx = {
-    requestId: crypto.randomUUID(),
-    page: "ping",
-    userId: "JK",
-    zulu: new Date().toISOString(),
-    local: new Date().toLocaleString("en-US", {
-      timeZone: "America/New_York",
-    }),
-  };
+
   let jei = 0;
   const built = await buildUniversalContext(req as any, "PING");
   await logj({
@@ -22,7 +14,7 @@ export default async function AxiomTestPage(req: NextRequest) {
     level: "info",
     message: `** PING ** `,
     file: "app/ping/page.tsx",
-    line: 20,
+    line: 12,
     payload: {
       some: "payload",
     },
@@ -44,7 +36,7 @@ export default async function AxiomTestPage(req: NextRequest) {
     level: "info",
     message: `"Fetched two APIs"`,
     file: "app/ping/page.tsx",
-    line: 20,
+    line: 34,
     payload: {
       some: "payload",
     },
