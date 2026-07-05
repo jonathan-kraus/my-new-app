@@ -37,9 +37,8 @@ export async function sendTestEmail(message: string, subject: string) {
 
   const finalText = message ?? baseEmail.text;
 
-  const finalHtml =
-    message ?
-      `<pre style="font-family: system-ui">${message}</pre>`
+  const finalHtml = message
+    ? `<pre style="font-family: system-ui">${message}</pre>`
     : baseEmail.html;
 
   const mailerSend = new MailerSend({

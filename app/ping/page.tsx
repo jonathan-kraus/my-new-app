@@ -6,7 +6,6 @@ import { NextRequest } from "next/server";
 import { logj } from "@/lib/log/logj";
 
 export default async function AxiomTestPage(req: NextRequest) {
-
   let jei = 0;
   const built = await buildUniversalContext(req as any, "PING");
   await logj({
