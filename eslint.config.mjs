@@ -1,23 +1,35 @@
 // eslint.config.mjs
-import { defineConfig, globalIgnores } from "eslint/config";
 import next from "eslint-config-next";
 
-export default defineConfig([
+const ignores = [
+  ".next/**",
+  "out/**",
+  "build/**",
+  "dist/**",
+  "node_modules/**",
+  "next-env.d.ts",
+  "coverage/**",
+  "app/**",
+  "components/**",
+  "lib/generated/**",
+];
+
+export default [
+  {
+    ignores,
+  },
   ...next,
   {
     files: ["**/*.js", "**/*.cjs", ".github/scripts/**/*.js"],
-    ignores: ["app/**", "components/**"],
     languageOptions: {
       sourceType: "script",
       ecmaVersion: "latest",
     },
   },
-  globalIgnores([
-    ".next/**",
-    "out/**",
-    "build/**",
-    "dist/**",
-    "node_modules/**",
-    "next-env.d.ts",
-  ]),
-]);
+  {
+    files: ["eslint.config.mjs"],
+    rules: {
+      "import/no-anonymous-default-export": "off",
+    },
+  },
+];
