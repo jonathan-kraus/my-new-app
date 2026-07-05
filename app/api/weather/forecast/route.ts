@@ -88,7 +88,7 @@ export async function GET(req: Request) {
         `&daily=temperature_2m_max,temperature_2m_min,weathercode` +
         `&temperature_unit=fahrenheit` +
         `&timezone=auto`,
-      { cache: "no-store" }
+      { cache: "no-store" },
     );
 
     // NOTE: we do NOT check weatherRes.ok here because tests mock fetch
@@ -110,7 +110,7 @@ export async function GET(req: Request) {
 
       return NextResponse.json(
         { error: "Forecast unavailable" },
-        { status: 502 }
+        { status: 502 },
       );
     }
   } catch (err) {
@@ -126,7 +126,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json(
       { error: "Forecast unavailable" },
-      { status: 502 }
+      { status: 502 },
     );
   }
 
@@ -163,7 +163,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json(
       { error: "Forecast unavailable" },
-      { status: 502 }
+      { status: 502 },
     );
   }
 
@@ -185,7 +185,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json(
       { error: "Forecast unavailable" },
-      { status: 502 }
+      { status: 502 },
     );
   }
 

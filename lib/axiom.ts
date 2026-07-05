@@ -2,14 +2,18 @@ type AxiomEvent = Record<string, unknown>;
 
 export async function axiomIngest<T extends AxiomEvent>(
   events: T[],
-  datasetOverride?: string
+  datasetOverride?: string,
 ) {
   const token = process.env.AXIOM_TOKEN?.trim();
   const orgId = process.env.AXIOM_ORG_ID?.trim();
   const dataset = (datasetOverride ?? process.env.AXIOM_DATASET)?.trim();
 
   if (!token || !orgId || !dataset) {
-    return { ok: true as const, skipped: true as const, reason: "missing_config" };
+    return {
+      ok: true as const,
+      skipped: true as const,
+      reason: "missing_config",
+    };
   }
 
   if (!events.length) {
@@ -32,7 +36,7 @@ export async function axiomIngest<T extends AxiomEvent>(
     if (!res.ok) {
       const text = await res.text();
       throw new Error(
-        `Axiom ingest failed for dataset "${dataset}": ${res.status} ${text.slice(0, 1000)}`
+        `Axiom ingest failed for dataset "${dataset}": ${res.status} ${text.slice(0, 1000)}`,
       );
     }
 
@@ -41,7 +45,7 @@ export async function axiomIngest<T extends AxiomEvent>(
     throw new Error(
       `Axiom ingest request failed for dataset "${dataset}": ${
         error instanceof Error ? error.message : String(error)
-      }`
+      }`,
     );
   }
 }
