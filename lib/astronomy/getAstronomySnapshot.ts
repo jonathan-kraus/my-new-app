@@ -5,9 +5,11 @@ import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
 import { format, addDays } from "date-fns";
 
-const astronomyLogGuard = (globalThis as typeof globalThis & {
-  __astronomySnapshotLogKeys?: Set<string>;
-}).__astronomySnapshotLogKeys ??= new Set<string>();
+const astronomyLogGuard = ((
+  globalThis as typeof globalThis & {
+    __astronomySnapshotLogKeys?: Set<string>;
+  }
+).__astronomySnapshotLogKeys ??= new Set<string>());
 
 export async function getAstronomySnapshot(
   locationId: string,

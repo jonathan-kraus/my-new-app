@@ -9,15 +9,22 @@ import { staticUniversalContext } from "@/lib/log/buildj";
 const built = staticUniversalContext("Jonathan");
 let jei = 0;
 const message_begin = "SendTestEmail -- ";
-logj({
-  domain: "jonathan",
-  level: "info",
-  message: message_begin + "Checked email_enabled message",
-  file: "lib/server/email/sendTestEmail.ts",
-  line: 12,
-  payload: { some: "data" },
-  meta: { built: { ...built, eventIndex: ++jei } },
-});
+
+const shouldLogModuleInitMessage =
+  process.env.NODE_ENV !== "production" ||
+  process.env.NEXT_PHASE === "phase-production-build";
+
+if (shouldLogModuleInitMessage) {
+  void logj({
+    domain: "jonathan",
+    level: "info",
+    message: message_begin + "Checked email_enabled message",
+    file: "lib/server/email/sendTestEmail.ts",
+    line: 12,
+    payload: { some: "data" },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
+}
 
 export async function sendTestEmail(message: string, subject: string) {
   // --- 1. Read flag -----------
@@ -46,8 +53,9 @@ export async function sendTestEmail(message: string, subject: string) {
 
   const finalText = message ?? baseEmail.text;
 
-  const finalHtml = message
-    ? `<pre style="font-family: system-ui">${message}</pre>`
+  const finalHtml =
+    message ?
+      `<pre style="font-family: system-ui">${message}</pre>`
     : baseEmail.html;
 
   const mailerSend = new MailerSend({
