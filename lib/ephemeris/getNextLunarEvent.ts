@@ -15,25 +15,23 @@ export function getNextLunarEvent(snapshot: {
 
   const events: { name: string; time: Date }[] = [];
 
-  // Only include events that exist
+  // Moonrise
   if (snapshot.moonriseAbsolute) {
-    events.push({
-      name: "Moonrise",
-      time: new Date(snapshot.moonriseAbsolute),
-    });
+    const d = new Date(snapshot.moonriseAbsolute);
+    if (!isNaN(d.getTime())) {
+      events.push({ name: "Moonrise", time: d });
+    }
   }
 
+  // Moonset
   if (snapshot.moonsetAbsolute) {
-    events.push({
-      name: "Moonset",
-      time: new Date(snapshot.moonsetAbsolute),
-    });
+    const d = new Date(snapshot.moonsetAbsolute);
+    if (!isNaN(d.getTime())) {
+      events.push({ name: "Moonset", time: d });
+    }
   }
 
-  // Filter out events that already happened
-  const upcoming = events.filter((e) => e.time.getTime() > now.getTime());
-
-  // If there are no events, return a fallback value.
+  // Fallback if no valid events
   if (events.length === 0) {
     return {
       name: "No lunar event",
@@ -47,12 +45,29 @@ export function getNextLunarEvent(snapshot: {
     };
   }
 
-  // If no events remain, pick the earliest one tomorrow (rare but possible)
-  const next =
-    upcoming.length > 0
-      ? upcoming.sort((a, b) => a.time.getTime() - b.time.getTime())[0]!
-      : events.sort((a, b) => a.time.getTime() - b.time.getTime())[0]!;
+  // Filter out past events
+  const upcoming = events.filter((e) => e.time.getTime() > now.getTime());
 
+  // Sort helper
+  const sortByTime = (arr: { name: string; time: Date }[]) =>
+    arr.sort((a, b) => a.time.getTime() - b.time.getTime());
+
+  // Determine next event — strict TS-safe narrowing
+  let next: { name: string; time: Date };
+
+  if (upcoming.length > 0) {
+    const sorted = sortByTime(upcoming);
+    const first = sorted.at(0);
+    if (!first) throw new Error("Unexpected empty sorted upcoming array");
+    next = first;
+  } else {
+    const sorted = sortByTime(events);
+    const first = sorted.at(0);
+    if (!first) throw new Error("Unexpected empty sorted events array");
+    next = first;
+  }
+
+  // Countdown
   const diffMs = next.time.getTime() - now.getTime();
   const countdown = formatCountdown(diffMs);
 
