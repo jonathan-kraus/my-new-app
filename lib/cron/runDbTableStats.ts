@@ -16,7 +16,7 @@ export async function runDbTableStats(ctx: {
   const start = Date.now();
   const snapshotDate = atLocalMidnight(new Date());
   const built = staticUniversalContext("runstats");
-  let jei = 0;
+  let jei = 1;
   await logj({
     domain: "jonathan",
     level: "info",
