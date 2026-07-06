@@ -1,6 +1,9 @@
 packages:
   - .
 
+minimumReleaseAge: 0
+trustLockfile: true
+
 allowBuilds:
   "@prisma/engines": true
   esbuild: true

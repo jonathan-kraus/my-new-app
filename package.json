@@ -4,7 +4,7 @@
   "type": "module",
   "vercel-build-id": "4",
   "private": true,
-  "packageManager": "pnpm@11.9.0",
+  "packageManager": "pnpm@11.10.0",
   "overrides": {
     "@eslint/plugin-kit": "^0.3.4",
     "ajv": "^8.18.0",
