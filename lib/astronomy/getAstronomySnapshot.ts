@@ -21,6 +21,14 @@ export async function getAstronomySnapshot(
   locationId: string,
   now = new Date(),
 ) {
+  // 🚫 Prevent DB + logging during build
+  if (process.env.NEXT_PHASE === "phase-production-build") {
+    return {
+      today: null,
+      tomorrow: null,
+    };
+  }
+
   const todayStr = format(now, "yyyy-MM-dd");
   const tomorrowStr = format(addDays(now, 1), "yyyy-MM-dd");
   const cacheKey = `${locationId}:${todayStr}`;

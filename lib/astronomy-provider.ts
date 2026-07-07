@@ -11,7 +11,7 @@ export async function fetchAstronomyMultiDay(
   const end = addDays(start, days - 1);
   const built = await staticUniversalContext("ASTRONOMY_PROVIDER");
   let jei = 0;
-    await logj({
+  await logj({
     domain: "astronomy",
     level: "info",
     message: `** Astronomy Data Fetched **`,
@@ -19,7 +19,7 @@ export async function fetchAstronomyMultiDay(
     line: 14,
     payload: {
       start: start,
-      end: end
+      end: end,
     },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
