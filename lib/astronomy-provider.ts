@@ -1,4 +1,6 @@
 import { addDays, format } from "date-fns";
+import { logj } from "@/lib/log/logj";
+import { staticUniversalContext } from "@/lib/log/buildj";
 
 export async function fetchAstronomyMultiDay(
   lat: number,
@@ -7,7 +9,20 @@ export async function fetchAstronomyMultiDay(
 ) {
   const start = new Date();
   const end = addDays(start, days - 1);
-
+  const built = await staticUniversalContext("ASTRONOMY_PROVIDER");
+  let jei = 0;
+    await logj({
+    domain: "astronomy",
+    level: "info",
+    message: `** Astronomy Data Fetched **`,
+    file: "app/page.tsx",
+    line: 14,
+    payload: {
+      start: start,
+      end: end
+    },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
   const url = new URL("https://api.open-meteo.com/v1/forecast");
   url.searchParams.set("latitude", lat.toString());
   url.searchParams.set("longitude", lon.toString());
