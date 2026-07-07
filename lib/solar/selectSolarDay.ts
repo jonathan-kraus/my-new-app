@@ -14,7 +14,8 @@ export function selectSolarDay(
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
   );
 
-  // Find today
+  // Find today2
+
   const today = sorted.find((d) => {
     const dt = new Date(d.date);
     return (

@@ -8,7 +8,7 @@ export function buildTestEmail() {
         <h2 style="color: #1e3a8a;">Weather Email Test</h2>
         <p>This is a test email sent from your dashboard to confirm MailerSend is working.</p>
         <p style="margin-top: 20px; color: #6b7280; font-size: 12px;">
-          Sent automatically from your system.
+           Sent automatically from your system.
         </p>
       </div>
     `,
