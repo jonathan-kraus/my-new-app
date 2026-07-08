@@ -43,8 +43,11 @@ export async function GET(req: Request) {
       level: "info",
       message: "🌟 Forecast cache hit",
       file: "app/api/weather/forecast/route.ts",
-      line: 43,
-      payload: { locationId },
+      line: 41,
+      payload: {
+        locationId: location.id,
+        fetchedAt: cached.fetchedAt.toISOString(),
+      },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
 
@@ -70,7 +73,7 @@ export async function GET(req: Request) {
     message: "🌟 Forecast cache miss → fetching external API",
     file: "app/api/weather/forecast/route.ts",
     line: 71,
-    payload: { locationId },
+    payload: { locationId: location.id },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
 
@@ -139,8 +142,8 @@ export async function GET(req: Request) {
     level: "info",
     message: "🌟 Forecast API response",
     file: "app/api/weather/forecast/route.ts",
-    line: 95,
-    payload: { raw, locationId },
+    line: 137,
+    payload: { raw, locationId: location.id },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
 
@@ -156,7 +159,7 @@ export async function GET(req: Request) {
       level: "error",
       message: "Forecast unavailable",
       file: "app/api/weather/forecast/route.ts",
-      line: 150,
+      line: 154,
       payload: { raw, issues: parsed.error.flatten() },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
