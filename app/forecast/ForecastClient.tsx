@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LocationSelector } from "@/components/LocationSelector";
 import { ForecastCard } from "./ForecastCard";
 import { CurrentWeather } from "./CurrentWeather";
@@ -49,6 +49,8 @@ export default function ForecastClient({
   });
 
   const [forecast, setForecast] = useState<ForecastResponse | null>(null);
+  const latestForecastRequestRef = useRef(0);
+  const logEventIndexRef = useRef(0);
 
   // Fallback to second location if nothing saved
   useEffect(() => {
@@ -67,10 +69,69 @@ export default function ForecastClient({
   // Fetch forecast when location changes
   useEffect(() => {
     if (!selectedId) return;
+    const requestId = ++latestForecastRequestRef.current;
+    const controller = new AbortController();
 
-    fetch(`/api/weather/forecast?locationId=${selectedId}`)
+    fetch(`/api/weather/forecast?locationId=${selectedId}`, {
+      signal: controller.signal,
+      cache: "no-store",
+    })
       .then((r) => r.json())
-      .then(setForecast);
+      .then((next: ForecastResponse) => {
+        // Ignore stale responses from older requests.
+        if (requestId !== latestForecastRequestRef.current) return;
+
+        setForecast((prev) => {
+          // In dev Strict Mode, duplicate mounts can issue near-simultaneous
+          // requests. If the second response is from cache for the same
+          // snapshot, keep the first API source so the badge is accurate to the
+          // initial fetch that just happened.
+          if (
+            prev &&
+            prev.source === "api" &&
+            next.source === "cache" &&
+            prev.fetchedAt === next.fetchedAt &&
+            prev.location.id === next.location.id
+          ) {
+            void fetch("/api/log", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              keepalive: true,
+              body: JSON.stringify({
+                domain: "weather",
+                level: "info",
+                message:
+                  "Forecast source guard kept api over cache duplicate response",
+                file: "app/forecast/ForecastClient.tsx",
+                line: 99,
+                payload: {
+                  locationId: next.location.id,
+                  fetchedAt: next.fetchedAt,
+                  previousSource: prev.source,
+                  nextSource: next.source,
+                },
+                meta: {
+                  built: {
+                    route: "forecast-client",
+                    requestId: crypto.randomUUID(),
+                    eventIndex: ++logEventIndexRef.current,
+                  },
+                },
+              }),
+            }).catch((error: unknown) => {
+              console.error("Failed to write forecast source guard log", error);
+            });
+            return prev;
+          }
+          return next;
+        });
+      })
+      .catch((err: unknown) => {
+        if ((err as { name?: string })?.name === "AbortError") return;
+        console.error("Forecast fetch failed", err);
+      });
+
+    return () => controller.abort();
   }, [selectedId]);
 
   const timeline = forecast ? useForecastTimeline(forecast.forecast) : null;
