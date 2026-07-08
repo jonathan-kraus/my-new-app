@@ -32,7 +32,7 @@ section "Updating pnpm"
 corepack prepare pnpm@latest --activate
 
 section "Checking outdated dependencies"
-pnpm outdated || warn "Some dependencies are outdated"
+pnpm check-out || warn "Some dependencies are outdated"
 
 section "Update dependencies"
 pnpm update --latest || warn "Failed to update dependencies"

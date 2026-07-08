@@ -38,6 +38,7 @@
     "genmsg": "node scripts/gen-commit-msg.js",
     "commit": "git commit -F .git/COMMIT_MSG",
     "mn": "bash ./scripts/mn.sh",
+    "check-out": "node ./scripts/check-outdated.ts",
     "smart-commit": "pnpm genmsg && git add . && git commit -F .git/COMMIT_MSG && git push origin main",
     "pfix": "prettier --write . --ignore-path .prettierignore",
     "postinstall": "prisma generate",
