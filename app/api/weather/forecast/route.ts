@@ -47,6 +47,11 @@ export async function GET(req: Request) {
       line: 41,
       payload: {
         locationId: resolvedLocationId,
+        cutoff: cutoff.toISOString(),
+        cachedFetchedAt: cached.fetchedAt.toISOString(),
+      },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
         fetchedAt: cached.fetchedAt.toISOString(),
       },
       meta: { built: { ...built, eventIndex: ++jei } },
