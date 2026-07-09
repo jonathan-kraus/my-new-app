@@ -31,9 +31,10 @@ export async function GET(req: Request) {
   // ----------------------------------------
   // CACHE CHECK
   // ----------------------------------------
+  const resolvedLocationId = location.id;
   const cutoff = new Date(Date.now() - FORECAST_CACHE_MINUTES * 60_000);
   const cached = await db.forecastSnapshot.findFirst({
-    where: { locationId, fetchedAt: { gte: cutoff } },
+    where: { locationId: resolvedLocationId, fetchedAt: { gte: cutoff } },
     orderBy: { fetchedAt: "desc" },
   });
 
@@ -45,7 +46,7 @@ export async function GET(req: Request) {
       file: "app/api/weather/forecast/route.ts",
       line: 41,
       payload: {
-        locationId: location.id,
+        locationId: resolvedLocationId,
         fetchedAt: cached.fetchedAt.toISOString(),
       },
       meta: { built: { ...built, eventIndex: ++jei } },
@@ -73,7 +74,7 @@ export async function GET(req: Request) {
     message: "🌟 Forecast cache miss → fetching external API",
     file: "app/api/weather/forecast/route.ts",
     line: 71,
-    payload: { locationId: location.id },
+    payload: { locationId: resolvedLocationId },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
 
@@ -143,7 +144,7 @@ export async function GET(req: Request) {
     message: "🌟 Forecast API response",
     file: "app/api/weather/forecast/route.ts",
     line: 137,
-    payload: { raw, locationId: location.id },
+    payload: { raw, locationId: resolvedLocationId },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
 
@@ -201,7 +202,7 @@ export async function GET(req: Request) {
     message: "🌟 Forecast API parsed",
     file: "app/api/weather/forecast/route.ts",
     line: 185,
-    payload: { locationId },
+    payload: { locationId: resolvedLocationId },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
 
@@ -210,7 +211,7 @@ export async function GET(req: Request) {
   // ----------------------------------------
   const snapshot = await db.forecastSnapshot.create({
     data: {
-      locationId,
+      locationId: resolvedLocationId,
       payload: {
         current: weather.current_weather,
         forecast: weather.daily,
