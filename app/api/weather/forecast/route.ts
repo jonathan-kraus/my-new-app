@@ -52,10 +52,6 @@ export async function GET(req: Request) {
       },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
-        fetchedAt: cached.fetchedAt.toISOString(),
-      },
-      meta: { built: { ...built, eventIndex: ++jei } },
-    });
 
     const weather = cached.payload as {
       current: any;
