@@ -11,7 +11,7 @@ export function computeGoldenBlueHours(day: {
   //
   // Golden hour calculations (your existing logic)
   //
-  const sunriseGoldenStart = new Date(sunrise.getTime() - 10 * 60 * 1000);
+  const sunriseGoldenStart = new Date(sunrise.getTime() - 10 * 6 * 10 * 1000);
   const sunriseGoldenEnd = new Date(sunrise.getTime() + 30 * 60 * 1000);
 
   const sunsetGoldenStart = new Date(sunset.getTime() - 30 * 60 * 1000);
