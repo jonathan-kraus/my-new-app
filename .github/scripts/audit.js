@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\.github\scripts\audit.js
- * @LastEditTime: 2026-07-03 19:24:37
+ * @LastEditTime: 2026-07-09 14:30:05
  */
 import fs from "fs";
 import * as yaml from "js-yaml";
@@ -114,28 +114,35 @@ for (const [pkg, items] of Object.entries(advisories)) {
     const vulnerableRange = adv.vulnerable_versions;
 
     // skip ignored advisories
-    if (IGNORE.includes(adv.id)) {
+    if (IGNORE.includes(String(adv.id))) {
       continue;
     }
 
-// skip ignored advisories
-if (IGNORE.includes(String(adv.id))) {
-  continue;
-}
+    // find the snapshot key for this package
+    const snapshotKey = Object.keys(deps).find(k => k.startsWith(pkg + "@"));
+    const snapshot = deps[snapshotKey];
 
-if (semver.satisfies(installed, vulnerableRange)) {
-  realFindings.push({
-    pkg,
-    installed,
-    title: adv.title,
-    severity: adv.severity,
-    vulnerableRange,
-    id: adv.id,
-  });
-}
+    // skip dev-only dependencies (pnpm v9)
+    const isDev = snapshot?.dev === true;
+    if (isDev) {
+      continue;
+    }
 
+    if (semver.satisfies(installed, vulnerableRange)) {
+      realFindings.push({
+        pkg,
+        installed,
+        title: adv.title,
+        severity: adv.severity,
+        vulnerableRange,
+        id: adv.id,
+      });
+    }
   }
 }
+
+
+
 const built = true;
 
 // -----------------------------
