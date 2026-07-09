@@ -42,6 +42,39 @@
     {
       "matchUpdateTypes": ["minor", "patch"],
       "automerge": true
+    },
+    {
+      "description": "Pin TypeScript to v5.x (TS 7 breaks ESLint + Next.js tooling)",
+      "matchPackageNames": ["typescript"],
+      "allowedVersions": "<6.0.0",
+      "enabled": true
+    },
+    {
+      "description": "Pin ESLint to v9.x (ESLint 10 breaks plugins)",
+      "matchPackageNames": ["eslint"],
+      "allowedVersions": "<10.0.0",
+      "enabled": true
+    },
+    {
+      "description": "Pin @typescript-eslint packages to versions compatible with TS 5.x",
+      "matchPackagePrefixes": ["@typescript-eslint/"],
+      "allowedVersions": "<7.0.0",
+      "enabled": true
+    },
+    {
+      "description": "Prevent upgrades of eslint-plugin-* packages beyond ESLint 9 compatibility",
+      "matchPackagePrefixes": [
+        "eslint-plugin-import",
+        "eslint-plugin-react",
+        "eslint-plugin-jsx-a11y"
+      ],
+      "allowedVersions": "<8.0.0",
+      "enabled": true
+    },
+    {
+      "description": "Group safe upgrades together",
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "safe-minor-patch-updates"
     }
   ]
 }
