@@ -51,6 +51,12 @@ export async function getDashboardData(): Promise<DashboardData> {
   ]);
 
   const vercel = vercelResult.ok ? vercelResult.data : null;
+  console.log("dashboard vercelResult.ok", vercelResult.ok);
+console.log("dashboard vercel raw", JSON.stringify(vercel, null, 2));
+console.log(
+  "dashboard vercel count",
+  Array.isArray(vercel?.deployments) ? vercel.deployments.length : "not-array",
+);
   const github = githubResult.ok ? githubResult.data : [];
   const astronomy = astronomyResult.ok
     ? (astronomyResult.data.snapshot ?? null)
