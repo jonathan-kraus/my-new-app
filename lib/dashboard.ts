@@ -1,14 +1,25 @@
-// lib/dashboard.ts
 export const dynamic = "force-dynamic";
+
 import { getVercelDeployments } from "./vercel";
 import { getRecentActivity } from "./github";
 import { getEphemerisSnapshot } from "@/lib/ephemeris/getEphemerisSnapshot";
 import { logj } from "@/lib/log/logj";
-import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { staticUniversalContext } from "@/lib/log/buildj";
 
-const built = await buildUniversalContext(req as any, "DASHBOARD");
-let jei = 0;
-export function logDashboardAstronomy(snapshot: unknown) {
+
+export interface VercelDeploymentsResponse {
+  deployments: any[];
+  pagination: any;
+}
+
+export interface DashboardData {
+  vercel: VercelDeploymentsResponse | null;
+  github: any[] | null;
+  astronomy: any | null;
+  system: { generatedAt: string };
+}
+const built = staticUniversalContext("Dashboard");
+export async function logDashboardAstronomy(snapshot: unknown) {
   await logj({
     domain: "DashboardAstronomy",
     level: "info",
@@ -16,86 +27,84 @@ export function logDashboardAstronomy(snapshot: unknown) {
     file: "dashboard.ts",
     line: 12,
     payload: { some: "data", snapshot },
-
     meta: {
-      built,
+      route: "lib/dashboard.ts",
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  });
+}
+
+export async function getDashboardData(): Promise<DashboardData> {
+  const projectId = process.env.VERCEL_PROJECT_ID!;
+
+  const [vercelResult, githubResult, astronomyResult] = await Promise.all([
+    safe<VercelDeploymentsResponse>(() => getVercelDeployments(projectId)),
+    safe(() => getRecentActivity("jonathan-kraus")),
+    safe(() => getEphemerisSnapshot("KOP")),
+  ]);
+
+  const vercel = vercelResult.ok ? vercelResult.data : null;
+
+  await logj({
+    domain: "vercel",
+    level: "info",
+    message: "Dashboard Vercel deployments initial call",
+    file: "dashboard.ts",
+    line: 55,
+    payload: {
+      vercelResultOk: vercelResult.ok,
+      vercelRaw: vercel,
+      vercelCount: Array.isArray(vercel?.deployments)
+        ? vercel.deployments.length
+        : "not-array",
+    },
+    meta: {
+      route: "lib/dashboard.ts",
+      zulu: new Date().toISOString(),
     },
   });
 
-  export interface VercelDeploymentsResponse {
-    deployments: any[];
-    pagination: any;
+  console.log("dashboard vercelResult.ok", vercelResult.ok);
+  console.log("dashboard vercel raw", JSON.stringify(vercel, null, 2));
+  console.log(
+    "dashboard vercel count",
+    Array.isArray(vercel?.deployments)
+      ? vercel.deployments.length
+      : "not-array",
+  );
+
+  const github = githubResult.ok ? githubResult.data : [];
+  const astronomy = astronomyResult.ok
+    ? (astronomyResult.data.snapshot ?? null)
+    : null;
+
+  if (astronomy) {
+    await logDashboardAstronomy(astronomy);
   }
 
-  export interface DashboardData {
-    vercel: VercelDeploymentsResponse | null;
-    github: any[] | null;
-    astronomy: any | null;
-    system: { generatedAt: string };
-  }
+  return {
+    vercel,
+    github,
+    astronomy,
+    system: {
+      generatedAt: new Date().toISOString(),
+    },
+  };
+}
 
-  export async function getDashboardData(): Promise<DashboardData> {
-    const projectId = process.env.VERCEL_PROJECT_ID!;
+export type SafeResult<T> =
+  | { ok: true; data: T }
+  | { ok: false; error: unknown };
 
-    const [vercelResult, githubResult, astronomyResult] = await Promise.all([
-      safe<VercelDeploymentsResponse>(() => getVercelDeployments(projectId)),
-      safe(() => getRecentActivity("jonathan-kraus")),
-      safe(() => getEphemerisSnapshot("KOP")),
-    ]);
-
-    const vercel = vercelResult.ok ? vercelResult.data : null;
-    await logj({
-      domain: "vercel",
-      level: "info",
-      message: "Dashboard Vercel deployments initial call",
-      file: "dashboard.ts",
-      line: 55,
-      payload: {
-        "dashboard vercelResult.ok": vercelResult.ok,
-        "dashboard vercel raw": JSON.stringify(vercel, null, 2),
-        "dashboard vercel count": Array.isArray(vercel?.deployments)
-          ? vercel.deployments.length
-          : "not-array",
-      },
-      meta: {
-        built,
-      },
-    });
-    console.log("dashboard vercelResult.ok", vercelResult.ok);
-    console.log("dashboard vercel raw", JSON.stringify(vercel, null, 2));
-    console.log(
-      "dashboard vercel count",
-      Array.isArray(vercel?.deployments)
-        ? vercel.deployments.length
-        : "not-array",
-    );
-    const github = githubResult.ok ? githubResult.data : [];
-    const astronomy = astronomyResult.ok
-      ? (astronomyResult.data.snapshot ?? null)
-      : null;
-    if (astronomy) {
-      logDashboardAstronomy(astronomy);
-    }
-    return {
-      vercel,
-      github,
-      astronomy,
-      system: {
-        generatedAt: new Date().toISOString(),
-      },
-    };
-  }
-
-  export type SafeResult<T> =
-    { ok: true; data: T } | { ok: false; error: unknown };
-
-  export async function safe<T>(fn: () => Promise<T>): Promise<SafeResult<T>> {
-    try {
-      const data = await fn();
-      return { ok: true, data };
-    } catch (error) {
-      console.error("Dashboard fetch error:", error);
-      return { ok: false, error };
-    }
+export async function safe<T>(fn: () => Promise<T>): Promise<SafeResult<T>> {
+  try {
+    const data = await fn();
+    return { ok: true, data };
+  } catch (error) {
+    console.error("Dashboard fetch error:", error);
+    return { ok: false, error };
   }
 }
