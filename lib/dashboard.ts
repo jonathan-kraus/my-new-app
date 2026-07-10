@@ -19,29 +19,22 @@ export interface DashboardData {
   system: { generatedAt: string };
 }
 const built = staticUniversalContext("Dashboard");
+let jei = 0;
 export async function logDashboardAstronomy(snapshot: unknown) {
   await logj({
     domain: "DashboardAstronomy",
     level: "info",
     message: "Dashboard Astronomy snapshot",
     file: "dashboard.ts",
-    line: 12,
+    line: 24,
     payload: { some: "data", snapshot },
-    meta: {
-      route: "lib/dashboard.ts",
-      zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
-    },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
 }
 
 export async function getDashboardData(): Promise<DashboardData> {
-  const projectId = process.env.VERCEL_PROJECT_ID!;
-
   const [vercelResult, githubResult, astronomyResult] = await Promise.all([
-    safe<VercelDeploymentsResponse>(() => getVercelDeployments(projectId)),
+    safe<VercelDeploymentsResponse>(() => getVercelDeployments()),
     safe(() => getRecentActivity("jonathan-kraus")),
     safe(() => getEphemerisSnapshot("KOP")),
   ]);
@@ -53,18 +46,16 @@ export async function getDashboardData(): Promise<DashboardData> {
     level: "info",
     message: "Dashboard Vercel deployments initial call",
     file: "dashboard.ts",
-    line: 55,
+    line: 46,
     payload: {
       vercelResultOk: vercelResult.ok,
       vercelRaw: vercel,
+      vercelError: vercelResult.ok ? null : String(vercelResult.error),
       vercelCount: Array.isArray(vercel?.deployments)
         ? vercel.deployments.length
         : "not-array",
     },
-    meta: {
-      route: "lib/dashboard.ts",
-      zulu: new Date().toISOString(),
-    },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
 
   console.log("dashboard vercelResult.ok", vercelResult.ok);

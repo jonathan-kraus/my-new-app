@@ -54,10 +54,8 @@ export interface VercelDeploymentsResponse {
 }
 
 export async function getVercelDeployments(
-  projectId: string,
 ): Promise<VercelDeploymentsResponse> {
   return vercelRequest<VercelDeploymentsResponse>("/v6/deployments", {
-    projectId,
     limit: "5",
   });
 }
