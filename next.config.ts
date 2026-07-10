@@ -1,7 +1,9 @@
 // next.config.js
-/** @type {import('next').NextConfig} */
-const { withAxiom } = require("next-axiom");
-const nextConfig = {
+import { withAxiom } from "next-axiom";
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  
   images: {
     remotePatterns: [
       {
@@ -18,4 +20,4 @@ const nextConfig = {
   },
 };
 
-module.exports = withAxiom(nextConfig);
+export default withAxiom(nextConfig);

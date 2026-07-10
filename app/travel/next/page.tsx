@@ -1,6 +1,8 @@
 // app/travel/next/page.tsx
 import { getNextTravelSnapshot } from "@/lib/server/travel/getNextTravelSnapshot";
 import { DateTime } from "luxon";
+import { IngestButton } from "./IngestButton";
+
 
 export default async function TravelNextPage() {
   const trip = await getNextTravelSnapshot();
@@ -11,6 +13,7 @@ export default async function TravelNextPage() {
       <div className="p-6 text-slate-200">
         <h1 className="text-2xl font-bold mb-2">Your Next Trip</h1>
         <p className="text-slate-400">No upcoming trips found.</p>
+        <IngestButton />
       </div>
     );
   }
