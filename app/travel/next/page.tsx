@@ -3,7 +3,6 @@ import { getNextTravelSnapshot } from "@/lib/server/travel/getNextTravelSnapshot
 import { DateTime } from "luxon";
 import { IngestButton } from "./IngestButton";
 
-
 export default async function TravelNextPage() {
   const trip = await getNextTravelSnapshot();
 

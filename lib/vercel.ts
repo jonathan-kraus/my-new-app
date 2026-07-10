@@ -1,4 +1,4 @@
-// lib/vercel.ts h
+// lib/vercel.ts
 
 export async function vercelRequest<T>(
   path: string,
@@ -31,7 +31,7 @@ export interface VercelDeploymentsResponse {
 export async function getVercelDeployments(
   projectId: string,
 ): Promise<VercelDeploymentsResponse> {
-  return vercelRequest<VercelDeploymentsResponse>("/v13/deployments", {
+  return vercelRequest<VercelDeploymentsResponse>("/v6/deployments", {
     projectId,
   });
 }

@@ -13,17 +13,17 @@ ${changedFiles.map((f) => `- ${f}`).join("\n")}
 Write only the commit message. No explanations.
   `.trim();
 
-const OLLAMA_URL = process.env.OLLAMA_URL ?? "http://127.0.0.1:11434";
+  const OLLAMA_URL = process.env.OLLAMA_URL ?? "http://127.0.0.1:11434";
 
-const response = await fetch(`${OLLAMA_URL}/api/generate`, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    model: "mistral",
-    prompt,
-    stream: true,
-  }),
-});
+  const response = await fetch(`${OLLAMA_URL}/api/generate`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "mistral",
+      prompt,
+      stream: true,
+    }),
+  });
   let full = "";
 
   for await (const chunk of response.body) {
