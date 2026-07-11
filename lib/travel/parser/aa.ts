@@ -145,16 +145,13 @@ function extractConfirmationCode($: cheerio.CheerioAPI): string {
   // ISSUED DATE
   // -----------------------------
 function extractIssuedDate($: cheerio.CheerioAPI): string {
-  // Restrict selector to AA table cells
   const el = $('td:contains("Issued"), span:contains("Issued")').first();
   if (!el.length) return "";
 
-  // Combine next sibling + fallback text
   const raw =
     clean(el.next().text().trim()) ||
     clean(el.text().trim());
 
-  // Remove CSS garbage
   if (
     raw.includes("inherit") ||
     raw.includes("important") ||
@@ -163,7 +160,6 @@ function extractIssuedDate($: cheerio.CheerioAPI): string {
     return "";
   }
 
-  // ⭐ Extract ONLY the date using regex
   const dateMatch = raw.match(
     /\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},\s+\d{4}\b/
   );
@@ -171,24 +167,6 @@ function extractIssuedDate($: cheerio.CheerioAPI): string {
   return dateMatch ? dateMatch[0] : "";
 }
 
-  // Fallback: extract from the same element (e.g., "Issued: May 1, 2026")
-  const raw = clean(el.text());
-  const parts = raw.split(":");
-
-  if (parts.length > 1 && parts[1]) {
-  const candidate = parts[1]!.trim(); // now guaranteed safe
-  if (
-    candidate &&
-    !candidate.includes("inherit") &&
-    !candidate.includes("important") &&
-    !candidate.includes("text-decoration")
-  ) {
-    return candidate;
-  }
-}
-
-  return "";
-}
 
 
   // -----------------------------
