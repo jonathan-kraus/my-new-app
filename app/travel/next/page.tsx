@@ -2,6 +2,8 @@
 import { getNextTravelSnapshot } from "@/lib/server/travel/getNextTravelSnapshot";
 import { DateTime } from "luxon";
 import { IngestButton } from "./IngestButton";
+import { TripSummaryCard } from "@/app/components/travel/TripSummaryCard";
+
 
 export default async function TravelNextPage() {
   const trip = await getNextTravelSnapshot();
@@ -10,6 +12,7 @@ export default async function TravelNextPage() {
   if (!trip || !trip.segments || trip.segments.length === 0) {
     return (
       <div className="p-6 text-slate-200">
+      <IngestButton />
         <h1 className="text-2xl font-bold mb-2">Your Next Trip</h1>
         <p className="text-slate-400">No upcoming trips found.</p>
         <IngestButton />
@@ -45,7 +48,8 @@ export default async function TravelNextPage() {
         </p>
         <p className="text-slate-400">{first.date}</p>
       </div>
-
+{/* Multi‑segment summary */}
+<TripSummaryCard snapshot={trip} />
       {/* Trip Summary */}
       <div className="bg-slate-900 p-4 rounded border border-slate-700 space-y-2">
         <h2 className="text-lg font-semibold text-emerald-300">
