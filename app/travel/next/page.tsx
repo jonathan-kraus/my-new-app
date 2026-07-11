@@ -12,10 +12,8 @@ export default async function TravelNextPage() {
   if (!trip || !trip.segments || trip.segments.length === 0) {
     return (
       <div className="p-6 text-slate-200">
-      <IngestButton />
         <h1 className="text-2xl font-bold mb-2">Your Next Trip</h1>
         <p className="text-slate-400">No upcoming trips found.</p>
-        <IngestButton />
       </div>
     );
   }
@@ -39,6 +37,7 @@ export default async function TravelNextPage() {
 
   return (
     <div className="p-6 text-slate-100 space-y-6">
+      <IngestButton />
       <h1 className="text-2xl font-bold">Your Next Trip</h1>
 
       {/* Countdown */}
