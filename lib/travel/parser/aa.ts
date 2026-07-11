@@ -145,22 +145,31 @@ function extractConfirmationCode($: cheerio.CheerioAPI): string {
   // ISSUED DATE
   // -----------------------------
 function extractIssuedDate($: cheerio.CheerioAPI): string {
-  const el = $('td:contains("Issued"), span:contains("Issued")')
-.first();
+  // Restrict selector to AA table cells
+  const el = $('td:contains("Issued"), span:contains("Issued")').first();
   if (!el.length) return "";
 
-  // Try the next sibling first
-  const nextText = clean(el.next().text().trim());
+  // Combine next sibling + fallback text
+  const raw =
+    clean(el.next().text().trim()) ||
+    clean(el.text().trim());
 
-  // Skip CSS garbage
+  // Remove CSS garbage
   if (
-    nextText &&
-    !nextText.includes("inherit") &&
-    !nextText.includes("important") &&
-    !nextText.includes("text-decoration")
+    raw.includes("inherit") ||
+    raw.includes("important") ||
+    raw.includes("text-decoration")
   ) {
-    return nextText;
+    return "";
   }
+
+  // ⭐ Extract ONLY the date using regex
+  const dateMatch = raw.match(
+    /\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},\s+\d{4}\b/
+  );
+
+  return dateMatch ? dateMatch[0] : "";
+}
 
   // Fallback: extract from the same element (e.g., "Issued: May 1, 2026")
   const raw = clean(el.text());
