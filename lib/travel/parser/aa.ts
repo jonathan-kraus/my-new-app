@@ -65,6 +65,22 @@ function clean(text: string): string {
     .replace(/\s+/g, " ")
     .trim();
 }
+function extractBase64Html(raw: string): string | null {
+  const marker = "Content-Transfer-Encoding: base64";
+  const idx = raw.indexOf(marker);
+  if (idx === -1) return null;
+
+  // Find the start of the base64 payload
+  const payloadStart = raw.indexOf("\n\n", idx);
+  if (payloadStart === -1) return null;
+
+  const base64Payload = raw.slice(payloadStart).trim();
+  try {
+    return Buffer.from(base64Payload, "base64").toString("utf8");
+  } catch {
+    return null;
+  }
+}
 
 function debugTree(node: cheerio.Cheerio<any>, $: cheerio.CheerioAPI) {
   const chain: string[] = [];
@@ -93,8 +109,10 @@ export function parseAAEmail(
   // -----------------------------
   // HTML PARSING
   // -----------------------------
-  const fullyDecoded = decodeQuotedPrintable(html);
-  const $ = cheerio.load(fullyDecoded);
+const base64Html = extractBase64Html(html);
+const fullyDecoded = base64Html ?? decodeQuotedPrintable(html);
+const $ = cheerio.load(fullyDecoded);
+
 function extractConfirmationCode($: cheerio.CheerioAPI): string {
   const candidates = [
     $('*:contains("Confirmation code")').next(),
