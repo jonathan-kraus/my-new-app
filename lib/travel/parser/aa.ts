@@ -120,6 +120,11 @@ function extractConfirmationCode($: cheerio.CheerioAPI): string {
     $('strong:contains("Record Locator")').next(),
     $('p:contains("Record Locator")').next(),
     $('div:contains("Record Locator")').next(),
+
+    // ⭐ Pattern C — unlabeled AA confirmation code
+    $('td.itinerary-small-text')
+      .filter((_, el) => /^[A-Z0-9]{5,8}$/.test(clean($(el).text())))
+      .first(),
   ];
 
   for (const sel of selectors) {
@@ -127,13 +132,14 @@ function extractConfirmationCode($: cheerio.CheerioAPI): string {
     if (text && /^[A-Z0-9]{5,8}$/.test(text)) return text;
   }
 
-  // Regex fallback — catches ALL formats
+  // Regex fallback
   const regex = /Record Locator[:\s]+([A-Z0-9]{5,8})/i;
   const match = $.root().text().match(regex);
   if (match) return match[1] ?? "";
 
   return "";
 }
+
 
 
   const confirmationCode = extractConfirmationCode($);
