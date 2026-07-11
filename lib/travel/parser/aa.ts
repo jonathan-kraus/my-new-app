@@ -95,25 +95,45 @@ export function parseAAEmail(
   // -----------------------------
   const fullyDecoded = decodeQuotedPrintable(html);
   const $ = cheerio.load(fullyDecoded);
+function extractConfirmationCode($: cheerio.CheerioAPI): string {
+  const candidates = [
+    $('*:contains("Confirmation code")').next(),
+    $('*:contains("Record Locator")').next(),
+    $('td:contains("Confirmation")').find("span").last(),
+    $('td:contains("Record Locator")').find("span").last(),
+    $('strong:contains("Record Locator")').next(),
+    $('p:contains("Record Locator")').next(),
+  ];
+
+  for (const c of candidates) {
+    const text = clean(c.text());
+    if (text && text.length <= 10) return text;
+  }
+
+  return "";
+}
 
   // -----------------------------
   // CONFIRMATION CODE
   // -----------------------------
-  const confirmationCode = clean(
-    $('span:contains("Confirmation code")').next().text().trim() ||
-      $('td:contains("Confirmation code") span').last().text().trim(),
-  );
+  const confirmationCode = extractConfirmationCode($);
+function extractIssuedDate($: cheerio.CheerioAPI) {
+  const el = $('*:contains("Issued")').first();
+  if (!el.length) return "";
 
+  const next = clean(el.next().text());
+  if (next) return next;
+
+  // fallback: same element, split by colon
+  const split = clean(el.text()).split(":");
+  return split[1]?.trim() ?? "";
+}
   // -----------------------------
   // ISSUED DATE
   // -----------------------------
-  const issuedDate = clean(
-    $(".background-color-standard span")
-      .filter((_, el) => $(el).text().includes("Issued"))
-      .next()
-      .text()
-      .trim(),
-  );
+
+  const issuedDate = extractIssuedDate($);
+
 
   // -----------------------------
   // PASSENGERS
@@ -168,7 +188,9 @@ export function parseAAEmail(
   // -----------------------------
   const segments: ParsedSegment[] = [];
 
-  const airportBlocks = $("td.itinerary-iata").toArray();
+const airportBlocks = $(
+  "td.itinerary-iata, td.itinerary-iata-code, td.iata-code, td.iata, td.airport-code"
+).toArray();
 
   for (let i = 0; i < airportBlocks.length; i += 2) {
     const depEl = airportBlocks[i];
