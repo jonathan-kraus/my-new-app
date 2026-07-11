@@ -1,7 +1,5 @@
 import * as cheerio from "cheerio";
 import { logj } from "@/lib/log/logj";
-import { buildUniversalContext } from "@/lib/log/build-universal-context";
-import { buildTestEmail } from "../../buildTestEmail";
 
 // -----------------------------
 // TYPES
@@ -81,6 +79,7 @@ function extractBase64Html(raw: string): string | null {
     return null;
   }
 }
+
 
 function debugTree(node: cheerio.Cheerio<any>, $: cheerio.CheerioAPI) {
   const chain: string[] = [];
