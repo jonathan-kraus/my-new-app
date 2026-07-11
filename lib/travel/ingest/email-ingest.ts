@@ -15,65 +15,43 @@ export async function ingestTravelEmails() {
   const eventIndex = 22;
   const requestId = crypto.randomUUID();
 
-  if (files.length === 0) {
-    throw new Error("No .eml files found in travel-emails/");
+  // ⭐ Require EXACTLY one file
+  if (files.length !== 1) {
+    console.log(
+      "INGEST: expected exactly one .eml file, found:",
+      files.length,
+      "→ ingestion aborted"
+    );
+    return;
   }
 
-  // ⭐ DEBUG: print mtimes when ingestion is triggered
-  {
-    const debugDir = path.join(process.cwd(), "travel-emails");
-    const debugFiles = fs.readdirSync(debugDir).filter((f) => f.endsWith(".eml"));
+  // ⭐ Deterministic single-file ingestion
+  const fileName: string = files[0]!;
+  const filePath = path.join(dir, fileName);
 
-    for (const fileName of debugFiles) {
-      const fullPath = path.join(debugDir, fileName);
-      const stats = fs.statSync(fullPath);
-
-      console.log(
-        "DEBUG MTime:",
-        fileName,
-        "mtime:",
-        stats.mtime.toISOString(),
-        "size:",
-        stats.size
-      );
+  logit(
+    "jonathan",
+    {
+      level: "info",
+      message: "Selected email for ingestion: " + filePath,
+      fileName,
+    },
+    { eventIndex },
+    {
+      file: "email-ingest.ts",
+      route: "N/A",
+      userId: undefined,
+      requestId,
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
     }
-  }
+  );
 
-
-  // Sort newest first
-  const sorted = files
-    .map((name) => {
-      const full = path.join(dir, name);
-      const stat = fs.statSync(full);
-
-      logit(
-        "jonathan",
-        {
-          level: "info",
-          message: "Pick email: " + full,
-          full,
-          lastTwo: name.split("-").slice(-2).join("-") + ".eml",
-        },
-        { eventIndex },
-        {
-          file: "email-ingest.ts",
-          route: "N/A",
-          userId: undefined,
-          requestId,
-          zulu: new Date().toISOString(),
-          local: new Date().toLocaleString("en-US", {
-            timeZone: "America/New_York",
-          }),
-        },
-      );
-
-      return { name, full, mtime: stat.mtime };
-    })
-    .sort((a, b) => b.mtime.getTime() - a.mtime.getTime());
-
-  const { full: filePath } = sorted[0]!;
   console.log("INGEST: selected file =", filePath);
 
+  // ⭐ Read raw file safely
   const raw = fs.readFileSync(filePath, "utf8");
 
   // ⭐ REAL MIME PARSING — this is the fix
