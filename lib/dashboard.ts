@@ -27,7 +27,7 @@ export async function logDashboardAstronomy(snapshot: unknown) {
     message: "Dashboard Astronomy snapshot",
     file: "dashboard.ts",
     line: 24,
-    payload: { some: "data", snapshot },
+    payload: { some: "data1", snapshot },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
 }
