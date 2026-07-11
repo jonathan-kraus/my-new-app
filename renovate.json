@@ -3,7 +3,6 @@
   "prCreation": "immediate",
   "rebaseWhen": "behind-base-branch",
   "ignoreTests": false,
-
   "packageRules": [
     {
       "matchManagers": ["npm", "pnpm"],
@@ -11,29 +10,24 @@
       "automergeType": "pr",
       "platformAutomerge": true
     },
-
     {
       "groupName": "Next.js ecosystem",
-      "matchPackagePatterns": ["^next$", "^eslint-config-next$", "^@next/", "^@vercel/"]
+      "matchPackageNames": ["/^next$/", "/^eslint-config-next$/", "/^@next\\//", "/^@vercel\\//"]
     },
-
     {
       "groupName": "Prisma",
       "matchUpdateTypes": ["major"],
       "enabled": false,
-      "matchPackagePatterns": ["^prisma$", "^@prisma/"]
+      "matchPackageNames": ["/^prisma$/", "/^@prisma\\//"]
     },
-
     {
       "groupName": "Vitest",
-      "matchPackagePatterns": ["^vitest$", "^@vitest/"]
+      "matchPackageNames": ["/^vitest$/", "/^@vitest\\//"]
     },
-
     {
       "groupName": "Tailwind",
-      "matchPackagePatterns": ["^tailwindcss$", "^@tailwindcss/"]
+      "matchPackageNames": ["/^tailwindcss$/", "/^@tailwindcss\\//"]
     },
-
     {
       "description": "Pin TypeScript to v5.x (TS 7 breaks ESLint + Next.js tooling)",
       "matchPackageNames": ["typescript"],
@@ -46,19 +40,14 @@
     },
     {
       "description": "Pin @typescript-eslint packages to versions compatible with TS 5.x",
-      "matchPackagePatterns": ["^@typescript-eslint/"],
+      "matchPackageNames": ["/^@typescript-eslint\\//"],
       "allowedVersions": "<7.0.0"
     },
     {
       "description": "Prevent upgrades of eslint-plugin-* packages beyond ESLint 9 compatibility",
-      "matchPackagePatterns": [
-        "^eslint-plugin-import$",
-        "^eslint-plugin-react$",
-        "^eslint-plugin-jsx-a11y$"
-      ],
+      "matchPackageNames": ["/^eslint-plugin-import$/", "/^eslint-plugin-react$/", "/^eslint-plugin-jsx-a11y$/"],
       "allowedVersions": "<8.0.0"
     },
-
     {
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "safe-minor-patch-updates",
