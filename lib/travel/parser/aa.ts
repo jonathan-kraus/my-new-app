@@ -5,15 +5,10 @@ import { logj } from "@/lib/log/logj";
 // MIME EXTRACTION
 // -----------------------------
 function extractHtmlPart(raw: string): string {
-  // Find the HTML MIME part
-  const htmlStart = raw.indexOf("Content-Type: text/html");
-  if (htmlStart === -1) return raw;
-
-  // Skip headers → find start of actual HTML payload
-  const partStart = raw.indexOf("\n\n", htmlStart);
-  if (partStart === -1) return raw;
-
-  return raw.slice(partStart).trim();
+  const htmlRegex = /Content-Type:\s*text\/html[^;]*;?.*?\r?\n\r?\n([\s\S]+)/i;
+  const match = raw.match(htmlRegex);
+  if (!match) return raw;
+  return (match[1] ?? "").trim();
 }
 
 function extractBase64Html(raw: string): string | null {
