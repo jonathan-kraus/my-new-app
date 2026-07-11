@@ -53,8 +53,7 @@ export interface VercelDeploymentsResponse {
   pagination: any;
 }
 
-export async function getVercelDeployments(
-): Promise<VercelDeploymentsResponse> {
+export async function getVercelDeployments(): Promise<VercelDeploymentsResponse> {
   return vercelRequest<VercelDeploymentsResponse>("/v6/deployments", {
     limit: "5",
   });

@@ -20,7 +20,7 @@ export async function ingestTravelEmails() {
     console.log(
       "INGEST: expected exactly one .eml file, found:",
       files.length,
-      "→ ingestion aborted"
+      "→ ingestion aborted",
     );
     return;
   }
@@ -46,7 +46,7 @@ export async function ingestTravelEmails() {
       local: new Date().toLocaleString("en-US", {
         timeZone: "America/New_York",
       }),
-    }
+    },
   );
 
   console.log("INGEST: selected file =", filePath);

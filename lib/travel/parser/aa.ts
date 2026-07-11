@@ -11,7 +11,6 @@ function extractHtmlPart(raw: string): string {
   return (match[1] ?? "").trim();
 }
 
-
 function extractBase64Html(raw: string): string | null {
   const marker = "Content-Transfer-Encoding: base64";
   const idx = raw.indexOf(marker);
@@ -113,30 +112,29 @@ export function parseAAEmail(
   // -----------------------------
   // CONFIRMATION CODE
   // -----------------------------
-function extractConfirmationCode($: cheerio.CheerioAPI): string {
-  const candidates = [
-    $('*:contains("Confirmation code")').next(),
-    $('*:contains("Record Locator")').next(),
-    $('td:contains("Confirmation")').find("span").last(),
-    $('td:contains("Record Locator")').find("span").last(),
-    $('strong:contains("Record Locator")').next(),
-    $('p:contains("Record Locator")').next(),
-    $('div:contains("Record Locator")').next(),
-  ];
+  function extractConfirmationCode($: cheerio.CheerioAPI): string {
+    const candidates = [
+      $('*:contains("Confirmation code")').next(),
+      $('*:contains("Record Locator")').next(),
+      $('td:contains("Confirmation")').find("span").last(),
+      $('td:contains("Record Locator")').find("span").last(),
+      $('strong:contains("Record Locator")').next(),
+      $('p:contains("Record Locator")').next(),
+      $('div:contains("Record Locator")').next(),
+    ];
 
-  for (const c of candidates) {
-    const text = clean(c.text());
-    if (text && text.length <= 10) return text;
+    for (const c of candidates) {
+      const text = clean(c.text());
+      if (text && text.length <= 10) return text;
+    }
+
+    // Fallback: regex search
+    const regex = /Record Locator[:\s]+([A-Z0-9]{5,8})/i;
+    const match = fullyDecoded.match(regex);
+    if (match) return match[1] ?? "";
+
+    return "";
   }
-
-  // Fallback: regex search
-  const regex = /Record Locator[:\s]+([A-Z0-9]{5,8})/i;
-  const match = fullyDecoded.match(regex);
-  if (match) return match[1] ?? "";
-
-  return "";
-}
-
 
   const confirmationCode = extractConfirmationCode($);
   const issuedDate = extractIssuedDate($);
@@ -144,30 +142,26 @@ function extractConfirmationCode($: cheerio.CheerioAPI): string {
   // -----------------------------
   // ISSUED DATE
   // -----------------------------
-function extractIssuedDate($: cheerio.CheerioAPI): string {
-  const el = $('td:contains("Issued"), span:contains("Issued")').first();
-  if (!el.length) return "";
+  function extractIssuedDate($: cheerio.CheerioAPI): string {
+    const el = $('td:contains("Issued"), span:contains("Issued")').first();
+    if (!el.length) return "";
 
-  const raw =
-    clean(el.next().text().trim()) ||
-    clean(el.text().trim());
+    const raw = clean(el.next().text().trim()) || clean(el.text().trim());
 
-  if (
-    raw.includes("inherit") ||
-    raw.includes("important") ||
-    raw.includes("text-decoration")
-  ) {
-    return "";
+    if (
+      raw.includes("inherit") ||
+      raw.includes("important") ||
+      raw.includes("text-decoration")
+    ) {
+      return "";
+    }
+
+    const dateMatch = raw.match(
+      /\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},\s+\d{4}\b/,
+    );
+
+    return dateMatch ? dateMatch[0] : "";
   }
-
-  const dateMatch = raw.match(
-    /\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2},\s+\d{4}\b/
-  );
-
-  return dateMatch ? dateMatch[0] : "";
-}
-
-
 
   // -----------------------------
   // PASSENGERS
@@ -222,7 +216,7 @@ function extractIssuedDate($: cheerio.CheerioAPI): string {
      td.iata-text, \
      td.airport-code-text, \
      td.airport, \
-     td.code"
+     td.code",
   ).toArray();
 
   const dateHeaders = $(".itinerary-header.darkmode-altblue")

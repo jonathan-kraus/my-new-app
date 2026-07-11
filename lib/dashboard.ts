@@ -6,7 +6,6 @@ import { getEphemerisSnapshot } from "@/lib/ephemeris/getEphemerisSnapshot";
 import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
 
-
 export interface VercelDeploymentsResponse {
   deployments: any[];
   pagination: any;
@@ -57,7 +56,7 @@ export async function getDashboardData(): Promise<DashboardData> {
     },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
-console.log("VERCEL_TOKEN suffix", process.env.VERCEL_TOKEN?.slice(-6));
+  console.log("VERCEL_TOKEN suffix", process.env.VERCEL_TOKEN?.slice(-6));
   console.log("dashboard vercelResult.ok", vercelResult.ok);
   console.log("dashboard vercel raw", JSON.stringify(vercel, null, 2));
   console.log(
@@ -87,8 +86,7 @@ console.log("VERCEL_TOKEN suffix", process.env.VERCEL_TOKEN?.slice(-6));
 }
 
 export type SafeResult<T> =
-  | { ok: true; data: T }
-  | { ok: false; error: unknown };
+  { ok: true; data: T } | { ok: false; error: unknown };
 
 export async function safe<T>(fn: () => Promise<T>): Promise<SafeResult<T>> {
   try {

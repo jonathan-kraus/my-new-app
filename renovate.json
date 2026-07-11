@@ -60,7 +60,7 @@
       "matchPackageNames": ["pnpm"],
       "allowedVersions": "<11.0.0",
       "enabled": true
-    }
+    },
     {
       "description": "Pin ESLint to v9.x (ESLint 10 breaks plugins)",
       "matchPackageNames": ["eslint"],
