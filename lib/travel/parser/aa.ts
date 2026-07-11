@@ -113,6 +113,32 @@ export function parseAAEmail(
   // CONFIRMATION CODE
   // -----------------------------
 function extractConfirmationCode($: cheerio.CheerioAPI): string {
+  // ⭐ 1. JSON-based extraction (most reliable)
+  const scripts = $("script").toArray();
+  for (const s of scripts) {
+    const text = $(s).html() || "";
+    try {
+      const json = JSON.parse(text);
+
+      // Look for reservationNumber or reservationId anywhere in the object
+      const candidates = [
+        json?.reservationNumber,
+        json?.reservationId,
+        json?.trip?.reservationNumber,
+        json?.reservation?.reservationId,
+      ];
+
+      for (const c of candidates) {
+        if (typeof c === "string" && /^[A-Z0-9]{5,8}$/.test(c)) {
+          return c;
+        }
+      }
+    } catch {
+      // Not JSON — skip
+    }
+  }
+
+  // ⭐ 2. HTML-based extraction (secondary)
   const selectors = [
     $('td:contains("Confirmation code")').next(),
     $('td:contains("Record Locator")').next(),
@@ -121,7 +147,7 @@ function extractConfirmationCode($: cheerio.CheerioAPI): string {
     $('p:contains("Record Locator")').next(),
     $('div:contains("Record Locator")').next(),
 
-    // ⭐ Pattern C — unlabeled AA confirmation code
+    // Unlabeled AA format
     $('td.itinerary-small-text')
       .filter((_, el) => /^[A-Z0-9]{5,8}$/.test(clean($(el).text())))
       .first(),
@@ -132,15 +158,13 @@ function extractConfirmationCode($: cheerio.CheerioAPI): string {
     if (text && /^[A-Z0-9]{5,8}$/.test(text)) return text;
   }
 
-  // Regex fallback
+  // ⭐ 3. Regex fallback
   const regex = /Record Locator[:\s]+([A-Z0-9]{5,8})/i;
   const match = $.root().text().match(regex);
   if (match) return match[1] ?? "";
 
   return "";
 }
-
-
 
   const confirmationCode = extractConfirmationCode($);
   const issuedDate = extractIssuedDate($);
