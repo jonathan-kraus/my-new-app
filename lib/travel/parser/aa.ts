@@ -5,11 +5,12 @@ import { logj } from "@/lib/log/logj";
 // MIME EXTRACTION
 // -----------------------------
 function extractHtmlPart(raw: string): string {
-  const htmlRegex = /Content-Type:\s*text\/html[^;]*;?.*?\r?\n\r?\n([\s\S]+)/i;
+  const htmlRegex = /Content-Type:\s*text\/html[\s\S]*?\r?\n\r?\n([\s\S]+)/i;
   const match = raw.match(htmlRegex);
   if (!match) return raw;
   return (match[1] ?? "").trim();
 }
+
 
 function extractBase64Html(raw: string): string | null {
   const marker = "Content-Transfer-Encoding: base64";

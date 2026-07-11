@@ -24,7 +24,14 @@ export async function ingestTravelEmails() {
     .map((name) => {
       const full = path.join(dir, name);
       const stat = fs.statSync(full);
+const dir = path.join(process.cwd(), "travel-emails");
+const files = fs.readdirSync(dir).filter((f) => f.endsWith(".eml"));
 
+for (const name of files) {
+  const full = path.join(dir, name);
+  const stat = fs.statSync(full);
+  console.log("FILE:", name, "mtime:", stat.mtime.toISOString());
+}
       logit(
         "jonathan",
         {
