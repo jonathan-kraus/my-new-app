@@ -145,7 +145,8 @@ function extractConfirmationCode($: cheerio.CheerioAPI): string {
   // ISSUED DATE
   // -----------------------------
 function extractIssuedDate($: cheerio.CheerioAPI): string {
-  const el = $('*:contains("Issued")').first();
+  const el = $('td:contains("Issued"), span:contains("Issued")')
+.first();
   if (!el.length) return "";
 
   // Try the next sibling first
