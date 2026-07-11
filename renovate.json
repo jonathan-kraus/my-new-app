@@ -50,6 +50,18 @@
       "enabled": true
     },
     {
+      "description": "Pin Node to v20.x (Node 22 breaks Prisma Dev Server + pnpm)",
+      "matchPackageNames": ["node"],
+      "allowedVersions": "<21.0.0",
+      "enabled": true
+    },
+    {
+      "description": "Pin pnpm to v10.x (pnpm 11 requires Node 22 and breaks Prisma Dev Server)",
+      "matchPackageNames": ["pnpm"],
+      "allowedVersions": "<11.0.0",
+      "enabled": true
+    }
+    {
       "description": "Pin ESLint to v9.x (ESLint 10 breaks plugins)",
       "matchPackageNames": ["eslint"],
       "allowedVersions": "<10.0.0",

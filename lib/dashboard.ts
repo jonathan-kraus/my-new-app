@@ -57,7 +57,7 @@ export async function getDashboardData(): Promise<DashboardData> {
     },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
-
+console.log("VERCEL_TOKEN suffix", process.env.VERCEL_TOKEN?.slice(-6));
   console.log("dashboard vercelResult.ok", vercelResult.ok);
   console.log("dashboard vercel raw", JSON.stringify(vercel, null, 2));
   console.log(
