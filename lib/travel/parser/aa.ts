@@ -139,22 +139,47 @@ function extractConfirmationCode($: cheerio.CheerioAPI): string {
 
 
   const confirmationCode = extractConfirmationCode($);
+  const issuedDate = extractIssuedDate($);
 
   // -----------------------------
   // ISSUED DATE
   // -----------------------------
-  function extractIssuedDate($: cheerio.CheerioAPI): string {
-    const el = $('*:contains("Issued")').first();
-    if (!el.length) return "";
+function extractIssuedDate($: cheerio.CheerioAPI): string {
+  const el = $('*:contains("Issued")').first();
+  if (!el.length) return "";
 
-    const next = clean(el.next().text());
-    if (next) return next;
+  // Try the next sibling first
+  const nextText = clean(el.next().text().trim());
 
-    const split = clean(el.text()).split(":");
-    return split[1]?.trim() ?? "";
+  // Skip CSS garbage
+  if (
+    nextText &&
+    !nextText.includes("inherit") &&
+    !nextText.includes("important") &&
+    !nextText.includes("text-decoration")
+  ) {
+    return nextText;
   }
 
-  const issuedDate = extractIssuedDate($);
+  // Fallback: extract from the same element (e.g., "Issued: May 1, 2026")
+  const raw = clean(el.text());
+  const parts = raw.split(":");
+
+  if (parts.length > 1 && parts[1]) {
+  const candidate = parts[1]!.trim(); // now guaranteed safe
+  if (
+    candidate &&
+    !candidate.includes("inherit") &&
+    !candidate.includes("important") &&
+    !candidate.includes("text-decoration")
+  ) {
+    return candidate;
+  }
+}
+
+  return "";
+}
+
 
   // -----------------------------
   // PASSENGERS
