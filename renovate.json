@@ -14,79 +14,55 @@
 
     {
       "groupName": "Next.js ecosystem",
-      "matchPackageNames": [
-        "/^next$/",
-        "/^eslint-config-next$/",
-        "/^@next//",
-        "/^@vercel//"
-      ]
+      "matchPackagePatterns": ["^next$", "^eslint-config-next$", "^@next/", "^@vercel/"]
     },
 
     {
       "groupName": "Prisma",
       "matchUpdateTypes": ["major"],
       "enabled": false,
-      "matchPackageNames": ["/^prisma$/", "/^@prisma//"]
+      "matchPackagePatterns": ["^prisma$", "^@prisma/"]
     },
 
     {
       "groupName": "Vitest",
-      "matchPackageNames": ["/^vitest$/", "/^@vitest//"]
+      "matchPackagePatterns": ["^vitest$", "^@vitest/"]
     },
 
     {
       "groupName": "Tailwind",
-      "matchPackageNames": ["/^tailwindcss$/", "/^@tailwindcss//"]
+      "matchPackagePatterns": ["^tailwindcss$", "^@tailwindcss/"]
     },
 
     {
-      "matchUpdateTypes": ["minor", "patch"],
-      "automerge": true
-    },
-    {
       "description": "Pin TypeScript to v5.x (TS 7 breaks ESLint + Next.js tooling)",
       "matchPackageNames": ["typescript"],
-      "allowedVersions": "<6.0.0",
-      "enabled": true
-    },
-    {
-      "description": "Pin Node to v20.x (Node 22 breaks Prisma Dev Server + pnpm)",
-      "matchPackageNames": ["node"],
-      "allowedVersions": "<21.0.0",
-      "enabled": true
-    },
-    {
-      "description": "Pin pnpm to v10.x (pnpm 11 requires Node 22 and breaks Prisma Dev Server)",
-      "matchPackageNames": ["pnpm"],
-      "allowedVersions": "<11.0.0",
-      "enabled": true
+      "allowedVersions": "<6.0.0"
     },
     {
       "description": "Pin ESLint to v9.x (ESLint 10 breaks plugins)",
       "matchPackageNames": ["eslint"],
-      "allowedVersions": "<10.0.0",
-      "enabled": true
+      "allowedVersions": "<10.0.0"
     },
     {
       "description": "Pin @typescript-eslint packages to versions compatible with TS 5.x",
-      "matchPackagePrefixes": ["@typescript-eslint/"],
-      "allowedVersions": "<7.0.0",
-      "enabled": true
+      "matchPackagePatterns": ["^@typescript-eslint/"],
+      "allowedVersions": "<7.0.0"
     },
     {
       "description": "Prevent upgrades of eslint-plugin-* packages beyond ESLint 9 compatibility",
-      "matchPackagePrefixes": [
-        "eslint-plugin-import",
-        "eslint-plugin-react",
-        "eslint-plugin-jsx-a11y"
+      "matchPackagePatterns": [
+        "^eslint-plugin-import$",
+        "^eslint-plugin-react$",
+        "^eslint-plugin-jsx-a11y$"
       ],
-      "allowedVersions": "<8.0.0",
-      "enabled": true
+      "allowedVersions": "<8.0.0"
     },
+
     {
-      "description": "Group safe upgrades together",
       "matchUpdateTypes": ["minor", "patch"],
-      "groupName": "safe-minor-patch-updates"
+      "groupName": "safe-minor-patch-updates",
+      "automerge": true
     }
   ]
 }
