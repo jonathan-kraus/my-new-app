@@ -112,29 +112,29 @@ export function parseAAEmail(
   // -----------------------------
   // CONFIRMATION CODE
   // -----------------------------
-  function extractConfirmationCode($: cheerio.CheerioAPI): string {
-    const candidates = [
-      $('*:contains("Confirmation code")').next(),
-      $('*:contains("Record Locator")').next(),
-      $('td:contains("Confirmation")').find("span").last(),
-      $('td:contains("Record Locator")').find("span").last(),
-      $('strong:contains("Record Locator")').next(),
-      $('p:contains("Record Locator")').next(),
-      $('div:contains("Record Locator")').next(),
-    ];
+function extractConfirmationCode($: cheerio.CheerioAPI): string {
+  const selectors = [
+    $('td:contains("Confirmation code")').next(),
+    $('td:contains("Record Locator")').next(),
+    $('span:contains("Record Locator")').last(),
+    $('strong:contains("Record Locator")').next(),
+    $('p:contains("Record Locator")').next(),
+    $('div:contains("Record Locator")').next(),
+  ];
 
-    for (const c of candidates) {
-      const text = clean(c.text());
-      if (text && text.length <= 10) return text;
-    }
-
-    // Fallback: regex search
-    const regex = /Record Locator[:\s]+([A-Z0-9]{5,8})/i;
-    const match = fullyDecoded.match(regex);
-    if (match) return match[1] ?? "";
-
-    return "";
+  for (const sel of selectors) {
+    const text = clean(sel.text());
+    if (text && /^[A-Z0-9]{5,8}$/.test(text)) return text;
   }
+
+  // Regex fallback — catches ALL formats
+  const regex = /Record Locator[:\s]+([A-Z0-9]{5,8})/i;
+  const match = $.root().text().match(regex);
+  if (match) return match[1] ?? "";
+
+  return "";
+}
+
 
   const confirmationCode = extractConfirmationCode($);
   const issuedDate = extractIssuedDate($);
