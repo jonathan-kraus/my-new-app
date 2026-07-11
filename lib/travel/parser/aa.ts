@@ -2,46 +2,35 @@ import * as cheerio from "cheerio";
 import { logj } from "@/lib/log/logj";
 
 // -----------------------------
-// TYPES
+// MIME EXTRACTION
 // -----------------------------
-export type ParsedPassenger = {
-  name: string;
-};
+function extractHtmlPart(raw: string): string {
+  // Find the HTML MIME part
+  const htmlStart = raw.indexOf("Content-Type: text/html");
+  if (htmlStart === -1) return raw;
 
-export type ParsedPayment = {
-  label: string;
-  amount: string;
-};
+  // Skip headers → find start of actual HTML payload
+  const partStart = raw.indexOf("\n\n", htmlStart);
+  if (partStart === -1) return raw;
 
-export type ParsedBag = {
-  description: string;
-  price?: string;
-};
+  return raw.slice(partStart).trim();
+}
 
-export type ParsedSegment = {
-  date: string;
-  departureAirport: string;
-  departureCity: string;
-  departureTime: string;
-  arrivalAirport: string;
-  arrivalCity: string;
-  arrivalTime: string;
-  flightNumber: string;
-  operatedBy: string;
-  seats: string[];
-};
+function extractBase64Html(raw: string): string | null {
+  const marker = "Content-Transfer-Encoding: base64";
+  const idx = raw.indexOf(marker);
+  if (idx === -1) return null;
 
-export type ParsedTravelSnapshot = {
-  source: "AA_EMAIL";
-  receivedAt: Date;
-  confirmationCode: string;
-  issuedDate: string;
-  rawHtml: string;
-  passengers: ParsedPassenger[];
-  payment: ParsedPayment[];
-  bags: ParsedBag[];
-  segments: ParsedSegment[];
-};
+  const payloadStart = raw.indexOf("\n\n", idx);
+  if (payloadStart === -1) return null;
+
+  const base64Payload = raw.slice(payloadStart).trim();
+  try {
+    return Buffer.from(base64Payload, "base64").toString("utf8");
+  } catch {
+    return null;
+  }
+}
 
 // -----------------------------
 // HELPERS
@@ -54,32 +43,14 @@ function decodeQuotedPrintable(input: string): string {
     );
 }
 
-// Normalize all the weirdness: NBSP, Â, zero-width, extra spaces
 function clean(text: string): string {
   return text
-    .replace(/\u00A0/g, " ") // NBSP
-    .replace(/Â/g, " ") // literal Â
-    .replace(/[\u200B-\u200D\uFEFF]/g, "") // zero-width chars
+    .replace(/\u00A0/g, " ")
+    .replace(/Â/g, " ")
+    .replace(/[\u200B-\u200D\uFEFF]/g, "")
     .replace(/\s+/g, " ")
     .trim();
 }
-function extractBase64Html(raw: string): string | null {
-  const marker = "Content-Transfer-Encoding: base64";
-  const idx = raw.indexOf(marker);
-  if (idx === -1) return null;
-
-  // Find the start of the base64 payload
-  const payloadStart = raw.indexOf("\n\n", idx);
-  if (payloadStart === -1) return null;
-
-  const base64Payload = raw.slice(payloadStart).trim();
-  try {
-    return Buffer.from(base64Payload, "base64").toString("utf8");
-  } catch {
-    return null;
-  }
-}
-
 
 function debugTree(node: cheerio.Cheerio<any>, $: cheerio.CheerioAPI) {
   const chain: string[] = [];
@@ -97,60 +68,96 @@ function debugTree(node: cheerio.Cheerio<any>, $: cheerio.CheerioAPI) {
 }
 
 // -----------------------------
+// TYPES
+// -----------------------------
+export type ParsedPassenger = { name: string };
+export type ParsedPayment = { label: string; amount: string };
+export type ParsedBag = { description: string; price?: string };
+export type ParsedSegment = {
+  date: string;
+  departureAirport: string;
+  departureCity: string;
+  departureTime: string;
+  arrivalAirport: string;
+  arrivalCity: string;
+  arrivalTime: string;
+  flightNumber: string;
+  operatedBy: string;
+  seats: string[];
+};
+export type ParsedTravelSnapshot = {
+  source: "AA_EMAIL";
+  receivedAt: Date;
+  confirmationCode: string;
+  issuedDate: string;
+  rawHtml: string;
+  passengers: ParsedPassenger[];
+  payment: ParsedPayment[];
+  bags: ParsedBag[];
+  segments: ParsedSegment[];
+};
+
+// -----------------------------
 // MAIN PARSER
 // -----------------------------
-const eventIndex = 22;
-const requestId = crypto.randomUUID();
 export function parseAAEmail(
-  html: string,
+  rawEmail: string,
   receivedAt: Date,
 ): ParsedTravelSnapshot {
-  // -----------------------------
-  // HTML PARSING
-  // -----------------------------
-const base64Html = extractBase64Html(html);
-const fullyDecoded = base64Html ?? decodeQuotedPrintable(html);
-const $ = cheerio.load(fullyDecoded);
+  // STEP 1: Extract HTML MIME part
+  const htmlPart = extractHtmlPart(rawEmail);
 
-function extractConfirmationCode($: cheerio.CheerioAPI): string {
-  const candidates = [
-    $('*:contains("Confirmation code")').next(),
-    $('*:contains("Record Locator")').next(),
-    $('td:contains("Confirmation")').find("span").last(),
-    $('td:contains("Record Locator")').find("span").last(),
-    $('strong:contains("Record Locator")').next(),
-    $('p:contains("Record Locator")').next(),
-  ];
+  // STEP 2: Decode base64 or quoted-printable
+  const base64Html = extractBase64Html(htmlPart);
+  const fullyDecoded = base64Html ?? decodeQuotedPrintable(htmlPart);
 
-  for (const c of candidates) {
-    const text = clean(c.text());
-    if (text && text.length <= 10) return text;
-  }
-
-  return "";
-}
+  // STEP 3: Load Cheerio
+  const $ = cheerio.load(fullyDecoded);
 
   // -----------------------------
   // CONFIRMATION CODE
   // -----------------------------
+  function extractConfirmationCode($: cheerio.CheerioAPI): string {
+    const candidates = [
+      $('*:contains("Confirmation code")').next(),
+      $('*:contains("Record Locator")').next(),
+      $('td:contains("Confirmation")').find("span").last(),
+      $('td:contains("Record Locator")').find("span").last(),
+      $('strong:contains("Record Locator")').next(),
+      $('p:contains("Record Locator")').next(),
+      $('div:contains("Record Locator")').next(),
+    ];
+
+    for (const c of candidates) {
+      const text = clean(c.text());
+      if (text && text.length <= 10) return text;
+    }
+
+    // Fallback: regex search
+    const regex = /Record Locator[:\s]+([A-Z0-9]{5,8})/i;
+    const match = fullyDecoded.match(regex);
+    if (match) return match[1];
+
+    return "";
+  }
+
   const confirmationCode = extractConfirmationCode($);
-function extractIssuedDate($: cheerio.CheerioAPI) {
-  const el = $('*:contains("Issued")').first();
-  if (!el.length) return "";
 
-  const next = clean(el.next().text());
-  if (next) return next;
-
-  // fallback: same element, split by colon
-  const split = clean(el.text()).split(":");
-  return split[1]?.trim() ?? "";
-}
   // -----------------------------
   // ISSUED DATE
   // -----------------------------
+  function extractIssuedDate($: cheerio.CheerioAPI): string {
+    const el = $('*:contains("Issued")').first();
+    if (!el.length) return "";
+
+    const next = clean(el.next().text());
+    if (next) return next;
+
+    const split = clean(el.text()).split(":");
+    return split[1]?.trim() ?? "";
+  }
 
   const issuedDate = extractIssuedDate($);
-
 
   // -----------------------------
   // PASSENGERS
@@ -189,25 +196,28 @@ function extractIssuedDate($: cheerio.CheerioAPI) {
     });
 
   // -----------------------------
-  // BAGS (none for now)
-  // -----------------------------
-  const bags: ParsedBag[] = [];
-
-  // -----------------------------
-  // DATES (index-based)
-  // -----------------------------
-  const dateHeaders = $(".itinerary-header.darkmode-altblue")
-    .map((_, el) => clean($(el).text()))
-    .get();
-
-  // -----------------------------
   // SEGMENTS
   // -----------------------------
   const segments: ParsedSegment[] = [];
 
-const airportBlocks = $(
-  "td.itinerary-iata, td.itinerary-iata-code, td.iata-code, td.iata, td.airport-code"
-).toArray();
+  const airportBlocks = $(
+    "td.itinerary-iata, \
+     td.itinerary-iata-code, \
+     td.iata-code, \
+     td.iata, \
+     td.airport-code, \
+     td.airportCode, \
+     td.iataCell, \
+     td.iata-code-cell, \
+     td.iata-text, \
+     td.airport-code-text, \
+     td.airport, \
+     td.code"
+  ).toArray();
+
+  const dateHeaders = $(".itinerary-header.darkmode-altblue")
+    .map((_, el) => clean($(el).text()))
+    .get();
 
   for (let i = 0; i < airportBlocks.length; i += 2) {
     const depEl = airportBlocks[i];
@@ -216,10 +226,8 @@ const airportBlocks = $(
 
     const segmentIndex = i / 2;
 
-    // -----------------------------
-    // DEPARTURE BLOCK
-    // -----------------------------
     const depTable = $(depEl).closest("table");
+    const arrTable = $(arrEl).closest("table");
 
     const departureAirport = clean($(depEl).text());
     const departureCity = clean(
@@ -229,26 +237,15 @@ const airportBlocks = $(
       depTable.find(".itinerary-text").first().text(),
     );
 
-    // -----------------------------
-    // ARRIVAL BLOCK
-    // -----------------------------
-    const arrTable = $(arrEl).closest("table");
-
     const arrivalAirport = clean($(arrEl).text());
     const arrivalCity = clean(
       arrTable.find(".itinerary-small-text").first().text(),
     );
     const arrivalTime = clean(arrTable.find(".itinerary-text").first().text());
 
-    // -----------------------------
-    // DATE (index-based: 0/1 → header[0], 2/3 → header[1], etc.)
-    // -----------------------------
     const dateIndex = Math.floor(segmentIndex);
     const date = dateHeaders[dateIndex] ?? dateHeaders[0] ?? "";
 
-    // -----------------------------
-    // FLIGHT NUMBER + OPERATED BY
-    // -----------------------------
     const flightCell = depTable.closest("td").next("td");
     const flightSpans = flightCell.find(".itinerary-small-text");
 
@@ -267,9 +264,6 @@ const airportBlocks = $(
         .join(" "),
     );
 
-    // -----------------------------
-    // SEATS (regex-filtered from merged row)
-    // -----------------------------
     const seatRow = arrTable
       .closest("td")
       .next("td")
@@ -282,20 +276,6 @@ const airportBlocks = $(
       .map((t) => t.replace("Seat:", "").replace(",", "").trim())
       .filter((t) => /^[0-9]{1,2}[A-Z]$/.test(t));
 
-    // -----------------------------
-    // LOGGING (shape you requested)
-    // -----------------------------
-    const built = {
-      ip: "34.228.247.225",
-      url: "https://www.kraus.my.id/api/ping",
-      zulu: "2026-03-30T17:45:12.421Z",
-      local: "3/30/2026, 1:45:12 PM",
-      route: "PING",
-      method: "GET",
-      userId: "UID-1234",
-      sessionEmail: "sessionEmail-1234",
-      sessionUser: "sessionUser-1234",
-    };
     logj({
       domain: "travel",
       level: "info",
@@ -304,23 +284,20 @@ const airportBlocks = $(
       line: 245,
       payload: {
         i: segmentIndex,
-        date: date,
-        departureAirport: departureAirport,
-        departureCity: departureCity,
-        departureTime: departureTime,
-        arrivalAirport: arrivalAirport,
-        arrivalCity: arrivalCity,
-        arrivalTime: arrivalTime,
-        flightNumber: flightNumber,
-        operatedBy: operatedBy,
-        seats: seats,
+        date,
+        departureAirport,
+        departureCity,
+        departureTime,
+        arrivalAirport,
+        arrivalCity,
+        arrivalTime,
+        flightNumber,
+        operatedBy,
+        seats,
         depTree: debugTree($(depEl), $),
         arrTree: debugTree($(arrEl), $),
         rawSeatRow: clean(seatRow.text()),
         rawFlightCell: clean(flightCell.text()),
-      },
-      meta: {
-        built,
       },
     });
 
@@ -346,7 +323,7 @@ const airportBlocks = $(
     rawHtml: fullyDecoded,
     passengers,
     payment,
-    bags,
+    bags: [],
     segments,
   };
 }
