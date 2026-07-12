@@ -36,34 +36,26 @@ jobs:
           cache: 'pnpm'
           cache-dependency-path: pnpm-lock.yaml
 
-      - name: Enable Corepack and pnpm
+      - name: Install pnpm
         run: |
-          corepack enable
-          corepack prepare pnpm@11.12.0 --activate
-          corepack install
-          mkdir -p ./.tools
-          corepack pnpm --version
-          echo "PNPM_CLI=$(pwd)/.tools/pnpm" >> "$GITHUB_ENV"
+          npm install -g pnpm@11.12.0
+          pnpm --version
 
       - name: Install dependencies
         run: |
-          export PATH="$(dirname "$PNPM_CLI"):$PATH"
-          corepack pnpm install --frozen-lockfile
+          pnpm install --frozen-lockfile
 
       - name: Generate Prisma Client
         run: |
-          export PATH="$(dirname "$PNPM_CLI"):$PATH"
-          corepack pnpm exec prisma generate
+          pnpm exec prisma generate
 
       - name: Check for outdated dependencies
         run: |
-          export PATH="$(dirname "$PNPM_CLI"):$PATH"
-          corepack pnpm outdated | grep -v -E '(prisma|@prisma)' || true
+          pnpm outdated | grep -v -E '(prisma|@prisma)' || true
 
       - name: Run tests with coverage
         run: |
-          export PATH="$(dirname "$PNPM_CLI"):$PATH"
-          corepack pnpm coverage
+          pnpm coverage
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v7
@@ -75,8 +67,7 @@ jobs:
 
       - name: Type check
         run: |
-          export PATH="$(dirname "$PNPM_CLI"):$PATH"
-          corepack pnpm run type-check
+          pnpm run type-check
 
       - name: Run security audit
         env:
@@ -101,5 +92,4 @@ jobs:
           AXIOM_DATASET: ${{ secrets.AXIOM_DATASET }}
           AXIOM_ORG_ID: ${{ secrets.AXIOM_ORG_ID }}
         run: |
-          export PATH="$(dirname "$PNPM_CLI"):$PATH"
-          corepack pnpm build
+          pnpm build
