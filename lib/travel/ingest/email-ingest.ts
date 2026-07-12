@@ -16,21 +16,22 @@ export async function ingestTravelEmails() {
   const built = await staticUniversalContext("INGEST");
   let jei = 0;
 
-//Require EXACTLY one file
+  // 1️⃣ File count check
+  console.log("INGEST: files found =", files.length);
   if (files.length !== 1) {
     logj({
-    domain: "jonathan",
-    level: "info",
-    message: "Starting travel email ingestion",
-    file: "email-ingest.ts",
-    line: 21,
-    payload: { filesCount: files.length },
-    meta: { built: { ...built, eventIndex: ++jei } },
-  });
+      domain: "jonathan",
+      level: "info",
+      message: "INGEST aborted: expected exactly one .eml file",
+      file: "email-ingest.ts",
+      line: 21,
+      payload: { filesCount: files.length },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
     return;
   }
 
-  // ⭐ Deterministic single-file ingestion
+  // 2️⃣ File selection
   const fileName: string = files[0]!;
   const filePath = path.join(dir, fileName);
 
@@ -43,15 +44,16 @@ export async function ingestTravelEmails() {
     payload: { fileName },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
-    
 
   console.log("INGEST: selected file =", filePath);
 
-  // ⭐ Read raw file safely
+  // 3️⃣ Read raw file
   const raw = fs.readFileSync(filePath, "utf8");
+  console.log("INGEST: raw file length =", raw.length);
 
-  // ⭐ REAL MIME PARSING — this is the fix
+  // 4️⃣ MIME parsing
   const parsedMime = await simpleParser(raw);
+  console.log("INGEST: parsedMime keys =", Object.keys(parsedMime));
 
   let html: string | null = null;
 
@@ -61,34 +63,47 @@ export async function ingestTravelEmails() {
     html = parsedMime.textAsHtml.toString();
   }
 
+  // 5️⃣ HTML extraction check
+  console.log("INGEST: html exists =", !!html, "length =", html?.length);
+
   if (!html) {
     console.error("INGEST ERROR: No HTML part found in email");
     throw new Error("No HTML part found in email");
   }
 
-    logj({
+  logj({
     domain: "jonathan",
     level: "info",
-    message: (`INGEST: extracted HTML length = ${html.length}`),
+    message: `INGEST: extracted HTML length = ${html.length}`,
     file: "email-ingest.ts",
     line: 71,
     payload: { htmlLength: html.length },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
-  // ⭐ Parse AA itinerary from HTML
+
+  // 6️⃣ Parse AA itinerary
   const parsed = parseAAEmail(html, new Date());
   console.log("INGEST: parsed snapshot =", parsed);
-const existing = await db.travelSnapshot.findUnique({
-  where: { confirmationCode: parsed.confirmationCode },
-});
 
-if (existing) {
-  console.log("Skipping insert — snapshot already exists");
-  return existing;
-}
+  // 7️⃣ Validate parser output
+  console.log("INGEST: parsed.confirmationCode =", parsed.confirmationCode);
+  console.log("INGEST: parsed.segments count =", parsed.segments?.length);
 
+  // 8️⃣ Dedupe check
+  const existing = await db.travelSnapshot.findUnique({
+    where: { confirmationCode: parsed.confirmationCode },
+  });
 
-  // ⭐ Write to DB
+  console.log("INGEST: dedupe check result =", existing ? "FOUND" : "NOT FOUND");
+
+  if (existing) {
+    console.log("Skipping insert — snapshot already exists");
+    return existing;
+  }
+
+  // 9️⃣ DB insert attempt
+  console.log("INGEST: inserting new snapshot into DB");
+
   const created = await db.travelSnapshot.create({
     data: {
       source: parsed.source,
@@ -131,6 +146,7 @@ if (existing) {
     },
   });
 
+  // 🔟 DB insert success
   console.log("INGEST: created DB row id =", created.id);
 
   return created;
