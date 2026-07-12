@@ -122,38 +122,53 @@ if (full.includes("reservationNumber")) {
   // CONFIRMATION CODE
   // -----------------------------
 function extractConfirmationCode($: cheerio.CheerioAPI): string {
-  const commentNodes: string[] = [];
+  // ⭐ 1. JSON-LD extraction (most reliable)
+  const ldScripts = $('script[type="application/ld+json"]').toArray();
 
-  $("*").each((_, el) => {
-    if (el.type === "comment") {
-      const text = (el.data || "").trim();
-      if (text.startsWith("{") || text.startsWith("[")) {
-        commentNodes.push(text);
-      }
-    }
-  });
-
-  for (const raw of commentNodes) {
+  for (const s of ldScripts) {
     try {
+      const raw = $(s).html() || "";
       const json = JSON.parse(raw);
 
-      const candidates = [
-        json?.reservationNumber,
-        json?.reservationId,
-        json?.trip?.reservationNumber,
-        json?.reservation?.reservationId,
-      ];
+      // JSON-LD may be an array or object
+      const items = Array.isArray(json) ? json : [json];
 
-      for (const c of candidates) {
-        if (typeof c === "string" && /^[A-Z0-9]{5,8}$/.test(c)) {
-          return c;
+      for (const item of items) {
+        const candidates = [
+          item?.reservationNumber,
+          item?.reservationId,
+          item?.reservation?.reservationId,
+          item?.trip?.reservationNumber,
+        ];
+
+        for (const c of candidates) {
+          if (typeof c === "string" && /^[A-Z0-9]{5,8}$/.test(c)) {
+            return c;
+          }
         }
       }
-    } catch {}
+    } catch {
+      // Not JSON — skip
+    }
   }
 
-  return ""; // Default if not found
+  // ⭐ 2. Visible HTML fallback
+  const htmlFallback = $('span:contains("GUMYUX"), td:contains("GUMYUX")')
+    .filter((_, el) => /^[A-Z0-9]{5,8}$/.test($(el).text().trim()))
+    .first()
+    .text()
+    .trim();
+
+  if (htmlFallback) return htmlFallback;
+
+  // ⭐ 3. Regex fallback
+  const regex = /([A-Z0-9]{5,8})/;
+  const match = $.root().text().match(regex);
+  if (match) return match[1] ?? "";
+
+  return "";
 }
+
 
 
   const confirmationCode = extractConfirmationCode($);
