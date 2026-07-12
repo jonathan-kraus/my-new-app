@@ -66,8 +66,6 @@ export async function ingestTravelEmails() {
     throw new Error("No HTML part found in email");
   }
 
-  
-    if (files.length !== 1) {
     logj({
     domain: "jonathan",
     level: "info",
@@ -136,5 +134,4 @@ if (existing) {
   console.log("INGEST: created DB row id =", created.id);
 
   return created;
-}
 }
