@@ -41,18 +41,27 @@ jobs:
           corepack enable
           corepack prepare pnpm@11.12.0 --activate
           pnpm --version
+          echo "PNPM_BIN=$(corepack which pnpm || true)" >> "$GITHUB_ENV"
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: |
+          export PATH="$(dirname "$PNPM_BIN"):$PATH"
+          pnpm install --frozen-lockfile
 
       - name: Generate Prisma Client
-        run: pnpm exec prisma generate
+        run: |
+          export PATH="$(dirname "$PNPM_BIN"):$PATH"
+          pnpm exec prisma generate
 
       - name: Check for outdated dependencies
-        run: pnpm outdated | grep -v -E '(prisma|@prisma)' || true
+        run: |
+          export PATH="$(dirname "$PNPM_BIN"):$PATH"
+          pnpm outdated | grep -v -E '(prisma|@prisma)' || true
 
       - name: Run tests with coverage
-        run: pnpm coverage
+        run: |
+          export PATH="$(dirname "$PNPM_BIN"):$PATH"
+          pnpm coverage
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v7
@@ -63,7 +72,9 @@ jobs:
           verbose: true
 
       - name: Type check
-        run: pnpm run type-check
+        run: |
+          export PATH="$(dirname "$PNPM_BIN"):$PATH"
+          pnpm run type-check
 
       - name: Run security audit
         env:
@@ -87,4 +98,6 @@ jobs:
           AXIOM_TOKEN: ${{ secrets.AXIOM_TOKEN }}
           AXIOM_DATASET: ${{ secrets.AXIOM_DATASET }}
           AXIOM_ORG_ID: ${{ secrets.AXIOM_ORG_ID }}
-        run: pnpm build
+        run: |
+          export PATH="$(dirname "$PNPM_BIN"):$PATH"
+          pnpm build
