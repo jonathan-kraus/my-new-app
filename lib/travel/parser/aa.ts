@@ -113,14 +113,25 @@ export function parseAAEmail(
   // CONFIRMATION CODE
   // -----------------------------
 function extractConfirmationCode($: cheerio.CheerioAPI): string {
-  // ⭐ 1. JSON-based extraction (most reliable)
-  const scripts = $("script").toArray();
-  for (const s of scripts) {
-    const text = $(s).html() || "";
-    try {
-      const json = JSON.parse(text);
+  // ⭐ 1. Extract JSON from HTML comments
+  const commentNodes: string[] = [];
 
-      // Look for reservationNumber or reservationId anywhere in the object
+  $("*").each((_, el) => {
+    if (el.type === "comment") {
+      const text = (el.data || "").trim();
+
+      // Only consider comments that look like JSON
+      if (text.startsWith("{") || text.startsWith("[")) {
+        commentNodes.push(text);
+      }
+    }
+  });
+
+  // Try to parse each JSON comment
+  for (const raw of commentNodes) {
+    try {
+      const json = JSON.parse(raw);
+
       const candidates = [
         json?.reservationNumber,
         json?.reservationId,
@@ -158,7 +169,7 @@ function extractConfirmationCode($: cheerio.CheerioAPI): string {
     if (text && /^[A-Z0-9]{5,8}$/.test(text)) return text;
   }
 
-  // ⭐ 3. Regex fallback2
+  // ⭐ 3. Regex fallback
   const regex = /Record Locator[:\s]+([A-Z0-9]{5,8})/i;
   const match = $.root().text().match(regex);
   if (match) return match[1] ?? "";
