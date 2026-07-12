@@ -75,6 +75,7 @@ export async function ingestTravelEmails() {
   // ⭐ Parse AA itinerary from HTML
   const parsed = parseAAEmail(html, new Date());
   console.log("INGEST: parsed snapshot =", parsed);
+console.log("CONFIRMATION CODE BEFORE INSERT:",  parsed.confirmationCode);
 
   // ⭐ Write to DB
   const created = await db.travelSnapshot.create({
@@ -118,7 +119,7 @@ export async function ingestTravelEmails() {
       },
     },
   });
-
+console.log("CONFIRMATION CODE AFTER INSERT:", parsed.confirmationCode);
   console.log("INGEST: created DB row id =", created.id);
 
   return created;
