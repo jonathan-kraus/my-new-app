@@ -113,7 +113,15 @@ export async function ingestTravelEmails() {
   });
 
   console.log("INGEST: dedupe check result =", existing ? "FOUND" : "NOT FOUND");
-
+    logj({
+    domain: "ingest",
+    level: "info",
+    message: `INGEST: dedupe check result = ${existing ? "FOUND" : "NOT FOUND"}`,
+    file: "email-ingest.ts",
+    line: 116,
+    payload: { confirmationCode: parsed.confirmationCode },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
   if (existing) {
     console.log("Skipping insert — snapshot already exists");
     return existing;
