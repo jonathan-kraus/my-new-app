@@ -12,7 +12,7 @@ export async function POST(request: Request) {
   //await log.api("jonathan", "In api\config\create\route.ts");
 
   const body = await request.json();
-  const dataset = body.dataset ?? process.env.AXIOM_DATASET;
+  const dataset = "config";
   const events = Array.isArray(body.events) ? body.events : [body];
 
   //  (await log.api("jonathan", "api/config/ got some data"),
