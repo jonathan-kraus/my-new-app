@@ -20,7 +20,7 @@ export async function ingestTravelEmails() {
   console.log("INGEST: files found =", files.length);
   if (files.length !== 1) {
     logj({
-      domain: "jonathan",
+      domain: "ingest",
       level: "info",
       message: "INGEST aborted: expected exactly one .eml file",
       file: "email-ingest.ts",
@@ -36,7 +36,7 @@ export async function ingestTravelEmails() {
   const filePath = path.join(dir, fileName);
 
   logj({
-    domain: "jonathan",
+    domain: "ingest",
     level: "info",
     message: "Selected email for ingestion: " + filePath,
     file: "email-ingest.ts",
@@ -72,11 +72,11 @@ export async function ingestTravelEmails() {
   }
 
   logj({
-    domain: "jonathan",
+    domain: "ingest",
     level: "info",
     message: `INGEST: extracted HTML length = ${html.length}`,
     file: "email-ingest.ts",
-    line: 71,
+    line: 74,
     payload: { htmlLength: html.length },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -148,6 +148,14 @@ export async function ingestTravelEmails() {
 
   // 🔟 DB insert success
   console.log("INGEST: created DB row id =", created.id);
-
+logj({
+      domain: "ingest",
+      level: "info",
+       message: `INGEST: created DB row id = ${created.id}`,
+      file: "email-ingest.ts",
+      line: 151,
+      payload: { createdId: created.id },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
   return created;
 }
