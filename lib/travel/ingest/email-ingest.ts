@@ -40,7 +40,7 @@ export async function ingestTravelEmails() {
     level: "info",
     message: "Selected email for ingestion: " + filePath,
     file: "email-ingest.ts",
-    line: 37,
+    line: 38,
     payload: { fileName },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -50,6 +50,15 @@ export async function ingestTravelEmails() {
   // 3️⃣ Read raw file
   const raw = fs.readFileSync(filePath, "utf8");
   console.log("INGEST: raw file length =", raw.length);
+    logj({
+    domain: "ingest",
+    level: "info",
+    message: "INGEST: raw file length = " + raw.length,
+    file: "email-ingest.ts",
+    line: 53,
+    payload: { length: raw.length },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
 
   // 4️⃣ MIME parsing
   const parsedMime = await simpleParser(raw);
