@@ -196,10 +196,10 @@ model Session {
 }
 
 model TravelSnapshot {
-  id               String          @id @default(cuid())
+  id               String       @id @default(cuid())
   source           String
   receivedAt       DateTime
-  confirmationCode String
+  confirmationCode String       @unique
   issuedDate       String
   passengers       Json
   payment          Json

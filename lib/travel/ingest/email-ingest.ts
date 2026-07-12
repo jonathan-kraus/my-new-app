@@ -5,23 +5,28 @@ import path from "path";
 import { simpleParser } from "mailparser";
 import { db } from "@/lib/db";
 import { parseAAEmail } from "@/lib/travel/parser/aa";
-import { logit } from "@/lib/log/logit";
+import { logj } from "@/lib/log/logj";
+import { staticUniversalContext } from "@/lib/log/buildj";
 
 export async function ingestTravelEmails() {
   console.log("INGEST: starting travel email ingestion");
 
   const dir = path.join(process.cwd(), "travel-emails");
   const files = fs.readdirSync(dir).filter((f) => f.endsWith(".eml"));
-  const eventIndex = 22;
-  const requestId = crypto.randomUUID();
+  const built = await staticUniversalContext("INGEST");
+  let jei = 0;
 
-  // ⭐ Require EXACTLY one file
+//Require EXACTLY one file
   if (files.length !== 1) {
-    console.log(
-      "INGEST: expected exactly one .eml file, found:",
-      files.length,
-      "→ ingestion aborted",
-    );
+    logj({
+    domain: "jonathan",
+    level: "info",
+    message: "Starting travel email ingestion",
+    file: "email-ingest.ts",
+    line: 21,
+    payload: { filesCount: files.length },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
     return;
   }
 
@@ -29,25 +34,16 @@ export async function ingestTravelEmails() {
   const fileName: string = files[0]!;
   const filePath = path.join(dir, fileName);
 
-  logit(
-    "jonathan",
-    {
-      level: "info",
-      message: "Selected email for ingestion: " + filePath,
-      fileName,
-    },
-    { eventIndex },
-    {
-      file: "email-ingest.ts",
-      route: "N/A",
-      userId: undefined,
-      requestId,
-      zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
-    },
-  );
+  logj({
+    domain: "jonathan",
+    level: "info",
+    message: "Selected email for ingestion: " + filePath,
+    file: "email-ingest.ts",
+    line: 37,
+    payload: { fileName },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
+    
 
   console.log("INGEST: selected file =", filePath);
 
@@ -70,12 +66,29 @@ export async function ingestTravelEmails() {
     throw new Error("No HTML part found in email");
   }
 
-  console.log("INGEST: extracted HTML length =", html.length);
-
+  
+    if (files.length !== 1) {
+    logj({
+    domain: "jonathan",
+    level: "info",
+    message: (`INGEST: extracted HTML length = ${html.length}`),
+    file: "email-ingest.ts",
+    line: 71,
+    payload: { htmlLength: html.length },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
   // ⭐ Parse AA itinerary from HTML
   const parsed = parseAAEmail(html, new Date());
   console.log("INGEST: parsed snapshot =", parsed);
-console.log("CONFIRMATION CODE BEFORE INSERT:",  parsed.confirmationCode);
+const existing = await db.travelSnapshot.findUnique({
+  where: { confirmationCode: parsed.confirmationCode },
+});
+
+if (existing) {
+  console.log("Skipping insert — snapshot already exists");
+  return existing;
+}
+
 
   // ⭐ Write to DB
   const created = await db.travelSnapshot.create({
@@ -119,8 +132,9 @@ console.log("CONFIRMATION CODE BEFORE INSERT:",  parsed.confirmationCode);
       },
     },
   });
-console.log("CONFIRMATION CODE AFTER INSERT:", parsed.confirmationCode);
+
   console.log("INGEST: created DB row id =", created.id);
 
   return created;
+}
 }

@@ -220,19 +220,19 @@ export type TravelSnapshotOrderByWithRelationInput = {
 
 export type TravelSnapshotWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  confirmationCode?: string
   AND?: Prisma.TravelSnapshotWhereInput | Prisma.TravelSnapshotWhereInput[]
   OR?: Prisma.TravelSnapshotWhereInput[]
   NOT?: Prisma.TravelSnapshotWhereInput | Prisma.TravelSnapshotWhereInput[]
   source?: Prisma.StringFilter<"TravelSnapshot"> | string
   receivedAt?: Prisma.DateTimeFilter<"TravelSnapshot"> | Date | string
-  confirmationCode?: Prisma.StringFilter<"TravelSnapshot"> | string
   issuedDate?: Prisma.StringFilter<"TravelSnapshot"> | string
   passengers?: Prisma.JsonFilter<"TravelSnapshot">
   payment?: Prisma.JsonFilter<"TravelSnapshot">
   bags?: Prisma.JsonFilter<"TravelSnapshot">
   rawHtml?: Prisma.StringFilter<"TravelSnapshot"> | string
   segments?: Prisma.TravelSegmentListRelationFilter
-}, "id">
+}, "id" | "confirmationCode">
 
 export type TravelSnapshotOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
