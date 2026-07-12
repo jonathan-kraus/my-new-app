@@ -10,6 +10,9 @@ export async function GET() {
 | where reason == "Flight"
 | sort by _time asc
 `;
+console.log("AXIOM_TOKEN:", process.env.AXIOM_TOKEN ? "present" : "missing");
+console.log("AXIOM_ORG_ID:", process.env.AXIOM_ORG_ID ? "present" : "missing");
+console.log("AXIOM_DATASET:", process.env.AXIOM_DATASET ? "present" : "missing");
 
     const qWeather = `
 ["config"]
