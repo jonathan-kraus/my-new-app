@@ -96,6 +96,15 @@ export async function ingestTravelEmails() {
 
   // 7️⃣ Validate parser output
   console.log("INGEST: parsed.confirmationCode =", parsed.confirmationCode);
+    logj({
+    domain: "ingest",
+    level: "info",
+    message: `INGEST: parsed.confirmationCode = ${parsed.confirmationCode}`,
+    file: "email-ingest.ts",
+    line: 99,
+    payload: { confirmationCode: parsed.confirmationCode },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
   console.log("INGEST: parsed.segments count =", parsed.segments?.length);
 
   // 8️⃣ Dedupe check
