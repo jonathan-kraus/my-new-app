@@ -108,6 +108,15 @@ export function parseAAEmail(
 
   // STEP 3: Load Cheerio
   const $ = cheerio.load(fullyDecoded);
+// DEBUG: search entire HTML for reservationNumber
+const full = $.root().html() || fullyDecoded;
+
+if (full.includes("reservationNumber")) {
+  console.log("FOUND reservationNumber in raw HTML");
+
+  const idx = full.indexOf("reservationNumber");
+  console.log("Context:", full.slice(idx - 200, idx + 200));
+}
 
   // -----------------------------
   // CONFIRMATION CODE
@@ -143,7 +152,7 @@ function extractConfirmationCode($: cheerio.CheerioAPI): string {
     } catch {}
   }
 
-  return "J";
+  return ""; // Default if not found
 }
 
 
