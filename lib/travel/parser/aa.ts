@@ -158,7 +158,7 @@ function extractConfirmationCode($: cheerio.CheerioAPI): string {
     if (text && /^[A-Z0-9]{5,8}$/.test(text)) return text;
   }
 
-  // ⭐ 3. Regex fallback
+  // ⭐ 3. Regex fallback2
   const regex = /Record Locator[:\s]+([A-Z0-9]{5,8})/i;
   const match = $.root().text().match(regex);
   if (match) return match[1] ?? "";
