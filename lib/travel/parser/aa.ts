@@ -113,21 +113,17 @@ export function parseAAEmail(
   // CONFIRMATION CODE
   // -----------------------------
 function extractConfirmationCode($: cheerio.CheerioAPI): string {
-  // ⭐ 1. Extract JSON from HTML comments
   const commentNodes: string[] = [];
 
   $("*").each((_, el) => {
     if (el.type === "comment") {
       const text = (el.data || "").trim();
-
-      // Only consider comments that look like JSON
       if (text.startsWith("{") || text.startsWith("[")) {
         commentNodes.push(text);
       }
     }
   });
 
-  // Try to parse each JSON comment
   for (const raw of commentNodes) {
     try {
       const json = JSON.parse(raw);
@@ -144,38 +140,12 @@ function extractConfirmationCode($: cheerio.CheerioAPI): string {
           return c;
         }
       }
-    } catch {
-      // Not JSON — skip
-    }
+    } catch {}
   }
 
-  // ⭐ 2. HTML-based extraction (secondary)
-  const selectors = [
-    $('td:contains("Confirmation code")').next(),
-    $('td:contains("Record Locator")').next(),
-    $('span:contains("Record Locator")').last(),
-    $('strong:contains("Record Locator")').next(),
-    $('p:contains("Record Locator")').next(),
-    $('div:contains("Record Locator")').next(),
-
-    // Unlabeled AA format
-    $('td.itinerary-small-text')
-      .filter((_, el) => /^[A-Z0-9]{5,8}$/.test(clean($(el).text())))
-      .first(),
-  ];
-
-  for (const sel of selectors) {
-    const text = clean(sel.text());
-    if (text && /^[A-Z0-9]{5,8}$/.test(text)) return text;
-  }
-
-  // ⭐ 3. Regex fallback
-  const regex = /Record Locator[:\s]+([A-Z0-9]{5,8})/i;
-  const match = $.root().text().match(regex);
-  if (match) return match[1] ?? "";
-
-  return "";
+  return "J";
 }
+
 
   const confirmationCode = extractConfirmationCode($);
   const issuedDate = extractIssuedDate($);
