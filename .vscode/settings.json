@@ -8,12 +8,22 @@
     "FilePath": "",
     "LastEditTime": ""
   },
-  "fileheader.configObj": {
-    "createHeader": true, // insert header on new file
-    "autoAdd": true, // auto-insert header
-    "autoAlready": true, // allow updating existing header
-    "updateHeader": true, // update LastEditTime on save
-    "autoAddLine": 1 // insert at top of filetrav
+  "terminal.integrated.profiles.windows": {
+    "PowerShell 7": {
+      "path": "C:\\Program Files\\WindowsApps\\Microsoft.PowerShellPreview_7.7.2.0_x64__8wekyb3d8bbwe\\pwsh.exe",
+      "args": []
+    },
+    "Windows PowerShell": null,
+    "PowerShell": null
   },
+  "terminal.integrated.defaultProfile.windows": "PowerShell 7",
+  "fileheader.configObj": {
+    "createHeader": true,
+    "autoAdd": true,
+    "autoAlready": true,
+    "updateHeader": true,
+    "autoAddLine": 1
+  },
+  "WillLuke.nextjs.addTypesOnSave": true,
   "WillLuke.nextjs.hasPrompted": true
 }
