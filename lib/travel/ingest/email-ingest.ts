@@ -50,7 +50,7 @@ export async function ingestTravelEmails() {
   // 3️⃣ Read raw file
   const raw = fs.readFileSync(filePath, "utf8");
   console.log("INGEST: raw file length =", raw.length);
-    logj({
+  logj({
     domain: "ingest",
     level: "info",
     message: "INGEST: raw file length = " + raw.length,
@@ -96,7 +96,7 @@ export async function ingestTravelEmails() {
 
   // 7️⃣ Validate parser output
   console.log("INGEST: parsed.confirmationCode =", parsed.confirmationCode);
-    logj({
+  logj({
     domain: "ingest",
     level: "info",
     message: `INGEST: parsed.confirmationCode = ${parsed.confirmationCode}`,
@@ -112,8 +112,11 @@ export async function ingestTravelEmails() {
     where: { confirmationCode: parsed.confirmationCode },
   });
 
-  console.log("INGEST: dedupe check result =", existing ? "FOUND" : "NOT FOUND");
-    logj({
+  console.log(
+    "INGEST: dedupe check result =",
+    existing ? "FOUND" : "NOT FOUND",
+  );
+  logj({
     domain: "ingest",
     level: "info",
     message: `INGEST: dedupe check result = ${existing ? "FOUND" : "NOT FOUND"}`,
@@ -174,14 +177,14 @@ export async function ingestTravelEmails() {
 
   // 🔟 DB insert success
   console.log("INGEST: created DB row id =", created.id);
-logj({
-      domain: "ingest",
-      level: "info",
-       message: `INGEST: created DB row id = ${created.id}`,
-      file: "email-ingest.ts",
-      line: 151,
-      payload: { createdId: created.id },
-      meta: { built: { ...built, eventIndex: ++jei } },
-    });
+  logj({
+    domain: "ingest",
+    level: "info",
+    message: `INGEST: created DB row id = ${created.id}`,
+    file: "email-ingest.ts",
+    line: 151,
+    payload: { createdId: created.id },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
   return created;
 }

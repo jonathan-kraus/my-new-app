@@ -108,68 +108,66 @@ export function parseAAEmail(
 
   // STEP 3: Load Cheerio
   const $ = cheerio.load(fullyDecoded);
-// DEBUG: search entire HTML for reservationNumber
-const full = $.root().html() || fullyDecoded;
+  // DEBUG: search entire HTML for reservationNumber
+  const full = $.root().html() || fullyDecoded;
 
-if (full.includes("reservationNumber")) {
-  console.log("FOUND reservationNumber in raw HTML");
+  if (full.includes("reservationNumber")) {
+    console.log("FOUND reservationNumber in raw HTML");
 
-  const idx = full.indexOf("reservationNumber");
-  console.log("Context:", full.slice(idx - 200, idx + 200));
-}
+    const idx = full.indexOf("reservationNumber");
+    console.log("Context:", full.slice(idx - 200, idx + 200));
+  }
 
   // -----------------------------
   // CONFIRMATION CODE
   // -----------------------------
-function extractConfirmationCode($: cheerio.CheerioAPI): string {
-  // ⭐ 1. JSON-LD extraction (most reliable)
-  const ldScripts = $('script[type="application/ld+json"]').toArray();
+  function extractConfirmationCode($: cheerio.CheerioAPI): string {
+    // ⭐ 1. JSON-LD extraction (most reliable)
+    const ldScripts = $('script[type="application/ld+json"]').toArray();
 
-  for (const s of ldScripts) {
-    try {
-      const raw = $(s).html() || "";
-      const json = JSON.parse(raw);
+    for (const s of ldScripts) {
+      try {
+        const raw = $(s).html() || "";
+        const json = JSON.parse(raw);
 
-      // JSON-LD may be an array or object
-      const items = Array.isArray(json) ? json : [json];
+        // JSON-LD may be an array or object
+        const items = Array.isArray(json) ? json : [json];
 
-      for (const item of items) {
-        const candidates = [
-          item?.reservationNumber,
-          item?.reservationId,
-          item?.reservation?.reservationId,
-          item?.trip?.reservationNumber,
-        ];
+        for (const item of items) {
+          const candidates = [
+            item?.reservationNumber,
+            item?.reservationId,
+            item?.reservation?.reservationId,
+            item?.trip?.reservationNumber,
+          ];
 
-        for (const c of candidates) {
-          if (typeof c === "string" && /^[A-Z0-9]{5,8}$/.test(c)) {
-            return c;
+          for (const c of candidates) {
+            if (typeof c === "string" && /^[A-Z0-9]{5,8}$/.test(c)) {
+              return c;
+            }
           }
         }
+      } catch {
+        // Not JSON — skip
       }
-    } catch {
-      // Not JSON — skip
     }
+
+    // ⭐ 2. Visible HTML fallback
+    const htmlFallback = $('span:contains("GUMYUX"), td:contains("GUMYUX")')
+      .filter((_, el) => /^[A-Z0-9]{5,8}$/.test($(el).text().trim()))
+      .first()
+      .text()
+      .trim();
+
+    if (htmlFallback) return htmlFallback;
+
+    // ⭐ 3. Regex fallback
+    const regex = /([A-Z0-9]{5,8})/;
+    const match = $.root().text().match(regex);
+    if (match) return match[1] ?? "";
+
+    return "";
   }
-
-  // ⭐ 2. Visible HTML fallback
-  const htmlFallback = $('span:contains("GUMYUX"), td:contains("GUMYUX")')
-    .filter((_, el) => /^[A-Z0-9]{5,8}$/.test($(el).text().trim()))
-    .first()
-    .text()
-    .trim();
-
-  if (htmlFallback) return htmlFallback;
-
-  // ⭐ 3. Regex fallback
-  const regex = /([A-Z0-9]{5,8})/;
-  const match = $.root().text().match(regex);
-  if (match) return match[1] ?? "";
-
-  return "";
-}
-
-
 
   const confirmationCode = extractConfirmationCode($);
   const issuedDate = extractIssuedDate($);

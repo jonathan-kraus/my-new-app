@@ -12,7 +12,12 @@
     },
     {
       "groupName": "Next.js ecosystem",
-      "matchPackageNames": ["/^next$/", "/^eslint-config-next$/", "/^@next\\//", "/^@vercel\\//"]
+      "matchPackageNames": [
+        "/^next$/",
+        "/^eslint-config-next$/",
+        "/^@next\\//",
+        "/^@vercel\\//"
+      ]
     },
     {
       "groupName": "Prisma",
@@ -45,7 +50,11 @@
     },
     {
       "description": "Prevent upgrades of eslint-plugin-* packages beyond ESLint 9 compatibility",
-      "matchPackageNames": ["/^eslint-plugin-import$/", "/^eslint-plugin-react$/", "/^eslint-plugin-jsx-a11y$/"],
+      "matchPackageNames": [
+        "/^eslint-plugin-import$/",
+        "/^eslint-plugin-react$/",
+        "/^eslint-plugin-jsx-a11y$/"
+      ],
       "allowedVersions": "<8.0.0"
     },
     {
