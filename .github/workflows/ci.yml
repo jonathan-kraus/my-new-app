@@ -9,7 +9,7 @@ on:
       - 'renovate/**'
 
 env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE25: true
 
 
 jobs:
@@ -32,7 +32,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '24.18.0'
+          node-version: '25.18.0'
 
       - name: Install pnpm
         run: |
