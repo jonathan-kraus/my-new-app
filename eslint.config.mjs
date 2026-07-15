@@ -9,6 +9,7 @@ const ignores = [
   "node_modules/**",
   "next-env.d.ts",
   "coverage/**",
+  "src/lib/generated/**",
   "app/**",
   "components/**",
   "lib/generated/**",
