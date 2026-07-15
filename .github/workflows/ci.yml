@@ -26,6 +26,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Lint commit messages
+        run: pnpm exec eslint .
+
       - name: Clean workspace
         run: git clean -fdx
 
