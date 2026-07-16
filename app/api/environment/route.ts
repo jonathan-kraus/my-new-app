@@ -30,7 +30,7 @@ export async function GET(nextReq: Request) {
       level: "info",
       message: "Retrieved Postgres Version",
       file: "app/api/environment/route.ts",
-      line: 26,
+      line: 28,
       payload: {
         pg: {
           version: postgresVersion,
