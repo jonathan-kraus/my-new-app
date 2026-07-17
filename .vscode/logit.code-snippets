@@ -1,17 +1,15 @@
 {
   "Insert logj call": {
-    "prefix": "logj",
+    "prefix": "logi",
     "body": [
       "await logj({",
-      "  domain: 'jonathan',",
-      "  level: 'info',",
+      "  domain: \"jonathan\",",
+      "  level: \"info\",",
       "  message: \"$1\",",
       "  file: \"$TM_FILENAME\",",
       "  line: $2,",
-      "  payload: { some: 'data' },",
-      "  meta: {",
-      "    built,",
-      "  },",
+      "  payload: { jei: jei },",
+      "  meta: { built: { ...built, eventIndex: ++jei } },",
       "});",
     ],
     "description": "Insert a structured logj() call",
@@ -20,5 +18,10 @@
     "prefix": "//s",
     "body": ["setLogFile(\"${RELATIVE_FILEPATH}\");"],
     "description": "Insert setLogFile() with the current file path",
+  },
+  "Insert Normalized Path": {
+    "prefix": "//j",
+    "body": ["// ${RELATIVE_FILEPATH}"],
+    "description": "Insert normalized relative file path",
   },
 }
