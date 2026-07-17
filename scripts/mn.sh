@@ -37,10 +37,23 @@ fail() {
 # section "Update dependencies"
 # pnpm update --latest || warn "Failed to update dependencies"
 
-section "Running Prettier check"
-if ! pnpm prettier --check .; then
-  warn "Prettier found issues — fixing…"
-  pnpm prettier --write .
+# === Logging Helpers ===
+# success() { echo "✔ $1"; }
+# warn()    { echo "⚠ $1"; }
+# info()    { echo "→ $1"; }
+# error()   { echo "✘ $1"; }
+
+echo "=== Running Prettier check ==="
+
+UNFORMATTED=$(pnpm prettier --list-different . 2>/dev/null || true)
+
+if [ -n "$UNFORMATTED" ]; then
+  warn "Found $(echo "$UNFORMATTED" | wc -l) file(s) needing formatting:"
+  echo "$UNFORMATTED" | sed 's/^/   • /'
+  echo
+  
+  echo "$UNFORMATTED" | xargs pnpm prettier --write --log-level=error
+  
   success "Prettier issues fixed"
 else
   success "Prettier formatting OK"

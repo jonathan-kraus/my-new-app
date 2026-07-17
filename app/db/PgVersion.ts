@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\db\PgVersion.ts
- * @LastEditTime: 2026-07-17 01:04:58
+ * @LastEditTime: 2026-07-17 15:25:36
  */
 import { neon } from "@neondatabase/serverless";
 import { NextRequest } from "next/server";
@@ -10,7 +10,7 @@ import { buildUniversalContext } from "@/lib/log/build-universal-context";
 export async function getPostgresVersion(req: NextRequest) {
   const sql = neon(process.env.DATABASE_URL!);
   const built = await buildUniversalContext(req as any, "PGVersion");
-  let jei = 0
+  let jei = 0;
   await logj({
     domain: "jonathan",
     level: "info",
