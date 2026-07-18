@@ -34,11 +34,12 @@ jobs:
         with:
           node-version: '25.9.0'
 
-      - name: Install pnpm
-        run: |
-          npm install -g pnpm@11.14.0
-          echo "$(npm prefix -g)/bin" >> "$GITHUB_PATH"
-          pnpm --version
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Set pnpm version
+        run: corepack prepare pnpm@latest --activate
+             pnpm --version
 
       - name: Install dependencies
         run: |
