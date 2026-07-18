@@ -1,25 +1,49 @@
-"use server";
-// app\components\SideNavNextEvent.tsx
+'use client';
 
-import { getAstronomySnapshot } from "@/lib/astronomy/getAstronomySnapshot";
-import { buildAstronomyEvents } from "@/lib/ephemeris/buildAstronomyEvents";
-import SideNavClient from "./SideNavClient";
+import { useState, useEffect } from 'react';
+import { getAstronomySnapshot } from '@/lib/astronomy/getAstronomySnapshot';
 
-export default async function SideNavNextEvent() {
-  const { today, tomorrow } = await getAstronomySnapshot("KOP");
+export default function AstronomySnapshotLoader({ locationId }: { locationId: string }) {
+  const [snapshot, setSnapshot] = useState<{ today: any; tomorrow: any } | null>(null);
+  const [isRunning, setIsRunning] = useState(false);
+  const [shouldRun, setShouldRun] = useState(false);
 
-  // If the cron hasn't populated data yet
-  if (!today || !tomorrow) {
-    return <SideNavClient nextEventLabel="—" nextEventTime={null} />;
-  }
+  // This runs the process only when shouldRun becomes true
+  useEffect(() => {
+    if (!shouldRun) return;
 
-  const events = buildAstronomyEvents(today, tomorrow);
-  const next = events[0];
+    const runSnapshot = async () => {
+      setIsRunning(true);
+      try {
+        const data = await getAstronomySnapshot(locationId, new Date(), { force: true });
+        setSnapshot(data);
+      } catch (error) {
+        console.error("Failed to load astronomy snapshot:", error);
+      } finally {
+        setIsRunning(false);
+        // Optional: reset so it can be triggered again
+        // setShouldRun(false);
+      }
+    };
+
+    runSnapshot();
+  }, [shouldRun, locationId]);
+
+  const handleRun = () => {
+    setShouldRun(true);
+  };
 
   return (
-    <SideNavClient
-      nextEventLabel={next?.label ?? "—"}
-      nextEventTime={next?.time ?? null}
-    />
+    <div>
+      <button onClick={handleRun} disabled={isRunning}>
+        {isRunning ? "Loading Astronomy Data..." : "Load Astronomy Snapshot"}
+      </button>
+
+      {snapshot && (
+        <pre style={{ marginTop: '1rem' }}>
+          {JSON.stringify(snapshot, null, 2)}
+        </pre>
+      )}
+    </div>
   );
 }
