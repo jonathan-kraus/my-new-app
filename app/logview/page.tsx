@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
-
+export const metadata = { title: "Log Viewer" };
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface Log {

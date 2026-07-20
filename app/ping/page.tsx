@@ -15,7 +15,7 @@ export default async function AxiomTestPage(req: NextRequest) {
     level: "info",
     message: `** PING ** `,
     file: "app/ping/page.tsx",
-    line: 11,
+    line: 13,
     payload: {
       some: "payload",
     },
