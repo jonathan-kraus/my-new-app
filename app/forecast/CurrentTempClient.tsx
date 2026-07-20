@@ -1,18 +1,14 @@
 /*
- * @FilePath: \my-new-app\app\forecast\test.tsx
- * @LastEditTime: 2026-07-19 21:03:20
+ * @FilePath: \my-new-app\app\forecast\CurrentTempClient.tsx
+ * @LastEditTime: 2026-07-19 21:09:31
  */
+// app/forecast/CurrentTempClient.tsx
 "use client";
 
 import { useEffect, useState } from "react";
 
-export async function generateMetadata() {
-  const temp = await CurrentTemp();
-  return { title: `Forecast — ${temp}°F` };
-}
-export default function CurrentTemp() {
+export default function CurrentTempClient() {
   const [temp, setTemp] = useState<number | null>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchTemp() {
@@ -27,20 +23,19 @@ export default function CurrentTemp() {
       const fahrenheit = Math.round((celsius * 9) / 5 + 32);
 
       setTemp(fahrenheit);
-      setLoading(false);
     }
 
     fetchTemp();
   }, []);
 
   return (
-    <div className="p-8 text-center">
+    <>
       <h1>King of Prussia, PA</h1>
-      {loading ? (
+      {temp === null ? (
         <p>Loading temperature...</p>
       ) : (
         <p className="text-7xl font-light mt-4">{temp}°F</p>
       )}
-    </div>
+    </>
   );
 }
