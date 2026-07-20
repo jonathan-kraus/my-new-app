@@ -5,6 +5,8 @@ import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { NextRequest } from "next/server";
 import { logj } from "@/lib/log/logj";
 
+export const metadata = { title: "PING" };
+
 export default async function AxiomTestPage(req: NextRequest) {
   let jei = 0;
   const built = await buildUniversalContext(req as any, "PING");
@@ -13,7 +15,7 @@ export default async function AxiomTestPage(req: NextRequest) {
     level: "info",
     message: `** PING ** `,
     file: "app/ping/page.tsx",
-    line: 12,
+    line: 11,
     payload: {
       some: "payload",
     },
