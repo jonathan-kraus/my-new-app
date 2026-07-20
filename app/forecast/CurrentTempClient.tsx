@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\forecast\CurrentTempClient.tsx
- * @LastEditTime: 2026-07-19 21:09:31
+ * @LastEditTime: 2026-07-19 23:39:42
  */
 // app/forecast/CurrentTempClient.tsx
 "use client";
@@ -12,7 +12,7 @@ export default function CurrentTempClient() {
 
   useEffect(() => {
     async function fetchTemp() {
-      const lat = 40.0894;
+      const lat = 40.0894; // change to db2 call
       const lon = -75.396;
 
       const res = await fetch(

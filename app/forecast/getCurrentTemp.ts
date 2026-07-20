@@ -1,18 +1,22 @@
 /*
  * @FilePath: \my-new-app\app\forecast\getCurrentTemp.ts
- * @LastEditTime: 2026-07-19 21:08:35
+ * @LastEditTime: 2026-07-20 03:06:22
  */
 // app/forecast/getCurrentTemp.ts
-export async function getCurrentTemp() {
-  const lat = 40.0894;
-  const lon = -75.396;
+import { db } from "@/lib/db";
 
-  const res = await fetch(
-    `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m`,
-    { next: { revalidate: 0 } },
-  );
+export async function getCurrentTemp() {
+  const location = await db.location.findUnique({
+    where: { key: "KOP" },
+  });
+
+  if (!location) throw new Error("Location not found for key KOP");
+
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&current=temperature_2m&temperature_unit=fahrenheit&timezone=${location.timezone}`;
+
+  const res = await fetch(url, { next: { revalidate: 0 } });
+  if (!res.ok) throw new Error("Failed to fetch temperature");
 
   const data = await res.json();
-  const celsius = data.current.temperature_2m;
-  return Math.round((celsius * 9) / 5 + 32);
+  return data.current.temperature_2m;
 }
