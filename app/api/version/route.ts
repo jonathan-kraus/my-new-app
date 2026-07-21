@@ -11,7 +11,7 @@ export async function GET(request: Request) {
   const base = {
     name: pkg.name,
     version: pkg.version,
-    buildTime: process.env.BUILD_TIME ?? null,
+    buildTime: normalizeEnv(process.env.BUILD_TIME),
     commit: safeCommit(),
   };
 
@@ -42,7 +42,10 @@ export async function GET(request: Request) {
   const deps = pkg.dependencies as Record<string, string>;
   const devDeps = pkg.devDependencies as Record<string, string>;
 
-  let version: string | null = deps?.[pkgName] ?? devDeps?.[pkgName] ?? null;
+  let version: string | null =
+    deps?.[pkgName] ??
+    devDeps?.[pkgName] ??
+    null;
 
   // Lookup in pnpm overrides (correct location)
   const overrides = pkg.overrides as Record<string, string> | undefined;
@@ -55,8 +58,8 @@ export async function GET(request: Request) {
     const lock = readLockfile();
     const resolved = lock.packages;
 
-    const match = Object.keys(resolved).find((key) =>
-      key.startsWith(`/${pkgName}@`),
+    const match = Object.keys(resolved).find(key =>
+      key.startsWith(`/${pkgName}@`)
     );
 
     if (match) {
@@ -77,7 +80,16 @@ function readLockfile() {
   return yaml.parse(readFileSync(lockPath, "utf8"));
 }
 
-function safeCommit() {
+function normalizeEnv(value: string | undefined): string | null {
+  return typeof value === "string" ? value : null;
+}
+
+function safeCommit(): string | null {
+  // Prefer Vercel commit SHA
+  const vercel = process.env.VERCEL_GIT_COMMIT_SHA;
+  if (typeof vercel === "string") return vercel;
+
+  // Local git fallback
   try {
     return execSync("git rev-parse HEAD").toString().trim();
   } catch {

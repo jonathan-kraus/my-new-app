@@ -1,4 +1,3 @@
-// next.config.js
 import { withAxiom } from "next-axiom";
 import type { NextConfig } from "next";
 
@@ -8,7 +7,6 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "avatars.githubusercontent.com",
-        port: "",
         pathname: "/**",
       },
       {
@@ -17,12 +15,10 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-};
-const pkg = require("./package.json");
 
-module.exports = {
   env: {
     BUILD_TIME: new Date().toISOString(),
+    COMMIT_SHA: process.env.VERCEL_GIT_COMMIT_SHA, // MUST NOT use null
   },
 };
 
