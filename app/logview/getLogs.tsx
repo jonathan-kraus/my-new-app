@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\logview\getLogs.tsx
- * @LastEditTime: 2026-07-20 23:08:50
+ * @LastEditTime: 2026-07-20 23:52:05
  */
 // app/logview/getLogs.ts
 import { db } from "@/lib/db";
@@ -23,6 +23,7 @@ export async function getLogs(params: {
     skip: (page - 1) * pageSize,
     take: pageSize,
   });
+console.log("LOG COUNT:", logs.length);
 
   const total = await db.log.count({ where });
 

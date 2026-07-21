@@ -156,6 +156,8 @@ model Log {
   @@index([sessionEmail])
   @@index([sessionUser])
   @@index([userId])
+
+  @@map("Log")
 }
 
 model Note {
