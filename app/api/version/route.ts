@@ -1,7 +1,3 @@
-/*
- * @FilePath: \my-new-app\app\api\version\route.ts
- * @LastEditTime: 2026-07-21 16:34:12
- */
 import pkg from "../../../package.json";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -12,7 +8,6 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const pkgName = searchParams.get("pkg");
 
-  // Base info
   const base = {
     name: pkg.name,
     version: pkg.version,
@@ -20,7 +15,7 @@ export async function GET(request: Request) {
     commit: safeCommit(),
   };
 
-  // If no ?pkg param → return base info
+  // No ?pkg → return base info
   if (!pkgName) return Response.json(base);
 
   // ?pkg=all → return all dependencies
@@ -29,10 +24,11 @@ export async function GET(request: Request) {
       ...base,
       dependencies: pkg.dependencies,
       devDependencies: pkg.devDependencies,
+      overrides: pkg.pnpm?.overrides ?? null,
     });
   }
 
-  // ?pkg=resolved → return resolved versions from pnpm-lock.yaml
+  // ?pkg=resolved → return full lockfile
   if (pkgName === "resolved") {
     const lock = readLockfile();
     return Response.json({
@@ -42,20 +38,37 @@ export async function GET(request: Request) {
     });
   }
 
-// Otherwise: return specific package version
-const deps = pkg.dependencies as Record<string, string>;
-const devDeps = pkg.devDependencies as Record<string, string>;
+  // Lookup in dependencies + devDependencies
+  const deps = pkg.dependencies as Record<string, string>;
+  const devDeps = pkg.devDependencies as Record<string, string>;
 
-const version =
-  deps?.[pkgName] ??
-  devDeps?.[pkgName] ??
-  null;
+  let version = deps?.[pkgName] ?? devDeps?.[pkgName] ?? null;
 
-return Response.json({
-  ...base,
-  package: pkgName,
-  version,
-});
+  // Lookup in pnpm overrides
+  const overrides = pkg.pnpm?.overrides as Record<string, string> | undefined;
+  if (!version && overrides?.[pkgName]) {
+    version = overrides[pkgName];
+  }
+
+  // Lookup resolved version in pnpm-lock.yaml
+  if (!version) {
+    const lock = readLockfile();
+    const resolved = lock.packages;
+
+    const match = Object.keys(resolved).find((key) =>
+      key.startsWith(`/${pkgName}@`),
+    );
+
+    if (match) {
+      version = match.split("@")[1];
+    }
+  }
+
+  return Response.json({
+    ...base,
+    package: pkgName,
+    version,
+  });
 }
 
 // Helpers
