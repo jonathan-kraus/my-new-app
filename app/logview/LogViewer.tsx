@@ -1,6 +1,6 @@
 /*
- * @FilePath: \my-new-app\app\logview\LogViewer2.tsx
- * @LastEditTime: 2026-07-20 19:47:20
+ * @FilePath: \my-new-app\app\logview\LogViewer.tsx
+ * @LastEditTime: 2026-07-20 20:03:38
  */
 "use client";
 
@@ -107,9 +107,9 @@ export default function LogViewer() {
         </span>
         <span
           className={
-            value === null || value === undefined ?
-              "italic text-zinc-300 dark:text-zinc-600"
-            : "text-zinc-700 dark:text-zinc-200 break-all"
+            value === null || value === undefined
+              ? "italic text-zinc-300 dark:text-zinc-600"
+              : "text-zinc-700 dark:text-zinc-200 break-all"
           }
         >
           {value === null || value === undefined ? "null" : String(value)}
@@ -156,7 +156,7 @@ export default function LogViewer() {
       setTotal(data.total);
       setDomains(data.domains);
       setLevelCounts(
-        data.levels.reduce(
+        (data.levels ?? []).reduce(
           (acc, { level, count }) => ({ ...acc, [level]: count }),
           {},
         ),
