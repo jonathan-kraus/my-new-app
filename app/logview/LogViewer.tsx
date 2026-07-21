@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\logview\LogViewer.tsx
- * @LastEditTime: 2026-07-20 20:03:38
+ * @LastEditTime: 2026-07-20 20:11:44
  */
 "use client";
 
@@ -85,13 +85,22 @@ export default function LogViewer() {
     );
   }
 
-  function JsonBlock({ value }: { value: unknown }) {
+function JsonBlock({ value }: { value: unknown }) {
+  if (!value || typeof value !== "object") {
     return (
-      <pre className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-md p-3 text-[11px] leading-relaxed overflow-auto max-h-52 font-mono text-zinc-500 dark:text-zinc-400 whitespace-pre-wrap break-all">
-        {JSON.stringify(value, null, 2)}
+      <pre className="text-xs text-zinc-500">
+        {String(value ?? "null")}
       </pre>
     );
   }
+
+  return (
+    <pre className="text-xs text-zinc-700 dark:text-zinc-300 whitespace-pre-wrap break-all">
+      {JSON.stringify(value, null, 2)}
+    </pre>
+  );
+}
+
 
   function KV({
     label,
