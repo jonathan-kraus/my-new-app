@@ -18,13 +18,13 @@ export async function GET(request: Request) {
   // No ?pkg → return base info
   if (!pkgName) return Response.json(base);
 
-  // ?pkg=all → return all dependencies
+  // ?pkg=all → return all dependencies + overrides
   if (pkgName === "all") {
     return Response.json({
       ...base,
       dependencies: pkg.dependencies,
       devDependencies: pkg.devDependencies,
-      overrides: pkg.pnpm?.overrides ?? null,
+      overrides: pkg.overrides ?? null,
     });
   }
 
@@ -42,12 +42,12 @@ export async function GET(request: Request) {
   const deps = pkg.dependencies as Record<string, string>;
   const devDeps = pkg.devDependencies as Record<string, string>;
 
-  let version = deps?.[pkgName] ?? devDeps?.[pkgName] ?? null;
+  let version: string | null = deps?.[pkgName] ?? devDeps?.[pkgName] ?? null;
 
-  // Lookup in pnpm overrides
-  const overrides = pkg.pnpm?.overrides as Record<string, string> | undefined;
+  // Lookup in pnpm overrides (correct location)
+  const overrides = pkg.overrides as Record<string, string> | undefined;
   if (!version && overrides?.[pkgName]) {
-    version = overrides[pkgName];
+    version = overrides[pkgName] ?? null;
   }
 
   // Lookup resolved version in pnpm-lock.yaml
@@ -60,7 +60,7 @@ export async function GET(request: Request) {
     );
 
     if (match) {
-      version = match.split("@")[1];
+      version = match.split("@")[1] ?? null;
     }
   }
 
