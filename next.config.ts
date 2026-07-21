@@ -18,5 +18,12 @@ const nextConfig: NextConfig = {
     ],
   },
 };
+const pkg = require("./package.json");
+
+module.exports = {
+  env: {
+    BUILD_TIME: new Date().toISOString(),
+  },
+};
 
 export default withAxiom(nextConfig);
