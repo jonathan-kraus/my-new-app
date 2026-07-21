@@ -1,11 +1,11 @@
 /*
  * @FilePath: \my-new-app\app\logview\page.tsx
- * @LastEditTime: 2026-07-20 22:09:59
+ * @LastEditTime: 2026-07-20 22:15:39
  */
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
-export const metadata = { title: "Log Viewer" };
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface Log {
@@ -104,9 +104,9 @@ function KV({
       </span>
       <span
         className={
-          value === null || value === undefined
-            ? "italic text-zinc-300 dark:text-zinc-600"
-            : "text-zinc-700 dark:text-zinc-200 break-all"
+          value === null || value === undefined ?
+            "italic text-zinc-300 dark:text-zinc-600"
+          : "text-zinc-700 dark:text-zinc-200 break-all"
         }
       >
         {value === null || value === undefined ? "null" : String(value)}
@@ -301,9 +301,9 @@ export default function LogViewer() {
             onClick={() => setSelectedLevel(String(val))}
             className={`flex items-center gap-2 w-full px-4 py-1.5 text-xs font-sans text-left transition-colors rounded-none
               ${
-                selectedLevel === val
-                  ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
-                  : "text-zinc-500 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
+                selectedLevel === val ?
+                  "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
+                : "text-zinc-500 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
               }`}
           >
             <span
@@ -327,9 +327,9 @@ export default function LogViewer() {
                 onClick={() => setSelectedDomain(domain)}
                 className={`flex items-center gap-2 w-full px-4 py-1.5 text-xs font-sans text-left transition-colors
                 ${
-                  selectedDomain === domain
-                    ? "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
-                    : "text-zinc-500 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
+                  selectedDomain === domain ?
+                    "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
+                  : "text-zinc-500 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800/50"
                 }`}
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-600 shrink-0" />
@@ -404,17 +404,17 @@ export default function LogViewer() {
               onClick={tailing ? stopTail : startTail}
               className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-sans rounded-md border transition-colors
                 ${
-                  tailing
-                    ? "bg-emerald-50 dark:bg-emerald-950 border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900"
-                    : "bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700"
+                  tailing ?
+                    "bg-emerald-50 dark:bg-emerald-950 border-emerald-300 dark:border-emerald-700 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900"
+                  : "bg-zinc-50 dark:bg-zinc-800 border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700"
                 }`}
               title={
-                tailing
-                  ? `Live — next refresh in ${countdown}s`
-                  : "Start live tail"
+                tailing ?
+                  `Live — next refresh in ${countdown}s`
+                : "Start live tail"
               }
             >
-              {tailing ? (
+              {tailing ?
                 <>
                   {/* Pulsing dot */}
                   <span className="relative flex w-2 h-2 shrink-0">
@@ -423,8 +423,7 @@ export default function LogViewer() {
                   </span>
                   Live · {countdown}s
                 </>
-              ) : (
-                <>
+              : <>
                   {/* Play icon */}
                   <svg
                     className="w-3 h-3"
@@ -435,7 +434,7 @@ export default function LogViewer() {
                   </svg>
                   Tail
                 </>
-              )}
+              }
             </button>
           </div>
 
@@ -505,9 +504,9 @@ export default function LogViewer() {
                     }
                     className={`border-b border-zinc-100 dark:border-zinc-800/60 cursor-pointer transition-colors
                       ${
-                        selectedLog?.id === log.id
-                          ? "bg-blue-50 dark:bg-blue-950/40"
-                          : "hover:bg-zinc-50 dark:hover:bg-zinc-800/40"
+                        selectedLog?.id === log.id ?
+                          "bg-blue-50 dark:bg-blue-950/40"
+                        : "hover:bg-zinc-50 dark:hover:bg-zinc-800/40"
                       }`}
                   >
                     <td className="px-3 py-1.5 text-[11px] text-zinc-400 whitespace-nowrap">
@@ -587,9 +586,9 @@ export default function LogViewer() {
                   <KV
                     label="file"
                     value={
-                      selectedLog.file
-                        ? `${selectedLog.file}${selectedLog.line ? ":" + selectedLog.line : ""}`
-                        : null
+                      selectedLog.file ?
+                        `${selectedLog.file}${selectedLog.line ? ":" + selectedLog.line : ""}`
+                      : null
                     }
                   />
                 </div>
@@ -626,15 +625,20 @@ export default function LogViewer() {
         {/* Status bar */}
         <div className="flex items-center gap-3 px-4 py-1.5 bg-white dark:bg-zinc-900 border-t border-zinc-200 dark:border-zinc-800 text-[11px] font-sans text-zinc-400 shrink-0">
           <span
-            className={`w-1.5 h-1.5 rounded-full ${loading ? "bg-amber-400 animate-pulse" : error ? "bg-red-400" : tailing ? "bg-emerald-500 animate-pulse" : "bg-emerald-500"}`}
+            className={`w-1.5 h-1.5 rounded-full ${
+              loading ? "bg-amber-400 animate-pulse"
+              : error ? "bg-red-400"
+              : tailing ? "bg-emerald-500 animate-pulse"
+              : "bg-emerald-500"
+            }`}
           />
-          {loading
-            ? "Loading…"
-            : error
-              ? "Error"
-              : tailing
-                ? `Live tail · ${logs.length} of ${total} logs · last updated ${lastTick ? lastTick.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }) : "—"}`
-                : `${logs.length} of ${total} logs`}
+          {loading ?
+            "Loading…"
+          : error ?
+            "Error"
+          : tailing ?
+            `Live tail · ${logs.length} of ${total} logs · last updated ${lastTick ? lastTick.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }) : "—"}`
+          : `${logs.length} of ${total} logs`}
           {!loading && !tailing && total > PAGE_SIZE && (
             <div className="ml-auto flex items-center gap-2">
               <button
