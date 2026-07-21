@@ -1,27 +1,24 @@
+"use client";
 /*
  * @FilePath: \my-new-app\app\logview\LogViewer.tsx
- * @LastEditTime: 2026-07-20 21:50:30
+ * @LastEditTime: 2026-07-20 23:06:07
  */
-"use client";
 
-import { useEffect, useState, useCallback, useRef } from "react";
-
-// ─── Types ────────────────────────────────────────────────────────────────────
-
+import { useCallback, useEffect, useRef, useState } from "react";
 interface Log {
   id: number;
   level: string;
   message: string;
   requestId: string | null;
   domain: string;
-  payload: Record<string, unknown>;
-  meta: Record<string, unknown> | null;
+  payload: any;
+  meta: any;
   userId: string | null;
   sessionEmail: string | null;
   sessionUser: string | null;
   file: string | null;
   line: number | null;
-  created_at: string;
+  created_at: string | Date;
 }
 
 interface ApiResponse {
@@ -29,49 +26,54 @@ interface ApiResponse {
   total: number;
   domains: { domain: string; count: number }[];
   levels: { level: string; count: number }[];
-  limit: number;
-  offset: number;
   error?: string;
 }
+export default function LogViewer({
+  initialData,
+}: {
+  initialData: ApiResponse;
+}) {
+  const [data, setData] = useState(initialData);
+  // ─── Types ────────────────────────────────────────────────────────────────────
 
-// ─── Constants ────────────────────────────────────────────────────────────────
+  // ─── Constants ────────────────────────────────────────────────────────────────
 
-const LEVEL_BADGE: Record<string, string> = {
-  error: "bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300",
-  warn: "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300",
-  info: "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300",
-  debug: "bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400",
-};
+  const LEVEL_BADGE: Record<string, string> = {
+    error: "bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300",
+    warn: "bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300",
+    info: "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300",
+    debug: "bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400",
+  };
 
-const LEVEL_DOT: Record<string, string> = {
-  error: "bg-red-500",
-  warn: "bg-amber-400",
-  info: "bg-blue-500",
-  debug: "bg-zinc-400",
-};
+  const LEVEL_DOT: Record<string, string> = {
+    error: "bg-red-500",
+    warn: "bg-amber-400",
+    info: "bg-blue-500",
+    debug: "bg-zinc-400",
+  };
 
-const WINDOWS = [
-  { value: "1h", label: "Last 1h" },
-  { value: "24h", label: "Last 24h" },
-  { value: "7d", label: "Last 7d" },
-  { value: "30d", label: "Last 30d" },
-  { value: "all", label: "All time" },
-];
+  const WINDOWS = [
+    { value: "1h", label: "Last 1h" },
+    { value: "24h", label: "Last 24h" },
+    { value: "7d", label: "Last 7d" },
+    { value: "30d", label: "Last 30d" },
+    { value: "all", label: "All time" },
+  ];
 
-const TAIL_INTERVALS = [
-  { value: 5, label: "5s" },
-  { value: 10, label: "10s" },
-  { value: 30, label: "30s" },
-];
+  const TAIL_INTERVALS = [
+    { value: 5, label: "5s" },
+    { value: 10, label: "10s" },
+    { value: 30, label: "30s" },
+  ];
 
-const PAGE_SIZE = 100;
+  const PAGE_SIZE = 100;
 
-// ─── Main Component ───────────────────────────────────────────────────────────
+  // ─── Main Component ───────────────────────────────────────────────────────────
 
-export default function LogViewer() {
   // ─── Helpers (now inside the client component) ──────────────────────────────
 
-  function fmtTs(iso: string) {
+  function fmtTs(ts: string | Date) {
+    const iso = typeof ts === "string" ? ts : ts.toISOString();
     const d = new Date(iso);
     return (
       d.toLocaleDateString("en-US", { month: "short", day: "numeric" }) +
@@ -113,9 +115,9 @@ export default function LogViewer() {
         </span>
         <span
           className={
-            value === null || value === undefined ?
-              "italic text-zinc-300 dark:text-zinc-600"
-            : "text-zinc-700 dark:text-zinc-200 break-all"
+            value === null || value === undefined
+              ? "italic text-zinc-300 dark:text-zinc-600"
+              : "text-zinc-700 dark:text-zinc-200 break-all"
           }
         >
           {value === null || value === undefined ? "null" : String(value)}
