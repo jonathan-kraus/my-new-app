@@ -2,6 +2,7 @@
 import { getDashboardData } from "@/lib/dashboard";
 import { AstronomyCard } from "@/app/astronomy/AstronomyCard";
 import VercelCard from "@/app/components/dashboard/vercel-card";
+import VersionCard from "@/app/components/dashboard/version-card";
 import { logj } from "@/lib/log/client";
 import type { Metadata } from "next";
 
@@ -27,6 +28,7 @@ export default async function DashboardPage() {
       {/* <GitHubCard data={data.github} /> */}
       {/* <WeatherCard data={data.weather} /> */}
       {/* <LogsCard data={data.logs} /> */}
+      <VersionCard />
     </div>
   );
 }
