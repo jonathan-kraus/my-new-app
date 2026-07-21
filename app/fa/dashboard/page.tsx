@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Skybox from "@/components/skybox";
 import { getConfig } from "@/lib/runtime/config";
 
-export const metadata = { title: "Flight Dashboard" };
 export default function FlightDashboard() {
   const [data, setData] = useState<any>(null);
   const [identInput, setIdentInput] = useState("");

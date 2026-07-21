@@ -8,6 +8,7 @@ import { logj } from "@/lib/log/client";
 //import { WeatherCard } from "./components/WeatherCard";
 //import { LogsCard } from "./components/LogsCard";
 export const dynamic = "force-dynamic";
+export const metadata = { title: "Dashboard" };
 export default async function DashboardPage() {
   void logj.info({
     domain: "dashboard",
