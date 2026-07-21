@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\logview\LogViewer.tsx
- * @LastEditTime: 2026-07-20 20:11:44
+ * @LastEditTime: 2026-07-20 21:50:30
  */
 "use client";
 
@@ -85,22 +85,19 @@ export default function LogViewer() {
     );
   }
 
-function JsonBlock({ value }: { value: unknown }) {
-  if (!value || typeof value !== "object") {
+  function JsonBlock({ value }: { value: unknown }) {
+    if (!value || typeof value !== "object") {
+      return (
+        <pre className="text-xs text-zinc-500">{String(value ?? "null")}</pre>
+      );
+    }
+
     return (
-      <pre className="text-xs text-zinc-500">
-        {String(value ?? "null")}
+      <pre className="text-xs text-zinc-700 dark:text-zinc-300 whitespace-pre-wrap break-all">
+        {JSON.stringify(value, null, 2)}
       </pre>
     );
   }
-
-  return (
-    <pre className="text-xs text-zinc-700 dark:text-zinc-300 whitespace-pre-wrap break-all">
-      {JSON.stringify(value, null, 2)}
-    </pre>
-  );
-}
-
 
   function KV({
     label,
@@ -116,9 +113,9 @@ function JsonBlock({ value }: { value: unknown }) {
         </span>
         <span
           className={
-            value === null || value === undefined
-              ? "italic text-zinc-300 dark:text-zinc-600"
-              : "text-zinc-700 dark:text-zinc-200 break-all"
+            value === null || value === undefined ?
+              "italic text-zinc-300 dark:text-zinc-600"
+            : "text-zinc-700 dark:text-zinc-200 break-all"
           }
         >
           {value === null || value === undefined ? "null" : String(value)}
@@ -160,7 +157,11 @@ function JsonBlock({ value }: { value: unknown }) {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
       const data: ApiResponse = await res.json();
-
+      console.log("API response:", data);
+      console.log("API response: logs", data.logs);
+      console.log("API response: total", data.total);
+      console.log("API response: domains", data.domains);
+      console.log("API response: levels", data.levels);
       setLogs(data.logs);
       setTotal(data.total);
       setDomains(data.domains);
