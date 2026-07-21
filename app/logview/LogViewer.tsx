@@ -181,10 +181,6 @@ export default function LogViewer({
   }, [window, page]);
 
   useEffect(() => {
-    fetchLogs();
-  }, [fetchLogs]);
-
-  useEffect(() => {
     if (tailTimerRef.current) {
       clearInterval(tailTimerRef.current);
       tailTimerRef.current = null;
