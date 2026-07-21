@@ -29,6 +29,7 @@ interface ApiResponse {
   total: number;
   domains: { domain: string; count: number }[];
   levels: { level: string; count: number }[];
+  last10: number;
   limit: number;
   offset: number;
   error?: string;
@@ -122,6 +123,7 @@ export default function LogViewerClient() {
     [],
   );
   const [levelCounts, setLevelCounts] = useState<Record<string, number>>({});
+  const [last10, setLast10] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -174,6 +176,7 @@ export default function LogViewerClient() {
         setLogs(data.logs);
         setTotal(data.total);
         setDomains(data.domains);
+        setLast10(data.last10);
         const lc: Record<string, number> = {};
         data.levels.forEach((r) => {
           lc[r.level] = r.count;
@@ -262,6 +265,18 @@ export default function LogViewerClient() {
   return (
     <div className="flex h-screen bg-zinc-50 dark:bg-zinc-950 font-mono text-sm overflow-hidden">
       <aside className="w-52 shrink-0 bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 flex flex-col py-4 overflow-y-auto">
+        <div className="px-4 pb-3 mb-3 border-b border-zinc-100 dark:border-zinc-800">
+          <p className="text-[10px] font-sans font-medium tracking-widest uppercase text-zinc-400 mb-2">
+            Last 10m
+          </p>
+          <div className="flex items-center justify-between gap-2 text-sm font-medium text-zinc-900 dark:text-zinc-100">
+            <span className="truncate">Matching logs</span>
+            <span className="text-[10px] bg-zinc-100 dark:bg-zinc-800 text-zinc-400 dark:text-zinc-500 px-2 py-0.5 rounded-full">
+              {last10}
+            </span>
+          </div>
+        </div>
+
         <p className="text-[10px] font-sans font-medium tracking-widest uppercase text-zinc-400 px-4 mb-3">
           Level
         </p>

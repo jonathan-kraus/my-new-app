@@ -110,20 +110,27 @@ export async function GET(req: NextRequest) {
   const countQuery = `SELECT COUNT(*)::int AS total FROM "Log" ${where}`;
   const domainQuery = `SELECT domain, COUNT(*)::int AS count FROM "Log" ${sidebarWhere} GROUP BY domain ORDER BY count DESC`;
   const levelQuery = `SELECT level, COUNT(*)::int AS count FROM "Log" ${sidebarWhere} GROUP BY level`;
+  const last10Where = sidebarWhere
+    ? `${sidebarWhere} AND created_at > NOW() - INTERVAL '10 minutes'`
+    : `WHERE created_at > NOW() - INTERVAL '10 minutes'`;
+  const last10Query = `SELECT COUNT(*)::int AS total FROM "Log" ${last10Where}`;
 
   try {
-    const [logsRes, countRes, domainRes, levelRes] = await Promise.all([
-      pool.query(logsQuery, logsValues),
-      pool.query<CountRow>(countQuery, baseValues),
-      pool.query<DomainRow>(domainQuery, sidebarValues),
-      pool.query<LevelRow>(levelQuery, sidebarValues),
-    ]);
+    const [logsRes, countRes, domainRes, levelRes, last10Res] =
+      await Promise.all([
+        pool.query(logsQuery, logsValues),
+        pool.query<CountRow>(countQuery, baseValues),
+        pool.query<DomainRow>(domainQuery, sidebarValues),
+        pool.query<LevelRow>(levelQuery, sidebarValues),
+        pool.query<CountRow>(last10Query, sidebarValues),
+      ]);
 
     return NextResponse.json({
       logs: logsRes.rows,
       total: countRes.rows[0]?.total ?? 0,
       domains: domainRes.rows,
       levels: levelRes.rows,
+      last10: last10Res.rows[0]?.total ?? 0,
       limit,
       offset,
     });
