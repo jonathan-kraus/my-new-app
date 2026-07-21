@@ -3,9 +3,10 @@ import { GitHubActivityCard } from "@/app/components/github/GitHubActivityCard";
 import { GitHubActivityEvent } from "@/lib/types";
 import { staticUniversalContext } from "@/lib/log/buildj";
 import { logj } from "@/lib/log/logj";
+import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
-export const metadata = { title: "GitHub Activity" };
+export const metadata: Metadata = { title: "GitHub Activity" };
 async function fetchGitHubEvents(): Promise<GitHubActivityEvent[]> {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/activity/github`,

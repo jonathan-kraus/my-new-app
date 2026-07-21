@@ -3,12 +3,13 @@ import { getDashboardData } from "@/lib/dashboard";
 import { AstronomyCard } from "@/app/astronomy/AstronomyCard";
 import VercelCard from "@/app/components/dashboard/vercel-card";
 import { logj } from "@/lib/log/client";
+import type { Metadata } from "next";
 
 //import { GitHubCard } from "./components/GitHubCard";
 //import { WeatherCard } from "./components/WeatherCard";
 //import { LogsCard } from "./components/LogsCard";
 export const dynamic = "force-dynamic";
-export const metadata = { title: "Dashboard" };
+export const metadata: Metadata = { title: "Dashboard" };
 export default async function DashboardPage() {
   void logj.info({
     domain: "dashboard",
