@@ -42,11 +42,42 @@ jobs:
           corepack prepare pnpm@latest --activate
           pnpm --version
 
+      - name: Cache pnpm store
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: pnpm-store-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            pnpm-store-${{ runner.os }}-
+      
       - name: Install dependencies
         run: |
           pnpm install --frozen-lockfile
+      
+      # -------------------------------
+      # Next.js build cache
+      # -------------------------------
+      - name: Cache Next.js build
+        uses: actions/cache@v3
+        with:
+          path: .next/cache
+          key: nextjs-${{ runner.os }}-${{ hashFiles('**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx') }}
+          restore-keys: |
+            nextjs-${{ runner.os }}-
 
-      - name: Lint commit messages
+      # -------------------------------
+      # TypeScript incremental cache
+      # -------------------------------
+      - name: Cache TypeScript build info
+        uses: actions/cache@v3
+        with:
+          path: |
+            tsconfig.tsbuildinfo
+          key: tsbuild-${{ runner.os }}-${{ hashFiles('tsconfig.json') }}
+          restore-keys: |
+            tsbuild-${{ runner.os }}-
+
+      - name: Lint code
         run: pnpm exec eslint .
 
       - name: Generate Prisma Client
