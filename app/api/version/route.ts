@@ -42,10 +42,7 @@ export async function GET(request: Request) {
   const deps = pkg.dependencies as Record<string, string>;
   const devDeps = pkg.devDependencies as Record<string, string>;
 
-  let version: string | null =
-    deps?.[pkgName] ??
-    devDeps?.[pkgName] ??
-    null;
+  let version: string | null = deps?.[pkgName] ?? devDeps?.[pkgName] ?? null;
 
   // Lookup in pnpm overrides (correct location)
   const overrides = pkg.overrides as Record<string, string> | undefined;
@@ -58,8 +55,8 @@ export async function GET(request: Request) {
     const lock = readLockfile();
     const resolved = lock.packages;
 
-    const match = Object.keys(resolved).find(key =>
-      key.startsWith(`/${pkgName}@`)
+    const match = Object.keys(resolved).find((key) =>
+      key.startsWith(`/${pkgName}@`),
     );
 
     if (match) {

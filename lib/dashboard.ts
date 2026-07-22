@@ -10,79 +10,6 @@ export interface VercelDeploymentsResponse {
   deployments: any[];
   pagination: any;
 }
-/**
- * Convert a Date → ISO string, or return null if invalid.
- */
-function safeDate(value: any): string | null {
-  if (!(value instanceof Date)) return null;
-  return isNaN(value.getTime()) ? null : value.toISOString();
-}
-
-/**
- * Convert anything that looks like a date string → ISO string.
- */
-function safeDateString(value: any): string | null {
-  if (typeof value !== "string") return null;
-  const d = new Date(value);
-  return isNaN(d.getTime()) ? null : d.toISOString();
-}
-
-/**
- * Recursively sanitize the entire snapshot.
- * - Converts Date objects → ISO strings
- * - Converts invalid Dates → null
- * - Converts date-like strings → ISO strings
- * - Leaves all other primitives untouched
- * - Recurses through objects and arrays
- */
-export function sanitizeSnapshot(input: any): any {
-  if (input === null || input === undefined) return input;
-
-  // Handle Date objects
-  if (input instanceof Date) {
-    return safeDate(input);
-  }
-
-  // Handle strings that might be dates
-  if (typeof input === "string") {
-    const iso = safeDateString(input);
-    return iso ?? input; // keep original string if not a date
-  }
-
-  // Handle arrays
-  if (Array.isArray(input)) {
-    return input.map((item) => sanitizeSnapshot(item));
-  }
-
-  // Handle objects
-  if (typeof input === "object") {
-    const out: Record<string, any> = {};
-
-    for (const key of Object.keys(input)) {
-      const value = input[key];
-
-      // Special case: dateObj fields
-      if (key === "dateObj") {
-        if (value instanceof Date) {
-          out[key] = safeDate(value);
-        } else if (typeof value === "string") {
-          out[key] = safeDateString(value);
-        } else {
-          out[key] = null;
-        }
-        continue;
-      }
-
-      // Recurse normally
-      out[key] = sanitizeSnapshot(value);
-    }
-
-    return out;
-  }
-
-  // Primitive (number, boolean, etc.)
-  return input;
-}
 
 export interface DashboardData {
   vercel: VercelDeploymentsResponse | null;
@@ -93,10 +20,6 @@ export interface DashboardData {
 const built = staticUniversalContext("Dashboard");
 let jei = 0;
 export async function logDashboardAstronomy(snapshot: unknown) {
-  const safePayload = {
-  ...snapshot,
-  snapshot: sanitizeSnapshot(snapshot),
-};
   await logj({
     domain: "DashboardAstronomy",
     level: "info",
@@ -133,7 +56,7 @@ export async function getDashboardData(): Promise<DashboardData> {
     },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
-  console.log("VERCEL_TOKEN suffix", process.env.VERCEL_TOKEN?.slice(-6));
+
   console.log("dashboard vercelResult.ok", vercelResult.ok);
   console.log("dashboard vercel raw", JSON.stringify(vercel, null, 2));
   console.log(

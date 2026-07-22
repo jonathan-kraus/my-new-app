@@ -2,7 +2,7 @@
  * @FilePath: \my-new-app\hooks\useVersionSWR.ts
  * @LastEditTime: 2026-07-21 18:22:50
  */
-'use client'
+"use client";
 import useSWR from "swr";
 
 export interface VersionInfo {
