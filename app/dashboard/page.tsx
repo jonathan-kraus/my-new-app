@@ -28,7 +28,7 @@ export default async function DashboardPage() {
       {/* <GitHubCard data={data.github} /> */}
       {/* <WeatherCard data={data.weather} /> */}
       {/* <LogsCard data={data.logs} /> */}
-      <VersionCard />
+      {/* <VersionCard /> */}
     </div>
   );
 }
