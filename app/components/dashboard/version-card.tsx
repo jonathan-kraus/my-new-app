@@ -1,5 +1,5 @@
 "use client";
-
+// app\components\dashboard\version-card.tsx
 import { useVersionSWR } from "@/hooks/useVersionSWR";
 import { logj } from "@/lib/log/client";
 import { staticUniversalContext } from "@/lib/log/buildj";
@@ -10,7 +10,7 @@ logj({
   domain: "dashboard",
   level: "info",
   message: "VersionCard loaded",
-  file: "app/dashboard/page.tsx",
+  file: "app\components\dashboard\version-card.tsx",
   line: 9,
   payload: { some: "Version Card loaded" },
   meta: { built: { ...built, eventIndex: ++jei } },

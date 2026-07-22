@@ -3,6 +3,8 @@ export const dynamic = "force-dynamic";
 import { getVercelDeployments } from "./vercel";
 import { getRecentActivity } from "./github";
 import { getEphemerisSnapshot } from "@/lib/ephemeris/getEphemerisSnapshot";
+import { getBuildMetadata } from "@/lib/version/build";
+import type { BuildMetadata } from "@/lib/version/build";
 import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
 
@@ -15,6 +17,7 @@ export interface DashboardData {
   vercel: VercelDeploymentsResponse | null;
   github: any[] | null;
   astronomy: any | null;
+  build: BuildMetadata;
   system: { generatedAt: string };
 }
 const built = staticUniversalContext("Dashboard");
@@ -79,6 +82,7 @@ export async function getDashboardData(): Promise<DashboardData> {
     vercel,
     github,
     astronomy,
+    build: getBuildMetadata(),
     system: {
       generatedAt: new Date().toISOString(),
     },

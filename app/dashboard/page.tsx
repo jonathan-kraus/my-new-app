@@ -7,6 +7,7 @@ import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import type { Metadata } from "next";
 import { auth } from "@/auth";
+import BuildCard from "../components/dashboard/build-card";
 
 //import { GitHubCard } from "./components/GitHubCard";
 //import { WeatherCard } from "./components/WeatherCard";
@@ -22,7 +23,6 @@ export default async function DashboardPage(req: Request) {
   console.log("DashboardPage built context:", built);
   let session = await auth();
 
-    
   await logj({
     domain: "dashboard",
     level: "info",
@@ -52,6 +52,7 @@ export default async function DashboardPage(req: Request) {
       {/* <WeatherCard data={data.weather} /> */}
       {/* <LogsCard data={data.logs} /> */}
       <VersionCard />
+      <BuildCard build={data.build} />
     </div>
   );
 }

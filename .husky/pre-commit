@@ -1,3 +1,2 @@
-
-
 pnpm bump:ui && git add version.json
+pnpm exec node scripts/collect-build-metadata.js
