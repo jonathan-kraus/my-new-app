@@ -11,10 +11,10 @@ import { auth } from "@/auth";
 //import { GitHubCard } from "./components/GitHubCard";
 //import { WeatherCard } from "./components/WeatherCard";
 //import { LogsCard } from "./components/LogsCard";
-import { Session } from '../../lib/generated/prisma/browser';
+
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = { title: "Dashboard" };
+export const metadata: Metadata = { title: "Dashboard " };
 let jei = 0;
 
 export default async function DashboardPage(req: Request) {
