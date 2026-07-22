@@ -28,7 +28,7 @@ export async function logDashboardAstronomy(snapshot: unknown) {
     level: "info",
     message: "Dashboard Astronomy snapshot",
     file: "dashboard.ts",
-    line: 24,
+    line: 26,
     payload: { some: "data1", snapshot },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -59,15 +59,6 @@ export async function getDashboardData(): Promise<DashboardData> {
     },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
-
-  console.log("dashboard vercelResult.ok", vercelResult.ok);
-  console.log("dashboard vercel raw", JSON.stringify(vercel, null, 2));
-  console.log(
-    "dashboard vercel count",
-    Array.isArray(vercel?.deployments)
-      ? vercel.deployments.length
-      : "not-array",
-  );
 
   const github = githubResult.ok ? githubResult.data : [];
   const astronomy = astronomyResult.ok
