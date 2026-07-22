@@ -1,6 +1,7 @@
+"use client";
 /*
  * @FilePath: \my-new-app\app\components\dashboard\version-card.tsx
- * @LastEditTime: 2026-07-21 18:15:43
+ * @LastEditTime: 2026-07-21 21:10:21
  */
 import { useVersionSWR } from "@/hooks/useVersionSWR";
 
