@@ -3,7 +3,7 @@ import { getDashboardData } from "@/lib/dashboard";
 import { AstronomyCard } from "@/app/astronomy/AstronomyCard";
 import VercelCard from "@/app/components/dashboard/vercel-card";
 import VersionCard from "@/app/components/dashboard/version-card";
-import { logj } from "@/lib/log/client";
+import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import type { Metadata } from "next";
 
