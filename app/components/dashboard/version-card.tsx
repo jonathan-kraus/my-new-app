@@ -2,22 +2,21 @@
 
 import { useVersionSWR } from "@/hooks/useVersionSWR";
 
-const PACKAGES = ["react", "next", "date-fns", "typescript"];
-
 export default function VersionCard() {
-  const app = useVersionSWR(); // main project version
+  const app = useVersionSWR();
 
-  // Call hooks individually (React-safe)
   const react = useVersionSWR("react");
   const next = useVersionSWR("next");
   const dateFns = useVersionSWR("date-fns");
   const typescript = useVersionSWR("typescript");
+  const eslint = useVersionSWR("eslint");
 
   const deps = [
-    { pkg: "react", ...react },
-    { pkg: "next", ...next },
-    { pkg: "date-fns", ...dateFns },
-    { pkg: "typescript", ...typescript },
+    { pkg: "react", label: "React", ...react },
+    { pkg: "next", label: "Next.js", ...next },
+    { pkg: "date-fns", label: "date-fns", ...dateFns },
+    { pkg: "typescript", label: "TypeScript", ...typescript },
+    { pkg: "eslint", label: "ESLint", ...eslint },
   ];
 
   return (
@@ -49,17 +48,30 @@ export default function VersionCard() {
       <hr className="border-white/10 my-3" />
 
       {/* Dependency Versions */}
-      <div className="space-y-2">
-        {deps.map((d) => (
-          <div key={d.pkg} className="text-sm text-gray-300">
-            <span className="font-medium">{d.pkg}:</span>{" "}
-            {d.loading
-              ? "loading…"
-              : d.error
-                ? "error"
-                : (d.data?.version ?? "unknown")}
-          </div>
-        ))}
+      <div className="space-y-3">
+        {deps.map((d) => {
+          const version = d.data?.version;
+          const isLoading = d.loading;
+          const isError = d.error;
+
+          return (
+            <div
+              key={d.pkg}
+              className="flex items-center justify-between text-sm text-gray-300"
+            >
+              <div className="flex items-center gap-2">
+                <span className="font-medium">{d.label}:</span>
+                {isLoading ? (
+                  <span className="text-gray-400">loading…</span>
+                ) : isError ? (
+                  <span className="text-red-400">error</span>
+                ) : (
+                  <span className="font-mono">{version}</span>
+                )}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
