@@ -43,7 +43,7 @@ jobs:
           pnpm --version
 
       - name: Cache pnpm store
-        uses: actions/cache@v3
+        uses: actions/cache@v6
         with:
           path: ~/.pnpm-store
           key: pnpm-store-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
@@ -58,7 +58,7 @@ jobs:
       # Next.js build cache
       # -------------------------------
       - name: Cache Next.js build
-        uses: actions/cache@v3
+        uses: actions/cache@v6
         with:
           path: .next/cache
           key: nextjs-${{ runner.os }}-${{ hashFiles('**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx') }}
@@ -69,7 +69,7 @@ jobs:
       # TypeScript incremental cache
       # -------------------------------
       - name: Cache TypeScript build info
-        uses: actions/cache@v3
+        uses: actions/cache@v6
         with:
           path: |
             tsconfig.tsbuildinfo
