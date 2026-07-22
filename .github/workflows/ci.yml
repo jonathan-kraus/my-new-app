@@ -119,7 +119,7 @@ jobs:
           echo "Process environment CI: $CI"
           echo "List coverage dir (if present):"; ls -la coverage || true
 
-      - name: Build
+      - name: Buildit
         env:
           CI: true
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
