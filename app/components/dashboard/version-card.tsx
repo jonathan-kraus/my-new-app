@@ -5,13 +5,14 @@ import { logj } from "@/lib/log/client";
 import { staticUniversalContext } from "@/lib/log/buildj";
 const built = await staticUniversalContext("dashboard");
 let jei = 0;
+
 logj({
   domain: "dashboard",
   level: "info",
   message: "VersionCard loaded",
   file: "app/dashboard/page.tsx",
-  line: 19,
-  payload: { some: "Dashboard page loaded" },
+  line: 9,
+  payload: { some: "Version Card loaded" },
   meta: { built: { ...built, eventIndex: ++jei } },
 });
 
