@@ -16,10 +16,12 @@ let jei = 0;
 
 export default async function DashboardPage(req: Request) {
   const built = await buildUniversalContext(req as any, "DASHBOARD");
-  void logj.info({
+  console.log("DashboardPage built context:", built);
+  await logj({
     domain: "dashboard",
+    level: "info",
     message: "Dashboard page loaded",
-    file: "DashboardPage.tsx",
+    file: "app/dashboard/page.tsx",
     line: 19,
     payload: { title: metadata.title, some: "Dashboard page loaded" },
     meta: { built: { ...built, eventIndex: ++jei } },
@@ -27,11 +29,12 @@ export default async function DashboardPage(req: Request) {
 
   const data = await getDashboardData();
 
+  console.log("DashboardPage fetched data:", data);
   await logj({
-    domain: "jonathan",
+    domain: "dashboard",
     level: "info",
-    message: "Fetched DB overview and history",
-    file: "app/admin/db/page.tsx",
+    message: "Dashboard page data fetched",
+    file: "app/dashboard/page.tsx",
     line: 31,
     payload: { data: data },
     meta: { built: { ...built, eventIndex: ++jei } },
