@@ -47,7 +47,15 @@ export default async function DashboardPage(req: Request) {
   });
   const tools = data.build.tools;
 console.log("TOOLS:", tools);
-
+await logj({
+    domain: "dashboard",
+    level: "info",
+    message: "Tools information",
+    file: "app/dashboard/page.tsx",
+    line: 50,
+    payload: { TOOLS: tools },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
   const toolEntries = Object.entries(tools).map(([name, version]) => ({
     name,
     version,
