@@ -21,7 +21,7 @@ let jei = 0;
 
 export default async function DashboardPage(req: Request) {
   const built = await buildUniversalContext(req as any, "DASHBOARD");
-  console.log("DashboardPage built context:", built);
+
   let session = await auth();
 
   await logj({
@@ -46,6 +46,7 @@ export default async function DashboardPage(req: Request) {
     meta: { built: { ...built, eventIndex: ++jei } },
   });
   const tools = data.build.tools;
+console.log("TOOLS:", tools);
 
   const toolEntries = Object.entries(tools).map(([name, version]) => ({
     name,
