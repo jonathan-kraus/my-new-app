@@ -1,11 +1,32 @@
-// app/components/SideNav.tsx
-"use server";
+"use client";
 
-import { getEphemerisSnapshot } from "@/lib/ephemeris/getEphemerisSnapshot";
+import { useEffect, useState } from "react";
 import SideNavClient from "./SideNavClient";
 
-export default async function SideNav() {
-  const snapshot = await getEphemerisSnapshot("KOP");
+type EphemerisSnapshot = {
+  nextEvent: {
+    name: string;
+    dateObj: string; // JSON always returns a string
+  } | null;
+};
+
+export default function SideNav() {
+  const [snapshot, setSnapshot] = useState<EphemerisSnapshot | null>(null);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch("/api/ephemeris?loc=KOP");
+        const data: EphemerisSnapshot = await res.json();
+        setSnapshot(data);
+      } catch (err) {
+        console.error("Failed to load ephemeris snapshot:", err);
+        setSnapshot(null);
+      }
+    }
+
+    load();
+  }, []);
 
   if (!snapshot?.nextEvent) {
     return <SideNavClient nextEventLabel="—" nextEventTime={null} />;
@@ -14,7 +35,11 @@ export default async function SideNav() {
   return (
     <SideNavClient
       nextEventLabel={snapshot.nextEvent.name}
-      nextEventTime={snapshot.nextEvent.dateObj}
+      nextEventTime={
+        snapshot.nextEvent.dateObj
+          ? new Date(snapshot.nextEvent.dateObj)
+          : null
+      }
     />
   );
 }
