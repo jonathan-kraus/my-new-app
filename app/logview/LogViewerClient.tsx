@@ -283,7 +283,7 @@ export default function LogViewerClient() {
   return (
     <div className="flex h-screen bg-zinc-50 dark:bg-zinc-950 font-mono text-sm overflow-hidden">
       <aside className="w-52 shrink-0 bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 flex flex-col py-4 overflow-y-auto">
-        <div className="px-4 pb-3 mb-3 border-b border-zinc-100 dark:border-zinc-800">
+        <div className="px-4 pb-3 mb-3 border-b border-yellow-100 dark:border-zinc-800">
           <p className="text-[10px] font-sans font-medium tracking-widest uppercase text-zinc-400 mb-2">
             Last 10m
           </p>
