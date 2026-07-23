@@ -18,7 +18,14 @@ export async function GET() {
     WHERE schemaname = 'public';
   `);
 
-  const results = [];
+const results: Array<{
+  table_name: string;
+  exact_rows: number;
+  total_bytes: number;
+  table_bytes: number;
+  index_bytes: number;
+  toast_bytes: number;
+}> = [];
 
   for (const { table_name } of tables) {
     // Exact row count
@@ -32,15 +39,23 @@ export async function GET() {
     const exactCount = row.exact_count;
     console.log(`Table: ${table_name}, Exact Row Count: ${exactCount}`);
     // Size metrics
-    const [sizes] = await db.$queryRawUnsafe<any[]>(`
-      SELECT
-        pg_total_relation_size('"${table_name}"') AS total_bytes,
-        pg_relation_size('"${table_name}"') AS table_bytes,
-        pg_indexes_size('"${table_name}"') AS index_bytes,
-        pg_total_relation_size('"${table_name}"')
-          - pg_relation_size('"${table_name}"')
-          - pg_indexes_size('"${table_name}"') AS toast_bytes
-    `);
+const sizes = assertNonEmptyArray(
+  await db.$queryRawUnsafe<{
+    total_bytes: number;
+    table_bytes: number;
+    index_bytes: number;
+    toast_bytes: number;
+  }[]>(`
+    SELECT
+      pg_total_relation_size('"${table_name}"') AS total_bytes,
+      pg_relation_size('"${table_name}"') AS table_bytes,
+      pg_indexes_size('"${table_name}"') AS index_bytes,
+      pg_total_relation_size('"${table_name}"')
+        - pg_relation_size('"${table_name}"')
+        - pg_indexes_size('"${table_name}"') AS toast_bytes
+  `),
+  `sizes for table ${table_name}`
+)[0];
 
     results.push({
       table_name,
