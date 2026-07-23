@@ -1,12 +1,13 @@
 /*
  * @FilePath: \my-new-app\app\page.tsx
- * @LastEditTime: 2026-07-03 21:15:09
+ * @LastEditTime: 2026-07-22 23:47:03
  */
 // app/page.tsx
 import { auth } from "@/auth";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { Button } from "@/components/ui/button";
+import { UIProvider } from "@/components/providers/ui-provider";
 import CurrentWeatherCard from "@/app/components/dashboard/current-weather-card";
 import Link from "next/link";
 import { db } from "@/lib/db";
@@ -167,6 +168,7 @@ export default async function HomePage(req: Request) {
         </section>
 
         {/* Quick Actions */}
+        <UIProvider>
         <section className="mt-8 flex gap-4">
           <Button asChild>
             <Link href="/forecast">Full Forecast</Link>
@@ -178,7 +180,9 @@ export default async function HomePage(req: Request) {
             <Link href="/api/prisma-test">Prisma Test</Link>
           </Button>
         </section>
+        </UIProvider>
       </div>
     </div>
+    
   );
 }
