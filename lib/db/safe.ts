@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\lib\db\safe.ts
- * @LastEditTime: 2026-05-10 20:32:59
+ * @LastEditTime: 2026-07-23 19:56:34
  */
 
 export function assertRows<T>(
@@ -29,7 +29,7 @@ export function firstRow<T>(rows: T[] | undefined | null, context?: string): T {
 export function assertNonEmptyArray<T>(
   value: T[] | undefined | null,
   context?: string,
-): [T, ...T[]] {
+): T[] {
   if (!value || value.length === 0) {
     throw new Error(
       context
@@ -38,6 +38,6 @@ export function assertNonEmptyArray<T>(
     );
   }
 
-  // This cast is safe because we validated length > 0
-  return value as [T, ...T[]];
+  return value;
 }
+
