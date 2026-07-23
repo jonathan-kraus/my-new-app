@@ -10,8 +10,8 @@ function getCallerInfo() {
   const stack = new Error().stack?.split("\n") ?? [];
   const caller = stack[3] ?? null;
 
-  let file = null;
-  let line = null;
+  let file: string | null = null;
+  let line: string | null = null;
 
   if (caller) {
     const match =

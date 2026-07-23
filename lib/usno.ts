@@ -7,7 +7,13 @@ export async function fetchUSNOMultiDay(
   days: number,
   startDate: Date,
 ) {
-  const results = [];
+  const results: Array<{
+    date: Date;
+    sunrise: Date;
+    sunset: Date;
+    moonrise: Date | null;
+    moonset: Date | null;
+  }> = [];
 
   for (let i = 0; i < days; i++) {
     const date = startOfDay(addDays(startDate, i));
@@ -54,3 +60,4 @@ export async function fetchUSNOMultiDay(
 
   return results;
 }
+
