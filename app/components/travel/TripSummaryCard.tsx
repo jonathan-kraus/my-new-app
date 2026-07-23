@@ -1,9 +1,10 @@
 /*
  * @FilePath: \my-new-app\app\components\travel\TripSummaryCard.tsx
- * @LastEditTime: 2026-05-11 05:29:45
+ * @LastEditTime: 2026-07-23 18:38:58
  */
 import type { ParsedTravelSnapshot } from "@/lib/travel/parser/aa";
-import type { Prisma } from "../../../src/lib/generated/prisma/client";
+import type { Prisma } from "@prisma/client";
+
 
 type TravelSegment = Prisma.TravelSegmentGetPayload<{}>;
 
