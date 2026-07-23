@@ -36,8 +36,8 @@ const row = assertNonEmptyArray(
   `exact count for table ${table_name}`
 )[0];
 
-    const exactCount = row.exact_count;
-    console.log(`Table: ${table_name}, Exact Row Count: ${exactCount}`);
+const exactCount = row.exact_count;
+console.log(`Table: ${table_name}, Exact Row Count: ${exactCount}`);
     // Size metrics
 const sizes = assertNonEmptyArray(
   await db.$queryRawUnsafe<{
