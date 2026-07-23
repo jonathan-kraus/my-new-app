@@ -29,12 +29,12 @@ const results: Array<{
 
   for (const { table_name } of tables) {
     // Exact row count
-    const [row] = assertNonEmptyArray(
-      await db.$queryRawUnsafe<{ exact_count: number }[]>(`
+const row = assertNonEmptyArray(
+  await db.$queryRawUnsafe<{ exact_count: number }[]>(`
     SELECT COUNT(*)::bigint AS exact_count FROM "${table_name}";
   `),
-      `exact count for table ${table_name}`,
-    );
+  `exact count for table ${table_name}`
+)[0];
 
     const exactCount = row.exact_count;
     console.log(`Table: ${table_name}, Exact Row Count: ${exactCount}`);
