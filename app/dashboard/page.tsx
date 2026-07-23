@@ -50,7 +50,7 @@ console.log("TOOLS:", tools);
 await logj({
     domain: "dashboard",
     level: "info",
-    message: "Tools information",
+    message: "Tools information @# ",
     file: "app/dashboard/page.tsx",
     line: 50,
     payload: { TOOLS: tools },
