@@ -34,11 +34,11 @@ export type GithubEventMinAggregateOutputType = {
   conclusion: string | null
   commitSha: string | null
   commitMessage: string | null
+  title: string | null
+  jobName: string | null
   url: string | null
   createdAt: Date | null
   updatedAt: Date | null
-  title: string | null
-  jobName: string | null
 }
 
 export type GithubEventMaxAggregateOutputType = {
@@ -51,11 +51,11 @@ export type GithubEventMaxAggregateOutputType = {
   conclusion: string | null
   commitSha: string | null
   commitMessage: string | null
+  title: string | null
+  jobName: string | null
   url: string | null
   createdAt: Date | null
   updatedAt: Date | null
-  title: string | null
-  jobName: string | null
 }
 
 export type GithubEventCountAggregateOutputType = {
@@ -68,12 +68,12 @@ export type GithubEventCountAggregateOutputType = {
   conclusion: number
   commitSha: number
   commitMessage: number
+  title: number
+  jobName: number
   url: number
   createdAt: number
   updatedAt: number
   raw: number
-  title: number
-  jobName: number
   _all: number
 }
 
@@ -88,11 +88,11 @@ export type GithubEventMinAggregateInputType = {
   conclusion?: true
   commitSha?: true
   commitMessage?: true
+  title?: true
+  jobName?: true
   url?: true
   createdAt?: true
   updatedAt?: true
-  title?: true
-  jobName?: true
 }
 
 export type GithubEventMaxAggregateInputType = {
@@ -105,11 +105,11 @@ export type GithubEventMaxAggregateInputType = {
   conclusion?: true
   commitSha?: true
   commitMessage?: true
+  title?: true
+  jobName?: true
   url?: true
   createdAt?: true
   updatedAt?: true
-  title?: true
-  jobName?: true
 }
 
 export type GithubEventCountAggregateInputType = {
@@ -122,12 +122,12 @@ export type GithubEventCountAggregateInputType = {
   conclusion?: true
   commitSha?: true
   commitMessage?: true
+  title?: true
+  jobName?: true
   url?: true
   createdAt?: true
   updatedAt?: true
   raw?: true
-  title?: true
-  jobName?: true
   _all?: true
 }
 
@@ -213,12 +213,12 @@ export type GithubEventGroupByOutputType = {
   conclusion: string | null
   commitSha: string | null
   commitMessage: string | null
+  title: string | null
+  jobName: string | null
   url: string | null
   createdAt: Date
   updatedAt: Date
   raw: runtime.JsonValue | null
-  title: string | null
-  jobName: string | null
   _count: GithubEventCountAggregateOutputType | null
   _min: GithubEventMinAggregateOutputType | null
   _max: GithubEventMaxAggregateOutputType | null
@@ -252,12 +252,12 @@ export type GithubEventWhereInput = {
   conclusion?: Prisma.StringNullableFilter<"GithubEvent"> | string | null
   commitSha?: Prisma.StringNullableFilter<"GithubEvent"> | string | null
   commitMessage?: Prisma.StringNullableFilter<"GithubEvent"> | string | null
+  title?: Prisma.StringNullableFilter<"GithubEvent"> | string | null
+  jobName?: Prisma.StringNullableFilter<"GithubEvent"> | string | null
   url?: Prisma.StringNullableFilter<"GithubEvent"> | string | null
   createdAt?: Prisma.DateTimeFilter<"GithubEvent"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"GithubEvent"> | Date | string
   raw?: Prisma.JsonNullableFilter<"GithubEvent">
-  title?: Prisma.StringNullableFilter<"GithubEvent"> | string | null
-  jobName?: Prisma.StringNullableFilter<"GithubEvent"> | string | null
 }
 
 export type GithubEventOrderByWithRelationInput = {
@@ -270,12 +270,12 @@ export type GithubEventOrderByWithRelationInput = {
   conclusion?: Prisma.SortOrderInput | Prisma.SortOrder
   commitSha?: Prisma.SortOrderInput | Prisma.SortOrder
   commitMessage?: Prisma.SortOrderInput | Prisma.SortOrder
+  title?: Prisma.SortOrderInput | Prisma.SortOrder
+  jobName?: Prisma.SortOrderInput | Prisma.SortOrder
   url?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   raw?: Prisma.SortOrderInput | Prisma.SortOrder
-  title?: Prisma.SortOrderInput | Prisma.SortOrder
-  jobName?: Prisma.SortOrderInput | Prisma.SortOrder
 }
 
 export type GithubEventWhereUniqueInput = Prisma.AtLeast<{
@@ -291,12 +291,12 @@ export type GithubEventWhereUniqueInput = Prisma.AtLeast<{
   conclusion?: Prisma.StringNullableFilter<"GithubEvent"> | string | null
   commitSha?: Prisma.StringNullableFilter<"GithubEvent"> | string | null
   commitMessage?: Prisma.StringNullableFilter<"GithubEvent"> | string | null
+  title?: Prisma.StringNullableFilter<"GithubEvent"> | string | null
+  jobName?: Prisma.StringNullableFilter<"GithubEvent"> | string | null
   url?: Prisma.StringNullableFilter<"GithubEvent"> | string | null
   createdAt?: Prisma.DateTimeFilter<"GithubEvent"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"GithubEvent"> | Date | string
   raw?: Prisma.JsonNullableFilter<"GithubEvent">
-  title?: Prisma.StringNullableFilter<"GithubEvent"> | string | null
-  jobName?: Prisma.StringNullableFilter<"GithubEvent"> | string | null
 }, "id" | "eventId">
 
 export type GithubEventOrderByWithAggregationInput = {
@@ -309,12 +309,12 @@ export type GithubEventOrderByWithAggregationInput = {
   conclusion?: Prisma.SortOrderInput | Prisma.SortOrder
   commitSha?: Prisma.SortOrderInput | Prisma.SortOrder
   commitMessage?: Prisma.SortOrderInput | Prisma.SortOrder
+  title?: Prisma.SortOrderInput | Prisma.SortOrder
+  jobName?: Prisma.SortOrderInput | Prisma.SortOrder
   url?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   raw?: Prisma.SortOrderInput | Prisma.SortOrder
-  title?: Prisma.SortOrderInput | Prisma.SortOrder
-  jobName?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.GithubEventCountOrderByAggregateInput
   _max?: Prisma.GithubEventMaxOrderByAggregateInput
   _min?: Prisma.GithubEventMinOrderByAggregateInput
@@ -333,12 +333,12 @@ export type GithubEventScalarWhereWithAggregatesInput = {
   conclusion?: Prisma.StringNullableWithAggregatesFilter<"GithubEvent"> | string | null
   commitSha?: Prisma.StringNullableWithAggregatesFilter<"GithubEvent"> | string | null
   commitMessage?: Prisma.StringNullableWithAggregatesFilter<"GithubEvent"> | string | null
+  title?: Prisma.StringNullableWithAggregatesFilter<"GithubEvent"> | string | null
+  jobName?: Prisma.StringNullableWithAggregatesFilter<"GithubEvent"> | string | null
   url?: Prisma.StringNullableWithAggregatesFilter<"GithubEvent"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"GithubEvent"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"GithubEvent"> | Date | string
   raw?: Prisma.JsonNullableWithAggregatesFilter<"GithubEvent">
-  title?: Prisma.StringNullableWithAggregatesFilter<"GithubEvent"> | string | null
-  jobName?: Prisma.StringNullableWithAggregatesFilter<"GithubEvent"> | string | null
 }
 
 export type GithubEventCreateInput = {
@@ -351,12 +351,12 @@ export type GithubEventCreateInput = {
   conclusion?: string | null
   commitSha?: string | null
   commitMessage?: string | null
+  title?: string | null
+  jobName?: string | null
   url?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   raw?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  title?: string | null
-  jobName?: string | null
 }
 
 export type GithubEventUncheckedCreateInput = {
@@ -369,12 +369,12 @@ export type GithubEventUncheckedCreateInput = {
   conclusion?: string | null
   commitSha?: string | null
   commitMessage?: string | null
+  title?: string | null
+  jobName?: string | null
   url?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   raw?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  title?: string | null
-  jobName?: string | null
 }
 
 export type GithubEventUpdateInput = {
@@ -387,12 +387,12 @@ export type GithubEventUpdateInput = {
   conclusion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commitSha?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commitMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  jobName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   raw?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  jobName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type GithubEventUncheckedUpdateInput = {
@@ -405,12 +405,12 @@ export type GithubEventUncheckedUpdateInput = {
   conclusion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commitSha?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commitMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  jobName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   raw?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  jobName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type GithubEventCreateManyInput = {
@@ -423,12 +423,12 @@ export type GithubEventCreateManyInput = {
   conclusion?: string | null
   commitSha?: string | null
   commitMessage?: string | null
+  title?: string | null
+  jobName?: string | null
   url?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   raw?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  title?: string | null
-  jobName?: string | null
 }
 
 export type GithubEventUpdateManyMutationInput = {
@@ -441,12 +441,12 @@ export type GithubEventUpdateManyMutationInput = {
   conclusion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commitSha?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commitMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  jobName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   raw?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  jobName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type GithubEventUncheckedUpdateManyInput = {
@@ -459,12 +459,12 @@ export type GithubEventUncheckedUpdateManyInput = {
   conclusion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commitSha?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   commitMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  jobName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   url?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   raw?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  title?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  jobName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type GithubEventCountOrderByAggregateInput = {
@@ -477,12 +477,12 @@ export type GithubEventCountOrderByAggregateInput = {
   conclusion?: Prisma.SortOrder
   commitSha?: Prisma.SortOrder
   commitMessage?: Prisma.SortOrder
+  title?: Prisma.SortOrder
+  jobName?: Prisma.SortOrder
   url?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   raw?: Prisma.SortOrder
-  title?: Prisma.SortOrder
-  jobName?: Prisma.SortOrder
 }
 
 export type GithubEventMaxOrderByAggregateInput = {
@@ -495,11 +495,11 @@ export type GithubEventMaxOrderByAggregateInput = {
   conclusion?: Prisma.SortOrder
   commitSha?: Prisma.SortOrder
   commitMessage?: Prisma.SortOrder
+  title?: Prisma.SortOrder
+  jobName?: Prisma.SortOrder
   url?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  title?: Prisma.SortOrder
-  jobName?: Prisma.SortOrder
 }
 
 export type GithubEventMinOrderByAggregateInput = {
@@ -512,11 +512,11 @@ export type GithubEventMinOrderByAggregateInput = {
   conclusion?: Prisma.SortOrder
   commitSha?: Prisma.SortOrder
   commitMessage?: Prisma.SortOrder
+  title?: Prisma.SortOrder
+  jobName?: Prisma.SortOrder
   url?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  title?: Prisma.SortOrder
-  jobName?: Prisma.SortOrder
 }
 
 
@@ -531,12 +531,12 @@ export type GithubEventSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   conclusion?: boolean
   commitSha?: boolean
   commitMessage?: boolean
+  title?: boolean
+  jobName?: boolean
   url?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   raw?: boolean
-  title?: boolean
-  jobName?: boolean
 }, ExtArgs["result"]["githubEvent"]>
 
 export type GithubEventSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -549,12 +549,12 @@ export type GithubEventSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   conclusion?: boolean
   commitSha?: boolean
   commitMessage?: boolean
+  title?: boolean
+  jobName?: boolean
   url?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   raw?: boolean
-  title?: boolean
-  jobName?: boolean
 }, ExtArgs["result"]["githubEvent"]>
 
 export type GithubEventSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -567,12 +567,12 @@ export type GithubEventSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   conclusion?: boolean
   commitSha?: boolean
   commitMessage?: boolean
+  title?: boolean
+  jobName?: boolean
   url?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   raw?: boolean
-  title?: boolean
-  jobName?: boolean
 }, ExtArgs["result"]["githubEvent"]>
 
 export type GithubEventSelectScalar = {
@@ -585,15 +585,15 @@ export type GithubEventSelectScalar = {
   conclusion?: boolean
   commitSha?: boolean
   commitMessage?: boolean
+  title?: boolean
+  jobName?: boolean
   url?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   raw?: boolean
-  title?: boolean
-  jobName?: boolean
 }
 
-export type GithubEventOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "eventId" | "type" | "repo" | "actor" | "status" | "conclusion" | "commitSha" | "commitMessage" | "url" | "createdAt" | "updatedAt" | "raw" | "title" | "jobName", ExtArgs["result"]["githubEvent"]>
+export type GithubEventOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "eventId" | "type" | "repo" | "actor" | "status" | "conclusion" | "commitSha" | "commitMessage" | "title" | "jobName" | "url" | "createdAt" | "updatedAt" | "raw", ExtArgs["result"]["githubEvent"]>
 
 export type $GithubEventPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "GithubEvent"
@@ -608,12 +608,12 @@ export type $GithubEventPayload<ExtArgs extends runtime.Types.Extensions.Interna
     conclusion: string | null
     commitSha: string | null
     commitMessage: string | null
+    title: string | null
+    jobName: string | null
     url: string | null
     createdAt: Date
     updatedAt: Date
     raw: runtime.JsonValue | null
-    title: string | null
-    jobName: string | null
   }, ExtArgs["result"]["githubEvent"]>
   composites: {}
 }
@@ -1046,12 +1046,12 @@ export interface GithubEventFieldRefs {
   readonly conclusion: Prisma.FieldRef<"GithubEvent", 'String'>
   readonly commitSha: Prisma.FieldRef<"GithubEvent", 'String'>
   readonly commitMessage: Prisma.FieldRef<"GithubEvent", 'String'>
+  readonly title: Prisma.FieldRef<"GithubEvent", 'String'>
+  readonly jobName: Prisma.FieldRef<"GithubEvent", 'String'>
   readonly url: Prisma.FieldRef<"GithubEvent", 'String'>
   readonly createdAt: Prisma.FieldRef<"GithubEvent", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"GithubEvent", 'DateTime'>
   readonly raw: Prisma.FieldRef<"GithubEvent", 'Json'>
-  readonly title: Prisma.FieldRef<"GithubEvent", 'String'>
-  readonly jobName: Prisma.FieldRef<"GithubEvent", 'String'>
 }
     
 

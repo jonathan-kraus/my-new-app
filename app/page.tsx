@@ -169,20 +169,19 @@ export default async function HomePage(req: Request) {
 
         {/* Quick Actions */}
         <UIProvider>
-        <section className="mt-8 flex gap-4">
-          <Button asChild>
-            <Link href="/forecast">Full Forecast</Link>
-          </Button>
-          <Button asChild>
-            <Link href="/logs">Logs</Link>
-          </Button>
-          <Button asChild>
-            <Link href="/api/prisma-test">Prisma Test</Link>
-          </Button>
-        </section>
+          <section className="mt-8 flex gap-4">
+            <Button asChild>
+              <Link href="/forecast">Full Forecast</Link>
+            </Button>
+            <Button asChild>
+              <Link href="/logs">Logs</Link>
+            </Button>
+            <Button asChild>
+              <Link href="/api/prisma-test">Prisma Test</Link>
+            </Button>
+          </section>
         </UIProvider>
       </div>
     </div>
-    
   );
 }

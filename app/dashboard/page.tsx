@@ -8,6 +8,7 @@ import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import type { Metadata } from "next";
 import { auth } from "@/auth";
 import BuildCard from "../components/dashboard/build-card";
+import { db } from "@/lib/db";
 
 //import { GitHubCard } from "./components/GitHubCard";
 //import { WeatherCard } from "./components/WeatherCard";
@@ -44,6 +45,45 @@ export default async function DashboardPage(req: Request) {
     payload: { data: data },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
+  const tools = data.build.tools;
+
+  const toolEntries = Object.entries(tools).map(([name, version]) => ({
+    name,
+    version,
+  }));
+
+  for (const { name, version } of toolEntries) {
+    const existing = await db.toolVersion.findUnique({ where: { name } });
+
+    if (!existing) {
+      await db.toolVersion.create({
+        data: {
+          name,
+          version,
+          added_at: new Date(),
+          verified_at: new Date(),
+        },
+      });
+      continue;
+    }
+
+    if (existing.version === version) {
+      await db.toolVersion.update({
+        where: { name },
+        data: { verified_at: new Date() },
+      });
+    } else {
+      await db.toolVersion.update({
+        where: { name },
+        data: {
+          version,
+          added_at: new Date(),
+          verified_at: new Date(),
+        },
+      });
+    }
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 p-6">
       <AstronomyCard data={data.astronomy} />

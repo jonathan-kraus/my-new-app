@@ -63,7 +63,8 @@ const IGNORE = [
     // minimatch ReDoS advisories
   "1113465",
   "1113544",
-  "1113552"
+  "1113552",
+  "1124273"   // find-my-way: DDoS with HTTP2 (Prisma dev dependency)
 ];
 
 

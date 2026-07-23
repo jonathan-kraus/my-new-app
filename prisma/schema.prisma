@@ -197,6 +197,14 @@ model Session {
   user         User     @relation(fields: [userId], references: [id])
 }
 
+model ToolVersion {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  version     String
+  added_at    DateTime @default(now())
+  verified_at DateTime @default(now())
+}
+
 model TravelSnapshot {
   id               String       @id @default(cuid())
   source           String

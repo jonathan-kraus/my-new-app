@@ -36,9 +36,7 @@ export default function SideNav() {
     <SideNavClient
       nextEventLabel={snapshot.nextEvent.name}
       nextEventTime={
-        snapshot.nextEvent.dateObj
-          ? new Date(snapshot.nextEvent.dateObj)
-          : null
+        snapshot.nextEvent.dateObj ? new Date(snapshot.nextEvent.dateObj) : null
       }
     />
   );
