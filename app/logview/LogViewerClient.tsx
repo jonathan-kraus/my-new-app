@@ -1,9 +1,5 @@
-/*
- * @FilePath: \my-new-app\app\logview\LogViewerClient.tsx
- * @LastEditTime: 2026-07-21 12:16:50
- */
 "use client";
-
+// app\logview\LogViewerClient.tsx
 import { useEffect, useState, useCallback, useRef } from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -83,6 +79,15 @@ function fmtTs(iso: string) {
   );
 }
 
+function fmtClock(d: Date) {
+  return d.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  });
+}
+
 function JsonBlock({ value }: { value: unknown }) {
   return (
     <pre className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-md p-3 text-[11px] leading-relaxed overflow-auto max-h-52 font-mono text-zinc-500 dark:text-zinc-400 whitespace-pre-wrap break-all">
@@ -141,17 +146,23 @@ export default function LogViewerClient() {
   const [lastTick, setLastTick] = useState<Date | null>(null);
   const [countdown, setCountdown] = useState(0);
 
-  const tailTimer = useRef<ReturnType<typeof setInterval> | null>(null);
-  const countdownTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   const knownIds = useRef<Set<number>>(new Set());
-  const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const offsetRef = useRef(0);
 
+  // ── Data fetching ────────────────────────────────────────────────────────
+  // fetchLogs depends only on the "filter" inputs. Pagination offset is passed
+  // in explicitly (or read from a ref) so this callback never changes just
+  // because the page changed — that was the source of the effect loops.
   const fetchLogs = useCallback(
-    async (opts?: { reset?: boolean; silent?: boolean }) => {
+    async (opts?: { reset?: boolean; silent?: boolean; offset?: number }) => {
       if (!opts?.silent) setLoading(true);
       setError(null);
-      const off = opts?.reset ? 0 : offset;
-      if (opts?.reset) setOffset(0);
+
+      const off = opts?.reset ? 0 : (opts?.offset ?? offsetRef.current);
+      if (opts?.reset && offsetRef.current !== 0) {
+        offsetRef.current = 0;
+        setOffset(0);
+      }
 
       const params = new URLSearchParams({
         window: window_,
@@ -189,76 +200,83 @@ export default function LogViewerClient() {
         if (!opts?.silent) setLoading(false);
       }
     },
-    [selectedLevel, selectedDomain, window_, search, offset],
+    [selectedLevel, selectedDomain, window_, search],
   );
 
-  const startCountdown = useCallback((seconds: number) => {
-    setCountdown(seconds);
-    if (countdownTimer.current) clearInterval(countdownTimer.current);
-    countdownTimer.current = setInterval(() => {
-      setCountdown((c) => {
-        if (c <= 1) {
-          clearInterval(countdownTimer.current!);
-          return 0;
-        }
-        return c - 1;
-      });
-    }, 1000);
-  }, []);
+  // Keep a ref to the latest fetchLogs so interval callbacks always call the
+  // freshest version without needing to be torn down and rebuilt.
+  const fetchRef = useRef(fetchLogs);
+  useEffect(() => {
+    fetchRef.current = fetchLogs;
+  }, [fetchLogs]);
 
-  const stopTail = useCallback(() => {
-    if (tailTimer.current) clearInterval(tailTimer.current);
-    if (countdownTimer.current) clearInterval(countdownTimer.current);
-    tailTimer.current = null;
-    countdownTimer.current = null;
-    setTailing(false);
-    setCountdown(0);
-    setNewCount(0);
-  }, []);
+  // ── Tail controls ──────────────────────────────────────────────────────────
+  const toggleTail = useCallback(() => {
+    setTailing((prev) => {
+      const next = !prev;
+      if (next) {
+        setWindow("1h");
+        offsetRef.current = 0;
+        setOffset(0);
+        setNewCount(0);
+        setCountdown(tailInterval);
+        // kick off an immediate fetch; subsequent ones come from the interval
+        fetchRef.current({ reset: true });
+      } else {
+        setCountdown(0);
+        setNewCount(0);
+      }
+      return next;
+    });
+  }, [tailInterval]);
 
-  const startTail = useCallback(() => {
-    setTailing(true);
-    setNewCount(0);
-    setWindow("1h");
-    fetchLogs({ reset: true, silent: false });
-    startCountdown(tailInterval);
-    tailTimer.current = setInterval(() => {
-      fetchLogs({ reset: true, silent: true });
-      startCountdown(tailInterval);
-    }, tailInterval * 1000);
-  }, [fetchLogs, tailInterval, startCountdown]);
-
+  // Live-tail polling: one interval, rebuilt only when tailing / interval change.
   useEffect(() => {
     if (!tailing) return;
-    stopTail();
-    const t = setTimeout(() => startTail(), 50);
-    return () => clearTimeout(t);
-  }, [tailing, startTail, stopTail]);
+    const id = setInterval(() => {
+      fetchRef.current({ reset: true, silent: true });
+      setCountdown(tailInterval);
+    }, tailInterval * 1000);
+    return () => clearInterval(id);
+  }, [tailing, tailInterval]);
 
+  // Countdown ticker (purely cosmetic).
+  useEffect(() => {
+    if (!tailing) return;
+    const id = setInterval(() => {
+      setCountdown((c) => (c <= 1 ? tailInterval : c - 1));
+    }, 1000);
+    return () => clearInterval(id);
+  }, [tailing, tailInterval]);
+
+  // Auto-dismiss the "new entries" banner.
   useEffect(() => {
     if (newCount === 0) return;
     const t = setTimeout(() => setNewCount(0), 2000);
     return () => clearTimeout(t);
   }, [newCount]);
 
-  useEffect(() => () => stopTail(), [stopTail]);
-
+  // Initial load + refetch on filter changes (skipped while tailing, which
+  // drives its own fetching through the interval above).
   useEffect(() => {
     if (tailing) return;
-    fetchLogs({ reset: true });
-  }, [selectedLevel, selectedDomain, window_, tailing, fetchLogs]);
+    fetchRef.current({ reset: true });
+  }, [selectedLevel, selectedDomain, window_, tailing]);
 
+  // Debounced search.
   useEffect(() => {
-    if (searchTimer.current) clearTimeout(searchTimer.current);
-    searchTimer.current = setTimeout(() => fetchLogs({ reset: true }), 350);
-    return () => {
-      if (searchTimer.current) clearTimeout(searchTimer.current);
-    };
-  }, [search, fetchLogs]);
+    if (tailing) return;
+    const t = setTimeout(() => fetchRef.current({ reset: true }), 350);
+    return () => clearTimeout(t);
+  }, [search, tailing]);
 
-  useEffect(() => {
-    if (offset > 0) fetchLogs();
-  }, [offset, fetchLogs]);
+  // ── Pagination ───────────────────────────────────────────────────────────
+  const goToOffset = useCallback((next: number) => {
+    const clamped = Math.max(0, next);
+    offsetRef.current = clamped;
+    setOffset(clamped);
+    fetchRef.current({ offset: clamped });
+  }, []);
 
   const totalAll = Object.values(levelCounts).reduce((a, b) => a + b, 0);
 
@@ -389,7 +407,7 @@ export default function LogViewerClient() {
             )}
 
             <button
-              onClick={tailing ? stopTail : startTail}
+              onClick={toggleTail}
               className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-sans rounded-md border transition-colors
                 ${
                   tailing
@@ -621,12 +639,12 @@ export default function LogViewerClient() {
             : error
               ? "Error"
               : tailing
-                ? `Live tail · ${logs.length} of ${total} logs · last updated ${lastTick ? lastTick.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }) : "—"}`
+                ? `Live tail · ${logs.length} of ${total} logs · last updated ${lastTick ? fmtClock(lastTick) : "—"}`
                 : `${logs.length} of ${total} logs`}
           {!loading && !tailing && total > PAGE_SIZE && (
             <div className="ml-auto flex items-center gap-2">
               <button
-                onClick={() => setOffset(Math.max(0, offset - PAGE_SIZE))}
+                onClick={() => goToOffset(offset - PAGE_SIZE)}
                 disabled={offset === 0}
                 className="disabled:opacity-30 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors"
               >
@@ -637,7 +655,7 @@ export default function LogViewerClient() {
                 {Math.ceil(total / PAGE_SIZE)}
               </span>
               <button
-                onClick={() => setOffset(offset + PAGE_SIZE)}
+                onClick={() => goToOffset(offset + PAGE_SIZE)}
                 disabled={offset + PAGE_SIZE >= total}
                 className="disabled:opacity-30 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors"
               >
