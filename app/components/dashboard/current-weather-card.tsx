@@ -18,8 +18,21 @@ type CurrentWeatherCardProps = {
   } | null;
 };
 
+interface CurrentWeather {
+  temperature: number;
+  feelsLike: number;
+  humidity: number;
+  windSpeed: number;
+}
+
+interface WeatherData {
+  current?: CurrentWeather;
+  sources?: { current?: string };
+}
+
+
 export default function CurrentWeatherCard({ location }: CurrentWeatherCardProps) {
-  const [data, setData] = useState<unknown>(null);
+  const [data, setData] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(true);
   const hasToasted = useRef(false);
 
@@ -61,7 +74,7 @@ const [formattedTime] = useState(() => {
 
 // Toast once when temperature arrives
 useEffect(() => {
-  const temp = (data as Record<string, unknown>)?.current?.temperature;
+  const temp = (data as WeatherData)?.current?.temperature;
   if (!temp) return;
   if (hasToasted.current) return;
 
@@ -70,7 +83,7 @@ useEffect(() => {
   });
 
   hasToasted.current = true;
-}, [(data as Record<string, unknown>)?.current?.temperature, location?.name]);
+}, [(data as WeatherData)?.current?.temperature, location?.name]);
 
 // Loading skeleton
 if (loading) {
@@ -84,8 +97,8 @@ if (loading) {
 }
 
 // Error state
-const current = (data as any)?.current;
-const sources = (data as any)?.sources;
+const current = (data as WeatherData)?.current;
+const sources = (data as WeatherData)?.sources;
 
 
 if (!current) {

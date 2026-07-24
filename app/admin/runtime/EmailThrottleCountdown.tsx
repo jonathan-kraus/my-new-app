@@ -1,7 +1,7 @@
 "use client";
 /*
  * @FilePath: \my-new-app\app\admin\runtime\EmailThrottleCountdown.tsx
- * @LastEditTime: 2026-07-24 19:14:31
+ * @LastEditTime: 2026-07-24 19:28:32
  */
 
 import { useEffect, useState } from "react";
@@ -38,6 +38,7 @@ export function EmailThrottleCountdown({
     if (!nextAllowed) return;
 
     function update() {
+      if (!nextAllowed) return;
       const now = new Date();
       const diff = nextAllowed.getTime() - now.getTime();
 
