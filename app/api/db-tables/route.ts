@@ -58,6 +58,7 @@ const sizes = assertNonEmptyArray(
   `),
   `sizes for table ${table_name}`
 )[0]!;
+
     results.push({
       table_name,
       exact_rows: exactCount,
