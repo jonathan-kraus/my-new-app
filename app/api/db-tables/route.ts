@@ -41,12 +41,14 @@ export async function GET() {
 
     // Size metrics
     const sizes = assertNonEmptyArray(
-      await db.$queryRawUnsafe<{
-        total_bytes: number | undefined;
-        table_bytes: number | undefined;
-        index_bytes: number | undefined;
-        toast_bytes: number | undefined;
-      }[]>(`
+      await db.$queryRawUnsafe<
+        {
+          total_bytes: number | undefined;
+          table_bytes: number | undefined;
+          index_bytes: number | undefined;
+          toast_bytes: number | undefined;
+        }[]
+      >(`
         SELECT
           pg_total_relation_size('"${table_name}"') AS total_bytes,
           pg_relation_size('"${table_name}"') AS table_bytes,
