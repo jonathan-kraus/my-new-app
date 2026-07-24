@@ -47,5 +47,4 @@ if (Object.keys(filtered).length) {
   console.log(JSON.stringify(filtered, null, 2));
   process.exit(1);
 }
-
 console.log("✓ No outdated dependencies");
