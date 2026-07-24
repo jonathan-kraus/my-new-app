@@ -1,5 +1,4 @@
 // eslint.config.mjs
-import ts from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
 import next from "eslint-config-next";
 import importPlugin from "eslint-plugin-import";
@@ -24,7 +23,7 @@ export default [
   // 2. Next.js recommended + core-web-vitals
   ...next,
 
-  // 3. Strict TypeScript linting for all TS/TSX files
+  // 3. Strict TypeScript linting
   {
     files: ["**/*.{ts,tsx}"],
     languageOptions: {
@@ -36,7 +35,6 @@ export default [
       },
     },
     plugins: {
-      "@typescript-eslint": ts,
       import: importPlugin,
       unusedImports,
     },
