@@ -1,5 +1,6 @@
 // app/api/logs/route.ts
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { logit } from "@/lib/log/logit";
 

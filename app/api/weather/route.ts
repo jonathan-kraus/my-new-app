@@ -1,5 +1,6 @@
 // app/api/weather/route.ts
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { z } from "zod";
 import { logj } from "@/lib/log/logj";

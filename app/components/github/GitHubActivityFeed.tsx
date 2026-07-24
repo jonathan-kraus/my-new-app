@@ -2,7 +2,7 @@
 // app\components\github\GitHubActivityFeed.tsx
 import { useEffect, useState } from "react";
 import { GitHubActivityCard } from "./GitHubActivityCard";
-import { GitHubActivityEvent } from "@/lib/types";
+import type { GitHubActivityEvent } from "@/lib/types";
 import { staticUniversalContext } from "@/lib/log/buildj";
 
 export default function GitHubActivityFeed() {

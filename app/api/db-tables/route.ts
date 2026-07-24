@@ -7,12 +7,12 @@ import { neon } from "@neondatabase/serverless";
 const db = neon(process.env.DATABASE_URL!);
 
 export async function GET() {
-  const tables = await db`
+  const tables = (await db`
     SELECT table_name
     FROM information_schema.tables
     WHERE table_schema = 'public'
     ORDER BY table_name ASC
-  ` as { table_name: string }[];
+  `) as { table_name: string }[];
 
   const results = [];
 
@@ -21,22 +21,22 @@ export async function GET() {
     const quoted = `"${table_name.replace(/"/g, '""')}"`;
 
     // Count rows
-    const countRows = await db`
+    const countRows = (await db`
       SELECT COUNT(*)::int AS exact_count
       FROM ${quoted}
-    ` as { exact_count: number }[];
+    `) as { exact_count: number }[];
 
     const { exact_count } = countRows[0]!;
 
     // Size metrics
-    const sizeRows = await db`
+    const sizeRows = (await db`
       SELECT
         pg_total_relation_size(${quoted}) AS total_bytes,
         pg_indexes_size(${quoted}) AS index_bytes,
         pg_total_relation_size(${quoted}::regclass)
           - pg_relation_size(${quoted})
           - pg_indexes_size(${quoted}) AS toast_bytes
-    ` as {
+    `) as {
       total_bytes: number;
       index_bytes: number;
       toast_bytes: number;

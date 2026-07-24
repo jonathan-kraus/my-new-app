@@ -3,7 +3,7 @@
  * @LastEditTime: 2026-04-02 23:10:51
  */
 // lib/github/normalize/workflowJob.ts
-import { BaseNormalizedGitHubEvent } from "./types";
+import type { BaseNormalizedGitHubEvent } from "./types";
 
 export function normalizeWorkflowJob(payload: any): BaseNormalizedGitHubEvent {
   const job = payload.workflow_job;

@@ -1,6 +1,6 @@
 "use client";
 
-import { GitHubActivityEvent } from "@/lib/types";
+import type { GitHubActivityEvent } from "@/lib/types";
 
 export function GitHubActivityCard({ event }: { event: GitHubActivityEvent }) {
   const {

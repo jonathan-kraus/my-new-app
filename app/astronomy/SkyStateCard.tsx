@@ -1,6 +1,6 @@
 "use client";
 
-import { SolarTimes } from "@/types/AstronomyTypes";
+import type { SolarTimes } from "@/types/AstronomyTypes";
 
 function getSkyState(now: Date, solar: SolarTimes) {
   const {

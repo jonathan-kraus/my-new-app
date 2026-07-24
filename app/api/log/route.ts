@@ -3,7 +3,8 @@
  * @LastEditTime: 2026-05-23 22:31:29
  */
 // app/api/log/route.ts
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { logj } from "@/lib/log/logj";
 import { auth } from "@/auth";
 

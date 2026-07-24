@@ -3,7 +3,7 @@
  * @LastEditTime: 2026-07-17 15:25:36
  */
 import { neon } from "@neondatabase/serverless";
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 

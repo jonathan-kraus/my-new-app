@@ -1,5 +1,5 @@
 import { Workflow, CheckCircle, XCircle, Loader2 } from "lucide-react";
-import { ActivityItemData } from "@/types/activity";
+import type { ActivityItemData } from "@/types/activity";
 import { formatTime } from "@/lib/astronomy/formatTime";
 export default function WorkflowRunCard({ item }: { item: ActivityItemData }) {
   const icon =

@@ -3,7 +3,7 @@
  * @LastEditTime: 2026-04-02 23:11:12
  */
 // lib/github/normalize/push.ts
-import { BaseNormalizedGitHubEvent } from "./types";
+import type { BaseNormalizedGitHubEvent } from "./types";
 
 export function normalizePush(payload: any): BaseNormalizedGitHubEvent {
   return {

@@ -3,7 +3,7 @@
  * @LastEditTime: 2026-04-02 23:11:55
  */
 // lib/github/normalize/issueComment.ts
-import { BaseNormalizedGitHubEvent } from "./types";
+import type { BaseNormalizedGitHubEvent } from "./types";
 
 export function normalizeIssueComment(payload: any): BaseNormalizedGitHubEvent {
   const issue = payload.issue;

@@ -3,7 +3,7 @@
  * @LastEditTime: 2026-04-04 00:48:46
  */
 import crypto from "crypto";
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { enrichContext } from "./context";
 

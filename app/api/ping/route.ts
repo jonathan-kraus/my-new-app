@@ -1,11 +1,11 @@
 // app/api/ping/route.ts
-import { NextResponse, NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { auth } from "@/auth";
-import { headers } from "next/headers";
+import { headers, cookies } from "next/headers";
 import { fetchWeatherApi } from "openmeteo";
-import { cookies } from "next/headers";
 
 export const runtime = "nodejs";
 

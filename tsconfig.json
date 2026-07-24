@@ -2,7 +2,7 @@
   "compilerOptions": {
     /* Core strictness */
     "strict": true,
-    "strictNullChecks": true, 
+    "strictNullChecks": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
     "noFallthroughCasesInSwitch": true,

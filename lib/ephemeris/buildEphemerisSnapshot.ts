@@ -1,6 +1,9 @@
 import type { AstronomySnapshot } from "@prisma/client";
-import type { SolarSnapshot } from "@/lib/ephemeris/types";
-import { EphemerisEvent, EphemerisSnapshot } from "./types";
+import type {
+  SolarSnapshot,
+  EphemerisEvent,
+  EphemerisSnapshot,
+} from "@/lib/ephemeris/types";
 import { getPhaseName } from "@/lib/astronomy/getPhaseName";
 import { writeEphemerisDebugEvent } from "@/lib/ephemeris/writeEphemerisDebugEvent";
 

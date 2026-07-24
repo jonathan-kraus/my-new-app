@@ -2,7 +2,7 @@
 
 import { refreshLogRowEstimateForToday } from "@/lib/db/refreshLogRowEstimateForToday";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 import { logj } from "@/lib/log/logj";
 
 export const metadata = { title: "PING" };

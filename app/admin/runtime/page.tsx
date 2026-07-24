@@ -2,7 +2,7 @@
 import { db } from "@/lib/db";
 import { ConfigTable } from "./ConfigTable";
 import { EmailThrottleCountdown } from "./EmailThrottleCountdown";
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 

@@ -3,7 +3,7 @@
  * @LastEditTime: 2026-04-02 23:10:30
  */
 // lib/github/normalize/workflowRun.ts
-import { BaseNormalizedGitHubEvent } from "./types";
+import type { BaseNormalizedGitHubEvent } from "./types";
 
 export function normalizeWorkflowRun(payload: any): BaseNormalizedGitHubEvent {
   const wr = payload.workflow_run;

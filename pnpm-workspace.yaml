@@ -1,6 +1,9 @@
 packages:
   - .
 
+overrides:
+  valibot: ^1.4.2
+
 minimumReleaseAge: 0
 trustLockfile: true
 

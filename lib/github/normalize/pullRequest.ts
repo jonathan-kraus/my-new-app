@@ -3,7 +3,7 @@
  * @LastEditTime: 2026-04-02 23:11:38
  */
 // lib/github/normalize/pullRequest.ts
-import { BaseNormalizedGitHubEvent } from "./types";
+import type { BaseNormalizedGitHubEvent } from "./types";
 
 export function normalizePullRequest(payload: any): BaseNormalizedGitHubEvent {
   const pr = payload.pull_request;

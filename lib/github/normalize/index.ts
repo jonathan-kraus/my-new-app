@@ -3,7 +3,7 @@
  * @LastEditTime: 2026-06-05 02:20:44
  */
 // lib/github/normalize/index.ts
-import { BaseNormalizedGitHubEvent, NormalizedGitHubEvent } from "./types";
+import type { BaseNormalizedGitHubEvent, NormalizedGitHubEvent } from "./types";
 
 import { normalizeWorkflowRun } from "./workflowRun";
 import { normalizeWorkflowJob } from "./workflowJob";

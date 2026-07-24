@@ -1,6 +1,6 @@
 import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
 
-import { buildWeatherEmail } from "./buildWeatherEmail";
+import type { buildWeatherEmail } from "./buildWeatherEmail";
 export async function sendWeatherEmail({
   to,
   weatherEmail,

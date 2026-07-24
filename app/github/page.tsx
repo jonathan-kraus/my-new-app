@@ -1,6 +1,6 @@
 // app/github/page.tsx
 import { GitHubActivityCard } from "@/app/components/github/GitHubActivityCard";
-import { GitHubActivityEvent } from "@/lib/types";
+import type { GitHubActivityEvent } from "@/lib/types";
 import { staticUniversalContext } from "@/lib/log/buildj";
 import { logj } from "@/lib/log/logj";
 import type { Metadata } from "next";

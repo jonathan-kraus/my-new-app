@@ -10,7 +10,7 @@ export async function GET() {
     prismaClientPresent: (() => {
       try {
         // check if Prisma client is importable without exposing client
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
+
         const pkg = require("@prisma/client");
         return !!pkg?.PrismaClient;
       } catch (e) {

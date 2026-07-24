@@ -3,7 +3,7 @@
  * @LastEditTime: 2026-04-02 23:12:17
  */
 // lib/github/normalize/generic.ts
-import { BaseNormalizedGitHubEvent } from "./types";
+import type { BaseNormalizedGitHubEvent } from "./types";
 
 export function normalizeGeneric(
   event: string,

@@ -9,27 +9,37 @@ export function EmailThrottleCountdown({
   lastSent: string | null;
   throttleMinutes: number;
 }) {
-  const [remaining, setRemaining] = useState<string>("");
+  // Initial derived state
+  const [remaining, setRemaining] = useState<string>(() => {
+    if (!lastSent || throttleMinutes <= 0) return "Ready now";
+    return "";
+  });
+
   const [status, setStatus] = useState<"ready" | "countdown" | "invalid">(
-    "invalid",
+    () => {
+      if (!lastSent || throttleMinutes <= 0) return "ready";
+      return "invalid";
+    },
   );
 
+  // Parse lastSent safely
+  const last = lastSent ? new Date(lastSent) : null;
+
+  // If timestamp is invalid → return JSX (never return a function)
+  if (!last || isNaN(last.getTime())) {
+    return (
+      <div className="px-4 py-3 rounded-lg border bg-red-600/20 text-red-300 border-red-600/40">
+        <div className="text-sm opacity-70">Next test email allowed in</div>
+        <div className="text-xl font-semibold">Invalid timestamp</div>
+      </div>
+    );
+  }
+
+  // Compute next allowed send time
+  const nextAllowed = new Date(last.getTime() + throttleMinutes * 60 * 1000);
+
+  // Countdown effect
   useEffect(() => {
-    if (!lastSent || throttleMinutes <= 0) {
-      setRemaining("Ready now");
-      setStatus("ready");
-      return;
-    }
-
-    const last = new Date(lastSent);
-    if (isNaN(last.getTime())) {
-      setRemaining("Invalid timestamp");
-      setStatus("invalid");
-      return;
-    }
-
-    const nextAllowed = new Date(last.getTime() + throttleMinutes * 60 * 1000);
-
     function update() {
       const now = new Date();
       const diff = nextAllowed.getTime() - now.getTime();
@@ -47,10 +57,10 @@ export function EmailThrottleCountdown({
       setStatus("countdown");
     }
 
-    update();
+    update(); // run immediately
     const interval = setInterval(update, 1000);
     return () => clearInterval(interval);
-  }, [lastSent, throttleMinutes]);
+  }, [nextAllowed]);
 
   // Badge color classes
   const color =

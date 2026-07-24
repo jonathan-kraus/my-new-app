@@ -1,5 +1,5 @@
 "use client";
-import { Location } from "@/lib/types";
+import type { Location } from "@/lib/types";
 
 export function LocationSelector({
   locations,

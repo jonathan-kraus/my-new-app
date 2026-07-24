@@ -44,7 +44,7 @@ export async function runDbTableStats(ctx: {
     meta: { built: { ...built, eventIndex: ++jei } },
   });
 
-const stats = (await sql`
+  const stats = (await sql`
   SELECT
     c.relname AS table_name,
     pg_total_relation_size(c.oid) AS total_bytes,
@@ -64,7 +64,7 @@ const stats = (await sql`
   for (const row of stats) {
     const tableName = row.table_name;
 
-const countRows = (await sql`
+    const countRows = (await sql`
   SELECT COUNT(*)::int AS count
   FROM ${sql.unsafe(`"${tableName.replace(/"/g, `""`)}"`)}
 `) as CountRow[];

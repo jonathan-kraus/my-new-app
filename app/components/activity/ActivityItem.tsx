@@ -1,4 +1,4 @@
-import { ActivityItemData } from "@/types/activity";
+import type { ActivityItemData } from "@/types/activity";
 import PushEventCard from "./PushEventCard";
 import PullRequestEventCard from "./PullRequestEventCard";
 import WorkflowRunCard from "./WorkflowRunCard";

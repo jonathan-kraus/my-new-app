@@ -2,7 +2,8 @@
  * @FilePath: \my-new-app\app\api\notes\due\route.ts
  * @LastEditTime: 2026-05-22 01:01:33
  */
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { Pool } from "@neondatabase/serverless";
 
 // GET /api/notes/due?days=7
