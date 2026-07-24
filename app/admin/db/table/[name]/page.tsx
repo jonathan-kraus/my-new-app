@@ -137,8 +137,24 @@ export default async function TablePage({ params, searchParams }: PageProps) {
   }
 
   // Find first and last snapshot dates
-  const rows = assertNonEmptyArray(history, "history snapshots");
-  const firstSnapshot = rows[0].snapshotDate;
+const rows = assertNonEmptyArray(
+  history as Array<{ snapshotDate: String }>,
+  "history snapshots"
+);
+
+const firstSnapshot = rows[0]!.snapshotDate;
+
+// Convert boxed String → primitive string
+const firstSnapshotStr = typeof firstSnapshot === "string"
+  ? firstSnapshot
+  : firstSnapshot.toString();
+
+const formattedSnapshot = new Date(firstSnapshotStr).toLocaleDateString("en-US", {
+  year: "numeric",
+  month: "short",
+  day: "numeric",
+});
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -194,7 +210,7 @@ export default async function TablePage({ params, searchParams }: PageProps) {
               <div className="text-lg font-medium">
                 {" "}
                 {firstSnapshot
-                  ? new Date(firstSnapshot).toLocaleDateString("en-US", {
+                  ? new Date(formattedSnapshot).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
                     })

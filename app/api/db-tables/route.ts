@@ -22,10 +22,10 @@ export async function GET() {
   const results: Array<{
     table_name: string;
     exact_rows: number;
-    total_bytes: number;
-    table_bytes: number;
-    index_bytes: number;
-    toast_bytes: number;
+    total_bytes: number | undefined;
+    table_bytes: number | undefined;
+    index_bytes: number | undefined;
+    toast_bytes: number | undefined;
   }> = [];
 
   for (const { table_name } of tables) {
@@ -35,30 +35,29 @@ export async function GET() {
         SELECT COUNT(*)::bigint AS exact_count FROM "${table_name}";
       `),
       `exact count for table ${table_name}`
-    )[0];
+    )[0]!;
 
     const exactCount = row.exact_count;
     console.log(`Table: ${table_name}, Exact Row Count: ${exactCount}`);
 
     // Size metrics
-    const sizes = assertNonEmptyArray(
-      await db.$queryRawUnsafe<{
-        total_bytes: number;
-        table_bytes: number;
-        index_bytes: number;
-        toast_bytes: number;
-      }[]>(`
-        SELECT
-          pg_total_relation_size('"${table_name}"') AS total_bytes,
-          pg_relation_size('"${table_name}"') AS table_bytes,
-          pg_indexes_size('"${table_name}"') AS index_bytes,
-          pg_total_relation_size('"${table_name}"')
-            - pg_relation_size('"${table_name}"')
-            - pg_indexes_size('"${table_name}"') AS toast_bytes
-      `),
-      `sizes for table ${table_name}`
-    )[0];
-
+const sizes = assertNonEmptyArray(
+  await db.$queryRawUnsafe<{
+    total_bytes: number | undefined;
+    table_bytes: number | undefined;
+    index_bytes: number | undefined;
+    toast_bytes: number | undefined;
+  }[]>(`
+    SELECT
+      pg_total_relation_size('"${table_name}"') AS total_bytes,
+      pg_relation_size('"${table_name}"') AS table_bytes,
+      pg_indexes_size('"${table_name}"') AS index_bytes,
+      pg_total_relation_size('"${table_name}"')
+        - pg_relation_size('"${table_name}"')
+        - pg_indexes_size('"${table_name}"') AS toast_bytes
+  `),
+  `sizes for table ${table_name}`
+)[0]!;
     results.push({
       table_name,
       exact_rows: exactCount,

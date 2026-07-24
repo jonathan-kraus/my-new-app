@@ -52,12 +52,12 @@ export async function GET(
 
     // Get row count
 
-    const [row] = assertNonEmptyArray(
-      await db.$queryRawUnsafe<{ count: number }[]>(`
+const row = assertNonEmptyArray(
+  await db.$queryRawUnsafe<{ count: number }[]>(`
     SELECT COUNT(*)::int AS count FROM "${name}"
   `),
-      `count query for table ${name}`,
-    );
+  `count query for table ${name}`,
+)[0]!;
 
     const totalRows = row.count;
 
