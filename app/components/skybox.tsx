@@ -1,19 +1,24 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import router from "next/dist/shared/lib/router/router";
 
 export default function Skybox() {
   const [planes, setPlanes] = useState<any[]>([]);
-
+  const router = useRouter();
   async function loadSkybox() {
+    
     const res = await fetch("/api/fa/dashboard");
     const json = await res.json();
     setPlanes(json.planes || []);
   }
 
-  useEffect(() => {
+useEffect(() => {
+  queueMicrotask(() => {
     loadSkybox();
-  }, []);
+  });
+}, []);
 
   async function selectFlight(ident: string) {
     await fetch("/api/set-flight-id", {
@@ -21,8 +26,8 @@ export default function Skybox() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ident }),
     });
-
-    window.location.href = "/fa/dashboard";
+    
+    router.push("/fa/dashboard");   // ✔ pure, allowed, no mutation
   }
 
   return (

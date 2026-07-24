@@ -2,13 +2,16 @@
 
 import type { SolarSnapshot } from "@/lib/ephemeris/types";
 import { useLiveCountdown } from "@/hooks/useLiveCountdown";
+import { useState } from "react";
 
 export default function SolarCard({ snapshot }: { snapshot: SolarSnapshot }) {
   // Determine which solar event is next (sunrise or sunset)
-  const next =
-    new Date(snapshot.sunrise.timestamp).getTime() > Date.now()
-      ? snapshot.sunrise
-      : snapshot.sunset;
+const [next] = useState(() => {
+  const now = Date.now();
+  return new Date(snapshot.sunrise.timestamp).getTime() > now
+    ? snapshot.sunrise
+    : snapshot.sunset;
+});
 
   const countdown = useLiveCountdown(next.dateObj);
 

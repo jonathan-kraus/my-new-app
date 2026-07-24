@@ -18,8 +18,10 @@ export function useSideNavActivationCounter() {
     localStorage.setItem(key, String(next));
 
     // Update state
+    queueMicrotask(() => {
     setCount(next);
-  }, []);
+  });
+}, []);
 
   return count;
 }

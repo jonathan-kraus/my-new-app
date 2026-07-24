@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\logs\axiom\LiveLogs.tsx
- * @LastEditTime: 2026-04-25 02:16:06
+ * @LastEditTime: 2026-07-24 17:55:27
  */
 "use client";
 
@@ -19,11 +19,14 @@ export default function LiveLogs() {
     setLoading(false);
   }
 
-  useEffect(() => {
+useEffect(() => {
+  queueMicrotask(() => {
     fetchLogs();
-    const id = setInterval(fetchLogs, 22222);
-    return () => clearInterval(id);
-  }, []);
+  });
+
+  const id = setInterval(fetchLogs, 22222);
+  return () => clearInterval(id);
+}, []);
 
   if (loading) {
     return <div className="text-gray-400">Loading logs…</div>;

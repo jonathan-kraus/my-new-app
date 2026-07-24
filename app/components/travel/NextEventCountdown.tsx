@@ -11,35 +11,33 @@ export function NextEventCountdown({ snapshot }: Props) {
   const next = snapshot.segments[0];
   const [countdown, setCountdown] = useState<string>("");
 
-  if (!next) {
-    return null; // or a fallback UI
-  }
+useEffect(() => {
+  if (!next) return;
 
-  useEffect(() => {
-    const target = parse(
-      `${next.date} ${next.departureTime}`,
-      "EEEE, MMMM d, yyyy h:mm a",
-      new Date(),
+  const target = parse(
+    `${next.date} ${next.departureTime}`,
+    "EEEE, MMMM d, yyyy h:mm a",
+    new Date(),
+  );
+
+  const update = () => {
+    const now = new Date();
+    if (now >= target) {
+      setCountdown("Departing now!");
+      return;
+    }
+    const duration = intervalToDuration({ start: now, end: target });
+    setCountdown(
+      formatDuration(duration, {
+        format: ["days", "hours", "minutes", "seconds"],
+      }),
     );
+  };
 
-    const update = () => {
-      const now = new Date();
-      if (now >= target) {
-        setCountdown("Departing now!");
-        return;
-      }
-      const duration = intervalToDuration({ start: now, end: target });
-      setCountdown(
-        formatDuration(duration, {
-          format: ["days", "hours", "minutes", "seconds"],
-        }),
-      );
-    };
-
-    update();
-    const interval = setInterval(update, 10000);
-    return () => clearInterval(interval);
-  }, [next]);
+  update();
+  const interval = setInterval(update, 10000);
+  return () => clearInterval(interval);
+}, [next]);
 
   return (
     <div className="bg-gray-900 rounded-lg p-4 shadow">

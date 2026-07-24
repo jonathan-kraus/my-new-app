@@ -95,8 +95,10 @@ export default function ConfigReadPage() {
   }
 
   useEffect(() => {
+  queueMicrotask(() => {
     loadData();
-  }, []);
+  });
+}, []);
 
   return (
     <div className="p-6 space-y-4 text-slate-100">

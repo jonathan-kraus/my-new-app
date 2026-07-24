@@ -1,4 +1,8 @@
 "use client";
+/*
+ * @FilePath: \my-new-app\app\admin\runtime\EmailThrottleCountdown.tsx
+ * @LastEditTime: 2026-07-24 19:14:31
+ */
 
 import { useEffect, useState } from "react";
 
@@ -9,37 +13,30 @@ export function EmailThrottleCountdown({
   lastSent: string | null;
   throttleMinutes: number;
 }) {
-  // Initial derived state
+  // Parse timestamp once (pure)
+  const last = lastSent ? new Date(lastSent) : null;
+
+  // Compute nextAllowed once (pure)
+  const nextAllowed =
+    last && !isNaN(last.getTime())
+      ? new Date(last.getTime() + throttleMinutes * 60 * 1000)
+      : null;
+
+  // Initial derived state (pure, lazy)
   const [remaining, setRemaining] = useState<string>(() => {
-    if (!lastSent || throttleMinutes <= 0) return "Ready now";
+    if (!nextAllowed || throttleMinutes <= 0) return "Ready now";
     return "";
   });
 
-  const [status, setStatus] = useState<"ready" | "countdown" | "invalid">(
-    () => {
-      if (!lastSent || throttleMinutes <= 0) return "ready";
-      return "invalid";
-    },
-  );
+  const [status, setStatus] = useState<"ready" | "countdown" | "invalid">(() => {
+    if (!nextAllowed || throttleMinutes <= 0) return "ready";
+    return "invalid";
+  });
 
-  // Parse lastSent safely
-  const last = lastSent ? new Date(lastSent) : null;
-
-  // If timestamp is invalid → return JSX (never return a function)
-  if (!last || isNaN(last.getTime())) {
-    return (
-      <div className="px-4 py-3 rounded-lg border bg-red-600/20 text-red-300 border-red-600/40">
-        <div className="text-sm opacity-70">Next test email allowed in</div>
-        <div className="text-xl font-semibold">Invalid timestamp</div>
-      </div>
-    );
-  }
-
-  // Compute next allowed send time
-  const nextAllowed = new Date(last.getTime() + throttleMinutes * 60 * 1000);
-
-  // Countdown effect
+  // Countdown effect — always runs, but exits early if invalid
   useEffect(() => {
+    if (!nextAllowed) return;
+
     function update() {
       const now = new Date();
       const diff = nextAllowed.getTime() - now.getTime();
@@ -57,10 +54,20 @@ export function EmailThrottleCountdown({
       setStatus("countdown");
     }
 
-    update(); // run immediately
+    update();
     const interval = setInterval(update, 1000);
     return () => clearInterval(interval);
   }, [nextAllowed]);
+
+  // Early return AFTER hooks
+  if (!nextAllowed) {
+    return (
+      <div className="px-4 py-3 rounded-lg border bg-red-600/20 text-red-300 border-red-600/40">
+        <div className="text-sm opacity-70">Next test email allowed in</div>
+        <div className="text-xl font-semibold">Invalid timestamp</div>
+      </div>
+    );
+  }
 
   // Badge color classes
   const color =

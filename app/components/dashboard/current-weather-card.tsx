@@ -17,22 +17,16 @@ type CurrentWeatherCardProps = {
     updatedAt: Date;
   } | null;
 };
-const ctx = {
-  requestId: crypto.randomUUID(),
-  page: "current-weather-card",
-  userId: "JK",
-};
-export default function CurrentWeatherCard({
-  location,
-}: CurrentWeatherCardProps) {
-  const [data, setData] = useState<any>(null);
+
+export default function CurrentWeatherCard({ location }: CurrentWeatherCardProps) {
+  const [data, setData] = useState<unknown>(null);
   const [loading, setLoading] = useState(true);
   const hasToasted = useRef(false);
 
   // Initial render log
   useEffect(() => {
     console.log(
-      `Rendering CurrentWeatherCard with location: ${location?.name ?? "null"}`,
+      `Rendering CurrentWeatherCard with location: ${location?.name ?? "null"}`
     );
   }, [location]);
 
@@ -52,57 +46,65 @@ export default function CurrentWeatherCard({
       }
     }
 
-    setLoading(true);
-    hasToasted.current = false;
-    load(location.id);
+    // Avoid synchronous setState inside effect → wrap in microtask
+    queueMicrotask(() => {
+      setLoading(true);
+      hasToasted.current = false;
+      load(location.id);
+    });
   }, [location]);
 
-  // Toast once when temperature arrives
-  useEffect(() => {
-    if (!data?.current?.temperature) return;
-    if (hasToasted.current) return;
+  // React‑pure: compute once, not on every render
+const [formattedTime] = useState(() => {
+  return formatEasternTime(Date.now());
+});
 
-    toast.success(
-      `🌡️ ${Math.round(data.current.temperature)}° in ${location?.name}`,
-      { duration: 4000 },
-    );
+// Toast once when temperature arrives
+useEffect(() => {
+  const temp = (data as Record<string, unknown>)?.current?.temperature;
+  if (!temp) return;
+  if (hasToasted.current) return;
 
-    hasToasted.current = true;
-  }, [data?.current?.temperature, location?.name]);
+  toast.success(`🌡️ ${Math.round(temp)}° in ${location?.name}`, {
+    duration: 4000,
+  });
 
-  // Loading skeleton
-  if (loading) {
-    return (
-      <div className="p-6 rounded-xl border bg-white shadow-sm animate-pulse">
-        <div className="h-6 w-32 bg-gray-200 rounded mb-4" />
-        <div className="h-10 w-20 bg-gray-200 rounded mb-2" />
-        <div className="h-4 w-40 bg-gray-200 rounded" />
-      </div>
-    );
-  }
+  hasToasted.current = true;
+}, [(data as Record<string, unknown>)?.current?.temperature, location?.name]);
 
-  // Error state
-  if (!data?.current) {
-    return (
-      <div className="p-6 rounded-xl border bg-white shadow-sm">
-        <p className="text-gray-600">Unable to load weather data.</p>
-      </div>
-    );
-  }
+// Loading skeleton
+if (loading) {
+  return (
+    <div className="p-6 rounded-xl border bg-white shadow-sm animate-pulse">
+      <div className="h-6 w-32 bg-gray-200 rounded mb-4" />
+      <div className="h-10 w-20 bg-gray-200 rounded mb-2" />
+      <div className="h-4 w-40 bg-gray-200 rounded" />
+    </div>
+  );
+}
 
-  // Derived fields
-  const { current, sources } = data;
+// Error state
+const current = (data as any)?.current;
+const sources = (data as any)?.sources;
 
-  const temp = Math.round(current.temperature);
-  const feelsLike = Math.round(current.feelsLike);
-  const humidity = current.humidity;
-  const wind = current.windSpeed;
-  const source = sources.current?.toUpperCase() ?? "UNKNOWN";
 
-  const formattedTime = formatEasternTime(Date.now());
+if (!current) {
+  return (
+    <div className="p-6 rounded-xl border bg-white shadow-sm">
+      <p className="text-gray-600">Unable to load weather data.</p>
+    </div>
+  );
+}
 
-  // Final log
-  console.log(`Weather summary for ${location?.name ?? "null"}`);
+// Derived fields
+const temp = Math.round(current.temperature);
+const feelsLike = Math.round(current.feelsLike);
+const humidity = current.humidity;
+const wind = current.windSpeed;
+const source = sources?.current?.toUpperCase() ?? "UNKNOWN";
+
+console.log(`Weather summary for ${location?.name ?? "null"}`);
+
 
   return (
     <div className="p-4 rounded-xl bg-gradient-to-br from-indigo-700 to-sky-800 border border-white/10 shadow-md">

@@ -1,20 +1,38 @@
+/*
+ * @FilePath: \my-new-app\app\notes\NotesClient.tsx
+ * @LastEditTime: 2026-07-24 17:48:35
+ */
 // app/notes/NotesClient.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { logj } from "@/lib/log/client";
+
+type Note = {
+  id: string;
+  title?: string | null;
+  content?: string | null;
+  followUpAt?: string | null;
+  color?: string | null;
+  createdAt: string;
+  isArchived?: boolean;
+  isCompleted?: boolean;
+};
 
 export default function NotesClient() {
   const [authorized, setAuthorized] = useState<boolean | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredNotes, setFilteredNotes] = useState<any[] | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
   const [editNeedsFollowUp, setEditNeedsFollowUp] = useState(false);
   const [editFollowUpDate, setEditFollowUpDate] = useState("");
   const [editColor, setEditColor] = useState("");
+  const [notes, setNotes] = useState<Note[] | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [followupsDueCount, setFollowupsDueCount] = useState<number>(0);
+  const [showFollowupsOnly, setShowFollowupsOnly] = useState(false);
 
   const colorOptions = [
     { value: "", label: "None", className: "bg-gray-500" },
@@ -26,12 +44,8 @@ export default function NotesClient() {
     { value: "pink", label: "Pink", className: "bg-pink-500" },
     { value: "orange", label: "Orange", className: "bg-orange-500" },
   ];
-  const [notes, setNotes] = useState<any[] | null>(null);
-  const [userId, setUserId] = useState<string | null>(null);
-  const [followupsDueCount, setFollowupsDueCount] = useState<number>(0);
-  const [showFollowupsOnly, setShowFollowupsOnly] = useState(false);
 
-  const isFollowupDueSoon = (note: any) => {
+  const isFollowupDueSoon = (note: Note) => {
     if (!note.followUpAt) return false;
     const now = new Date();
     const dueAt = new Date(note.followUpAt);
@@ -51,16 +65,16 @@ export default function NotesClient() {
       }
     } catch (err) {
       setFollowupsDueCount(0);
+      console.error("Error fetching follow-ups due count:", err);
     }
   };
 
+  // Initial load: notes, user, auth, followups
   useEffect(() => {
     async function load() {
       const res = await fetch("/api/notes");
       const data = await res.json();
-      if (!userId) {
-        setUserId(data.userId ?? "JK");
-      }
+
       if (res.status === 401) {
         toast.error(
           "🛑 Access denied — Authentication required for this mission.",
@@ -71,13 +85,13 @@ export default function NotesClient() {
 
       setAuthorized(true);
       setNotes(data.notes ?? []);
-      setFilteredNotes(data.notes ?? []);
-      setUserId(data.userId ?? null);
+      setUserId(data.userId ?? "JK");
 
       await refreshFollowupsDueCount();
     }
 
-    load();
+    void load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -89,27 +103,28 @@ export default function NotesClient() {
     });
   }, []);
 
-  useEffect(() => {
-    if (!notes) return;
+  // Pure derived filtering: no setState, no effect needed
+  const filteredNotes = useMemo(() => {
+    if (!notes) return [];
 
     let currentNotes = notes;
+
     if (showFollowupsOnly) {
       currentNotes = currentNotes.filter(isFollowupDueSoon);
     }
 
     if (searchQuery.trim() === "") {
-      setFilteredNotes(currentNotes);
-      return;
+      return currentNotes;
     }
 
     const query = searchQuery.toLowerCase();
-    const filtered = currentNotes.filter(
+
+    return currentNotes.filter(
       (note) =>
         (note.title && note.title.toLowerCase().includes(query)) ||
         (note.content && note.content.toLowerCase().includes(query)),
     );
-    setFilteredNotes(filtered);
-  }, [searchQuery, notes, showFollowupsOnly]);
+  }, [notes, showFollowupsOnly, searchQuery]);
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this note?")) return;
@@ -131,7 +146,7 @@ export default function NotesClient() {
     }
   };
 
-  const handleEdit = (note: any) => {
+  const handleEdit = (note: Note) => {
     setEditingId(note.id);
     setEditTitle(note.title || "");
     setEditContent(note.content || "");
@@ -256,7 +271,9 @@ export default function NotesClient() {
           >
             {showFollowupsOnly
               ? "Show all notes"
-              : `View follow-ups${followupsDueCount > 0 ? ` (${followupsDueCount})` : ""}`}
+              : `View follow-ups${
+                  followupsDueCount > 0 ? ` (${followupsDueCount})` : ""
+                }`}
           </button>
         </div>
 
@@ -269,7 +286,7 @@ export default function NotesClient() {
         />
       </div>
 
-      {filteredNotes?.length === 0 && (
+      {filteredNotes.length === 0 && (
         <p>
           {searchQuery
             ? "No notes found matching your search."
@@ -277,7 +294,7 @@ export default function NotesClient() {
         </p>
       )}
 
-      {filteredNotes?.map((note) => (
+      {filteredNotes.map((note) => (
         <div
           key={note.id}
           className={`mb-4 p-4 border rounded backdrop-blur-md ${

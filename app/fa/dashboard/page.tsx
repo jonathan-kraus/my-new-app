@@ -18,9 +18,12 @@ export default function FlightDashboard() {
     setData(json);
   }
 
-  useEffect(() => {
+useEffect(() => {
+  queueMicrotask(() => {
     load();
-  }, []);
+  });
+}, []);
+
 
   async function updateFlight() {
     if (!identInput) return;

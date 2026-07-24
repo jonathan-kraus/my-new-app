@@ -39,9 +39,12 @@ export default function ForecastClient({
 }) {
   const [isReady, setIsReady] = useState(false);
 
-  useEffect(() => {
+useEffect(() => {
+  queueMicrotask(() => {
     setIsReady(true);
-  }, []);
+  });
+}, []);
+
 
   const [selectedId, setSelectedId] = useState<string | null>(() => {
     if (typeof window === "undefined") return null;
@@ -53,11 +56,13 @@ export default function ForecastClient({
   const logEventIndexRef = useRef(0);
 
   // Fallback to second location if nothing saved
-  useEffect(() => {
-    if (!selectedId && locations.length > 0) {
+useEffect(() => {
+  if (!selectedId && locations.length > 0) {
+    queueMicrotask(() => {
       setSelectedId(locations[1]?.id ?? null);
-    }
-  }, [locations, selectedId]);
+    });
+  }
+}, [locations, selectedId]);
 
   // Persist selection
   useEffect(() => {
@@ -134,7 +139,8 @@ export default function ForecastClient({
     return () => controller.abort();
   }, [selectedId]);
 
-  const timeline = forecast ? useForecastTimeline(forecast.forecast) : null;
+ const timeline = useForecastTimeline(forecast?.forecast ?? null);
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 px-4 sm:px-6 lg:px-8 py-10 text-white">

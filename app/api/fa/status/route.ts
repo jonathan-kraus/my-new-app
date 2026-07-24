@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\fa\status\route.ts
- * @LastEditTime: 2026-03-11 00:23:19
+ * @LastEditTime: 2026-07-24 17:04:24
  */
 import { logit } from "@/lib/log/logit";
 import { getConfig } from "@/lib/runtime/config";
