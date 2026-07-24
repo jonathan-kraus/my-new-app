@@ -46,8 +46,8 @@ export default async function DashboardPage(req: Request) {
     meta: { built: { ...built, eventIndex: ++jei } },
   });
   const tools = data.build.tools;
-console.log("TOOLS:", tools);
-await logj({
+  console.log("TOOLS:", tools);
+  await logj({
     domain: "dashboard",
     level: "info",
     message: "Tools information @# ",

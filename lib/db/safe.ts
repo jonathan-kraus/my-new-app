@@ -40,4 +40,3 @@ export function assertNonEmptyArray<T>(
 
   return value;
 }
-

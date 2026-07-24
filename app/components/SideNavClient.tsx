@@ -72,7 +72,6 @@ export default function SideNavClient({
   let jei = 0;
   const first = assertNonEmptyArray(navItems, "navItems")[0]!;
 
-
   useEffect(() => {
     if (!formattedVersion) return;
     const built = staticUniversalContext("side-nav");
