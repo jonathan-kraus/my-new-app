@@ -1,77 +1,59 @@
-// app/api/db-tables/route.ts
-import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { assertNonEmptyArray } from "@/lib/db/safe";
+/*
+ * @FilePath: \my-new-app\app\api\db-tables\route.ts
+ * @LastEditTime: 2026-07-24 00:49:48
+ */
+import { neon } from "@neondatabase/serverless";
 
-export const runtime = "nodejs";
-
-function sanitizeBigInt(obj: any) {
-  return JSON.parse(
-    JSON.stringify(obj, (_, v) => (typeof v === "bigint" ? Number(v) : v)),
-  );
-}
+const db = neon(process.env.DATABASE_URL!);
 
 export async function GET() {
-  // Fetch all table names in the public schema
-  const tables = await db.$queryRawUnsafe<{ table_name: string }[]>(`
-    SELECT tablename AS table_name
-    FROM pg_tables
-    WHERE schemaname = 'public';
-  `);
+  const tables = await db`
+    SELECT table_name
+    FROM information_schema.tables
+    WHERE table_schema = 'public'
+    ORDER BY table_name ASC
+  ` as { table_name: string }[];
 
-  const results: Array<{
-    table_name: string;
-    exact_rows: number;
-    total_bytes: number | undefined;
-    table_bytes: number | undefined;
-    index_bytes: number | undefined;
-    toast_bytes: number | undefined;
-  }> = [];
+  const results = [];
 
   for (const { table_name } of tables) {
-    // Exact row count
-    const row = assertNonEmptyArray(
-      await db.$queryRawUnsafe<{ exact_count: number }[]>(`
-        SELECT COUNT(*)::bigint AS exact_count FROM "${table_name}";
-      `),
-      `exact count for table ${table_name}`,
-    )[0]!;
+    // Safe identifier quoting
+    const quoted = `"${table_name.replace(/"/g, '""')}"`;
 
-    const exactCount = row.exact_count;
+    // Count rows
+    const countRows = await db`
+      SELECT COUNT(*)::int AS exact_count
+      FROM ${quoted}
+    ` as { exact_count: number }[];
+
+    const { exact_count } = countRows[0]!;
 
     // Size metrics
-    const sizes = assertNonEmptyArray(
-      await db.$queryRawUnsafe<
-        {
-          total_bytes: number | undefined;
-          table_bytes: number | undefined;
-          index_bytes: number | undefined;
-          toast_bytes: number | undefined;
-        }[]
-      >(`
-        SELECT
-          pg_total_relation_size('"${table_name}"') AS total_bytes,
-          pg_relation_size('"${table_name}"') AS table_bytes,
-          pg_indexes_size('"${table_name}"') AS index_bytes,
-          pg_total_relation_size('"${table_name}"')
-            - pg_relation_size('"${table_name}"')
-            - pg_indexes_size('"${table_name}"') AS toast_bytes
-      `),
-      `sizes for table ${table_name}`,
-    )[0]!;
+    const sizeRows = await db`
+      SELECT
+        pg_total_relation_size(${quoted}) AS total_bytes,
+        pg_indexes_size(${quoted}) AS index_bytes,
+        pg_total_relation_size(${quoted}::regclass)
+          - pg_relation_size(${quoted})
+          - pg_indexes_size(${quoted}) AS toast_bytes
+    ` as {
+      total_bytes: number;
+      index_bytes: number;
+      toast_bytes: number;
+    }[];
+
+    const { total_bytes, index_bytes, toast_bytes } = sizeRows[0]!;
 
     results.push({
-      table_name,
-      exact_rows: exactCount,
-      total_bytes: sizes.total_bytes,
-      table_bytes: sizes.table_bytes,
-      index_bytes: sizes.index_bytes,
-      toast_bytes: sizes.toast_bytes,
+      name: table_name,
+      exact_count,
+      sizes: {
+        total_bytes,
+        index_bytes,
+        toast_bytes,
+      },
     });
   }
 
-  // Sort by total size descending
-  results.sort((a, b) => Number(b.total_bytes) - Number(a.total_bytes));
-
-  return NextResponse.json(sanitizeBigInt(results));
+  return Response.json(results);
 }
