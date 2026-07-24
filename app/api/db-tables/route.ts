@@ -63,7 +63,7 @@ const sizes = assertNonEmptyArray(
       exact_rows: exactCount,
       ...sizes,
     });
-  }
+  
 
   // Sort by total size descending
   results.sort((a, b) => Number(b.total_bytes) - Number(a.total_bytes));
