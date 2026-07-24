@@ -66,7 +66,7 @@ export async function GET() {
       index_bytes: sizes.index_bytes,
       toast_bytes: sizes.toast_bytes,
     });
-  } 
+  }
 
   // Sort by total size descending
   results.sort((a, b) => Number(b.total_bytes) - Number(a.total_bytes));
