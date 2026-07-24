@@ -71,3 +71,4 @@ const sizes = assertNonEmptyArray(
 
   return NextResponse.json(sanitizeBigInt(results));
 }
+}
