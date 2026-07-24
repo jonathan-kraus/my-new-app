@@ -36,7 +36,7 @@ export default [
     },
     plugins: {
       import: importPlugin,
-      unusedImports,
+      "unused-imports": unusedImports,
     },
     rules: {
       // Strict TypeScript rules
