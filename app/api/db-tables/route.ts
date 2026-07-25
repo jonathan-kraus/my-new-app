@@ -1,13 +1,13 @@
 /*
  * @FilePath: \my-new-app\app\api\db-tables\route.ts
- * @LastEditTime: 2026-07-24 23:13:10
+ * @LastEditTime: 2026-07-24 23:33:20
  */
 import { neon } from "@neondatabase/serverless";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { NextRequest } from "next/server";
 
-const db = neon(process.env.DATABASE_URL!);
+
 type FormattedTable = {
   name: string;
   exact_count: number;
@@ -19,15 +19,19 @@ type FormattedTable = {
 };
 
 export async function GET(req: NextRequest) {
+  const db = neon(process.env.DATABASE_URL!);
+
   const built = await buildUniversalContext(req, "dbtables");
   let jei = 0;
+
   console.log("db-tables route called");
+
   await logj({
     domain: "jonathan",
     level: "info",
     message: `API db-tables started`,
     file: "app/api/db-tables/route.ts",
-    line: 24,
+    line: 29,
     payload: {
       some: "data",
     },
@@ -50,7 +54,7 @@ export async function GET(req: NextRequest) {
       level: "info",
       message: `API db-tables count rows for table: ${table_name}`,
       file: "app/api/db-tables/route.ts",
-      line: 47,
+      line: 52,
       payload: {
         table_name: table_name,
       },
@@ -70,7 +74,7 @@ export async function GET(req: NextRequest) {
       level: "info",
       message: `API db-tables size metrics for table: ${table_name}`,
       file: "app/api/db-tables/route.ts",
-      line: 67,
+      line: 72,
       payload: {
         table_name: table_name,
       },
