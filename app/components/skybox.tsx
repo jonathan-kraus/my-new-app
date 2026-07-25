@@ -8,17 +8,16 @@ export default function Skybox() {
   const [planes, setPlanes] = useState<any[]>([]);
   const router = useRouter();
   async function loadSkybox() {
-    
     const res = await fetch("/api/fa/dashboard");
     const json = await res.json();
     setPlanes(json.planes || []);
   }
 
-useEffect(() => {
-  queueMicrotask(() => {
-    loadSkybox();
-  });
-}, []);
+  useEffect(() => {
+    queueMicrotask(() => {
+      loadSkybox();
+    });
+  }, []);
 
   async function selectFlight(ident: string) {
     await fetch("/api/set-flight-id", {
@@ -26,8 +25,8 @@ useEffect(() => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ident }),
     });
-    
-    router.push("/fa/dashboard");   // ✔ pure, allowed, no mutation
+
+    router.push("/fa/dashboard"); // ✔ pure, allowed, no mutation
   }
 
   return (

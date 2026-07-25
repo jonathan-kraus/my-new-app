@@ -93,21 +93,21 @@ function Carousel({
     setApi(api);
   }, [api, setApi]);
 
-React.useEffect(() => {
-  if (!api) return;
+  React.useEffect(() => {
+    if (!api) return;
 
-  queueMicrotask(() => {
-    onSelect(api);
-  });
+    queueMicrotask(() => {
+      onSelect(api);
+    });
 
-  api.on("reInit", onSelect);
-  api.on("select", onSelect);
+    api.on("reInit", onSelect);
+    api.on("select", onSelect);
 
-  return () => {
-    api.off("reInit", onSelect);
-    api.off("select", onSelect);
-  };
-}, [api, onSelect]);
+    return () => {
+      api.off("reInit", onSelect);
+      api.off("select", onSelect);
+    };
+  }, [api, onSelect]);
 
   return (
     <CarouselContext.Provider

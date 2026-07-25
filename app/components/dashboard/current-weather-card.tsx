@@ -30,8 +30,9 @@ interface WeatherData {
   sources?: { current?: string };
 }
 
-
-export default function CurrentWeatherCard({ location }: CurrentWeatherCardProps) {
+export default function CurrentWeatherCard({
+  location,
+}: CurrentWeatherCardProps) {
   const [data, setData] = useState<WeatherData | null>(null);
   const [loading, setLoading] = useState(true);
   const hasToasted = useRef(false);
@@ -39,7 +40,7 @@ export default function CurrentWeatherCard({ location }: CurrentWeatherCardProps
   // Initial render log
   useEffect(() => {
     console.log(
-      `Rendering CurrentWeatherCard with location: ${location?.name ?? "null"}`
+      `Rendering CurrentWeatherCard with location: ${location?.name ?? "null"}`,
     );
   }, [location]);
 
@@ -68,56 +69,54 @@ export default function CurrentWeatherCard({ location }: CurrentWeatherCardProps
   }, [location]);
 
   // React‑pure: compute once, not on every render
-const [formattedTime] = useState(() => {
-  return formatEasternTime(Date.now());
-});
-
-// Toast once when temperature arrives
-useEffect(() => {
-  const temp = (data as WeatherData)?.current?.temperature;
-  if (!temp) return;
-  if (hasToasted.current) return;
-
-  toast.success(`🌡️ ${Math.round(temp)}° in ${location?.name}`, {
-    duration: 4000,
+  const [formattedTime] = useState(() => {
+    return formatEasternTime(Date.now());
   });
 
-  hasToasted.current = true;
-}, [(data as WeatherData)?.current?.temperature, location?.name]);
+  // Toast once when temperature arrives
+  useEffect(() => {
+    const temp = (data as WeatherData)?.current?.temperature;
+    if (!temp) return;
+    if (hasToasted.current) return;
 
-// Loading skeleton
-if (loading) {
-  return (
-    <div className="p-6 rounded-xl border bg-white shadow-sm animate-pulse">
-      <div className="h-6 w-32 bg-gray-200 rounded mb-4" />
-      <div className="h-10 w-20 bg-gray-200 rounded mb-2" />
-      <div className="h-4 w-40 bg-gray-200 rounded" />
-    </div>
-  );
-}
+    toast.success(`🌡️ ${Math.round(temp)}° in ${location?.name}`, {
+      duration: 4000,
+    });
 
-// Error state
-const current = (data as WeatherData)?.current;
-const sources = (data as WeatherData)?.sources;
+    hasToasted.current = true;
+  }, [(data as WeatherData)?.current?.temperature, location?.name]);
 
+  // Loading skeleton
+  if (loading) {
+    return (
+      <div className="p-6 rounded-xl border bg-white shadow-sm animate-pulse">
+        <div className="h-6 w-32 bg-gray-200 rounded mb-4" />
+        <div className="h-10 w-20 bg-gray-200 rounded mb-2" />
+        <div className="h-4 w-40 bg-gray-200 rounded" />
+      </div>
+    );
+  }
 
-if (!current) {
-  return (
-    <div className="p-6 rounded-xl border bg-white shadow-sm">
-      <p className="text-gray-600">Unable to load weather data.</p>
-    </div>
-  );
-}
+  // Error state
+  const current = (data as WeatherData)?.current;
+  const sources = (data as WeatherData)?.sources;
 
-// Derived fields
-const temp = Math.round(current.temperature);
-const feelsLike = Math.round(current.feelsLike);
-const humidity = current.humidity;
-const wind = current.windSpeed;
-const source = sources?.current?.toUpperCase() ?? "UNKNOWN";
+  if (!current) {
+    return (
+      <div className="p-6 rounded-xl border bg-white shadow-sm">
+        <p className="text-gray-600">Unable to load weather data.</p>
+      </div>
+    );
+  }
 
-console.log(`Weather summary for ${location?.name ?? "null"}`);
+  // Derived fields
+  const temp = Math.round(current.temperature);
+  const feelsLike = Math.round(current.feelsLike);
+  const humidity = current.humidity;
+  const wind = current.windSpeed;
+  const source = sources?.current?.toUpperCase() ?? "UNKNOWN";
 
+  console.log(`Weather summary for ${location?.name ?? "null"}`);
 
   return (
     <div className="p-4 rounded-xl bg-gradient-to-br from-indigo-700 to-sky-800 border border-white/10 shadow-md">

@@ -28,10 +28,12 @@ export function EmailThrottleCountdown({
     return "";
   });
 
-  const [status, setStatus] = useState<"ready" | "countdown" | "invalid">(() => {
-    if (!nextAllowed || throttleMinutes <= 0) return "ready";
-    return "invalid";
-  });
+  const [status, setStatus] = useState<"ready" | "countdown" | "invalid">(
+    () => {
+      if (!nextAllowed || throttleMinutes <= 0) return "ready";
+      return "invalid";
+    },
+  );
 
   // Countdown effect — always runs, but exits early if invalid
   useEffect(() => {

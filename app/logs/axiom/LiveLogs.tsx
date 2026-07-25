@@ -19,14 +19,14 @@ export default function LiveLogs() {
     setLoading(false);
   }
 
-useEffect(() => {
-  queueMicrotask(() => {
-    fetchLogs();
-  });
+  useEffect(() => {
+    queueMicrotask(() => {
+      fetchLogs();
+    });
 
-  const id = setInterval(fetchLogs, 22222);
-  return () => clearInterval(id);
-}, []);
+    const id = setInterval(fetchLogs, 22222);
+    return () => clearInterval(id);
+  }, []);
 
   if (loading) {
     return <div className="text-gray-400">Loading logs…</div>;

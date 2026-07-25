@@ -16,115 +16,114 @@ export default function GitHubActivityFeed() {
   const [repos, setRepos] = useState("jonathan-kraus/my-new-app"); // Default repos
   const [workflowOwner, setWorkflowOwner] = useState("jonathan-kraus");
   const [workflowRepo, setWorkflowRepo] = useState("my-new-app");
-  
+
   const fetchActivity = async () => {
-  setLoading(true);
-  setError(null);
+    setLoading(true);
+    setError(null);
 
-  // Validate required fields based on type
-  if (type === "user" && !username) {
-    setError("Username is required for user activity");
-    setLoading(false);
-    return;
-  }
-
-  if (type === "workflows" && (!workflowOwner || !workflowRepo)) {
-    setError("Both owner and repository name are required for workflows");
-    setLoading(false);
-    return;
-  }
-
-  try {
-    const params = new URLSearchParams({
-      type,
-      limit: "15",
-    });
-
-    if (type === "user") {
-      params.append("username", username);
-    } else if (type === "repositories") {
-      params.append("repos", repos);
-    } else if (type === "workflows") {
-      params.append("owner", workflowOwner);
-      params.append("repo", workflowRepo);
+    // Validate required fields based on type
+    if (type === "user" && !username) {
+      setError("Username is required for user activity");
+      setLoading(false);
+      return;
     }
 
-    const response = await fetch(`/api/github/activity?${params}`);
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch: ${response.statusText}`);
+    if (type === "workflows" && (!workflowOwner || !workflowRepo)) {
+      setError("Both owner and repository name are required for workflows");
+      setLoading(false);
+      return;
     }
 
-    const data = await response.json();
-    let jei = 0;
+    try {
+      const params = new URLSearchParams({
+        type,
+        limit: "15",
+      });
 
-    const transformedActivities: GitHubActivityEvent[] = data.data.map(
-      (item: any, index: number) => {
-        if (type === "workflows") {
+      if (type === "user") {
+        params.append("username", username);
+      } else if (type === "repositories") {
+        params.append("repos", repos);
+      } else if (type === "workflows") {
+        params.append("owner", workflowOwner);
+        params.append("repo", workflowRepo);
+      }
+
+      const response = await fetch(`/api/github/activity?${params}`);
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      let jei = 0;
+
+      const transformedActivities: GitHubActivityEvent[] = data.data.map(
+        (item: any, index: number) => {
+          if (type === "workflows") {
+            return {
+              id: item.id || `workflow-${index}`,
+              name: item.name || "CI/CD Workflow",
+              repo: `${item.repository?.owner?.login || workflowOwner}/${item.repository?.name || workflowRepo}`,
+              status: item.status || "completed",
+              conclusion: item.conclusion || "success",
+              event: "workflow_run",
+              actor: item.actor?.login || "Unknown",
+              commitMessage: item.head_commit?.message || "Workflow run",
+              commitSha: item.head_sha?.substring(0, 7),
+              url: item.html_url,
+              createdAt: item.created_at || new Date().toISOString(),
+              updatedAt: item.updated_at || new Date().toISOString(),
+              source: "github",
+            };
+          }
+
+          const built = staticUniversalContext("github-activity-feed");
+          console.log("🌟 Logging GitHub activity fetch");
+          fetch("/api/log", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            keepalive: true,
+            body: JSON.stringify({
+              domain: "github",
+              message: "Starting GitHub activity fetch",
+              file: "app/components/github/GitHubActivityFeed.tsx",
+              line: 87,
+              level: "info",
+              payload: { name: item.name, url: item.html_url },
+              meta: { built: { ...built, eventIndex: ++jei } },
+            }),
+          });
+
           return {
-            id: item.id || `workflow-${index}`,
-            name: item.name || "CI/CD Workflow",
-            repo: `${item.repository?.owner?.login || workflowOwner}/${item.repository?.name || workflowRepo}`,
+            id: item.sha || `${item.repo}-${index}`,
+            name: item.name || `${item.owner}/${item.repo}`,
+            repo: `${item.owner}/${item.repo}`,
             status: item.status || "completed",
             conclusion: item.conclusion || "success",
-            event: "workflow_run",
-            actor: item.actor?.login || "Unknown",
-            commitMessage: item.head_commit?.message || "Workflow run",
-            commitSha: item.head_sha?.substring(0, 7),
-            url: item.html_url,
-            createdAt: item.created_at || new Date().toISOString(),
-            updatedAt: item.updated_at || new Date().toISOString(),
+            event: item.type,
+            actor: item.author,
+            commitMessage: item.message,
+            commitSha: item.sha?.substring(0, 7),
+            url: item.url,
+            createdAt: item.date,
+            updatedAt: item.date,
             source: "github",
           };
-        }
+        },
+      );
 
-        const built = staticUniversalContext("github-activity-feed");
-        console.log("🌟 Logging GitHub activity fetch");
-        fetch("/api/log", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          keepalive: true,
-          body: JSON.stringify({
-            domain: "github",
-            message: "Starting GitHub activity fetch",
-            file: "app/components/github/GitHubActivityFeed.tsx",
-            line: 87,
-            level: "info",
-            payload: { name: item.name, url: item.html_url },
-            meta: { built: { ...built, eventIndex: ++jei } },
-          }),
-        });
+      setActivities(transformedActivities);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        return {
-          id: item.sha || `${item.repo}-${index}`,
-          name: item.name || `${item.owner}/${item.repo}`,
-          repo: `${item.owner}/${item.repo}`,
-          status: item.status || "completed",
-          conclusion: item.conclusion || "success",
-          event: item.type,
-          actor: item.author,
-          commitMessage: item.message,
-          commitSha: item.sha?.substring(0, 7),
-          url: item.url,
-          createdAt: item.date,
-          updatedAt: item.date,
-          source: "github",
-        };
-      },
-    );
-
-    setActivities(transformedActivities);
-  } catch (err: any) {
-    setError(err.message);
-  } finally {
-    setLoading(false);
-  }
-};
-
-useEffect(() => {
-  queueMicrotask(fetchActivity);
-}, [type, username, repos, workflowOwner, workflowRepo]);
-
+  useEffect(() => {
+    queueMicrotask(fetchActivity);
+  }, [type, username, repos, workflowOwner, workflowRepo]);
 
   if (loading) {
     return (

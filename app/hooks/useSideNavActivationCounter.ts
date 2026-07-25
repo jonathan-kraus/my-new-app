@@ -19,9 +19,9 @@ export function useSideNavActivationCounter() {
 
     // Update state
     queueMicrotask(() => {
-    setCount(next);
-  });
-}, []);
+      setCount(next);
+    });
+  }, []);
 
   return count;
 }
