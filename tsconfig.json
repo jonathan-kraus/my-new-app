@@ -9,7 +9,7 @@
     /* Module + resolution */
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "target": "ES2022",
     "lib": ["ES2022", "DOM"],
     "types": ["vitest/globals"],

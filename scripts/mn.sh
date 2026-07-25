@@ -38,10 +38,10 @@ fail() {
 # pnpm update --latest || warn "Failed to update dependencies"
 
 # === Logging Helpers ===
-# success() { echo "✔ $1"; }
-# warn()    { echo "⚠ $1"; }
-# info()    { echo "→ $1"; }
-# error()   { echo "✘ $1"; }
+success() { echo "✔ $1"; }
+warn()    { echo "⚠ $1"; }
+info()    { echo "→ $1"; }
+error()   { echo "✘ $1"; }
 
 echo "=== Running Prettier check ==="
 
