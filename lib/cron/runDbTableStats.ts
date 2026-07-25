@@ -106,7 +106,8 @@ const countRows = await sql`
     "totalBytes",
     "tableBytes",
     "indexBytes",
-    "toastBytes"
+    "toastBytes",
+    "createdAt"
   )
   VALUES (
     ${tableName},
@@ -115,7 +116,8 @@ const countRows = await sql`
     ${BigInt(row.total_bytes)},
     ${BigInt(row.table_bytes)},
     ${BigInt(row.index_bytes)},
-    ${BigInt(row.toast_bytes)}
+    ${BigInt(row.toast_bytes)},
+    ${new Date().toISOString()}
   )
   ON CONFLICT ("tableName", "snapshotDate")
   DO UPDATE SET
@@ -125,6 +127,7 @@ const countRows = await sql`
     "indexBytes" = EXCLUDED."indexBytes",
     "toastBytes" = EXCLUDED."toastBytes";
 `;
+
 
       tablesProcessed++;
     } catch (err: any) {
