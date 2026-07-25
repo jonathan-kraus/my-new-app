@@ -98,33 +98,34 @@ const countRows = await sql`
       });
 
       // INSERT stats
-      await sql`
-        INSERT INTO "DbTableStats" (
-          "tableName",
-          "snapshotDate",
-          "rowEstimate",
-          "totalBytes",
-          "tableBytes",
-          "indexBytes",
-          "toastBytes"
-        )
-        VALUES (
-          ${tableName},
-          ${snapshotDate.toISOString()},
-          ${count},
-          ${String(row.total_bytes)},
-          ${String(row.table_bytes)},
-          ${String(row.index_bytes)},
-          ${String(row.toast_bytes)}
-        )
-        ON CONFLICT ("tableName", "snapshotDate")
-        DO UPDATE SET
-          "rowEstimate" = EXCLUDED."rowEstimate",
-          "totalBytes" = EXCLUDED."totalBytes",
-          "tableBytes" = EXCLUDED."tableBytes",
-          "indexBytes" = EXCLUDED."indexBytes",
-          "toastBytes" = EXCLUDED."toastBytes";
-      `;
+  await sql`
+  INSERT INTO "DbTableStats" (
+    "tableName",
+    "snapshotDate",
+    "rowEstimate",
+    "totalBytes",
+    "tableBytes",
+    "indexBytes",
+    "toastBytes"
+  )
+  VALUES (
+    ${tableName},
+    ${snapshotDate.toISOString()},
+    ${count},
+    ${row.total_bytes},
+    ${row.table_bytes},
+    ${row.index_bytes},
+    ${row.toast_bytes}
+  )
+  ON CONFLICT ("tableName", "snapshotDate")
+  DO UPDATE SET
+    "rowEstimate" = EXCLUDED."rowEstimate",
+    "totalBytes" = EXCLUDED."totalBytes",
+    "tableBytes" = EXCLUDED."tableBytes",
+    "indexBytes" = EXCLUDED."indexBytes",
+    "toastBytes" = EXCLUDED."toastBytes";
+`;
+
 
       tablesProcessed++;
     } catch (err: any) {
