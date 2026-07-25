@@ -76,16 +76,18 @@ export async function runDbTableStats(ctx: {
 
     try {
       // COUNT rows
-const countRows = await sql`
+      const countRows = await sql`
   SELECT COUNT(*)::int AS count
   FROM ${sql.unsafe(`public."${tableName.replace(/"/g, '""')}"`)}
 `;
 
       const count =
-  (await sql`
+        (
+          await sql`
     SELECT COUNT(*)::int AS count
     FROM ${sql.unsafe(`public."${tableName.replace(/"/g, '""')}"`)}
-  `)[0]?.count ?? 0;
+  `
+        )[0]?.count ?? 0;
 
       // Log AFTER count query
       await logj({
@@ -99,30 +101,30 @@ const countRows = await sql`
       });
 
       // INSERT stats
-  await db.dbTableStats.upsert({
-  where: {
-    tableName_snapshotDate: {
-      tableName: row.table_name,
-      snapshotDate,
-    },
-  },
-  update: {
-    rowEstimate: count,
-    totalBytes: BigInt(row.total_bytes),
-    tableBytes: BigInt(row.table_bytes),
-    indexBytes: BigInt(row.index_bytes),
-    toastBytes: BigInt(row.toast_bytes),
-  },
-  create: {
-    tableName: row.table_name,
-    snapshotDate,
-    rowEstimate: count,
-    totalBytes: BigInt(row.total_bytes),
-    tableBytes: BigInt(row.table_bytes),
-    indexBytes: BigInt(row.index_bytes),
-    toastBytes: BigInt(row.toast_bytes),
-  },
-});
+      await db.dbTableStats.upsert({
+        where: {
+          tableName_snapshotDate: {
+            tableName: row.table_name,
+            snapshotDate,
+          },
+        },
+        update: {
+          rowEstimate: count,
+          totalBytes: BigInt(row.total_bytes),
+          tableBytes: BigInt(row.table_bytes),
+          indexBytes: BigInt(row.index_bytes),
+          toastBytes: BigInt(row.toast_bytes),
+        },
+        create: {
+          tableName: row.table_name,
+          snapshotDate,
+          rowEstimate: count,
+          totalBytes: BigInt(row.total_bytes),
+          tableBytes: BigInt(row.table_bytes),
+          indexBytes: BigInt(row.index_bytes),
+          toastBytes: BigInt(row.toast_bytes),
+        },
+      });
 
       tablesProcessed++;
     } catch (err: any) {
