@@ -64,10 +64,11 @@ export async function runDbTableStats(ctx: {
   for (const row of stats) {
     const tableName = row.table_name;
 
-    const countRows = (await sql`
+const countRows = await sql`
   SELECT COUNT(*)::int AS count
-  FROM ${sql.unsafe(`"${tableName.replace(/"/g, `""`)}"`)}
-`) as CountRow[];
+  FROM ${sql.unsafe(`"${tableName.replace(/"/g, '""')}"::regclass`)}
+`;
+
 
     const count = countRows[0]?.count ?? 0;
 
