@@ -1,10 +1,19 @@
 /*
  * @FilePath: \my-new-app\app\api\db-tables\route.ts
- * @LastEditTime: 2026-07-24 00:49:48
+ * @LastEditTime: 2026-07-24 21:58:47
  */
 import { neon } from "@neondatabase/serverless";
 
 const db = neon(process.env.DATABASE_URL!);
+type FormattedTable = {
+  name: string;
+  exact_count: number;
+  sizes: {
+    total_bytes: number;
+    index_bytes: number;
+    toast_bytes: number;
+  };
+};
 
 export async function GET() {
   const tables = (await db`
@@ -43,7 +52,7 @@ export async function GET() {
     }[];
 
     const { total_bytes, index_bytes, toast_bytes } = sizeRows[0]!;
-
+    const results: FormattedTable[] = [];
     results.push({
       name: table_name,
       exact_count,
