@@ -21,6 +21,7 @@ type FormattedTable = {
 export async function GET(req: NextRequest) {
   const built = await buildUniversalContext(req, "dbtables");
   let jei = 0;
+  console.log("db-tables route called");
   await logj({
     domain: "jonathan",
     level: "info",
