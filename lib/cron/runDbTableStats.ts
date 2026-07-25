@@ -35,7 +35,7 @@ export async function runDbTableStats(ctx: {
     level: "info",
     message: "dbTables cron started",
     file: "lib/cron/runDbTableStats.ts",
-    line: 24,
+    line: 33,
     payload: { date: snapshotDate.toISOString() },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -68,19 +68,23 @@ export async function runDbTableStats(ctx: {
       level: "info",
       message: `dbTables preparing to count rows for table ${tableName}`,
       file: "lib/cron/runDbTableStats.ts",
-      line: 50,
+      line: 66,
       payload: { name: tableName },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
 
     try {
       // COUNT rows
-      const countRows = (await sql`
-        SELECT COUNT(*)::int AS count
-        FROM ${sql.unsafe(quoted)}
-      `) as CountRow[];
+const countRows = await sql`
+  SELECT COUNT(*)::int AS count
+  FROM ${sql.unsafe(`public."${tableName.replace(/"/g, '""')}"`)}
+`;
 
-      const count = countRows[0]?.count ?? 0;
+      const count =
+  (await sql`
+    SELECT COUNT(*)::int AS count
+    FROM ${sql.unsafe(`public."${tableName.replace(/"/g, '""')}"`)}
+  `)[0]?.count ?? 0;
 
       // Log AFTER count query
       await logj({
@@ -88,7 +92,7 @@ export async function runDbTableStats(ctx: {
         level: "info",
         message: `dbTables update started for table ${tableName} with ${count} rows`,
         file: "lib/cron/runDbTableStats.ts",
-        line: 58,
+        line: 86,
         payload: { name: tableName, count },
         meta: { built: { ...built, eventIndex: ++jei } },
       });
@@ -130,7 +134,7 @@ export async function runDbTableStats(ctx: {
         level: "error",
         message: `dbTables error for table ${tableName}`,
         file: "lib/cron/runDbTableStats.ts",
-        line: 80,
+        line: 128,
         payload: { error: String(err), name: tableName },
         meta: { built: { ...built, eventIndex: ++jei } },
       });
@@ -146,7 +150,7 @@ export async function runDbTableStats(ctx: {
     level: "info",
     message: "dbTables cron completed",
     file: "lib/cron/runDbTableStats.ts",
-    line: 95,
+    line: 144,
     payload: {
       tables: tablesProcessed,
       durationMs: Date.now() - start,
