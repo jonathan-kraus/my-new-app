@@ -1,6 +1,7 @@
 import { neon } from "@neondatabase/serverless";
 import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
+import { db } from "@/lib/db";
 
 const sql = neon(process.env.DATABASE_URL!);
 
@@ -98,36 +99,30 @@ const countRows = await sql`
       });
 
       // INSERT stats
-  await sql`
-  INSERT INTO "DbTableStats" (
-    "tableName",
-    "snapshotDate",
-    "rowEstimate",
-    "totalBytes",
-    "tableBytes",
-    "indexBytes",
-    "toastBytes",
-    "createdAt"
-  )
-  VALUES (
-    ${tableName},
-    ${snapshotDate.toISOString()},
-    ${count},
-    ${BigInt(row.total_bytes)},
-    ${BigInt(row.table_bytes)},
-    ${BigInt(row.index_bytes)},
-    ${BigInt(row.toast_bytes)},
-    ${new Date().toISOString()}
-  )
-  ON CONFLICT ("tableName", "snapshotDate")
-  DO UPDATE SET
-    "rowEstimate" = EXCLUDED."rowEstimate",
-    "totalBytes" = EXCLUDED."totalBytes",
-    "tableBytes" = EXCLUDED."tableBytes",
-    "indexBytes" = EXCLUDED."indexBytes",
-    "toastBytes" = EXCLUDED."toastBytes";
-`;
-
+  await db.dbTableStats.upsert({
+  where: {
+    tableName_snapshotDate: {
+      tableName: row.table_name,
+      snapshotDate,
+    },
+  },
+  update: {
+    rowEstimate: count,
+    totalBytes: BigInt(row.total_bytes),
+    tableBytes: BigInt(row.table_bytes),
+    indexBytes: BigInt(row.index_bytes),
+    toastBytes: BigInt(row.toast_bytes),
+  },
+  create: {
+    tableName: row.table_name,
+    snapshotDate,
+    rowEstimate: count,
+    totalBytes: BigInt(row.total_bytes),
+    tableBytes: BigInt(row.table_bytes),
+    indexBytes: BigInt(row.index_bytes),
+    toastBytes: BigInt(row.toast_bytes),
+  },
+});
 
       tablesProcessed++;
     } catch (err: any) {
