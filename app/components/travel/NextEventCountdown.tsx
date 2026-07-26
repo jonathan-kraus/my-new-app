@@ -1,7 +1,21 @@
 "use client";
 import { parse, intervalToDuration, formatDuration } from "date-fns";
 import { useState, useEffect } from "react";
+import { logj } from "@/lib/log/client";
+import { staticUniversalContext } from "@/lib/log/buildj";
 import type { ParsedTravelSnapshot } from "@/lib/travel/parser/aa";
+const built = await staticUniversalContext("dashboard");
+let jei = 0;
+
+logj({
+  domain: "dashboard",
+  level: "info",
+  message: "VersionCard loaded",
+  file: "app\components\travel\NextEventCountdown.tsx",
+  line: 10,
+  payload: { some: "next event" },
+  meta: { built: { ...built, eventIndex: ++jei } },
+});
 
 type Props = {
   snapshot: ParsedTravelSnapshot;
