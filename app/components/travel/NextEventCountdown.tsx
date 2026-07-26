@@ -10,7 +10,7 @@ let jei = 0;
 logj({
   domain: "dashboard",
   level: "info",
-  message: "VersionCard loaded",
+  message: "NextEventCountdown loaded",
   file: "app\components\travel\NextEventCountdown.tsx",
   line: 10,
   payload: { some: "next event" },

@@ -1,6 +1,3 @@
 # pnpm configuration
 
-minimumReleaseAge=0h
-strict-peer-dependencies=false
 auto-install-peers=true
-node-linker=hoisted
