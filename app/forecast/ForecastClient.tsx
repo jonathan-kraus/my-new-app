@@ -6,6 +6,10 @@ import { ForecastCard } from "./ForecastCard";
 import { CurrentWeather } from "./CurrentWeather";
 import { useForecastTimeline } from "@/hooks/useForecastTimeline";
 import { Location } from "@/lib/types";
+import { logj } from "@/lib/log/client";
+import { staticUniversalContext } from "@/lib/log/buildj";
+const built = await staticUniversalContext("dashboard");
+let jei = 0;
 
 type ForecastResponse = {
   location: Location;
@@ -22,6 +26,16 @@ type ForecastResponse = {
   fetchedAt: string;
   source: string;
 };
+
+logj({
+  domain: "forecast",
+  level: "info",
+  message: "ForecastClient loaded",
+  file: "app\components\forecast\ForecastClient.tsx",
+  line: 30,
+  payload: { some: "Forecast Client loaded" },
+  meta: { built: { ...built, eventIndex: ++jei } },
+});
 
 function formatDayLabel(dateStr: string, index: number) {
   if (index === 0) return "Today";
@@ -71,6 +85,15 @@ export default function ForecastClient({
     if (!selectedId) return;
     const requestId = ++latestForecastRequestRef.current;
     const controller = new AbortController();
+    logj({
+      domain: "forecast",
+      level: "info",
+      message: "About to fetch forecast for location",
+      file: "app\components\forecast\ForecastClient.tsx",
+      line: 30,
+      payload: { selectedId: selectedId },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
 
     fetch(`/api/weather/forecast?locationId=${selectedId}`, {
       signal: controller.signal,
@@ -136,6 +159,16 @@ export default function ForecastClient({
 
   const timeline = forecast ? useForecastTimeline(forecast.forecast) : null;
   console.log("FORECAST CLIENT RECEIVED:", forecast);
+  logj({
+    domain: "forecast",
+    level: "info",
+    message: "ForecastClient received data",
+    file: "app\components\forecast\ForecastClient.tsx",
+    line: 162,
+    payload: { forecast: forecast },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 px-4 sm:px-6 lg:px-8 py-10 text-white">
       <div className="w-full max-w-6xl mx-auto">
