@@ -37,6 +37,7 @@ export async function GET(req: Request) {
     where: { locationId: resolvedLocationId, fetchedAt: { gte: cutoff } },
     orderBy: { fetchedAt: "desc" },
   });
+console.log("CACHED SNAPSHOT PAYLOAD:", JSON.stringify(cached!.payload, null, 2));
 
   if (cached) {
     await logj({
@@ -155,6 +156,7 @@ export async function GET(req: Request) {
   // SCHEMA VALIDATION
   // ----------------------------------------
   const parsed = ForecastResponseSchema.safeParse(raw);
+console.log("ZOD PARSED RESULT:", parsed);
 
   if (!parsed.success) {
     // log #3 in invalid-case test
