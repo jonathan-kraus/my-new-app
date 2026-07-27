@@ -3,6 +3,9 @@ packages:
   - "packages/*"
   - "tools/*"
 
+overrides:
+valibot: ^1.4.2
+
 allowBuilds:
   '@prisma/engines': true
   esbuild: true
