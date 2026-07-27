@@ -1,3 +1,16 @@
 # pnpm configuration
 
 auto-install-peers=true
+strict-peer-dependencies=false
+
+allowBuilds:
+  '@prisma/engines': true
+  prisma: true
+  esbuild: true
+  sharp: true
+  unrs-resolver: true
+
+prefer-offline=true
+save-exact=true
+use-lockfile=true
+shared-workspace-lockfile=true
