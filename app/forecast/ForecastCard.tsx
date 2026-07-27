@@ -24,8 +24,7 @@ export function ForecastCard({
     addSuffix: true,
   });
 
-  const t = useForecastTimeline(forecast);
-  if (!forecast || !forecast.time) {
+if (!forecast || !forecast.time) {
   return (
     <div className="p-8 text-red-200">
       No forecast data returned.
@@ -33,6 +32,7 @@ export function ForecastCard({
   );
 }
 
+const t = useForecastTimeline(forecast);
 
   return (
     <div className="w-full max-w-5xl mx-auto p-8 rounded-xl bg-gradient-to-br from-blue-500 via-sky-500 to-indigo-500 text-white shadow-lg">
