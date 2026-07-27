@@ -13,26 +13,21 @@ export function ForecastCard({
   forecast,
   fetchedAt,
   source,
-}: {
-  location: any;
-  current: any;
-  forecast: any;
-  fetchedAt: string;
-  source: string;
 }) {
   const updatedAgo = formatDistanceToNow(new Date(fetchedAt), {
     addSuffix: true,
   });
 
-if (!forecast || !forecast.time) {
-  return (
-    <div className="p-8 text-red-200">
-      No forecast data returned.
-    </div>
-  );
-}
+  // ⭐ Guard MUST come before useForecastTimeline
+  if (!forecast || !forecast.time) {
+    return (
+      <div className="p-8 text-red-200">
+        No forecast data returned.
+      </div>
+    );
+  }
 
-const t = useForecastTimeline(forecast);
+  const t = useForecastTimeline(forecast);
 
   return (
     <div className="w-full max-w-5xl mx-auto p-8 rounded-xl bg-gradient-to-br from-blue-500 via-sky-500 to-indigo-500 text-white shadow-lg">
