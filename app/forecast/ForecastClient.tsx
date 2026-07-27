@@ -161,5 +161,7 @@ export default function ForecastClient({
         {forecast && (
   <div className="p-8 text-white text-xl">
     This page intentionally left blank.
-  </div>
+  </div>)}
+    </div>
+      </div>
 )}
