@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { LocationSelector } from "@/components/LocationSelector";
 import { ForecastCard } from "./ForecastCard";
 import { CurrentWeather } from "./CurrentWeather";
-import { useForecastTimeline } from "@/hooks/useForecastTimeline";
+// import { useForecastTimeline } from "@/hooks/useForecastTimeline";
 import type { Location } from "@/lib/types";
 
 type ForecastResponse = {
@@ -141,7 +141,7 @@ export default function ForecastClient({
     return () => controller.abort();
   }, [selectedId]);
 
-  const timeline = useForecastTimeline(forecast?.forecast ?? null);
+  // const timeline = useForecastTimeline(forecast?.forecast ?? null);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 px-4 sm:px-6 lg:px-8 py-10 text-white">
