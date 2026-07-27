@@ -39,7 +39,10 @@ export async function GET(req: Request) {
   });
 
   if (cached) {
-    console.log("CACHED SNAPSHOT PAYLOAD:", JSON.stringify(cached!.payload, null, 2));
+    console.log(
+      "CACHED SNAPSHOT PAYLOAD:",
+      JSON.stringify(cached!.payload, null, 2),
+    );
 
     await logj({
       domain: "weather",
@@ -106,7 +109,6 @@ export async function GET(req: Request) {
     try {
       raw = await weatherRes.json();
       console.log("RAW OPEN-METEO RESPONSE:", JSON.stringify(raw, null, 2));
-
     } catch (err) {
       await logj({
         domain: "weather",
@@ -158,7 +160,7 @@ export async function GET(req: Request) {
   // SCHEMA VALIDATION
   // ----------------------------------------
   const parsed = ForecastResponseSchema.safeParse(raw);
-console.log("ZOD PARSED RESULT:", parsed);
+  console.log("ZOD PARSED RESULT:", parsed);
 
   if (!parsed.success) {
     // log #3 in invalid-case test
