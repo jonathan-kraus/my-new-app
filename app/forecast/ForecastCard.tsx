@@ -25,6 +25,14 @@ export function ForecastCard({
   });
 
   const t = useForecastTimeline(forecast);
+  if (!forecast || !forecast.time) {
+  return (
+    <div className="p-8 text-red-200">
+      Something went wrong — no forecast data returned.
+    </div>
+  );
+}
+
 
   return (
     <div className="w-full max-w-5xl mx-auto p-8 rounded-xl bg-gradient-to-br from-blue-500 via-sky-500 to-indigo-500 text-white shadow-lg">
