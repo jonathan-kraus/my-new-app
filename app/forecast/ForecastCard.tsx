@@ -1,84 +1,13 @@
 "use client";
 
-import { formatDistanceToNow } from "date-fns";
-import { useForecastTimeline } from "@/hooks/useForecastTimeline";
-import { WEATHER_ICONS } from "../../lib/ephemeris/weatherIcons";
-
-export function iconFor(code: number): string {
-  return WEATHER_ICONS[code] ?? "❓";
-}
-export function ForecastCard({
-  location,
-  current,
-  forecast,
-  fetchedAt,
-  source,
-}: {
-  location: any;
-  current: any;
-  forecast: any;
-  fetchedAt: string;
-  source: string;
-}) {
-
-  const updatedAgo = formatDistanceToNow(new Date(fetchedAt), {
-    addSuffix: true,
-  });
-
-  // ⭐ Guard MUST come before useForecastTimeline
-  if (!forecast || !forecast.time) {
-    return (
-      <div className="p-8 text-red-200">
-        No forecast data returned.
-      </div>
-    );
-  }
-
-  const t = useForecastTimeline(forecast);
-
+export function ForecastCard() {
   return (
     <div className="w-full max-w-5xl mx-auto p-8 rounded-xl bg-gradient-to-br from-blue-500 via-sky-500 to-indigo-500 text-white shadow-lg">
       <h2 className="text-3xl font-bold mb-6">7‑Day Forecast</h2>
 
-      {/* Current conditions */}
-      <div className="mb-6">
-        <p className="text-xl font-semibold">
-          {location.name}: {current.temperature.toFixed(0)}°F
-        </p>
-        <p className="opacity-80 text-sm">
-          Wind: {current.windspeed.toFixed(0)} mph · Code{" "}
-          {iconFor(forecast.weathercode[0])} {forecast.weathercode[0]}
-        </p>
+      <div className="p-8 text-white text-xl">
+        This page intentionally left blank.
       </div>
-
-      {/* Forecast grid */}
-      <div className="grid grid-cols-7 gap-4 text-center">
-        {forecast.time.map((day: string, i: number) => (
-          <div
-            key={day}
-            className="bg-white/20 rounded-lg p-4 backdrop-blur-sm"
-          >
-            <p className="font-semibold text-lg">
-              {new Date(day).toLocaleDateString("en-US", { weekday: "short" })}
-            </p>
-
-            <p className="text-sm">
-              {Math.round(forecast.temperature_2m_max[i])}° /{" "}
-              {Math.round(forecast.temperature_2m_min[i])}°
-            </p>
-
-            <p className="text-xs opacity-80">
-              Code {Number(forecast.weathercode[i])}
-            </p>
-
-            <p className="text-2xl mt-1">🌤️</p>
-          </div>
-        ))}
-      </div>
-
-      <p className="mt-4 opacity-80 text-sm">
-        Updated {updatedAgo} · Source: {source}
-      </p>
     </div>
   );
 }
