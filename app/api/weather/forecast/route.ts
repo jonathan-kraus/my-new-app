@@ -37,9 +37,10 @@ export async function GET(req: Request) {
     where: { locationId: resolvedLocationId, fetchedAt: { gte: cutoff } },
     orderBy: { fetchedAt: "desc" },
   });
-console.log("CACHED SNAPSHOT PAYLOAD:", JSON.stringify(cached!.payload, null, 2));
 
   if (cached) {
+    console.log("CACHED SNAPSHOT PAYLOAD:", JSON.stringify(cached!.payload, null, 2));
+
     await logj({
       domain: "weather",
       level: "info",
@@ -48,6 +49,7 @@ console.log("CACHED SNAPSHOT PAYLOAD:", JSON.stringify(cached!.payload, null, 2)
       line: 41,
       payload: {
         locationId: resolvedLocationId,
+        data: cached.payload,
         cutoff: cutoff.toISOString(),
         cachedFetchedAt: cached.fetchedAt.toISOString(),
       },
