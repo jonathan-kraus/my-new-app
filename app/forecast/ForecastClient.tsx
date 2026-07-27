@@ -169,11 +169,11 @@ export default function ForecastClient({
 
 {forecast?.forecast && (
   <ForecastCard
-    location={forecast.location}
-    current={forecast.current}
-    forecast={forecast.forecast}
-    fetchedAt={forecast.fetchedAt}
-    source={forecast.source}
+    // location={forecast.location}
+    // current={forecast.current}
+    // forecast={forecast.forecast}
+    // fetchedAt={forecast.fetchedAt}
+    // source={forecast.source}
   />
 )}
 
