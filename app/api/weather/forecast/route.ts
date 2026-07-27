@@ -102,6 +102,8 @@ export async function GET(req: Request) {
 
     try {
       raw = await weatherRes.json();
+      console.log("RAW OPEN-METEO RESPONSE:", JSON.stringify(raw, null, 2));
+
     } catch (err) {
       await logj({
         domain: "weather",
