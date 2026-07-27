@@ -159,52 +159,7 @@ export default function ForecastClient({
         </div>
 
         {forecast && (
-          <>
-            <p className="mb-4 text-lg opacity-90">{forecast.location.name}</p>
-
-            <CurrentWeather
-              temperature={forecast.current.temperature}
-              windspeed={forecast.current.windspeed}
-            />
-
-{forecast?.forecast && (
-  <ForecastCard
-    // location={forecast.location}
-    // current={forecast.current}
-    // forecast={forecast.forecast}
-    // fetchedAt={forecast.fetchedAt}
-    // source={forecast.source}
-  />
+  <div className="p-8 text-white text-xl">
+    This page intentionally left blank.
+  </div>
 )}
-
-            {timeline && (
-              <div className="mt-6 space-y-1 text-sm opacity-90">
-                <p>
-                  Warmest day:{" "}
-                  {new Date(timeline.warmestDay).toLocaleDateString("en-US", {
-                    weekday: "long",
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </p>
-                <p>
-                  Coldest day:{" "}
-                  {new Date(timeline.coldestDay).toLocaleDateString("en-US", {
-                    weekday: "long",
-                    month: "short",
-                    day: "numeric",
-                  })}
-                </p>
-                <p>Trend: {timeline.trend}</p>
-                <p>
-                  Avg High: {timeline.avgHigh.toFixed(1)}° · Avg Low:{" "}
-                  {timeline.avgLow.toFixed(1)}°
-                </p>
-              </div>
-            )}
-          </>
-        )}
-      </div>
-    </div>
-  );
-}
