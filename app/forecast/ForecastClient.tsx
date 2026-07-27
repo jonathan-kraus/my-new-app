@@ -158,7 +158,7 @@ export default function ForecastClient({
   }, [selectedId]);
 
   const timeline = forecast ? useForecastTimeline(forecast.forecast) : null;
-  console.log("FORECAST CLIENT RECEIVED:", forecast);
+
   logj({
     domain: "forecast",
     level: "info",
