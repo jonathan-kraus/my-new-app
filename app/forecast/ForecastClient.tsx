@@ -158,7 +158,10 @@ export default function ForecastClient({
   }, [selectedId]);
 
   const timeline = forecast ? useForecastTimeline(forecast.forecast) : null;
+  const loggedRef = useRef(false);
 
+if (!loggedRef.current) {
+  loggedRef.current = true;
   logj({
     domain: "forecast",
     level: "info",
@@ -168,7 +171,7 @@ export default function ForecastClient({
     payload: { forecast: forecast },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
-
+}
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 px-4 sm:px-6 lg:px-8 py-10 text-white">
       <div className="w-full max-w-6xl mx-auto">
