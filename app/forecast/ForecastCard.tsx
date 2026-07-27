@@ -13,7 +13,14 @@ export function ForecastCard({
   forecast,
   fetchedAt,
   source,
+}: {
+  location: any;
+  current: any;
+  forecast: any;
+  fetchedAt: string;
+  source: string;
 }) {
+
   const updatedAgo = formatDistanceToNow(new Date(fetchedAt), {
     addSuffix: true,
   });
