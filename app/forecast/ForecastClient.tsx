@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { LocationSelector } from "@/components/LocationSelector";
 import { ForecastCard } from "./ForecastCard";
 import { CurrentWeather } from "./CurrentWeather";
-// import { useForecastTimeline } from "@/hooks/useForecastTimeline";
-import type { Location } from "@/lib/types";
+import { useForecastTimeline } from "@/hooks/useForecastTimeline";
+import { Location } from "@/lib/types";
 
 type ForecastResponse = {
   location: Location;
@@ -40,9 +40,7 @@ export default function ForecastClient({
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    queueMicrotask(() => {
-      setIsReady(true);
-    });
+    setIsReady(true);
   }, []);
 
   const [selectedId, setSelectedId] = useState<string | null>(() => {
@@ -57,25 +55,20 @@ export default function ForecastClient({
   // Fallback to second location if nothing saved
   useEffect(() => {
     if (!selectedId && locations.length > 0) {
-      queueMicrotask(() => {
-        setSelectedId(locations[1]?.id ?? null);
-      });
+      setSelectedId(locations[1]?.id ?? null);
     }
   }, [locations, selectedId]);
 
   // Persist selection
   useEffect(() => {
     if (selectedId) {
-      console.log("Persisting selected location ID:", selectedId);
       localStorage.setItem("lastLocationId", selectedId);
     }
   }, [selectedId]);
- console.log("EOE selected location ID:", selectedId);
+
   // Fetch forecast when location changes
   useEffect(() => {
-    console.log("Before EOE selected location ID:", selectedId);
     if (!selectedId) return;
-     console.log("After EOE selected location ID:", selectedId);
     const requestId = ++latestForecastRequestRef.current;
     const controller = new AbortController();
 
@@ -141,7 +134,7 @@ export default function ForecastClient({
     return () => controller.abort();
   }, [selectedId]);
 
-  // const timeline = useForecastTimeline(forecast?.forecast ?? null);
+  const timeline = forecast ? useForecastTimeline(forecast.forecast) : null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 px-4 sm:px-6 lg:px-8 py-10 text-white">
@@ -159,9 +152,50 @@ export default function ForecastClient({
         </div>
 
         {forecast && (
-  <div className="p-8 text-white text-xl">
-    This page intentionally left blank.
-  </div>)}
-    </div>
+          <>
+            <p className="mb-4 text-lg opacity-90">{forecast.location.name}</p>
+
+            <CurrentWeather
+              temperature={forecast.current.temperature}
+              windspeed={forecast.current.windspeed}
+            />
+
+            <ForecastCard
+              location={forecast.location}
+              current={forecast.current}
+              forecast={forecast.forecast}
+              fetchedAt={forecast.fetchedAt}
+              source={forecast.source}
+            />
+
+            {timeline && (
+              <div className="mt-6 space-y-1 text-sm opacity-90">
+                <p>
+                  Warmest day:{" "}
+                  {new Date(timeline.warmestDay).toLocaleDateString("en-US", {
+                    weekday: "long",
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </p>
+                <p>
+                  Coldest day:{" "}
+                  {new Date(timeline.coldestDay).toLocaleDateString("en-US", {
+                    weekday: "long",
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </p>
+                <p>Trend: {timeline.trend}</p>
+                <p>
+                  Avg High: {timeline.avgHigh.toFixed(1)}° · Avg Low:{" "}
+                  {timeline.avgLow.toFixed(1)}°
+                </p>
+              </div>
+            )}
+          </>
+        )}
       </div>
-)}
+    </div>
+  );
+}
