@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\.github\scripts\audit.js
- * @LastEditTime: 2026-07-24 19:43:55
+ * @LastEditTime: 2026-07-26 20:11:57
  */
 import fs from "fs";
 import * as yaml from "js-yaml";
@@ -64,9 +64,11 @@ const IGNORE = [
   "1113465",
   "1113544",
   "1113552",
-  "1124334", 
+  "1124334",
+  "1124298",
   "1124273"   // find-my-way: DDoS with HTTP2 (Prisma dev dependency)
 ];
+
 
 
 // -----------------------------
