@@ -73,6 +73,7 @@ export default function ForecastClient({
  console.log("EOE selected location ID:", selectedId);
   // Fetch forecast when location changes
   useEffect(() => {
+    console.log("Before EOE selected location ID:", selectedId);
     if (!selectedId) return;
      console.log("After EOE selected location ID:", selectedId);
     const requestId = ++latestForecastRequestRef.current;
