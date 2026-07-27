@@ -167,13 +167,15 @@ export default function ForecastClient({
               windspeed={forecast.current.windspeed}
             />
 
-            <ForecastCard
-              location={forecast.location}
-              current={forecast.current}
-              forecast={forecast.forecast}
-              fetchedAt={forecast.fetchedAt}
-              source={forecast.source}
-            />
+{forecast?.forecast && (
+  <ForecastCard
+    location={forecast.location}
+    current={forecast.current}
+    forecast={forecast.forecast}
+    fetchedAt={forecast.fetchedAt}
+    source={forecast.source}
+  />
+)}
 
             {timeline && (
               <div className="mt-6 space-y-1 text-sm opacity-90">

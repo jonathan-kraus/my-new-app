@@ -28,7 +28,7 @@ export function ForecastCard({
   if (!forecast || !forecast.time) {
   return (
     <div className="p-8 text-red-200">
-      Something went wrong — no forecast data returned.
+      No forecast data returned.
     </div>
   );
 }
