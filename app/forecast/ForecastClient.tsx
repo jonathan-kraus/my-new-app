@@ -66,13 +66,15 @@ export default function ForecastClient({
   // Persist selection
   useEffect(() => {
     if (selectedId) {
+      console.log("Persisting selected location ID:", selectedId);
       localStorage.setItem("lastLocationId", selectedId);
     }
   }, [selectedId]);
-
+ console.log("EOE selected location ID:", selectedId);
   // Fetch forecast when location changes
   useEffect(() => {
     if (!selectedId) return;
+     console.log("After EOE selected location ID:", selectedId);
     const requestId = ++latestForecastRequestRef.current;
     const controller = new AbortController();
 
