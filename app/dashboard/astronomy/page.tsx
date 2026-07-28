@@ -14,20 +14,20 @@ const built = staticUniversalContext("ASTRONOMY");
 const jnow = Date.now();
 const result = format(jnow, "yyyy-MM-dd HH:mm:ss");
 let jei = 0;
-await logj({
-  domain: "jonathan",
-  level: "info",
-  message: "In Dashboard/Astronomy",
-  file: "app/dashboard/astronomy/page.tsx",
-  line: 17,
-  payload: { some: result },
-  meta: { built: { ...built, eventIndex: ++jei } },
-});
 
 export default async function DashboardAstronomyPage() {
   const snapshot = await getEphemerisSnapshot("KOP");
   const solar = snapshot.snapshot?.solar ?? null;
   const lunar = snapshot.snapshot?.lunar ?? null;
+  await logj({
+    domain: "jonathan",
+    level: "info",
+    message: "In Dashboard/Astronomy",
+    file: "app/dashboard/astronomy/page.tsx",
+    line: 22,
+    payload: { some: result },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
   if (!solar || !lunar) {
     return (
       <div className="p-4 text-gray-500">
