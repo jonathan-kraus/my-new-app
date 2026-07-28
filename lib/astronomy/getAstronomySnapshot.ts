@@ -21,12 +21,8 @@ export async function getAstronomySnapshot(
   locationId: string,
   now = new Date(),
 ) {
-  // 🚫 Prevent DB + logging during build
   if (process.env.NEXT_PHASE === "phase-production-build") {
-    return {
-      today: null,
-      tomorrow: null,
-    };
+    return { today: null, tomorrow: null };
   }
 
   const todayStr = format(now, "yyyy-MM-dd");
@@ -34,7 +30,9 @@ export async function getAstronomySnapshot(
   const cacheKey = `${locationId}:${todayStr}`;
 
   let snapshotPromise = astronomySnapshotCache.get(cacheKey);
+
   if (!snapshotPromise) {
+    // Create the promise first
     snapshotPromise = (async () => {
       const today = await db.astronomySnapshot.findUnique({
         where: {
@@ -45,13 +43,14 @@ export async function getAstronomySnapshot(
         },
       });
 
+      // Only log once (when the cache is actually populated)
       const built = await staticUniversalContext("ASTRONOMY_SNAPSHOT");
       await logj({
         domain: "jonathan",
         level: "info",
         message: "Astronomy snapshot fetched",
         file: "lib/astronomy/getAstronomySnapshot.ts",
-        line: 41,
+        line: 48,
         payload: { today },
         meta: { built: { ...built, eventIndex: 1 } },
       });
@@ -68,12 +67,8 @@ export async function getAstronomySnapshot(
       return { today, tomorrow };
     })();
 
+    // Critical: set it immediately so concurrent callers reuse it
     astronomySnapshotCache.set(cacheKey, snapshotPromise);
-
-    snapshotPromise = snapshotPromise.catch((error: unknown) => {
-      astronomySnapshotCache.delete(cacheKey);
-      throw error;
-    });
   }
 
   return snapshotPromise;
