@@ -45,16 +45,16 @@ export default function ForecastClient({
   useEffect(() => {
     setIsReady(true);
   }, []);
-let jei = 0;
-logj({
-  domain: "forecast",
-  level: "info",
-  message: "ForecastClient loaded",
-  file: "app\components\forecast\ForecastClient.tsx",
-  line: 30,
-  payload: { lacations: locations },
-  meta: { built: { ...built, eventIndex: ++jei } },
-});
+  let jei = 0;
+  logj({
+    domain: "forecast",
+    level: "info",
+    message: "ForecastClient loaded",
+    file: "app/components/forecast/ForecastClient.tsx",
+    line: 30,
+    payload: { lacations: locations },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
   const [selectedId, setSelectedId] = useState<string | null>(() => {
     if (typeof window === "undefined") return null;
     return localStorage.getItem("lastLocationId");

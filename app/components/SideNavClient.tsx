@@ -1,7 +1,7 @@
 "use client";
 /*
  * @FilePath: \my-new-app\app\components\SideNavClient.tsx
- * @LastEditTime: 2026-07-23 22:29:33
+ * @LastEditTime: 2026-07-28 16:15:08
  */
 
 import Link from "next/link";
@@ -51,9 +51,19 @@ export default function SideNavClient({
 
   const navItems = [
     { href: "/", label: "Home", icon: "🏠" },
-    { href: "/dashboard", label: "Dashboard", icon: "📊" },
-    { href: "/dashboard/astronomy", label: "Astronomy", icon: "🚀" },
-    { href: "/dashboard/environment", label: "Environment", icon: "🌐" },
+    { href: "/dashboard", label: "Dashboard", icon: "📊", prefetch: false },
+    {
+      href: "/dashboard/astronomy",
+      label: "Astronomy",
+      icon: "🚀",
+      prefetch: false,
+    },
+    {
+      href: "/dashboard/environment",
+      label: "Environment",
+      icon: "🌐",
+      prefetch: false,
+    },
     { href: "/forecast", label: "Forecast", icon: "🌤️" },
     { href: "/logs", label: "Logs", icon: "📘" },
     { href: "/logview", label: "Logview", icon: "📘" },
@@ -61,12 +71,22 @@ export default function SideNavClient({
     { href: "/github", label: "GitHub", icon: "🐙" },
     { href: "/ping", label: "Ping", icon: "🛠️" },
     { href: "/travel/next", label: "Travel", icon: "✈️" },
-    { href: "/fa/dashboard", label: "Flight Dashboard", icon: "✈️" },
+    {
+      href: "/fa/dashboard",
+      label: "Flight Dashboard",
+      icon: "✈️",
+      prefetch: false,
+    },
     { href: "/admin/runtime", label: "Runtime", icon: "🛠️" },
     { href: "/config/create", label: "Config/create", icon: "🛠️" },
     { href: "/config/read", label: "Config/read", icon: "🛠️" },
     { href: "/admin/db", label: "Tables", icon: "🛢️" },
-    { href: "/database-explorer", label: "Database Explorer", icon: "🛢️" },
+    {
+      href: "/database-explorer",
+      label: "Database Explorer",
+      icon: "🛢️",
+      prefetch: false,
+    },
   ];
 
   let jei = 0;
@@ -83,7 +103,7 @@ export default function SideNavClient({
         domain: "jonathan",
         message: `🧭 in SideNav ${pathname}`,
         file: "app/components/SideNavClient.tsx",
-        line: 77,
+        line: 106,
         level: "info",
         payload: { label: first.label, Version: formattedVersion },
         meta: { built: { ...built, eventIndex: ++jei } },
@@ -105,6 +125,7 @@ export default function SideNavClient({
             <Link
               key={item.href}
               href={item.href}
+              prefetch={item.prefetch ?? true}
               className={`flex items-center gap-3 px-4 py-2 rounded-lg transition-all ${
                 isActive
                   ? "bg-white/20 font-semibold border-l-2 border-white"
