@@ -16,7 +16,6 @@
       "node",
       "next",
       "next/types",
-      "next/image-types",
       "vitest/globals"
     ],
     "allowJs": false,
