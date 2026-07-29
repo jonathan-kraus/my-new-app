@@ -4,7 +4,6 @@
   "type": "module",
   "vercel-build-id": "4",
   "private": true,
-  "packageManager": "pnpm@11.17.0+sha512.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
