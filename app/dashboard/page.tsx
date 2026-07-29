@@ -3,7 +3,6 @@ import { getDashboardData } from "@/lib/dashboard";
 import { AstronomyCard } from "@/app/astronomy/AstronomyCard";
 import { VercelCard } from "@/app/components/dashboard/vercel-card";
 import VersionCard from "@/app/components/dashboard/version-card";
-import { useVersionSWR } from "@/hooks/useVersionSWR";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import type { Metadata } from "next";
@@ -93,12 +92,12 @@ export default async function DashboardPage(req: Request) {
       });
     }
   }
-const all = useVersionSWR("all");
+
   return (
     
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 p-6">
       <AstronomyCard data={data.astronomy} />
-     <VercelCard data={all.data} />
+
       {/* <GitHubCard data={data.github} /> */}
       {/* <WeatherCard data={data.weather} /> */}
       {/* <LogsCard data={data.logs} /> */}
