@@ -51,10 +51,13 @@ export default function BuildCard({ build }: { build: BuildMetadata }) {
             <span className="font-medium">TypeScript:</span>{" "}
             {build.tools?.typescript ?? "unknown"}
           </div>
-
           <div>
             <span className="font-medium">ESLint:</span>{" "}
             {build.tools?.eslint ?? "unknown"}
+          </div>
+          <div>
+            <span className="font-medium">ESLint:</span>{" "}
+            {build.tools?.openmeteo ?? "openmeteo unknown"}
           </div>
         </div>
       </div>
