@@ -33,7 +33,7 @@ const getCachedAstronomySnapshot = unstable_cache(
       level: "info",
       message: "Astronomy snapshot fetched",
       file: "lib/astronomy/getAstronomySnapshot.ts",
-      line: 47,
+      line: 31,
       payload: { today },
       meta: { built: { ...built, eventIndex: 1 } },
     });

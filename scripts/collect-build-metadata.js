@@ -34,7 +34,6 @@ function safeVersion(pkg) {
   }
 }
 
-
 const metadata = {
   timestamp: new Date().toISOString(),
   git: {
