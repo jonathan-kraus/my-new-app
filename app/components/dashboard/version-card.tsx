@@ -3,7 +3,7 @@
 import { useVersionSWR } from "@/hooks/useVersionSWR";
 import { logj } from "@/lib/log/client";
 import { staticUniversalContext } from "@/lib/log/buildj";
-import { VercelCard } from "@/components/VercelCard";
+import { VercelCard } from "@/components/dashboard/vercel-card"
 
 const built = await staticUniversalContext("dashboard");
 let jei = 0;
