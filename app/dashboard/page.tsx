@@ -1,7 +1,6 @@
 // app/dashboard/page.tsx
 import { getDashboardData } from "@/lib/dashboard";
 import { AstronomyCard } from "@/app/astronomy/AstronomyCard";
-import { VercelCard } from "@/app/components/dashboard/vercel-card";
 import VersionCard from "@/app/components/dashboard/version-card";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
@@ -29,7 +28,7 @@ export default async function DashboardPage(req: Request) {
     level: "info",
     message: "Dashboard page loaded",
     file: "app/dashboard/page.tsx",
-    line: 19,
+    line: 26,
     payload: { title: metadata.title, a: "b", user: session?.user },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -41,7 +40,7 @@ export default async function DashboardPage(req: Request) {
     level: "info",
     message: "Dashboard page data fetched",
     file: "app/dashboard/page.tsx",
-    line: 39,
+    line: 38,
     payload: { data: data },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -52,7 +51,7 @@ export default async function DashboardPage(req: Request) {
     level: "info",
     message: "Tools information @# ",
     file: "app/dashboard/page.tsx",
-    line: 50,
+    line: 49,
     payload: { TOOLS: tools },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
