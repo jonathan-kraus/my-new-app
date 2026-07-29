@@ -18,6 +18,7 @@ export type BuildMetadata = {
     typescript: string;
     eslint: string;
     openmeteo: string;
+    prisma: string;
   };
 };
 

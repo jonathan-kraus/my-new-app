@@ -59,6 +59,10 @@ export default function BuildCard({ build }: { build: BuildMetadata }) {
             <span className="font-medium">Openmeteo:</span>{" "}
             {build.tools?.openmeteo ?? "openmeteo unknown"}
           </div>
+          <div>
+            <span className="font-medium">Prisma:</span>{" "}
+            {build.tools?.prisma ?? "Prisma unknown"}
+          </div>
         </div>
       </div>
     </div>
