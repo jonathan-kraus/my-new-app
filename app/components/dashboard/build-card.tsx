@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\components\dashboard\build-card.tsx
- * @LastEditTime: 2026-07-22 13:27:02
+ * @LastEditTime: 2026-07-29 13:40:39
  */
 // app/components/dashboard/build-card.tsx
 import type { BuildMetadata } from "@/lib/version/build";
