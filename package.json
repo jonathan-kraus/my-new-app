@@ -4,9 +4,6 @@
   "type": "module",
   "vercel-build-id": "4",
   "private": true,
-  "engines": {
-    "node": ">24.15.0"
-  },
   "packageManager": "pnpm@11.18.0",
   "overrides": {
     "@eslint/plugin-kit": "^0.7.0",
