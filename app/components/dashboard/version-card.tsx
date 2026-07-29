@@ -24,6 +24,7 @@ export default function VersionCard() {
   const dateFns = useVersionSWR("date-fns");
   const typescript = useVersionSWR("typescript");
   const eslint = useVersionSWR("eslint");
+  const all = useVersionSWR("all");
 
   const deps = [
     { pkg: "react", label: "React", ...react },
@@ -31,6 +32,7 @@ export default function VersionCard() {
     { pkg: "date-fns", label: "date-fns", ...dateFns },
     { pkg: "typescript", label: "TypeScript", ...typescript },
     { pkg: "eslint", label: "ESLint", ...eslint },
+    { pkg: "all", label: "all", ...all },
   ];
 
   return (
