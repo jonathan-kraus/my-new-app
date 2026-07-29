@@ -1,11 +1,17 @@
 /*
  * @FilePath: \my-new-app\scripts\collect-build-metadata.js
- * @LastEditTime: 2026-07-29 01:02:20
+ * @LastEditTime: 2026-07-29 15:31:06
  */
 import { execSync } from "child_process";
 import fs from "fs";
 import path from "path";
+import { createRequire } from "module";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const require = createRequire(import.meta.url);
 
+const projectRoot = path.resolve(__dirname, "..");
 function run(cmd) {
   try {
     return execSync(cmd).toString().trim();
@@ -17,12 +23,17 @@ function run(cmd) {
 // Safe resolver for packages without a CLI (or when CLI output is messy)
 function safeVersion(pkg) {
   try {
-    const pkgJson = require(`${pkg}/package.json`);
-    return pkgJson.version ?? "unknown";
-  } catch {
-    return "unknown";
+    const pkgJsonPath = require.resolve(`${pkg}/package.json`, {
+      paths: [projectRoot],
+    });
+    const pkgJson = require(pkgJsonPath);
+    return pkgJson.version ?? "Junknown";
+  } catch (err) {
+    console.log("Failed to resolve", pkg, err);
+    return "Kunknown";
   }
 }
+
 
 const metadata = {
   timestamp: new Date().toISOString(),

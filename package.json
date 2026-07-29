@@ -5,7 +5,7 @@
   "vercel-build-id": "4",
   "private": true,
   "engines": {
-    "node": "24.18.1"
+    "node": ">24.15.0"
   },
   "packageManager": "pnpm@11.18.0",
   "overrides": {
