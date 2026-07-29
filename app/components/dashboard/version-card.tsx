@@ -19,21 +19,8 @@ logj({
 export default function VersionCard() {
   const app = useVersionSWR();
 
-  const react = useVersionSWR("react");
-  const next = useVersionSWR("next");
-  const dateFns = useVersionSWR("date-fns");
-  const typescript = useVersionSWR("typescript");
-  const eslint = useVersionSWR("eslint");
   const all = useVersionSWR("all");
 
-  const deps = [
-    { pkg: "react", label: "React", ...react },
-    { pkg: "next", label: "Next.js", ...next },
-    { pkg: "date-fns", label: "date-fns", ...dateFns },
-    { pkg: "typescript", label: "TypeScript", ...typescript },
-    { pkg: "eslint", label: "ESLint", ...eslint },
-    { pkg: "all", label: "all", ...all },
-  ];
 
   return (
     <div className="p-4 bg-zinc-900 rounded border border-white/10">
@@ -63,32 +50,7 @@ export default function VersionCard() {
 
       <hr className="border-white/10 my-3" />
 
-      {/* Dependency Versions */}
-      <div className="space-y-3">
-        {deps.map((d) => {
-          const version = d.data?.version;
-          const isLoading = d.loading;
-          const isError = d.error;
 
-          return (
-            <div
-              key={d.pkg}
-              className="flex items-center justify-between text-sm text-gray-300"
-            >
-              <div className="flex items-center gap-2">
-                <span className="font-medium">{d.label}:</span>
-                {isLoading ? (
-                  <span className="text-gray-400">loading…</span>
-                ) : isError ? (
-                  <span className="text-red-400">error</span>
-                ) : (
-                  <span className="font-mono">{version}</span>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
     </div>
   );
 }

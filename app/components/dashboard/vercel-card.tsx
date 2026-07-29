@@ -1,88 +1,103 @@
-// app/components/dashboard/vercel-card.tsx
-type Deployment = {
-  uid: string;
-  url: string;
-  state: string;
-  createdAt: number;
-  meta: {
-    githubCommitMessage?: string;
-    githubCommitSha?: string;
-  };
-};
+"use client";
 
-type Props = {
-  deployments: Deployment[];
-};
+import React from "react";
+import type {
+  VersionAllResponse
+} from "@/hooks/useVersionSWR"; // adjust path
 
-export default function VercelCard({ deployments }: Props) {
-  if (!deployments || deployments.length === 0) {
-    return (
-      <div className="p-4 bg-red-900/20 text-red-300 rounded">
-        No Vercel deployments found.
-      </div>
-    );
-  }
+interface VercelCardProps {
+  data: VersionAllResponse;
+}
+
+interface SectionProps {
+  title: string;
+  children: React.ReactNode;
+}
+
+interface RowProps {
+  label: string;
+  value: string | number | null;
+}
+
+export function VercelCard({ data }: VercelCardProps) {
+  const {
+    name,
+    version,
+    buildTime,
+    commit,
+    dependencies,
+    devDependencies,
+    overrides,
+    workspacePackages,
+  } = data;
 
   return (
-    <div className="p-4 bg-zinc-900 rounded">
-      <h2 className="text-lg font-semibold mb-3">Recent Vercel Deployments</h2>
+    <div className="vercel-card">
+      <Section title="App">
+        <Row label="Name" value={name} />
+        <Row label="Version" value={version} />
+        <Row label="Commit" value={commit} />
+        <Row label="Build Time" value={buildTime} />
+      </Section>
 
-      <ul className="space-y-3">
-        {deployments.slice(0, 5).map((d) => {
-          const created = new Date(d.createdAt).toLocaleString("en-US", {
-            timeZone: "America/New_York",
-            month: "numeric",
-            day: "numeric",
-            year: "numeric",
-            hour: "numeric",
-            minute: "2-digit",
-            hour12: true,
-          });
-          const sha = d.meta.githubCommitSha?.slice(0, 7) ?? "unknown";
+      {/* Workspace Packages (alphabetized) */}
+      {workspacePackages && Object.keys(workspacePackages).length > 0 && (
+        <Section title="Workspace Packages">
+          {Object.entries(workspacePackages)
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([pkg, ver]) => (
+              <Row key={pkg} label={pkg} value={ver} />
+            ))}
+        </Section>
+      )}
 
-          return (
-            <li
-              key={d.uid}
-              className="p-3 rounded-lg bg-white/5 border border-white/10"
-            >
-              <div className="flex justify-between items-start gap-4">
-                <div className="space-y-1">
-                  <div className="text-base font-semibold text-white">
-                    {d.meta.githubCommitMessage ?? "No commit message"}
-                  </div>
+      {/* Dependencies */}
+      <Section title="Dependencies">
+        {Object.entries(dependencies)
+          .sort(([a], [b]) => a.localeCompare(b))
+          .map(([pkg, ver]) => (
+            <Row key={pkg} label={pkg} value={ver} />
+          ))}
+      </Section>
 
-                  <div className="text-sm font-medium text-gray-300 tracking-wide">
-                    SHA: <span className="font-mono">{sha}</span>
-                  </div>
+      {/* Dev Dependencies */}
+      <Section title="Dev Dependencies">
+        {Object.entries(devDependencies)
+          .sort(([a], [b]) => a.localeCompare(b))
+          .map(([pkg, ver]) => (
+            <Row key={pkg} label={pkg} value={ver} />
+          ))}
+      </Section>
 
-                  <div className="text-sm font-medium text-gray-300">
-                    State:{" "}
-                    <span
-                      className={
-                        d.state === "READY" ? "text-green-400" : "text-red-400"
-                      }
-                    >
-                      {d.state}
-                    </span>
-                  </div>
+      {/* Overrides */}
+      {overrides && Object.keys(overrides).length > 0 && (
+        <Section title="Overrides">
+          {Object.entries(overrides)
+            .sort(([a], [b]) => a.localeCompare(b))
+            .map(([pkg, ver]) => (
+              <Row key={pkg} label={pkg} value={ver} />
+            ))}
+        </Section>
+      )}
+    </div>
+  );
+}
 
-                  <div className="text-sm text-gray-400">
-                    Created: {created}
-                  </div>
-                </div>
 
-                <a
-                  href={`https://${d.url}`}
-                  target="_blank"
-                  className="text-sm font-medium text-blue-400 underline"
-                >
-                  View
-                </a>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
+function Section({ title, children }: SectionProps) {
+  return (
+    <div className="section">
+      <h3 className="section-title">{title}</h3>
+      <div className="section-body">{children}</div>
+    </div>
+  );
+}
+
+function Row({ label, value }: RowProps) {
+  return (
+    <div className="row">
+      <span className="row-label">{label}</span>
+      <span className="row-value">{value}</span>
     </div>
   );
 }
