@@ -12,12 +12,7 @@
     "noImplicitAny": true,
     "target": "ES2022",
     "lib": ["ES2022", "DOM"],
-    "types": [
-      "node",
-      "next",
-      "next/types",
-      "vitest/globals"
-    ],
+    "types": ["node", "next", "next/types", "vitest/globals"],
     "allowJs": false,
     "resolveJsonModule": true,
     "isolatedModules": true,

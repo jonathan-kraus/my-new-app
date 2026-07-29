@@ -17,6 +17,7 @@ export type BuildMetadata = {
     next: string;
     typescript: string;
     eslint: string;
+    openmeteo: string;
   };
 };
 

@@ -3,12 +3,7 @@
 auto-install-peers=true
 strict-peer-dependencies=false
 
-allowBuilds:
-  '@prisma/engines': true
-  prisma: true
-  esbuild: true
-  sharp: true
-  unrs-resolver: true
+allow-builds=@prisma/engines prisma esbuild sharp unrs-resolver
 
 prefer-offline=true
 save-exact=true

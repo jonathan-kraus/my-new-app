@@ -41,7 +41,7 @@ export default async function DashboardPage(req: Request) {
     level: "info",
     message: "Dashboard page data fetched",
     file: "app/dashboard/page.tsx",
-    line: 32,
+    line: 39,
     payload: { data: data },
     meta: { built: { ...built, eventIndex: ++jei } },
   });

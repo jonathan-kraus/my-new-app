@@ -1,16 +1,10 @@
 packages:
-  - "apps/*"
+  - "app/*"
   - "packages/*"
-  - "tools/*"
-
-overrides:
-valibot: ^1.4.2
-
+  - "services/*"
 allowBuilds:
-  "@prisma/engines": true
+  '@prisma/engines': true
   esbuild: true
   prisma: true
   sharp: true
   unrs-resolver: true
-
-minimumReleaseAge: 0
