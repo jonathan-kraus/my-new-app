@@ -1,5 +1,5 @@
 import pkg from "../../../package.json";
-import { readFileSync } from "node:fs";
+import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import yaml from "yaml";
 import { execSync } from "node:child_process";
@@ -15,20 +15,18 @@ export async function GET(request: Request) {
     commit: safeCommit(),
   };
 
-  // No ?pkg → return base info
   if (!pkgName) return Response.json(base);
 
-  // ?pkg=all → return all dependencies + overrides
   if (pkgName === "all") {
     return Response.json({
       ...base,
       dependencies: pkg.dependencies,
       devDependencies: pkg.devDependencies,
       overrides: pkg.overrides ?? null,
+      workspacePackages: scanWorkspacePackages(),
     });
   }
 
-  // ?pkg=resolved → return full lockfile
   if (pkgName === "resolved") {
     const lock = readLockfile();
     return Response.json({
@@ -38,25 +36,21 @@ export async function GET(request: Request) {
     });
   }
 
-  // Lookup in dependencies + devDependencies
   const deps = pkg.dependencies as Record<string, string>;
   const devDeps = pkg.devDependencies as Record<string, string>;
-
   let version: string | null = deps?.[pkgName] ?? devDeps?.[pkgName] ?? null;
 
-  // Lookup in pnpm overrides (correct location)
   const overrides = pkg.overrides as Record<string, string> | undefined;
   if (!version && overrides?.[pkgName]) {
     version = overrides[pkgName] ?? null;
   }
 
-  // Lookup resolved version in pnpm-lock.yaml
   if (!version) {
     const lock = readLockfile();
     const resolved = lock.packages;
 
     const match = Object.keys(resolved).find((key) =>
-      key.startsWith(`/${pkgName}@`),
+      key.startsWith(`/${pkgName}@`)
     );
 
     if (match) {
@@ -71,9 +65,15 @@ export async function GET(request: Request) {
   });
 }
 
-// Helpers
+/* -------------------------------------------------------------------------- */
+/*                               Helper Functions                             */
+/* -------------------------------------------------------------------------- */
+
 function readLockfile() {
-  const lockPath = join(process.cwd(), "pnpm-lock.yaml");
+  const lockPath = join(
+    /*turbopackIgnore: true*/ process.cwd(),
+    "pnpm-lock.yaml"
+  );
   return yaml.parse(readFileSync(lockPath, "utf8"));
 }
 
@@ -82,14 +82,58 @@ function normalizeEnv(value: string | undefined): string | null {
 }
 
 function safeCommit(): string | null {
-  // Prefer Vercel commit SHA
   const vercel = process.env.VERCEL_GIT_COMMIT_SHA;
   if (typeof vercel === "string") return vercel;
 
-  // Local git fallback
   try {
     return execSync("git rev-parse HEAD").toString().trim();
   } catch {
     return null;
   }
+}
+
+function scanWorkspacePackages() {
+  const rootPkgPath = join(
+    /*turbopackIgnore: true*/ process.cwd(),
+    "package.json"
+  );
+
+  const rootPkg = JSON.parse(readFileSync(rootPkgPath, "utf8"));
+  const workspaces = rootPkg.workspaces ?? [];
+  const results: Record<string, string> = {};
+
+  for (const pattern of workspaces) {
+    const base = join(
+      /*turbopackIgnore: true*/ process.cwd(),
+      pattern.replace("/*", "")
+    );
+
+    if (!existsSync(/*turbopackIgnore: true*/ base)) continue;
+
+    const entries = readdirSync(
+      /*turbopackIgnore: true*/ base,
+      { withFileTypes: true }
+    );
+
+    for (const entry of entries) {
+      if (!entry.isDirectory()) continue;
+
+      const pkgPath = join(
+        /*turbopackIgnore: true*/ base,
+        entry.name,
+        "package.json"
+      );
+
+      if (!existsSync(/*turbopackIgnore: true*/ pkgPath)) continue;
+
+      try {
+        const pkgJson = JSON.parse(readFileSync(pkgPath, "utf8"));
+        results[pkgJson.name] = pkgJson.version ?? "unknown";
+      } catch {
+        results[entry.name] = "unknown";
+      }
+    }
+  }
+
+  return results;
 }
