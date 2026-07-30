@@ -10,7 +10,7 @@ interface VercelCardProps {
 interface SectionProps {
   title: string;
   children: React.ReactNode;
-  headerColor?: string; 
+  headerColor?: string;
 }
 
 interface RowProps {
@@ -30,15 +30,14 @@ export function VercelCard({ data }: VercelCardProps) {
     workspacePackages,
   } = data;
 
-
   return (
-<div className="vercel-card p-4 rounded-lg border border-yellow-300/30 bg-white/5 backdrop-blur-sm">
-  <Section title="App" headerColor="text-yellow-300">
-    <Row label="Name" value={name} />
-    <Row label="Version" value={version} />
-    <Row label="Commit" value={commit} />
-    <Row label="Build Time" value={buildTime} />
-  </Section>
+    <div className="vercel-card p-4 rounded-lg border border-yellow-300/30 bg-white/5 backdrop-blur-sm">
+      <Section title="App" headerColor="text-yellow-300">
+        <Row label="Name" value={name} />
+        <Row label="Version" value={version} />
+        <Row label="Commit" value={commit} />
+        <Row label="Build Time" value={buildTime} />
+      </Section>
 
       {/* Workspace Packages (alphabetized) */}
       {workspacePackages && Object.keys(workspacePackages).length > 0 && (
@@ -86,7 +85,9 @@ export function VercelCard({ data }: VercelCardProps) {
 function Section({ title, children, headerColor }: SectionProps) {
   return (
     <div className="section">
-        <h3 className={`section-title text-lg font-bold mb-2 ${headerColor ?? ""}`}>
+      <h3
+        className={`section-title text-lg font-bold mb-2 ${headerColor ?? ""}`}
+      >
         {title}
       </h3>
       <div className="section-body">{children}</div>
@@ -98,7 +99,7 @@ function Row({ label, value }: RowProps) {
   return (
     <div className="row grid grid-cols-2 gap-4">
       <span className="row-label">{label}</span>
-      <span className="row-value text-right">{value}</span>
+      <span className="row-value text-right truncate max-w-45">{value}</span>
     </div>
   );
 }
