@@ -10,6 +10,7 @@ interface VercelCardProps {
 interface SectionProps {
   title: string;
   children: React.ReactNode;
+  headerColor?: string; // <-- add this
 }
 
 interface RowProps {
@@ -31,7 +32,7 @@ export function VercelCard({ data }: VercelCardProps) {
 
   return (
     <div className="vercel-card">
-      <Section title="App">
+      <Section title="App" headerColor="text-yellow-300">
         <Row label="Name" value={name} />
         <Row label="Version" value={version} />
         <Row label="Commit" value={commit} />
@@ -40,7 +41,7 @@ export function VercelCard({ data }: VercelCardProps) {
 
       {/* Workspace Packages (alphabetized) */}
       {workspacePackages && Object.keys(workspacePackages).length > 0 && (
-        <Section title="Workspace Packages">
+        <Section title="Workspace Packages" headerColor="text-yellow-300">
           {Object.entries(workspacePackages)
             .sort(([a], [b]) => a.localeCompare(b))
             .map(([pkg, ver]) => (
@@ -50,7 +51,7 @@ export function VercelCard({ data }: VercelCardProps) {
       )}
 
       {/* Dependencies */}
-      <Section title="Dependencies">
+      <Section title="Dependencies" headerColor="text-yellow-300">
         {Object.entries(dependencies)
           .sort(([a], [b]) => a.localeCompare(b))
           .map(([pkg, ver]) => (
@@ -59,7 +60,7 @@ export function VercelCard({ data }: VercelCardProps) {
       </Section>
 
       {/* Dev Dependencies */}
-      <Section title="Dev Dependencies">
+      <Section title="Dependencies" headerColor="text-yellow-300">
         {Object.entries(devDependencies)
           .sort(([a], [b]) => a.localeCompare(b))
           .map(([pkg, ver]) => (
@@ -69,7 +70,7 @@ export function VercelCard({ data }: VercelCardProps) {
 
       {/* Overrides */}
       {overrides && Object.keys(overrides).length > 0 && (
-        <Section title="Overrides">
+        <Section title="Overrides" headerColor="text-yellow-300">
           {Object.entries(overrides)
             .sort(([a], [b]) => a.localeCompare(b))
             .map(([pkg, ver]) => (
