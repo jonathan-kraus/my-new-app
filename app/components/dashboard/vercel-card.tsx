@@ -1,9 +1,7 @@
 "use client";
 
 import React from "react";
-import type {
-  VersionAllResponse
-} from "@/hooks/useVersionSWR"; // adjust path
+import type { VersionAllResponse } from "@/hooks/useVersionSWR"; // adjust path
 
 interface VercelCardProps {
   data: VersionAllResponse;
@@ -83,7 +81,6 @@ export function VercelCard({ data }: VercelCardProps) {
   );
 }
 
-
 function Section({ title, children }: SectionProps) {
   return (
     <div className="section">
@@ -95,9 +92,9 @@ function Section({ title, children }: SectionProps) {
 
 function Row({ label, value }: RowProps) {
   return (
-    <div className="row">
+    <div className="row grid grid-cols-2 gap-4">
       <span className="row-label">{label}</span>
-      <span className="row-value">{value}</span>
+      <span className="row-value text-right">{value}</span>
     </div>
   );
 }

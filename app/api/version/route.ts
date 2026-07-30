@@ -50,7 +50,7 @@ export async function GET(request: Request) {
     const resolved = lock.packages;
 
     const match = Object.keys(resolved).find((key) =>
-      key.startsWith(`/${pkgName}@`)
+      key.startsWith(`/${pkgName}@`),
     );
 
     if (match) {
@@ -72,7 +72,7 @@ export async function GET(request: Request) {
 function readLockfile() {
   const lockPath = join(
     /*turbopackIgnore: true*/ process.cwd(),
-    "pnpm-lock.yaml"
+    "pnpm-lock.yaml",
   );
   return yaml.parse(readFileSync(lockPath, "utf8"));
 }
@@ -95,7 +95,7 @@ function safeCommit(): string | null {
 function scanWorkspacePackages() {
   const rootPkgPath = join(
     /*turbopackIgnore: true*/ process.cwd(),
-    "package.json"
+    "package.json",
   );
 
   const rootPkg = JSON.parse(readFileSync(rootPkgPath, "utf8"));
@@ -105,15 +105,14 @@ function scanWorkspacePackages() {
   for (const pattern of workspaces) {
     const base = join(
       /*turbopackIgnore: true*/ process.cwd(),
-      pattern.replace("/*", "")
+      pattern.replace("/*", ""),
     );
 
     if (!existsSync(/*turbopackIgnore: true*/ base)) continue;
 
-    const entries = readdirSync(
-      /*turbopackIgnore: true*/ base,
-      { withFileTypes: true }
-    );
+    const entries = readdirSync(/*turbopackIgnore: true*/ base, {
+      withFileTypes: true,
+    });
 
     for (const entry of entries) {
       if (!entry.isDirectory()) continue;
@@ -121,7 +120,7 @@ function scanWorkspacePackages() {
       const pkgPath = join(
         /*turbopackIgnore: true*/ base,
         entry.name,
-        "package.json"
+        "package.json",
       );
 
       if (!existsSync(/*turbopackIgnore: true*/ pkgPath)) continue;
