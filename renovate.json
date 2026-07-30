@@ -39,25 +39,6 @@
       "allowedVersions": "<6.0.0"
     },
     {
-      "description": "Pin ESLint to v9.x (ESLint 10 breaks plugins)",
-      "matchPackageNames": ["eslint"],
-      "allowedVersions": "<10.0.0"
-    },
-    {
-      "description": "Pin @typescript-eslint packages to versions compatible with TS 5.x",
-      "matchPackageNames": ["/^@typescript-eslint\\//"],
-      "allowedVersions": "<7.0.0"
-    },
-    {
-      "description": "Prevent upgrades of eslint-plugin-* packages beyond ESLint 9 compatibility",
-      "matchPackageNames": [
-        "/^eslint-plugin-import$/",
-        "/^eslint-plugin-react$/",
-        "/^eslint-plugin-jsx-a11y$/"
-      ],
-      "allowedVersions": "<8.0.0"
-    },
-    {
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "safe-minor-patch-updates",
       "automerge": true
