@@ -10,7 +10,7 @@ interface VercelCardProps {
 interface SectionProps {
   title: string;
   children: React.ReactNode;
-  headerColor?: string; // <-- add this
+  headerColor?: string; 
 }
 
 interface RowProps {
@@ -30,14 +30,15 @@ export function VercelCard({ data }: VercelCardProps) {
     workspacePackages,
   } = data;
 
+
   return (
-    <div className="vercel-card">
-      <Section title="App" headerColor="text-yellow-300">
-        <Row label="Name" value={name} />
-        <Row label="Version" value={version} />
-        <Row label="Commit" value={commit} />
-        <Row label="Build Time" value={buildTime} />
-      </Section>
+<div className="vercel-card p-4 rounded-lg border border-yellow-300/30 bg-white/5 backdrop-blur-sm">
+  <Section title="App" headerColor="text-yellow-300">
+    <Row label="Name" value={name} />
+    <Row label="Version" value={version} />
+    <Row label="Commit" value={commit} />
+    <Row label="Build Time" value={buildTime} />
+  </Section>
 
       {/* Workspace Packages (alphabetized) */}
       {workspacePackages && Object.keys(workspacePackages).length > 0 && (
