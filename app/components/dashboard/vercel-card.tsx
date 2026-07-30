@@ -83,10 +83,12 @@ export function VercelCard({ data }: VercelCardProps) {
   );
 }
 
-function Section({ title, children }: SectionProps) {
+function Section({ title, children, headerColor }: SectionProps) {
   return (
     <div className="section">
-      <h3 className="section-title">{title}</h3>
+        <h3 className={`section-title text-lg font-bold mb-2 ${headerColor ?? ""}`}>
+        {title}
+      </h3>
       <div className="section-body">{children}</div>
     </div>
   );
