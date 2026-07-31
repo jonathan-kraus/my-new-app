@@ -2,22 +2,22 @@
 import { getDashboardData } from "@/lib/dashboard";
 import { getFullPackageData } from "@/lib/version/get-full-package-data";
 import { AstronomyCard } from "@/app/astronomy/AstronomyCard";
-import { VercelCard } from "@/app/components/dashboard/vercel-card";
+import CurrentWeatherCard from "@/app/components/dashboard/current-weather-card";
 import VersionCard from "@/app/components/dashboard/version-card";
+import { version } from "../../lib/log/context";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import type { Metadata } from "next";
 import { auth } from "@/auth";
 import BuildCard from "../components/dashboard/build-card";
 import { db } from "@/lib/db";
+import { LocationSchema, WeatherSchema } from "@/lib/schemas/page-schemas";
 
 //import { GitHubCard } from "./components/GitHubCard";
 //import { WeatherCard } from "./components/WeatherCard";
 //import { LogsCard } from "./components/LogsCard";
-import { version } from "../../lib/log/context";
 
 export const dynamic = "force-dynamic";
-
 export const metadata: Metadata = { title: "Dashboard " };
 let jei = 0;
 
@@ -37,13 +37,26 @@ export default async function DashboardPage(req: Request) {
   });
 
   const data = await getDashboardData();
+  const location = await db.location.findFirst({
+    where: { isDefault: true },
+  });
+  LocationSchema.parse(location);
+  if (!location) {
+    return <div>No default location configured.</div>;
+  }
+  const weatherRes = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/weather?locationId=${location.id}`,
+    { cache: "no-store" },
+  );
+  const weather = await weatherRes.json();
+  WeatherSchema.parse(weather);
 
   await logj({
     domain: "dashboard",
     level: "info",
     message: "Dashboard page data fetched",
     file: "app/dashboard/page.tsx",
-    line: 40,
+    line: 57,
     payload: { data: data },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -112,7 +125,7 @@ export default async function DashboardPage(req: Request) {
         level: "info",
         message: "Same Version  -- update verfied_at",
         file: "app/dashboard/page.tsx",
-        line: 109,
+        line: 126,
         payload: {
           name: name,
           version: current.version,
@@ -138,7 +151,7 @@ export default async function DashboardPage(req: Request) {
       level: "info",
       message: "New Version ${name} ",
       file: "app/dashboard/page.tsx",
-      line: 134,
+      line: 152,
       payload: {
         baseName: baseName,
         version: current.version,
@@ -181,7 +194,7 @@ export default async function DashboardPage(req: Request) {
       <BuildCard build={{ ...data.build, tools: importantTools }} />
 
       {/* VercelCard now receives the COMPLETE data */}
-      <VercelCard data={fullPackageData} /> 
+      <CurrentWeatherCard location={location} />
 
       <VersionCard />
     </div>
