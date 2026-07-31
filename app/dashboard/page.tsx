@@ -24,7 +24,7 @@ let jei = 0;
 export default async function DashboardPage(req: Request) {
   const built = await buildUniversalContext(req as any, "DASHBOARD");
   const session = await auth();
-
+  const verbose = false;
   await logj({
     domain: "dashboard",
     level: "info",
@@ -105,20 +105,21 @@ export default async function DashboardPage(req: Request) {
       });
       continue;
     }
-
-    await logj({
-      domain: "dashboard",
-      level: "info",
-      message: "Same Version  -- update verfied_at",
-      file: "app/dashboard/page.tsx",
-      line: 109,
-      payload: {
-        name: name,
-        version: current.version,
-        verified: current.verified_at,
-      },
-      meta: { built: { ...built, eventIndex: ++jei } },
-    });
+    if (verbose) {
+      await logj({
+        domain: "dashboard",
+        level: "info",
+        message: "Same Version  -- update verfied_at",
+        file: "app/dashboard/page.tsx",
+        line: 109,
+        payload: {
+          name: name,
+          version: current.version,
+          verified: current.verified_at,
+        },
+        meta: { built: { ...built, eventIndex: ++jei } },
+      });
+    }
     if (current.version === version) {
       await db.toolVersion.update({
         where: { name },

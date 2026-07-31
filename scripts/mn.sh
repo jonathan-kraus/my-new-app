@@ -1,4 +1,4 @@
-
+#!/usr/bin/env bash
 set -euo pipefail
 
 # Colors
@@ -28,20 +28,14 @@ fail() {
   echo -e "${RED}✖ $1${NC}"
 }
 
- section "Updating pnpm"
- corepack prepare pnpm@latest --activate
+section "Updating pnpm"
+corepack prepare pnpm@latest --activate
 
 # section "Checking outdated dependencies"
 # pnpm check-out || warn "Some dependencies are outdated"
 
 # section "Update dependencies"
 # pnpm update --latest || warn "Failed to update dependencies"
-
-# === Logging Helpers ===
-success() { echo "✔ $1"; }
-warn()    { echo "⚠ $1"; }
-info()    { echo "→ $1"; }
-error()   { echo "✘ $1"; }
 
 echo "=== Running Prettier check ==="
 
@@ -51,14 +45,13 @@ if [ -n "$UNFORMATTED" ]; then
   warn "Found $(echo "$UNFORMATTED" | wc -l) file(s) needing formatting:"
   echo "$UNFORMATTED" | sed 's/^/   • /'
   echo
-  
+
   echo "$UNFORMATTED" | xargs pnpm prettier --write --log-level=error
-  
+
   success "Prettier issues fixed"
 else
   success "Prettier formatting OK"
 fi
-
 
 # section "Running ESLint"
 # pnpm lint && success "ESLint passed"
@@ -69,6 +62,7 @@ echo "Checking types..."
 if ! pnpm type-check; then
   warn "TypeScript errors detected"
 fi
+
 section "Validating Prisma schema"
 pnpm prisma validate && success "Prisma schema valid"
 
@@ -77,3 +71,22 @@ node .github/scripts/audit.js
 
 section "Maintenance Summary"
 echo -e "${GREEN}All checks completed.${NC}"
+
+# ---------------------------------------------------------------
+# Ask whether to run smart-commit (default = Y)
+# ---------------------------------------------------------------
+echo
+read -r -p "Run pnpm smart-commit? [Y/n] " answer
+answer=${answer:-Y}          # default to Y if user just presses Enter
+
+case "$answer" in
+  [Yy]|[Yy][Ee][Ss])
+    echo
+    section "Running pnpm smart-commit"
+    pnpm smart-commit
+    ;;
+  *)
+    echo
+    warn "Skipped smart-commit"
+    ;;
+esac
