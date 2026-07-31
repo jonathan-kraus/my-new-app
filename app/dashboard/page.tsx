@@ -2,7 +2,7 @@
 import { getDashboardData } from "@/lib/dashboard";
 import { getFullPackageData } from "@/lib/version/get-full-package-data";
 import { AstronomyCard } from "@/app/astronomy/AstronomyCard";
-
+import { VercelCard } from "@/app/components/dashboard/vercel-card";
 import VersionCard from "@/app/components/dashboard/version-card";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
@@ -181,7 +181,7 @@ export default async function DashboardPage(req: Request) {
       <BuildCard build={{ ...data.build, tools: importantTools }} />
 
       {/* VercelCard now receives the COMPLETE data */}
-      {/* <VercelCard data={fullPackageData} /> */}
+      <VercelCard data={fullPackageData} /> 
 
       <VersionCard />
     </div>
