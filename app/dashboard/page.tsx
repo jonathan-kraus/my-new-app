@@ -24,13 +24,14 @@ let jei = 0;
 export default async function DashboardPage(req: Request) {
   const built = await buildUniversalContext(req as any, "DASHBOARD");
   const session = await auth();
-  const verbose = false;
+  // run verbose logs only sometimes (sample ~10% of requests)
+  const verbose = Math.random() < 0.1;
   await logj({
     domain: "dashboard",
     level: "info",
     message: "Dashboard page loaded",
     file: "app/dashboard/page.tsx",
-    line: 26,
+    line: 28,
     payload: { title: metadata.title, a: "b", user: session?.user },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -42,7 +43,7 @@ export default async function DashboardPage(req: Request) {
     level: "info",
     message: "Dashboard page data fetched",
     file: "app/dashboard/page.tsx",
-    line: 38,
+    line: 40,
     payload: { data: data },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -120,6 +121,7 @@ export default async function DashboardPage(req: Request) {
         meta: { built: { ...built, eventIndex: ++jei } },
       });
     }
+
     if (current.version === version) {
       await db.toolVersion.update({
         where: { name },
@@ -134,9 +136,9 @@ export default async function DashboardPage(req: Request) {
     await logj({
       domain: "dashboard",
       level: "info",
-      message: "New Version ",
+      message: "New Version ${name} ",
       file: "app/dashboard/page.tsx",
-      line: 132,
+      line: 134,
       payload: {
         baseName: baseName,
         version: current.version,
