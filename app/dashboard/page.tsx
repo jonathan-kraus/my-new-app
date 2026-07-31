@@ -61,9 +61,10 @@ export default async function DashboardPage(req: Request) {
   }));
 
   for (const { name, version } of toolEntries) {
-    const existing = await db.toolVersion.findUnique({ where: { name } });
+    const current = await db.toolVersion.findUnique({ where: { name } });
 
-    if (!existing) {
+    // ── 1. Brand-new tool ──────────────────────────────────────
+    if (!current) {
       await db.toolVersion.create({
         data: {
           name,
@@ -75,21 +76,43 @@ export default async function DashboardPage(req: Request) {
       continue;
     }
 
-    if (existing.version === version) {
+    // ── 2. Same version → just bump verified_at ────────────────
+    if (current.version === version) {
       await db.toolVersion.update({
         where: { name },
         data: { verified_at: new Date() },
       });
-    } else {
-      await db.toolVersion.update({
-        where: { name },
-        data: {
-          version,
-          added_at: new Date(),
-          verified_at: new Date(),
-        },
-      });
+      continue;
     }
+
+    // ── 3. Version changed → promote old → base* and update current
+    const baseName = `base${name}`; // e.g. "basepnpm"
+
+    // Upsert the base record with the *previous* version
+    await db.toolVersion.upsert({
+      where: { name: baseName },
+      create: {
+        name: baseName,
+        version: current.version,
+        added_at: current.added_at, // keep the original first-seen time
+        verified_at: new Date(),
+      },
+      update: {
+        version: current.version,
+        // optionally keep the original added_at or reset it – your choice
+        verified_at: new Date(),
+      },
+    });
+
+    // Now update the live tool to the new version
+    await db.toolVersion.update({
+      where: { name },
+      data: {
+        version,
+        added_at: new Date(),
+        verified_at: new Date(),
+      },
+    });
   }
 
   return (
