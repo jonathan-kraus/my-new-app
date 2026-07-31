@@ -12,7 +12,13 @@ export async function GET(request: Request) {
 
   // 1. No query → just base info
   if (!pkgName) {
-    const { dependencies, devDependencies, overrides, workspacePackages, ...base } = full;
+    const {
+      dependencies,
+      devDependencies,
+      overrides,
+      workspacePackages,
+      ...base
+    } = full;
     return Response.json(base);
   }
 
@@ -57,23 +63,23 @@ export async function GET(request: Request) {
   }
 
   return Response.json({
-  name: full.name,
-  version: full.version,          // app version
-  buildTime: full.buildTime,
-  commit: full.commit,
-  package: pkgName,
-  resolvedVersion: version,       // the specific package version
-});
+    name: full.name,
+    version: full.version, // app version
+    buildTime: full.buildTime,
+    commit: full.commit,
+    package: pkgName,
+    resolvedVersion: version, // the specific package version
+  });
 
-/* -------------------------------------------------------------------------- */
-/*                               Helpers                                      */
-/* -------------------------------------------------------------------------- */
+  /* -------------------------------------------------------------------------- */
+  /*                               Helpers                                      */
+  /* -------------------------------------------------------------------------- */
 
-function readLockfile() {
-  const lockPath = join(
-    /*turbopackIgnore: true*/ process.cwd(),
-    "pnpm-lock.yaml",
-  );
-  return yaml.parse(readFileSync(lockPath, "utf8"));
-}
+  function readLockfile() {
+    const lockPath = join(
+      /*turbopackIgnore: true*/ process.cwd(),
+      "pnpm-lock.yaml",
+    );
+    return yaml.parse(readFileSync(lockPath, "utf8"));
+  }
 }

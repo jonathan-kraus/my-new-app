@@ -14,7 +14,7 @@ import { db } from "@/lib/db";
 //import { GitHubCard } from "./components/GitHubCard";
 //import { WeatherCard } from "./components/WeatherCard";
 //import { LogsCard } from "./components/LogsCard";
-import { version } from '../../lib/log/context';
+import { version } from "../../lib/log/context";
 
 export const dynamic = "force-dynamic";
 
@@ -46,20 +46,10 @@ export default async function DashboardPage(req: Request) {
     payload: { data: data },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
-  
-  await logj({
-    domain: "dashboard",
-    level: "info",
-    message: "Tools information ",
-    file: "app/dashboard/page.tsx",
-    line: 50,
-    payload: { TOOLS: "tools" },
-    meta: { built: { ...built, eventIndex: ++jei } },
-  });
 
   // 1. Full data that will be given to VercelCard AND the DB loop
   // ---------------------------------------------------------------
-const fullPackageData = getFullPackageData();
+  const fullPackageData = getFullPackageData();
 
   // ---------------------------------------------------------------
   // 2. Small curated list (still available for other cards / UI)
@@ -116,6 +106,19 @@ const fullPackageData = getFullPackageData();
       continue;
     }
 
+    await logj({
+      domain: "dashboard",
+      level: "info",
+      message: "Same Version  -- update verfied_at",
+      file: "app/dashboard/page.tsx",
+      line: 109,
+      payload: {
+        name: name,
+        version: current.version,
+        verified: current.verified_at,
+      },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
     if (current.version === version) {
       await db.toolVersion.update({
         where: { name },
@@ -127,6 +130,19 @@ const fullPackageData = getFullPackageData();
     // Version changed → keep the old one as base*
     const baseName = `base${name}`;
 
+    await logj({
+      domain: "dashboard",
+      level: "info",
+      message: "New Version ",
+      file: "app/dashboard/page.tsx",
+      line: 132,
+      payload: {
+        baseName: baseName,
+        version: current.version,
+        added: current.added_at,
+      },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
     await db.toolVersion.upsert({
       where: { name: baseName },
       create: {
