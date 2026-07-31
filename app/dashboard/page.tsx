@@ -1,6 +1,8 @@
 // app/dashboard/page.tsx
 import { getDashboardData } from "@/lib/dashboard";
+import { getFullPackageData } from "@/lib/version/get-full-package-data";
 import { AstronomyCard } from "@/app/astronomy/AstronomyCard";
+
 import VersionCard from "@/app/components/dashboard/version-card";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
@@ -21,8 +23,7 @@ let jei = 0;
 
 export default async function DashboardPage(req: Request) {
   const built = await buildUniversalContext(req as any, "DASHBOARD");
-
-  let session = await auth();
+  const session = await auth();
 
   await logj({
     domain: "dashboard",
@@ -45,38 +46,64 @@ export default async function DashboardPage(req: Request) {
     payload: { data: data },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
-  const tools = data.build.tools;
-  console.log("TOOLS:", tools);
+  
   await logj({
     domain: "dashboard",
     level: "info",
-    message: "Tools information @# ",
+    message: "Tools information ",
     file: "app/dashboard/page.tsx",
-    line: 49,
-    payload: { TOOLS: tools },
+    line: 50,
+    payload: { TOOLS: "tools" },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
-  const toolEntries = Object.entries(tools).map(([name, version]) => ({
-    name,
-    version,
-  }));
 
+  // 1. Full data that will be given to VercelCard AND the DB loop
+  // ---------------------------------------------------------------
+const fullPackageData = getFullPackageData();
+
+  // ---------------------------------------------------------------
+  // 2. Small curated list (still available for other cards / UI)
+  // ---------------------------------------------------------------
+  const importantTools = data.build?.tools ?? {
+    node: "unknown",
+    pnpm: "unknown",
+    next: "unknown",
+    typescript: "unknown",
+    eslint: "unknown",
+    openmeteo: "unknown",
+    prisma: "unknown",
+  };
+
+  // ---------------------------------------------------------------
+  // 3. Build the list that will be written to the database
+  //    (full list + optional filtering)
+  // ---------------------------------------------------------------
+  const IGNORE = [
+    /^@radix-ui\//,
+    /^@types\//,
+    /^@typescript-eslint\//,
+    // add more patterns you don't want to track
+  ];
+
+  const fullTools: Record<string, string> = {
+    ...fullPackageData.dependencies,
+    ...fullPackageData.devDependencies,
+    ...(fullPackageData.overrides ?? {}),
+  };
+
+  const toolEntries = Object.entries(fullTools)
+    .filter(([name]) => !IGNORE.some((re) => re.test(name)))
+    .map(([name, version]) => ({
+      name,
+      version: String(version),
+    }));
+
+  // ---------------------------------------------------------------
+  // 4. Database populater (with base* logic)
+  // ---------------------------------------------------------------
   for (const { name, version } of toolEntries) {
     const current = await db.toolVersion.findUnique({ where: { name } });
-await logj({
-    domain: "dashboard",
-    level: "info",
-    message: "Tools information @# ",
-    file: "app/dashboard/page.tsx",
-    line: 71,
-    payload: { TOOLS: tools,
-      current: current,
-      name: name,
-      version: version
-    },
-    meta: { built: { ...built, eventIndex: ++jei } },
-  });
-    // ── 1. Brand-new tool ──────────────────────────────────────
+
     if (!current) {
       await db.toolVersion.create({
         data: {
@@ -89,7 +116,6 @@ await logj({
       continue;
     }
 
-    // ── 2. Same version → just bump verified_at ────────────────
     if (current.version === version) {
       await db.toolVersion.update({
         where: { name },
@@ -98,26 +124,23 @@ await logj({
       continue;
     }
 
-    // ── 3. Version changed → promote old → base* and update current
-    const baseName = `base${name}`; // e.g. "basepnpm"
+    // Version changed → keep the old one as base*
+    const baseName = `base${name}`;
 
-    // Upsert the base record with the *previous* version
     await db.toolVersion.upsert({
       where: { name: baseName },
       create: {
         name: baseName,
         version: current.version,
-        added_at: current.added_at, // keep the original first-seen time
+        added_at: current.added_at,
         verified_at: new Date(),
       },
       update: {
         version: current.version,
-        // optionally keep the original added_at or reset it – your choice
         verified_at: new Date(),
       },
     });
 
-    // Now update the live tool to the new version
     await db.toolVersion.update({
       where: { name },
       data: {
@@ -128,15 +151,20 @@ await logj({
     });
   }
 
+  // ---------------------------------------------------------------
+  // 5. Render
+  // ---------------------------------------------------------------
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 p-6">
       <AstronomyCard data={data.astronomy} />
 
-      {/* <GitHubCard data={data.github} /> */}
-      {/* <WeatherCard data={data.weather} /> */}
-      {/* <LogsCard data={data.logs} /> */}
+      {/* Small curated tools still available if you want them */}
+      <BuildCard build={{ ...data.build, tools: importantTools }} />
+
+      {/* VercelCard now receives the COMPLETE data */}
+      {/* <VercelCard data={fullPackageData} /> */}
+
       <VersionCard />
-      <BuildCard build={data.build} />
     </div>
   );
 }

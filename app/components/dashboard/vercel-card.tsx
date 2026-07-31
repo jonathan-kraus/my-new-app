@@ -60,7 +60,7 @@ export function VercelCard({ data }: VercelCardProps) {
       </Section>
 
       {/* Dev Dependencies */}
-      <Section title="Dependencies" headerColor="text-yellow-300">
+      <Section title="Dev Dependencies" headerColor="text-yellow-300">
         {Object.entries(devDependencies)
           .sort(([a], [b]) => a.localeCompare(b))
           .map(([pkg, ver]) => (
