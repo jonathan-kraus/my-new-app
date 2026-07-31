@@ -12,6 +12,7 @@ import { db } from "@/lib/db";
 //import { GitHubCard } from "./components/GitHubCard";
 //import { WeatherCard } from "./components/WeatherCard";
 //import { LogsCard } from "./components/LogsCard";
+import { version } from '../../lib/log/context';
 
 export const dynamic = "force-dynamic";
 
@@ -62,7 +63,19 @@ export default async function DashboardPage(req: Request) {
 
   for (const { name, version } of toolEntries) {
     const current = await db.toolVersion.findUnique({ where: { name } });
-
+await logj({
+    domain: "dashboard",
+    level: "info",
+    message: "Tools information @# ",
+    file: "app/dashboard/page.tsx",
+    line: 71,
+    payload: { TOOLS: tools,
+      current: current,
+      name: name,
+      version: version
+    },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
     // ── 1. Brand-new tool ──────────────────────────────────────
     if (!current) {
       await db.toolVersion.create({
