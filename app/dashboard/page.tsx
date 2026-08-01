@@ -4,7 +4,6 @@ import { getFullPackageData } from "@/lib/version/get-full-package-data";
 import { AstronomyCard } from "@/app/astronomy/AstronomyCard";
 import CurrentWeatherCard from "@/app/components/dashboard/current-weather-card";
 import VersionCard from "@/app/components/dashboard/version-card";
-import { version } from "../../lib/log/context";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import type { Metadata } from "next";
@@ -56,7 +55,7 @@ export default async function DashboardPage(req: Request) {
     level: "info",
     message: "Dashboard page data fetched",
     file: "app/dashboard/page.tsx",
-    line: 57,
+    line: 53,
     payload: { data: data },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -125,7 +124,7 @@ export default async function DashboardPage(req: Request) {
         level: "info",
         message: "Same Version  -- update verfied_at",
         file: "app/dashboard/page.tsx",
-        line: 126,
+        line: 122,
         payload: {
           name: name,
           version: current.version,
@@ -151,7 +150,7 @@ export default async function DashboardPage(req: Request) {
       level: "info",
       message: "New Version ${name} ",
       file: "app/dashboard/page.tsx",
-      line: 152,
+      line: 148,
       payload: {
         baseName: baseName,
         version: current.version,
