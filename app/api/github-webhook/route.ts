@@ -1,3 +1,7 @@
+/*
+ * @FilePath: \my-new-app\app\api\github-webhook\route.ts
+ * @LastEditTime: 2026-08-01 13:48:15
+ */
 // app/api/github-webhook/route.ts
 export const runtime = "nodejs";
 
@@ -35,7 +39,7 @@ export const POST = withLogging(async (req: Request) => {
       event +
       (normalized.title ? ` - ${JSON.stringify(normalized.title)}` : ""),
     file: "app/api/github-webhook/route.ts",
-    line: 31,
+    line: 34,
     payload: { event, type: normalized.type, gw },
     meta: { built: { ...built, eventIndex: ++jei } },
   });

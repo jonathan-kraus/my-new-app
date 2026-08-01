@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\lib\github\normalize\index.ts
- * @LastEditTime: 2026-06-05 02:20:44
+ * @LastEditTime: 2026-08-01 13:44:50
  */
 // lib/github/normalize/index.ts
 import type { BaseNormalizedGitHubEvent, NormalizedGitHubEvent } from "./types";
@@ -27,7 +27,7 @@ export function normalizeGitHubEvent(
     level: "info",
     message: "Github normalize event - " + event,
     file: "lib/github/normalize/index.ts",
-    line: 24,
+    line: 25,
     payload: { repo: repo, event: event },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
