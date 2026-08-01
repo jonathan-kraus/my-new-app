@@ -205,7 +205,7 @@ importers:
         version: 19.2.8(react@19.2.8)
       react-hook-form:
         specifier: ^7.81.0
-        version: 7.83.0(react@19.2.8)
+        version: 7.84.0(react@19.2.8)
       react-hot-toast:
         specifier: ^2.6.0
         version: 2.6.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -257,13 +257,13 @@ importers:
         version: 30.0.0
       '@types/luxon':
         specifier: ^3.7.2
-        version: 3.7.2
+        version: 3.7.3
       '@types/node':
         specifier: ^26.1.1
         version: 26.1.2
       '@types/pg':
         specifier: ^8.20.0
-        version: 8.20.0
+        version: 8.20.3
       '@types/quoted-printable':
         specifier: ^1.0.2
         version: 1.0.2
@@ -317,7 +317,7 @@ importers:
         version: 9.1.7
       js-yaml:
         specifier: ^5.2.1
-        version: 5.2.2
+        version: 5.2.3
       prettier:
         specifier: ^3.9.6
         version: 3.9.6
@@ -2283,8 +2283,8 @@ packages:
   '@types/lodash@4.17.24':
     resolution: {integrity: sha512-gIW7lQLZbue7lRSWEFql49QJJWThrTFFeIMJdp3eH4tKoxm1OvEPg02rm4wCCSHS0cL3/Fizimb35b7k8atwsQ==}
 
-  '@types/luxon@3.7.2':
-    resolution: {integrity: sha512-gW+Oib+vUtGJBtNC8V9Reww0oIpusw+4m81uncg9REGZAJfqOQHfo/nkabnc7w0QReXyPqjrbWMJk6NuAkiX3Q==}
+  '@types/luxon@3.7.3':
+    resolution: {integrity: sha512-pE7BSbKHiojpl4v7iEzdfFLXXJaH5RPJxI3Wr4x3HU59l83PJfhcUx4mGPWq245+DCAENAzRF/+ZoYr2tJCe/g==}
 
   '@types/mailparser@3.4.6':
     resolution: {integrity: sha512-wVV3cnIKzxTffaPH8iRnddX1zahbYB1ZEoAxyhoBo3TBCBuK6nZ8M8JYO/RhsCuuBVOw/DEN/t/ENbruwlxn6Q==}
@@ -2295,8 +2295,8 @@ packages:
   '@types/node@26.1.2':
     resolution: {integrity: sha512-Vu4a5UFA9rIIFJ7rB/Vaafh9lrCQszopTCx6KjFboXTGQbPNasehVR5TEiithSDGyd1DEiUByggTZsg8jukeIg==}
 
-  '@types/pg@8.20.0':
-    resolution: {integrity: sha512-bEPFOaMAHTEP1EzpvHTbmwR8UsFyHSKsRisLIHVMXnpNefSbGA1bD6CVy+qKjGSqmZqNqBDV2azOBo8TgkcVow==}
+  '@types/pg@8.20.3':
+    resolution: {integrity: sha512-4Tvg+HO6+oQaAkpT8GTYoSExzpGGZz532GXgbbCElWJQeQdMozBWxEKNBhJJpHFjWXsMxqPbyypvj/89FWNoSQ==}
 
   '@types/quoted-printable@1.0.2':
     resolution: {integrity: sha512-3B28oB1rRaZNb3N5dlxysm8lH1ujzvReDuYBiIO4jvpTIg9ksrILCNgPxSGVyTWE/qwuxzgHaVehwMK3CVqAtA==}
@@ -3786,8 +3786,8 @@ packages:
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
-  js-yaml@5.2.2:
-    resolution: {integrity: sha512-dayzUzKkJ1MkuUtZglSebU43utNXH0OWQByK9rKOOuYIO8M5TV1y+n8ALMdG0rdzBnfNkOmZEqrURepb0ejqBw==}
+  js-yaml@5.2.3:
+    resolution: {integrity: sha512-n+mUVyUX5bVv7G/G2zyIHOhdxfuU1dY2NOFzTQUWiMUbFss8b57NFlgCCaggU78wSw5KVS9cllzeLyzyR+n5nw==}
     hasBin: true
 
   jsesc@3.1.0:
@@ -4435,8 +4435,8 @@ packages:
     peerDependencies:
       react: ^19.2.8
 
-  react-hook-form@7.83.0:
-    resolution: {integrity: sha512-AXt8cMCmx5a7u4uvpb2uRFVrWQhllI4pV+LSykxIac/hjt44TnQkmX9BKuQi2i+LDC62esmiLpilkav+kjVf/A==}
+  react-hook-form@7.84.0:
+    resolution: {integrity: sha512-+hWvQP6GLco56mDwrbU4XnHix8t1z90ltZsDIrREl+jnQFQxYLX8oAzqe/Xn8nHpmoXTY5M6oEXrAhbP1qevNQ==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
@@ -5792,7 +5792,7 @@ snapshots:
   '@prisma/adapter-pg@7.9.1':
     dependencies:
       '@prisma/driver-adapter-utils': 7.9.1
-      '@types/pg': 8.20.0
+      '@types/pg': 8.20.3
       pg: 8.22.0
       postgres-array: 3.0.4
     transitivePeerDependencies:
@@ -6876,7 +6876,7 @@ snapshots:
 
   '@types/lodash@4.17.24': {}
 
-  '@types/luxon@3.7.2': {}
+  '@types/luxon@3.7.3': {}
 
   '@types/mailparser@3.4.6':
     dependencies:
@@ -6889,7 +6889,7 @@ snapshots:
     dependencies:
       undici-types: 8.3.0
 
-  '@types/pg@8.20.0':
+  '@types/pg@8.20.3':
     dependencies:
       '@types/node': 26.1.2
       pg-protocol: 1.15.0
@@ -8588,7 +8588,7 @@ snapshots:
 
   js-tokens@4.0.0: {}
 
-  js-yaml@5.2.2:
+  js-yaml@5.2.3:
     dependencies:
       argparse: 2.0.1
 
@@ -9189,7 +9189,7 @@ snapshots:
       react: 19.2.8
       scheduler: 0.27.0
 
-  react-hook-form@7.83.0(react@19.2.8):
+  react-hook-form@7.84.0(react@19.2.8):
     dependencies:
       react: 19.2.8
 
