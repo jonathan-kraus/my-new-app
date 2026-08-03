@@ -56,11 +56,11 @@ export default async function DashboardPage(req: Request) {
     }
 
     const raw = await weatherRes.json();
-    
+    console.log("Raw weather data:", raw);
     await logj({
       domain: "dashboard",
       level: "info",
-      message: "Dashboard page loaded",
+      message: "Dashboard received weather data from API...",
       file: "app/dashboard/page.tsx",
       line: 60,
       payload: { "Raw weather data": raw },
@@ -78,7 +78,7 @@ export default async function DashboardPage(req: Request) {
     level: "info",
     message: "Dashboard page data fetched",
     file: "app/dashboard/page.tsx",
-    line: 53,
+    line: 76,
     payload: { data: data },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
