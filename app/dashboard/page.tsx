@@ -56,6 +56,16 @@ export default async function DashboardPage(req: Request) {
     }
 
     const raw = await weatherRes.json();
+    
+    await logj({
+      domain: "dashboard",
+      level: "info",
+      message: "Dashboard page loaded",
+      file: "app/dashboard/page.tsx",
+      line: 60,
+      payload: { "Raw weather data": raw },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
     WeatherSchema.parse(raw);
     weather = raw;
   } catch (err) {
