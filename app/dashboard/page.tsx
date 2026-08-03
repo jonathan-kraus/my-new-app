@@ -202,9 +202,9 @@ export default async function DashboardPage(req: Request) {
       <BuildCard build={{ ...data.build, tools: importantTools }} />
 
       {/* VercelCard now receives the COMPLETE data */}
-      <CurrentWeatherCard location={location} />
+      {/* <CurrentWeatherCard location={location} /> */}
 
-      {/* <VersionCard /> */}
+      <VersionCard />
       <LogsCard logs={logs} />
     </div>
   );
