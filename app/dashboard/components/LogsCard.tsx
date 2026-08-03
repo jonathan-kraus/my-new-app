@@ -1,31 +1,17 @@
 "use client";
-
+import type { Prisma } from "@prisma/client/";
 import React, { useState } from "react";
 
 export interface LogEntry {
   id: number;
   created_at: string | Date;
   domain: string;
-  level: "info" | "warn" | "error";
+  level: string;
   message: string;
-  file: string;
-  line: number;
-  payload: Record<string, unknown>;
-  meta: {
-    built?: {
-      requestId: string;
-      userId: string | null;
-      sessionEmail: string | null;
-      sessionUser: string | null;
-      route: string;
-      eventIndex: number;
-      method: string;
-      url: string;
-      ip?: string;
-      userAgent?: string;
-    };
-    [key: string]: unknown;
-  };
+  file: string | null;
+  line: number | null;
+  payload: Prisma.JsonValue;
+  meta: Prisma.JsonValue;
 }
 
 interface LogsCardProps {
@@ -53,7 +39,15 @@ export function LogsCard({ title = "Logs", logs }: LogsCardProps) {
 
 function LogRow({ log }: { log: LogEntry }) {
   const [open, setOpen] = useState(false);
+  const metaObj =
+    log.meta && typeof log.meta === "object" && !Array.isArray(log.meta)
+      ? (log.meta as Record<string, unknown>)
+      : null;
 
+  const builtObj =
+    metaObj && typeof metaObj.built === "object" && metaObj.built !== null
+      ? (metaObj.built as Record<string, unknown>)
+      : null;
   return (
     <li className="rounded-md border p-3 bg-muted/30">
       <div className="flex items-start justify-between">
@@ -100,9 +94,9 @@ function LogRow({ log }: { log: LogEntry }) {
             meta: {JSON.stringify(log.meta, null, 2)}
           </pre>
 
-          {log.meta.built && (
+          {builtObj && (
             <pre className="bg-black/10 p-2 rounded-md overflow-x-auto">
-              built: {JSON.stringify(log.meta.built, null, 2)}
+              built: {JSON.stringify(builtObj, null, 2)}
             </pre>
           )}
         </div>
