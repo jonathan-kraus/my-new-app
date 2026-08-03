@@ -205,7 +205,7 @@ export default async function DashboardPage(req: Request) {
       <CurrentWeatherCard location={location} />
 
       <VersionCard />
-      <LogsCard logs={logs} />
+      {/* <LogsCard logs={logs} /> */}
     </div>
   );
 }
