@@ -14,7 +14,7 @@ import { LocationSchema, WeatherSchema } from "@/lib/schemas/page-schemas";
 
 //import { GitHubCard } from "./components/GitHubCard";
 //import { WeatherCard } from "./components/WeatherCard";
-//import { LogsCard } from "./components/LogsCard";
+import { LogsCard } from "./components/LogsCard";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Dashboard " };
@@ -183,8 +183,17 @@ export default async function DashboardPage(req: Request) {
   }
 
   // ---------------------------------------------------------------
-  // 5. Render
+  // 5. Fetch logs
   // ---------------------------------------------------------------
+  const logs = await db.log.findMany({
+    orderBy: { created_at: "desc" },
+    take: 50,
+  });
+
+  // ---------------------------------------------------------------
+  // 6. Render
+  // ---------------------------------------------------------------
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 p-6">
       <AstronomyCard data={data.astronomy} />
@@ -196,6 +205,7 @@ export default async function DashboardPage(req: Request) {
       <CurrentWeatherCard location={location} />
 
       <VersionCard />
+      <LogsCard logs={logs} />
     </div>
   );
 }

@@ -1,3 +1,7 @@
+/*
+ * @FilePath: \my-new-app\lib\types.ts
+ * @LastEditTime: 2026-08-03 16:58:23
+ */
 // lib/types.ts - EXACT PRISMA MATCH
 export type LogLevel = "debug" | "info" | "warn" | "error";
 
