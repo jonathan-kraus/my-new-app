@@ -43,12 +43,25 @@ export default async function DashboardPage(req: Request) {
   if (!location) {
     return <div>No default location configured.</div>;
   }
-  const weatherRes = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/weather?locationId=${location.id}`,
-    { cache: "no-store" },
-  );
-  const weather = await weatherRes.json();
-  WeatherSchema.parse(weather);
+  let weather: any = null;
+
+  try {
+    const weatherRes = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/weather?locationId=${location.id}`,
+      { cache: "no-store" },
+    );
+
+    if (!weatherRes.ok) {
+      throw new Error(`Weather API returned ${weatherRes.status}`);
+    }
+
+    const raw = await weatherRes.json();
+    WeatherSchema.parse(raw);
+    weather = raw;
+  } catch (err) {
+    console.error("Weather API failed:", err);
+    weather = null;
+  }
 
   await logj({
     domain: "dashboard",
