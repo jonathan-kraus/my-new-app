@@ -204,8 +204,8 @@ export default async function DashboardPage(req: Request) {
       {/* VercelCard now receives the COMPLETE data */}
       <CurrentWeatherCard location={location} />
 
-      <VersionCard />
-      {/* <LogsCard logs={logs} /> */}
+      {/* <VersionCard /> */}
+      <LogsCard logs={logs} />
     </div>
   );
 }
