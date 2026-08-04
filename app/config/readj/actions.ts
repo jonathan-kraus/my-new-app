@@ -1,17 +1,16 @@
 /*
  * @FilePath: \my-new-app\app\config\readj\actions.ts
- * @LastEditTime: 2026-08-04 14:09:00
+ * @LastEditTime: 2026-08-04 14:14:07
  */
 "use server";
 
 import { queryAxiom } from "@/lib/axiom/query";
 import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
-import type { Metadata } from "next";
 
-const built = await staticUniversalContext("Config");
-export const metadata: Metadata = { title: "Config" };
+const built = staticUniversalContext("Config");
 let jei = 0;
+
 export type ConfigEntry = {
   reason?: string;
   message?: string;
