@@ -147,7 +147,7 @@ export default async function DashboardPage(req: Request) {
         level: "info",
         message: "Same Version  -- update verfied_at",
         file: "app/dashboard/page.tsx",
-        line: 122,
+        line: 145,
         payload: {
           name: name,
           version: current.version,
@@ -171,9 +171,9 @@ export default async function DashboardPage(req: Request) {
     await logj({
       domain: "dashboard",
       level: "info",
-      message: "New Version ${name} ",
+      message: `New Version ${baseName} → ${current.version}`,
       file: "app/dashboard/page.tsx",
-      line: 148,
+      line: 171,
       payload: {
         baseName: baseName,
         version: current.version,
