@@ -15,17 +15,17 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       '@axiomhq/logging':
-        specifier: ^0.3.0
-        version: 0.3.0(@axiomhq/js@2.0.0)
+        specifier: ^0.4.0
+        version: 0.4.0(@axiomhq/js@2.0.0)
       '@axiomhq/react':
-        specifier: ^0.3.0
-        version: 0.3.0(@axiomhq/logging@0.3.0(@axiomhq/js@2.0.0))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: ^0.4.0
+        version: 0.4.0(@axiomhq/logging@0.4.0(@axiomhq/js@2.0.0))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@heroicons/react':
         specifier: ^2.2.0
         version: 2.2.0(react@19.2.8)
       '@hono/node-server':
-        specifier: 2.0.12
-        version: 2.0.12(hono@4.13.0)
+        specifier: 2.1.0
+        version: 2.1.0(hono@4.13.0)
       '@neondatabase/postgrest-js':
         specifier: 0.2.0-beta
         version: 0.2.0-beta
@@ -263,7 +263,7 @@ importers:
         version: 26.1.2
       '@types/pg':
         specifier: ^8.20.3
-        version: 8.20.3
+        version: 8.20.4
       '@types/quoted-printable':
         specifier: ^1.0.2
         version: 1.0.2
@@ -378,8 +378,8 @@ packages:
     resolution: {integrity: sha512-mhDH0KLFkDko9ytoltgmch2gOiwE6kY6VWhCmTux9lzL9hmjTej68JeQKwq9GGqOY7xwDsya88bNiTnp/zc8+Q==}
     engines: {node: '>=20'}
 
-  '@axiomhq/logging@0.3.0':
-    resolution: {integrity: sha512-m3vozK3FVlAgznbwUcE4NSuHEkNnlKaynvNr/BwJpsFORzCmB0ekvCT98UVrtET3fi/33gserYzywZJa0b6n/g==}
+  '@axiomhq/logging@0.4.0':
+    resolution: {integrity: sha512-exb1qV5pt15ydSX5iIB9AQ0xv+O5iHmslHoyGJAmCgehFlHESivbuiFyb6Kbk0y4MW+zz8/aD5N0dHQLfUb4TA==}
     engines: {node: '>=20'}
     peerDependencies:
       '@axiomhq/js': ^1.0.0
@@ -387,11 +387,11 @@ packages:
       '@axiomhq/js':
         optional: true
 
-  '@axiomhq/react@0.3.0':
-    resolution: {integrity: sha512-NDqKc37Z9qWYam0qpsmy8JIiMz3RPSfNeoSbfBT/biPpNOgUJCO5ToXi+N0X6QFn/SlXuN9fxlWD8B5CDkt2CQ==}
+  '@axiomhq/react@0.4.0':
+    resolution: {integrity: sha512-98YUCh2oiHDocsYOcsdBzCezilniwDQuyYEhCqiU67nNZRlea9+AkJlov5iUrwRKAZKZyT/dcARfU35us9+RjQ==}
     engines: {node: '>=20'}
     peerDependencies:
-      '@axiomhq/logging': 0.3.0
+      '@axiomhq/logging': 0.4.0
       react: ^18 || ^19
       react-dom: ^18 || ^19
 
@@ -711,8 +711,8 @@ packages:
     peerDependencies:
       react: '>= 16 || ^19.0.0-rc'
 
-  '@hono/node-server@2.0.12':
-    resolution: {integrity: sha512-eWpQYr67tqJLeaSUl0Q+TquuYfUdTibpOJlUMV2FfUP7+KqCC5TufnwnlXL6mobZBJbGAYRd7ZvEBDCbLInjhg==}
+  '@hono/node-server@2.1.0':
+    resolution: {integrity: sha512-XovyyCCnBzW+zKu+z/zq8hwNs4KOR5rEMAOxo2f40Q5xoOI37IMm6MIg2COOUtUApo0i6850MTBKH2u4QLGIqg==}
     engines: {node: '>=20'}
     peerDependencies:
       hono: ^4
@@ -2139,8 +2139,8 @@ packages:
   '@types/node@26.1.2':
     resolution: {integrity: sha512-Vu4a5UFA9rIIFJ7rB/Vaafh9lrCQszopTCx6KjFboXTGQbPNasehVR5TEiithSDGyd1DEiUByggTZsg8jukeIg==}
 
-  '@types/pg@8.20.3':
-    resolution: {integrity: sha512-4Tvg+HO6+oQaAkpT8GTYoSExzpGGZz532GXgbbCElWJQeQdMozBWxEKNBhJJpHFjWXsMxqPbyypvj/89FWNoSQ==}
+  '@types/pg@8.20.4':
+    resolution: {integrity: sha512-Jz7UDOlIiFJuacC0TlBoLyNtmwlA/wpIyPDd3tvUqlRM+HzkWy2xUgpFpaXtbfTAFF6sIGq5lsCDBdJnhky1Xg==}
 
   '@types/quoted-printable@1.0.2':
     resolution: {integrity: sha512-3B28oB1rRaZNb3N5dlxysm8lH1ujzvReDuYBiIO4jvpTIg9ksrILCNgPxSGVyTWE/qwuxzgHaVehwMK3CVqAtA==}
@@ -4984,13 +4984,13 @@ snapshots:
     dependencies:
       fetch-retry: 6.0.0
 
-  '@axiomhq/logging@0.3.0(@axiomhq/js@2.0.0)':
+  '@axiomhq/logging@0.4.0(@axiomhq/js@2.0.0)':
     optionalDependencies:
       '@axiomhq/js': 2.0.0
 
-  '@axiomhq/react@0.3.0(@axiomhq/logging@0.3.0(@axiomhq/js@2.0.0))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@axiomhq/react@0.4.0(@axiomhq/logging@0.4.0(@axiomhq/js@2.0.0))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
-      '@axiomhq/logging': 0.3.0(@axiomhq/js@2.0.0)
+      '@axiomhq/logging': 0.4.0(@axiomhq/js@2.0.0)
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
       use-deep-compare: 1.3.0(react@19.2.8)
@@ -5269,7 +5269,7 @@ snapshots:
     dependencies:
       react: 19.2.8
 
-  '@hono/node-server@2.0.12(hono@4.13.0)':
+  '@hono/node-server@2.1.0(hono@4.13.0)':
     dependencies:
       hono: 4.13.0
 
@@ -5519,7 +5519,7 @@ snapshots:
   '@prisma/adapter-pg@7.9.1':
     dependencies:
       '@prisma/driver-adapter-utils': 7.9.1
-      '@types/pg': 8.20.3
+      '@types/pg': 8.20.4
       pg: 8.22.0
       postgres-array: 3.0.4
     transitivePeerDependencies:
@@ -6609,7 +6609,7 @@ snapshots:
     dependencies:
       undici-types: 8.3.0
 
-  '@types/pg@8.20.3':
+  '@types/pg@8.20.4':
     dependencies:
       '@types/node': 26.1.2
       pg-protocol: 1.15.0
