@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\config\readj\actions.ts
- * @LastEditTime: 2026-08-04 15:05:07
+ * @LastEditTime: 2026-08-04 15:31:23
  */
 "use server";
 
@@ -19,15 +19,19 @@ export type ConfigEntry = {
   Variable03: string;
   [key: string]: unknown; // allow extra Axiom fields
 };
-
+console.log("START: readj", process.env.AXIOM_TOKEN ? "present" : "missing");
 export async function readFlightConfig(): Promise<ConfigEntry | null> {
-  const q = `
-  ["config"]
-  | where reason == "Flight"
-  | sort by _time desc
-  | take 1
-  `;
-  const rows = await queryAxiom(q);
+  // Queries
+  const qFlight = `
+["config"]
+| where reason == "Flight"
+| sort by _time asc
+`;
+  console.log(
+    "AXIOM_TOKEN: readj",
+    process.env.AXIOM_TOKEN ? "present" : "missing",
+  );
+  const rows = await queryAxiom(qFlight);
   await logj({
     domain: "dashboard",
     level: "info",
@@ -51,14 +55,13 @@ export async function readFlightConfig(): Promise<ConfigEntry | null> {
 }
 
 export async function readWeatherConfig(): Promise<ConfigEntry | null> {
-  const q = `
-  ["config"]
-  | where reason == "Weather"
-  | sort by _time desc
-  | take 1
-  `;
+    const qWeather = `
+["config"]
+| where reason == "Weather"
+| sort by _time asc
+`;
 
-  const rows = await queryAxiom(q);
+  const rows = await queryAxiom(qWeather);
   await logj({
     domain: "dashboard",
     level: "info",
