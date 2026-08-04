@@ -1,11 +1,17 @@
 /*
  * @FilePath: \my-new-app\app\config\readj\actions.ts
- * @LastEditTime: 2026-08-04 13:45:05
+ * @LastEditTime: 2026-08-04 14:09:00
  */
 "use server";
 
 import { queryAxiom } from "@/lib/axiom/query";
+import { logj } from "@/lib/log/logj";
+import { staticUniversalContext } from "@/lib/log/buildj";
+import type { Metadata } from "next";
 
+const built = await staticUniversalContext("Config");
+export const metadata: Metadata = { title: "Config" };
+let jei = 0;
 export type ConfigEntry = {
   reason?: string;
   message?: string;
@@ -21,8 +27,17 @@ export async function readFlightConfig(): Promise<ConfigEntry | null> {
   | sort by _time desc
   | take 1
   `;
-
   const rows = await queryAxiom(q);
+  await logj({
+    domain: "dashboard",
+    level: "info",
+    message: "Dashboard page loaded",
+    file: "app/dashboard/page.tsx",
+    line: 31,
+    payload: { "FLIGHT QUERY ROWS:": JSON.stringify(rows, null, 2) },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
+
   console.log("FLIGHT QUERY ROWS:", JSON.stringify(rows, null, 2));
 
   // rows are already the event objects (or contain a nested data object)
@@ -43,6 +58,16 @@ export async function readWeatherConfig(): Promise<ConfigEntry | null> {
   `;
 
   const rows = await queryAxiom(q);
+  await logj({
+    domain: "dashboard",
+    level: "info",
+    message: "Dashboard page loaded",
+    file: "app/dashboard/page.tsx",
+    line: 61,
+    payload: { "WEATHER QUERY ROWS:": JSON.stringify(rows, null, 2) },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
+
   console.log("WEATHER QUERY ROWS:", JSON.stringify(rows, null, 2));
 
   const row = rows[0] as Record<string, unknown> | undefined;
