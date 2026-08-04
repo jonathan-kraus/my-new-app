@@ -54,7 +54,7 @@
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.3",
-    "@axiomhq/js": "^1.8.0",
+    "@axiomhq/js": "^2.0.0",
     "@axiomhq/logging": "^0.3.0",
     "@axiomhq/react": "^0.3.0",
     "@heroicons/react": "^2.2.0",
