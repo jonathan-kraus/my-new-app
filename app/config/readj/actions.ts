@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\config\readj\actions.ts
- * @LastEditTime: 2026-08-04 14:14:07
+ * @LastEditTime: 2026-08-04 15:05:07
  */
 "use server";
 
@@ -23,7 +23,7 @@ export type ConfigEntry = {
 export async function readFlightConfig(): Promise<ConfigEntry | null> {
   const q = `
   ["config"]
-  | where data.reason == "Flight"
+  | where reason == "Flight"
   | sort by _time desc
   | take 1
   `;
@@ -53,7 +53,7 @@ export async function readFlightConfig(): Promise<ConfigEntry | null> {
 export async function readWeatherConfig(): Promise<ConfigEntry | null> {
   const q = `
   ["config"]
-  | where data.reason == "Weather"
+  | where reason == "Weather"
   | sort by _time desc
   | take 1
   `;
