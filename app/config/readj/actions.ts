@@ -55,7 +55,7 @@ export async function readFlightConfig(): Promise<ConfigEntry | null> {
 }
 
 export async function readWeatherConfig(): Promise<ConfigEntry | null> {
-    const qWeather = `
+  const qWeather = `
 ["config"]
 | where reason == "Weather"
 | sort by _time asc
