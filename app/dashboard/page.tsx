@@ -220,13 +220,9 @@ export default async function DashboardPage(req: Request) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 p-6">
       <AstronomyCard data={data.astronomy} />
-
       {/* Small curated tools still available if you want them */}
       <BuildCard build={{ ...data.build, tools: importantTools }} />
-
-      {/* VercelCard now receives the COMPLETE data */}
-      {/* <CurrentWeatherCard location={location} /> */}
-
+      <CurrentWeatherCard location={location} />
       <VersionCard />
       <LogsCard logs={logs} />
     </div>
