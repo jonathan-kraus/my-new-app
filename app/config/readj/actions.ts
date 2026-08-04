@@ -22,6 +22,7 @@ export type ConfigEntry = {
 
 export async function readFlightConfig(): Promise<ConfigEntry | null> {
   const q = `
+  ["config"]
   | where data.reason == "Flight"
   | sort by _time desc
   | take 1
@@ -51,6 +52,7 @@ export async function readFlightConfig(): Promise<ConfigEntry | null> {
 
 export async function readWeatherConfig(): Promise<ConfigEntry | null> {
   const q = `
+  ["config"]
   | where data.reason == "Weather"
   | sort by _time desc
   | take 1
