@@ -1,9 +1,12 @@
+/*
+ * @FilePath: \my-new-app\app\components\dashboard\version-card.tsx
+ * @LastEditTime: 2026-08-03 20:07:50
+ */
 "use client";
 // app\components\dashboard\version-card.tsx
-import { useVersionSWR } from "@/hooks/useVersionSWR";
+import { getFullPackageData } from "@/lib/version/get-full-package-data";
 import { logj } from "@/lib/log/client";
 import { staticUniversalContext } from "@/lib/log/buildj";
-import { VercelCard } from "@/components/dashboard/vercel-card";
 
 const built = await staticUniversalContext("dashboard");
 let jei = 0;
@@ -19,11 +22,28 @@ logj({
 });
 
 export default function VersionCard() {
-  const { data, loading, error } = useVersionSWR("all");
+  const data = getFullPackageData();
 
-  if (loading) return <div>Loading…</div>;
-  if (error) return <div>Error: {error}</div>;
-  if (!data) return <div>No data</div>;
+  return (
+    <div className="rounded-lg border bg-card p-4 text-sm">
+      <div className="font-mono text-xs mb-2">
+        {data.name} @ {data.version}
+      </div>
 
-  return <VercelCard data={data} />;
+      <pre className="text-xs whitespace-pre-wrap">
+        {JSON.stringify(
+          {
+            buildTime: data.buildTime,
+            commit: data.commit,
+            dependencies: data.dependencies,
+            devDependencies: data.devDependencies,
+            overrides: data.overrides,
+            workspacePackages: data.workspacePackages,
+          },
+          null,
+          2,
+        )}
+      </pre>
+    </div>
+  );
 }
