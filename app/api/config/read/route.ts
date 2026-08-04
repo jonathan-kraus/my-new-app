@@ -1,32 +1,34 @@
 // /api/config/read/route.ts
 import { queryAxiom } from "@/lib/axiom/query";
 import { NextResponse } from "next/server";
-
+import { logj } from "@/lib/log/logj";
+import { staticUniversalContext } from "@/lib/log/buildj";
 export async function GET() {
+  const built = staticUniversalContext("Config");
+  let jei = 0;
   try {
     // Queries
     const qFlight = `
 ["config"]
 | where reason == "Flight"
-| sort by _time asc
+| sort by _time desc
+| take 1
 `;
-    console.log(
-      "AXIOM_TOKEN:",
-      process.env.AXIOM_TOKEN ? "present" : "missing",
-    );
-    console.log(
-      "AXIOM_ORG_ID:",
-      process.env.AXIOM_ORG_ID ? "present" : "missing",
-    );
-    console.log(
-      "AXIOM_DATASET:",
-      process.env.AXIOM_DATASET ? "present" : "missing",
-    );
+    await logj({
+      domain: "config",
+      level: "info",
+      message: "Config page loaded",
+      file: "api/config/read/route.ts",
+      line: 17,
+      payload: { qflight: qFlight },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
 
     const qWeather = `
 ["config"]
 | where reason == "Weather"
-| sort by _time asc
+| sort by _time desc
+| take 1
 `;
 
     // Fetch rows
