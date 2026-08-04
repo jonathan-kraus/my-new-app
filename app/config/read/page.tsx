@@ -72,11 +72,11 @@ export default function ConfigReadPage() {
   const [updatedAt, setUpdatedAt] = useState<string>(
     new Date().toLocaleTimeString(),
   );
-  console.log("ConfigReadPage: start function");
+
   async function loadData() {
     setStatus("loading");
     setError(null);
-
+    console.log("ConfigReadPage: start function loadData");
     try {
       const res = await fetch("/api/config/read");
       if (!res.ok) throw new Error(`status ${res.status}`);
