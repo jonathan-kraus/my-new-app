@@ -72,7 +72,7 @@ export default function ConfigReadPage() {
   const [updatedAt, setUpdatedAt] = useState<string>(
     new Date().toLocaleTimeString(),
   );
-
+  console.log("ConfigReadPage: start function");
   async function loadData() {
     setStatus("loading");
     setError(null);
@@ -82,7 +82,7 @@ export default function ConfigReadPage() {
       if (!res.ok) throw new Error(`status ${res.status}`);
 
       const json = await res.json();
-
+      console.log("ConfigReadPage: loaded data", json);
       setFlight(json.flight ?? null);
       setWeather(json.weather ?? null);
       setStats(json.stats ?? null);

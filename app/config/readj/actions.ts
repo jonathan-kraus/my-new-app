@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\config\readj\actions.ts
- * @LastEditTime: 2026-08-04 15:31:23
+ * @LastEditTime: 2026-08-04 15:51:38
  */
 "use server";
 
@@ -27,10 +27,7 @@ export async function readFlightConfig(): Promise<ConfigEntry | null> {
 | where reason == "Flight"
 | sort by _time asc
 `;
-  console.log(
-    "AXIOM_TOKEN: readj",
-    process.env.AXIOM_TOKEN ? "present" : "missing",
-  );
+
   const rows = await queryAxiom(qFlight);
   await logj({
     domain: "dashboard",
