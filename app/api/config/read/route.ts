@@ -3,6 +3,9 @@ import { queryAxiom } from "@/lib/axiom/query";
 import { NextResponse } from "next/server";
 import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
+
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const built = staticUniversalContext("Config");
   let jei = 0;
@@ -19,7 +22,7 @@ export async function GET() {
       level: "info",
       message: "Config page loaded",
       file: "api/config/read/route.ts",
-      line: 17,
+      line: 20,
       payload: { qflight: qFlight },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
