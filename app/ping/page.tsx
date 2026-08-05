@@ -1,6 +1,8 @@
 // app/ping/page.tsx
 export default async function PingPage() {
-  const res = await fetch("/api/ping", { cache: "no-store" });
+  const res = await fetch("https://www.kraus.my.id/api/ping", {
+    cache: "no-store",
+  });
   const data = await res.json();
 
   return (
