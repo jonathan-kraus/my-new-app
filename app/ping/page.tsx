@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\ping\page.tsx
- * @LastEditTime: 2026-08-04 21:44:49
+ * @LastEditTime: 2026-08-05 01:48:57
  */
 // app/ping/page.tsx
 
@@ -14,7 +14,8 @@ export const metadata = { title: "PING" };
 const fcm = Number(await getConfig("FORECAST_CACHE_MINUTES", "41"));
 
 export default async function AxiomTestPage(req: NextRequest) {
-  if (fcm < 30 || fcm > 60) {
+  if (fcm < 50 || fcm > 60) {
+    console.error(`Invalid FORECAST_CACHE_MINUTES: ${fcm}`);
     throw new Error(`Invalid FORECAST_CACHE_MINUTES: ${fcm}`);
   }
   let jei = 0;

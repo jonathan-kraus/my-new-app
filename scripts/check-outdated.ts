@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\scripts\check-outdated.ts
- * @LastEditTime: 2026-07-07 23:32:21
+ * @LastEditTime: 2026-08-04 21:53:55
  */
 import { execSync } from "node:child_process";
 
@@ -36,7 +36,7 @@ try {
 
 const data = JSON.parse(raw || "{}") as Record<string, OutdatedEntry>;
 
-const ignore = new Set(["tsconfck"]);
+const ignore = new Set(["typescript"]);
 
 const filtered = Object.fromEntries(
   Object.entries(data).filter(([name]) => !ignore.has(name)),
