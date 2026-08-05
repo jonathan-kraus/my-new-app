@@ -1,6 +1,6 @@
 /*
- * @FilePath: \my-new-app\app\api\ping\page.tsx
- * @LastEditTime: 2026-08-05 16:28:37
+ * @FilePath: \my-new-app\app\ping\page.tsx
+ * @LastEditTime: 2026-08-05 16:35:02
  */
 // app/ping/page.tsx
 import { headers } from "next/headers";
