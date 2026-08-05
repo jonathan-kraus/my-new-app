@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\config\readj\actions.ts
- * @LastEditTime: 2026-08-04 15:51:38
+ * @LastEditTime: 2026-08-05 01:54:39
  */
 "use server";
 
@@ -19,7 +19,7 @@ export type ConfigEntry = {
   Variable03: string;
   [key: string]: unknown; // allow extra Axiom fields
 };
-console.log("START: readj", process.env.AXIOM_TOKEN ? "present" : "missing");
+
 export async function readFlightConfig(): Promise<ConfigEntry | null> {
   // Queries
   const qFlight = `
