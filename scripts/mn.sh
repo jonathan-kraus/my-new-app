@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+###
+ # @FilePath: \my-new-app\scripts\mn.sh
+ # @LastEditTime: 2026-08-04 21:48:41
+### 
 set -euo pipefail
 
 # Colors
@@ -31,8 +35,8 @@ fail() {
 section "Updating pnpm"
 corepack prepare pnpm@latest --activate
 
-# section "Checking outdated dependencies"
-# pnpm check-out || warn "Some dependencies are outdated"
+section "Checking outdated dependencies"
+pnpm check-out || warn "Some dependencies are outdated"
 
 # section "Update dependencies"
 # pnpm update --latest || warn "Failed to update dependencies"
