@@ -1,13 +1,22 @@
+/*
+ * @FilePath: \my-new-app\app\ping\page.tsx
+ * @LastEditTime: 2026-08-04 21:44:49
+ */
 // app/ping/page.tsx
 
 import { refreshLogRowEstimateForToday } from "@/lib/db/refreshLogRowEstimateForToday";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import type { NextRequest } from "next/server";
 import { logj } from "@/lib/log/logj";
+import { getConfig } from "@/lib/runtime/config";
 
 export const metadata = { title: "PING" };
+const fcm = Number(await getConfig("FORECAST_CACHE_MINUTES", "41"));
 
 export default async function AxiomTestPage(req: NextRequest) {
+  if (fcm < 30 || fcm > 60) {
+    throw new Error(`Invalid FORECAST_CACHE_MINUTES: ${fcm}`);
+  }
   let jei = 0;
   const built = await buildUniversalContext(req as any, "PING");
   await logj({
