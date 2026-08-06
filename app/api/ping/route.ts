@@ -194,10 +194,27 @@ export async function GET(req: NextRequest) {
     });
   }
 
-  // (await log.api("ephemeris", "Called Ping"),
-  //   {
-  //     Dailydata: weatherData.daily,
-  //   });
+  const geoUrl = `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`;
+  let geo = null;
+
+  try {
+    const geoRes = await fetch(geoUrl, {
+      headers: { "User-Agent": "jonathan-ping-api" }, // required by Nominatim
+    });
+    geo = await geoRes.json();
+
+    await logj({
+      domain: "jonathan",
+      level: "info",
+      message: "ping retrieved reverse geocode",
+      file: "app/api/ping/route.ts",
+      line: 200,
+      payload: { geo, geoUrl },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
+  } catch (err) {
+    geo = { error: "Reverse geocode failed", details: String(err) };
+  }
 
   return NextResponse.json({
     //daily,
@@ -206,6 +223,7 @@ export async function GET(req: NextRequest) {
     local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" }),
     weather: weatherData,
     iss: issPassData,
+    location: geo?.address ?? geo,
   });
 }
 
