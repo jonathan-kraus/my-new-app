@@ -1,3 +1,7 @@
+/*
+ * @FilePath: \my-new-app\app\admin\runtime\page.tsx
+ * @LastEditTime: 2026-08-06 00:16:21
+ */
 // app/admin/runtime/page.tsx
 import { db } from "@/lib/db";
 import { ConfigTable } from "./ConfigTable";
@@ -27,7 +31,7 @@ export default async function RuntimeAdminPage(req: NextRequest) {
     level: "info",
     message: `** Runtime Admin Page **`,
     file: "app/admin/runtime/page.tsx",
-    line: 23,
+    line: 25,
     payload: {
       lastsent: lastSent,
       throttle: throttle,

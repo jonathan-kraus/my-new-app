@@ -62,6 +62,7 @@ export const ModelName = {
   Note: 'Note',
   RuntimeConfig: 'RuntimeConfig',
   Session: 'Session',
+  ToolVersion: 'ToolVersion',
   TravelSnapshot: 'TravelSnapshot',
   TravelSegment: 'TravelSegment',
   User: 'User',
@@ -192,12 +193,12 @@ export const GithubEventScalarFieldEnum = {
   conclusion: 'conclusion',
   commitSha: 'commitSha',
   commitMessage: 'commitMessage',
-  title: 'title',
-  jobName: 'jobName',
   url: 'url',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  raw: 'raw'
+  raw: 'raw',
+  title: 'title',
+  jobName: 'jobName'
 } as const
 
 export type GithubEventScalarFieldEnum = (typeof GithubEventScalarFieldEnum)[keyof typeof GithubEventScalarFieldEnum]
@@ -274,6 +275,17 @@ export const SessionScalarFieldEnum = {
 } as const
 
 export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
+
+
+export const ToolVersionScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  version: 'version',
+  added_at: 'added_at',
+  verified_at: 'verified_at'
+} as const
+
+export type ToolVersionScalarFieldEnum = (typeof ToolVersionScalarFieldEnum)[keyof typeof ToolVersionScalarFieldEnum]
 
 
 export const TravelSnapshotScalarFieldEnum = {

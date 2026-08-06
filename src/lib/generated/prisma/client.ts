@@ -97,6 +97,11 @@ export type RuntimeConfig = Prisma.RuntimeConfigModel
  */
 export type Session = Prisma.SessionModel
 /**
+ * Model ToolVersion
+ * 
+ */
+export type ToolVersion = Prisma.ToolVersionModel
+/**
  * Model TravelSnapshot
  * 
  */

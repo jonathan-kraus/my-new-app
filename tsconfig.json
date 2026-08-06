@@ -28,7 +28,6 @@
       "@/auth": ["./auth"],
       "@/components/*": ["./app/components/*"],
       "@/db/*": ["./src/db/*"],
-      "@/generated/*": ["./src/lib/generated/*"],
       "@/hooks/*": ["./hooks/*"],
       "@/lib/*": ["./lib/*"],
       "@/tests/*": ["./tests/*"],
@@ -52,11 +51,5 @@
     ".next/dev/types/**/*.ts"
   ],
   /* Exclude build artifacts + generated code */
-  "exclude": [
-    "node_modules",
-    ".next",
-    "dist",
-    "coverage",
-    "src/lib/generated/prisma"
-  ]
+  "exclude": ["node_modules", ".next", "dist", "coverage"]
 }

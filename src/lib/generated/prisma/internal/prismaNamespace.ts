@@ -80,12 +80,12 @@ export type PrismaVersion = {
 }
 
 /**
- * Prisma Client JS version: 7.8.0
- * Query Engine version: 3c6e192761c0362d496ed980de936e2f3cebcd3a
+ * Prisma Client JS version: 7.9.0
+ * Query Engine version: e922089b7d7502aff4249d5da3420f6fa55fc6ad
  */
 export const prismaVersion: PrismaVersion = {
-  client: "7.8.0",
-  engine: "3c6e192761c0362d496ed980de936e2f3cebcd3a"
+  client: "7.9.0",
+  engine: "e922089b7d7502aff4249d5da3420f6fa55fc6ad"
 }
 
 /**
@@ -156,6 +156,19 @@ export type Subset<T, U> = {
 };
 
 /**
+ * Resolved type of the argument passed to the `PrismaClient` constructor.
+ *
+ * When called without a narrower options type (the common case), this resolves
+ * to `PrismaClientOptions` directly, which produces a clear TypeScript error
+ * message (`not assignable to parameter of type 'PrismaClientOptions'`) when
+ * the argument is missing or incomplete. When the user supplies a narrower
+ * options type (e.g. via a literal), it falls back to `Subset` to keep
+ * filtering out unknown properties.
+ */
+export type PrismaClientConstructorArgs<Options extends PrismaClientOptions> =
+  [PrismaClientOptions] extends [Options] ? PrismaClientOptions : Subset<Options, PrismaClientOptions>;
+
+/**
  * SelectSubset
  * @desc From `T` pick properties that exist in `U`. Simple version of Intersection.
  * Additionally, it validates, if both select and include are present. If the case, it errors.
@@ -187,7 +200,7 @@ type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never };
 export type XOR<T, U> =
   T extends object ?
   U extends object ?
-    (Without<T, U> & U) | (Without<U, T> & T)
+    ((Without<T, U> & U) | (Without<U, T> & T)) & object
   : U : T
 
 
@@ -395,6 +408,7 @@ export const ModelName = {
   Note: 'Note',
   RuntimeConfig: 'RuntimeConfig',
   Session: 'Session',
+  ToolVersion: 'ToolVersion',
   TravelSnapshot: 'TravelSnapshot',
   TravelSegment: 'TravelSegment',
   User: 'User',
@@ -417,7 +431,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "account" | "astronomySnapshot" | "dbTableStats" | "ephemerisDebug" | "forecastSnapshot" | "githubEvent" | "location" | "log" | "note" | "runtimeConfig" | "session" | "travelSnapshot" | "travelSegment" | "user" | "userRole" | "verification" | "verificationToken" | "weatherSnapshot"
+    modelProps: "account" | "astronomySnapshot" | "dbTableStats" | "ephemerisDebug" | "forecastSnapshot" | "githubEvent" | "location" | "log" | "note" | "runtimeConfig" | "session" | "toolVersion" | "travelSnapshot" | "travelSegment" | "user" | "userRole" | "verification" | "verificationToken" | "weatherSnapshot"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1235,6 +1249,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ToolVersion: {
+      payload: Prisma.$ToolVersionPayload<ExtArgs>
+      fields: Prisma.ToolVersionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ToolVersionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ToolVersionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ToolVersionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ToolVersionPayload>
+        }
+        findFirst: {
+          args: Prisma.ToolVersionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ToolVersionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ToolVersionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ToolVersionPayload>
+        }
+        findMany: {
+          args: Prisma.ToolVersionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ToolVersionPayload>[]
+        }
+        create: {
+          args: Prisma.ToolVersionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ToolVersionPayload>
+        }
+        createMany: {
+          args: Prisma.ToolVersionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ToolVersionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ToolVersionPayload>[]
+        }
+        delete: {
+          args: Prisma.ToolVersionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ToolVersionPayload>
+        }
+        update: {
+          args: Prisma.ToolVersionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ToolVersionPayload>
+        }
+        deleteMany: {
+          args: Prisma.ToolVersionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ToolVersionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ToolVersionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ToolVersionPayload>[]
+        }
+        upsert: {
+          args: Prisma.ToolVersionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ToolVersionPayload>
+        }
+        aggregate: {
+          args: Prisma.ToolVersionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateToolVersion>
+        }
+        groupBy: {
+          args: Prisma.ToolVersionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ToolVersionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ToolVersionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ToolVersionCountAggregateOutputType> | number
+        }
+      }
+    }
     TravelSnapshot: {
       payload: Prisma.$TravelSnapshotPayload<ExtArgs>
       fields: Prisma.TravelSnapshotFieldRefs
@@ -1897,12 +1985,12 @@ export const GithubEventScalarFieldEnum = {
   conclusion: 'conclusion',
   commitSha: 'commitSha',
   commitMessage: 'commitMessage',
-  title: 'title',
-  jobName: 'jobName',
   url: 'url',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  raw: 'raw'
+  raw: 'raw',
+  title: 'title',
+  jobName: 'jobName'
 } as const
 
 export type GithubEventScalarFieldEnum = (typeof GithubEventScalarFieldEnum)[keyof typeof GithubEventScalarFieldEnum]
@@ -1979,6 +2067,17 @@ export const SessionScalarFieldEnum = {
 } as const
 
 export type SessionScalarFieldEnum = (typeof SessionScalarFieldEnum)[keyof typeof SessionScalarFieldEnum]
+
+
+export const ToolVersionScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  version: 'version',
+  added_at: 'added_at',
+  verified_at: 'verified_at'
+} as const
+
+export type ToolVersionScalarFieldEnum = (typeof ToolVersionScalarFieldEnum)[keyof typeof ToolVersionScalarFieldEnum]
 
 
 export const TravelSnapshotScalarFieldEnum = {
@@ -2228,19 +2327,10 @@ export type BatchPayload = {
 export const defineExtension = runtime.Extensions.defineExtension as unknown as runtime.Types.Extensions.ExtendsHook<"define", TypeMapCb, runtime.Types.Extensions.DefaultArgs>
 export type DefaultPrismaClient = PrismaClient
 export type ErrorFormat = 'pretty' | 'colorless' | 'minimal'
-export type PrismaClientOptions = ({
-  /**
-   * Instance of a Driver Adapter, e.g., like one provided by `@prisma/adapter-pg`.
-   */
-  adapter: runtime.SqlDriverAdapterFactory
-  accelerateUrl?: never
-} | {
-  /**
-   * Prisma Accelerate URL allowing the client to connect through Accelerate instead of a direct database.
-   */
-  accelerateUrl: string
-  adapter?: never
-}) & {
+/**
+ * Options common to all variants of `PrismaClientOptions`, regardless of whether you connect to your database through a driver adapter or through Prisma Accelerate.
+ */
+export interface PrismaClientBaseOptions {
   /**
    * @default "colorless"
    */
@@ -2327,6 +2417,56 @@ export type PrismaClientOptions = ({
    */
   queryPlanCacheMaxSize?: number
 }
+
+/**
+ * `PrismaClient` options for connecting to your database through Prisma Accelerate instead of a driver adapter.
+ * 
+ * Learn more: https://pris.ly/d/accelerate
+ */
+export interface PrismaClientOptionsWithAccelerateUrl extends PrismaClientBaseOptions {
+  /**
+   * The Prisma Accelerate connection URL. Use this option to connect to your database through Prisma Accelerate instead of using a driver adapter to connect directly.
+   * 
+   * Learn more: https://pris.ly/d/accelerate
+   */
+  accelerateUrl: string
+  adapter?: never
+}
+
+/**
+ * `PrismaClient` options for connecting to your database through a driver adapter. This is the common case in Prisma 7.
+ * 
+ * Learn more: https://pris.ly/d/driver-adapters
+ */
+export interface PrismaClientOptionsWithAdapter extends PrismaClientBaseOptions {
+  /**
+   * A driver adapter that PrismaClient uses to connect to your database, such as the ones provided by `@prisma/adapter-pg`, `@prisma/adapter-libsql`, `@prisma/adapter-planetscale`, etc.
+   * 
+   * A driver adapter is **required** unless you connect to your database through Prisma Accelerate (in which case use `accelerateUrl` instead).
+   * 
+   * Learn more: https://pris.ly/d/driver-adapters
+   * 
+   * @example
+   * ```ts
+   * import { PrismaPg } from '@prisma/adapter-pg'
+   * import { PrismaClient } from './generated/prisma/client'
+   * 
+   * const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL })
+   * const prisma = new PrismaClient({ adapter })
+   * ```
+   */
+  adapter: runtime.SqlDriverAdapterFactory
+  accelerateUrl?: never
+}
+
+/**
+ * Options passed to the `PrismaClient` constructor.
+ * 
+ * A driver adapter (or, alternatively, a Prisma Accelerate URL) is **required**. See {@link PrismaClientOptionsWithAdapter} and {@link PrismaClientOptionsWithAccelerateUrl} for the two variants. All other properties live in {@link PrismaClientBaseOptions} and are optional.
+ * 
+ * Learn more about driver adapters: https://pris.ly/d/driver-adapters
+ */
+export type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaClientOptionsWithAdapter
 export type GlobalOmitConfig = {
   account?: Prisma.AccountOmit
   astronomySnapshot?: Prisma.AstronomySnapshotOmit
@@ -2339,6 +2479,7 @@ export type GlobalOmitConfig = {
   note?: Prisma.NoteOmit
   runtimeConfig?: Prisma.RuntimeConfigOmit
   session?: Prisma.SessionOmit
+  toolVersion?: Prisma.ToolVersionOmit
   travelSnapshot?: Prisma.TravelSnapshotOmit
   travelSegment?: Prisma.TravelSegmentOmit
   user?: Prisma.UserOmit
