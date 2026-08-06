@@ -163,6 +163,34 @@ export async function GET(req: NextRequest) {
   });
   console.log("\nDaily data:\n", weatherData.daily);
 
+  // Fetch ISS pass data for the location
+  const issUrl = `http://api.open-notify.org/iss-pass.json?lat=${latitude}&lon=${longitude}`;
+  let issPassData = null;
+  try {
+    const issResponse = await fetch(issUrl);
+    issPassData = await issResponse.json();
+    await logj({
+      domain: "jonathan",
+      level: "info",
+      message: "ping retrieved ISS pass data",
+      file: "app/api/ping/route.ts",
+      line: 156,
+      payload: issPassData,
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
+  } catch (error) {
+    console.error("Error fetching ISS pass data:", error);
+    await logj({
+      domain: "jonathan",
+      level: "error",
+      message: "ping failed to retrieve ISS pass data",
+      file: "app/api/ping/route.ts",
+      line: 164,
+      payload: { error: String(error) },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
+  }
+
   // (await log.api("ephemeris", "Called Ping"),
   //   {
   //     Dailydata: weatherData.daily,
@@ -173,6 +201,8 @@ export async function GET(req: NextRequest) {
     //current,
     ok: true,
     local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" }),
+    weather: weatherData,
+    iss: issPassData,
   });
 }
 
