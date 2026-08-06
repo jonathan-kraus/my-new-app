@@ -175,7 +175,7 @@ export async function GET(req: NextRequest) {
       message: "ping retrieved ISS pass data",
       file: "app/api/ping/route.ts",
       line: 156,
-      payload: issPassData,
+      payload:  { issPassData: issPassData, issUrl: issUrl },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
   } catch (error) {
