@@ -164,28 +164,31 @@ export async function GET(req: NextRequest) {
   console.log("\nDaily data:\n", weatherData.daily);
 
   // Fetch ISS pass data for the location
-  const issUrl = `http://api.open-notify.org/iss-pass.json?lat=${latitude}&lon=${longitude}`;
+  const issUrl = "https://api.wheretheiss.at/v1/satellites/25544";
   let issPassData = null;
+
   try {
-    const issResponse = await fetch(issUrl);
+    const issResponse = await fetch(issUrl, { cache: "no-store" });
     issPassData = await issResponse.json();
+
     await logj({
       domain: "jonathan",
       level: "info",
-      message: "ping retrieved ISS pass data",
+      message: "ping retrieved ISS position data",
       file: "app/api/ping/route.ts",
-      line: 156,
-      payload:  { issPassData: issPassData, issUrl: issUrl },
+      line: 174,
+      payload: { issPassData, issUrl },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
   } catch (error) {
-    console.error("Error fetching ISS pass data:", error);
+    issPassData = { error: "ISS API failed", details: String(error) };
+
     await logj({
       domain: "jonathan",
       level: "error",
-      message: "ping failed to retrieve ISS pass data",
+      message: "ping failed to retrieve ISS position data",
       file: "app/api/ping/route.ts",
-      line: 164,
+      line: 186,
       payload: { error: String(error) },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
