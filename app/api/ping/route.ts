@@ -194,6 +194,37 @@ export async function GET(req: NextRequest) {
     });
   }
 
+  // Fetch reverse geocode for the location of the ISS
+  let issLocation = null;
+  if (issPassData && !issPassData.error) {
+    const issLatitude = issPassData.latitude;
+    const issLongitude = issPassData.longitude;
+    const geoUrl = `https://nominatim.openstreetmap.org/reverse?lat=${issLatitude}&lon=${issLongitude}&format=json`;
+
+    try {
+      const geoRes = await fetch(geoUrl, {
+        headers: { "User-Agent": "jonathan-ping-api" }, // required by Nominatim
+      });
+      issLocation = await geoRes.json();
+
+      await logj({
+        domain: "jonathan",
+        level: "info",
+        message: "ping retrieved reverse geocode for ISS location",
+        file: "app/api/ping/route.ts",
+        line: 200,
+        payload: { issLocation, geoUrl, issLatitude, issLongitude },
+        meta: { built: { ...built, eventIndex: ++jei } },
+      });
+    } catch (err) {
+      issLocation = {
+        error: "ISS reverse geocode failed",
+        details: String(err),
+      };
+    }
+  }
+
+  // Fetch reverse geocode for the weather location
   const geoUrl = `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`;
   let geo = null;
 
@@ -206,7 +237,7 @@ export async function GET(req: NextRequest) {
     await logj({
       domain: "jonathan",
       level: "info",
-      message: "ping retrieved reverse geocode",
+      message: "ping retrieved reverse geocode for weather location",
       file: "app/api/ping/route.ts",
       line: 200,
       payload: { geo, geoUrl },
@@ -222,7 +253,10 @@ export async function GET(req: NextRequest) {
     ok: true,
     local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" }),
     weather: weatherData,
-    iss: issPassData,
+    iss: {
+      ...issPassData,
+      location: issLocation?.address ?? issLocation,
+    },
     location: geo?.address ?? geo,
   });
 }
