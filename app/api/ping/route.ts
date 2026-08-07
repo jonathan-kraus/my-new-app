@@ -207,6 +207,17 @@ export async function GET(req: NextRequest) {
       });
       issLocation = await geoRes.json();
 
+      // Check if geocoding failed (e.g., over ocean)
+      if (issLocation.error) {
+        issLocation = {
+          message: "ISS is currently over water/ocean",
+          coordinates: {
+            latitude: issLatitude,
+            longitude: issLongitude,
+          },
+        };
+      }
+
       await logj({
         domain: "jonathan",
         level: "info",
@@ -220,12 +231,16 @@ export async function GET(req: NextRequest) {
       issLocation = {
         error: "ISS reverse geocode failed",
         details: String(err),
+        coordinates: {
+          latitude: issLatitude,
+          longitude: issLongitude,
+        },
       };
     }
   }
 
   // Fetch reverse geocode for the weather location
-  const geoUrl = `https://nominatim.openstreetmap.org/reverse?lat=${issLatitude}&lon=${issLongitude}&format=json`;
+  const geoUrl = `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`;
   let geo = null;
 
   try {
