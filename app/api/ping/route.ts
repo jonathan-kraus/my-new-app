@@ -6,6 +6,7 @@ import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { auth } from "@/auth";
 import { headers, cookies } from "next/headers";
 import { fetchWeatherApi } from "openmeteo";
+import { db } from "@/lib/db";
 
 export const runtime = "nodejs";
 
@@ -26,13 +27,22 @@ export async function GET(req: NextRequest) {
     level: "info",
     message: "Starting ping request for weather fetch",
     file: "app/api/ping/route.ts",
-    line: 16,
+    line: 25,
     payload: {},
     meta: { built: { ...built, eventIndex: ++jei } },
   });
+
+  // Fetch location from database
+  const location = await db.location.findFirst({
+    where: { key: "KOP" },
+  });
+
+  const latitude = location?.latitude ?? 40.15;
+  const longitude = location?.longitude ?? -75.1;
+
   const params = {
-    latitude: 40.15,
-    longitude: -75.1,
+    latitude,
+    longitude,
     daily: [
       "weather_code",
       "temperature_2m_max",
@@ -60,8 +70,6 @@ export async function GET(req: NextRequest) {
     throw new Error("Expected response to be defined");
   }
   // Attributes for timezone and location
-  const latitude = response.latitude();
-  const longitude = response.longitude();
   const elevation = response.elevation();
   const timezone = response.timezone();
   const timezoneAbbreviation = response.timezoneAbbreviation();
