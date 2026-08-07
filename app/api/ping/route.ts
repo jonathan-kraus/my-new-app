@@ -15,11 +15,6 @@ export async function GET(req: NextRequest) {
   const session = await auth();
   const c = await cookies();
   let jei = 0;
-  console.log("PING cookies:", c.getAll());
-  console.log("PING session:", session);
-  console.log("PING req:", req);
-
-  console.log("PING cookie header:", h.get("cookie"));
 
   const built = await buildUniversalContext(req, "PING");
   await logj({
@@ -159,7 +154,7 @@ export async function GET(req: NextRequest) {
     level: "info",
     message: "ping processed weather data",
     file: "app/api/ping/route.ts",
-    line: 149,
+    line: 153,
     payload: {
       Currenttime: weatherData.current.time,
       Currenttemperature_2m: weatherData.current.temperature_2m,
@@ -184,7 +179,7 @@ export async function GET(req: NextRequest) {
       level: "info",
       message: "ping retrieved ISS position data",
       file: "app/api/ping/route.ts",
-      line: 174,
+      line: 178,
       payload: { issPassData, issUrl },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -196,7 +191,7 @@ export async function GET(req: NextRequest) {
       level: "error",
       message: "ping failed to retrieve ISS position data",
       file: "app/api/ping/route.ts",
-      line: 186,
+      line: 190,
       payload: { error: String(error) },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -231,7 +226,7 @@ export async function GET(req: NextRequest) {
         level: "info",
         message: "ping retrieved reverse geocode for ISS location",
         file: "app/api/ping/route.ts",
-        line: 210,
+        line: 225,
         payload: { issLocation, geoUrl, issLatitude, issLongitude },
         meta: { built: { ...built, eventIndex: ++jei } },
       });
@@ -262,7 +257,7 @@ export async function GET(req: NextRequest) {
       level: "info",
       message: "ping retrieved reverse geocode for weather location",
       file: "app/api/ping/route.ts",
-      line: 237,
+      line: 256,
       payload: { geo, geoUrl },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
