@@ -212,7 +212,7 @@ export async function GET(req: NextRequest) {
         level: "info",
         message: "ping retrieved reverse geocode for ISS location",
         file: "app/api/ping/route.ts",
-        line: 200,
+        line: 210,
         payload: { issLocation, geoUrl, issLatitude, issLongitude },
         meta: { built: { ...built, eventIndex: ++jei } },
       });
@@ -225,7 +225,7 @@ export async function GET(req: NextRequest) {
   }
 
   // Fetch reverse geocode for the weather location
-  const geoUrl = `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`;
+  const geoUrl = `https://nominatim.openstreetmap.org/reverse?lat=${issLatitude}&lon=${issLongitude}&format=json`;
   let geo = null;
 
   try {
@@ -239,7 +239,7 @@ export async function GET(req: NextRequest) {
       level: "info",
       message: "ping retrieved reverse geocode for weather location",
       file: "app/api/ping/route.ts",
-      line: 200,
+      line: 237,
       payload: { geo, geoUrl },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
