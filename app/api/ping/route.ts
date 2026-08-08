@@ -75,10 +75,10 @@ export async function GET(req: NextRequest) {
     const seventhChar = decimalPart[6] ?? "0";
 
     // Use the two digits as a number to select location via ranges
-    const twoDigitNumber = parseInt(sixthChar + seventhChar);
-    if (twoDigitNumber < 33) {
+    const twoDigits = sixthChar + seventhChar;
+    if (twoDigits < "33") {
       key = locations[0]!;
-    } else if (twoDigitNumber < 66) {
+    } else if (twoDigits < "66") {
       key = locations[1]!;
     } else {
       key = locations[2]!;
