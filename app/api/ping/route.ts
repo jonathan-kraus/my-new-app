@@ -74,20 +74,14 @@ export async function GET(req: NextRequest) {
     const sixthChar = decimalPart[5] ?? "0";
     const seventhChar = decimalPart[6] ?? "0";
 
-    // Use the digits to select location via case statement
-    const digitSum = parseInt(sixthChar) + parseInt(seventhChar);
-    switch (digitSum % 3) {
-      case 0:
-        key = locations[0]!;
-        break;
-      case 1:
-        key = locations[1]!;
-        break;
-      case 2:
-        key = locations[2]!;
-        break;
-      default:
-        key = locations[0]!;
+    // Use the two digits as a number to select location via ranges
+    const twoDigitNumber = parseInt(sixthChar + seventhChar);
+    if (twoDigitNumber < 33) {
+      key = locations[0]!;
+    } else if (twoDigitNumber < 66) {
+      key = locations[1]!;
+    } else {
+      key = locations[2]!;
     }
   } else {
     // Fallback to random selection if ISS altitude is unavailable
