@@ -26,9 +26,74 @@ export async function GET(req: NextRequest) {
     payload: {},
     meta: { built: { ...built, eventIndex: ++jei } },
   });
-  const locations = ["KOP", "BKL", "WIL"];
-  // Pick one randomly
-  const key = locations[Math.floor(Math.random() * locations.length)];
+
+  // Fetch ISS pass data first to get altitude for location selection
+  const issUrl = "https://api.wheretheiss.at/v1/satellites/25544";
+  let issPassData = null;
+
+  try {
+    const issResponse = await fetch(issUrl, { cache: "no-store" });
+    issPassData = await issResponse.json();
+
+    await logj({
+      domain: "jonathan",
+      level: "info",
+      message: "ping retrieved ISS position data",
+      file: "app/api/ping/route.ts",
+      line: 178,
+      payload: { issPassData, issUrl },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
+  } catch (error) {
+    issPassData = { error: "ISS API failed", details: String(error) };
+
+    await logj({
+      domain: "jonathan",
+      level: "error",
+      message: "ping failed to retrieve ISS position data",
+      file: "app/api/ping/route.ts",
+      line: 190,
+      payload: { error: String(error) },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
+  }
+
+  const locations = ["KOP", "BKL", "WIL"] as const;
+  // Use ISS altitude to select location
+  let key: string;
+  if (
+    issPassData &&
+    issPassData.altitude !== undefined &&
+    issPassData.altitude !== null
+  ) {
+    const altitudeValue = issPassData.altitude;
+    const altitudeStr = altitudeValue.toString();
+    const decimalPart = altitudeStr.split(".")[1] || "";
+
+    // Get 6th and 7th characters after decimal (0-indexed, so indices 5 and 6)
+    const sixthChar = decimalPart[5] ?? "0";
+    const seventhChar = decimalPart[6] ?? "0";
+
+    // Use the digits to select location via case statement
+    const digitSum = parseInt(sixthChar) + parseInt(seventhChar);
+    switch (digitSum % 3) {
+      case 0:
+        key = locations[0]!;
+        break;
+      case 1:
+        key = locations[1]!;
+        break;
+      case 2:
+        key = locations[2]!;
+        break;
+      default:
+        key = locations[0]!;
+    }
+  } else {
+    // Fallback to random selection if ISS altitude is unavailable
+    key = locations[Math.floor(Math.random() * locations.length)]!;
+  }
+
   // Fetch location from database
   const location = await db.location.findFirst({
     where: { key },
@@ -151,6 +216,7 @@ export async function GET(req: NextRequest) {
     `\nCurrent weather_code: ${weatherData.current.weather_code}`,
     `\nCurrent cloud_cover: ${weatherData.current.cloud_cover}`,
   );
+
   await logj({
     domain: "jonathan",
     level: "info",
@@ -167,37 +233,6 @@ export async function GET(req: NextRequest) {
     meta: { built: { ...built, eventIndex: ++jei } },
   });
   console.log("\nDaily data:\n", weatherData.daily);
-
-  // Fetch ISS pass data for the location
-  const issUrl = "https://api.wheretheiss.at/v1/satellites/25544";
-  let issPassData = null;
-
-  try {
-    const issResponse = await fetch(issUrl, { cache: "no-store" });
-    issPassData = await issResponse.json();
-
-    await logj({
-      domain: "jonathan",
-      level: "info",
-      message: "ping retrieved ISS position data",
-      file: "app/api/ping/route.ts",
-      line: 178,
-      payload: { issPassData, issUrl },
-      meta: { built: { ...built, eventIndex: ++jei } },
-    });
-  } catch (error) {
-    issPassData = { error: "ISS API failed", details: String(error) };
-
-    await logj({
-      domain: "jonathan",
-      level: "error",
-      message: "ping failed to retrieve ISS position data",
-      file: "app/api/ping/route.ts",
-      line: 190,
-      payload: { error: String(error) },
-      meta: { built: { ...built, eventIndex: ++jei } },
-    });
-  }
 
   // Fetch reverse geocode for the location of the ISS
   let issLocation = null;
