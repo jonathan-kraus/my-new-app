@@ -206,20 +206,9 @@ export async function GET(req: NextRequest) {
 
     try {
       const geoRes = await fetch(geoUrl, {
-        headers: { "User-Agent": "jonathan-ping-api" }, // required by Nominatim
+        headers: { "User-Agent": "jonathan-ping-iss" },
       });
-      issLocation = await geoRes.json();
-
-      // Check if geocoding failed (e.g., over ocean)
-      if (issLocation.error) {
-        issLocation = {
-          message: "ISS is currently over water/ocean",
-          coordinates: {
-            latitude: issLatitude,
-            longitude: issLongitude,
-          },
-        };
-      }
+      const geo = await geoRes.json();
 
       await logj({
         domain: "jonathan",
@@ -239,6 +228,43 @@ export async function GET(req: NextRequest) {
           longitude: issLongitude,
         },
       };
+    }
+  }
+
+  // Calculate nearest major city to the weather location
+  const majorCities = [
+    { name: "New York", country: "USA", lat: 40.7128, lon: -74.006 },
+    { name: "London", country: "UK", lat: 51.5074, lon: -0.1278 },
+    { name: "Tokyo", country: "Japan", lat: 35.6895, lon: 139.6917 },
+    { name: "Sydney", country: "Australia", lat: -33.8688, lon: 151.2093 },
+    { name: "Jakarta", country: "Indonesia", lat: -6.2088, lon: 106.8456 },
+    { name: "Cape Town", country: "South Africa", lat: -33.9249, lon: 18.4241 },
+    { name: "São Paulo", country: "Brazil", lat: -23.5558, lon: -46.6396 },
+    { name: "Paris", country: "France", lat: 48.8566, lon: 2.3522 },
+    { name: "Mumbai", country: "India", lat: 19.076, lon: 72.8777 },
+  ];
+
+  function haversine(lat1: number, lon1: number, lat2: number, lon2: number) {
+    const R = 6371; // km
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) ** 2;
+
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+
+  let nearestCity = null;
+  let nearestDistance = Infinity;
+
+  for (const city of majorCities) {
+    const dist = haversine(latitude, longitude, city.lat, city.lon);
+    if (dist < nearestDistance) {
+      nearestDistance = dist;
+      nearestCity = { ...city, distanceKm: dist };
     }
   }
 
@@ -271,11 +297,11 @@ export async function GET(req: NextRequest) {
     ok: true,
     local: new Date().toLocaleString("en-US", { timeZone: "America/New_York" }),
     weather: weatherData,
-    iss: {
-      ...issPassData,
-      location: issLocation?.address ?? issLocation,
+    iss: issPassData,
+    location: {
+      reverseGeocode: geo?.address ?? geo,
+      nearestMajorCity: nearestCity,
     },
-    location: geo?.address ?? geo,
   });
 }
 
