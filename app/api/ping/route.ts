@@ -199,9 +199,11 @@ export async function GET(req: NextRequest) {
 
   // Fetch reverse geocode for the location of the ISS
   let issLocation = null;
+  let issLatitude = 0;
+  let issLongitude = 0;
   if (issPassData && !issPassData.error) {
-    const issLatitude = issPassData.latitude;
-    const issLongitude = issPassData.longitude;
+    issLatitude = issPassData.latitude;
+    issLongitude = issPassData.longitude;
     const geoUrl = `https://nominatim.openstreetmap.org/reverse?lat=${issLatitude}&lon=${issLongitude}&format=json`;
 
     try {
@@ -261,7 +263,7 @@ export async function GET(req: NextRequest) {
   let nearestDistance = Infinity;
 
   for (const city of majorCities) {
-    const dist = haversine(latitude, longitude, city.lat, city.lon);
+    const dist = haversine(issLatitude, issLongitude, city.lat, city.lon);
     if (dist < nearestDistance) {
       nearestDistance = dist;
       nearestCity = { ...city, distanceKm: dist };
