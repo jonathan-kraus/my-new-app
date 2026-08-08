@@ -26,10 +26,12 @@ export async function GET(req: NextRequest) {
     payload: {},
     meta: { built: { ...built, eventIndex: ++jei } },
   });
-
+  const locations = ["KOP", "BKL", "WIL"];
+  // Pick one randomly
+  const key = locations[Math.floor(Math.random() * locations.length)];
   // Fetch location from database
   const location = await db.location.findFirst({
-    where: { key: "KOP" },
+    where: { key },
   });
 
   const latitude = location?.latitude ?? 40.15;
