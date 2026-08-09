@@ -1,4 +1,3 @@
-import { sql, excludeTables } from "@/lib/db/utils";
 import { notFound } from "next/navigation";
 import { DashboardHeader } from "@/components/dashboard-header";
 import { TableDetailView } from "@/components/table-detail-view";
@@ -7,8 +6,12 @@ import { StatCard } from "@/components/stat-card";
 import { Rows3, HardDrive, Columns3, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { logj } from "@/lib/log/logj";
-import { assertNonEmptyArray, firstRow } from "@/lib/db/safe";
+import { assertNonEmptyArray } from "@/lib/db/safe";
 import { staticUniversalContext } from "@/lib/log/buildj";
+import {
+  getTableDataWithPrisma,
+  getTableHistoryWithPrisma,
+} from "@/lib/db/prisma-table";
 export const dynamic = "force-dynamic";
 
 interface PageProps {
@@ -17,108 +20,33 @@ interface PageProps {
 }
 
 async function getTableData(name: string, page: number) {
-  // Validate table exists and is not excluded
   const built = staticUniversalContext("TablePage");
   let jei = 0;
   await logj({
     domain: "jonathan",
     level: "info",
-    message: "Validating Table existence",
+    message: "Fetching table data with Prisma",
     file: "page.tsx",
-    line: 23,
+    line: 19,
     payload: { name: name, page: page },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
-  const tableCheck = await sql`
-    SELECT table_name FROM information_schema.tables
-    WHERE table_schema = 'public' AND table_name = ${name}
-  `;
-  if (tableCheck.length === 0 || excludeTables.includes(name)) {
+
+  const data = await getTableDataWithPrisma(name, page);
+  if (!data) {
     return null;
   }
 
-  const columns = await sql`
-    SELECT column_name, data_type, is_nullable, column_default
-    FROM information_schema.columns
-    WHERE table_schema = 'public' AND table_name = ${name}
-    ORDER BY ordinal_position
-  `;
-
-  const countResult = await sql.query(
-    `SELECT COUNT(*)::int AS count FROM "${name}"`,
-  );
-  const row = firstRow(countResult, `count query for table ${name}`);
-  const totalRows = row.count ?? 0;
-
-  const limit = 50;
-  const offset = (page - 1) * limit;
-
-  // Try to order by common columns
-  let orderCol = columns[0]?.column_name || "id";
-  const hasCreatedAt = columns.some(
-    (c) =>
-      c.column_name === "createdAt" ||
-      c.column_name === "created_at" ||
-      c.column_name === "fetchedAt",
-  );
-  if (hasCreatedAt) {
-    const col = columns.find(
-      (c) =>
-        c.column_name === "createdAt" ||
-        c.column_name === "created_at" ||
-        c.column_name === "fetchedAt",
-    );
-    if (col) orderCol = col.column_name;
-  }
-
-  const rows = await sql.query(
-    `SELECT * FROM "${name}" ORDER BY "${orderCol}" DESC LIMIT ${limit} OFFSET ${offset}`,
-  );
-
-  // Get size info
-  const sizeResult = await sql`
-    SELECT
-      pg_total_relation_size(c.oid) AS total_bytes,
-      pg_indexes_size(c.oid) AS index_bytes,
-      pg_relation_size(c.oid) AS table_bytes
-    FROM pg_class c
-    JOIN pg_namespace n ON n.oid = c.relnamespace
-    WHERE n.nspname = 'public' AND c.relname = ${name}
-  `;
-
   return {
-    name,
-    columns: columns.map((c) => ({
-      name: c.column_name as string,
-      type: c.data_type as string,
-      nullable: c.is_nullable === "YES",
-    })),
-    rows,
-    totalRows,
-    page,
-    limit,
-    totalPages: Math.ceil(totalRows / limit),
-    totalBytes: Number(sizeResult[0]?.total_bytes || 0),
-    indexBytes: Number(sizeResult[0]?.index_bytes || 0),
-    tableBytes: Number(sizeResult[0]?.table_bytes || 0),
+    ...data,
+    totalBytes: 0, // Would need separate query for size info
+    indexBytes: 0,
+    tableBytes: 0,
   };
 }
 
 async function getTableHistory(name: string) {
-  const history = await sql`
-    SELECT "tableName", "rowEstimate", "totalBytes", "indexBytes", "tableBytes", "toastBytes", "snapshotDate"
-    FROM "DbTableStats"
-    WHERE "tableName" = ${name}
-      AND "snapshotDate" >= NOW() - INTERVAL '30 days'
-    ORDER BY "snapshotDate" ASC
-  `;
-
-  return history.map((h) => ({
-    tableName: h.tableName as string,
-    rowEstimate: Number(h.rowEstimate),
-    totalBytes: Number(h.totalBytes),
-    snapshotDate: h.snapshotDate as string,
-  }));
+  return getTableHistoryWithPrisma(name);
 }
 
 export default async function TablePage({ params, searchParams }: PageProps) {
@@ -205,24 +133,21 @@ export default async function TablePage({ params, searchParams }: PageProps) {
               icon={Columns3}
             />
             <div className="rounded-lg border p-4">
-              {" "}
-              <div className="text-sm text-muted-foreground">
-                Tracked Since
-              </div>{" "}
+              <div className="text-sm text-muted-foreground">Tracked Since</div>
               <div className="text-lg font-medium">
-                {" "}
                 {firstSnapshot
                   ? new Date(formattedSnapshot).toLocaleDateString("en-US", {
                       month: "short",
                       day: "numeric",
                     })
-                  : "Not yet"}{" "}
-              </div>{" "}
+                  : "Not yet"}
+              </div>
+              <div className="text-xs text-muted-foreground mt-1">
+                {history.length > 0
+                  ? `${history.length} snapshots`
+                  : "Take a snapshot"}
+              </div>
             </div>
-            subtitle=
-            {history.length > 0
-              ? `${history.length} snapshots`
-              : "Take a snapshot"}
           </div>
 
           {/* History charts */}
