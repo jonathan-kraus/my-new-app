@@ -3,7 +3,7 @@ import { withLogging } from "@/lib/logging/withLogging";
 import { sendTestEmail } from "@/lib/server/email/sendTestEmail";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 export const POST = withLogging(async (req: Request) => {
   const test_msg1 = "This is a test email sent from the Next.js API route.";
@@ -21,7 +21,7 @@ export const POST = withLogging(async (req: Request) => {
     file: "app/api/email/test/route.ts",
     line: 17,
     payload: {
-      some: "data",
+      result: result,
     },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
