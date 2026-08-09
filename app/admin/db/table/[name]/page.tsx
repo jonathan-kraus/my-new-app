@@ -25,7 +25,7 @@ async function getTableData(name: string, page: number) {
     level: "info",
     message: "Validating Table existence",
     file: "page.tsx",
-    line: 24,
+    line: 23,
     payload: { name: name, page: page },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
