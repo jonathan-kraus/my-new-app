@@ -14,7 +14,7 @@ export async function GET(
   await logit(
     "jonathan",
     { level: "info", message: "In db table detail for ${ name }", name },
-    { moreinfo: "more info here", eventIndex: 22 },
+    { moreinfo: "more info ", eventIndex: 22 },
     {
       requestId: crypto.randomUUID(),
       zulu: new Date().toISOString(),
