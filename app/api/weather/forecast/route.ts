@@ -260,6 +260,7 @@ export async function GET(req: Request) {
   }
 
   const weather = parsed.data;
+  const rawAsAny = raw as any;
   const rawWithCurrent = raw as any;
 
   // ----------------------------------------
@@ -307,7 +308,12 @@ export async function GET(req: Request) {
           windspeed: weather.current.wind_speed_10m,
           humidity: weather.current.relative_humidity_2m,
         },
-        forecast: weather.daily,
+        forecast: {
+          time: weather.daily.time,
+          temperature_2m_max: weather.daily.temperature_2m_max,
+          temperature_2m_min: weather.daily.temperature_2m_min,
+          weathercode: weather.daily.weathercode,
+        } as any,
       },
     },
   });
