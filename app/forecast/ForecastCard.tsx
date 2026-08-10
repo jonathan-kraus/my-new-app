@@ -1,6 +1,36 @@
-"use client";
+import { Location } from "@/lib/types";
 
-import React from "react";
+type ForecastRow = {
+  date: Date;
+  max: number;
+  min: number;
+  code: number;
+};
+export type ForecastCardProps = {
+  location: Location;
+  current: {
+    temperature: number;
+    windspeed: number;
+    humidity?: number;
+  };
+  forecast: {
+    time: string[];
+    temperature_2m_max: number[];
+    temperature_2m_min: number[];
+    weathercode: number[];
+  };
+  fetchedAt: string;
+  source: string;
+  astronomy: {
+    sunrise?: string;
+    sunset?: string;
+    moonrise?: string;
+    moonset?: string;
+    moonPhaseName?: string;
+    moonPhaseEmoji?: string;
+  };
+  sendForecastEmailAction: (formData: FormData) => void | Promise<void>;
+};
 
 export function ForecastCard({
   location,
@@ -10,103 +40,98 @@ export function ForecastCard({
   source,
   astronomy,
   sendForecastEmailAction,
-}: {
-  location: { name: string };
-  current: { temperature: number; windspeed: number; humidity?: number };
-  forecast: {
-    time: string[];
-    temperature_2m_max: number[];
-    temperature_2m_min: number[];
-    weathercode: number[];
+}: ForecastCardProps) {
+  const rows: ForecastRow[] =
+    forecast.time.length === forecast.temperature_2m_max.length &&
+    forecast.time.length === forecast.temperature_2m_min.length &&
+    forecast.time.length === forecast.weathercode.length
+      ? forecast.time.map((t, i) => ({
+          date: new Date(t),
+          max: forecast.temperature_2m_max[i]!,
+          min: forecast.temperature_2m_min[i]!,
+          code: forecast.weathercode[i]!,
+        }))
+      : [];
+
+  const onSendEmail = () => {
+    const form = new FormData();
+    form.set("locationName", location.name);
+    form.set("temperature", String(current.temperature));
+    form.set("feelsLike", String(current.temperature));
+    form.set("humidity", String(current.humidity ?? 0));
+    form.set("windSpeed", String(current.windspeed));
+    form.set("fetchedAt", fetchedAt);
+    form.set("source", source);
+
+    form.set("sunrise", astronomy.sunrise ?? "");
+    form.set("sunset", astronomy.sunset ?? "");
+    form.set("moonrise", astronomy.moonrise ?? "");
+    form.set("moonset", astronomy.moonset ?? "");
+    form.set("moonPhaseName", astronomy.moonPhaseName ?? "");
+    form.set("moonPhaseEmoji", astronomy.moonPhaseEmoji ?? "");
+
+    sendForecastEmailAction(form);
   };
-  fetchedAt: string;
-  source: string;
-  astronomy?: {
-    sunrise?: string;
-    sunset?: string;
-    moonrise?: string;
-    moonset?: string;
-    moonPhaseName?: string;
-    moonPhaseEmoji?: string;
-  };
-  sendForecastEmailAction: (formData: FormData) => void | Promise<void>;
-}) {
+
   return (
-    <div className="bg-white text-black p-6 rounded-xl shadow relative">
-      {/* ⭐ Email Button (Top‑Right) */}
-      <form action={sendForecastEmailAction} className="absolute top-4 right-4">
-        {/* Hidden fields with real forecast data */}
-        <input type="hidden" name="locationName" value={location.name} />
-        <input type="hidden" name="temperature" value={current.temperature} />
-        <input type="hidden" name="feelsLike" value={current.temperature} />
-        <input type="hidden" name="humidity" value={current.humidity ?? 0} />
-        <input type="hidden" name="windSpeed" value={current.windspeed} />
-        <input type="hidden" name="fetchedAt" value={fetchedAt} />
-        <input type="hidden" name="source" value={source} />
-
-        <input
-          type="hidden"
-          name="sunrise"
-          value={astronomy?.sunrise || "N/A"}
-        />
-        <input type="hidden" name="sunset" value={astronomy?.sunset || "N/A"} />
-        <input
-          type="hidden"
-          name="moonrise"
-          value={astronomy?.moonrise || "N/A"}
-        />
-        <input
-          type="hidden"
-          name="moonset"
-          value={astronomy?.moonset || "N/A"}
-        />
-        <input
-          type="hidden"
-          name="moonPhaseName"
-          value={astronomy?.moonPhaseName || "Unknown"}
-        />
-        <input
-          type="hidden"
-          name="moonPhaseEmoji"
-          value={astronomy?.moonPhaseEmoji || "🌑"}
-        />
-
+    <div className="mt-8 bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl text-white">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-2xl font-bold">{location.name}</h2>
         <button
-          type="submit"
-          className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
+          onClick={onSendEmail}
+          className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm font-medium transition"
         >
-          Email
+          Email Forecast
         </button>
-      </form>
-
-      {/* ⭐ Card Header */}
-      <h2 className="text-xl font-semibold mb-4">{location.name}</h2>
-
-      {/* ⭐ Forecast List */}
-      <div className="space-y-2">
-        {forecast.time.map((t, i) => (
-          <div key={t} className="flex justify-between border-b pb-2 text-sm">
-            <span>
-              {new Date(t).toLocaleDateString("en-US", {
-                weekday: "long",
-                month: "short",
-                day: "numeric",
-              })}
-            </span>
-            <span>
-              {forecast.temperature_2m_max[i]}° /{" "}
-              {forecast.temperature_2m_min[i]}°
-            </span>
-            <span>Code {forecast.weathercode[i]}</span>
-          </div>
-        ))}
       </div>
 
-      {/* ⭐ Footer */}
-      <div className="mt-4 text-xs text-gray-600">
-        <p>Source: {source}</p>
-        <p>Fetched: {new Date(fetchedAt).toLocaleTimeString()}</p>
+      {/* Current */}
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <p className="text-sm opacity-80">Current Temperature</p>
+          <p className="text-4xl font-black">{current.temperature}°</p>
+        </div>
+        <div className="text-right">
+          <p className="text-sm opacity-80">Wind</p>
+          <p className="text-xl font-semibold">{current.windspeed} mph</p>
+        </div>
       </div>
+
+      {/* Forecast Table */}
+      <div className="overflow-hidden rounded-xl border border-white/10">
+        <table className="w-full text-left">
+          <tbody className="divide-y divide-white/10">
+            {rows.map((row, i) => (
+              <tr key={i} className="hover:bg-white/5 transition-colors">
+                <td className="py-3 px-4 font-medium">
+                  {row.date.toLocaleDateString("en-US", {
+                    weekday: "long",
+                    month: "short",
+                    day: "numeric",
+                  })}
+                </td>
+
+                <td className="py-3 px-4">
+                  <span className="opacity-90">
+                    {row.max.toFixed(1)}° / {row.min.toFixed(1)}°
+                  </span>
+                </td>
+
+                <td className="py-3 px-4 text-right opacity-70">
+                  Code {row.code}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Footer */}
+      <p className="mt-4 text-xs opacity-70">
+        Source: {source} · Fetched:{" "}
+        {new Date(fetchedAt).toLocaleTimeString("en-US")}
+      </p>
     </div>
   );
 }
