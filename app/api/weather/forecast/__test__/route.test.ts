@@ -111,7 +111,7 @@ const makeSnapshot = (overrides = {}) => ({
 const mockApiResponse = (overrides = {}) => ({
   current: {
     temperature: 32,
-    windspeed: 5,
+    wind_speed_10m: 5,
     relative_humidity_2m: 65,
   },
   daily: {

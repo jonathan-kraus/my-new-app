@@ -90,7 +90,7 @@ describe("GET /api/weather/forecast", () => {
       json: async () => ({
         current: {
           temperature: 72,
-          windspeed: 8,
+          wind_speed_10m: 8,
           relative_humidity_2m: 65,
         },
         daily: {

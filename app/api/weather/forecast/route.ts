@@ -304,7 +304,7 @@ export async function GET(req: Request) {
       payload: {
         current: {
           temperature: weather.current.temperature,
-          windspeed: weather.current.windspeed,
+          windspeed: weather.current.wind_speed_10m,
           humidity: weather.current.relative_humidity_2m,
         },
         forecast: weather.daily,
@@ -355,7 +355,7 @@ export async function GET(req: Request) {
     location,
     current: {
       temperature: weather.current.temperature,
-      windspeed: weather.current.windspeed,
+      windspeed: weather.current.wind_speed_10m,
       humidity: weather.current.relative_humidity_2m,
     },
     forecast: {
