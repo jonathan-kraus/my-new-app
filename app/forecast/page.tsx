@@ -15,7 +15,9 @@ export async function sendForecastEmailAction(formData: FormData) {
   const to = session?.user?.email;
 
   if (!to) {
-    return { ok: false, error: "No email found in session" };
+    throw new Error(
+      "No email found in session. Please log in to use this feature.",
+    );
   }
 
   const weatherEmail = buildWeatherEmail({
@@ -39,7 +41,6 @@ export async function sendForecastEmailAction(formData: FormData) {
   });
 
   await sendWeatherEmail({ to, weatherEmail });
-  return { ok: true };
 }
 
 //

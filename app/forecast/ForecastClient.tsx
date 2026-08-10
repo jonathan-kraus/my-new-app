@@ -38,7 +38,7 @@ export default function ForecastClient({
   sendForecastEmailAction,
 }: {
   locations: Location[];
-  sendForecastEmailAction: (formData: FormData) => { ok: boolean; error?: string } | Promise<{ ok: boolean; error?: string }>;
+  sendForecastEmailAction: (formData: FormData) => void | Promise<void>;
 }) {
   const [isReady, setIsReady] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(() => {
