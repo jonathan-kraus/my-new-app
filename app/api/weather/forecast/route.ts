@@ -6,6 +6,22 @@ import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { ForecastResponseSchema } from "@/lib/weather/zodschema";
 import { getConfig } from "@/lib/runtime/config";
+import { getAstronomySnapshot } from "@/lib/astronomy/getAstronomySnapshot";
+import { format } from "date-fns";
+
+function getMoonEmoji(phaseName: string | null): string {
+  if (!phaseName) return "🌑";
+  const name = phaseName.toLowerCase();
+  if (name.includes("new")) return "🌑";
+  if (name.includes("waxing crescent")) return "🌒";
+  if (name.includes("first quarter")) return "🌓";
+  if (name.includes("waxing gibbous")) return "🌔";
+  if (name.includes("full")) return "🌕";
+  if (name.includes("waning gibbous")) return "🌖";
+  if (name.includes("last quarter")) return "🌗";
+  if (name.includes("waning crescent")) return "🌘";
+  return "🌑";
+}
 
 const fcm = Number(await getConfig("FORECAST_CACHE_MINUTES", "10"));
 const FORECAST_CACHE_MINUTES = fcm;
@@ -64,10 +80,43 @@ export async function GET(req: Request) {
       forecast: any;
     };
 
+    // Ensure current data has required fields
+    if (!weather.current) {
+      weather.current = { temperature: 0, windspeed: 0, humidity: 0 };
+    }
+    if (
+      weather.current.humidity === undefined ||
+      weather.current.humidity === null
+    ) {
+      weather.current.humidity = 0;
+    }
+
+    // Fetch astronomy data
+    const astronomyData = await getAstronomySnapshot(resolvedLocationId);
+    const astronomy = astronomyData.today
+      ? {
+          sunrise: astronomyData.today.sunrise,
+          sunset: astronomyData.today.sunset,
+          moonrise: astronomyData.today.moonrise || "N/A",
+          moonset: astronomyData.today.moonset || "N/A",
+          moonPhaseName: astronomyData.today.phaseName || "Unknown",
+          moonPhaseEmoji: getMoonEmoji(astronomyData.today.phaseName),
+        }
+      : {
+          sunrise: "N/A",
+          sunset: "N/A",
+          moonrise: "N/A",
+          moonset: "N/A",
+          moonPhaseName: "Unknown",
+          moonPhaseEmoji: "🌑",
+        };
+
     return NextResponse.json({
       source: "cache",
       location,
-      ...weather,
+      current: weather.current,
+      forecast: weather.forecast,
+      astronomy,
       fetchedAt: cached.fetchedAt.toISOString(),
     });
   }
@@ -95,9 +144,10 @@ export async function GET(req: Request) {
       `https://api.open-meteo.com/v1/forecast` +
         `?latitude=${location.latitude}` +
         `&longitude=${location.longitude}` +
-        `&current_weather=true` +
+        `&current=temperature,relative_humidity_2m,wind_speed_10m` +
         `&daily=temperature_2m_max,temperature_2m_min,weathercode` +
         `&temperature_unit=fahrenheit` +
+        `&wind_speed_unit=mph` +
         `&timezone=auto`,
       { cache: "no-store" },
     );
@@ -181,6 +231,7 @@ export async function GET(req: Request) {
   }
 
   const weather = parsed.data;
+  const rawWithCurrent = raw as any;
 
   // ----------------------------------------
   // GUARD AGAINST PARTIAL DAILY BLOCK
@@ -222,7 +273,11 @@ export async function GET(req: Request) {
     data: {
       locationId: resolvedLocationId,
       payload: {
-        current: weather.current_weather,
+        current: {
+          temperature: weather.current.temperature,
+          windspeed: weather.current.windspeed,
+          humidity: weather.current.relative_humidity_2m,
+        },
         forecast: weather.daily,
       },
     },
@@ -245,11 +300,37 @@ export async function GET(req: Request) {
   // ----------------------------------------
   // RETURN FRESH DATA (TESTS REQUIRE source: "api")
   // ----------------------------------------
+
+  // Fetch astronomy data
+  const astronomyData = await getAstronomySnapshot(resolvedLocationId);
+  const astronomy = astronomyData.today
+    ? {
+        sunrise: astronomyData.today.sunrise,
+        sunset: astronomyData.today.sunset,
+        moonrise: astronomyData.today.moonrise || "N/A",
+        moonset: astronomyData.today.moonset || "N/A",
+        moonPhaseName: astronomyData.today.phaseName || "Unknown",
+        moonPhaseEmoji: getMoonEmoji(astronomyData.today.phaseName),
+      }
+    : {
+        sunrise: "N/A",
+        sunset: "N/A",
+        moonrise: "N/A",
+        moonset: "N/A",
+        moonPhaseName: "Unknown",
+        moonPhaseEmoji: "🌑",
+      };
+
   return NextResponse.json({
     source: "api",
     location,
-    current: weather.current_weather,
+    current: {
+      temperature: weather.current.temperature,
+      windspeed: weather.current.windspeed,
+      humidity: weather.current.relative_humidity_2m,
+    },
     forecast: weather.daily,
+    astronomy,
     fetchedAt: snapshot.fetchedAt.toISOString(),
   });
 }

@@ -19,7 +19,7 @@ export async function sendForecastEmailAction(formData: FormData) {
       temperature: Number(formData.get("temperature")),
       feelsLike: Number(formData.get("feelsLike")),
       humidity: Number(formData.get("humidity")),
-      windSpeed: Number(formData.get("windSpeed")),
+      windSpeed: Number(formData.get("windSpeed") || formData.get("windspeed")),
       fetchedAt: formData.get("fetchedAt") as string,
     },
     astronomy: {

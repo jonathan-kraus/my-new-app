@@ -3,6 +3,7 @@ import { z } from "zod";
 export const CurrentWeatherSchema = z.object({
   temperature: z.number(),
   windspeed: z.number(),
+  relative_humidity_2m: z.number().optional(),
 });
 
 export const DailyForecastSchema = z.object({
@@ -13,7 +14,7 @@ export const DailyForecastSchema = z.object({
 });
 
 export const ForecastResponseSchema = z.object({
-  current_weather: CurrentWeatherSchema,
+  current: CurrentWeatherSchema,
   daily: DailyForecastSchema,
 });
 

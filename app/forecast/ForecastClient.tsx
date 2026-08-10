@@ -18,13 +18,13 @@ type ForecastResponse = {
     windspeed: number;
     humidity?: number;
   };
-  astronomy: {
-    sunrise: string;
-    sunset: string;
-    moonrise: string;
-    moonset: string;
-    moonPhaseName: string;
-    moonPhaseEmoji: string;
+  astronomy?: {
+    sunrise?: string;
+    sunset?: string;
+    moonrise?: string;
+    moonset?: string;
+    moonPhaseName?: string;
+    moonPhaseEmoji?: string;
   };
   forecast: {
     time: string[];
@@ -128,7 +128,16 @@ export default function ForecastClient({
               forecast={forecast.forecast}
               fetchedAt={forecast.fetchedAt}
               source={forecast.source}
-              astronomy={forecast.astronomy}
+              astronomy={
+                forecast.astronomy || {
+                  sunrise: "N/A",
+                  sunset: "N/A",
+                  moonrise: "N/A",
+                  moonset: "N/A",
+                  moonPhaseName: "Unknown",
+                  moonPhaseEmoji: "🌑",
+                }
+              }
               sendForecastEmailAction={sendForecastEmailAction}
             />
 

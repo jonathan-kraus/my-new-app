@@ -21,13 +21,13 @@ export function ForecastCard({
   };
   fetchedAt: string;
   source: string;
-  astronomy: {
-    sunrise: string;
-    sunset: string;
-    moonrise: string;
-    moonset: string;
-    moonPhaseName: string;
-    moonPhaseEmoji: string;
+  astronomy?: {
+    sunrise?: string;
+    sunset?: string;
+    moonrise?: string;
+    moonset?: string;
+    moonPhaseName?: string;
+    moonPhaseEmoji?: string;
   };
   sendForecastEmailAction: (formData: FormData) => void | Promise<void>;
 }) {
@@ -44,19 +44,31 @@ export function ForecastCard({
         <input type="hidden" name="fetchedAt" value={fetchedAt} />
         <input type="hidden" name="source" value={source} />
 
-        <input type="hidden" name="sunrise" value={astronomy.sunrise} />
-        <input type="hidden" name="sunset" value={astronomy.sunset} />
-        <input type="hidden" name="moonrise" value={astronomy.moonrise} />
-        <input type="hidden" name="moonset" value={astronomy.moonset} />
+        <input
+          type="hidden"
+          name="sunrise"
+          value={astronomy?.sunrise || "N/A"}
+        />
+        <input type="hidden" name="sunset" value={astronomy?.sunset || "N/A"} />
+        <input
+          type="hidden"
+          name="moonrise"
+          value={astronomy?.moonrise || "N/A"}
+        />
+        <input
+          type="hidden"
+          name="moonset"
+          value={astronomy?.moonset || "N/A"}
+        />
         <input
           type="hidden"
           name="moonPhaseName"
-          value={astronomy.moonPhaseName}
+          value={astronomy?.moonPhaseName || "Unknown"}
         />
         <input
           type="hidden"
           name="moonPhaseEmoji"
-          value={astronomy.moonPhaseEmoji}
+          value={astronomy?.moonPhaseEmoji || "🌑"}
         />
 
         <button
