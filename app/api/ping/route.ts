@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
   const session = await auth();
   const c = await cookies();
   let jei = 0;
-  if (!req.url.includes("99")) {
+  if (req.url.includes("99")) {
     const built = await buildUniversalContext(req, "PING");
     await logj({
       domain: "jonathan",
