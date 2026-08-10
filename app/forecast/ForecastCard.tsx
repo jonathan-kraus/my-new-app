@@ -1,81 +1,100 @@
 "use client";
 
-import { formatDistanceToNow } from "date-fns";
-import { useForecastTimeline } from "@/hooks/useForecastTimeline";
-import { WEATHER_ICONS } from "../../lib/ephemeris/weatherIcons";
+import React from "react";
 
-export function iconFor(code: number): string {
-  return WEATHER_ICONS[code] ?? "❓";
-}
 export function ForecastCard({
   location,
   current,
   forecast,
   fetchedAt,
   source,
+  astronomy,
+  sendForecastEmailAction,
 }: {
-  location: any;
-  current: any;
-  forecast: any;
+  location: { name: string };
+  current: { temperature: number; windspeed: number; humidity?: number };
+  forecast: {
+    time: string[];
+    temperature_2m_max: number[];
+    temperature_2m_min: number[];
+    weathercode: number[];
+  };
   fetchedAt: string;
   source: string;
+  astronomy: {
+    sunrise: string;
+    sunset: string;
+    moonrise: string;
+    moonset: string;
+    moonPhaseName: string;
+    moonPhaseEmoji: string;
+  };
+  sendForecastEmailAction: (formData: FormData) => void | Promise<void>;
 }) {
-  const updatedAgo = formatDistanceToNow(new Date(fetchedAt), {
-    addSuffix: true,
-  });
-
-  const t = useForecastTimeline(forecast);
-  if (!forecast || !forecast.time) {
-    return (
-      <div className="p-8 text-red-200">
-        Something went wrong — no forecast data returned.
-      </div>
-    );
-  }
-
   return (
-    <div className="w-full max-w-5xl mx-auto p-8 rounded-xl bg-gradient-to-br from-blue-500 via-sky-500 to-indigo-500 text-white shadow-lg">
-      <h2 className="text-3xl font-bold mb-6">7‑Day Forecast</h2>
+    <div className="bg-white text-black p-6 rounded-xl shadow relative">
+      {/* ⭐ Email Button (Top‑Right) */}
+      <form action={sendForecastEmailAction} className="absolute top-4 right-4">
+        {/* Hidden fields with real forecast data */}
+        <input type="hidden" name="locationName" value={location.name} />
+        <input type="hidden" name="temperature" value={current.temperature} />
+        <input type="hidden" name="feelsLike" value={current.temperature} />
+        <input type="hidden" name="humidity" value={current.humidity ?? 0} />
+        <input type="hidden" name="windSpeed" value={current.windspeed} />
+        <input type="hidden" name="fetchedAt" value={fetchedAt} />
+        <input type="hidden" name="source" value={source} />
 
-      {/* Current conditions */}
-      <div className="mb-6">
-        <p className="text-xl font-semibold">
-          {location.name}: {current.temperature.toFixed(0)}°F
-        </p>
-        <p className="opacity-80 text-sm">
-          Wind: {current.windspeed.toFixed(0)} mph · Code{" "}
-          {iconFor(forecast.weathercode[0])} {forecast.weathercode[0]}
-        </p>
-      </div>
+        <input type="hidden" name="sunrise" value={astronomy.sunrise} />
+        <input type="hidden" name="sunset" value={astronomy.sunset} />
+        <input type="hidden" name="moonrise" value={astronomy.moonrise} />
+        <input type="hidden" name="moonset" value={astronomy.moonset} />
+        <input
+          type="hidden"
+          name="moonPhaseName"
+          value={astronomy.moonPhaseName}
+        />
+        <input
+          type="hidden"
+          name="moonPhaseEmoji"
+          value={astronomy.moonPhaseEmoji}
+        />
 
-      {/* Forecast grid */}
-      <div className="grid grid-cols-7 gap-4 text-center">
-        {forecast.time.map((day: string, i: number) => (
-          <div
-            key={day}
-            className="bg-white/20 rounded-lg p-4 backdrop-blur-sm"
-          >
-            <p className="font-semibold text-lg">
-              {new Date(day).toLocaleDateString("en-US", { weekday: "short" })}
-            </p>
+        <button
+          type="submit"
+          className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
+        >
+          Email
+        </button>
+      </form>
 
-            <p className="text-sm">
-              {Math.round(forecast.temperature_2m_max[i])}° /{" "}
-              {Math.round(forecast.temperature_2m_min[i])}°
-            </p>
+      {/* ⭐ Card Header */}
+      <h2 className="text-xl font-semibold mb-4">{location.name}</h2>
 
-            <p className="text-xs opacity-80">
-              Code {Number(forecast.weathercode[i])}
-            </p>
-
-            <p className="text-2xl mt-1">🌤️</p>
+      {/* ⭐ Forecast List */}
+      <div className="space-y-2">
+        {forecast.time.map((t, i) => (
+          <div key={t} className="flex justify-between border-b pb-2 text-sm">
+            <span>
+              {new Date(t).toLocaleDateString("en-US", {
+                weekday: "long",
+                month: "short",
+                day: "numeric",
+              })}
+            </span>
+            <span>
+              {forecast.temperature_2m_max[i]}° /{" "}
+              {forecast.temperature_2m_min[i]}°
+            </span>
+            <span>Code {forecast.weathercode[i]}</span>
           </div>
         ))}
       </div>
 
-      <p className="mt-4 opacity-80 text-sm">
-        Updated {updatedAgo} · Source: {source}
-      </p>
+      {/* ⭐ Footer */}
+      <div className="mt-4 text-xs text-gray-600">
+        <p>Source: {source}</p>
+        <p>Fetched: {new Date(fetchedAt).toLocaleTimeString()}</p>
+      </div>
     </div>
   );
 }
