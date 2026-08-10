@@ -25,6 +25,20 @@ vi.mock("@/lib/db", () => ({
       findFirst: forecastSnapshotFindFirst,
       create: forecastSnapshotCreate,
     },
+    astronomySnapshot: {
+      findUnique: vi.fn().mockResolvedValue({
+        id: "astro-1",
+        locationId: "db-location-123",
+        dateString: "2026-07-09",
+        sunrise: "06:30",
+        sunset: "20:30",
+        moonrise: "10:00",
+        moonset: "23:00",
+        moonPhase: 0.5,
+        phaseName: "Full Moon",
+        fetchedAt: new Date(),
+      }),
+    },
   },
 }));
 
@@ -44,6 +58,19 @@ vi.mock("@/lib/runtime/config", () => ({
   getConfig: vi.fn(async () => 10),
 }));
 
+vi.mock("@/lib/astronomy/getAstronomySnapshot", () => ({
+  getAstronomySnapshot: vi.fn().mockResolvedValue({
+    today: {
+      sunrise: "06:30",
+      sunset: "20:30",
+      moonrise: "10:00",
+      moonset: "23:00",
+      phaseName: "Full Moon",
+    },
+    tomorrow: null,
+  }),
+}));
+
 import { GET } from "@/app/api/weather/forecast/route";
 
 describe("GET /api/weather/forecast", () => {
@@ -61,9 +88,10 @@ describe("GET /api/weather/forecast", () => {
     });
     global.fetch = vi.fn().mockResolvedValue({
       json: async () => ({
-        current_weather: {
+        current: {
           temperature: 72,
           windspeed: 8,
+          relative_humidity_2m: 65,
         },
         daily: {
           time: ["2026-07-09"],

@@ -11,6 +11,20 @@ vi.mock("@/lib/db", () => ({
     location: { findUnique: vi.fn() },
     forecastSnapshot: { findFirst: vi.fn(), create: vi.fn() },
     runtimeConfig: { findUnique: vi.fn().mockResolvedValue(null) },
+    astronomySnapshot: {
+      findUnique: vi.fn().mockResolvedValue({
+        id: "astro-1",
+        locationId: "KOP",
+        dateString: "2026-01-24",
+        sunrise: "06:30",
+        sunset: "20:30",
+        moonrise: "10:00",
+        moonset: "23:00",
+        moonPhase: 0.5,
+        phaseName: "Full Moon",
+        fetchedAt: new Date(),
+      }),
+    },
   },
 }));
 
@@ -27,6 +41,19 @@ vi.mock("@/lib/log/context", () => ({
     requestId: "req-123",
     page: "/api/weather/forecast",
     userId: "u1",
+  }),
+}));
+
+vi.mock("@/lib/astronomy/getAstronomySnapshot", () => ({
+  getAstronomySnapshot: vi.fn().mockResolvedValue({
+    today: {
+      sunrise: "06:30",
+      sunset: "20:30",
+      moonrise: "10:00",
+      moonset: "23:00",
+      phaseName: "Full Moon",
+    },
+    tomorrow: null,
   }),
 }));
 
@@ -70,19 +97,22 @@ const makeSnapshot = (overrides = {}) => ({
   locationId: "KOP",
   fetchedAt: new Date(),
   payload: {
-    current: { temp: 30 },
-    forecast: { highs: [40, 41] },
+    current: { temperature: 30, windspeed: 5, humidity: 60 },
+    forecast: {
+      time: ["2026-01-24"],
+      temperature_2m_max: [40],
+      temperature_2m_min: [20],
+      weathercode: [1],
+    },
   },
   ...overrides,
 });
 
 const mockApiResponse = (overrides = {}) => ({
-  current_weather: {
+  current: {
     temperature: 32,
-    weathercode: 1,
     windspeed: 5,
-    winddirection: 180,
-    time: "2026-01-24T00:00",
+    relative_humidity_2m: 65,
   },
   daily: {
     time: ["2026-01-24"],
@@ -139,8 +169,9 @@ describe("GET /api/weather/forecast", () => {
 
     expect(res.status).toBe(200);
     expect(json.source).toBe("cache");
-    expect(json.current.temp).toBe(30);
-    expect(json.forecast.highs).toEqual([40, 41]);
+    expect(json.current.temperature).toBe(30);
+    expect(json.forecast.temperature_2m_max).toEqual([40]);
+    expect(json.astronomy).toBeDefined();
     expect(mockedLog).toHaveBeenCalled();
   });
 

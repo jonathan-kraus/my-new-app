@@ -47,6 +47,43 @@ const getCachedAstronomySnapshot = unstable_cache(
   },
 );
 
+async function getAstronomySnapshotInternal(
+  locationId: string,
+  todayStr: string,
+  tomorrowStr: string,
+) {
+  const today = await db.astronomySnapshot.findUnique({
+    where: {
+      locationId_dateString: {
+        locationId,
+        dateString: todayStr,
+      },
+    },
+  });
+
+  const tomorrow = await db.astronomySnapshot.findUnique({
+    where: {
+      locationId_dateString: {
+        locationId,
+        dateString: tomorrowStr,
+      },
+    },
+  });
+
+  const built = await staticUniversalContext("ASTRONOMY_SNAPSHOT");
+  await logj({
+    domain: "jonathan",
+    level: "info",
+    message: "Astronomy snapshot fetched",
+    file: "lib/astronomy/getAstronomySnapshot.ts",
+    line: 31,
+    payload: { today },
+    meta: { built: { ...built, eventIndex: 1 } },
+  });
+
+  return { today, tomorrow };
+}
+
 export async function getAstronomySnapshot(
   locationId: string,
   now = new Date(),
@@ -57,6 +94,11 @@ export async function getAstronomySnapshot(
 
   const todayStr = format(now, "yyyy-MM-dd");
   const tomorrowStr = format(addDays(now, 1), "yyyy-MM-dd");
+
+  // In test environment, bypass unstable_cache which doesn't work
+  if (process.env.NODE_ENV === "test") {
+    return getAstronomySnapshotInternal(locationId, todayStr, tomorrowStr);
+  }
 
   return getCachedAstronomySnapshot(locationId, todayStr, tomorrowStr);
 }
