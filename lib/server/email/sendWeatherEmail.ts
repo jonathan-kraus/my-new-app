@@ -3,52 +3,43 @@
 import { getConfig, setConfig } from "@/lib/runtime/config";
 import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
 import { buildSendWeatherEmail } from "@/lib/buildSendWeatherEmail";
-import { logit } from "@/lib/log/logit";
+import { logj } from "@/lib/log/logj";
+import { staticUniversalContext } from "@/lib/log/buildj";
 import { getThrottleStatus } from "./throttle-utils";
+
+const built = staticUniversalContext("SendWeatherEmail");
+let jei = 0;
+const message_begin = "SendWeatherEmail -- ";
 
 export async function sendWeatherEmail(message?: string, subject?: string) {
   // --- 1. Read flag ---------------------------------------------------------
   const enabled = await getConfig("email_enabled", "1");
-  const eventIndex = 212;
-  const requestId = crypto.randomUUID();
-  await logit(
-    "email",
-    {
-      level: "info",
-      message: "sendWeatherEmail - Checked email_enabled",
+
+  await logj({
+    domain: "email",
+    level: "info",
+    message: message_begin + "Checked email_enabled",
+    file: "lib/server/email/sendWeatherEmail.ts",
+    line: 16,
+    payload: {
+      enabled_raw: enabled,
+      enabled_string: String(enabled),
+      message,
+      subject,
     },
-    { eventIndex },
-    {
-      payload: {
-        enabled_raw: enabled,
-        enabled_string: String(enabled),
-        message,
-        subject,
-      },
-      requestId: requestId,
-      zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
-    },
-  );
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
 
   if (String(enabled) !== "1") {
-    await logit(
-      "email",
-      {
-        level: "warn",
-        message: "sendWeatherEmail - Email sending disabled by runtime flag",
-      },
-      { eventIndex },
-      {
-        requestId: requestId,
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", {
-          timeZone: "America/New_York",
-        }),
-      },
-    );
+    await logj({
+      domain: "email",
+      level: "warn",
+      message: message_begin + "Email sending disabled by runtime flag",
+      file: "lib/server/email/sendWeatherEmail.ts",
+      line: 33,
+      payload: {},
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
     return { ok: false, reason: "disabled" };
   }
 
@@ -87,25 +78,18 @@ export async function sendWeatherEmail(message?: string, subject?: string) {
     .setText(finalText);
 
   // --- 3. Throttle ----------------------------------------------------------
-  await logit(
-    "email",
-    {
-      level: "info",
-      message: "Throttle check starting",
+  await logj({
+    domain: "email",
+    level: "info",
+    message: message_begin + "Throttle check starting",
+    file: "lib/server/email/sendWeatherEmail.ts",
+    line: 80,
+    payload: {
+      throttleMinutes,
+      lastSentRaw,
     },
-    { eventIndex },
-    {
-      payload: {
-        throttleMinutes,
-        lastSentRaw,
-      },
-      requestId: requestId,
-      zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
-    },
-  );
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
 
   const throttleStatus = getThrottleStatus(
     typeof lastSentRaw === "string" && lastSentRaw.length > 0
@@ -114,28 +98,21 @@ export async function sendWeatherEmail(message?: string, subject?: string) {
     throttleMinutes,
   );
 
-  await logit(
-    "email",
-    {
-      level: "info",
-      message: "Throttle status computed",
+  await logj({
+    domain: "email",
+    level: "info",
+    message: message_begin + "Throttle status computed",
+    file: "lib/server/email/sendWeatherEmail.ts",
+    line: 94,
+    payload: {
+      isThrottled: throttleStatus.isThrottled,
+      canSendNow: throttleStatus.canSendNow,
+      timeUntilAllowed: throttleStatus.timeUntilAllowed,
+      remainingMinutes: throttleStatus.remainingMinutes,
+      throttleWindowMinutes: throttleStatus.throttleWindowMinutes,
     },
-    { eventIndex },
-    {
-      payload: {
-        isThrottled: throttleStatus.isThrottled,
-        canSendNow: throttleStatus.canSendNow,
-        timeUntilAllowed: throttleStatus.timeUntilAllowed,
-        remainingMinutes: throttleStatus.remainingMinutes,
-        throttleWindowMinutes: throttleStatus.throttleWindowMinutes,
-      },
-      requestId: requestId,
-      zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
-    },
-  );
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
 
   if (throttleStatus.isThrottled) {
     return {
@@ -149,72 +126,51 @@ export async function sendWeatherEmail(message?: string, subject?: string) {
   try {
     await mailerSend.email.send(emailParams);
 
-    await logit(
-      "email",
-      {
-        level: "info",
-        message: "Travel Weather email sent",
+    await logj({
+      domain: "email",
+      level: "info",
+      message: message_begin + "Travel Weather email sent",
+      file: "lib/server/email/sendWeatherEmail.ts",
+      line: 128,
+      payload: {
+        subject: finalSubject,
+        message_preview: message?.slice(0, 80),
       },
-      { eventIndex },
-      {
-        payload: {
-          subject: finalSubject,
-          message_preview: message?.slice(0, 80),
-        },
-        requestId: requestId,
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", {
-          timeZone: "America/New_York",
-        }),
-      },
-    );
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
 
     // --- 5. Update timestamp --------------------------------------------------
     const newTimestamp = new Date().toISOString();
     const saved = await setConfig("email.last_sent_at", newTimestamp);
 
-    await logit(
-      "email",
-      {
-        level: "info",
-        message: "Updated last_sent_at",
+    await logj({
+      domain: "email",
+      level: "info",
+      message: message_begin + "Updated last_sent_at",
+      file: "lib/server/email/sendWeatherEmail.ts",
+      line: 141,
+      payload: {
+        attempted: newTimestamp,
+        saved,
+        match: String(saved) === newTimestamp,
       },
-      { eventIndex },
-      {
-        payload: {
-          attempted: newTimestamp,
-          saved,
-          match: String(saved) === newTimestamp,
-        },
-        requestId: requestId,
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", {
-          timeZone: "America/New_York",
-        }),
-      },
-    );
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
 
     return { ok: true, sent: true };
   } catch (err: any) {
-    await logit(
-      "email",
-      {
-        level: "error",
-        message: "MailerSend error",
+    await logj({
+      domain: "email",
+      level: "error",
+      message: message_begin + "MailerSend error",
+      file: "lib/server/email/sendWeatherEmail.ts",
+      line: 156,
+      payload: {
+        error: err?.message,
+        stack: err?.stack,
       },
-      { eventIndex },
-      {
-        payload: {
-          error: err?.message,
-          stack: err?.stack,
-        },
-        requestId: requestId,
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", {
-          timeZone: "America/New_York",
-        }),
-      },
-    );
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
 
     return { ok: false, reason: "error", detail: err.message };
   }
