@@ -59,7 +59,6 @@ export default function ForecastClient({
   });
   const [forecast, setForecast] = useState<ForecastResponse | null>(null);
   const latestForecastRequestRef = useRef(0);
-  const logEventIndexRef = useRef(0);
 
   useEffect(() => setIsReady(true), []);
 
@@ -97,7 +96,15 @@ export default function ForecastClient({
         if ((err as { name?: string })?.name === "AbortError") return;
         console.error("Forecast fetch failed", err);
       });
-
+    logj({
+      domain: "forecast",
+      level: "info",
+      message: "Forecast client completed",
+      file: "app/forecast/ForecastClient.tsx",
+      line: 99,
+      payload: { selectedId },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
     return () => controller.abort();
   }, [selectedId]);
 
