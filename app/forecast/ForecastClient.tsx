@@ -8,6 +8,8 @@ import { useForecastTimeline } from "@/hooks/useForecastTimeline";
 import { Location } from "@/lib/types";
 import { logj } from "@/lib/log/client";
 import { staticUniversalContext } from "@/lib/log/buildj";
+import { sendForecastEmailAction } from "./page"; // ⭐ server action import
+
 const built = await staticUniversalContext("dashboard");
 
 type ForecastResponse = {
@@ -15,6 +17,15 @@ type ForecastResponse = {
   current: {
     temperature: number;
     windspeed: number;
+    humidity?: number;
+  };
+  astronomy: {
+    sunrise: string;
+    sunset: string;
+    moonrise: string;
+    moonset: string;
+    moonPhaseName: string;
+    moonPhaseEmoji: string;
   };
   forecast: {
     time: string[];
@@ -45,6 +56,7 @@ export default function ForecastClient({
   useEffect(() => {
     setIsReady(true);
   }, []);
+
   let jei = 0;
   logj({
     domain: "forecast",
@@ -52,9 +64,10 @@ export default function ForecastClient({
     message: "ForecastClient loaded",
     file: "app/components/forecast/ForecastClient.tsx",
     line: 30,
-    payload: { lacations: locations },
+    payload: { locations },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
+
   const [selectedId, setSelectedId] = useState<string | null>(() => {
     if (typeof window === "undefined") return null;
     return localStorage.getItem("lastLocationId");
@@ -83,13 +96,14 @@ export default function ForecastClient({
     if (!selectedId) return;
     const requestId = ++latestForecastRequestRef.current;
     const controller = new AbortController();
+
     logj({
       domain: "forecast",
       level: "info",
       message: "About to fetch forecast for location",
-      file: "app\components\forecast\ForecastClient.tsx",
+      file: "app/components/forecast/ForecastClient.tsx",
       line: 30,
-      payload: { selectedId: selectedId },
+      payload: { selectedId },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
 
@@ -99,55 +113,10 @@ export default function ForecastClient({
     })
       .then((r) => r.json())
       .then((next: ForecastResponse) => {
-        // Ignore stale responses from older requests.
         if (requestId !== latestForecastRequestRef.current) return;
-
-        setForecast((prev) => {
-          // In dev Strict Mode, duplicate mounts can issue near-simultaneous
-          // requests. If the second response is from cache for the same
-          // snapshot, keep the first API source so the badge is accurate to the
-          // initial fetch that just happened.
-          if (
-            prev &&
-            prev.source === "api" &&
-            next.source === "cache" &&
-            prev.fetchedAt === next.fetchedAt &&
-            prev.location.id === next.location.id
-          ) {
-            void fetch("/api/log", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              keepalive: true,
-              body: JSON.stringify({
-                domain: "weather",
-                level: "info",
-                message:
-                  "Forecast source guard kept api over cache duplicate response",
-                file: "app/forecast/ForecastClient.tsx",
-                line: 99,
-                payload: {
-                  locationId: next.location.id,
-                  fetchedAt: next.fetchedAt,
-                  previousSource: prev.source,
-                  nextSource: next.source,
-                },
-                meta: {
-                  built: {
-                    route: "forecast-client",
-                    requestId: crypto.randomUUID(),
-                    eventIndex: ++logEventIndexRef.current,
-                  },
-                },
-              }),
-            }).catch((error: unknown) => {
-              console.error("Failed to write forecast source guard log", error);
-            });
-            return prev;
-          }
-          return next;
-        });
+        setForecast(next);
       })
-      .catch((err: unknown) => {
+      .catch((err) => {
         if ((err as { name?: string })?.name === "AbortError") return;
         console.error("Forecast fetch failed", err);
       });
@@ -165,12 +134,13 @@ export default function ForecastClient({
       domain: "forecast",
       level: "info",
       message: "ForecastClient received data",
-      file: "app\components\forecast\ForecastClient.tsx",
+      file: "app/components/forecast/ForecastClient.tsx",
       line: 162,
-      payload: { forecast: forecast },
+      payload: { forecast },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
   }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 px-4 sm:px-6 lg:px-8 py-10 text-white">
       <div className="w-full max-w-6xl mx-auto">
@@ -228,6 +198,93 @@ export default function ForecastClient({
                 </p>
               </div>
             )}
+
+            {/* ⭐ EMAIL FORM — now inside ForecastClient */}
+            <form
+              action={sendForecastEmailAction}
+              className="mt-10 bg-white text-black p-6 rounded-xl shadow space-y-4"
+            >
+              <h2 className="text-xl font-semibold">Email This Forecast</h2>
+
+              <input
+                type="email"
+                name="email"
+                required
+                placeholder="Enter your email"
+                className="border px-3 py-2 rounded w-64"
+              />
+
+              {/* ⭐ Hidden fields with real forecast data */}
+              <input
+                type="hidden"
+                name="locationName"
+                value={forecast.location.name}
+              />
+              <input
+                type="hidden"
+                name="temperature"
+                value={forecast.current.temperature}
+              />
+              <input
+                type="hidden"
+                name="feelsLike"
+                value={forecast.current.temperature}
+              />
+              <input
+                type="hidden"
+                name="humidity"
+                value={forecast.current.humidity ?? 0}
+              />
+              <input
+                type="hidden"
+                name="windSpeed"
+                value={forecast.current.windspeed}
+              />
+              <input
+                type="hidden"
+                name="fetchedAt"
+                value={forecast.fetchedAt}
+              />
+              <input type="hidden" name="source" value={forecast.source} />
+
+              <input
+                type="hidden"
+                name="sunrise"
+                value={forecast.astronomy.sunrise}
+              />
+              <input
+                type="hidden"
+                name="sunset"
+                value={forecast.astronomy.sunset}
+              />
+              <input
+                type="hidden"
+                name="moonrise"
+                value={forecast.astronomy.moonrise}
+              />
+              <input
+                type="hidden"
+                name="moonset"
+                value={forecast.astronomy.moonset}
+              />
+              <input
+                type="hidden"
+                name="moonPhaseName"
+                value={forecast.astronomy.moonPhaseName}
+              />
+              <input
+                type="hidden"
+                name="moonPhaseEmoji"
+                value={forecast.astronomy.moonPhaseEmoji}
+              />
+
+              <button
+                type="submit"
+                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+              >
+                📧 Email Me This Forecast
+              </button>
+            </form>
           </>
         )}
       </div>
