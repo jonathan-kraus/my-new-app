@@ -7,6 +7,7 @@ import { CurrentWeather } from "./CurrentWeather";
 import { useForecastTimeline } from "@/hooks/useForecastTimeline";
 import { Location } from "@/lib/types";
 import { logj } from "@/lib/log/client";
+import { staticUniversalContext } from "@/lib/log/buildj";
 
 type ForecastResponse = {
   location: Location;
@@ -40,12 +41,22 @@ export default function ForecastClient({
   locations: Location[];
   sendForecastEmailAction: (formData: FormData) => void | Promise<void>;
 }) {
+  const built = staticUniversalContext("ForecastClient");
+  let jei = 0;
   const [isReady, setIsReady] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(() => {
     if (typeof window === "undefined") return null;
     return localStorage.getItem("lastLocationId");
   });
-
+  logj({
+    domain: "forecast",
+    level: "info",
+    message: "Forecast client loaded",
+    file: "app/forecast/ForecastClient.tsx",
+    line: 51,
+    payload: { selectedId },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
   const [forecast, setForecast] = useState<ForecastResponse | null>(null);
   const latestForecastRequestRef = useRef(0);
   const logEventIndexRef = useRef(0);
