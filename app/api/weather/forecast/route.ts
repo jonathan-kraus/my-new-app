@@ -91,6 +91,30 @@ export async function GET(req: Request) {
       weather.current.humidity = 0;
     }
 
+    // Ensure forecast data has required structure
+    if (!weather.forecast) {
+      weather.forecast = {
+        time: [],
+        temperature_2m_max: [],
+        temperature_2m_min: [],
+        weathercode: [],
+      };
+    } else {
+      // Normalize forecast structure if it has old format
+      if (!weather.forecast.temperature_2m_max && weather.forecast.highs) {
+        weather.forecast.temperature_2m_max = weather.forecast.highs;
+      }
+      if (!weather.forecast.temperature_2m_min && weather.forecast.lows) {
+        weather.forecast.temperature_2m_min = weather.forecast.lows;
+      }
+      if (!weather.forecast.time) {
+        weather.forecast.time = [];
+      }
+      if (!weather.forecast.weathercode) {
+        weather.forecast.weathercode = [];
+      }
+    }
+
     // Fetch astronomy data
     const astronomyData = await getAstronomySnapshot(resolvedLocationId);
     const astronomy = astronomyData.today
@@ -115,7 +139,12 @@ export async function GET(req: Request) {
       source: "cache",
       location,
       current: weather.current,
-      forecast: weather.forecast,
+      forecast: {
+        time: weather.forecast.time || [],
+        temperature_2m_max: weather.forecast.temperature_2m_max || [],
+        temperature_2m_min: weather.forecast.temperature_2m_min || [],
+        weathercode: weather.forecast.weathercode || [],
+      },
       astronomy,
       fetchedAt: cached.fetchedAt.toISOString(),
     });
@@ -329,7 +358,12 @@ export async function GET(req: Request) {
       windspeed: weather.current.windspeed,
       humidity: weather.current.relative_humidity_2m,
     },
-    forecast: weather.daily,
+    forecast: {
+      time: weather.daily.time,
+      temperature_2m_max: weather.daily.temperature_2m_max,
+      temperature_2m_min: weather.daily.temperature_2m_min,
+      weathercode: weather.daily.weathercode,
+    },
     astronomy,
     fetchedAt: snapshot.fetchedAt.toISOString(),
   });
