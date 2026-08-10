@@ -11,7 +11,12 @@ import { db } from "@/lib/db";
 export async function sendForecastEmailAction(formData: FormData) {
   "use server";
 
-  const to = formData.get("email") as string;
+  const session = await auth();
+  const to = session?.user?.email;
+
+  if (!to) {
+    return { ok: false, error: "No email found in session" };
+  }
 
   const weatherEmail = buildWeatherEmail({
     locationName: formData.get("locationName") as string,
@@ -34,6 +39,7 @@ export async function sendForecastEmailAction(formData: FormData) {
   });
 
   await sendWeatherEmail({ to, weatherEmail });
+  return { ok: true };
 }
 
 //

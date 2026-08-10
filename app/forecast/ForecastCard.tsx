@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 
 export function ForecastCard({
   location,
@@ -29,7 +29,7 @@ export function ForecastCard({
     moonPhaseName?: string;
     moonPhaseEmoji?: string;
   };
-  sendForecastEmailAction: (formData: FormData) => void | Promise<void>;
+  sendForecastEmailAction: (formData: FormData) => { ok: boolean; error?: string } | Promise<{ ok: boolean; error?: string }>;
 }) {
   return (
     <div className="bg-white text-black p-6 rounded-xl shadow relative">

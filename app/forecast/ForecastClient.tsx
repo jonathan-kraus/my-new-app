@@ -7,9 +7,6 @@ import { CurrentWeather } from "./CurrentWeather";
 import { useForecastTimeline } from "@/hooks/useForecastTimeline";
 import { Location } from "@/lib/types";
 import { logj } from "@/lib/log/client";
-import { staticUniversalContext } from "@/lib/log/buildj";
-
-const built = await staticUniversalContext("dashboard");
 
 type ForecastResponse = {
   location: Location;
@@ -41,7 +38,7 @@ export default function ForecastClient({
   sendForecastEmailAction,
 }: {
   locations: Location[];
-  sendForecastEmailAction: (formData: FormData) => void | Promise<void>;
+  sendForecastEmailAction: (formData: FormData) => { ok: boolean; error?: string } | Promise<{ ok: boolean; error?: string }>;
 }) {
   const [isReady, setIsReady] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(() => {
