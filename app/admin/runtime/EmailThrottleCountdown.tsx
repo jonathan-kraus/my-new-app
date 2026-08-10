@@ -5,6 +5,7 @@
  */
 
 import { useEffect, useState } from "react";
+import { formatDistanceToNow } from "date-fns";
 
 export function EmailThrottleCountdown({
   lastSent,
@@ -45,15 +46,22 @@ export function EmailThrottleCountdown({
       const diff = nextAllowed.getTime() - now.getTime();
 
       if (diff <= 0) {
-        setRemaining("Ready now");
+        // Past the throttle window - show relative time since
+        const timePast = formatDistanceToNow(nextAllowed, { addSuffix: true });
+        setRemaining(`Ready now (${timePast})`);
         setStatus("ready");
         return;
       }
 
+      // Still in throttle window - show countdown
       const minutes = Math.floor(diff / 1000 / 60);
       const seconds = Math.floor((diff / 1000) % 60);
 
-      setRemaining(`${minutes}m ${seconds}s`);
+      if (minutes > 0) {
+        setRemaining(`in ${minutes}m ${seconds}s`);
+      } else {
+        setRemaining(`in ${seconds}s`);
+      }
       setStatus("countdown");
     }
 

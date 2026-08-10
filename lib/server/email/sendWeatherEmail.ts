@@ -4,6 +4,7 @@ import { getConfig, setConfig } from "@/lib/runtime/config";
 import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
 import { buildSendWeatherEmail } from "@/lib/buildSendWeatherEmail";
 import { logit } from "@/lib/log/logit";
+import { getThrottleStatus } from "./throttle-utils";
 
 export async function sendWeatherEmail(message?: string, subject?: string) {
   // --- 1. Read flag ---------------------------------------------------------
@@ -106,38 +107,42 @@ export async function sendWeatherEmail(message?: string, subject?: string) {
     },
   );
 
-  if (typeof lastSentRaw === "string" && lastSentRaw.length > 0) {
-    const last = new Date(lastSentRaw);
-    const now = new Date();
-    const diffMinutes = (now.getTime() - last.getTime()) / 1000 / 60;
+  const throttleStatus = getThrottleStatus(
+    typeof lastSentRaw === "string" && lastSentRaw.length > 0
+      ? lastSentRaw
+      : null,
+    throttleMinutes,
+  );
 
-    await logit(
-      "email",
-      {
-        level: "info",
-        message: "Computed throttle difference",
+  await logit(
+    "email",
+    {
+      level: "info",
+      message: "Throttle status computed",
+    },
+    { eventIndex },
+    {
+      payload: {
+        isThrottled: throttleStatus.isThrottled,
+        canSendNow: throttleStatus.canSendNow,
+        timeUntilAllowed: throttleStatus.timeUntilAllowed,
+        remainingMinutes: throttleStatus.remainingMinutes,
+        throttleWindowMinutes: throttleStatus.throttleWindowMinutes,
       },
-      { eventIndex },
-      {
-        payload: {
-          diffMinutes,
-          throttleMinutes,
-        },
-        requestId: requestId,
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", {
-          timeZone: "America/New_York",
-        }),
-      },
-    );
+      requestId: requestId,
+      zulu: new Date().toISOString(),
+      local: new Date().toLocaleString("en-US", {
+        timeZone: "America/New_York",
+      }),
+    },
+  );
 
-    if (diffMinutes < throttleMinutes) {
-      return {
-        ok: false,
-        reason: "throttled",
-        detail: `Wait ${Math.ceil(throttleMinutes - diffMinutes)} more minutes`,
-      };
-    }
+  if (throttleStatus.isThrottled) {
+    return {
+      ok: false,
+      reason: "throttled",
+      detail: throttleStatus.timeUntilAllowed,
+    };
   }
 
   // --- 4. Send email --------------------------------------------------------

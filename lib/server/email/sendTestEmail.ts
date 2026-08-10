@@ -5,6 +5,7 @@ import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
 import { buildTestEmail } from "@/lib/buildTestEmail";
 import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
+import { getThrottleStatus } from "./throttle-utils";
 
 const built = staticUniversalContext("Jonathan");
 let jei = 0;
@@ -20,7 +21,7 @@ export async function sendTestEmail(message: string, subject: string) {
       level: "info",
       message: message_begin + "Email disabled by flag",
       file: "lib/server/email/sendTestEmail.ts",
-      line: 27,
+      line: 18,
       payload: { some: "data" },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -62,46 +63,49 @@ export async function sendTestEmail(message: string, subject: string) {
     level: "info",
     message: message_begin + "Throttle check starting",
     file: "lib/server/email/sendTestEmail.ts",
-    line: 69,
+    line: 60,
     payload: { some: "data" },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
 
-  if (typeof lastSentRaw === "string" && lastSentRaw.length > 0) {
-    const last = new Date(lastSentRaw);
-    const now = new Date();
-    const diffMinutes = (now.getTime() - last.getTime()) / 1000 / 60;
+  const throttleStatus = getThrottleStatus(
+    typeof lastSentRaw === "string" && lastSentRaw.length > 0
+      ? lastSentRaw
+      : null,
+    throttleMinutes,
+  );
 
+  await logj({
+    domain: "jonathan",
+    level: "info",
+    message: message_begin + "Throttle status computed",
+    file: "lib/server/email/sendTestEmail.ts",
+    line: 72,
+    payload: {
+      isThrottled: throttleStatus.isThrottled,
+      canSendNow: throttleStatus.canSendNow,
+      timeUntilAllowed: throttleStatus.timeUntilAllowed,
+      remainingMinutes: throttleStatus.remainingMinutes,
+      throttleWindowMinutes: throttleStatus.throttleWindowMinutes,
+    },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
+
+  if (throttleStatus.isThrottled) {
     await logj({
       domain: "jonathan",
       level: "info",
-      message: message_begin + "Computed throttle minutes",
+      message: message_begin + "Throttled",
       file: "lib/server/email/sendTestEmail.ts",
-      line: 84,
-      payload: {
-        diffminutes: diffMinutes,
-        throttleMinutes: throttleMinutes,
-        nextAllowedInMinutes: throttleMinutes - diffMinutes,
-      },
+      line: 89,
+      payload: { throttleStatus },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
-
-    if (diffMinutes < throttleMinutes) {
-      await logj({
-        domain: "jonathan",
-        level: "info",
-        message: message_begin + "Throttled",
-        file: "lib/server/email/sendTestEmail.ts",
-        line: 99,
-        payload: { diffminutes: diffMinutes },
-        meta: { built: { ...built, eventIndex: ++jei } },
-      });
-      return {
-        ok: false,
-        reason: "throttled",
-        detail: `Wait ${Math.ceil(throttleMinutes - diffMinutes)} more minutes`,
-      };
-    }
+    return {
+      ok: false,
+      reason: "throttled",
+      detail: throttleStatus.timeUntilAllowed,
+    };
   }
 
   // --- 4. Send email --------------------------------------------------------
@@ -113,7 +117,7 @@ export async function sendTestEmail(message: string, subject: string) {
       level: "info",
       message: message_begin + "Test email sent",
       file: "lib/server/email/sendTestEmail.ts",
-      line: 120,
+      line: 111,
       payload: { some: "data" },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -126,7 +130,7 @@ export async function sendTestEmail(message: string, subject: string) {
       level: "info",
       message: message_begin + "Updated last_sent_at",
       file: "lib/server/email/sendTestEmail.ts",
-      line: 133,
+      line: 124,
       payload: { some: "data" },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -138,7 +142,7 @@ export async function sendTestEmail(message: string, subject: string) {
       level: "info",
       message: message_begin + "Mailersend error",
       file: "lib/server/email/sendTestEmail.ts",
-      line: 145,
+      line: 136,
       payload: { some: "data" },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
