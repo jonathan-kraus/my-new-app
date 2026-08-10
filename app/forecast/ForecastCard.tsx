@@ -74,7 +74,10 @@ export function ForecastCard({
   };
 
   return (
-    <div className="mt-8 bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl text-white">
+    <div
+      className="mt-8 bg-white/10 backdrop-blur-md rounded-2xl p-6 shadow-xl text-white
+                animate-[fadeIn_0.5s_ease-out]"
+    >
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold">{location.name}</h2>
@@ -103,8 +106,13 @@ export function ForecastCard({
         <table className="w-full text-left">
           <tbody className="divide-y divide-white/10">
             {rows.map((row, i) => (
-              <tr key={i} className="hover:bg-white/5 transition-colors">
-                <td className="py-3 px-4 font-medium">
+              <tr
+                key={i}
+                className="hover:bg-white/5 transition-colors
+               animate-[rowIn_0.4s_ease-out]
+               [animation-delay:${i * 80}ms]"
+              >
+                <td className="py-3 px-4 font-medium block md:table-cell">
                   {row.date.toLocaleDateString("en-US", {
                     weekday: "long",
                     month: "short",
@@ -112,13 +120,13 @@ export function ForecastCard({
                   })}
                 </td>
 
-                <td className="py-3 px-4">
+                <td className="py-3 px-4 block md:table-cell">
                   <span className="opacity-90">
                     {row.max.toFixed(1)}° / {row.min.toFixed(1)}°
                   </span>
                 </td>
 
-                <td className="py-3 px-4 text-right opacity-70">
+                <td className="py-3 px-4 text-right opacity-70 block md:table-cell md:text-right">
                   Code {row.code}
                 </td>
               </tr>
