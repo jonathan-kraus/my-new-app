@@ -11,7 +11,7 @@ export async function sendWeatherEmail({
   const mailerSend = new MailerSend({
     apiKey: process.env.MAILERSEND_API_KEY!,
   });
-
+  // app\forecast\mailersend.tsx
   const sentFrom = new Sender("weather@www.kraus.my.id", "Weather Bot");
   const recipients = [new Recipient(to)];
 
