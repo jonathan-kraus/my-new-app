@@ -7,7 +7,9 @@ import { headers } from "next/headers";
 
 export default async function PingPage() {
   const [pingRes] = await Promise.all([
-    fetch("https://www.kraus.my.id/api/ping", { cache: "no-store" }),
+    fetch("https://www.kraus.my.id/api/ping?run=Jonathan", {
+      cache: "no-store",
+    }),
     // fetch("https://www.kraus.my.id/api/deployments", { cache: "no-store" }),
   ]);
 
