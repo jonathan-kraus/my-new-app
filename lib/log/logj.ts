@@ -77,9 +77,12 @@ export function safeForNeon(value: unknown): unknown {
 // ---------------------------------------------------------------------------
 // Main logj()
 // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Main logj() with hybrid callsite detection
+// ---------------------------------------------------------------------------
 export async function logj(input: LogjInput) {
   try {
-    const {
+    let {
       domain,
       level,
       message,
@@ -89,6 +92,32 @@ export async function logj(input: LogjInput) {
       meta = {},
     } = input;
 
+    // -----------------------------------------------------------------------
+    // HYBRID CALLSITE DETECTION
+    // Only fill file/line if user didn't provide them
+    // -----------------------------------------------------------------------
+    if (!file || !line) {
+      const err = new Error();
+      const stack = err.stack?.split("\n");
+
+      const caller = stack?.find((frame) => !frame.includes("logj"));
+
+      if (caller) {
+        const match = caller.match(/\((.*):(\d+):\d+\)/);
+
+        if (match) {
+          const detectedFile = match[1] ?? null;
+          const detectedLine = match[2] ? Number(match[2]) : null;
+
+          file = file ?? detectedFile;
+          line = line ?? detectedLine;
+        }
+      }
+    }
+
+    // -----------------------------------------------------------------------
+    // Canonical user/session/request fields
+    // -----------------------------------------------------------------------
     const canonicalUserId = (payload.userId ??
       payload.session?.user?.id ??
       meta.built?.userId ??
@@ -109,6 +138,9 @@ export async function logj(input: LogjInput) {
       meta.built?.requestId ??
       "canr") as string;
 
+    // -----------------------------------------------------------------------
+    // Canonical record
+    // -----------------------------------------------------------------------
     const canonical: CanonicalLogRecord = {
       domain,
       level,
@@ -131,10 +163,16 @@ export async function logj(input: LogjInput) {
 
     const record = parsed.data;
 
+    // -----------------------------------------------------------------------
+    // Event index prefix
+    // -----------------------------------------------------------------------
     const eventIndex = (meta.built?.eventIndex ?? 0) as number;
     const prefixedMessage =
       eventIndex > 0 ? `#${eventIndex} ${message}` : message;
 
+    // -----------------------------------------------------------------------
+    // Write to Neon/Postgres
+    // -----------------------------------------------------------------------
     await db.log.create({
       data: {
         ...record,
@@ -144,14 +182,17 @@ export async function logj(input: LogjInput) {
       },
     });
 
+    // -----------------------------------------------------------------------
+    // Write to Axiom
+    // -----------------------------------------------------------------------
     await axiomIngest([
       {
         domain,
         level,
-        message: prefixedMessage, // use same variable for consistency
+        message: prefixedMessage,
         file,
         line,
-        eventIndex: meta.built?.eventIndex ?? 0, // also fixed to use built
+        eventIndex,
         meta_json: JSON.stringify(record.meta),
         payload_json: JSON.stringify(record.payload),
       },

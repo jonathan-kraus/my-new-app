@@ -13,8 +13,8 @@ export async function GET(nextReq: Request) {
     domain: "environment",
     level: "info",
     message: "Starting Environment Status Check",
-    file: "app/api/environment/route.ts",
-    line: 9,
+    // file: "app/api/environment/route.ts",
+    // line: 9,
     payload: { some: "data" },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
