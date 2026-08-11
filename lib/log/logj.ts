@@ -99,16 +99,21 @@ export async function logj(input: LogjInput) {
     if (!file || !line) {
       const err = new Error();
       const stack = err.stack?.split("\n");
+
       const caller = stack?.find((frame) => !frame.includes("logj"));
 
       if (caller) {
-        const match = caller.match(/\((.*):(\d+):\d+\)/);
+        // Format A: at Something (/path/file.ts:123:45)
+        let match = caller.match(/\((.*):(\d+):\d+\)/);
+
+        // Format B: at /path/file.ts:123:45
+        if (!match) {
+          match = caller.match(/at\s+(.*):(\d+):\d+/);
+        }
 
         if (match) {
-          const [_, rawFile, rawLine] = match;
-
-          const detectedFile: string | null = rawFile ?? null;
-          const detectedLine: number | null = rawLine ? Number(rawLine) : null;
+          const detectedFile = match[1] ?? null;
+          const detectedLine = match[2] ? Number(match[2]) : null;
 
           if (!file) file = detectedFile;
           if (!line) line = detectedLine;
