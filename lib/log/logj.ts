@@ -99,18 +99,19 @@ export async function logj(input: LogjInput) {
     if (!file || !line) {
       const err = new Error();
       const stack = err.stack?.split("\n");
-
       const caller = stack?.find((frame) => !frame.includes("logj"));
 
       if (caller) {
         const match = caller.match(/\((.*):(\d+):\d+\)/);
 
         if (match) {
-          const detectedFile = match[1] ?? null;
-          const detectedLine = match[2] ? Number(match[2]) : null;
+          const [_, rawFile, rawLine] = match;
 
-          file = file ?? detectedFile;
-          line = line ?? detectedLine;
+          const detectedFile: string | null = rawFile ?? null;
+          const detectedLine: number | null = rawLine ? Number(rawLine) : null;
+
+          if (!file) file = detectedFile;
+          if (!line) line = detectedLine;
         }
       }
     }
