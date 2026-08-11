@@ -12,7 +12,7 @@ export async function GET(nextReq: Request) {
   await logj({
     domain: "environment",
     level: "info",
-    message: "Starting Environment Status Check",
+    message: "<><><><><><>Starting Environment Status Check",
     // file: "app/api/environment/route.ts",
     // line: 1119,
     payload: { some: "data" },
