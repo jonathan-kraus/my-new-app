@@ -10,6 +10,9 @@ if (!filePath) {
 const workspaceRoot = process.cwd();
 const relativeFilePath = path.relative(workspaceRoot, filePath);
 
+// ⭐ FIX: normalize Windows paths
+const normalizedPath = relativeFilePath.replace(/\\/g, "/");
+
 const lines = fs.readFileSync(filePath, "utf8").split("\n");
 
 let fileUpdates = 0;
@@ -22,7 +25,7 @@ for (let i = 0; i < lines.length; i++) {
   if (line.includes("logj({")) {
     const correctLineNumber = i + 1;
 
-    // Now scan forward until we hit the closing });
+    // Scan forward until the closing });
     for (let j = i; j < lines.length; j++) {
       let inner = lines[j];
 
@@ -30,7 +33,7 @@ for (let i = 0; i < lines.length; i++) {
       if (inner.includes("file:")) {
         inner = inner.replace(
           /file:\s*["'][^"']*["']/,
-          `file: "${relativeFilePath}"`,
+          `file: "${normalizedPath}"`,
         );
         lines[j] = inner;
         fileUpdates++;
@@ -52,5 +55,5 @@ for (let i = 0; i < lines.length; i++) {
 fs.writeFileSync(filePath, lines.join("\n"));
 
 console.log(
-  `Updated file: ${fileUpdates} times, line: ${lineUpdates} times in ${relativeFilePath}`,
+  `Updated file: ${fileUpdates} times, line: ${lineUpdates} times in ${normalizedPath}`,
 );
