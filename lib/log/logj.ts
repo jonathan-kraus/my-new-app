@@ -96,29 +96,42 @@ export async function logj(input: LogjInput) {
     // HYBRID CALLSITE DETECTION
     // Only fill file/line if user didn't provide them
     // -----------------------------------------------------------------------
+
     if (!file || !line) {
       const err = new Error();
       const stack = err.stack?.split("\n");
 
-      const caller = stack?.find((frame) => !frame.includes("logj"));
+      // Find the first frame that actually contains a TypeScript file path
+      const caller = stack?.find(
+        (frame) => frame.includes(".ts:") || frame.includes(".tsx:"),
+      );
+      console.log("STACK FRAMES:");
+      stack?.forEach((frame, i) => {
+        console.log(`  [${i}] ${frame}`);
+      });
+      console.log("CALLER FRAME:", caller);
 
       if (caller) {
+        let match: RegExpMatchArray | null = null;
+
         // Format A: at Something (/path/file.ts:123:45)
-        let match = caller.match(/\((.*):(\d+):\d+\)/);
+        match = caller.match(/\((.*):(\d+):\d+\)/);
 
         // Format B: at /path/file.ts:123:45
         if (!match) {
           match = caller.match(/at\s+(.*):(\d+):\d+/);
         }
 
-        // ⭐ Format C: bare path without "at"
-        // app/api/environment/route.ts:1119:18
+        // Format C: bare path without "at"
         if (!match) {
           match = caller.match(/(.*):(\d+):\d+/);
         }
+
         if (match) {
-          const detectedFile = match[1] ?? null;
-          const detectedLine = match[2] ? Number(match[2]) : null;
+          const detectedFile: string | null = match[1] ?? null;
+          const detectedLine: number | null = match[2]
+            ? Number(match[2])
+            : null;
 
           if (!file) file = detectedFile;
           if (!line) line = detectedLine;
