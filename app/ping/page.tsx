@@ -1,17 +1,24 @@
 /*
  * @FilePath: \my-new-app\app\ping\page.tsx
- * @LastEditTime: 2026-08-07 00:03:24
+ * @LastEditTime: 2026-08-10 20:44:31
  */
 // app/ping/page.tsx
 import { headers } from "next/headers";
 
-export default async function PingPage() {
-  const [pingRes] = await Promise.all([
-    fetch("https://www.kraus.my.id/api/ping?run=Jonathan", {
-      cache: "no-store",
-    }),
-    // fetch("https://www.kraus.my.id/api/deployments", { cache: "no-store" }),
-  ]);
+export default async function PingPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ run?: string }>;
+}) {
+  const { run } = await searchParams;
+
+  if (run !== "1") {
+    return <p>Ping is idle. Visit /ping?run=1 to run it manually.</p>;
+  }
+
+  const pingRes = await fetch("https://www.kraus.my.id/api/ping?run=Jonathan", {
+    cache: "no-store",
+  });
 
   const pingData = await pingRes.json();
   // const deployments = await secondRes.json();
