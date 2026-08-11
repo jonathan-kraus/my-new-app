@@ -1,8 +1,12 @@
+/*
+ * @FilePath: \my-new-app\lib\log\logj.ts
+ * @LastEditTime: 2026-08-11 18:41:03
+ */
 import "server-only";
 import { db } from "@/lib/db";
 import { axiomIngest } from "@/lib/axiom";
 import { z } from "zod";
-import type { LogjInput, LogjPayload, LogjMeta } from "@/lib/log/types";
+import type { LogjInput } from "@/lib/log/types";
 
 const NEON_MAX_JSON = 200_000;
 const logCounters = new Map<string, number>();
@@ -77,12 +81,9 @@ export function safeForNeon(value: unknown): unknown {
 // ---------------------------------------------------------------------------
 // Main logj()
 // ---------------------------------------------------------------------------
-// ---------------------------------------------------------------------------
-// Main logj() with hybrid callsite detection
-// ---------------------------------------------------------------------------
 export async function logj(input: LogjInput) {
   try {
-    let {
+    const {
       domain,
       level,
       message,
@@ -92,56 +93,6 @@ export async function logj(input: LogjInput) {
       meta = {},
     } = input;
 
-    // -----------------------------------------------------------------------
-    // HYBRID CALLSITE DETECTION
-    // Only fill file/line if user didn't provide them
-    // -----------------------------------------------------------------------
-
-    if (!file || !line) {
-      const err = new Error();
-      const stack = err.stack?.split("\n");
-
-      // Find the first frame that actually contains a TypeScript file path
-      const caller = stack?.find(
-        (frame) => frame.includes(".ts:") || frame.includes(".tsx:"),
-      );
-      console.log("STACK FRAMES:");
-      stack?.forEach((frame, i) => {
-        console.log(`  [${i}] ${frame}`);
-      });
-      console.log("CALLER FRAME:", caller);
-
-      if (caller) {
-        let match: RegExpMatchArray | null = null;
-
-        // Format A: at Something (/path/file.ts:123:45)
-        match = caller.match(/\((.*):(\d+):\d+\)/);
-
-        // Format B: at /path/file.ts:123:45
-        if (!match) {
-          match = caller.match(/at\s+(.*):(\d+):\d+/);
-        }
-
-        // Format C: bare path without "at"
-        if (!match) {
-          match = caller.match(/(.*):(\d+):\d+/);
-        }
-
-        if (match) {
-          const detectedFile: string | null = match[1] ?? null;
-          const detectedLine: number | null = match[2]
-            ? Number(match[2])
-            : null;
-
-          if (!file) file = detectedFile;
-          if (!line) line = detectedLine;
-        }
-      }
-    }
-
-    // -----------------------------------------------------------------------
-    // Canonical user/session/request fields
-    // -----------------------------------------------------------------------
     const canonicalUserId = (payload.userId ??
       payload.session?.user?.id ??
       meta.built?.userId ??
@@ -162,9 +113,6 @@ export async function logj(input: LogjInput) {
       meta.built?.requestId ??
       "canr") as string;
 
-    // -----------------------------------------------------------------------
-    // Canonical record
-    // -----------------------------------------------------------------------
     const canonical: CanonicalLogRecord = {
       domain,
       level,
@@ -187,16 +135,10 @@ export async function logj(input: LogjInput) {
 
     const record = parsed.data;
 
-    // -----------------------------------------------------------------------
-    // Event index prefix
-    // -----------------------------------------------------------------------
     const eventIndex = (meta.built?.eventIndex ?? 0) as number;
     const prefixedMessage =
       eventIndex > 0 ? `#${eventIndex} ${message}` : message;
 
-    // -----------------------------------------------------------------------
-    // Write to Neon/Postgres
-    // -----------------------------------------------------------------------
     await db.log.create({
       data: {
         ...record,
@@ -206,17 +148,14 @@ export async function logj(input: LogjInput) {
       },
     });
 
-    // -----------------------------------------------------------------------
-    // Write to Axiom
-    // -----------------------------------------------------------------------
     await axiomIngest([
       {
         domain,
         level,
-        message: prefixedMessage,
+        message: prefixedMessage, // use same variable for consistency
         file,
         line,
-        eventIndex,
+        eventIndex: meta.built?.eventIndex ?? 0, // also fixed to use built
         meta_json: JSON.stringify(record.meta),
         payload_json: JSON.stringify(record.payload),
       },
