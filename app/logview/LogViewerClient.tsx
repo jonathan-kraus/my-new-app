@@ -577,20 +577,14 @@ export default function LogViewerClient() {
               <div className="flex-1 overflow-y-auto">
                 <div className="px-4 py-3 border-b border-zinc-100 dark:border-zinc-800">
                   <p className="text-[10px] font-sans font-medium tracking-widest uppercase text-zinc-400 mb-2">
-                    Core
+                    Base
                   </p>
                   <KV label="timestamp" value={fmtTs(selectedLog.created_at)} />
                   <KV label="domain" value={selectedLog.domain} />
                   <KV label="message" value={selectedLog.message} />
                   <KV label="requestId" value={selectedLog.requestId} />
-                  <KV
-                    label="file"
-                    value={
-                      selectedLog.file
-                        ? `${selectedLog.file}${selectedLog.line ? ":" + selectedLog.line : ""}`
-                        : null
-                    }
-                  />
+                  <KV label="file" value={selectedLog.file} />
+                  <KV label="line" value={selectedLog.line} />
                 </div>
 
                 <div className="px-4 py-3 border-b border-zinc-100 dark:border-zinc-800">
