@@ -1,0 +1,7 @@
+[
+  {
+    "key": "ctrl+alt+l",
+    "command": "workbench.action.tasks.runTask",
+    "args": "Update logj lines in current file"
+  }
+]

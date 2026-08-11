@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\notes\route.ts
- * @LastEditTime: 2026-06-06 13:00:14
+ * @LastEditTime: 2026-08-11 19:18:27
  */
 
 import { NextResponse } from "next/server";
@@ -18,8 +18,8 @@ export const GET = withLogging(async (req: Request) => {
     domain: "notes",
     level: "info",
     message: "🎶 Notes GET started 🎶",
-    file: "app/api/notes/route.ts",
-    line: 16,
+    file: "app\api\notes\route.ts",
+    line: 17,
     payload: {
       some: "data",
     },
@@ -43,8 +43,8 @@ export const GET = withLogging(async (req: Request) => {
       domain: "notes",
       level: "info",
       message: `Notes GET completed with ${notes.length} notes`,
-      file: "app/api/notes/route.ts",
-      line: 43,
+      file: "app\api\notes\route.ts",
+      line: 42,
       payload: {
         count: notes.length,
       },
@@ -66,8 +66,8 @@ export const POST = withLogging(async (req: Request) => {
     domain: "notes",
     level: "info",
     message: "🎶 Notes POST started 🎶",
-    file: "app/api/notes/route.ts",
-    line: 66,
+    file: "app\api\notes\route.ts",
+    line: 65,
     payload: {
       some: "data",
     },
@@ -100,8 +100,8 @@ export const POST = withLogging(async (req: Request) => {
       domain: "notes",
       level: "info",
       message: "🎶 Note created 🎶",
-      file: "app/api/notes/route.ts",
-      line: 103,
+      file: "app\api\notes\route.ts",
+      line: 99,
       payload: {
         noteId: note.id,
         title: note.title,
@@ -126,8 +126,8 @@ export const PUT = withLogging(async (req: Request) => {
     domain: "notes",
     level: "info",
     message: "🎶 Notes PUT started 🎶",
-    file: "app/api/notes/route.ts",
-    line: 126,
+    file: "app\api\notes\route.ts",
+    line: 125,
     payload: {
       some: "data",
     },
@@ -175,8 +175,8 @@ export const PUT = withLogging(async (req: Request) => {
       domain: "notes",
       level: "info",
       message: `🎶 Note updated - ${updatedNote?.title} 🎶`,
-      file: "app/api/notes/route.ts",
-      line: 175,
+      file: "app\api\notes\route.ts",
+      line: 174,
       payload: {
         noteId: id,
         title: updatedNote?.title,
@@ -202,8 +202,8 @@ export const DELETE = withLogging(async (req: Request) => {
     domain: "notes",
     level: "info",
     message: "🎶 Notes DELETE started 🎶",
-    file: "app/api/notes/route.ts",
-    line: 192,
+    file: "app\api\notes\route.ts",
+    line: 201,
     payload: {
       some: "data",
     },
@@ -239,8 +239,8 @@ export const DELETE = withLogging(async (req: Request) => {
       domain: "jonathan",
       level: "info",
       message: "Note deleted",
-      file: "route.ts",
-      line: 229,
+      file: "app\api\notes\route.ts",
+      line: 238,
       payload: { title: noteToDelete?.title, userEmail: email },
       meta: { built: { ...built, eventIndex: ++jei } },
     });

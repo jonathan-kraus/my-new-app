@@ -1,8 +1,5 @@
-/*
- * @FilePath: \my-new-app\scripts\update-logj-lines.js
- * @LastEditTime: 2026-08-11 18:44:44
- */
 import fs from "fs";
+import path from "path";
 
 const filePath = process.argv[2];
 if (!filePath) {
@@ -10,20 +7,50 @@ if (!filePath) {
   process.exit(1);
 }
 
+const workspaceRoot = process.cwd();
+const relativeFilePath = path.relative(workspaceRoot, filePath);
+
 const lines = fs.readFileSync(filePath, "utf8").split("\n");
 
-const updated = lines.map((line, index) => {
-  const lineNumber = index + 1;
+let fileUpdates = 0;
+let lineUpdates = 0;
 
+for (let i = 0; i < lines.length; i++) {
+  const line = lines[i];
+
+  // Detect the start of a logj block
   if (line.includes("logj({")) {
-    if (line.includes("line:")) {
-      return line.replace(/line:\s*\d+/, `line: ${lineNumber}`);
+    const correctLineNumber = i + 1;
+
+    // Now scan forward until we hit the closing });
+    for (let j = i; j < lines.length; j++) {
+      let inner = lines[j];
+
+      // Update file:
+      if (inner.includes("file:")) {
+        inner = inner.replace(
+          /file:\s*["'][^"']*["']/,
+          `file: "${relativeFilePath}"`,
+        );
+        lines[j] = inner;
+        fileUpdates++;
+      }
+
+      // Update line:
+      if (inner.includes("line:")) {
+        inner = inner.replace(/line:\s*\d+/, `line: ${correctLineNumber}`);
+        lines[j] = inner;
+        lineUpdates++;
+      }
+
+      // End of block
+      if (inner.includes("});")) break;
     }
-    return line.replace("logj({", `logj({ line: ${lineNumber},`);
   }
+}
 
-  return line;
-});
+fs.writeFileSync(filePath, lines.join("\n"));
 
-fs.writeFileSync(filePath, updated.join("\n"));
-console.log("Updated logj line numbers in", filePath);
+console.log(
+  `Updated file: ${fileUpdates} times, line: ${lineUpdates} times in ${relativeFilePath}`,
+);
