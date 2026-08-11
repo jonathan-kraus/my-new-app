@@ -12,7 +12,7 @@ export const GET = withLogging(async (req: Request) => {
     level: "info",
     message: "test-account message",
     file: "app/api/test-account/route.ts",
-    line: 9,
+    line: 10,
     payload: {
       ip: built.ip,
     },

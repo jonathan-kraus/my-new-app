@@ -29,7 +29,7 @@ export default async function GitHubPage() {
     level: "info",
     message: `fetchGitHubEvents returned ${events.length} events`,
     file: "app/github/page.tsx",
-    line: 23,
+    line: 27,
     payload: {
       eventCount: events.length,
     },

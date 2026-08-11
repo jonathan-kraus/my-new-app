@@ -36,7 +36,7 @@ export async function runDbTableStats(ctx: {
     level: "info",
     message: "dbTables cron started",
     file: "lib/cron/runDbTableStats.ts",
-    line: 33,
+    line: 34,
     payload: { date: snapshotDate.toISOString() },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -69,7 +69,7 @@ export async function runDbTableStats(ctx: {
       level: "info",
       message: `dbTables preparing to count rows for table ${tableName}`,
       file: "lib/cron/runDbTableStats.ts",
-      line: 66,
+      line: 67,
       payload: { name: tableName },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -95,7 +95,7 @@ export async function runDbTableStats(ctx: {
         level: "info",
         message: `dbTables update started for table ${tableName} with ${count} rows`,
         file: "lib/cron/runDbTableStats.ts",
-        line: 86,
+        line: 93,
         payload: { name: tableName, count },
         meta: { built: { ...built, eventIndex: ++jei } },
       });
@@ -134,7 +134,7 @@ export async function runDbTableStats(ctx: {
         level: "error",
         message: `dbTables error for table ${tableName}`,
         file: "lib/cron/runDbTableStats.ts",
-        line: 128,
+        line: 132,
         payload: { error: String(err), name: tableName },
         meta: { built: { ...built, eventIndex: ++jei } },
       });
@@ -150,7 +150,7 @@ export async function runDbTableStats(ctx: {
     level: "info",
     message: "dbTables cron completed",
     file: "lib/cron/runDbTableStats.ts",
-    line: 144,
+    line: 148,
     payload: {
       tables: tablesProcessed,
       durationMs: Date.now() - start,

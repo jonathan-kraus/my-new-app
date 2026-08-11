@@ -21,7 +21,7 @@ export async function GET() {
       domain: "config",
       level: "info",
       message: "Config page loaded",
-      file: "api/config/read/route.ts",
+      file: "app/api/config/read/route.ts",
       line: 20,
       payload: { qflight: qFlight },
       meta: { built: { ...built, eventIndex: ++jei } },

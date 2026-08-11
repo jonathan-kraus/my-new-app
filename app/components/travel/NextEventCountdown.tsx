@@ -11,7 +11,7 @@ logj({
   domain: "dashboard",
   level: "info",
   message: "NextEventCountdown loaded",
-  file: "app\components\travel\NextEventCountdown.tsx",
+  file: "app/components/travel/NextEventCountdown.tsx",
   line: 10,
   payload: { some: "next event" },
   meta: { built: { ...built, eventIndex: ++jei } },

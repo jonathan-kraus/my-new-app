@@ -38,7 +38,7 @@ async function cleanupOldLogs(days: number, built: any) {
     level: "info",
     message: `Log cleanup completed`,
     file: "app/api/cron/astronomy/route.ts",
-    line: 35,
+    line: 36,
     payload: {
       beforeCount,
       deleted: result.count,
@@ -74,7 +74,7 @@ async function cleanupEphem(days: number, built: any) {
     level: "info",
     message: `Ephemeris cleanup completed`,
     file: "app/api/cron/astronomy/route.ts",
-    line: 71,
+    line: 72,
     payload: {
       beforeCount,
       deleted: result.count,
@@ -98,7 +98,7 @@ export async function GET(req: NextRequest) {
       level: "info",
       message: `Astronomy cron location started for ${location.name}`,
       file: "app/api/cron/astronomy/route.ts",
-      line: 95,
+      line: 96,
       payload: {
         name: location.name,
       },
@@ -115,7 +115,7 @@ export async function GET(req: NextRequest) {
         level: "info",
         message: `Astronomy cron day started for ${location.name} count: ${i + 1} `,
         file: "app/api/cron/astronomy/route.ts",
-        line: 112,
+        line: 113,
         payload: {
           count: i,
         },
@@ -149,7 +149,7 @@ export async function GET(req: NextRequest) {
       level: "info",
       message: `Astronomy cron location upsert for ${location.name} completed`,
       file: "app/api/cron/astronomy/route.ts",
-      line: 146,
+      line: 147,
       payload: {
         duration: durationMs,
       },
@@ -168,7 +168,7 @@ export async function GET(req: NextRequest) {
       level: "info",
       message: `Astronomy cron completed deleted ${deleted} logs`,
       file: "app/api/cron/astronomy/route.ts",
-      line: 165,
+      line: 166,
       payload: {
         durationMs,
         logDays: logDays,

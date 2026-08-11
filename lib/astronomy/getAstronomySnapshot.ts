@@ -76,7 +76,7 @@ async function getAstronomySnapshotInternal(
     level: "info",
     message: "Astronomy snapshot fetched",
     file: "lib/astronomy/getAstronomySnapshot.ts",
-    line: 31,
+    line: 74,
     payload: { today },
     meta: { built: { ...built, eventIndex: 1 } },
   });

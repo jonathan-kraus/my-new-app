@@ -38,7 +38,7 @@ export default async function HomePage(req: Request) {
     level: "info",
     message: `** Dashboard Start **`,
     file: "app/page.tsx",
-    line: 35,
+    line: 36,
     payload: {
       some: "data",
     },
@@ -63,7 +63,7 @@ export default async function HomePage(req: Request) {
       domain: "weather",
       level: "error",
       message: "weatherRes not ok",
-      file: "page.tsx",
+      file: "app/page.tsx",
       line: 62,
       payload: { status: weatherRes.status },
     });
@@ -81,7 +81,7 @@ export default async function HomePage(req: Request) {
       domain: "weather",
       level: "error",
       message: "weatherRes.json() failed",
-      file: "page.tsx",
+      file: "app/page.tsx",
       line: 80,
       payload: { error: String(err) },
     });
@@ -97,7 +97,7 @@ export default async function HomePage(req: Request) {
       domain: "weather",
       level: "error",
       message: "WeatherSchema.parse failed",
-      file: "page.tsx",
+      file: "app/page.tsx",
       line: 96,
       payload: { error: String(err) },
     });
@@ -109,8 +109,8 @@ export default async function HomePage(req: Request) {
     domain: "jonathan",
     level: "info",
     message: "weatherData retrieved",
-    file: "page.tsx",
-    line: 62,
+    file: "app/page.tsx",
+    line: 108,
     payload: { some: "data" },
 
     meta: { built: { ...built, eventIndex: ++jei } },
@@ -126,7 +126,7 @@ export default async function HomePage(req: Request) {
     level: "info",
     message: `*** Dashboard End ***`,
     file: "app/page.tsx",
-    line: 68,
+    line: 124,
     payload: {
       location: location,
       weatherData: weatherData,

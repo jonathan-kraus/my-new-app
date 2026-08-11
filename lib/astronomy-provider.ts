@@ -15,7 +15,7 @@ export async function fetchAstronomyMultiDay(
     domain: "astronomy",
     level: "info",
     message: `** Astronomy Data Fetched **`,
-    file: "app/page.tsx",
+    file: "lib/astronomy-provider.ts",
     line: 14,
     payload: {
       start: start,

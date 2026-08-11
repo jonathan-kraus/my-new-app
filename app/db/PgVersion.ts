@@ -15,7 +15,7 @@ export async function getPostgresVersion(req: NextRequest) {
     domain: "jonathan",
     level: "info",
     message: "Retrieving Postgres version from Neon (PGVersion.ts)",
-    file: "PgVersion.ts",
+    file: "app/db/PgVersion.ts",
     line: 14,
     payload: { jei: jei },
     meta: { built: { ...built, eventIndex: ++jei } },

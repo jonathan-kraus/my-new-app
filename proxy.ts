@@ -46,7 +46,7 @@ export async function proxy(req: NextRequest) {
   //     level: 'info',
   //     message: "Normalize path segments pathname: " + normalizedPath,
   //     file: "proxy.ts",
-  //     line: 41,
+  //     line: 44,
   //     payload: { some: 'data' },
   //     meta: { built: { ...built, eventIndex: ++jei } },
   //   });

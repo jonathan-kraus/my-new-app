@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
       domain: "jonathan",
       level: "info",
       message: "Ping work skipped. Add ?run=Jonathan to execute.",
-      file: "route.ts",
+      file: "app/api/ping/route.ts",
       line: 23,
       payload: { jei: jei },
       meta: { built: { ...built, eventIndex: ++jei } },
@@ -238,7 +238,7 @@ export async function GET(req: NextRequest) {
     level: "info",
     message: "ping processed weather data",
     file: "app/api/ping/route.ts",
-    line: 241,
+    line: 236,
     payload: {
       Currenttime: weatherData.current.time,
       Currenttemperature_2m: weatherData.current.temperature_2m,

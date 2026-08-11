@@ -33,8 +33,8 @@ export async function readFlightConfig(): Promise<ConfigEntry | null> {
     domain: "dashboard",
     level: "info",
     message: "Dashboard page loaded",
-    file: "app/dashboard/page.tsx",
-    line: 31,
+    file: "app/config/readj/actions.ts",
+    line: 32,
     payload: { "FLIGHT QUERY ROWS:": JSON.stringify(rows, null, 2) },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -63,8 +63,8 @@ export async function readWeatherConfig(): Promise<ConfigEntry | null> {
     domain: "dashboard",
     level: "info",
     message: "Dashboard page loaded",
-    file: "app/dashboard/page.tsx",
-    line: 61,
+    file: "app/config/readj/actions.ts",
+    line: 62,
     payload: { "WEATHER QUERY ROWS:": JSON.stringify(rows, null, 2) },
     meta: { built: { ...built, eventIndex: ++jei } },
   });

@@ -318,7 +318,7 @@ export function parseAAEmail(
       level: "info",
       message: "aa-segment-debugging",
       file: "lib/travel/parser/aa.ts",
-      line: 245,
+      line: 316,
       payload: {
         i: segmentIndex,
         date,

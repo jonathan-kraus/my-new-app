@@ -20,7 +20,7 @@ export async function GET() {
     level: "info",
     message: "Loading FA dashboard route",
     file: "app/api/fa/dashboard/route.ts",
-    line: 19,
+    line: 18,
     payload: { some: "data" },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -48,7 +48,7 @@ export async function GET() {
     level: "info",
     message: "Completed FA dashboard route",
     file: "app/api/fa/dashboard/route.ts",
-    line: 47,
+    line: 46,
     payload: {
       countData: countData,
       minLat: minLat,

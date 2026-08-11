@@ -15,8 +15,8 @@ logj({
   domain: "dashboard",
   level: "info",
   message: "VersionCard loaded",
-  file: "app\components\dashboard\version-card.tsx",
-  line: 9,
+  file: "app/components/dashboard/version-card.tsx",
+  line: 14,
   payload: { some: "Version Card loaded" },
   meta: { built: { ...built, eventIndex: ++jei } },
 });

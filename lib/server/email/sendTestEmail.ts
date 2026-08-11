@@ -21,7 +21,7 @@ export async function sendTestEmail(message: string, subject: string) {
       level: "info",
       message: message_begin + "Email disabled by flag",
       file: "lib/server/email/sendTestEmail.ts",
-      line: 18,
+      line: 19,
       payload: { some: "data" },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -63,7 +63,7 @@ export async function sendTestEmail(message: string, subject: string) {
     level: "info",
     message: message_begin + "Throttle check starting",
     file: "lib/server/email/sendTestEmail.ts",
-    line: 60,
+    line: 61,
     payload: { some: "data" },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -80,7 +80,7 @@ export async function sendTestEmail(message: string, subject: string) {
     level: "info",
     message: message_begin + "Throttle status computed",
     file: "lib/server/email/sendTestEmail.ts",
-    line: 72,
+    line: 78,
     payload: {
       isThrottled: throttleStatus.isThrottled,
       canSendNow: throttleStatus.canSendNow,
@@ -97,7 +97,7 @@ export async function sendTestEmail(message: string, subject: string) {
       level: "info",
       message: message_begin + "Throttled",
       file: "lib/server/email/sendTestEmail.ts",
-      line: 89,
+      line: 95,
       payload: { throttleStatus },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -117,7 +117,7 @@ export async function sendTestEmail(message: string, subject: string) {
       level: "info",
       message: message_begin + "Test email sent",
       file: "lib/server/email/sendTestEmail.ts",
-      line: 111,
+      line: 115,
       payload: { some: "data" },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -130,7 +130,7 @@ export async function sendTestEmail(message: string, subject: string) {
       level: "info",
       message: message_begin + "Updated last_sent_at",
       file: "lib/server/email/sendTestEmail.ts",
-      line: 124,
+      line: 128,
       payload: { some: "data" },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -142,7 +142,7 @@ export async function sendTestEmail(message: string, subject: string) {
       level: "info",
       message: message_begin + "Mailersend error",
       file: "lib/server/email/sendTestEmail.ts",
-      line: 136,
+      line: 140,
       payload: { some: "data" },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
