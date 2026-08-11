@@ -111,6 +111,11 @@ export async function logj(input: LogjInput) {
           match = caller.match(/at\s+(.*):(\d+):\d+/);
         }
 
+        // ⭐ Format C: bare path without "at"
+        // app/api/environment/route.ts:1119:18
+        if (!match) {
+          match = caller.match(/(.*):(\d+):\d+/);
+        }
         if (match) {
           const detectedFile = match[1] ?? null;
           const detectedLine = match[2] ? Number(match[2]) : null;
