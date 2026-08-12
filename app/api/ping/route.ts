@@ -248,7 +248,6 @@ export async function GET(req: NextRequest) {
     },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
-  console.log("\nDaily data:\n", weatherData.daily);
 
   // Fetch reverse geocode for the location of the ISS
   let issLocation = null;
@@ -270,7 +269,7 @@ export async function GET(req: NextRequest) {
         level: "info",
         message: "ping retrieved reverse geocode for ISS location",
         file: "app/api/ping/route.ts",
-        line: 268,
+        line: 267,
         payload: { issLocation, geoUrl, issLatitude, issLongitude },
         meta: { built: { ...built, eventIndex: ++jei } },
       });
@@ -344,7 +343,7 @@ export async function GET(req: NextRequest) {
       level: "info",
       message: "ping retrieved reverse geocode for weather location",
       file: "app/api/ping/route.ts",
-      line: 342,
+      line: 341,
       payload: { geo, geoUrl },
       meta: { built: { ...built, eventIndex: ++jei } },
     });

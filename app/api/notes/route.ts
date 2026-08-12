@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\notes\route.ts
- * @LastEditTime: 2026-08-11 19:18:27
+ * @LastEditTime: 2026-08-11 22:05:54
  */
 
 import { NextResponse } from "next/server";
@@ -171,7 +171,7 @@ export const PUT = withLogging(async (req: Request) => {
     }
 
     const updatedNote = await db.note.findUnique({ where: { id } });
-    logj({
+    await logj({
       domain: "notes",
       level: "info",
       message: `🎶 Note updated - ${updatedNote?.title} 🎶`,
@@ -236,7 +236,7 @@ export const DELETE = withLogging(async (req: Request) => {
     }
     const built = await buildUniversalContext(req as any, "NOTES");
     await logj({
-      domain: "jonathan",
+      domain: "notes",
       level: "info",
       message: "Note deleted",
       file: "app/api/notes/route.ts",
