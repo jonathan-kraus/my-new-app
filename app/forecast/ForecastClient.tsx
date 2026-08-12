@@ -53,7 +53,7 @@ export default function ForecastClient({
     level: "info",
     message: "Forecast client loaded",
     file: "app/forecast/ForecastClient.tsx",
-    // line: 51,
+    line: 51,
     payload: { selectedId },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
