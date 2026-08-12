@@ -161,14 +161,13 @@ export async function GET(req: NextRequest) {
       ? 61
       : parseInt(logDaysNum, 10);
     const deleted = await cleanupOldLogs(cleanupDays, built);
-    const deletedE = await cleanupEphem(cleanupDays, built);
 
     await logj({
       domain: "ephemeris",
       level: "info",
       message: `Astronomy cron completed deleted ${deleted} logs`,
       file: "app/api/cron/astronomy/route.ts",
-      line: 166,
+      line: 165,
       payload: {
         durationMs,
         logDays: logDays,
