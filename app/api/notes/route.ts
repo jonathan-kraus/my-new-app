@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\notes\route.ts
- * @LastEditTime: 2026-08-11 22:05:54
+ * @LastEditTime: 2026-08-12 14:14:48
  */
 
 import { NextResponse } from "next/server";

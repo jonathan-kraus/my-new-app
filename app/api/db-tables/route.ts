@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\db-tables\route.ts
- * @LastEditTime: 2026-07-24 23:45:42
+ * @LastEditTime: 2026-08-12 14:24:34
  */
 import { neon } from "@neondatabase/serverless";
 import { logj } from "@/lib/log/logj";

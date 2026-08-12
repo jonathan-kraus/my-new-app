@@ -1,3 +1,7 @@
+/*
+ * @FilePath: \my-new-app\app\components\travel\NextEventCountdown.tsx
+ * @LastEditTime: 2026-08-12 14:24:58
+ */
 "use client";
 import { parse, intervalToDuration, formatDuration } from "date-fns";
 import { useState, useEffect } from "react";
