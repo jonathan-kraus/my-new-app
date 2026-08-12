@@ -126,7 +126,7 @@
     "server-only": "0.0.1",
     "sharp": "0.35.3",
     "sonner": "2.0.8",
-    "swr": "2.5.0",
+    "swr": "2.5.1",
     "tailwind-merge": "3.6.0",
     "typescript": "5.9.3",
     "vite": "8.2.1",
