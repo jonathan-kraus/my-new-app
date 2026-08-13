@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\proxy.ts
- * @LastEditTime: 2026-08-13 01:34:09
+ * @LastEditTime: 2026-08-13 01:59:00
  */
 import { Logger } from "next-axiom";
 import { auth } from "@/auth";
@@ -42,7 +42,7 @@ export async function proxy(req: NextRequest) {
   await logj({
     domain: "jonathan",
     level: "info",
-    message: `Normalized path segments in ${normalizeDurationMs.toFixed(3)} ms`,
+    message: `Normalized path ${pathname}  in ${normalizeDurationMs.toFixed(3)} ms`,
     file: "proxy.ts",
     line: 35,
     payload: {
