@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\page.tsx
- * @LastEditTime: 2026-08-13 18:20:27
+ * @LastEditTime: 2026-08-13 18:50:52
  */
 // app/page.tsx
 import { auth } from "@/auth";
@@ -166,7 +166,7 @@ export default async function HomePage(req: Request) {
         {/* Recent Activity */}
         <section className="mt-6">
           <h2 className="text-xl font-medium mb-2 text-sky-200">
-            {<RecentActivity />}
+            {/* {<RecentActivity />} */}
           </h2>
         </section>
 
