@@ -11,12 +11,12 @@ import {
   clearRequest,
 } from "@/lib/log/timing";
 
-// import { logj } from "@/lib/log/logj";
-// import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { logj } from "@/lib/log/logj";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 export async function proxy(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
-
+  let jei = 0;
   // --- 0) Filter out ALL noise -----------------------------------
   const isInternal =
     pathname.startsWith("/_next") || pathname.startsWith("/favicon");
@@ -39,36 +39,17 @@ export async function proxy(req: NextRequest) {
   }
 
   // --- 1) Normalize path segments ---------------------------------
-  //  const normalizedPath = normalizePath(pathname);
-  //  const built = await buildUniversalContext(req, "PROXY");
-  //   await logj({
-  //     domain: 'jonathan',
-  //     level: 'info',
-  //     message: "Normalize path segments pathname: " + normalizedPath,
-  //     file: "proxy.ts",
-  //     line: 44,
-  //     payload: { some: 'data' },
-  //     meta: { built: { ...built, eventIndex: ++jei } },
-  //   });
-  // await logit(
-  //   "middleware",
-  //   {
-  //     level: "info",
-  //     message: "Normalized path segments pathname: " + pathname,
-  //     last,
-  //     lastTwo,
-  //   },
-  //   {},
-  //   {
-
-  //     route: pathname,
-  //     userId: undefined,
-  //     zulu: new Date().toISOString(),
-  //     local: new Date().toLocaleString("en-US", {
-  //       timeZone: "America/New_York",
-  //     }),
-  //   },
-  // );
+  const normalizedPath = normalizePath(pathname);
+  const built = await buildUniversalContext(req, "PROXY");
+  await logj({
+    domain: "jonathan",
+    level: "info",
+    message: "Normalize path segments pathname: " + normalizedPath,
+    file: "proxy.ts",
+    line: 44,
+    payload: { some: "data" },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
 
   // --- 2) Start timing -------------------------------------------
   startRequest(req.url);
