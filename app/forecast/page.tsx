@@ -1,3 +1,7 @@
+/*
+ * @FilePath: \my-new-app\app\forecast\page.tsx
+ * @LastEditTime: 2026-08-13 14:23:19
+ */
 // app/forecast/page.tsx
 import { auth } from "@/auth";
 import ForecastClient from "./ForecastClient";
@@ -8,6 +12,9 @@ import { db } from "@/lib/db";
 //
 // ⭐ SERVER ACTION — must stay in a server component
 //
+export async function generateMetadata() {
+  return { title: `Forecast` };
+}
 export async function sendForecastEmailAction(formData: FormData) {
   "use server";
 
