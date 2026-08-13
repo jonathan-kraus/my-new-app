@@ -13,7 +13,14 @@ import { db } from "@/lib/db";
 // ⭐ SERVER ACTION — must stay in a server component
 //
 export async function generateMetadata() {
-  return { title: `Forecast` };
+  const temperature = await db.weatherSnapshot.findFirst({
+    select: {
+      temperature: true,
+    },
+    where: { locationId: "KOP" },
+    orderBy: { fetchedAt: "desc" },
+  });
+  return { title: `Forecast - ${temperature?.temperature}°F` };
 }
 export async function sendForecastEmailAction(formData: FormData) {
   "use server";
