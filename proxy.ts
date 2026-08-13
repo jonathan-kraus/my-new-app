@@ -45,7 +45,7 @@ export async function proxy(req: NextRequest) {
 
   const normalizeStartedAt = performance.now();
 
-  const { last, lastTwo } = normalizePath(pathname);
+  const { last, lastTwo } = normalizePath(req.url);
 
   const normalizeDurationMs = performance.now() - normalizeStartedAt;
 
@@ -56,7 +56,7 @@ export async function proxy(req: NextRequest) {
     level: "info",
     message: `Normalized path segments in ${normalizeDurationMs.toFixed(3)} ms`,
     file: "proxy.ts",
-    line: 54,
+    line: 44,
     payload: {
       pathname,
       last,
@@ -65,7 +65,6 @@ export async function proxy(req: NextRequest) {
     },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
-
   // --- 2) Start timing -------------------------------------------
   startRequest(req.url);
   const logger = new Logger({ source: "middleware" });

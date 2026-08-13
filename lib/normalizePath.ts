@@ -1,13 +1,13 @@
 /*
  * @FilePath: \my-new-app\lib\normalizePath.ts
- * @LastEditTime: 2026-02-26 16:51:03
+ * @LastEditTime: 2026-08-13 00:58:52
  */
-export default function normalizePath(url: string): {
+export default function normalizePath(absoluteUrl: string): {
   last: string;
   lastTwo: string;
 } {
   try {
-    const u = new URL(url);
+    const u = new URL(absoluteUrl);
 
     // Remove empty segments caused by leading/trailing slashes
     const parts = u.pathname
