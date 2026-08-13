@@ -7,7 +7,7 @@ import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { ForecastResponseSchema } from "@/lib/weather/zodschema";
 import { getConfig } from "@/lib/runtime/config";
 import { getAstronomySnapshot } from "@/lib/astronomy/getAstronomySnapshot";
-import { format } from "date-fns";
+import { headers } from "next/headers";
 
 function getMoonEmoji(phaseName: string | null): string {
   if (!phaseName) return "🌑";
@@ -30,7 +30,13 @@ export async function GET(req: Request) {
   const session = await auth();
   const built = await buildUniversalContext(req as any, "FORECAST");
   let jei = 0;
+  const requestHeaders = await headers();
 
+  const requestId = requestHeaders.get("x-app-request-id");
+
+  const proxyStartedAt = Number(requestHeaders.get("x-app-request-started-at"));
+
+  const forecastStartedAt = performance.now();
   const { searchParams } = new URL(req.url);
   const locationId = searchParams.get("locationId");
 
@@ -240,7 +246,23 @@ export async function GET(req: Request) {
   // ----------------------------------------
   const parsed = ForecastResponseSchema.safeParse(raw);
   console.log("ZOD PARSED RESULT:", parsed);
+  const forecastDurationMs = performance.now() - forecastStartedAt;
 
+  const totalDurationMs = Number.isFinite(proxyStartedAt)
+    ? Date.now() - proxyStartedAt
+    : null;
+  await logj({
+    domain: "weather",
+    level: "info",
+    message: "Forecast page data completed",
+    file: "app/forecast/page.tsx",
+    line: 24,
+    payload: {
+      requestId: requestId || undefined,
+      forecastDurationMs: Number(forecastDurationMs.toFixed(3)),
+      totalDurationMs,
+    },
+  });
   if (!parsed.success) {
     // log #3 in invalid-case test
     await logj({

@@ -1,50 +1,38 @@
+/*
+ * @FilePath: \my-new-app\proxy.ts
+ * @LastEditTime: 2026-08-13 01:34:09
+ */
 import { Logger } from "next-axiom";
 import { auth } from "@/auth";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import normalizePath from "@/lib/normalizePath";
-
-import {
-  startRequest,
-  getDuration,
-  nextEventIndex,
-  clearRequest,
-} from "@/lib/log/timing";
-
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 export async function proxy(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
-  let jei = 0;
-  // --- 0) Filter out ALL noise -----------------------------------
+
   const isInternal =
-    pathname.startsWith("/_next") || pathname.startsWith("/favicon");
-  pathname.startsWith("/admin") ||
-    pathname.startsWith("/dashboard") ||
-    pathname === "/" ||
-    pathname.startsWith("/logs");
+    pathname.startsWith("/_next") || pathname === "/favicon.ico";
 
-  if (isInternal) {
-    return NextResponse.next();
-  }
-
-  // Prefetch detection (correct way)
   const isPrefetch =
     req.headers.get("purpose") === "prefetch" ||
-    req.headers.get("x-middleware-prefetch") === "1";
+    req.headers.get("x-middleware-prefetch") === "1" ||
+    req.headers.get("next-router-prefetch") === "1";
 
-  if (isPrefetch) {
+  if (isInternal || isPrefetch) {
     return NextResponse.next();
   }
 
-  // --- 1) Normalize path segments ---------------------------------
-  // const normalizeStartedAt = performance.now();
-  // const { last, lastTwo } = normalizePath(pathname);
-  // const normalizeDurationMs = performance.now() - normalizeStartedAt;
+  // Date.now() is safe to forward to a page/route and compare there.
+  const requestStartedAt = Date.now();
+  const requestId = crypto.randomUUID();
 
+  // performance.now() is excellent for a local micro-measurement.
   const normalizeStartedAt = performance.now();
 
+  // normalizePath expects an absolute URL, not "/forecast".
   const { last, lastTwo } = normalizePath(req.url);
 
   const normalizeDurationMs = performance.now() - normalizeStartedAt;
@@ -56,67 +44,46 @@ export async function proxy(req: NextRequest) {
     level: "info",
     message: `Normalized path segments in ${normalizeDurationMs.toFixed(3)} ms`,
     file: "proxy.ts",
-    line: 44,
+    line: 35,
     payload: {
+      requestId,
       pathname,
       last,
       lastTwo,
       normalizeDurationMs: Number(normalizeDurationMs.toFixed(3)),
     },
-    meta: { built: { ...built, eventIndex: ++jei } },
+    meta: {
+      built: {
+        ...built,
+        eventIndex: 1,
+      },
+    },
   });
-  // --- 2) Start timing -------------------------------------------
-  startRequest(req.url);
+
+  // Retain this if you want next-axiom's middleware request instrumentation.
   const logger = new Logger({ source: "middleware" });
   logger.middleware(req);
 
-  // --- 3) Skip NextAuth routes -----------------------------------
-  if (pathname.startsWith("/api/auth")) {
-    return end(req, NextResponse.next());
-  }
-
-  // --- 4) Auth check ---------------------------------------------
   const session = await auth();
+
   if (!session) {
-    return end(
-      req,
-      NextResponse.redirect(new URL("/api/auth/signin", req.url)),
-    );
+    return NextResponse.redirect(new URL("/api/auth/signin", req.url));
   }
 
-  // --- 5) Continue request ---------------------------------------
-  return end(req, NextResponse.next());
-}
+  // These are request headers forwarded to the page/route—not response headers.
+  const forwardedHeaders = new Headers(req.headers);
 
-// --- END helper ---------------------------------------------------
-async function end(req: NextRequest, res: NextResponse) {
-  const durationMs = getDuration(req.url);
-  const pathname = req.nextUrl.pathname;
-  // const built = await buildUniversalContext(req, "PROXY");
+  forwardedHeaders.set("x-app-request-started-at", String(requestStartedAt));
 
-  // await logj(
-  //   "middleware",
-  //   "proxy.ts",
-  //   90,
-  //   {
-  //     level: "info",
-  //     message: "REQUEST END " + pathname,
-  //   },
-  //   {
-  //     durationMs,
-  //     method: req.method,
-  //     url: req.url,
-  //     status: res.status,
-  //   },
-  //   {
-  //     built: built,
-  //   },
-  // );
+  forwardedHeaders.set("x-app-request-id", requestId);
 
-  clearRequest(req.url);
-  return res;
+  return NextResponse.next({
+    request: {
+      headers: forwardedHeaders,
+    },
+  });
 }
 
 export const config = {
-  matcher: ["/((?!api|_next|favicon.ico).*)"],
+  matcher: ["/((?!api|_next|favicon.ico).*)", "/api/weather/forecast/:path*"],
 };
