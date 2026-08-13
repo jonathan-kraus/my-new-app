@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\page.tsx
- * @LastEditTime: 2026-08-13 18:50:52
+ * @LastEditTime: 2026-08-13 18:55:20
  */
 // app/page.tsx
 import { auth } from "@/auth";
@@ -153,7 +153,7 @@ export default async function HomePage(req: Request) {
 
         {/* Current Weather */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <CurrentWeatherCard location={location} />
+          {/* <CurrentWeatherCard location={location} /> */}
         </section>
 
         {/* System Health */}
@@ -166,7 +166,7 @@ export default async function HomePage(req: Request) {
         {/* Recent Activity */}
         <section className="mt-6">
           <h2 className="text-xl font-medium mb-2 text-sky-200">
-            {/* {<RecentActivity />} */}
+            {<RecentActivity />}
           </h2>
         </section>
 
