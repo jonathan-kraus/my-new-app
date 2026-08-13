@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\proxy.ts
- * @LastEditTime: 2026-08-13 15:10:25
+ * @LastEditTime: 2026-08-13 15:17:09
  */
 import { Logger } from "next-axiom";
 import { auth } from "@/auth";
@@ -38,7 +38,7 @@ export async function proxy(req: NextRequest) {
   const normalizeDurationMs = performance.now() - normalizeStartedAt;
 
   const built = await buildUniversalContext(req, "PROXY");
-  const jei = 77;
+
   await logj({
     domain: "jonathan",
     level: "info",

@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\lib\log\logj.ts
- * @LastEditTime: 2026-08-11 18:41:03
+ * @LastEditTime: 2026-08-13 15:12:07
  */
 import "server-only";
 import { db } from "@/lib/db";
@@ -9,7 +9,7 @@ import { z } from "zod";
 import type { LogjInput } from "@/lib/log/types";
 
 const NEON_MAX_JSON = 200_000;
-const logCounters = new Map<string, number>();
+
 // ---------------------------------------------------------------------------
 // Zod schema for the *canonical* log record
 // ---------------------------------------------------------------------------
