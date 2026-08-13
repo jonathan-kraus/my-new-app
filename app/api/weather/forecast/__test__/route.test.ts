@@ -196,7 +196,7 @@ describe("GET /api/weather/forecast", () => {
     expect(json.source).toBe("api");
     expect(json.current.temperature).toBe(32);
 
-    expect(mockedLog).toHaveBeenCalledTimes(4);
+    expect(mockedLog).toHaveBeenCalledTimes(5);
     expect(mockedDb.forecastSnapshot.create).toHaveBeenCalled();
   });
 
@@ -216,6 +216,6 @@ describe("GET /api/weather/forecast", () => {
     expect(res.status).toBe(502);
     expect(json.error).toBe("Forecast unavailable");
 
-    expect(mockedLog).toHaveBeenCalledTimes(3);
+    expect(mockedLog).toHaveBeenCalledTimes(4);
   });
 });
