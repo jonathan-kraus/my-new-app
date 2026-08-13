@@ -39,15 +39,30 @@ export async function proxy(req: NextRequest) {
   }
 
   // --- 1) Normalize path segments ---------------------------------
-  const normalizedPath = normalizePath(pathname);
+  // const normalizeStartedAt = performance.now();
+  // const { last, lastTwo } = normalizePath(pathname);
+  // const normalizeDurationMs = performance.now() - normalizeStartedAt;
+
+  const normalizeStartedAt = performance.now();
+
+  const { last, lastTwo } = normalizePath(pathname);
+
+  const normalizeDurationMs = performance.now() - normalizeStartedAt;
+
   const built = await buildUniversalContext(req, "PROXY");
+
   await logj({
     domain: "jonathan",
     level: "info",
-    message: "Normalize path segments pathname: " + normalizedPath,
+    message: `Normalized path segments in ${normalizeDurationMs.toFixed(3)} ms`,
     file: "proxy.ts",
-    line: 44,
-    payload: { some: "data" },
+    line: 54,
+    payload: {
+      pathname,
+      last,
+      lastTwo,
+      normalizeDurationMs: Number(normalizeDurationMs.toFixed(3)),
+    },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
 
