@@ -14,14 +14,16 @@ import { db } from "@/lib/db";
 //
 export async function generateMetadata() {
   const temperature = await db.weatherSnapshot.findFirst({
-    select: {
-      temperature: true,
-    },
+    select: { temperature: true },
     where: { locationId: "KOP" },
     orderBy: { fetchedAt: "desc" },
   });
-  return { title: `Forecast - ${temperature?.temperature}°F` };
+
+  const temp = Math.round(temperature?.temperature ?? 0);
+
+  return { title: `Forecast - ${temp}°F` };
 }
+
 export async function sendForecastEmailAction(formData: FormData) {
   "use server";
 

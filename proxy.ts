@@ -44,7 +44,7 @@ export async function proxy(req: NextRequest) {
     level: "info",
     message: `Normalized path ${pathname}  in ${normalizeDurationMs.toFixed(3)} ms`,
     file: "proxy.ts",
-    line: 35,
+    line: 42,
     payload: {
       requestId,
       pathname,

@@ -72,7 +72,7 @@ export async function GET(req: Request) {
       level: "info",
       message: "🌟 Forecast cache hit",
       file: "app/api/weather/forecast/route.ts",
-      line: 69,
+      line: 70,
       payload: {
         locationId: resolvedLocationId,
         data: cached.payload,
@@ -165,7 +165,7 @@ export async function GET(req: Request) {
     level: "warn",
     message: "🌟 Forecast cache miss → fetching external API",
     file: "app/api/weather/forecast/route.ts",
-    line: 162,
+    line: 163,
     payload: { locationId: resolvedLocationId },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -201,7 +201,7 @@ export async function GET(req: Request) {
         level: "error",
         message: "Open-Meteo JSON parse failed",
         file: "app/api/weather/forecast/route.ts",
-        line: 198,
+        line: 199,
         payload: { error: String(err) },
         meta: { built: { ...built, eventIndex: ++jei } },
       });
@@ -217,7 +217,7 @@ export async function GET(req: Request) {
       level: "error",
       message: "Open-Meteo fetch threw",
       file: "app/api/weather/forecast/route.ts",
-      line: 214,
+      line: 215,
       payload: { error: String(err) },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -237,7 +237,7 @@ export async function GET(req: Request) {
     level: "info",
     message: "🌟 Forecast API response",
     file: "app/api/weather/forecast/route.ts",
-    line: 234,
+    line: 235,
     payload: { raw, locationId: resolvedLocationId },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -258,7 +258,7 @@ export async function GET(req: Request) {
     level: "info",
     message: "Forecast page data completed",
     file: "app/api/weather/forecast/route.ts",
-    line: 254,
+    line: 256,
     payload: {
       requestId: requestId || undefined,
       forecastDurationMs: Number(forecastDurationMs.toFixed(3)),
@@ -272,7 +272,7 @@ export async function GET(req: Request) {
       level: "error",
       message: "Forecast unavailable",
       file: "app/api/weather/forecast/route.ts",
-      line: 268,
+      line: 270,
       payload: { raw, issues: parsed.error.flatten() },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -296,7 +296,7 @@ export async function GET(req: Request) {
       level: "error",
       message: "Forecast unavailable (missing daily block)",
       file: "app/api/weather/forecast/route.ts",
-      line: 292,
+      line: 294,
       payload: { raw },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -315,7 +315,7 @@ export async function GET(req: Request) {
     level: "info",
     message: "🌟 Forecast API parsed",
     file: "app/api/weather/forecast/route.ts",
-    line: 311,
+    line: 313,
     payload: { locationId: resolvedLocationId },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -348,7 +348,7 @@ export async function GET(req: Request) {
     level: "info",
     message: "🌟 Forecast snapshot stored",
     file: "app/api/weather/forecast/route.ts",
-    line: 344,
+    line: 346,
     payload: {
       snapshotId: snapshot.id,
       cacheWindowMinutes: FORECAST_CACHE_MINUTES,

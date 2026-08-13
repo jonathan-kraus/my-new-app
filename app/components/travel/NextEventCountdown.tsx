@@ -16,7 +16,7 @@ logj({
   level: "info",
   message: "NextEventCountdown loaded",
   file: "app/components/travel/NextEventCountdown.tsx",
-  line: 10,
+  line: 14,
   payload: { some: "next event" },
   meta: { built: { ...built, eventIndex: ++jei } },
 });
