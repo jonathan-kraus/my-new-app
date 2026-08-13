@@ -68,7 +68,8 @@ const IGNORE = [
   "1124298",
   "1124273",
   "1130733",
-  "1130734"    // find-my-way: DDoS with HTTP2 (Prisma dev dependency)
+  "1130734",
+  "1139427",   // find-my-way: DDoS with HTTP2 (Prisma dev dependency)
 ];
 
 
