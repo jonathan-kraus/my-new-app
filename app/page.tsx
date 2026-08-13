@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\page.tsx
- * @LastEditTime: 2026-07-22 23:47:03
+ * @LastEditTime: 2026-08-13 18:20:27
  */
 // app/page.tsx
 import { auth } from "@/auth";
@@ -29,7 +29,10 @@ function getGreeting(): string {
 export default async function HomePage(req: Request) {
   // If you still need the full session object for richer logging, fetch it here
   const session = await auth();
-  SessionSchema.parse(session); // throws if shape is unexpected
+  const parsed = SessionSchema.safeParse(session);
+  if (!parsed.success) {
+    return <div>Invalid session.</div>;
+  }
   // Use userId from the universal context if available, otherwise fall back to session
   const built = await buildUniversalContext(req as any, "DASHBOARD");
   let jei = 0;
@@ -38,7 +41,7 @@ export default async function HomePage(req: Request) {
     level: "info",
     message: `** Dashboard Start **`,
     file: "app/page.tsx",
-    line: 36,
+    line: 39,
     payload: {
       some: "data",
     },
@@ -64,7 +67,7 @@ export default async function HomePage(req: Request) {
       level: "error",
       message: "weatherRes not ok",
       file: "app/page.tsx",
-      line: 62,
+      line: 65,
       payload: { status: weatherRes.status },
     });
 
@@ -82,7 +85,7 @@ export default async function HomePage(req: Request) {
       level: "error",
       message: "weatherRes.json() failed",
       file: "app/page.tsx",
-      line: 80,
+      line: 83,
       payload: { error: String(err) },
     });
 
@@ -98,7 +101,7 @@ export default async function HomePage(req: Request) {
       level: "error",
       message: "WeatherSchema.parse failed",
       file: "app/page.tsx",
-      line: 96,
+      line: 99,
       payload: { error: String(err) },
     });
 
@@ -110,7 +113,7 @@ export default async function HomePage(req: Request) {
     level: "info",
     message: "weatherData retrieved",
     file: "app/page.tsx",
-    line: 108,
+    line: 111,
     payload: { some: "data" },
 
     meta: { built: { ...built, eventIndex: ++jei } },
@@ -126,7 +129,7 @@ export default async function HomePage(req: Request) {
     level: "info",
     message: `*** Dashboard End ***`,
     file: "app/page.tsx",
-    line: 124,
+    line: 127,
     payload: {
       location: location,
       weatherData: weatherData,
