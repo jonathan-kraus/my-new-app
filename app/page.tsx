@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\page.tsx
- * @LastEditTime: 2026-08-13 18:55:20
+ * @LastEditTime: 2026-08-13 19:39:04
  */
 // app/page.tsx
 import { auth } from "@/auth";
@@ -123,13 +123,49 @@ export default async function HomePage(req: Request) {
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/weather/forecast?locationId=${location?.id}`,
     { cache: "no-store" },
   );
-  const forecastData = await forecastRes.json();
+
+  if (!forecastRes.ok) {
+    await logj({
+      domain: "forecast",
+      level: "error",
+      message: "forecastRes not ok",
+      file: "app/page.tsx",
+      line: 128,
+      payload: { status: forecastRes.status },
+    });
+
+    return <div>Forecast service unavailable.</div>;
+  }
+
+  let forecastData;
+  try {
+    forecastData = await forecastRes.json();
+  } catch (err) {
+    await logj({
+      domain: "forecast",
+      level: "error",
+      message: "forecastRes.json() failed",
+      file: "app/page.tsx",
+      line: 144,
+      payload: { error: String(err) },
+    });
+
+    return <div>Forecast data could not be parsed.</div>;
+  }
+
+  try {
+    forecastData = await forecastRes.json();
+  } catch (err) {
+    console.error("Forecast JSON parse failed:", err);
+    return <div>Forecast data could not be parsed.</div>;
+  }
+
   await logj({
     domain: "jonathan",
     level: "info",
     message: `*** Dashboard End ***`,
     file: "app/page.tsx",
-    line: 127,
+    line: 163,
     payload: {
       location: location,
       weatherData: weatherData,
@@ -139,7 +175,7 @@ export default async function HomePage(req: Request) {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-sky-600 to-sky-900 text-white p-8">
+    <div className="min-h-screen bg-linear-to-b from-sky-600 to-sky-900 text-white p-8">
       <div className="max-w-5xl mx-auto bg-sky-800/60 backdrop-blur-md rounded-2xl p-8 shadow-xl border border-white/10">
         {/* Header */}
         <section className="mb-8">
