@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\proxy.ts
- * @LastEditTime: 2026-08-13 17:21:42
+ * @LastEditTime: 2026-08-13 17:59:00
  */
 import { Logger } from "next-axiom";
 import { auth } from "@/auth";
@@ -24,6 +24,27 @@ export async function proxy(req: NextRequest) {
   if (isInternal || isPrefetch) {
     return NextResponse.next();
   }
+  const SCANNER_PATHS = [
+    "/telescope",
+    "/telescope/requests",
+    "/phpmyadmin",
+    "/wp-admin",
+    "/wp-login.php",
+    "/admin",
+    "/dashboard",
+    "/api/graphql",
+    "/server-status",
+    "/.env",
+    "/vendor/phpunit",
+  ];
+
+  function isScannerPath(pathname: string) {
+    return SCANNER_PATHS.some((p) => pathname.startsWith(p));
+  }
+  let domain = "Jonathan";
+  if (isScannerPath(pathname)) {
+    let domain = "Scanner";
+  }
 
   // Date.now() is safe to forward to a page/route and compare there.
   const requestStartedAt = Date.now();
@@ -40,7 +61,7 @@ export async function proxy(req: NextRequest) {
   const built = await buildUniversalContext(req, "PROXY");
 
   await logj({
-    domain: "jonathan",
+    domain: domain,
     level: "info",
     message: `Normalized path ${pathname} in ${normalizeDurationMs.toFixed(3)} ms`,
     file: "proxy.ts",
