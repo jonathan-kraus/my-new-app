@@ -153,7 +153,7 @@ export default async function HomePage(req: Request) {
 
         {/* Current Weather */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* <CurrentWeatherCard location={location} /> */}
+          <CurrentWeatherCard location={location} />
         </section>
 
         {/* System Health */}
