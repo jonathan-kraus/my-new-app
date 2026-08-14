@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\page.tsx
- * @LastEditTime: 2026-08-13 21:19:45
+ * @LastEditTime: 2026-08-13 21:25:45
  */
 
 import { auth } from "@/auth";
@@ -174,7 +174,7 @@ export default async function HomePage(req: Request) {
       level: "error",
       message: "gitRes.json() failed",
       file: "app/page.tsx",
-      line: 173,
+      line: 172,
       payload: {
         error: String(err),
         body: raw,
@@ -202,7 +202,7 @@ export default async function HomePage(req: Request) {
     level: "info",
     message: "Dashboard timing",
     file: "app/page.tsx",
-    line: 201,
+    line: 200,
     payload: {
       dashboardDurationMs: dashboardEnd - dashboardStart,
       sessionDurationMs: sessionEnd - sessionStart,
