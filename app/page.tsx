@@ -1,8 +1,8 @@
 /*
  * @FilePath: \my-new-app\app\page.tsx
- * @LastEditTime: 2026-08-13 19:39:04
+ * @LastEditTime: 2026-08-13 20:12:34
  */
-// app/page.tsx
+
 import { auth } from "@/auth";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
@@ -17,6 +17,7 @@ import {
   LocationSchema,
   WeatherSchema,
 } from "@/lib/schemas/page-schemas";
+import { headers } from "next/headers";
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -27,40 +28,51 @@ function getGreeting(): string {
 }
 
 export default async function HomePage(req: Request) {
-  // If you still need the full session object for richer logging, fetch it here
   const session = await auth();
   const parsed = SessionSchema.safeParse(session);
   if (!parsed.success) {
     return <div>Invalid session.</div>;
   }
-  // Use userId from the universal context if available, otherwise fall back to session
+
   const built = await buildUniversalContext(req as any, "DASHBOARD");
   let jei = 0;
+
   await logj({
     domain: "jonathan",
     level: "info",
     message: `** Dashboard Start **`,
     file: "app/page.tsx",
     line: 39,
-    payload: {
-      some: "data",
-    },
+    payload: { some: "data" },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
 
   const location = await db.location.findFirst({
     where: { isDefault: true },
   });
+
   LocationSchema.parse(location);
+
   if (!location) {
     return <div>No default location configured.</div>;
   }
+
+  // ---------------------------
+  // CORRECT SERVER-SIDE BASE URL
+  // ---------------------------
+  const h = await headers();
+  const host = h.get("host");
+  const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
+  const base = `${protocol}://${host}`;
+
+  // ---------------------------
+  // WEATHER FETCH
+  // ---------------------------
   const weatherRes = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/weather?locationId=${location.id}`,
+    `${base}/api/weather?locationId=${location.id}`,
     { cache: "no-store" },
   );
 
-  // 1. Handle network errors
   if (!weatherRes.ok) {
     await logj({
       domain: "weather",
@@ -76,23 +88,26 @@ export default async function HomePage(req: Request) {
 
   let weatherData;
 
-  // 2. Handle invalid JSON
   try {
     weatherData = await weatherRes.json();
   } catch (err) {
+    const raw = await weatherRes.text().catch(() => "Could not read body");
+
     await logj({
       domain: "weather",
       level: "error",
       message: "weatherRes.json() failed",
       file: "app/page.tsx",
       line: 83,
-      payload: { error: String(err) },
+      payload: {
+        error: String(err),
+        body: raw,
+      },
     });
 
     return <div>Weather data could not be parsed.</div>;
   }
 
-  // 3. Handle schema validation errors
   try {
     WeatherSchema.parse(weatherData);
   } catch (err) {
@@ -115,12 +130,14 @@ export default async function HomePage(req: Request) {
     file: "app/page.tsx",
     line: 111,
     payload: { some: "data" },
-
     meta: { built: { ...built, eventIndex: ++jei } },
   });
 
+  // ---------------------------
+  // FORECAST FETCH
+  // ---------------------------
   const forecastRes = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/weather/forecast?locationId=${location?.id}`,
+    `${base}/api/weather/forecast?locationId=${location.id}`,
     { cache: "no-store" },
   );
 
@@ -138,25 +155,24 @@ export default async function HomePage(req: Request) {
   }
 
   let forecastData;
+
   try {
     forecastData = await forecastRes.json();
   } catch (err) {
+    const raw = await forecastRes.text().catch(() => "Could not read body");
+
     await logj({
       domain: "forecast",
       level: "error",
       message: "forecastRes.json() failed",
       file: "app/page.tsx",
       line: 144,
-      payload: { error: String(err) },
+      payload: {
+        error: String(err),
+        body: raw,
+      },
     });
 
-    return <div>Forecast data could not be parsed.</div>;
-  }
-
-  try {
-    forecastData = await forecastRes.json();
-  } catch (err) {
-    console.error("Forecast JSON parse failed:", err);
     return <div>Forecast data could not be parsed.</div>;
   }
 
@@ -167,9 +183,9 @@ export default async function HomePage(req: Request) {
     file: "app/page.tsx",
     line: 163,
     payload: {
-      location: location,
-      weatherData: weatherData,
-      forecastData: forecastData,
+      location,
+      weatherData,
+      forecastData,
     },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -202,7 +218,7 @@ export default async function HomePage(req: Request) {
         {/* Recent Activity */}
         <section className="mt-6">
           <h2 className="text-xl font-medium mb-2 text-sky-200">
-            {<RecentActivity />}
+            <RecentActivity />
           </h2>
         </section>
 
