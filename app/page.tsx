@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\page.tsx
- * @LastEditTime: 2026-08-13 20:12:34
+ * @LastEditTime: 2026-08-13 20:25:27
  */
 
 import { auth } from "@/auth";
@@ -17,7 +17,7 @@ import {
   LocationSchema,
   WeatherSchema,
 } from "@/lib/schemas/page-schemas";
-import { headers } from "next/headers";
+import { headers, cookies } from "next/headers";
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -42,7 +42,7 @@ export default async function HomePage(req: Request) {
     level: "info",
     message: `** Dashboard Start **`,
     file: "app/page.tsx",
-    line: 39,
+    line: 40,
     payload: { some: "data" },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -66,11 +66,21 @@ export default async function HomePage(req: Request) {
   const base = `${protocol}://${host}`;
 
   // ---------------------------
+  // AUTHENTICATED COOKIE FORWARDING
+  // ---------------------------
+  const cookieHeader = cookies().toString();
+
+  // ---------------------------
   // WEATHER FETCH
   // ---------------------------
   const weatherRes = await fetch(
     `${base}/api/weather?locationId=${location.id}`,
-    { cache: "no-store" },
+    {
+      cache: "no-store",
+      headers: {
+        cookie: cookieHeader,
+      },
+    },
   );
 
   if (!weatherRes.ok) {
@@ -79,7 +89,7 @@ export default async function HomePage(req: Request) {
       level: "error",
       message: "weatherRes not ok",
       file: "app/page.tsx",
-      line: 65,
+      line: 87,
       payload: { status: weatherRes.status },
     });
 
@@ -98,10 +108,13 @@ export default async function HomePage(req: Request) {
       level: "error",
       message: "weatherRes.json() failed",
       file: "app/page.tsx",
-      line: 83,
+      line: 106,
       payload: {
         error: String(err),
         body: raw,
+        url: weatherRes.url,
+        status: weatherRes.status,
+        redirected: weatherRes.redirected,
       },
     });
 
@@ -116,7 +129,7 @@ export default async function HomePage(req: Request) {
       level: "error",
       message: "WeatherSchema.parse failed",
       file: "app/page.tsx",
-      line: 99,
+      line: 127,
       payload: { error: String(err) },
     });
 
@@ -128,7 +141,7 @@ export default async function HomePage(req: Request) {
     level: "info",
     message: "weatherData retrieved",
     file: "app/page.tsx",
-    line: 111,
+    line: 139,
     payload: { some: "data" },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -138,7 +151,12 @@ export default async function HomePage(req: Request) {
   // ---------------------------
   const forecastRes = await fetch(
     `${base}/api/weather/forecast?locationId=${location.id}`,
-    { cache: "no-store" },
+    {
+      cache: "no-store",
+      headers: {
+        cookie: cookieHeader,
+      },
+    },
   );
 
   if (!forecastRes.ok) {
@@ -147,7 +165,7 @@ export default async function HomePage(req: Request) {
       level: "error",
       message: "forecastRes not ok",
       file: "app/page.tsx",
-      line: 128,
+      line: 163,
       payload: { status: forecastRes.status },
     });
 
@@ -166,14 +184,13 @@ export default async function HomePage(req: Request) {
       level: "error",
       message: "forecastRes.json() failed",
       file: "app/page.tsx",
-      line: 144,
+      line: 182,
       payload: {
         error: String(err),
-        url: forecastRes.url,
-        redirected: forecastRes.redirected,
-        status: forecastRes.status,
-        statusText: forecastRes.statusText,
         body: raw,
+        url: forecastRes.url,
+        status: forecastRes.status,
+        redirected: forecastRes.redirected,
       },
     });
 
@@ -185,7 +202,7 @@ export default async function HomePage(req: Request) {
     level: "info",
     message: `*** Dashboard End ***`,
     file: "app/page.tsx",
-    line: 163,
+    line: 200,
     payload: {
       location,
       weatherData,
