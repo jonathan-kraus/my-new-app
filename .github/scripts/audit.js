@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\.github\scripts\audit.js
- * @LastEditTime: 2026-07-26 20:11:57
+ * @LastEditTime: 2026-08-14 11:58:29
  */
 import fs from "fs";
 import * as yaml from "js-yaml";
@@ -56,20 +56,7 @@ console.log("🔍 -- Auditing", Object.keys(payload).length, "packages…");
 
 // advisories to ignore by ID
 const IGNORE = [
-  "1121191",                 // your existing ignore
-  "GHSA-92pp-h63x-v22m",     // @hono/node-server (bundled by Prisma)
-  "GHSA-qx2v-qp2m-jg93",     // postcss (bundled by Next.js)
-  "1106734",                 // @eslint/plugin-kit low-severity dev tooling advisory
-    // minimatch ReDoS advisories
-  "1113465",
-  "1113544",
-  "1113552",
-  "1124334",
-  "1124298",
-  "1124273",
-  "1130733",
-  "1130734",
-  "1139427",   // find-my-way: DDoS with HTTP2 (Prisma dev dependency)
+    "1111111",   // Dummy
 ];
 
 
