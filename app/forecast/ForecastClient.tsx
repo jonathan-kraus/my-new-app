@@ -111,7 +111,7 @@ export default function ForecastClient({
   const timeline = forecast ? useForecastTimeline(forecast.forecast) : null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 px-4 py-10 text-white">
+    <div className="min-h-screen bg-linear-to-br from-sky-400 via-blue-500 to-indigo-600 px-4 py-10 text-white">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">

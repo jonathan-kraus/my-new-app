@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\page.tsx
- * @LastEditTime: 2026-08-13 20:25:27
+ * @LastEditTime: 2026-08-13 21:09:12
  */
 
 import { auth } from "@/auth";
@@ -28,13 +28,30 @@ function getGreeting(): string {
 }
 
 export default async function HomePage(req: Request) {
+  // ---------------------------
+  // DASHBOARD TIMING START
+  // ---------------------------
+  const dashboardStart = performance.now();
+
+  // ---------------------------
+  // SESSION TIMING
+  // ---------------------------
+  const sessionStart = performance.now();
   const session = await auth();
+  const sessionEnd = performance.now();
+
   const parsed = SessionSchema.safeParse(session);
   if (!parsed.success) {
     return <div>Invalid session.</div>;
   }
 
+  // ---------------------------
+  // UNIVERSAL CONTEXT TIMING
+  // ---------------------------
+  const contextStart = performance.now();
   const built = await buildUniversalContext(req as any, "DASHBOARD");
+  const contextEnd = performance.now();
+
   let jei = 0;
 
   await logj({
@@ -42,14 +59,19 @@ export default async function HomePage(req: Request) {
     level: "info",
     message: `** Dashboard Start **`,
     file: "app/page.tsx",
-    line: 40,
+    line: 57,
     payload: { some: "data" },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
 
+  // ---------------------------
+  // DB TIMING
+  // ---------------------------
+  const dbStart = performance.now();
   const location = await db.location.findFirst({
     where: { isDefault: true },
   });
+  const dbEnd = performance.now();
 
   LocationSchema.parse(location);
 
@@ -58,7 +80,7 @@ export default async function HomePage(req: Request) {
   }
 
   // ---------------------------
-  // CORRECT SERVER-SIDE BASE URL
+  // BASE URL
   // ---------------------------
   const h = await headers();
   const host = h.get("host");
@@ -66,49 +88,37 @@ export default async function HomePage(req: Request) {
   const base = `${protocol}://${host}`;
 
   // ---------------------------
-  // AUTHENTICATED COOKIE FORWARDING
+  // COOKIE FORWARDING
   // ---------------------------
-  const cookieHeader = cookies().toString();
+  const cookieStore = cookies();
+  const cookieHeader = cookieStore
+    .getAll()
+    .map((c) => `${c.name}=${c.value}`)
+    .join("; ");
 
   // ---------------------------
-  // WEATHER FETCH
+  // WEATHER TIMING
   // ---------------------------
+  const weatherStart = performance.now();
   const weatherRes = await fetch(
     `${base}/api/weather?locationId=${location.id}`,
     {
       cache: "no-store",
-      headers: {
-        cookie: cookieHeader,
-      },
+      headers: { cookie: cookieHeader },
     },
   );
 
-  if (!weatherRes.ok) {
-    await logj({
-      domain: "weather",
-      level: "error",
-      message: "weatherRes not ok",
-      file: "app/page.tsx",
-      line: 87,
-      payload: { status: weatherRes.status },
-    });
-
-    return <div>Weather service unavailable.</div>;
-  }
-
   let weatherData;
-
   try {
     weatherData = await weatherRes.json();
   } catch (err) {
     const raw = await weatherRes.text().catch(() => "Could not read body");
-
     await logj({
       domain: "weather",
       level: "error",
       message: "weatherRes.json() failed",
       file: "app/page.tsx",
-      line: 106,
+      line: 116,
       payload: {
         error: String(err),
         body: raw,
@@ -117,74 +127,35 @@ export default async function HomePage(req: Request) {
         redirected: weatherRes.redirected,
       },
     });
-
     return <div>Weather data could not be parsed.</div>;
   }
+  const weatherEnd = performance.now();
 
-  try {
-    WeatherSchema.parse(weatherData);
-  } catch (err) {
-    await logj({
-      domain: "weather",
-      level: "error",
-      message: "WeatherSchema.parse failed",
-      file: "app/page.tsx",
-      line: 127,
-      payload: { error: String(err) },
-    });
-
-    return <div>Weather data is invalid.</div>;
-  }
-
-  await logj({
-    domain: "jonathan",
-    level: "info",
-    message: "weatherData retrieved",
-    file: "app/page.tsx",
-    line: 139,
-    payload: { some: "data" },
-    meta: { built: { ...built, eventIndex: ++jei } },
-  });
+  WeatherSchema.parse(weatherData);
 
   // ---------------------------
-  // FORECAST FETCH
+  // FORECAST TIMING
   // ---------------------------
+  const forecastStart = performance.now();
   const forecastRes = await fetch(
     `${base}/api/weather/forecast?locationId=${location.id}`,
     {
       cache: "no-store",
-      headers: {
-        cookie: cookieHeader,
-      },
+      headers: { cookie: cookieHeader },
     },
   );
 
-  if (!forecastRes.ok) {
-    await logj({
-      domain: "forecast",
-      level: "error",
-      message: "forecastRes not ok",
-      file: "app/page.tsx",
-      line: 163,
-      payload: { status: forecastRes.status },
-    });
-
-    return <div>Forecast service unavailable.</div>;
-  }
-
   let forecastData;
-
   try {
     forecastData = await forecastRes.json();
   } catch (err) {
     const raw = await forecastRes.text().catch(() => "Could not read body");
-
     await logj({
       domain: "forecast",
       level: "error",
       message: "forecastRes.json() failed",
       file: "app/page.tsx",
-      line: 182,
+      line: 153,
       payload: {
         error: String(err),
         body: raw,
@@ -193,28 +164,37 @@ export default async function HomePage(req: Request) {
         redirected: forecastRes.redirected,
       },
     });
-
     return <div>Forecast data could not be parsed.</div>;
   }
+  const forecastEnd = performance.now();
 
+  // ---------------------------
+  // DASHBOARD TIMING END
+  // ---------------------------
+  const dashboardEnd = performance.now();
+
+  // ---------------------------
+  // LOG FULL TIMING BREAKDOWN
+  // ---------------------------
   await logj({
-    domain: "jonathan",
+    domain: "dashboard",
     level: "info",
-    message: `*** Dashboard End ***`,
+    message: "Dashboard timing",
     file: "app/page.tsx",
-    line: 200,
+    line: 179,
     payload: {
-      location,
-      weatherData,
-      forecastData,
+      dashboardDurationMs: dashboardEnd - dashboardStart,
+      sessionDurationMs: sessionEnd - sessionStart,
+      contextDurationMs: contextEnd - contextStart,
+      dbDurationMs: dbEnd - dbStart,
+      weatherDurationMs: weatherEnd - weatherStart,
+      forecastDurationMs: forecastEnd - forecastStart,
     },
-    meta: { built: { ...built, eventIndex: ++jei } },
   });
 
   return (
     <div className="min-h-screen bg-linear-to-b from-sky-600 to-sky-900 text-white p-8">
       <div className="max-w-5xl mx-auto bg-sky-800/60 backdrop-blur-md rounded-2xl p-8 shadow-xl border border-white/10">
-        {/* Header */}
         <section className="mb-8">
           <h1 className="text-4xl font-semibold mb-1">
             {getGreeting()}, Jonathan.
@@ -224,26 +204,22 @@ export default async function HomePage(req: Request) {
           </p>
         </section>
 
-        {/* Current Weather */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <CurrentWeatherCard location={location} />
         </section>
 
-        {/* System Health */}
         <section className="mt-10">
           <h2 className="text-xl font-medium mb-2 text-sky-200">
             System Health
           </h2>
         </section>
 
-        {/* Recent Activity */}
         <section className="mt-6">
           <h2 className="text-xl font-medium mb-2 text-sky-200">
             <RecentActivity />
           </h2>
         </section>
 
-        {/* Quick Actions */}
         <UIProvider>
           <section className="mt-8 flex gap-4">
             <Button asChild>
