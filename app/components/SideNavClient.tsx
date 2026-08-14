@@ -1,7 +1,7 @@
 "use client";
 /*
  * @FilePath: \my-new-app\app\components\SideNavClient.tsx
- * @LastEditTime: 2026-08-14 02:57:59
+ * @LastEditTime: 2026-08-14 08:43:56
  */
 
 import Link from "next/link";
