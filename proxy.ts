@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\proxy.ts
- * @LastEditTime: 2026-08-13 17:59:00
+ * @LastEditTime: 2026-08-13 20:40:47
  */
 import { Logger } from "next-axiom";
 import { auth } from "@/auth";
@@ -106,5 +106,5 @@ export async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next|favicon.ico).*)", "/api/weather/forecast/:path*"],
+  matcher: ["/((?!api|_next|favicon.ico).*)"],
 };
