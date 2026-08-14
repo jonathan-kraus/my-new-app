@@ -88,15 +88,6 @@ export default async function HomePage(req: Request) {
   const base = `${protocol}://${host}`;
 
   // ---------------------------
-  // COOKIE FORWARDING
-  // ---------------------------
-  const cookieStore = cookies();
-  const cookieHeader = cookieStore
-    .getAll()
-    .map((c) => `${c.name}=${c.value}`)
-    .join("; ");
-
-  // ---------------------------
   // WEATHER TIMING
   // ---------------------------
   const weatherStart = performance.now();
@@ -104,7 +95,6 @@ export default async function HomePage(req: Request) {
     `${base}/api/weather?locationId=${location.id}`,
     {
       cache: "no-store",
-      headers: { cookie: cookieHeader },
     },
   );
 
@@ -118,7 +108,7 @@ export default async function HomePage(req: Request) {
       level: "error",
       message: "weatherRes.json() failed",
       file: "app/page.tsx",
-      line: 116,
+      line: 107,
       payload: {
         error: String(err),
         body: raw,
@@ -141,7 +131,6 @@ export default async function HomePage(req: Request) {
     `${base}/api/weather/forecast?locationId=${location.id}`,
     {
       cache: "no-store",
-      headers: { cookie: cookieHeader },
     },
   );
 
@@ -155,7 +144,7 @@ export default async function HomePage(req: Request) {
       level: "error",
       message: "forecastRes.json() failed",
       file: "app/page.tsx",
-      line: 153,
+      line: 144,
       payload: {
         error: String(err),
         body: raw,
@@ -181,7 +170,7 @@ export default async function HomePage(req: Request) {
     level: "info",
     message: "Dashboard timing",
     file: "app/page.tsx",
-    line: 179,
+    line: 170,
     payload: {
       dashboardDurationMs: dashboardEnd - dashboardStart,
       sessionDurationMs: sessionEnd - sessionStart,
