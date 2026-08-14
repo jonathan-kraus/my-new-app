@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\page.tsx
- * @LastEditTime: 2026-08-13 21:09:12
+ * @LastEditTime: 2026-08-13 21:19:45
  */
 
 import { auth } from "@/auth";
@@ -108,7 +108,7 @@ export default async function HomePage(req: Request) {
       level: "error",
       message: "weatherRes.json() failed",
       file: "app/page.tsx",
-      line: 107,
+      line: 106,
       payload: {
         error: String(err),
         body: raw,
@@ -144,7 +144,7 @@ export default async function HomePage(req: Request) {
       level: "error",
       message: "forecastRes.json() failed",
       file: "app/page.tsx",
-      line: 144,
+      line: 142,
       payload: {
         error: String(err),
         body: raw,
@@ -156,6 +156,38 @@ export default async function HomePage(req: Request) {
     return <div>Forecast data could not be parsed.</div>;
   }
   const forecastEnd = performance.now();
+  // ---------------------------
+  // GIT ACTIVITY TIMING
+  // ---------------------------
+  const gitStart = performance.now();
+  const gitRes = await fetch(`${base}/api/activity/github`, {
+    cache: "no-store",
+  });
+
+  let gitData;
+  try {
+    gitData = await gitRes.json();
+  } catch (err) {
+    const raw = await gitRes.text().catch(() => "Could not read body");
+    await logj({
+      domain: "git",
+      level: "error",
+      message: "gitRes.json() failed",
+      file: "app/page.tsx",
+      line: 173,
+      payload: {
+        error: String(err),
+        body: raw,
+        url: gitRes.url,
+        status: gitRes.status,
+        redirected: gitRes.redirected,
+      },
+    });
+    return <div>Git activity could not be parsed.</div>;
+  }
+
+  const gitEnd = performance.now();
+  const gitDurationMs = gitEnd - gitStart;
 
   // ---------------------------
   // DASHBOARD TIMING END
@@ -170,7 +202,7 @@ export default async function HomePage(req: Request) {
     level: "info",
     message: "Dashboard timing",
     file: "app/page.tsx",
-    line: 170,
+    line: 201,
     payload: {
       dashboardDurationMs: dashboardEnd - dashboardStart,
       sessionDurationMs: sessionEnd - sessionStart,
@@ -178,6 +210,7 @@ export default async function HomePage(req: Request) {
       dbDurationMs: dbEnd - dbStart,
       weatherDurationMs: weatherEnd - weatherStart,
       forecastDurationMs: forecastEnd - forecastStart,
+      gitDurationMs: gitDurationMs,
     },
   });
 
