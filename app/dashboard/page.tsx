@@ -171,10 +171,11 @@ export default async function DashboardPage(req: Request) {
     await logj({
       domain: "dashboard",
       level: "info",
-      message: `New Version ${baseName} → ${current.version}`,
+      message: `New Version ${name} → ${current.version}`,
       file: "app/dashboard/page.tsx",
       line: 171,
       payload: {
+        name: name,
         baseName: baseName,
         version: current.version,
         added: current.added_at,
