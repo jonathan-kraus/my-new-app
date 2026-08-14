@@ -169,6 +169,10 @@ export default async function HomePage(req: Request) {
       line: 144,
       payload: {
         error: String(err),
+        url: forecastRes.url,
+        redirected: forecastRes.redirected,
+        status: forecastRes.status,
+        statusText: forecastRes.statusText,
         body: raw,
       },
     });
