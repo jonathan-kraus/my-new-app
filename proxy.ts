@@ -42,7 +42,7 @@ export async function proxy(req: NextRequest) {
     return SCANNER_PATHS.some((p) => pathname.startsWith(p));
   }
 
-  let domain = "Journal";
+  let domain = "Jonathan";
   if (isScannerPath(pathname)) {
     domain = "Scanner";
   }
