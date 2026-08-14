@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\proxy.ts
- * @LastEditTime: 2026-08-13 20:40:47
+ * @LastEditTime: 2026-08-14 12:24:26
  */
 import { Logger } from "next-axiom";
 import { auth } from "@/auth";
@@ -41,9 +41,10 @@ export async function proxy(req: NextRequest) {
   function isScannerPath(pathname: string) {
     return SCANNER_PATHS.some((p) => pathname.startsWith(p));
   }
-  let domain = "Jonathan";
+
+  let domain = "Journal";
   if (isScannerPath(pathname)) {
-    let domain = "Scanner";
+    domain = "Scanner";
   }
 
   // Date.now() is safe to forward to a page/route and compare there.
