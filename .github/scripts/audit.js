@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\.github\scripts\audit.js
- * @LastEditTime: 2026-08-14 11:58:29
+ * @LastEditTime: 2026-08-14 12:08:14
  */
 import fs from "fs";
 import * as yaml from "js-yaml";
@@ -56,7 +56,7 @@ console.log("🔍 -- Auditing", Object.keys(payload).length, "packages…");
 
 // advisories to ignore by ID
 const IGNORE = [
-    "1111111",   // Dummy
+    // "1111111",   // Dummy
 ];
 
 
@@ -100,6 +100,24 @@ const advisories = await res.json();
 // Filter advisories by semver + IGNORE
 // -----------------------------
 const realFindings = [];
+// realFindings: array of advisory objects from your audit pipeline
+// IGNORE: your ignore list
+
+const currentIds = new Set(realFindings.map(a => a.id));
+
+const staleIgnores = IGNORE.filter(id => !currentIds.has(id));
+const validIgnores = IGNORE.filter(id => currentIds.has(id));
+
+// Log what will be removed
+if (staleIgnores.length > 0) {
+  console.log("Stale ignore entries detected:");
+  staleIgnores.forEach(id => console.log("  -", id));
+} else {
+  console.log("No stale ignore entries.");
+}
+
+// Replace IGNORE with only valid entries
+const prunedIgnoreList = validIgnores;
 
 for (const [pkg, items] of Object.entries(advisories)) {
   const installed = payload[pkg][0];
