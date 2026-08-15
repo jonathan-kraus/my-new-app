@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\proxy.ts
- * @LastEditTime: 2026-08-14 23:54:34
+ * @LastEditTime: 2026-08-15 00:12:54
  */
 import { Logger } from "next-axiom";
 import { auth } from "@/auth";
@@ -55,8 +55,11 @@ export async function proxy(req: NextRequest) {
   const normalizeStartedAt = performance.now();
 
   // normalizePath expects an absolute URL, not "/forecast".
-  const { last, lastTwo } = normalizePath(req.url);
-
+  const { last, lastTwo: initialLastTwo } = normalizePath(req.url);
+  let lastTwo = initialLastTwo;
+  if (lastTwo === last) {
+    lastTwo = "";
+  }
   const normalizeDurationMs = performance.now() - normalizeStartedAt;
 
   const built = await buildUniversalContext(req, "PROXY");
