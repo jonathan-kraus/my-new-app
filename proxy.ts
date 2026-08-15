@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\proxy.ts
- * @LastEditTime: 2026-08-14 12:24:26
+ * @LastEditTime: 2026-08-14 23:54:34
  */
 import { Logger } from "next-axiom";
 import { auth } from "@/auth";
@@ -47,7 +47,7 @@ export async function proxy(req: NextRequest) {
     domain = "Scanner";
   }
 
-  // Date.now() is safe to forward to a page/route and compare there.
+  // Date.now() is safe to forward to a page/route and compare there
   const requestStartedAt = Date.now();
   const requestId = crypto.randomUUID();
 
