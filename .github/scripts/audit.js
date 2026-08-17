@@ -120,6 +120,7 @@ const validIgnores = IGNORE.filter(id => allIds.has(String(id)));
 
 // Log stale ignore entries
 if (staleIgnores.length > 0) {
+  console.log(`You have ${validIgnores.length} active ignore entries.`);
   console.log("Stale ignore entries detected:");
   staleIgnores.forEach(id => console.log("  -", id));
 } else {
