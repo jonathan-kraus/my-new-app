@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\.github\scripts\audit.js
- * @LastEditTime: 2026-08-17 18:47:13
+ * @LastEditTime: 2026-08-17 19:55:30
  */
 import fs from "fs";
 import * as yaml from "js-yaml";
@@ -93,13 +93,11 @@ if (!res.ok) {
   throw new Error("Audit API error"); // <-- CI still fails, no libuv crash
 }
 
-
 const advisories = await res.json();
 
 // -----------------------------
 // Filter advisories by semver + IGNORE
 // -----------------------------
-
 // advisories is an object: { pkgName: [advisoryObjects...] }
 const allAdvisories = [];
 for (const [pkg, items] of Object.entries(advisories)) {
@@ -117,10 +115,9 @@ const allIds = new Set(allAdvisories.map(a => String(a.id)));
 // Determine stale ignore entries
 const staleIgnores = IGNORE.filter(id => !allIds.has(String(id)));
 const validIgnores = IGNORE.filter(id => allIds.has(String(id)));
-
-// Log stale ignore entries
-if (staleIgnores.length > 0) {
-  console.log(`You have ${validIgnores.length} active ignore entries.`);
+console.log(`You have ${validIgnores.length} active ignore entries.`);
+  
+  if (staleIgnores.length > 0) {
   console.log("Stale ignore entries detected:");
   staleIgnores.forEach(id => console.log("  -", id));
 } else {
