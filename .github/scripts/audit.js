@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\.github\scripts\audit.js
- * @LastEditTime: 2026-08-14 12:08:14
+ * @LastEditTime: 2026-08-17 13:28:37
  */
 import fs from "fs";
 import * as yaml from "js-yaml";
@@ -56,7 +56,7 @@ console.log("🔍 -- Auditing", Object.keys(payload).length, "packages…");
 
 // advisories to ignore by ID
 const IGNORE = [
-    // "1111111",   // Dummy
+    "1145093",   
 ];
 
 

@@ -2,7 +2,6 @@ packages:
   - "app/*"
   - "packages/*"
   - "services/*"
-packageManager: pnpm@11
 minimumReleaseAge: 0
 allowBuilds:
   "@prisma/engines": true

@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\proxy.ts
- * @LastEditTime: 2026-08-15 00:12:54
+ * @LastEditTime: 2026-08-17 13:27:02
  */
 import { Logger } from "next-axiom";
 import { auth } from "@/auth";
@@ -54,7 +54,7 @@ export async function proxy(req: NextRequest) {
   // performance.now() is excellent for a local micro-measurement.
   const normalizeStartedAt = performance.now();
 
-  // normalizePath expects an absolute URL, not "/forecast".
+  // normalizePath expects an absolute URL, not "/forecast"
   const { last, lastTwo: initialLastTwo } = normalizePath(req.url);
   let lastTwo = initialLastTwo;
   if (lastTwo === last) {
