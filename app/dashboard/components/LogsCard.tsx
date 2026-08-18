@@ -58,10 +58,9 @@ function LogRow({ log }: { log: LogEntry }) {
             {new Date(log.created_at).toLocaleString()} — {log.domain}
           </span>
 
-          <span className="text-xs text-muted-foreground">
-            file:{log.file}
-            line:{log.line}
-          </span>
+          <span className="text-xs text-muted-foreground">file:{log.file}</span>
+
+          <span className="text-xs text-muted-foreground">line:{log.line}</span>
         </div>
 
         <span
