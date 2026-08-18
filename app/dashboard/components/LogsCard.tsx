@@ -59,7 +59,6 @@ function LogRow({ log }: { log: LogEntry }) {
           </span>
 
           <span className="text-xs text-muted-foreground">file:{log.file}</span>
-
           <span className="text-xs text-muted-foreground">line:{log.line}</span>
         </div>
 
