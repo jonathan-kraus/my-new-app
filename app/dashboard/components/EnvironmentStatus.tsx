@@ -70,7 +70,7 @@ export function EnvironmentStatus() {
   }, []);
 
   if (loading) {
-    return <div className="p-6 text-gray-500">Loading environment status…</div>;
+    return <div className="p-6 text-blue-500">Loading environment status…</div>;
   }
 
   if (!data) {
