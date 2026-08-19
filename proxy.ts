@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\proxy.ts
- * @LastEditTime: 2026-08-19 12:26:34
+ * @LastEditTime: 2026-08-19 12:42:32
  */
 
 import { Logger } from "next-axiom";
@@ -20,28 +20,51 @@ export async function proxy(req: NextRequest) {
     url.hostname = "kraus.my.id";
     return NextResponse.redirect(url);
   }
-
+  const url2 = req.nextUrl.clone();
+  const built = await buildUniversalContext(req, "PROXY");
   //
   // 2. Skip ALL NextAuth routes (signin, callback, session, providers, etc.)
   //    This ensures the OAuth callback is NOT intercepted by session enforcement.
   //
   if (req.nextUrl.pathname.startsWith("/api/auth")) {
     console.log("Skipping ALL NextAuth routes");
+    await logj({
+      domain: "PROXY",
+      level: "info",
+      message: `Skipping ALL NextAuth routes for ${url2.toString()}`,
+      file: "proxy.ts",
+      line: 31,
+      payload: {
+        url2: url2.toString(),
+        method: req.method,
+        nextUrl: req.nextUrl.toString(),
+        nextUrlHostname: req.nextUrl.hostname,
+        nextUrlPathname: req.nextUrl.pathname,
+        nextUrlSearch: req.nextUrl.search,
+        nextUrlSearchParams: Object.fromEntries(
+          req.nextUrl.searchParams.entries(),
+        ),
+      },
+      meta: {
+        built: {
+          ...built,
+          eventIndex: 1,
+        },
+      },
+    });
     return NextResponse.next();
   }
 
   //
   // 3. Logging start
   //
-  const url2 = req.nextUrl.clone();
-  const built = await buildUniversalContext(req, "PROXY");
 
   await logj({
     domain: "PROXY",
     level: "info",
     message: `A1 Start proxy for ${url2.toString()}`,
     file: "proxy.ts",
-    line: 50,
+    line: 63,
     payload: {
       url2: url2.toString(),
       method: req.method,
@@ -125,7 +148,7 @@ export async function proxy(req: NextRequest) {
     level: "info",
     message: `A2 Normalized path ${pathname} in ${normalizeDurationMs.toFixed(3)} ms`,
     file: "proxy.ts",
-    line: 126,
+    line: 147,
     payload: {
       requestId,
       pathname,
