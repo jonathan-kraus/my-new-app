@@ -12,6 +12,19 @@ import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 export async function proxy(req: NextRequest) {
   // 1. Force www → apex BEFORE anything else runs
+  await logj({
+    domain: "PROXY",
+    level: "info",
+    message: "Redirecting unauthenticated user to signin",
+    file: "proxy.ts",
+    line: 200,
+    payload: {
+      redirectTo: "https://kraus.my.id/api/auth/signin",
+      requestUrl: req.url,
+      nextUrl: req.nextUrl.toString(),
+    },
+  });
+
   if (req.nextUrl.hostname === "www.kraus.my.id") {
     const url = req.nextUrl.clone();
     url.hostname = "kraus.my.id";
