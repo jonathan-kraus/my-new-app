@@ -1,8 +1,25 @@
+/*
+ * @FilePath: \my-new-app\app\profile\page.tsx
+ * @LastEditTime: 2026-08-19 17:28:03
+ */
 import { auth, signIn, signOut } from "@/auth";
+import { logj } from "@/lib/log/logj";
+import { staticUniversalContext } from "@/lib/log/buildj";
 
 export default async function ProfilePage() {
+  const built = staticUniversalContext("Jonathan");
+  let jei = 0;
+  await logj({
+    domain: "Jonathan",
+    level: "info",
+    message: "ProfilePage loaded",
+    file: "app/profile/page.tsx",
+    line: 12,
+    payload: { some: "Profile Page loaded" },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
   const session = await auth();
-  let userInfo = null;
+
   return (
     <div className="p-8 space-y-4">
       <h1 className="text-3xl font-bold">Profile</h1>
@@ -14,31 +31,15 @@ export default async function ProfilePage() {
             await signIn("github");
           }}
         >
-          <button
-            type="submit"
-            className="px-4 py-2 bg-blue-600 text-white rounded"
-          >
+          <button className="px-4 py-2 bg-blue-600 text-white rounded">
             Sign in with GitHub
           </button>
         </form>
       )}
 
       {session && (
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <p>
-              <strong>Name:</strong> {session.user?.name} {userInfo}
-            </p>
-            <p>
-              <strong>User ID:</strong> {session.user?.id}
-            </p>
-            <p>
-              <strong>Email:</strong> {session.user?.email}
-            </p>
-            <p>
-              <strong>Session Expires:</strong> {session.expires}
-            </p>
-          </div>
+        <>
+          <p>Signed in as {session.user?.email}</p>
 
           <form
             action={async () => {
@@ -46,14 +47,11 @@ export default async function ProfilePage() {
               await signOut();
             }}
           >
-            <button
-              type="submit"
-              className="px-4 py-2 bg-red-600 text-white rounded"
-            >
+            <button className="px-4 py-2 bg-red-600 text-white rounded">
               Sign out
             </button>
           </form>
-        </div>
+        </>
       )}
     </div>
   );
