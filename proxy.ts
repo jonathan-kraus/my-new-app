@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\proxy.ts
- * @LastEditTime: 2026-08-18 23:27:10
+ * @LastEditTime: 2026-08-18 23:38:53
  */
 import { Logger } from "next-axiom";
 import { auth } from "@/auth";
@@ -9,7 +9,6 @@ import { NextResponse } from "next/server";
 import normalizePath from "@/lib/normalizePath";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
-import { url } from "zod";
 
 export async function proxy(req: NextRequest) {
   // 1. Force www → apex BEFORE anything else runs
@@ -23,7 +22,7 @@ export async function proxy(req: NextRequest) {
   await logj({
     domain: "PROXY",
     level: "info",
-    message: `Start proxy for ${req.url}`,
+    message: `Start proxy for ${url2.toString()}`,
     file: "proxy.ts",
     line: 23,
     payload: {
@@ -124,6 +123,7 @@ export async function proxy(req: NextRequest) {
   const session = await auth();
 
   if (!session) {
+    // IMPORTANT: do NOT use req.url here
     return NextResponse.redirect("https://kraus.my.id/api/auth/signin");
   }
 
