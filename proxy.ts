@@ -11,6 +11,11 @@ import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 export async function proxy(req: NextRequest) {
+  if (req.nextUrl.hostname === "www.kraus.my.id") {
+    const url = req.nextUrl.clone();
+    url.hostname = "kraus.my.id";
+    return NextResponse.redirect(url);
+  }
   const pathname = req.nextUrl.pathname;
 
   const isInternal =
