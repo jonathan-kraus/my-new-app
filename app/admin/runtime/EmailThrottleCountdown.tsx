@@ -1,7 +1,7 @@
 "use client";
 /*
  * @FilePath: \my-new-app\app\admin\runtime\EmailThrottleCountdown.tsx
- * @LastEditTime: 2026-08-18 22:45:14
+ * @LastEditTime: 2026-08-19 00:30:09
  */
 
 import { useEffect, useState } from "react";
@@ -36,7 +36,7 @@ export function EmailThrottleCountdown({
     },
   );
 
-  // Countdown effect — always runs, but exits early if invalid
+  // Countdown effect — always runs, but exits early if invalid.
   useEffect(() => {
     if (!nextAllowed) return;
 
