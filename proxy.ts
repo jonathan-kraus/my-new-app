@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\proxy.ts
- * @LastEditTime: 2026-08-19 14:42:52
+ * @LastEditTime: 2026-08-19 15:03:08
  */
 
 import { Logger } from "next-axiom";
@@ -12,14 +12,6 @@ import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 export async function proxy(req: NextRequest) {
-  //
-  // 1. Force www → apex BEFORE anything else
-  //
-  if (req.nextUrl.hostname === "www.kraus.my.id") {
-    const url = req.nextUrl.clone();
-    url.hostname = "kraus.my.id";
-    return NextResponse.redirect(url);
-  }
   const url2 = req.nextUrl.clone();
   const built = await buildUniversalContext(req, "PROXY");
   //
