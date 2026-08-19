@@ -140,7 +140,7 @@ export async function proxy(req: NextRequest) {
     await logj({
       domain: "PROXY",
       level: "info",
-      message: `Skipping ALL Auth.js routes for ${req.nextUrl.pathname}`,
+      message: `** Skipping ALL Auth.js routes for ${req.nextUrl.pathname}`,
       file: "proxy.ts",
       line: 148,
       payload: {
