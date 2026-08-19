@@ -1,7 +1,7 @@
 "use client";
 /*
  * @FilePath: \my-new-app\app\admin\runtime\EmailThrottleCountdown.tsx
- * @LastEditTime: 2026-08-18 22:11:29
+ * @LastEditTime: 2026-08-18 22:45:14
  */
 
 import { useEffect, useState } from "react";
@@ -23,7 +23,7 @@ export function EmailThrottleCountdown({
       ? new Date(last.getTime() + throttleMinutes * 60 * 1000)
       : null;
 
-  // Initial derived state (pure, lazy).
+  // Initial derived state (pure, lazy)
   const [remaining, setRemaining] = useState<string>(() => {
     if (!nextAllowed || throttleMinutes <= 0) return "Ready now";
     return "";
