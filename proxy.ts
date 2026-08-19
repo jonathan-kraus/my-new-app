@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\proxy.ts
- * @LastEditTime: 2026-08-19 15:03:08
+ * @LastEditTime: 2026-08-19 16:58:20
  */
 
 import { Logger } from "next-axiom";
@@ -195,9 +195,9 @@ export async function proxy(req: NextRequest) {
   //
   const session = await auth();
 
-  if (!session) {
-    return NextResponse.redirect("https://kraus.my.id/api/auth/signin");
-  }
+  // if (!session) {
+  //   return NextResponse.redirect("https://kraus.my.id/api/auth/signin");
+  // }
 
   //
   // 9. Forward headers
