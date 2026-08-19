@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\proxy.ts
- * @LastEditTime: 2026-08-19 01:29:28
+ * @LastEditTime: 2026-08-19 01:35:48
  */
 import { Logger } from "next-axiom";
 import { auth } from "@/auth";
@@ -44,7 +44,11 @@ export async function proxy(req: NextRequest) {
       },
     });
   }
-
+  // Skip all NextAuth routes
+  if (req.nextUrl.pathname.startsWith("/api/auth")) {
+    console.log("Skipping NextAuth route");
+    return NextResponse.next();
+  }
   const url2 = req.nextUrl.clone();
   const built = await buildUniversalContext(req, "PROXY");
   await logj({
