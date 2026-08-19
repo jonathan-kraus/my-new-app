@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\proxy.ts
- * @LastEditTime: 2026-08-17 13:27:02
+ * @LastEditTime: 2026-08-18 23:04:23
  */
 import { Logger } from "next-axiom";
 import { auth } from "@/auth";
@@ -11,6 +11,32 @@ import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 export async function proxy(req: NextRequest) {
+  const url2 = req.nextUrl.clone();
+  const built = await buildUniversalContext(req, "PROXY");
+  await logj({
+    domain: "PROXY",
+    level: "info",
+    message: `Start proxy for ${req.url}`,
+    file: "proxy.ts",
+    line: 63,
+    payload: {
+      url2: url2.toString(),
+      method: req.method,
+      nextUrl: req.nextUrl.toString(),
+      nextUrlHostname: req.nextUrl.hostname,
+      nextUrlPathname: req.nextUrl.pathname,
+      nextUrlSearch: req.nextUrl.search,
+      nextUrlSearchParams: Object.fromEntries(
+        req.nextUrl.searchParams.entries(),
+      ),
+    },
+    meta: {
+      built: {
+        ...built,
+        eventIndex: 1,
+      },
+    },
+  });
   if (req.nextUrl.hostname === "www.kraus.my.id") {
     const url = req.nextUrl.clone();
     url.hostname = "kraus.my.id";
@@ -66,8 +92,6 @@ export async function proxy(req: NextRequest) {
     lastTwo = "";
   }
   const normalizeDurationMs = performance.now() - normalizeStartedAt;
-
-  const built = await buildUniversalContext(req, "PROXY");
 
   await logj({
     domain: domain,
