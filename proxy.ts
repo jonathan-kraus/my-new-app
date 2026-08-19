@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\proxy.ts
- * @LastEditTime: 2026-08-19 01:09:03
+ * @LastEditTime: 2026-08-19 01:29:28
  */
 import { Logger } from "next-axiom";
 import { auth } from "@/auth";
@@ -32,17 +32,17 @@ export async function proxy(req: NextRequest) {
   }
   if (req.nextUrl.pathname.startsWith("/api/auth/callback")) {
     await logj({
-    domain: "PROXY",
-    level: "info",
-    message: " *** BAD BAD should not be here *** ",
-    file: "proxy.ts",
-    line: 34,
-    payload: {
-      redirectTo: "https://kraus.my.id/api/auth/signin",
-      requestUrl: req.url,
-      nextUrl: req.nextUrl.toString(),
-    },
-  });
+      domain: "PROXY",
+      level: "info",
+      message: " *** BAD BAD should not be here *** ",
+      file: "proxy.ts",
+      line: 34,
+      payload: {
+        redirectTo: "https://kraus.my.id/api/auth/signin",
+        requestUrl: req.url,
+        nextUrl: req.nextUrl.toString(),
+      },
+    });
   }
 
   const url2 = req.nextUrl.clone();
@@ -170,5 +170,5 @@ export async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api/auth|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/:path*"],
 };
