@@ -30,6 +30,15 @@ export async function proxy(req: NextRequest) {
     url.hostname = "kraus.my.id";
     return NextResponse.redirect(url);
   }
+  if (req.nextUrl.pathname.startsWith("/api/auth/callback")) {
+    await logj({
+      domain: "PROXY",
+      level: "info",
+      message: "*** Callback reached proxy ***",
+      payload: { url: req.url },
+    });
+  }
+
   const url2 = req.nextUrl.clone();
   const built = await buildUniversalContext(req, "PROXY");
   await logj({
