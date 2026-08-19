@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\.github\scripts\audit.js
- * @LastEditTime: 2026-08-18 20:58:03
+ * @LastEditTime: 2026-08-18 21:09:23
  */
 import fs from "fs";
 import * as yaml from "js-yaml";
@@ -117,7 +117,7 @@ const staleIgnores = IGNORE.filter(id => !allIds.has(String(id)));
 const validIgnores = IGNORE.filter(id => allIds.has(String(id)));
 console.log(`You have ${validIgnores.length} active ignore entries.`);
   
-  if (staleIgnores.length > 10) {
+  if (staleIgnores.length > 0) {
   console.log("Stale ignore entries detected:");
   staleIgnores.forEach(id => console.log("  -", id));
 } else {
