@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\proxy.ts
- * @LastEditTime: 2026-08-18 23:04:23
+ * @LastEditTime: 2026-08-18 23:13:28
  */
 import { Logger } from "next-axiom";
 import { auth } from "@/auth";
@@ -9,8 +9,15 @@ import { NextResponse } from "next/server";
 import normalizePath from "@/lib/normalizePath";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { url } from "zod";
 
 export async function proxy(req: NextRequest) {
+  // 1. Force www → apex BEFORE anything else runs
+  if (req.nextUrl.hostname === "www.kraus.my.id") {
+    const url = req.nextUrl.clone();
+    url.hostname = "kraus.my.id";
+    return NextResponse.redirect(url);
+  }
   const url2 = req.nextUrl.clone();
   const built = await buildUniversalContext(req, "PROXY");
   await logj({
@@ -18,7 +25,7 @@ export async function proxy(req: NextRequest) {
     level: "info",
     message: `Start proxy for ${req.url}`,
     file: "proxy.ts",
-    line: 63,
+    line: 23,
     payload: {
       url2: url2.toString(),
       method: req.method,
@@ -37,11 +44,7 @@ export async function proxy(req: NextRequest) {
       },
     },
   });
-  if (req.nextUrl.hostname === "www.kraus.my.id") {
-    const url = req.nextUrl.clone();
-    url.hostname = "kraus.my.id";
-    return NextResponse.redirect(url);
-  }
+
   const pathname = req.nextUrl.pathname;
 
   const isInternal =
@@ -98,7 +101,7 @@ export async function proxy(req: NextRequest) {
     level: "info",
     message: `Normalized path ${pathname} in ${normalizeDurationMs.toFixed(3)} ms`,
     file: "proxy.ts",
-    line: 63,
+    line: 99,
     payload: {
       requestId,
       pathname,
