@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\proxy.ts
- * @LastEditTime: 2026-08-18 23:13:28
+ * @LastEditTime: 2026-08-18 23:27:10
  */
 import { Logger } from "next-axiom";
 import { auth } from "@/auth";
@@ -124,7 +124,7 @@ export async function proxy(req: NextRequest) {
   const session = await auth();
 
   if (!session) {
-    return NextResponse.redirect(new URL("/api/auth/signin", req.url));
+    return NextResponse.redirect("https://kraus.my.id/api/auth/signin");
   }
 
   // These are request headers forwarded to the page/route—not response headers.
