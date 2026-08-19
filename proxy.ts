@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\proxy.ts
- * @LastEditTime: 2026-08-18 23:38:53
+ * @LastEditTime: 2026-08-19 01:09:03
  */
 import { Logger } from "next-axiom";
 import { auth } from "@/auth";
@@ -17,7 +17,7 @@ export async function proxy(req: NextRequest) {
     level: "info",
     message: "Redirecting unauthenticated user to signin",
     file: "proxy.ts",
-    line: 200,
+    line: 15,
     payload: {
       redirectTo: "https://kraus.my.id/api/auth/signin",
       requestUrl: req.url,
@@ -32,11 +32,17 @@ export async function proxy(req: NextRequest) {
   }
   if (req.nextUrl.pathname.startsWith("/api/auth/callback")) {
     await logj({
-      domain: "PROXY",
-      level: "info",
-      message: "*** Callback reached proxy ***",
-      payload: { url: req.url },
-    });
+    domain: "PROXY",
+    level: "info",
+    message: " *** BAD BAD should not be here *** ",
+    file: "proxy.ts",
+    line: 34,
+    payload: {
+      redirectTo: "https://kraus.my.id/api/auth/signin",
+      requestUrl: req.url,
+      nextUrl: req.nextUrl.toString(),
+    },
+  });
   }
 
   const url2 = req.nextUrl.clone();
@@ -46,7 +52,7 @@ export async function proxy(req: NextRequest) {
     level: "info",
     message: `Start proxy for ${url2.toString()}`,
     file: "proxy.ts",
-    line: 23,
+    line: 50,
     payload: {
       url2: url2.toString(),
       method: req.method,
@@ -122,7 +128,7 @@ export async function proxy(req: NextRequest) {
     level: "info",
     message: `Normalized path ${pathname} in ${normalizeDurationMs.toFixed(3)} ms`,
     file: "proxy.ts",
-    line: 99,
+    line: 126,
     payload: {
       requestId,
       pathname,
@@ -164,5 +170,5 @@ export async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next|favicon.ico).*)"],
+  matcher: ["/((?!api/auth|_next/static|_next/image|favicon.ico).*)"],
 };
