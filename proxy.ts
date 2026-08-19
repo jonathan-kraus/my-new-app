@@ -1,7 +1,8 @@
 /*
  * @FilePath: \my-new-app\proxy.ts
- * @LastEditTime: 2026-08-19 01:50:23
+ * @LastEditTime: 2026-08-19 02:00:00
  */
+
 import { Logger } from "next-axiom";
 import { auth } from "@/auth";
 import type { NextRequest } from "next/server";
@@ -11,57 +12,36 @@ import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 export async function proxy(req: NextRequest) {
-  // 1. Force www → apex BEFORE anything else runs
-  await logj({
-    domain: "PROXY",
-    level: "info",
-    message: "Redirecting unauthenticated user to signin",
-    file: "proxy.ts",
-    line: 15,
-    payload: {
-      redirectTo: "https://kraus.my.id/api/auth/signin",
-      requestUrl: req.url,
-      nextUrl: req.nextUrl.toString(),
-    },
-  });
-
+  //
+  // 1. Force www → apex BEFORE anything else
+  //
   if (req.nextUrl.hostname === "www.kraus.my.id") {
     const url = req.nextUrl.clone();
     url.hostname = "kraus.my.id";
     return NextResponse.redirect(url);
   }
-  if (req.nextUrl.pathname.startsWith("/api/auth/callback")) {
-    await logj({
-      domain: "PROXY",
-      level: "info",
-      message: " *** BAD BAD should not be here *** ",
-      file: "proxy.ts",
-      line: 34,
-      payload: {
-        redirectTo: "https://kraus.my.id/api/auth/signin",
-        requestUrl: req.url,
-        nextUrl: req.nextUrl.toString(),
-      },
-    });
-  }
-  // Skip all NextAuth routes
-  if (
-    req.nextUrl.pathname === "/api/auth/signin" ||
-    req.nextUrl.pathname === "/api/auth/signout" ||
-    req.nextUrl.pathname === "/api/auth/providers"
-  ) {
-    console.log("Skipping NextAuth signin/provider route");
+
+  //
+  // 2. Skip ALL NextAuth routes (signin, callback, session, providers, etc.)
+  //    This is REQUIRED so the callback is NOT intercepted by session enforcement.
+  //
+  if (req.nextUrl.pathname.startsWith("/api/auth")) {
+    console.log("Skipping ALL NextAuth routes");
     return NextResponse.next();
   }
 
+  //
+  // 3. Logging start
+  //
   const url2 = req.nextUrl.clone();
   const built = await buildUniversalContext(req, "PROXY");
+
   await logj({
     domain: "PROXY",
     level: "info",
     message: `Start proxy for ${url2.toString()}`,
     file: "proxy.ts",
-    line: 50,
+    line: 39,
     payload: {
       url2: url2.toString(),
       method: req.method,
@@ -81,6 +61,9 @@ export async function proxy(req: NextRequest) {
     },
   });
 
+  //
+  // 4. Skip internal Next.js assets and prefetches
+  //
   const pathname = req.nextUrl.pathname;
 
   const isInternal =
@@ -94,6 +77,10 @@ export async function proxy(req: NextRequest) {
   if (isInternal || isPrefetch) {
     return NextResponse.next();
   }
+
+  //
+  // 5. Scanner detection
+  //
   const SCANNER_PATHS = [
     "/telescope",
     "/telescope/requests",
@@ -117,19 +104,20 @@ export async function proxy(req: NextRequest) {
     domain = "Scanner";
   }
 
-  // Date.now() is safe to forward to a page/route and compare there
+  //
+  // 6. Normalize path
+  //
   const requestStartedAt = Date.now();
   const requestId = crypto.randomUUID();
 
-  // performance.now() is excellent for a local micro-measurement.
   const normalizeStartedAt = performance.now();
-
-  // normalizePath expects an absolute URL, not "/forecast"
   const { last, lastTwo: initialLastTwo } = normalizePath(req.url);
+
   let lastTwo = initialLastTwo;
   if (lastTwo === last) {
     lastTwo = "";
   }
+
   const normalizeDurationMs = performance.now() - normalizeStartedAt;
 
   await logj({
@@ -137,7 +125,7 @@ export async function proxy(req: NextRequest) {
     level: "info",
     message: `Normalized path ${pathname} in ${normalizeDurationMs.toFixed(3)} ms`,
     file: "proxy.ts",
-    line: 126,
+    line: 123,
     payload: {
       requestId,
       pathname,
@@ -153,22 +141,27 @@ export async function proxy(req: NextRequest) {
     },
   });
 
-  // Retain this if you want next-axiom's middleware request instrumentation.
+  //
+  // 7. Axiom instrumentation
+  //
   const logger = new Logger({ source: "middleware" });
   logger.middleware(req);
 
+  //
+  // 8. Session enforcement (ONLY for non-auth routes)
+  //
   const session = await auth();
 
   if (!session) {
-    // IMPORTANT: do NOT use req.url here
     return NextResponse.redirect("https://kraus.my.id/api/auth/signin");
   }
 
-  // These are request headers forwarded to the page/route—not response headers.
+  //
+  // 9. Forward headers
+  //
   const forwardedHeaders = new Headers(req.headers);
 
   forwardedHeaders.set("x-app-request-started-at", String(requestStartedAt));
-
   forwardedHeaders.set("x-app-request-id", requestId);
 
   return NextResponse.next({
@@ -178,6 +171,9 @@ export async function proxy(req: NextRequest) {
   });
 }
 
+//
+// 10. Matcher — MUST run on ALL paths and ALL hostnames
+//
 export const config = {
   matcher: ["/:path*"],
 };
