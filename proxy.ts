@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\proxy.ts
- * @LastEditTime: 2026-08-19 14:05:34
+ * @LastEditTime: 2026-08-19 14:42:52
  */
 
 import { Logger } from "next-axiom";
@@ -62,7 +62,7 @@ export async function proxy(req: NextRequest) {
   await logj({
     domain: "PROXY",
     level: "info",
-    message: `A1 Start proxy for ${url2.toString()}`,
+    message: `A3 Start proxy for ${url2.toString()}`,
     file: "proxy.ts",
     line: 62,
     payload: {
@@ -174,7 +174,7 @@ export async function proxy(req: NextRequest) {
   await logj({
     domain: domain,
     level: "info",
-    message: `A2 Normalized path ${pathname} in ${normalizeDurationMs.toFixed(3)} ms`,
+    message: `A3 Normalized path ${pathname} in ${normalizeDurationMs.toFixed(3)} ms`,
     file: "proxy.ts",
     line: 174,
     payload: {
