@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\proxy.ts
- * @LastEditTime: 2026-08-19 12:42:32
+ * @LastEditTime: 2026-08-19 14:05:34
  */
 
 import { Logger } from "next-axiom";
@@ -64,7 +64,7 @@ export async function proxy(req: NextRequest) {
     level: "info",
     message: `A1 Start proxy for ${url2.toString()}`,
     file: "proxy.ts",
-    line: 63,
+    line: 62,
     payload: {
       url2: url2.toString(),
       method: req.method,
@@ -142,13 +142,41 @@ export async function proxy(req: NextRequest) {
   }
 
   const normalizeDurationMs = performance.now() - normalizeStartedAt;
-
+  // Skip ALL Auth.js routes
+  if (req.nextUrl.pathname.startsWith("/api/auth")) {
+    console.log("Skipping ALL Auth.js routes");
+    await logj({
+      domain: "PROXY",
+      level: "info",
+      message: `Skipping ALL Auth.js routes for ${req.nextUrl.pathname}`,
+      file: "proxy.ts",
+      line: 148,
+      payload: {
+        url2: url2.toString(),
+        method: req.method,
+        nextUrl: req.nextUrl.toString(),
+        nextUrlHostname: req.nextUrl.hostname,
+        nextUrlPathname: req.nextUrl.pathname,
+        nextUrlSearch: req.nextUrl.search,
+        nextUrlSearchParams: Object.fromEntries(
+          req.nextUrl.searchParams.entries(),
+        ),
+      },
+      meta: {
+        built: {
+          ...built,
+          eventIndex: 1,
+        },
+      },
+    });
+    return NextResponse.next();
+  }
   await logj({
     domain: domain,
     level: "info",
     message: `A2 Normalized path ${pathname} in ${normalizeDurationMs.toFixed(3)} ms`,
     file: "proxy.ts",
-    line: 147,
+    line: 174,
     payload: {
       requestId,
       pathname,
@@ -198,5 +226,5 @@ export async function proxy(req: NextRequest) {
 // 10. Matcher — MUST run on ALL paths and ALL hostnames
 //
 export const config = {
-  matcher: ["/:path*"],
+  matcher: ["/((?!api/auth).*)"],
 };
