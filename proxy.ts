@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\proxy.ts
- * @LastEditTime: 2026-08-19 02:00:00
+ * @LastEditTime: 2026-08-19 12:26:34
  */
 
 import { Logger } from "next-axiom";
@@ -23,7 +23,7 @@ export async function proxy(req: NextRequest) {
 
   //
   // 2. Skip ALL NextAuth routes (signin, callback, session, providers, etc.)
-  //    This is REQUIRED so the callback is NOT intercepted by session enforcement.
+  //    This ensures the OAuth callback is NOT intercepted by session enforcement.
   //
   if (req.nextUrl.pathname.startsWith("/api/auth")) {
     console.log("Skipping ALL NextAuth routes");
@@ -39,9 +39,9 @@ export async function proxy(req: NextRequest) {
   await logj({
     domain: "PROXY",
     level: "info",
-    message: `Start proxy for ${url2.toString()}`,
+    message: `A1 Start proxy for ${url2.toString()}`,
     file: "proxy.ts",
-    line: 39,
+    line: 50,
     payload: {
       url2: url2.toString(),
       method: req.method,
@@ -123,9 +123,9 @@ export async function proxy(req: NextRequest) {
   await logj({
     domain: domain,
     level: "info",
-    message: `Normalized path ${pathname} in ${normalizeDurationMs.toFixed(3)} ms`,
+    message: `A2 Normalized path ${pathname} in ${normalizeDurationMs.toFixed(3)} ms`,
     file: "proxy.ts",
-    line: 123,
+    line: 126,
     payload: {
       requestId,
       pathname,
