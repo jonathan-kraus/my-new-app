@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\proxy.ts
- * @LastEditTime: 2026-08-20 14:50:31
+ * @LastEditTime: 2026-08-20 18:06:32
  */
 
 import { Logger } from "next-axiom";
@@ -51,30 +51,30 @@ export async function proxy(req: NextRequest) {
   // 3. Logging start
   //
 
-  await logj({
-    domain: "PROXY",
-    level: "info",
-    message: `Start proxy for ${url2.toString()}`,
-    file: "proxy.ts",
-    line: 54,
-    payload: {
-      url2: url2.toString(),
-      method: req.method,
-      nextUrl: req.nextUrl.toString(),
-      nextUrlHostname: req.nextUrl.hostname,
-      nextUrlPathname: req.nextUrl.pathname,
-      nextUrlSearch: req.nextUrl.search,
-      nextUrlSearchParams: Object.fromEntries(
-        req.nextUrl.searchParams.entries(),
-      ),
-    },
-    meta: {
-      built: {
-        ...built,
-        eventIndex: 1,
-      },
-    },
-  });
+  // await logj({
+  //   domain: "PROXY",
+  //   level: "info",
+  //   message: `Start proxy for ${url2.toString()}`,
+  //   file: "proxy.ts",
+  //   line: 54,
+  //   payload: {
+  //     url2: url2.toString(),
+  //     method: req.method,
+  //     nextUrl: req.nextUrl.toString(),
+  //     nextUrlHostname: req.nextUrl.hostname,
+  //     nextUrlPathname: req.nextUrl.pathname,
+  //     nextUrlSearch: req.nextUrl.search,
+  //     nextUrlSearchParams: Object.fromEntries(
+  //       req.nextUrl.searchParams.entries(),
+  //     ),
+  //   },
+  //   meta: {
+  //     built: {
+  //       ...built,
+  //       eventIndex: 1,
+  //     },
+  //   },
+  // });
 
   //
   // 4. Skip internal Next.js assets and prefetches
