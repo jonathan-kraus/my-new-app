@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\proxy.ts
- * @LastEditTime: 2026-08-20 18:59:50
+ * @LastEditTime: 2026-08-20 19:04:10
  */
 
 import { Logger } from "next-axiom";
@@ -39,12 +39,7 @@ export async function proxy(req: NextRequest) {
           req.nextUrl.searchParams.entries(),
         ),
       },
-      meta: {
-        built: {
-          ...built,
-          eventIndex: 1,
-        },
-      },
+      meta: { built: { ...built, eventIndex: ++jei } },
     });
     return NextResponse.next();
   }
@@ -53,7 +48,7 @@ export async function proxy(req: NextRequest) {
   // 3. Logging start
   //
   const solarspeed = Number(await getConfig("solar.speed", "0"));
-  if (solarspeed > 900) {
+  if (solarspeed < 900) {
     await logj({
       domain: "PROXY",
       level: "info",
@@ -152,15 +147,11 @@ export async function proxy(req: NextRequest) {
           req.nextUrl.searchParams.entries(),
         ),
       },
-      meta: {
-        built: {
-          ...built,
-          eventIndex: 1,
-        },
-      },
+      meta: { built: { ...built, eventIndex: ++jei } },
     });
     return NextResponse.next();
   }
+
   await logj({
     domain: domain,
     level: "info",
@@ -174,12 +165,7 @@ export async function proxy(req: NextRequest) {
       lastTwo,
       normalizeDurationMs: Number(normalizeDurationMs.toFixed(3)),
     },
-    meta: {
-      built: {
-        ...built,
-        eventIndex: 1,
-      },
-    },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
 
   //
