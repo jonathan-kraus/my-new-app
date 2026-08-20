@@ -27,7 +27,7 @@ export async function proxy(req: NextRequest) {
       level: "info",
       message: `Skipping ALL NextAuth routes for ${url2.toString()}`,
       file: "proxy.ts",
-      line: 23,
+      line: 25,
       payload: {
         url2: url2.toString(),
         method: req.method,
@@ -54,7 +54,7 @@ export async function proxy(req: NextRequest) {
       level: "info",
       message: `Start proxy for ${url2.toString()}`,
       file: "proxy.ts",
-      line: 54,
+      line: 52,
       payload: {
         url2: url2.toString(),
         method: req.method,
@@ -135,7 +135,7 @@ export async function proxy(req: NextRequest) {
       level: "info",
       message: `** Skipping ALL Auth.js routes for ${req.nextUrl.pathname}`,
       file: "proxy.ts",
-      line: 140,
+      line: 133,
       payload: {
         url2: url2.toString(),
         method: req.method,
@@ -157,7 +157,7 @@ export async function proxy(req: NextRequest) {
     level: "info",
     message: `Normalized path ${pathname} in ${normalizeDurationMs.toFixed(3)} ms`,
     file: "proxy.ts",
-    line: 166,
+    line: 155,
     payload: {
       requestId,
       pathname,
