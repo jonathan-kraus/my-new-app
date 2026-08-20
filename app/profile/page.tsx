@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\profile\page.tsx
- * @LastEditTime: 2026-08-20 00:59:15
+ * @LastEditTime: 2026-08-20 01:04:57
  */
 import { auth, signIn, signOut } from "@/auth";
 import { logj } from "@/lib/log/logj";
@@ -40,16 +40,10 @@ export default async function ProfilePage() {
       {session && (
         <>
           <p>Signed in as {session.user?.email}</p>
-
-          <p>
-            User ID: {session.user?.id}
-            <br />
-            Expires
-            {formatDistanceToNow(new Date(session.expires), {
-              addSuffix: true,
-            })}
-          </p>
-
+          <p>User ID: {session.user?.id}</p>
+          <br />
+          Expires{" "}
+          {formatDistanceToNow(new Date(session.expires), { addSuffix: true })}
           <form
             action={async () => {
               "use server";
