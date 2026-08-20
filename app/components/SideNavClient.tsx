@@ -65,7 +65,7 @@ export default function SideNavClient({
       prefetch: false,
     },
     { href: "/forecast", label: "Forecast", icon: "🌤️" },
-    { href: "/logs", label: "Logs", icon: "📘" },
+    { href: "/profile", label: "Profile", icon: "�" },
     { href: "/logview", label: "Logview", icon: "📘" },
     { href: "/notes", label: "Notes", icon: "📝" },
     { href: "/github", label: "GitHub", icon: "🐙" },
