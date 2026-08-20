@@ -1,11 +1,11 @@
 /*
  * @FilePath: \my-new-app\app\profile\page.tsx
- * @LastEditTime: 2026-08-19 17:28:03
+ * @LastEditTime: 2026-08-20 00:45:01
  */
 import { auth, signIn, signOut } from "@/auth";
 import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
-
+import { formatDistanceToNow } from "date-fns";
 export default async function ProfilePage() {
   const built = staticUniversalContext("Jonathan");
   let jei = 0;
@@ -40,6 +40,12 @@ export default async function ProfilePage() {
       {session && (
         <>
           <p>Signed in as {session.user?.email}</p>
+
+          <p>
+            {formatDistanceToNow(new Date(session.expires), {
+              addSuffix: true,
+            })}
+          </p>
 
           <form
             action={async () => {
