@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\proxy.ts
- * @LastEditTime: 2026-08-19 16:58:20
+ * @LastEditTime: 2026-08-20 14:50:31
  */
 
 import { Logger } from "next-axiom";
@@ -25,7 +25,7 @@ export async function proxy(req: NextRequest) {
       level: "info",
       message: `Skipping ALL NextAuth routes for ${url2.toString()}`,
       file: "proxy.ts",
-      line: 31,
+      line: 23,
       payload: {
         url2: url2.toString(),
         method: req.method,
@@ -54,9 +54,9 @@ export async function proxy(req: NextRequest) {
   await logj({
     domain: "PROXY",
     level: "info",
-    message: `A3 Start proxy for ${url2.toString()}`,
+    message: `Start proxy for ${url2.toString()}`,
     file: "proxy.ts",
-    line: 62,
+    line: 54,
     payload: {
       url2: url2.toString(),
       method: req.method,
@@ -142,7 +142,7 @@ export async function proxy(req: NextRequest) {
       level: "info",
       message: `** Skipping ALL Auth.js routes for ${req.nextUrl.pathname}`,
       file: "proxy.ts",
-      line: 148,
+      line: 140,
       payload: {
         url2: url2.toString(),
         method: req.method,
@@ -166,9 +166,9 @@ export async function proxy(req: NextRequest) {
   await logj({
     domain: domain,
     level: "info",
-    message: `A3 Normalized path ${pathname} in ${normalizeDurationMs.toFixed(3)} ms`,
+    message: `Normalized path ${pathname} in ${normalizeDurationMs.toFixed(3)} ms`,
     file: "proxy.ts",
-    line: 174,
+    line: 166,
     payload: {
       requestId,
       pathname,
