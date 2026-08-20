@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\proxy.ts
- * @LastEditTime: 2026-08-20 18:06:32
+ * @LastEditTime: 2026-08-20 18:53:55
  */
 
 import { Logger } from "next-axiom";
@@ -10,6 +10,7 @@ import { NextResponse } from "next/server";
 import normalizePath from "@/lib/normalizePath";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { getConfig } from "./lib/runtime/config";
 
 export async function proxy(req: NextRequest) {
   const url2 = req.nextUrl.clone();
@@ -50,32 +51,33 @@ export async function proxy(req: NextRequest) {
   //
   // 3. Logging start
   //
-
-  // await logj({
-  //   domain: "PROXY",
-  //   level: "info",
-  //   message: `Start proxy for ${url2.toString()}`,
-  //   file: "proxy.ts",
-  //   line: 54,
-  //   payload: {
-  //     url2: url2.toString(),
-  //     method: req.method,
-  //     nextUrl: req.nextUrl.toString(),
-  //     nextUrlHostname: req.nextUrl.hostname,
-  //     nextUrlPathname: req.nextUrl.pathname,
-  //     nextUrlSearch: req.nextUrl.search,
-  //     nextUrlSearchParams: Object.fromEntries(
-  //       req.nextUrl.searchParams.entries(),
-  //     ),
-  //   },
-  //   meta: {
-  //     built: {
-  //       ...built,
-  //       eventIndex: 1,
-  //     },
-  //   },
-  // });
-
+  const solarspeed = Number(await getConfig("solar.speed", "0"));
+  if (solarspeed > 900) {
+    await logj({
+      domain: "PROXY",
+      level: "info",
+      message: `Start proxy for ${url2.toString()}`,
+      file: "proxy.ts",
+      line: 54,
+      payload: {
+        url2: url2.toString(),
+        method: req.method,
+        nextUrl: req.nextUrl.toString(),
+        nextUrlHostname: req.nextUrl.hostname,
+        nextUrlPathname: req.nextUrl.pathname,
+        nextUrlSearch: req.nextUrl.search,
+        nextUrlSearchParams: Object.fromEntries(
+          req.nextUrl.searchParams.entries(),
+        ),
+      },
+      meta: {
+        built: {
+          ...built,
+          eventIndex: 1,
+        },
+      },
+    });
+  }
   //
   // 4. Skip internal Next.js assets and prefetches
   //
