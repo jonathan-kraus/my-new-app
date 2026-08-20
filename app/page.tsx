@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\page.tsx
- * @LastEditTime: 2026-08-13 21:25:45
+ * @LastEditTime: 2026-08-20 00:27:10
  */
 
 import { auth } from "@/auth";
@@ -18,7 +18,7 @@ import {
   WeatherSchema,
 } from "@/lib/schemas/page-schemas";
 import { headers, cookies } from "next/headers";
-
+export const dynamic = "force-dynamic";
 function getGreeting(): string {
   const hour = new Date().getHours();
   if (hour < 5) return "Good evening";
@@ -41,8 +41,8 @@ export default async function HomePage(req: Request) {
   const sessionEnd = performance.now();
 
   const parsed = SessionSchema.safeParse(session);
-  if (!parsed.success) {
-    return <div>Invalid session.</div>;
+  if (!parsed.success || !parsed.data.user) {
+    return <div>Public homepage (no active session).</div>;
   }
 
   // ---------------------------
@@ -224,6 +224,8 @@ export default async function HomePage(req: Request) {
           <p className="text-sky-400">
             Your system is online and running smoothly.
           </p>
+          <p>Signed in as {parsed.data.user.email}</p>
+          <p>Session lookup took {(sessionEnd - sessionStart).toFixed(2)} ms</p>
         </section>
 
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
