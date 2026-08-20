@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\proxy.ts
- * @LastEditTime: 2026-08-20 18:53:55
+ * @LastEditTime: 2026-08-20 18:59:50
  */
 
 import { Logger } from "next-axiom";
@@ -15,6 +15,7 @@ import { getConfig } from "./lib/runtime/config";
 export async function proxy(req: NextRequest) {
   const url2 = req.nextUrl.clone();
   const built = await buildUniversalContext(req, "PROXY");
+  let jei = 0;
   //
   // 2. Skip ALL NextAuth routes (signin, callback, session, providers, etc.)
   //    This ensures the OAuth callback is NOT intercepted by session enforcement.
@@ -70,12 +71,7 @@ export async function proxy(req: NextRequest) {
           req.nextUrl.searchParams.entries(),
         ),
       },
-      meta: {
-        built: {
-          ...built,
-          eventIndex: 1,
-        },
-      },
+      meta: { built: { ...built, eventIndex: ++jei } },
     });
   }
   //
