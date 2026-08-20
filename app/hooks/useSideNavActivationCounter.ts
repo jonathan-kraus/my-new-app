@@ -1,3 +1,7 @@
+/*
+ * @FilePath: \my-new-app\app\hooks\useSideNavActivationCounter.ts
+ * @LastEditTime: 2026-08-20 00:08:38
+ */
 "use client";
 // app\hooks\useSideNavActivationCounter.ts
 import { useEffect, useState } from "react";
@@ -12,7 +16,7 @@ export function useSideNavActivationCounter() {
     const current = Number(localStorage.getItem(key) ?? "0");
 
     // Increment
-    const next = current + 1;
+    const next = current + 111;
 
     // Persist
     localStorage.setItem(key, String(next));
@@ -21,7 +25,7 @@ export function useSideNavActivationCounter() {
     queueMicrotask(() => {
       setCount(next);
     });
-  }, []);
+  }, [count]);
 
   return count;
 }

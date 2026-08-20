@@ -1,7 +1,7 @@
 "use client";
 /*
  * @FilePath: \my-new-app\app\components\SideNavClient.tsx
- * @LastEditTime: 2026-08-14 08:43:56
+ * @LastEditTime: 2026-08-20 00:06:27
  */
 
 import Link from "next/link";
@@ -114,7 +114,7 @@ export default function SideNavClient({
 
   return (
     <aside className="w-64 h-screen flex flex-col bg-slate-950 text-white shadow-xl">
-      <nav className="flex-1 p-4 space-y-2 overflow-y-auto bg-gradient-to-b from-blue-600 via-blue-700 to-transparent">
+      <nav className="flex-1 p-4 space-y-2 overflow-y-auto bg-linear-to-b from-blue-600 via-blue-700 to-transparent">
         {navItems.map((item) => {
           const isActive =
             item.href === "/"
