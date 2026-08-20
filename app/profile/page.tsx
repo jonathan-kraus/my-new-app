@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\profile\page.tsx
- * @LastEditTime: 2026-08-20 00:55:41
+ * @LastEditTime: 2026-08-20 00:59:15
  */
 import { auth, signIn, signOut } from "@/auth";
 import { logj } from "@/lib/log/logj";
