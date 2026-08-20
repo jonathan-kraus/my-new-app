@@ -19,7 +19,7 @@
     "serialize-javascript": "7.1.0",
     "undici": "8.10.0",
     "valibot": "1.4.2",
-    "vite": "8.2.1",
+    "vite": "8.2.2",
     "yaml": "2.9.0"
   },
   "onlyBuiltDependencies": [
