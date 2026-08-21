@@ -44,7 +44,7 @@ export default async function ProfilePage() {
           <p>
             User ID: {session.user?.id}
             <br />
-            Expires
+            Expires" "
             {formatDistanceToNow(new Date(session.expires), {
               addSuffix: true,
             })}
