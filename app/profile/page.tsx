@@ -6,6 +6,7 @@ import { auth, signIn, signOut } from "@/auth";
 import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
 import { formatDistanceToNow } from "date-fns";
+import { ProfileCard } from "../components/ProfileCard";
 export default async function ProfilePage() {
   const built = staticUniversalContext("Jonathan");
   let jei = 0;
@@ -60,6 +61,10 @@ export default async function ProfilePage() {
               Sign out
             </button>
           </form>
+          <ProfileCard
+            name={session.user?.name || "Unknown"}
+            email={session.user?.email || "Unknown"}
+          />
         </>
       )}
     </div>
