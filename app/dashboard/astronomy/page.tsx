@@ -1,4 +1,3 @@
-// app/dashboard/astronomy/page.tsx
 import { computeSolarNoon } from "@/lib/ephemeris/utils/computeSolarNoon";
 import { getEphemerisSnapshot } from "@/lib/ephemeris/getEphemerisSnapshot";
 import { AstronomyTimeline } from "@/components/astronomy/AstronomyTimeline";
@@ -9,40 +8,91 @@ import { SolarArcBar } from "@/app/components/SolarArcBar";
 import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
 
+export const dynamic = "force-dynamic"; // ensure cookies + fresh SSR
 export const revalidate = 60;
+
 const built = staticUniversalContext("ASTRONOMY");
-const jnow = Date.now();
-const result = format(jnow, "yyyy-MM-dd HH:mm:ss");
 let jei = 0;
 
-export default async function DashboardAstronomyPage() {
-  const snapshot = await getEphemerisSnapshot("KOP");
-  const solar = snapshot.snapshot?.solar ?? null;
-  const lunar = snapshot.snapshot?.lunar ?? null;
+async function fetchWithRetry(station: string) {
+  const attempt1 = await getEphemerisSnapshot(station);
+
   await logj({
     domain: "jonathan",
     level: "info",
-    message: "In Dashboard/Astronomy",
+    message: "Astronomy fetch attempt #1",
     file: "app/dashboard/astronomy/page.tsx",
-    line: 22,
-    payload: { some: result },
+    line: 20,
+    payload: { snapshot: !!attempt1.snapshot },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
+
+  if (attempt1.snapshot?.solar && attempt1.snapshot?.lunar) {
+    return attempt1;
+  }
+
+  // Retry after short delay
+  await new Promise((r) => setTimeout(r, 250));
+
+  const attempt2 = await getEphemerisSnapshot(station);
+
+  await logj({
+    domain: "jonathan",
+    level: "info",
+    message: "Astronomy fetch attempt #2",
+    file: "app/dashboard/astronomy/page.tsx",
+    line: 39,
+    payload: { snapshot: !!attempt2.snapshot },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
+
+  return attempt2;
+}
+
+export default async function DashboardAstronomyPage() {
+  const snapshot = await fetchWithRetry("KOP");
+  const solar = snapshot.snapshot?.solar ?? null;
+  const lunar = snapshot.snapshot?.lunar ?? null;
+
   if (!solar || !lunar) {
     return (
-      <div className="p-4 text-gray-500">
-        {" "}
-        No astronomy data available yet.{" "}
+      <div className="flex flex-col items-center justify-center p-10 text-gray-400">
+        <svg
+          className="animate-spin h-8 w-8 mb-4 text-gray-500"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+          />
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8z"
+          />
+        </svg>
+        <div>Loading astronomy data…</div>
       </div>
     );
   }
 
   const solarNoon = computeSolarNoon(
-    solar!.sunrise.dateObj,
-    solar!.sunset.dateObj,
+    solar.sunrise.dateObj,
+    solar.sunset.dateObj,
   );
+
   if (!solar.sunrise?.timestamp || !solar.sunset?.timestamp || !solarNoon) {
-    return null; // or a loading state
+    return (
+      <div className="flex flex-col items-center justify-center p-10 text-gray-400">
+        <div>Loading astronomy data…</div>
+      </div>
+    );
   }
 
   return (
@@ -58,7 +108,6 @@ export default async function DashboardAstronomyPage() {
 
       {/* Top section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Next Event */}
         <NextEventCard
           nextEvent={snapshot.nextEvent!.name}
           nextEventTime={snapshot.nextEvent!.dateObj}
@@ -74,7 +123,6 @@ export default async function DashboardAstronomyPage() {
             </div>
             <div className="flex justify-between">
               <span>Solar Noon</span>
-
               <span>
                 {formatInTimeZone(solarNoon, "America/New_York", "h:mm a")}
               </span>
@@ -144,7 +192,7 @@ export default async function DashboardAstronomyPage() {
             ? parseISO(solar.goldenHour.sunrise.end.timestamp)
             : null
         }
-        solarNoon={solarNoon ?? null}
+        solarNoon={solarNoon}
         sunsetBlueStart={
           solar.blueHour.sunset.start?.timestamp
             ? parseISO(solar.blueHour.sunset.start.timestamp)
