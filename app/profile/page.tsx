@@ -21,8 +21,7 @@ export default async function ProfilePage() {
   });
   const session = await auth();
   const expiretemp = new Date(session!.expires);
-  const expires2 =
-    "Expires " + formatDistanceToNow(expiretemp, { addSuffix: true });
+  const expires2 = formatDistanceToNow(expiretemp, { addSuffix: true });
 
   return (
     <div className="p-8 space-y-4">
