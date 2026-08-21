@@ -5,7 +5,7 @@ import { LocationSelector } from "@/components/LocationSelector";
 import { ForecastCard } from "./ForecastCard";
 import { CurrentWeather } from "./CurrentWeather";
 import { useForecastTimeline } from "@/hooks/useForecastTimeline";
-import { Location } from "@/lib/types";
+import type { Location } from "@/lib/types";
 import { logj } from "@/lib/log/client";
 import { staticUniversalContext } from "@/lib/log/buildj";
 

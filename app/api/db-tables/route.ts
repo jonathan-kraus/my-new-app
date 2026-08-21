@@ -5,7 +5,7 @@
 import { neon } from "@neondatabase/serverless";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
-import { NextRequest } from "next/server";
+import type { NextRequest } from "next/server";
 
 type FormattedTable = {
   name: string;

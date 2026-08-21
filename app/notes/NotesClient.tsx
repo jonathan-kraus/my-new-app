@@ -91,7 +91,6 @@ export default function NotesClient() {
     }
 
     void load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

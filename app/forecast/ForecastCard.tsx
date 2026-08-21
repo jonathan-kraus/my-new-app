@@ -1,4 +1,4 @@
-import { Location } from "@/lib/types";
+import type { Location } from "@/lib/types";
 
 type ForecastRow = {
   date: Date;
