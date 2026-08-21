@@ -40,6 +40,15 @@ export default async function ProfilePage() {
 
       {session && (
         <>
+          <ProfileCard
+            name={session.user?.name}
+            email={session.user?.email}
+            id={session.user?.id}
+            expires={session.expires}
+            image={session.user?.image}
+          />
+          <p></p>
+          <br />
           <p>Signed in as {session.user?.email}</p>
 
           <p>
@@ -61,13 +70,6 @@ export default async function ProfilePage() {
               Sign out
             </button>
           </form>
-          <ProfileCard
-            name={session.user?.name}
-            email={session.user?.email}
-            id={session.user?.id}
-            expires={session.expires}
-            image={session.user?.image}
-          />
         </>
       )}
     </div>
