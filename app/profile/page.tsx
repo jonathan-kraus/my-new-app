@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\profile\page.tsx
- * @LastEditTime: 2026-08-21 01:13:35
+ * @LastEditTime: 2026-08-21 01:31:30
  */
 import { auth, signIn, signOut } from "@/auth";
 import { logj } from "@/lib/log/logj";
@@ -62,8 +62,11 @@ export default async function ProfilePage() {
             </button>
           </form>
           <ProfileCard
-            name={session.user?.name || "Unknown"}
-            email={session.user?.email || "Unknown"}
+            name={session.user?.name}
+            email={session.user?.email}
+            id={session.user?.id}
+            expires={session.expires}
+            image={session.user?.image}
           />
         </>
       )}
