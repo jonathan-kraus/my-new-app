@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\profile\page.tsx
- * @LastEditTime: 2026-08-21 15:28:15
+ * @LastEditTime: 2026-08-21 17:23:54
  */
 import { auth, signIn, signOut } from "@/auth";
 import { logj } from "@/lib/log/logj";
@@ -20,6 +20,9 @@ export default async function ProfilePage() {
     meta: { built: { ...built, eventIndex: ++jei } },
   });
   const session = await auth();
+  const expiretemp = new Date(session!.expires);
+  const expires2 =
+    "Expires " + formatDistanceToNow(expiretemp, { addSuffix: true });
 
   return (
     <div className="p-8 space-y-4">
@@ -44,9 +47,7 @@ export default async function ProfilePage() {
             name={session.user?.name}
             email={session.user?.email}
             id={session.user?.id}
-            expires={formatDistanceToNow(new Date(session.expires), {
-              addSuffix: true,
-            })}
+            expires={expires2}
             image={session.user?.image}
           />
           <p></p>
@@ -56,7 +57,7 @@ export default async function ProfilePage() {
           <p>
             User ID: {session.user?.id}
             <br />
-            Expires{" "}
+            Expires
             {formatDistanceToNow(new Date(session.expires), {
               addSuffix: true,
             })}
