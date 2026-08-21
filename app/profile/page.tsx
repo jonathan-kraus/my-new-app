@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\profile\page.tsx
- * @LastEditTime: 2026-08-21 00:25:46
+ * @LastEditTime: 2026-08-21 00:31:15
  */
 import { auth, signIn, signOut } from "@/auth";
 import { logj } from "@/lib/log/logj";
@@ -54,9 +54,8 @@ export default async function ProfilePage() {
             <button className="px-4 py-2 bg-red-600 text-white rounded">
               Sign out
             </button>
-
-            <ProfileCard />
           </form>
+          <ProfileCard />
         </>
       )}
     </div>
