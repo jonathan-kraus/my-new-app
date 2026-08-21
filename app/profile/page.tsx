@@ -13,9 +13,9 @@ export default async function ProfilePage() {
   await logj({
     domain: "Jonathan",
     level: "info",
-    message: "ProfilePage loaded",
+    message: "Profile page loaded",
     file: "app/profile/page.tsx",
-    line: 12,
+    line: 13,
     payload: { some: "Profile Page loaded" },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
