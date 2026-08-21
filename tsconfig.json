@@ -25,7 +25,7 @@
 
     "paths": {
       "@/app/*": ["./app/*"],
-      "@/auth": ["./auth"],
+      "@/auth": ["./auth.ts"],
       "@/components/*": ["./app/components/*"],
       "@/db/*": ["./src/db/*"],
       "@/hooks/*": ["./hooks/*"],
