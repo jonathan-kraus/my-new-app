@@ -131,27 +131,29 @@ const prunedIgnoreList = validIgnores;
 const realFindings = [];
 
 for (const [pkg, items] of Object.entries(advisories)) {
-  const installed = payload[pkg][0];
+  // Find the snapshot key for this package (pnpm v9)
+  const snapshotKey = Object.keys(deps).find(k => k.startsWith(pkg + "@"));
+  if (!snapshotKey) continue;
+
+  const snapshot = deps[snapshotKey];
+  const installed = snapshot.version; // ✔ correct installed version
 
   for (const adv of items) {
     const vulnerableRange = adv.vulnerable_versions;
 
-    // skip ignored advisories
+    // ✔ skip ignored advisories
     if (prunedIgnoreList.includes(String(adv.id))) {
       continue;
     }
 
-    // find the snapshot key for this package
-    const snapshotKey = Object.keys(deps).find(k => k.startsWith(pkg + "@"));
-    const snapshot = deps[snapshotKey];
-
-    // skip dev-only dependencies (pnpm v9)
-    const isDev = snapshot?.dev === true;
+    // ✔ OPTIONAL: skip dev-only dependencies
+    // If you want nanoid to show up, REMOVE this check.
+    const isDev = snapshot.dev === true;
     if (isDev) {
-      continue;
+      // continue;  // ❌ remove this if you want nanoid flagged
     }
 
-    // semver check
+    // ✔ semver check using correct installed version
     if (semver.satisfies(installed, vulnerableRange)) {
       realFindings.push({
         pkg,
