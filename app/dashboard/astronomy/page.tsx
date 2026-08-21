@@ -6,17 +6,15 @@ import { format, parseISO } from "date-fns";
 import { formatInTimeZone } from "date-fns-tz";
 import { SolarArcBar } from "@/app/components/SolarArcBar";
 import { logj } from "@/lib/log/logj";
-import { staticUniversalContext } from "@/lib/log/buildj";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 export const dynamic = "force-dynamic"; // ensure cookies + fresh SSR
 export const revalidate = 60;
 
-const built = staticUniversalContext("ASTRONOMY");
-let jei = 0;
-
-async function fetchWithRetry(station: string) {
+async function fetchWithRetry(req: Request, station: string) {
   const attempt1 = await getEphemerisSnapshot(station);
-
+  const built = await buildUniversalContext(req as any, "ASTRONOMY");
+  let jei = 0;
   await logj({
     domain: "jonathan",
     level: "info",
