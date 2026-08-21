@@ -1,18 +1,19 @@
 /*
  * @FilePath: \my-new-app\app\profile\page.tsx
- * @LastEditTime: 2026-08-20 01:10:29
+ * @LastEditTime: 2026-08-21 00:16:30
  */
 import { auth, signIn, signOut } from "@/auth";
 import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
 import { formatDistanceToNow } from "date-fns";
+import { ProfileCard } from "@/app/components/ProfileCard";
 export default async function ProfilePage() {
   const built = staticUniversalContext("Jonathan");
   let jei = 0;
   await logj({
     domain: "Jonathan",
     level: "info",
-    message: "ProfilePage loaded",
+    message: "Profile Page loaded",
     file: "app/profile/page.tsx",
     line: 12,
     payload: { some: "Profile Page loaded" },
@@ -53,6 +54,8 @@ export default async function ProfilePage() {
             <button className="px-4 py-2 bg-red-600 text-white rounded">
               Sign out
             </button>
+
+            <ProfileCard />
           </form>
         </>
       )}
