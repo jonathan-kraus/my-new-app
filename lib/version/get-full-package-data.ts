@@ -1,9 +1,8 @@
 /*
  * @FilePath: \my-new-app\lib\version\get-full-package-data.ts
- * @LastEditTime: 2026-08-03 20:14:42
+ * @LastEditTime: 2026-08-21 14:42:29
  */
 import pkg from "../../package.json";
-
 export type FullPackageData = {
   name: string;
   version: string;
@@ -49,8 +48,7 @@ function resolveCommit(): string | null {
 
   // Dev fallback: try local git
   try {
-    const { execSync } =
-      require("node:child_process") as typeof import("node:child_process");
+    const { execSync } = require("node:child_process");
     return execSync("git rev-parse HEAD").toString().trim();
   } catch {
     return null;
