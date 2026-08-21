@@ -25,8 +25,14 @@ async function fetchWithRetry(req: Request, station: string) {
     level: "info",
     message: "Astronomy fetch attempt #1",
     file: "app/dashboard/astronomy/page.tsx",
-    line: 20,
-    payload: { snapshot: !!attempt1.snapshot },
+    line: 23,
+    payload: {
+      snapshot: !!attempt1.snapshot,
+      user: session.user,
+      name: session.user.name,
+      email: session.user.email,
+      station: station,
+    },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
 
@@ -44,7 +50,7 @@ async function fetchWithRetry(req: Request, station: string) {
     level: "info",
     message: "Astronomy fetch attempt #2",
     file: "app/dashboard/astronomy/page.tsx",
-    line: 39,
+    line: 51,
     payload: { snapshot: !!attempt2.snapshot },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
