@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\profile\page.tsx
- * @LastEditTime: 2026-08-21 01:31:30
+ * @LastEditTime: 2026-08-21 15:28:15
  */
 import { auth, signIn, signOut } from "@/auth";
 import { logj } from "@/lib/log/logj";
@@ -44,7 +44,9 @@ export default async function ProfilePage() {
             name={session.user?.name}
             email={session.user?.email}
             id={session.user?.id}
-            expires={session.expires}
+            expires={formatDistanceToNow(new Date(session.expires), {
+              addSuffix: true,
+            })}
             image={session.user?.image}
           />
           <p></p>

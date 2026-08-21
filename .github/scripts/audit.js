@@ -166,3 +166,13 @@ for (const [pkg, items] of Object.entries(advisories)) {
     }
   }
 }
+if (realFindings.length > 0) {
+  console.log(`Found ${realFindings.length} active vulnerabilities:`);
+  for (const f of realFindings) {
+    console.log(
+      `- ${f.pkg}@${f.installed} (${f.severity}) — ${f.title} [${f.id}]`
+    );
+  }
+} else {
+  console.log("No active vulnerabilities found.");
+}
