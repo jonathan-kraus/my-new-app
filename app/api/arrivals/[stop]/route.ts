@@ -1,9 +1,9 @@
 /*
  * @FilePath: \my-new-app\app\api\arrivals\[stop]\route.ts
- * @LastEditTime: 2026-08-22 17:58:46
+ * @LastEditTime: 2026-08-22 19:05:27
  */
 import { mbta } from "@/lib/mbta";
-
+console.log("api/arrivals/[stop]/route.ts loaded");
 export async function GET(
   req: Request,
   { params }: { params: { stop: string } },
