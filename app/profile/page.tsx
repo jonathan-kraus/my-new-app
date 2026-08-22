@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\profile\page.tsx
- * @LastEditTime: 2026-08-21 18:00:28
+ * @LastEditTime: 2026-08-22 00:02:45
  */
 import { auth, signIn, signOut } from "@/auth";
 import { logj } from "@/lib/log/logj";
@@ -16,9 +16,13 @@ export default async function ProfilePage() {
     message: "Profile page loaded",
     file: "app/profile/page.tsx",
     line: 13,
-    payload: { some: "Profile Page loaded" },
+    payload: {
+      AUTH_URL: process.env.AUTH_URL,
+      NEXTAUTH_URL: process.env.NEXTAUTH_URL,
+    },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
+
   const session = await auth();
 
   if (!session) {

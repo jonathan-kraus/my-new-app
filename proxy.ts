@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\proxy.ts
- * @LastEditTime: 2026-08-20 19:04:10
+ * @LastEditTime: 2026-08-22 00:07:56
  */
 
 import { Logger } from "next-axiom";
@@ -151,23 +151,23 @@ export async function proxy(req: NextRequest) {
     });
     return NextResponse.next();
   }
-
-  await logj({
-    domain: domain,
-    level: "info",
-    message: `Normalized path ${pathname} in ${normalizeDurationMs.toFixed(3)} ms`,
-    file: "proxy.ts",
-    line: 155,
-    payload: {
-      requestId,
-      pathname,
-      last,
-      lastTwo,
-      normalizeDurationMs: Number(normalizeDurationMs.toFixed(3)),
-    },
-    meta: { built: { ...built, eventIndex: ++jei } },
-  });
-
+  if (solarspeed < 900) {
+    await logj({
+      domain: domain,
+      level: "info",
+      message: `Normalized path ${pathname} in ${normalizeDurationMs.toFixed(3)} ms`,
+      file: "proxy.ts",
+      line: 155,
+      payload: {
+        requestId,
+        pathname,
+        last,
+        lastTwo,
+        normalizeDurationMs: Number(normalizeDurationMs.toFixed(3)),
+      },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
+  }
   //
   // 7. Axiom instrumentation
   //
