@@ -88,7 +88,7 @@ export default function GitHubActivityFeed() {
               domain: "github",
               message: "Starting GitHub activity fetch",
               file: "app/components/github/GitHubActivityFeed.tsx",
-              line: 87,
+              line: 83,
               level: "info",
               payload: { name: item.name, url: item.html_url },
               meta: { built: { ...built, eventIndex: ++jei } },
