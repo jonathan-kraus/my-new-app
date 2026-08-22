@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\proxy.ts
- * @LastEditTime: 2026-08-22 00:07:56
+ * @LastEditTime: 2026-08-22 19:28:36
  */
 
 import { Logger } from "next-axiom";
@@ -151,7 +151,7 @@ export async function proxy(req: NextRequest) {
     });
     return NextResponse.next();
   }
-  if (solarspeed < 900) {
+  if (solarspeed > 900) {
     await logj({
       domain: domain,
       level: "info",
