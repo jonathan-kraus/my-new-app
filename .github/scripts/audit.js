@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\.github\scripts\audit.js
- * @LastEditTime: 2026-08-18 21:09:23
+ * @LastEditTime: 2026-08-22 04:20:38
  */
 import fs from "fs";
 import * as yaml from "js-yaml";
@@ -47,16 +47,17 @@ for (const key of Object.keys(deps)) {
 
   const name = clean.slice(0, atIndex);
   const version = clean.slice(atIndex + 1);
-  if (!name || !version) continue;
+  if (!name || !version || !semver.valid(version)) continue;
 
-  payload[name] = [version];
+  if (!payload[name]) payload[name] = [];
+  if (!payload[name].includes(version)) payload[name].push(version);
 }
 
 console.log("🔍 -- Auditing", Object.keys(payload).length, "packages…");
 
 // advisories to ignore by ID
 const IGNORE = [
-  // "1145093",   
+  "1145093",
 ];
 
 
@@ -94,7 +95,8 @@ if (!res.ok) {
 }
 
 const advisories = await res.json();
-
+console.log("deepmerge-ts payload versions:", payload["deepmerge-ts"]);
+console.log("deepmerge-ts advisories:", advisories["deepmerge-ts"]);
 // -----------------------------
 // Filter advisories by semver + IGNORE
 // -----------------------------
@@ -131,38 +133,33 @@ const prunedIgnoreList = validIgnores;
 const realFindings = [];
 
 for (const [pkg, items] of Object.entries(advisories)) {
-  // Find the snapshot key for this package (pnpm v9)
-  const snapshotKey = Object.keys(deps).find(k => k.startsWith(pkg + "@"));
-  if (!snapshotKey) continue;
+  // All versions of this package actually in the lockfile
+  const installedVersions = payload[pkg] ?? [];
 
-  const snapshot = deps[snapshotKey];
-  const installed = snapshot.version; // ✔ correct installed version
+  for (const installed of installedVersions) {
+    if (!installed || !semver.valid(installed)) continue;
 
-  for (const adv of items) {
-    const vulnerableRange = adv.vulnerable_versions;
+    for (const adv of items) {
+      if (prunedIgnoreList.includes(String(adv.id))) continue;
 
-    // ✔ skip ignored advisories
-    if (prunedIgnoreList.includes(String(adv.id))) {
-      continue;
-    }
+      const vulnerableRange = adv.vulnerable_versions;
+      if (!vulnerableRange) continue;
 
-    // ✔ OPTIONAL: skip dev-only dependencies
-    // If you want nanoid to show up, REMOVE this check.
-    const isDev = snapshot.dev === true;
-    if (isDev) {
-      // continue;  // ❌ remove this if you want nanoid flagged
-    }
-
-    // ✔ semver check using correct installed version
-    if (semver.satisfies(installed, vulnerableRange)) {
-      realFindings.push({
-        pkg,
-        installed,
-        title: adv.title,
-        severity: adv.severity,
-        vulnerableRange,
-        id: adv.id,
+      // includePrerelease helps odd ranges; force coerces some edge versions
+      const affected = semver.satisfies(installed, vulnerableRange, {
+        includePrerelease: true,
       });
+
+      if (affected) {
+        realFindings.push({
+          pkg,
+          installed,
+          title: adv.title,
+          severity: adv.severity,
+          vulnerableRange,
+          id: adv.id,
+        });
+      }
     }
   }
 }
