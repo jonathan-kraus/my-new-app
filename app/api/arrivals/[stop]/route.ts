@@ -1,8 +1,7 @@
 /*
- * @FilePath: \my-new-app\app\arrivals\[stop]\route.ts
- * @LastEditTime: 2026-08-22 17:25:02
+ * @FilePath: \my-new-app\app\api\arrivals\[stop]\route.ts
+ * @LastEditTime: 2026-08-22 17:58:46
  */
-// app/api/arrivals/[stop]/route.ts
 import { mbta } from "@/lib/mbta";
 
 export async function GET(
