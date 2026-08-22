@@ -1,6 +1,6 @@
 /*
- * @FilePath: \my-new-app\app\astronomy\components\ArrivalsWidget.tsx
- * @LastEditTime: 2026-08-22 17:27:33
+ * @FilePath: \my-new-app\app\components\ArrivalsWidget.tsx
+ * @LastEditTime: 2026-08-22 18:36:51
  */
 "use client";
 
@@ -13,8 +13,10 @@ export function ArrivalsWidget({ stop }: { stop: string }) {
   const { data, isLoading } = useSWR(`/api/arrivals/${stop}`, fetcher, {
     refreshInterval: 15000,
   });
+  console.log("ArrivalsWidget stop =", stop);
 
   const predictions = data?.data ?? [];
+  console.log("ArrivalsWidget predictions =", predictions);
 
   return (
     <Card className="p-4 shadow-lg border border-neutral-200 bg-white/70 backdrop-blur-md">
