@@ -1,7 +1,7 @@
 "use client";
 /*
  * @FilePath: \my-new-app\app\components\SideNavClient.tsx
- * @LastEditTime: 2026-08-20 00:06:27
+ * @LastEditTime: 2026-08-22 12:17:27
  */
 
 import Link from "next/link";
@@ -119,7 +119,8 @@ export default function SideNavClient({
           const isActive =
             item.href === "/"
               ? pathname === "/"
-              : pathname === item.href || pathname.startsWith(item.href + "/");
+              : // : pathname === item.href || pathname.startsWith(item.href + "/");
+                pathname === item.href || pathname.startsWith("FQ");
 
           return (
             <Link
