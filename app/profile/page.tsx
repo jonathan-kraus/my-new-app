@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\profile\page.tsx
- * @LastEditTime: 2026-08-21 17:40:57
+ * @LastEditTime: 2026-08-21 18:00:28
  */
 import { auth, signIn, signOut } from "@/auth";
 import { logj } from "@/lib/log/logj";
@@ -20,14 +20,13 @@ export default async function ProfilePage() {
     meta: { built: { ...built, eventIndex: ++jei } },
   });
   const session = await auth();
-  const expiretemp = new Date(session!.expires);
-  const expires2 = formatDistanceToNow(expiretemp, { addSuffix: true });
 
-  return (
-    <div className="p-8 space-y-4">
-      <h1 className="text-3xl font-bold">Profile</h1>
+  if (!session) {
+    return (
+      <div className="p-8 space-y-4">
+        <h1 className="text-3xl font-bold">Profile</h1>
+        <p>You are not signed in.</p>
 
-      {!session && (
         <form
           action={async () => {
             "use server";
@@ -38,32 +37,36 @@ export default async function ProfilePage() {
             Sign in with GitHub
           </button>
         </form>
-      )}
+      </div>
+    );
+  }
 
-      {session && (
-        <>
-          <ProfileCard
-            name={session.user?.name}
-            email={session.user?.email}
-            id={session.user?.id}
-            expires={expires2}
-            image={session.user?.image}
-          />
-          <p></p>
-          <br />
+  const expires2 = formatDistanceToNow(new Date(session.expires), {
+    addSuffix: true,
+  });
 
-          <form
-            action={async () => {
-              "use server";
-              await signOut();
-            }}
-          >
-            <button className="px-4 py-2 bg-red-600 text-white rounded">
-              Sign out
-            </button>
-          </form>
-        </>
-      )}
+  return (
+    <div className="p-8 space-y-4">
+      <h1 className="text-3xl font-bold">Profile</h1>
+
+      <ProfileCard
+        name={session.user?.name}
+        email={session.user?.email}
+        id={session.user?.id}
+        expires={expires2}
+        image={session.user?.image}
+      />
+
+      <form
+        action={async () => {
+          "use server";
+          await signOut();
+        }}
+      >
+        <button className="px-4 py-2 bg-red-600 text-white rounded">
+          Sign out
+        </button>
+      </form>
     </div>
   );
 }
