@@ -16,7 +16,7 @@ export default async function TestPage() {
       <h1 className="text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 mb-3">
         Weather Dashboard
       </h1>
-      <ArrivalsWidget stop="place-dean" />
+      <ArrivalsWidget stop="place-sstat" />
       <a
         href="/dashboard"
         className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg text-white font-semibold hover:from-blue-600 hover:to-purple-600 transition-colors duration-300"
