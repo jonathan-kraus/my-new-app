@@ -11,7 +11,7 @@ export async function mbta(path: string, params: Record<string, string> = {}) {
     },
     next: { revalidate: 10 },
   });
-
+  console.log("MBTA request:", url.toString(), "Status:", res.status, res);
   if (!res.ok) throw new Error(`MBTA error: ${res.status}`);
   return res.json();
 }
