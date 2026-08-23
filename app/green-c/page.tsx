@@ -1,19 +1,15 @@
 /*
  * @FilePath: \my-new-app\app\green-c\page.tsx
- * @LastEditTime: 2026-08-22 22:47:11
+ * @LastEditTime: 2026-08-23 15:30:24
  */
 "use client";
 
 import useSWR from "swr";
 import { useState } from "react";
-import { logj } from "@/lib/log/client";
-import { staticUniversalContext } from "@/lib/log/buildj";
 
-const built = await staticUniversalContext("mbta-green-c");
-let jei = 0;
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
+const fetcher = (url) => fetch(url).then((r) => r.json());
 
-// Hard-coded Green-C stops (accurate MBTA IDs)
+// Green Line C stops
 const greenCStops = [
   { id: "place-clmnl", name: "Cleveland Circle" },
   { id: "place-engav", name: "Englewood Ave" },
@@ -31,40 +27,61 @@ const greenCStops = [
 ];
 
 export default function GreenCPage() {
-  // Default stop = Dean Road
   const [stopId, setStopId] = useState("place-denrd");
-  logj({
-    domain: "green-c",
-    level: "info",
-    message: "Green-C Started",
-    file: "app/api/notes/route.ts",
-    line: 36,
-    payload: {
-      stopId: stopId,
-    },
-    meta: { built: { ...built, eventIndex: ++jei } },
-  });
-  const { data, isLoading } = useSWR(`/api/arrivals/${stopId}`, fetcher, {
-    refreshInterval: 15000,
-  });
+  const [showDetails, setShowDetails] = useState(false);
 
-  const predictions = data?.data?.slice(0, 3) ?? [];
+  // Predictions + trip info
+  const { data, isLoading } = useSWR(
+    `/api/arrivals/${stopId}?include=trip`,
+    fetcher,
+    { refreshInterval: 15000 }
+  );
+
+  const predictions = data?.data?.slice(0, 4) ?? [];
+  const included = data?.included ?? [];
+
+  // Stop details
+  const { data: stopInfo } = useSWR(
+    showDetails ? `/api/stops/${stopId}` : null,
+    fetcher
+  );
+
+  function getHeadsign(prediction) {
+    const tripId = prediction.relationships?.trip?.data?.id;
+    return included.find((i) => i.id === tripId)?.attributes?.headsign;
+  }
+
+  function getDirection(prediction) {
+    return prediction.attributes.direction_id === 0
+      ? "Westbound"
+      : "Eastbound";
+  }
+
+  function getTime(prediction) {
+    const arrival = prediction.attributes?.arrival_time;
+    const dep = prediction.attributes?.departure_time;
+    const t = arrival || dep;
+    return t ? new Date(t).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) : "—";
+  }
 
   return (
     <div style={{ padding: 20, fontFamily: "sans-serif" }}>
-      <h1>Green Line C — Predictions</h1>
+      <h1 style={{ color: "#00843D" }}>🟢🚋 Green Line C</h1>
 
       {/* Stop Selector */}
       <div style={{ marginBottom: 20 }}>
         <label style={{ fontWeight: "bold" }}>Choose a stop:</label>
         <select
           value={stopId}
-          onChange={(e) => setStopId(e.target.value)}
+          onChange={(e) => {
+            setStopId(e.target.value);
+            setShowDetails(false);
+          }}
           style={{
             marginLeft: 10,
             padding: 6,
-            backgroundColor: "#222", // dark background
-            color: "#fff", // white text
+            backgroundColor: "#222",
+            color: "#fff",
             border: "1px solid #555",
             borderRadius: 6,
           }}
@@ -73,10 +90,7 @@ export default function GreenCPage() {
             <option
               key={stop.id}
               value={stop.id}
-              style={{
-                backgroundColor: "#222",
-                color: "#fff",
-              }}
+              style={{ backgroundColor: "#222", color: "#fff" }}
             >
               {stop.name}
             </option>
@@ -85,28 +99,67 @@ export default function GreenCPage() {
       </div>
 
       {/* Predictions */}
-      <h2>Next arrivals for {stopId}</h2>
+      <h2 style={{ marginBottom: 10 }}>
+        Next arrivals for <span style={{ color: "#00843D" }}>{stopId}</span>
+      </h2>
 
       {isLoading && <div>Loading predictions…</div>}
 
-      {!isLoading && predictions.length === 0 && (
-        <div>No predictions available.</div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        {predictions.map((p) => (
+          <div
+            key={p.id}
+            style={{
+              background: "#111",
+              padding: 12,
+              borderRadius: 8,
+              borderLeft: "6px solid #00843D",
+            }}
+          >
+            <div style={{ fontSize: 18, fontWeight: "bold" }}>
+              🟢🚋 Green‑C — {getTime(p)}
+            </div>
+            <div style={{ opacity: 0.8 }}>
+              {getHeadsign(p)} ({getDirection(p)})
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Details Button */}
+      <button
+        onClick={() => setShowDetails(!showDetails)}
+        style={{
+          marginTop: 20,
+          padding: "8px 14px",
+          backgroundColor: "#00843D",
+          color: "white",
+          border: "none",
+          borderRadius: 6,
+          cursor: "pointer",
+        }}
+      >
+        {showDetails ? "Hide Details" : "Show Stop Details"}
+      </button>
+
+      {/* Stop Details */}
+      {showDetails && stopInfo && (
+        <div
+          style={{
+            marginTop: 20,
+            padding: 12,
+            background: "#222",
+            borderRadius: 8,
+            color: "#fff",
+          }}
+        >
+          <h3>Stop Info</h3>
+          <p><strong>Name:</strong> {stopInfo.data.attributes.name}</p>
+          <p><strong>Municipality:</strong> {stopInfo.data.attributes.municipality}</p>
+          <p><strong>Latitude:</strong> {stopInfo.data.attributes.latitude}</p>
+          <p><strong>Longitude:</strong> {stopInfo.data.attributes.longitude}</p>
+        </div>
       )}
-
-      <ul>
-        {predictions.map((p: any) => {
-          const arrival = p.attributes?.arrival_time;
-          const dep = p.attributes?.departure_time;
-          const time = arrival || dep;
-
-          return (
-            <li key={p.id}>
-              {p.relationships.route.data.id} —{" "}
-              {time ? new Date(time).toLocaleTimeString() : "No time"}
-            </li>
-          );
-        })}
-      </ul>
     </div>
   );
 }
