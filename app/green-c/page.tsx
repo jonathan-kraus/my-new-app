@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\green-c\page.tsx
- * @LastEditTime: 2026-08-22 22:39:05
+ * @LastEditTime: 2026-08-22 22:47:11
  */
 "use client";
 
@@ -38,7 +38,7 @@ export default function GreenCPage() {
     level: "info",
     message: "Green-C Started",
     file: "app/api/notes/route.ts",
-    line: 17,
+    line: 36,
     payload: {
       stopId: stopId,
     },
