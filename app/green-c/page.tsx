@@ -1,12 +1,16 @@
 /*
  * @FilePath: \my-new-app\app\green-c\page.tsx
- * @LastEditTime: 2026-08-22 20:55:56
+ * @LastEditTime: 2026-08-22 22:39:05
  */
 "use client";
 
 import useSWR from "swr";
 import { useState } from "react";
+import { logj } from "@/lib/log/client";
+import { staticUniversalContext } from "@/lib/log/buildj";
 
+const built = await staticUniversalContext("mbta-green-c");
+let jei = 0;
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 // Hard-coded Green-C stops (accurate MBTA IDs)
@@ -29,7 +33,17 @@ const greenCStops = [
 export default function GreenCPage() {
   // Default stop = Dean Road
   const [stopId, setStopId] = useState("place-denrd");
-
+  logj({
+    domain: "green-c",
+    level: "info",
+    message: "Green-C Started",
+    file: "app/api/notes/route.ts",
+    line: 17,
+    payload: {
+      stopId: stopId,
+    },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
   const { data, isLoading } = useSWR(`/api/arrivals/${stopId}`, fetcher, {
     refreshInterval: 15000,
   });
