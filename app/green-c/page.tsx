@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\green-c\page.tsx
- * @LastEditTime: 2026-08-23 15:36:12
+ * @LastEditTime: 2026-08-23 15:56:55
  */
 "use client";
 
@@ -44,6 +44,7 @@ const greenCStops = [
   { id: "place-kntst", name: "Kent Street" },
   { id: "place-hwsst", name: "Hawes Street" },
   { id: "place-smary", name: "St. Mary’s Street" },
+  { id: "place-hymnl", name: "Hynes Convention Center" },
 ];
 
 export default function GreenCPage() {
@@ -145,7 +146,7 @@ export default function GreenCPage() {
               🟢🚋 Green‑C — {getTime(p)}
             </div>
             <div style={{ opacity: 0.8 }}>
-              {getHeadsign(p)} ({getDirection(p)})
+              {getHeadsign(p)} - {getDirection(p)}
             </div>
           </div>
         ))}
