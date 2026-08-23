@@ -1,0 +1,84 @@
+/*
+ * @FilePath: \my-new-app\app\green-c\page.tsx
+ * @LastEditTime: 2026-08-22 20:50:59
+ */
+"use client";
+
+import useSWR from "swr";
+import { useState } from "react";
+
+const fetcher = (url: string) => fetch(url).then((r) => r.json());
+
+// Hard-coded Green-C stops (accurate MBTA IDs)
+const greenCStops = [
+  { id: "place-clmnl", name: "Cleveland Circle" },
+  { id: "place-engav", name: "Englewood Ave" },
+  { id: "place-denrd", name: "Dean Road" },
+  { id: "place-tapst", name: "Tappan Street" },
+  { id: "place-wascm", name: "Washington Square" },
+  { id: "place-fbkst", name: "Fairbanks Street" },
+  { id: "place-brnhl", name: "Brandon Hall" },
+  { id: "place-sumav", name: "Summit Ave" },
+  { id: "place-coecl", name: "Coolidge Corner" },
+  { id: "place-stplb", name: "St. Paul Street" },
+  { id: "place-kntst", name: "Kent Street" },
+  { id: "place-hwsst", name: "Hawes Street" },
+  { id: "place-smary", name: "St. Mary’s Street" },
+];
+
+export default function GreenCPage() {
+  // Default stop = Dean Road
+  const [stopId, setStopId] = useState("place-denrd");
+
+  const { data, isLoading } = useSWR(`/api/arrivals/${stopId}`, fetcher, {
+    refreshInterval: 15000,
+  });
+
+  const predictions = data?.data?.slice(0, 3) ?? [];
+
+  return (
+    <div style={{ padding: 20, fontFamily: "sans-serif" }}>
+      <h1>Green Line C — Predictions</h1>
+
+      {/* Stop Selector */}
+      <div style={{ marginBottom: 20 }}>
+        <label style={{ fontWeight: "bold" }}>Choose a stop:</label>
+        <select
+          value={stopId}
+          onChange={(e) => setStopId(e.target.value)}
+          style={{ marginLeft: 10, padding: 6 }}
+        >
+          {greenCStops.map((stop) => (
+            <option key={stop.id} value={stop.id}>
+              {stop.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Predictions */}
+      <h2>Next arrivals for {stopId}</h2>
+
+      {isLoading && <div>Loading predictions…</div>}
+
+      {!isLoading && predictions.length === 0 && (
+        <div>No predictions available.</div>
+      )}
+
+      <ul>
+        {predictions.map((p: any) => {
+          const arrival = p.attributes?.arrival_time;
+          const dep = p.attributes?.departure_time;
+          const time = arrival || dep;
+
+          return (
+            <li key={p.id}>
+              {p.relationships.route.data.id} —{" "}
+              {time ? new Date(time).toLocaleTimeString() : "No time"}
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
