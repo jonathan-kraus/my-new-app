@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\green-c\page.tsx
- * @LastEditTime: 2026-08-22 20:50:59
+ * @LastEditTime: 2026-08-22 20:55:56
  */
 "use client";
 
@@ -46,10 +46,24 @@ export default function GreenCPage() {
         <select
           value={stopId}
           onChange={(e) => setStopId(e.target.value)}
-          style={{ marginLeft: 10, padding: 6 }}
+          style={{
+            marginLeft: 10,
+            padding: 6,
+            backgroundColor: "#222", // dark background
+            color: "#fff", // white text
+            border: "1px solid #555",
+            borderRadius: 6,
+          }}
         >
           {greenCStops.map((stop) => (
-            <option key={stop.id} value={stop.id}>
+            <option
+              key={stop.id}
+              value={stop.id}
+              style={{
+                backgroundColor: "#222",
+                color: "#fff",
+              }}
+            >
               {stop.name}
             </option>
           ))}
