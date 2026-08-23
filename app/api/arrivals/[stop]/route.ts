@@ -1,23 +1,35 @@
 /*
  * @FilePath: \my-new-app\app\api\arrivals\[stop]\route.ts
- * @LastEditTime: 2026-08-23 16:10:38
+ * @LastEditTime: 2026-08-23 19:05:03
  */
 import { mbta } from "@/lib/mbta";
+import { logj } from "@/lib/log/client";
+import { staticUniversalContext } from "@/lib/log/buildj";
+
+const built = await staticUniversalContext("arrivals");
+let jei = 0;
 
 export async function GET(req: Request, context: any) {
   const ctx = await context;
   const params = await ctx.params;
+  logj({
+    domain: "arrivals",
+    level: "info",
+    message: "Arrivals GET started",
+    file: "app/api/arrivals/[stop]/route.ts",
+    line: 16,
+    payload: {
+      URL: req.url,
+      params: params,
+      method: req.method,
+    },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
 
-  console.log("*api/arrivals/[stop]/route.ts loaded");
-  console.log("*URL:", req.url);
-  console.log("*Params:", params);
-
-  console.log("*Fetching MBTA data");
   const data = await mbta("predictions", {
     "filter[stop]": params.stop,
     include: "trip",
   });
-  console.log("Arrivals response:", JSON.stringify(data, null, 2));
 
   return Response.json(data);
 }
