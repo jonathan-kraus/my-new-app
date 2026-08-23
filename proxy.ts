@@ -151,7 +151,7 @@ export async function proxy(req: NextRequest) {
     });
     return NextResponse.next();
   }
-  if (solarspeed > 900) {
+  if (solarspeed < 900) {
     await logj({
       domain: domain,
       level: "info",
