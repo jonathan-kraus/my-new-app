@@ -44,7 +44,7 @@ export async function buildSendWeatherEmail() {
 
   const segments = snapshot.segments
     .sort((a: any, b: any) => a.departureTime - b.departureTime)
-    .sort((a, b) => a.departureTime.localeCompare(b.departureTime));
+    .sort((a: any, b: any) => a.departureTime.localeCompare(b.departureTime));
 
   if (segments.length === 0) {
     return {

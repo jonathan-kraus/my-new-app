@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\green-c\page.tsx
- * @LastEditTime: 2026-08-23 18:09:29
+ * @LastEditTime: 2026-08-23 18:22:42
  */
 "use client";
 
@@ -123,9 +123,27 @@ export default function GreenCPage() {
         </select>
       </div>
 
+      {/* Stop Details */}
+      {showDetails && (
+        <div
+          style={{
+            background: "#111",
+            padding: 12,
+            borderRadius: 8,
+            borderLeft: "6px solid #00843D",
+          }}
+        >
+          <div style={{ fontSize: 18, fontWeight: "bold" }}>
+            {stopInfo?.attributes?.name}
+          </div>
+          <div style={{ opacity: 0.8 }}>
+            {stopInfo?.attributes?.description}
+          </div>
+        </div>
+      )}
       {/* Predictions */}
       <h2 style={{ marginBottom: 10 }}>
-        Next arrivals for <span style={{ color: "#00843D" }}>{stopId}</span>
+        Next arrivals for <span style={{ color: "#00843D" }}>{stop.name}</span>
       </h2>
 
       {isLoading && <div>Loading predictions…</div>}
