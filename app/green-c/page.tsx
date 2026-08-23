@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\green-c\page.tsx
- * @LastEditTime: 2026-08-23 18:33:04
+ * @LastEditTime: 2026-08-23 18:35:47
  */
 "use client";
 
@@ -142,10 +142,9 @@ export default function GreenCPage() {
         </div>
       )}
       {/* Predictions */}
-      <h2 style={{ marginBottom: 10 }}>
-        Next arrivals for{" "}
-        <span style={{ color: "#00843D" }}>{stopInfo?.attributes?.name}</span>
-      </h2>
+      <div style={{ marginTop: 20, marginBottom: 20 }}>
+        <h2 style={{ color: "#00843D" }}>Predictions</h2>
+      </div>
 
       {isLoading && <div>Loading predictions…</div>}
 
