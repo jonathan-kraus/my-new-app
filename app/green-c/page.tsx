@@ -1,13 +1,33 @@
 /*
  * @FilePath: \my-new-app\app\green-c\page.tsx
- * @LastEditTime: 2026-08-23 15:30:24
+ * @LastEditTime: 2026-08-23 15:36:12
  */
 "use client";
 
 import useSWR from "swr";
 import { useState } from "react";
 
-const fetcher = (url) => fetch(url).then((r) => r.json());
+interface MBTAPrediction {
+  id: string;
+  attributes: {
+    arrival_time?: string;
+    departure_time?: string;
+    direction_id: number;
+  };
+  relationships: {
+    trip: { data: { id: string } | null };
+    route: { data: { id: string } };
+  };
+}
+
+interface MBTATrip {
+  id: string;
+  attributes: {
+    headsign?: string;
+  };
+}
+
+const fetcher = (url: string): Promise<any> => fetch(url).then((r) => r.json());
 
 // Green Line C stops
 const greenCStops = [
@@ -31,11 +51,12 @@ export default function GreenCPage() {
   const [showDetails, setShowDetails] = useState(false);
 
   // Predictions + trip info
-  const { data, isLoading } = useSWR(
-    `/api/arrivals/${stopId}?include=trip`,
-    fetcher,
-    { refreshInterval: 15000 }
-  );
+  const { data, isLoading } = useSWR<{
+    data: MBTAPrediction[];
+    included: MBTATrip[];
+  }>(`/api/arrivals/${stopId}?include=trip`, fetcher, {
+    refreshInterval: 15000,
+  });
 
   const predictions = data?.data?.slice(0, 4) ?? [];
   const included = data?.included ?? [];
@@ -43,25 +64,29 @@ export default function GreenCPage() {
   // Stop details
   const { data: stopInfo } = useSWR(
     showDetails ? `/api/stops/${stopId}` : null,
-    fetcher
+    fetcher,
   );
 
-  function getHeadsign(prediction) {
+  function getHeadsign(prediction: MBTAPrediction) {
     const tripId = prediction.relationships?.trip?.data?.id;
-    return included.find((i) => i.id === tripId)?.attributes?.headsign;
+    return included.find((i: MBTATrip) => i.id === tripId)?.attributes
+      ?.headsign;
   }
 
-  function getDirection(prediction) {
-    return prediction.attributes.direction_id === 0
-      ? "Westbound"
-      : "Eastbound";
+  function getDirection(prediction: MBTAPrediction) {
+    return prediction.attributes.direction_id === 0 ? "Westbound" : "Eastbound";
   }
 
-  function getTime(prediction) {
+  function getTime(prediction: MBTAPrediction) {
     const arrival = prediction.attributes?.arrival_time;
     const dep = prediction.attributes?.departure_time;
     const t = arrival || dep;
-    return t ? new Date(t).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) : "—";
+    return t
+      ? new Date(t).toLocaleTimeString([], {
+          hour: "numeric",
+          minute: "2-digit",
+        })
+      : "—";
   }
 
   return (
@@ -106,7 +131,7 @@ export default function GreenCPage() {
       {isLoading && <div>Loading predictions…</div>}
 
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        {predictions.map((p) => (
+        {predictions.map((p: MBTAPrediction) => (
           <div
             key={p.id}
             style={{
@@ -154,10 +179,19 @@ export default function GreenCPage() {
           }}
         >
           <h3>Stop Info</h3>
-          <p><strong>Name:</strong> {stopInfo.data.attributes.name}</p>
-          <p><strong>Municipality:</strong> {stopInfo.data.attributes.municipality}</p>
-          <p><strong>Latitude:</strong> {stopInfo.data.attributes.latitude}</p>
-          <p><strong>Longitude:</strong> {stopInfo.data.attributes.longitude}</p>
+          <p>
+            <strong>Name:</strong> {stopInfo.data.attributes.name}
+          </p>
+          <p>
+            <strong>Municipality:</strong>{" "}
+            {stopInfo.data.attributes.municipality}
+          </p>
+          <p>
+            <strong>Latitude:</strong> {stopInfo.data.attributes.latitude}
+          </p>
+          <p>
+            <strong>Longitude:</strong> {stopInfo.data.attributes.longitude}
+          </p>
         </div>
       )}
     </div>
