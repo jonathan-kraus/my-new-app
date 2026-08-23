@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\green-c\page.tsx
- * @LastEditTime: 2026-08-23 18:35:47
+ * @LastEditTime: 2026-08-23 18:52:07
  */
 "use client";
 
@@ -66,15 +66,12 @@ export default function GreenCPage() {
   const { data: allStops } = useSWR(showDetails ? "/api/stops" : null, fetcher);
 
   const stopInfo = allStops?.data?.find((s: any) => s.id === stopId);
+  const selectedStop = greenCStops.find((s) => s.id === stopId);
 
   function getHeadsign(prediction: MBTAPrediction) {
     const tripId = prediction.relationships?.trip?.data?.id;
     return included.find((i: MBTATrip) => i.id === tripId)?.attributes
       ?.headsign;
-  }
-
-  function getDirection(prediction: MBTAPrediction) {
-    return prediction.attributes.direction_id === 0 ? "Westbound" : "Eastbound";
   }
 
   function getTime(prediction: MBTAPrediction) {
@@ -143,7 +140,9 @@ export default function GreenCPage() {
       )}
       {/* Predictions */}
       <div style={{ marginTop: 20, marginBottom: 20 }}>
-        <h2 style={{ color: "#00843D" }}>Predictions</h2>
+        <h2 style={{ color: "#00843D" }}>
+          Next arrivals for {selectedStop?.name}
+        </h2>
       </div>
 
       {isLoading && <div>Loading predictions…</div>}
@@ -159,12 +158,20 @@ export default function GreenCPage() {
               borderLeft: "6px solid #00843D",
             }}
           >
-            <div style={{ fontSize: 18, fontWeight: "bold" }}>
-              🟢🚋 Green‑C — {getTime(p)}
-            </div>
-            <div style={{ opacity: 0.8 }}>
-              {getHeadsign(p)} - {getDirection(p)}
-            </div>
+            {(() => {
+              const routeId = p.relationships.route.data.id; // "Green-B"
+              const routeLabel = routeId.replace("Green-", "Green‑"); // "Green‑B"
+
+              return (
+                <>
+                  <div style={{ fontSize: 18, fontWeight: "bold" }}>
+                    🟢🚋 {routeLabel} — {getTime(p)}
+                  </div>
+
+                  <div style={{ opacity: 0.8 }}>{getHeadsign(p) ?? "—"}</div>
+                </>
+              );
+            })()}
           </div>
         ))}
       </div>
