@@ -14,7 +14,7 @@ export default async function TestPage() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center bg-gray-950 text-white p-8">
       <h1 className="text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 mb-3">
-        Weather Dashboard
+        Dean Road
       </h1>
       <ArrivalsWidget stop="place-denrd" />
       <a
