@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\green-c\page.tsx
- * @LastEditTime: 2026-08-23 15:56:55
+ * @LastEditTime: 2026-08-23 18:09:29
  */
 "use client";
 
@@ -63,10 +63,9 @@ export default function GreenCPage() {
   const included = data?.included ?? [];
 
   // Stop details
-  const { data: stopInfo } = useSWR(
-    showDetails ? `/api/stops/${stopId}` : null,
-    fetcher,
-  );
+  const { data: allStops } = useSWR(showDetails ? "/api/stops" : null, fetcher);
+
+  const stopInfo = allStops?.data?.find((s: any) => s.id === stopId);
 
   function getHeadsign(prediction: MBTAPrediction) {
     const tripId = prediction.relationships?.trip?.data?.id;
@@ -169,30 +168,32 @@ export default function GreenCPage() {
       </button>
 
       {/* Stop Details */}
-      {showDetails && stopInfo && (
-        <div
-          style={{
-            marginTop: 20,
-            padding: 12,
-            background: "#222",
-            borderRadius: 8,
-            color: "#fff",
-          }}
-        >
-          <h3>Stop Info</h3>
-          <p>
-            <strong>Name:</strong> {stopInfo.data.attributes.name}
-          </p>
-          <p>
-            <strong>Municipality:</strong>{" "}
-            {stopInfo.data.attributes.municipality}
-          </p>
-          <p>
-            <strong>Latitude:</strong> {stopInfo.data.attributes.latitude}
-          </p>
-          <p>
-            <strong>Longitude:</strong> {stopInfo.data.attributes.longitude}
-          </p>
+      {showDetails && allStops && (
+        <div className="mt-4 p-4 bg-muted/30 rounded-md text-sm">
+          <h3 className="font-semibold mb-2">Stop Info</h3>
+
+          {(() => {
+            const stopInfo = allStops.data.find((s: any) => s.id === stopId);
+            if (!stopInfo) return <p>No stop info found.</p>;
+
+            return (
+              <>
+                <p>
+                  <strong>Name:</strong> {stopInfo.attributes.name}
+                </p>
+                <p>
+                  <strong>Municipality:</strong>{" "}
+                  {stopInfo.attributes.municipality}
+                </p>
+                <p>
+                  <strong>Latitude:</strong> {stopInfo.attributes.latitude}
+                </p>
+                <p>
+                  <strong>Longitude:</strong> {stopInfo.attributes.longitude}
+                </p>
+              </>
+            );
+          })()}
         </div>
       )}
     </div>
