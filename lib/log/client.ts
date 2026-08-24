@@ -1,14 +1,15 @@
 /*
  * @FilePath: \my-new-app\lib\log\client.ts
- * @LastEditTime: 2026-06-20 13:24:46
+ * @LastEditTime: 2026-08-23 23:36:28
  */
 import type { LogjInput } from "@/lib/log/types";
 
-// --- Internal client-side safe fetch ---
+// Prevent SSR from calling /api/log
 async function clientLog(input: LogjInput): Promise<void> {
-  // Prevent SSR from calling /api/log
-  if (typeof window === "undefined") return;
-
+  if (typeof window === "undefined") {
+    console.warn("[log/client] skipped: no window (server import?)");
+    return;
+  }
   try {
     await fetch("/api/log", {
       method: "POST",
