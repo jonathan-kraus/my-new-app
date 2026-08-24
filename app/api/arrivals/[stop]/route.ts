@@ -2,7 +2,7 @@
  * @FilePath: \my-new-app\app\api\arrivals\[stop]\route.ts
 
 \[stop]\route.ts
- * @LastEditTime: 2026-08-24 17:14:02
+ * @LastEditTime: 2026-08-24 17:19:56
  */
 import { NextResponse } from "next/server";
 import { logj } from "@/lib/log/logj";
@@ -10,10 +10,9 @@ import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 export async function GET(
   request: Request,
-  { params }: { params: { stop: string } },
+  context: { params: { stop: string } }
 ) {
-  // ⭐ Correctly read stopId from App Router params
-  const stopId = params.stop;
+  const stopId = context.params.stop;
   console.log("### USING NEW ARRIVALS ROUTE ### stopId =", stopId);
 console.log("### DEBUG ### RAW request.url =", request.url);
 console.log("### DEBUG ### RAW pathname =", new URL(request.url).pathname);
