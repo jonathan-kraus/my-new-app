@@ -29,7 +29,11 @@ export async function GET(req: Request, context: any) {
     },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
-
+  console.log("Arrivals GET started", {
+    URL: req.url,
+    params,
+    method: req.method,
+  });
   // Do NOT filter by route at the MBTA level — it hides ADDED / messy trips
   const data = await mbta("predictions", {
     "filter[stop]": params.stop,
