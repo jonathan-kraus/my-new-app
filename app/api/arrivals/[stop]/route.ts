@@ -2,7 +2,7 @@
  * @FilePath: \my-new-app\app\api\arrivals\[stop]\route.ts
 
 \[stop]\route.ts
- * @LastEditTime: 2026-08-24 17:00:57
+ * @LastEditTime: 2026-08-24 17:14:02
  */
 import { NextResponse } from "next/server";
 import { logj } from "@/lib/log/logj";
@@ -15,6 +15,17 @@ export async function GET(
   // ⭐ Correctly read stopId from App Router params
   const stopId = params.stop;
   console.log("### USING NEW ARRIVALS ROUTE ### stopId =", stopId);
+console.log("### DEBUG ### RAW request.url =", request.url);
+console.log("### DEBUG ### RAW pathname =", new URL(request.url).pathname);
+
+const headerObj: Record<string, string> = {};
+request.headers.forEach((value, key) => {
+  headerObj[key] = value;
+});
+console.log("### DEBUG ### RAW headers =", headerObj);
+
+console.log("### DEBUG ### params =", params);
+
 
   const built = await buildUniversalContext(request as any, "mbta");
   let jei = 0;
