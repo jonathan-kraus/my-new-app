@@ -23,8 +23,6 @@ export async function GET(
   });
   console.log("### DEBUG ### RAW headers =", headerObj);
 
-  console.log("### DEBUG ### context.params =", context.params);
-
   const built = await buildUniversalContext(request as any, "mbta");
   let jei = 0;
 
