@@ -17,7 +17,7 @@ export async function GET(req: Request, context: any) {
     domain: "arrivals",
     level: "info",
     message: "🎶 Arrivals GET started 🎶",
-    file: "app/api/arrivals/[stop]/route.ts",
+    file: "app/api/arrivals/xstopx/route.ts",
     line: 11,
     payload: {
       some: "data",
