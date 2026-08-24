@@ -6,6 +6,11 @@
       "type": "shell",
       "command": "node",
       "args": ["${workspaceFolder}/scripts/update-logj-lines.js", "${file}"],
+      "options": {
+        "shell": {
+          "executable": "powershell.exe"
+        }
+      },
       "problemMatcher": []
     }
   ]
