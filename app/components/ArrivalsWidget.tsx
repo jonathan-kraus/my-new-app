@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\components\ArrivalsWidget.tsx
- * @LastEditTime: 2026-08-24 15:37:06
+ * @LastEditTime: 2026-08-24 16:14:53
  */
 "use client";
 
@@ -10,14 +10,13 @@ import { Card } from "@/components/ui/card";
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 export function ArrivalsWidget({ stop }: { stop: string }) {
+  // ⭐ Prevent SWR from firing until stop is defined
   const { data, isLoading } = useSWR(
-    `/api/arrivals/${stop}?include=trip`,
+    stop ? `/api/arrivals/${stop}?include=trip` : null,
     fetcher,
-    {
-      refreshInterval: 15000,
-    },
+    { refreshInterval: 15000 },
   );
-
+console.log("ArrivalsWidget data:", data);
   const predictions = data?.data ?? [];
   const included = data?.included ?? [];
 
@@ -39,18 +38,13 @@ export function ArrivalsWidget({ stop }: { stop: string }) {
 
       <ul className="space-y-2">
         {predictions.map((p: any) => {
-          // ⭐ Authoritative branch (Green-B / Green-C / Green-D / Green-E)
           const route = p.relationships.route.data.id;
-
-          // ⭐ Arrival time
           const arrival = p.attributes.arrival_time;
           const time = arrival ? new Date(arrival).toLocaleTimeString() : "—";
 
-          // ⭐ Direction (0 = Eastbound, 1 = Westbound)
           const directionId = p.attributes.direction_id;
           const directionText = directionId === 0 ? "Eastbound" : "Westbound";
 
-          // ⭐ Trip lookup → terminal/headsign
           const tripId = p.relationships.trip?.data?.id;
           const trip = tripMap.get(tripId);
           const terminal = trip?.attributes?.headsign ?? "Unknown";
