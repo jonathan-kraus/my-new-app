@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\components\ArrivalsWidget.tsx
- * @LastEditTime: 2026-08-24 16:43:09
+ * @LastEditTime: 2026-08-24 16:59:34
  */
 "use client";
 
@@ -13,7 +13,7 @@ export function ArrivalsWidget({ stop }: { stop: string }) {
   console.log("### ArrivalsWidget MOUNTED ### stop =", stop);
   // ⭐ Prevent SWR from firing until stop is defined
   const { data, isLoading } = useSWR(
-    stop ? `/api/arrivals/${stop}?include=trip` : null,
+    stop ? `/api/arrivals/${stop}` : null,
     fetcher,
     { refreshInterval: 15000 },
   );

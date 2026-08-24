@@ -2,7 +2,7 @@
  * @FilePath: \my-new-app\app\api\arrivals\[stop]\route.ts
 
 \[stop]\route.ts
- * @LastEditTime: 2026-08-24 16:48:12
+ * @LastEditTime: 2026-08-24 17:00:57
  */
 import { NextResponse } from "next/server";
 import { logj } from "@/lib/log/logj";
