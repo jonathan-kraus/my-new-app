@@ -1,8 +1,8 @@
 /*
- * @FilePath: \my-new-app\app\api\arrivals
+ * @FilePath: \my-new-app\app\api\arrivals\[stop]\route.ts
 
 \[stop]\route.ts
- * @LastEditTime: 2026-08-24 16:00:00
+ * @LastEditTime: 2026-08-24 16:48:12
  */
 import { NextResponse } from "next/server";
 import { logj } from "@/lib/log/logj";
@@ -14,6 +14,7 @@ export async function GET(
 ) {
   // ⭐ Correctly read stopId from App Router params
   const stopId = params.stop;
+  console.log("### USING NEW ARRIVALS ROUTE ### stopId =", stopId);
 
   const built = await buildUniversalContext(request as any, "mbta");
   let jei = 0;
