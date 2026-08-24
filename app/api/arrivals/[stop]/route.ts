@@ -1,8 +1,9 @@
 /*
  * @FilePath: \my-new-app\app\api\arrivals\[stop]\route.ts
- * @LastEditTime: 2026-08-23 20:09:29
+ * @LastEditTime: 2026-08-23 20:18:36
  */
 import { mbta } from "@/lib/mbta";
+import { NextResponse } from "next/server";
 import { logj } from "@/lib/log/client";
 import { staticUniversalContext } from "@/lib/log/buildj";
 
@@ -58,5 +59,10 @@ export async function GET(req: Request, context: any) {
   });
 
   // 4. Done — do NOT filter stop_sequence
-  return withCorrectVehicle;
+  const filtered = withCorrectVehicle; // or whatever your final variable is
+
+  return NextResponse.json({
+    stop: params.stop,
+    predictions: filtered,
+  });
 }
