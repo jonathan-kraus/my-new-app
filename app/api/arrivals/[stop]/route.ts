@@ -18,7 +18,7 @@ export async function GET(req: Request, context: any) {
       level: "info",
       message: "Arrivals GET started",
       file: "app/api/arrivals/[stop]/route.ts",
-      line: 17,
+      line: 16,
       payload: { some: "data" },
       meta: { built: { ...(built ?? {}), eventIndex: ++jei } },
     });
@@ -36,7 +36,7 @@ export async function GET(req: Request, context: any) {
     level: "info",
     message: "Arrivals GET completed",
     file: "app/api/arrivals/[stop]/route.ts",
-    line: 17,
+    line: 34,
     payload: {
       Arrivals_response: JSON.stringify(data, null, 2),
       URL: req.url,
