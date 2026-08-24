@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\arrivals\[stop]\route.ts
- * @LastEditTime: 2026-08-24 17:24:42
+ * @LastEditTime: 2026-08-24 17:30:02
  */
 import { NextResponse } from "next/server";
 import { logj } from "@/lib/log/logj";
@@ -8,13 +8,14 @@ import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 export async function GET(
   request: Request,
-  context: { params: { stop: string } }
+  contextPromise: any
 ) {
+  const context = await contextPromise;
   const stopId = context.params.stop;
 
   console.log("### USING NEW ARRIVALS ROUTE ### stopId =", stopId);
-  console.log("### DEBUG ### RAW request.url =", request.url);
-  console.log("### DEBUG ### RAW pathname =", new URL(request.url).pathname);
+  console.log("### DEBUG ### context =", context);
+  console.log("### DEBUG ### context.params =", context.params);
 
   const headerObj: Record<string, string> = {};
   request.headers.forEach((value, key) => {
