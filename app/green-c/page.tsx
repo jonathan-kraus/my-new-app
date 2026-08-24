@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\green-c\page.tsx
- * @LastEditTime: 2026-08-23 18:52:07
+ * @LastEditTime: 2026-08-23 20:33:12
  */
 "use client";
 
@@ -58,7 +58,7 @@ export default function GreenCPage() {
   }>(`/api/arrivals/${stopId}?include=trip`, fetcher, {
     refreshInterval: 15000,
   });
-
+  console.log("PREDICTIONS", data);
   const predictions = data?.data?.slice(0, 4) ?? [];
   const included = data?.included ?? [];
 
