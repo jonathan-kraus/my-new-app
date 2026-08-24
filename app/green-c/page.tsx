@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\green-c\page.tsx
- * @LastEditTime: 2026-08-23 20:33:12
+ * @LastEditTime: 2026-08-23 20:48:34
  */
 "use client";
 
@@ -17,13 +17,6 @@ interface MBTAPrediction {
   relationships: {
     trip: { data: { id: string } | null };
     route: { data: { id: string } };
-  };
-}
-
-interface MBTATrip {
-  id: string;
-  attributes: {
-    headsign?: string;
   };
 }
 
@@ -51,32 +44,36 @@ export default function GreenCPage() {
   const [stopId, setStopId] = useState("place-denrd");
   const [showDetails, setShowDetails] = useState(false);
 
-  // Predictions + trip info
+  // Predictions from your API route
   const { data, isLoading } = useSWR<{
-    data: MBTAPrediction[];
-    included: MBTATrip[];
-  }>(`/api/arrivals/${stopId}?include=trip`, fetcher, {
+    stop: string;
+    predictions: MBTAPrediction[];
+  }>(`/api/arrivals/${stopId}`, fetcher, {
     refreshInterval: 15000,
   });
+
   console.log("PREDICTIONS", data);
-  const predictions = data?.data?.slice(0, 4) ?? [];
-  const included = data?.included ?? [];
+
+  // Correct shape — your API returns { stop, predictions }
+  const predictions: MBTAPrediction[] = data?.predictions ?? [];
+
+  // Sort by arrival/departure time
+  const sorted = [...predictions].sort((a, b) => {
+    const ta = a.attributes.arrival_time ?? a.attributes.departure_time;
+    const tb = b.attributes.arrival_time ?? b.attributes.departure_time;
+    return new Date(ta ?? 0).getTime() - new Date(tb ?? 0).getTime();
+  });
+
+  // Only show first 4
+  const nextFour = sorted.slice(0, 4);
 
   // Stop details
   const { data: allStops } = useSWR(showDetails ? "/api/stops" : null, fetcher);
-
-  const stopInfo = allStops?.data?.find((s: any) => s.id === stopId);
   const selectedStop = greenCStops.find((s) => s.id === stopId);
 
-  function getHeadsign(prediction: MBTAPrediction) {
-    const tripId = prediction.relationships?.trip?.data?.id;
-    return included.find((i: MBTATrip) => i.id === tripId)?.attributes
-      ?.headsign;
-  }
-
   function getTime(prediction: MBTAPrediction) {
-    const arrival = prediction.attributes?.arrival_time;
-    const dep = prediction.attributes?.departure_time;
+    const arrival = prediction.attributes.arrival_time;
+    const dep = prediction.attributes.departure_time;
     const t = arrival || dep;
     return t
       ? new Date(t).toLocaleTimeString([], {
@@ -131,13 +128,20 @@ export default function GreenCPage() {
           }}
         >
           <div style={{ fontSize: 18, fontWeight: "bold" }}>
-            {stopInfo?.attributes?.name}
+            {
+              allStops?.data?.find((s: any) => s.id === stopId)?.attributes
+                ?.name
+            }
           </div>
           <div style={{ opacity: 0.8 }}>
-            {stopInfo?.attributes?.description}
+            {
+              allStops?.data?.find((s: any) => s.id === stopId)?.attributes
+                ?.description
+            }
           </div>
         </div>
       )}
+
       {/* Predictions */}
       <div style={{ marginTop: 20, marginBottom: 20 }}>
         <h2 style={{ color: "#00843D" }}>
@@ -148,7 +152,7 @@ export default function GreenCPage() {
       {isLoading && <div>Loading predictions…</div>}
 
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        {predictions.map((p: MBTAPrediction) => (
+        {nextFour.map((p) => (
           <div
             key={p.id}
             style={{
@@ -159,8 +163,8 @@ export default function GreenCPage() {
             }}
           >
             {(() => {
-              const routeId = p.relationships.route.data.id; // "Green-B"
-              const routeLabel = routeId.replace("Green-", "Green‑"); // "Green‑B"
+              const routeId = p.relationships.route.data.id; // "Green-C"
+              const routeLabel = routeId.replace("Green-", "Green‑");
 
               return (
                 <>
@@ -168,7 +172,7 @@ export default function GreenCPage() {
                     🟢🚋 {routeLabel} — {getTime(p)}
                   </div>
 
-                  <div style={{ opacity: 0.8 }}>{getHeadsign(p) ?? "—"}</div>
+                  <div style={{ opacity: 0.8 }}>—</div>
                 </>
               );
             })()}
@@ -191,36 +195,6 @@ export default function GreenCPage() {
       >
         {showDetails ? "Hide Details" : "Show Stop Details"}
       </button>
-
-      {/* Stop Details */}
-      {showDetails && allStops && (
-        <div className="mt-4 p-4 bg-muted/30 rounded-md text-sm">
-          <h3 className="font-semibold mb-2">Stop Info</h3>
-
-          {(() => {
-            const stopInfo = allStops.data.find((s: any) => s.id === stopId);
-            if (!stopInfo) return <p>No stop info found.</p>;
-
-            return (
-              <>
-                <p>
-                  <strong>Name:</strong> {stopInfo.attributes.name}
-                </p>
-                <p>
-                  <strong>Municipality:</strong>{" "}
-                  {stopInfo.attributes.municipality}
-                </p>
-                <p>
-                  <strong>Latitude:</strong> {stopInfo.attributes.latitude}
-                </p>
-                <p>
-                  <strong>Longitude:</strong> {stopInfo.attributes.longitude}
-                </p>
-              </>
-            );
-          })()}
-        </div>
-      )}
     </div>
   );
 }
