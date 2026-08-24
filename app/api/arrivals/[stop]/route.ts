@@ -1,8 +1,8 @@
 /*
- * @FilePath: \my-new-app\app\api\arrivals\[stop]\route.ts
+ * @FilePath: \my-new-app\app\api\arrivals
 
 \[stop]\route.ts
- * @LastEditTime: 2026-08-24 15:53:36
+ * @LastEditTime: 2026-08-24 16:00:00
  */
 import { NextResponse } from "next/server";
 import { logj } from "@/lib/log/logj";
@@ -66,7 +66,7 @@ export async function GET(
       Arrivals_response: JSON.stringify(data, null, 2),
       URL: request.url,
       data_length: data.length,
-      stopid: stopId, // ⭐ Log the real stopId, not params
+      stopid: stopId, // ⭐ Log the real stopId
     },
     meta: { built: { ...(built ?? {}), eventIndex: ++jei } },
   });
