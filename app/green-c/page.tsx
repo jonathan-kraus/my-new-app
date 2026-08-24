@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\green-c\page.tsx
- * @LastEditTime: 2026-08-24 15:11:33
+ * @LastEditTime: 2026-08-24 15:21:24
  */
 "use client";
 
@@ -32,19 +32,27 @@ const fetcher = (url: string): Promise<any> => fetch(url).then((r) => r.json());
 // Green Line C stops
 const greenCStops = [
   { id: "place-clmnl", name: "Cleveland Circle" },
-  { id: "place-engav", name: "Englewood Ave" },
+  { id: "place-engav", name: "Englewood Avenue" },
   { id: "place-denrd", name: "Dean Road" },
   { id: "place-tapst", name: "Tappan Street" },
-  { id: "place-wascm", name: "Washington Square" },
+  { id: "place-bcnwa", name: "Washington Square" },
   { id: "place-fbkst", name: "Fairbanks Street" },
-  { id: "place-brnhl", name: "Brandon Hall" },
-  { id: "place-sumav", name: "Summit Ave" },
-  { id: "place-cool", name: "Coolidge Corner" },
-  { id: "place-stplb", name: "St. Paul Street" },
+  { id: "place-bndhl", name: "Brandon Hall" },
+  { id: "place-sumav", name: "Summit Avenue" },
+  { id: "place-cool", name: "Coolidge Corner" }, // ⭐ FIXED
+  { id: "place-stpul", name: "Saint Paul Street" },
   { id: "place-kntst", name: "Kent Street" },
   { id: "place-hwsst", name: "Hawes Street" },
-  { id: "place-smary", name: "St. Mary’s Street" },
+  { id: "place-smary", name: "Saint Mary's Street" },
+
+  // Shared trunk stops (still part of Green‑C service)
+  { id: "place-kencl", name: "Kenmore" },
   { id: "place-hymnl", name: "Hynes Convention Center" },
+  { id: "place-coecl", name: "Copley" },
+  { id: "place-armnl", name: "Arlington" },
+  { id: "place-boyls", name: "Boylston" },
+  { id: "place-pktrm", name: "Park Street" },
+  { id: "place-gover", name: "Government Center" },
 ];
 
 export default function GreenCPage() {
