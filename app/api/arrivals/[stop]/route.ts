@@ -2,7 +2,7 @@
  * @FilePath: \my-new-app\app\api\arrivals\[stop]\route.ts
 
 \[stop]\route.ts
- * @LastEditTime: 2026-08-23 21:04:54
+ * @LastEditTime: 2026-08-23 21:44:59
  */
 import { NextResponse } from "next/server";
 import { mbta } from "@/lib/mbta";
@@ -83,6 +83,8 @@ export async function GET(req: Request, context: any) {
 
   // 3. Do NOT filter stop_sequence — Green Line surface stops use weird values (e.g., 420)
   const filtered = onlyGreenC;
+  const includedTrips =
+    data.included?.filter((inc: any) => inc.type === "trip") ?? [];
 
   logj({
     domain: "arrivals",
@@ -101,5 +103,6 @@ export async function GET(req: Request, context: any) {
   return NextResponse.json({
     stop: params.stop,
     predictions: filtered,
+    included: includedTrips,
   });
 }
