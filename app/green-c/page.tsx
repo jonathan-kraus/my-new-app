@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\green-c\page.tsx
- * @LastEditTime: 2026-08-23 18:09:29
+ * @LastEditTime: 2026-08-24 15:11:33
  */
 "use client";
 
@@ -39,7 +39,7 @@ const greenCStops = [
   { id: "place-fbkst", name: "Fairbanks Street" },
   { id: "place-brnhl", name: "Brandon Hall" },
   { id: "place-sumav", name: "Summit Ave" },
-  { id: "place-coecl", name: "Coolidge Corner" },
+  { id: "place-cool", name: "Coolidge Corner" },
   { id: "place-stplb", name: "St. Paul Street" },
   { id: "place-kntst", name: "Kent Street" },
   { id: "place-hwsst", name: "Hawes Street" },
