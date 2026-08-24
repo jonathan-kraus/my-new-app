@@ -1,8 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\arrivals\[stop]\route.ts
-
-\[stop]\route.ts
- * @LastEditTime: 2026-08-24 17:19:56
+ * @LastEditTime: 2026-08-24 17:24:42
  */
 import { NextResponse } from "next/server";
 import { logj } from "@/lib/log/logj";
@@ -13,18 +11,18 @@ export async function GET(
   context: { params: { stop: string } }
 ) {
   const stopId = context.params.stop;
+
   console.log("### USING NEW ARRIVALS ROUTE ### stopId =", stopId);
-console.log("### DEBUG ### RAW request.url =", request.url);
-console.log("### DEBUG ### RAW pathname =", new URL(request.url).pathname);
+  console.log("### DEBUG ### RAW request.url =", request.url);
+  console.log("### DEBUG ### RAW pathname =", new URL(request.url).pathname);
 
-const headerObj: Record<string, string> = {};
-request.headers.forEach((value, key) => {
-  headerObj[key] = value;
-});
-console.log("### DEBUG ### RAW headers =", headerObj);
+  const headerObj: Record<string, string> = {};
+  request.headers.forEach((value, key) => {
+    headerObj[key] = value;
+  });
+  console.log("### DEBUG ### RAW headers =", headerObj);
 
-console.log("### DEBUG ### params =", params);
-
+  console.log("### DEBUG ### context.params =", context.params);
 
   const built = await buildUniversalContext(request as any, "mbta");
   let jei = 0;
@@ -46,7 +44,6 @@ console.log("### DEBUG ### params =", params);
     console.error("logj: THREW", err);
   }
 
-  // ⭐ Build MBTA API URL
   const url = new URL("https://api-v3.mbta.com/predictions");
   url.searchParams.set("filter[stop]", stopId);
   url.searchParams.set("include", "trip");
@@ -60,7 +57,7 @@ console.log("### DEBUG ### params =", params);
   if (!res.ok) {
     return NextResponse.json(
       { error: "Failed to fetch MBTA arrivals" },
-      { status: res.status },
+      { status: res.status }
     );
   }
 
@@ -77,7 +74,7 @@ console.log("### DEBUG ### params =", params);
       Arrivals_response: JSON.stringify(data, null, 2),
       URL: request.url,
       data_length: data.length,
-      stopid: stopId, // ⭐ Log the real stopId
+      stopid: stopId,
     },
     meta: { built: { ...(built ?? {}), eventIndex: ++jei } },
   });
