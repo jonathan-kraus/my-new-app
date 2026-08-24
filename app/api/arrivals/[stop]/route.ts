@@ -1,15 +1,16 @@
 /*
  * @FilePath: \my-new-app\app\api\arrivals\[stop]\route.ts
- * @LastEditTime: 2026-08-23 22:18:22
+ * @LastEditTime: 2026-08-23 22:33:42
  */
 import { mbta } from "@/lib/mbta";
 import { logj } from "@/lib/log/client";
-import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { staticUniversalContext } from "@/lib/log/buildj";
 
 export async function GET(req: Request, context: any) {
   const ctx = await context;
   const params = await ctx.params;
-  const built = await buildUniversalContext(req as any, "mbta");
+  const built = staticUniversalContext("mbta");
+  console.log("built:", built);
   let jei = 0;
   await logj({
     domain: "arrivals",
