@@ -1,33 +1,14 @@
 /*
  * @FilePath: \my-new-app\app\green-c\page.tsx
- * @LastEditTime: 2026-08-24 15:21:24
+ * @LastEditTime: 2026-08-24 16:39:39
  */
 "use client";
 
-import useSWR from "swr";
 import { useState } from "react";
+import useSWR from "swr";
+import { ArrivalsWidget } from "@/components/ArrivalsWidget";
 
-interface MBTAPrediction {
-  id: string;
-  attributes: {
-    arrival_time?: string;
-    departure_time?: string;
-    direction_id: number;
-  };
-  relationships: {
-    trip: { data: { id: string } | null };
-    route: { data: { id: string } };
-  };
-}
-
-interface MBTATrip {
-  id: string;
-  attributes: {
-    headsign?: string;
-  };
-}
-
-const fetcher = (url: string): Promise<any> => fetch(url).then((r) => r.json());
+const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 // Green Line C stops
 const greenCStops = [
@@ -39,13 +20,13 @@ const greenCStops = [
   { id: "place-fbkst", name: "Fairbanks Street" },
   { id: "place-bndhl", name: "Brandon Hall" },
   { id: "place-sumav", name: "Summit Avenue" },
-  { id: "place-cool", name: "Coolidge Corner" }, // ⭐ FIXED
+  { id: "place-cool", name: "Coolidge Corner" },
   { id: "place-stpul", name: "Saint Paul Street" },
   { id: "place-kntst", name: "Kent Street" },
   { id: "place-hwsst", name: "Hawes Street" },
   { id: "place-smary", name: "Saint Mary's Street" },
 
-  // Shared trunk stops (still part of Green‑C service)
+  // Shared trunk
   { id: "place-kencl", name: "Kenmore" },
   { id: "place-hymnl", name: "Hynes Convention Center" },
   { id: "place-coecl", name: "Copley" },
@@ -59,43 +40,10 @@ export default function GreenCPage() {
   const [stopId, setStopId] = useState("place-denrd");
   const [showDetails, setShowDetails] = useState(false);
 
-  // Predictions + trip info
-  const { data, isLoading } = useSWR<{
-    data: MBTAPrediction[];
-    included: MBTATrip[];
-  }>(`/api/arrivals/${stopId}?include=trip`, fetcher, {
-    refreshInterval: 15000,
-  });
-
-  const predictions = data?.data?.slice(0, 4) ?? [];
-  const included = data?.included ?? [];
-
   // Stop details
   const { data: allStops } = useSWR(showDetails ? "/api/stops" : null, fetcher);
 
   const stopInfo = allStops?.data?.find((s: any) => s.id === stopId);
-
-  function getHeadsign(prediction: MBTAPrediction) {
-    const tripId = prediction.relationships?.trip?.data?.id;
-    return included.find((i: MBTATrip) => i.id === tripId)?.attributes
-      ?.headsign;
-  }
-
-  function getDirection(prediction: MBTAPrediction) {
-    return prediction.attributes.direction_id === 0 ? "Westbound" : "Eastbound";
-  }
-
-  function getTime(prediction: MBTAPrediction) {
-    const arrival = prediction.attributes?.arrival_time;
-    const dep = prediction.attributes?.departure_time;
-    const t = arrival || dep;
-    return t
-      ? new Date(t).toLocaleTimeString([], {
-          hour: "numeric",
-          minute: "2-digit",
-        })
-      : "—";
-  }
 
   return (
     <div style={{ padding: 20, fontFamily: "sans-serif" }}>
@@ -131,33 +79,8 @@ export default function GreenCPage() {
         </select>
       </div>
 
-      {/* Predictions */}
-      <h2 style={{ marginBottom: 10 }}>
-        Next arrivals for <span style={{ color: "#00843D" }}>{stopId}</span>
-      </h2>
-
-      {isLoading && <div>Loading predictions…</div>}
-
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        {predictions.map((p: MBTAPrediction) => (
-          <div
-            key={p.id}
-            style={{
-              background: "#111",
-              padding: 12,
-              borderRadius: 8,
-              borderLeft: "6px solid #00843D",
-            }}
-          >
-            <div style={{ fontSize: 18, fontWeight: "bold" }}>
-              🟢🚋 Green‑C — {getTime(p)}
-            </div>
-            <div style={{ opacity: 0.8 }}>
-              {getHeadsign(p)} - {getDirection(p)}
-            </div>
-          </div>
-        ))}
-      </div>
+      {/* ⭐ NEW: Arrivals Widget */}
+      <ArrivalsWidget stop={stopId} />
 
       {/* Details Button */}
       <button
@@ -176,32 +99,22 @@ export default function GreenCPage() {
       </button>
 
       {/* Stop Details */}
-      {showDetails && allStops && (
+      {showDetails && stopInfo && (
         <div className="mt-4 p-4 bg-muted/30 rounded-md text-sm">
           <h3 className="font-semibold mb-2">Stop Info</h3>
 
-          {(() => {
-            const stopInfo = allStops.data.find((s: any) => s.id === stopId);
-            if (!stopInfo) return <p>No stop info found.</p>;
-
-            return (
-              <>
-                <p>
-                  <strong>Name:</strong> {stopInfo.attributes.name}
-                </p>
-                <p>
-                  <strong>Municipality:</strong>{" "}
-                  {stopInfo.attributes.municipality}
-                </p>
-                <p>
-                  <strong>Latitude:</strong> {stopInfo.attributes.latitude}
-                </p>
-                <p>
-                  <strong>Longitude:</strong> {stopInfo.attributes.longitude}
-                </p>
-              </>
-            );
-          })()}
+          <p>
+            <strong>Name:</strong> {stopInfo.attributes.name}
+          </p>
+          <p>
+            <strong>Municipality:</strong> {stopInfo.attributes.municipality}
+          </p>
+          <p>
+            <strong>Latitude:</strong> {stopInfo.attributes.latitude}
+          </p>
+          <p>
+            <strong>Longitude:</strong> {stopInfo.attributes.longitude}
+          </p>
         </div>
       )}
     </div>
