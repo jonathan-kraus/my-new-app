@@ -1,11 +1,10 @@
 /*
  * @FilePath: \my-new-app\app\api\arrivals\[stop]\route.ts
- * @LastEditTime: 2026-08-23 22:49:34
+ * @LastEditTime: 2026-08-23 23:11:26
  */
 import { mbta } from "@/lib/mbta";
 import { logj } from "@/lib/log/client";
 import { staticUniversalContext } from "@/lib/log/buildj";
-import { Axiom } from "@axiomhq/js";
 
 export async function GET(req: Request, context: any) {
   const ctx = await context;
@@ -13,17 +12,21 @@ export async function GET(req: Request, context: any) {
   const built = staticUniversalContext("mbta");
   console.log("built:", built);
   let jei = 0;
-  await logj({
-    domain: "arrivals",
-    level: "info",
-    message: "🎶 Arrivals GET started 🎶",
-    file: "app/api/arrivals/xstopx/route.ts",
-    line: 11,
-    payload: {
-      some: "data",
-    },
-    meta: { built: { ...built, eventIndex: ++jei } },
-  });
+  try {
+    console.log("logj: about to call");
+    await logj({
+      domain: "arrivals",
+      level: "info",
+      message: "Arrivals GET started", // plain ASCII for the test
+      file: "app/api/arrivals/[stop]/route.ts",
+      line: 11,
+      payload: { some: "data" },
+      meta: { built: { ...(built ?? {}), eventIndex: ++jei } },
+    });
+    console.log("logj: returned OK");
+  } catch (err) {
+    console.error("logj: THREW", err);
+  }
   await new Promise((r) => setTimeout(r, 10));
   console.log("*api/arrivals/[stop]/route.ts loaded");
   console.log("*URL:", req.url);
