@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\components\ArrivalsWidget.tsx
- * @LastEditTime: 2026-08-24 16:14:53
+ * @LastEditTime: 2026-08-24 16:25:02
  */
 "use client";
 
@@ -8,6 +8,7 @@ import useSWR from "swr";
 import { Card } from "@/components/ui/card";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
+console.log("### ArrivalsWidget MOUNTED ### stop =", stop);
 
 export function ArrivalsWidget({ stop }: { stop: string }) {
   // ⭐ Prevent SWR from firing until stop is defined
@@ -16,7 +17,7 @@ export function ArrivalsWidget({ stop }: { stop: string }) {
     fetcher,
     { refreshInterval: 15000 },
   );
-console.log("ArrivalsWidget data:", data);
+  console.log("ArrivalsWidget data:", data);
   const predictions = data?.data ?? [];
   const included = data?.included ?? [];
 
