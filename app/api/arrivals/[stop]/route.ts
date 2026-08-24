@@ -1,9 +1,9 @@
 /*
  * @FilePath: \my-new-app\app\api\arrivals\[stop]\route.ts
- * @LastEditTime: 2026-08-23 23:36:05
+ * @LastEditTime: 2026-08-23 23:40:11
  */
 import { mbta } from "@/lib/mbta";
-import { logj } from "@/lib/log/client";
+import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
 
 export async function GET(req: Request, context: any) {
