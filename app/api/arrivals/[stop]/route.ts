@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\arrivals\[stop]\route.ts
- * @LastEditTime: 2026-08-24 17:39:18
+ * @LastEditTime: 2026-08-24 17:45:19
  */
 import { NextResponse } from "next/server";
 import { logj } from "@/lib/log/logj";
@@ -19,7 +19,25 @@ export async function GET(request: Request) {
       { status: 400 }
     );
   }
+const built = await buildUniversalContext(request as any, "mbta");
+  let jei = 0;
 
+  try {
+    await logj({
+      domain: "arrivals",
+      level: "info",
+      message: `Arrivals GET started stopid: ${stopId}`,
+      file: "app/api/arrivals/[stop]/route.ts",
+      line: 26,
+      payload: {
+        stopid: stopId,
+        URL: request.url,
+      },
+      meta: { built: { ...(built ?? {}), eventIndex: ++jei } },
+    });
+  } catch (err) {
+    console.error("logj: THREW", err);
+  }
   // Build MBTA API request
   const url = new URL("https://api-v3.mbta.com/predictions");
   url.searchParams.set("filter[stop]", stopId);
