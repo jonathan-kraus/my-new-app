@@ -14,12 +14,9 @@ export async function GET(request: Request) {
   console.log("### ARRIVALS ROUTE ### stopId =", stopId);
 
   if (!stopId) {
-    return Response.json(
-      { error: "Missing stop ID" },
-      { status: 400 }
-    );
+    return Response.json({ error: "Missing stop ID" }, { status: 400 });
   }
-const built = await buildUniversalContext(request as any, "mbta");
+  const built = await buildUniversalContext(request as any, "mbta");
   let jei = 0;
 
   try {
@@ -52,7 +49,7 @@ const built = await buildUniversalContext(request as any, "mbta");
   if (!res.ok) {
     return Response.json(
       { error: "Failed to fetch MBTA arrivals" },
-      { status: res.status }
+      { status: res.status },
     );
   }
 

@@ -171,13 +171,12 @@ export default async function DashboardPage(req: Request) {
     await logj({
       domain: "dashboard",
       level: "info",
-      message: `New Version ${name} → ${current.version}`,
-      file: "app/dashboard/page.tsx",
-      line: 171,
+      message: `New Version ${name} → ${version}`,
       payload: {
-        name: name,
-        baseName: baseName,
-        version: current.version,
+        name,
+        baseName,
+        oldVersion: current.version,
+        newVersion: version,
         added: current.added_at,
       },
       meta: { built: { ...built, eventIndex: ++jei } },
@@ -186,12 +185,12 @@ export default async function DashboardPage(req: Request) {
       where: { name: baseName },
       create: {
         name: baseName,
-        version: current.version,
+        version: current.version, // old version
         added_at: current.added_at,
         verified_at: new Date(),
       },
       update: {
-        version: current.version,
+        version: current.version, // old version
         verified_at: new Date(),
       },
     });
