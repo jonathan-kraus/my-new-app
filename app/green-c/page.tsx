@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\green-c\page.tsx
- * @LastEditTime: 2026-08-25 17:41:47
+ * @LastEditTime: 2026-08-25 17:45:43
  */
 "use client";
 
@@ -84,7 +84,6 @@ export default function GreenCPage() {
                   {getCountdown(p.attributes.arrival_time)}
                 </p>
                 <p>
-                  <strong>Departs:</strong>
                   {p.attributes.arrival_time
                     ? new Date(p.attributes.arrival_time).toLocaleTimeString()
                     : "—"}
