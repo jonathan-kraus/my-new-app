@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\green-c\page.tsx
- * @LastEditTime: 2026-08-25 15:59:16
+ * @LastEditTime: 2026-08-25 17:34:58
  */
 "use client";
 
@@ -60,10 +60,16 @@ export default function GreenCPage() {
             inbound.map((p) => (
               <div key={p.id} className="mb-3 p-2 bg-gray-700 rounded">
                 <p>
+                  <strong>Route:</strong>{" "}
+                  {p.relationships.route?.data?.id ?? "Unknown"}
+                </p>
+                <p>
                   <strong>Arrives:</strong>{" "}
                   {p.attributes.arrival_time
                     ? new Date(p.attributes.arrival_time).toLocaleTimeString()
                     : "—"}
+                </p>
+                <p>
                   <strong>Vehicle:</strong>{" "}
                   {p.relationships.vehicle?.data?.id ?? "Unknown"}
                 </p>
