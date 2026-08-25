@@ -1,6 +1,6 @@
 [
   {
-    "key": "ctrl+alt+l",
+    "key": "ctrl+alt+u",
     "command": "workbench.action.tasks.runTask",
     "args": "Update logj lines in current file"
   }

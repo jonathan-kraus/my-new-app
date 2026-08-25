@@ -25,7 +25,7 @@ export async function GET(request: Request) {
       level: "info",
       message: `Arrivals GET started stopid: ${stopId}`,
       file: "app/api/arrivals/[stop]/route.ts",
-      line: 26,
+      line: 23,
       payload: {
         stopid: stopId,
         URL: request.url,
