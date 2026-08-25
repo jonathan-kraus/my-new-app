@@ -1,17 +1,17 @@
 /*
  * @FilePath: \my-new-app\app\green-c\page.tsx
- * @LastEditTime: 2026-08-25 15:50:13
+ * @LastEditTime: 2026-08-25 15:59:16
  */
 "use client";
 
 import { useState } from "react";
 import useSWR from "swr";
-import { greenCStops } from "@/app/green-c/greenCStops";
+import { greenCStops } from "@/lib/mbta/types";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function GreenCPage() {
-  const [stopId, setStopId] = useState("place-cool"); // default to Coolidge Corner
+  const [stopId, setStopId] = useState<string>("place-cool");
 
   const { data, isLoading } = useSWR<{
     data: MBTAPrediction[];
@@ -37,11 +37,13 @@ export default function GreenCPage() {
           onChange={(e) => setStopId(e.target.value)}
           className="p-2 border rounded-md text-black bg-white dark:text-white dark:bg-gray-900 w-full"
         >
-          {greenCStops.map((stop) => (
-            <option key={stop.id} value={stop.id}>
-              {stop.attributes.name}
-            </option>
-          ))}
+          {greenCStops.map(
+            (stop: { id: string; attributes: { name: string } }) => (
+              <option key={stop.id} value={stop.id}>
+                {stop.attributes.name}
+              </option>
+            ),
+          )}
         </select>
       </div>
 
@@ -59,9 +61,9 @@ export default function GreenCPage() {
               <div key={p.id} className="mb-3 p-2 bg-gray-700 rounded">
                 <p>
                   <strong>Arrives:</strong>{" "}
-                  {new Date(p.attributes.arrival_time).toLocaleTimeString()}
-                </p>
-                <p>
+                  {p.attributes.arrival_time
+                    ? new Date(p.attributes.arrival_time).toLocaleTimeString()
+                    : "—"}
                   <strong>Vehicle:</strong>{" "}
                   {p.relationships.vehicle?.data?.id ?? "Unknown"}
                 </p>
@@ -85,9 +87,9 @@ export default function GreenCPage() {
               <div key={p.id} className="mb-3 p-2 bg-gray-700 rounded">
                 <p>
                   <strong>Arrives:</strong>{" "}
-                  {new Date(p.attributes.arrival_time).toLocaleTimeString()}
-                </p>
-                <p>
+                  {p.attributes.arrival_time
+                    ? new Date(p.attributes.arrival_time).toLocaleTimeString()
+                    : "—"}
                   <strong>Vehicle:</strong>{" "}
                   {p.relationships.vehicle?.data?.id ?? "Unknown"}
                 </p>
