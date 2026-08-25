@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\green-c\page.tsx
- * @LastEditTime: 2026-08-24 16:39:39
+ * @LastEditTime: 2026-08-24 22:32:18
  */
 "use client";
 
@@ -89,7 +89,7 @@ export default function GreenCPage() {
           marginTop: 20,
           padding: "8px 14px",
           backgroundColor: "#00843D",
-          color: "white",
+          color: "green",
           border: "none",
           borderRadius: 6,
           cursor: "pointer",
