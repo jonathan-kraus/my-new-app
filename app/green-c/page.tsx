@@ -44,7 +44,9 @@ export default function GreenCPage() {
 
   return (
     <div className="max-w-xl mx-auto p-6 text-white">
-      <h1 className="text-3xl font-bold mb-6">TTT</h1>
+      <h1 className="text-3xl font-bold  justify-center mb-6">
+        Train Arrivals
+      </h1>
 
       <div className="mb-6">
         <label className="block mb-2 font-medium">Choose a stop:</label>
