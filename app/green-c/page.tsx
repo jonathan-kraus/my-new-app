@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\green-c\page.tsx
- * @LastEditTime: 2026-08-25 17:38:17
+ * @LastEditTime: 2026-08-25 17:41:47
  */
 "use client";
 
@@ -9,6 +9,22 @@ import useSWR from "swr";
 import { greenCStops } from "@/lib/mbta/types";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
+function getCountdown(arrival: string | null): string {
+  if (!arrival) return "—";
+
+  const arrivalDate = new Date(arrival).getTime();
+  const now = Date.now();
+  const diffMs = arrivalDate - now;
+
+  if (diffMs <= 0) return "Arriving now";
+
+  const diffMin = Math.floor(diffMs / 60000);
+
+  if (diffMin === 0) return "Less than 1 min";
+  if (diffMin === 1) return "1 min";
+
+  return `${diffMin} min`;
+}
 
 export default function GreenCPage() {
   const [stopId, setStopId] = useState<string>("place-cool");
@@ -65,6 +81,10 @@ export default function GreenCPage() {
                 </p>
                 <p>
                   <strong>Arrives:</strong>{" "}
+                  {getCountdown(p.attributes.arrival_time)}
+                </p>
+                <p>
+                  <strong>Departs:</strong>
                   {p.attributes.arrival_time
                     ? new Date(p.attributes.arrival_time).toLocaleTimeString()
                     : "—"}
@@ -97,6 +117,9 @@ export default function GreenCPage() {
                 </p>
                 <p>
                   <strong>Arrives:</strong>{" "}
+                  {getCountdown(p.attributes.arrival_time)}
+                </p>
+                <p>
                   {p.attributes.arrival_time
                     ? new Date(p.attributes.arrival_time).toLocaleTimeString()
                     : "—"}
