@@ -1,34 +1,41 @@
+/*
+ * @FilePath: \my-new-app\app\green-c\page.tsx
+ * @LastEditTime: 2026-08-25 15:50:13
+ */
 "use client";
 
 import { useState } from "react";
 import useSWR from "swr";
-import { splitInboundOutbound } from "@/lib/mbta/splitInboundOutbound";
-import { ArrivalCard } from "@/components/ArrivalCard";
-import { greenCStops } from "@/lib/mbta/types";
+import { greenCStops } from "@/app/green-c/greenCStops";
 
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function GreenCPage() {
-  const [stopId, setStopId] = useState("place-denrd");
+  const [stopId, setStopId] = useState("place-cool"); // default to Coolidge Corner
 
-  const { data, isLoading } = useSWR(`/api/arrivals/${stopId}`, fetcher, {
+  const { data, isLoading } = useSWR<{
+    data: MBTAPrediction[];
+    included: MBTARoute[];
+  }>(`/api/arrivals/${stopId}?include=route`, fetcher, {
     refreshInterval: 15000,
   });
 
   const predictions = data?.data ?? [];
-  const { inbound, outbound } = splitInboundOutbound(predictions);
+
+  const inbound = predictions.filter((p) => p.attributes?.direction_id === 0);
+
+  const outbound = predictions.filter((p) => p.attributes?.direction_id === 1);
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">T T T</h1>
+    <div className="max-w-xl mx-auto p-6 text-white">
+      <h1 className="text-3xl font-bold mb-6">TTT</h1>
 
-      {/* ⭐ STOP SELECTOR (this is what disappeared) */}
       <div className="mb-6">
         <label className="block mb-2 font-medium">Choose a stop:</label>
         <select
           value={stopId}
           onChange={(e) => setStopId(e.target.value)}
-          className="p-2 border rounded-md text-yellow-300 bg-blue-700 dark:text-yellow-300 dark:bg-blue-400"
+          className="p-2 border rounded-md text-black bg-white dark:text-white dark:bg-gray-900 w-full"
         >
           {greenCStops.map((stop) => (
             <option key={stop.id} value={stop.id}>
@@ -38,24 +45,84 @@ export default function GreenCPage() {
         </select>
       </div>
 
-      {/* ⭐ Two-column layout */}
-      <div className="grid grid-cols-2 gap-6">
-        <div>
-          <h2 className="font-semibold mb-2">Inbound (Downtown)</h2>
-          {inbound.length === 0 && <div>No inbound trains predicted.</div>}
-          {inbound.map((p) => (
-            <ArrivalCard key={p.id} prediction={p} />
-          ))}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Inbound */}
+        <div className="p-4 bg-gray-800 rounded-lg">
+          <h2 className="text-xl font-semibold mb-2">Inbound (Downtown)</h2>
+
+          {isLoading ? (
+            <p>Loading…</p>
+          ) : inbound.length === 0 ? (
+            <p>No inbound trains predicted.</p>
+          ) : (
+            inbound.map((p) => (
+              <div key={p.id} className="mb-3 p-2 bg-gray-700 rounded">
+                <p>
+                  <strong>Arrives:</strong>{" "}
+                  {new Date(p.attributes.arrival_time).toLocaleTimeString()}
+                </p>
+                <p>
+                  <strong>Vehicle:</strong>{" "}
+                  {p.relationships.vehicle?.data?.id ?? "Unknown"}
+                </p>
+              </div>
+            ))
+          )}
         </div>
 
-        <div>
-          <h2 className="font-semibold mb-2">Outbound (Cleveland Circle)</h2>
-          {outbound.length === 0 && <div>No outbound trains predicted.</div>}
-          {outbound.map((p) => (
-            <ArrivalCard key={p.id} prediction={p} />
-          ))}
+        {/* Outbound */}
+        <div className="p-4 bg-gray-800 rounded-lg">
+          <h2 className="text-xl font-semibold mb-2">
+            Outbound (Cleveland Circle)
+          </h2>
+
+          {isLoading ? (
+            <p>Loading…</p>
+          ) : outbound.length === 0 ? (
+            <p>No outbound trains predicted.</p>
+          ) : (
+            outbound.map((p) => (
+              <div key={p.id} className="mb-3 p-2 bg-gray-700 rounded">
+                <p>
+                  <strong>Arrives:</strong>{" "}
+                  {new Date(p.attributes.arrival_time).toLocaleTimeString()}
+                </p>
+                <p>
+                  <strong>Vehicle:</strong>{" "}
+                  {p.relationships.vehicle?.data?.id ?? "Unknown"}
+                </p>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>
   );
 }
+
+type MBTAPrediction = {
+  id: string;
+  attributes: {
+    arrival_time: string | null;
+    departure_time: string | null;
+    direction_id: number;
+    stop_sequence: number;
+    status: string | null;
+  };
+  relationships: {
+    route: { data: { id: string } };
+    stop: { data: { id: string } };
+    trip: { data: { id: string } };
+    vehicle?: { data?: { id: string } };
+  };
+};
+
+type MBTARoute = {
+  id: string;
+  attributes: {
+    long_name: string;
+    short_name: string;
+    direction_names: string[];
+    direction_destinations: string[];
+  };
+};
