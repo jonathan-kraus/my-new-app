@@ -28,7 +28,7 @@ export default function GreenCPage() {
         <select
           value={stopId}
           onChange={(e) => setStopId(e.target.value)}
-          className="p-2 border rounded-md"
+          className="p-2 border rounded-md text-yellow-300 bg-blue-700 dark:text-yellow-300 dark:bg-blue-400"
         >
           {greenCStops.map((stop) => (
             <option key={stop.id} value={stop.id}>
