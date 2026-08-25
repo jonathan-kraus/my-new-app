@@ -1,7 +1,3 @@
-/*
- * @FilePath: \my-new-app\app\green-c\page.tsx
- * @LastEditTime: 2026-08-25 17:45:43
- */
 "use client";
 
 import { useState } from "react";
@@ -9,6 +5,7 @@ import useSWR from "swr";
 import { greenCStops } from "@/lib/mbta/types";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
 function getCountdown(arrival: string | null): string {
   if (!arrival) return "—";
 
@@ -26,28 +23,42 @@ function getCountdown(arrival: string | null): string {
   return `${diffMin} min`;
 }
 
+function getTrip(prediction: MBTAPrediction, included: any[]) {
+  return (
+    included?.find(
+      (i) =>
+        i.type === "trip" && i.id === prediction.relationships.trip?.data?.id,
+    ) || null
+  );
+}
+
+function getHeadsign(prediction: MBTAPrediction, included: any[]) {
+  const trip = getTrip(prediction, included);
+  return trip?.attributes?.headsign || trip?.attributes?.destination || null;
+}
+
+function getDirectionLabel(dir: number) {
+  return dir === 0 ? "Outbound" : "Inbound";
+}
+
 export default function GreenCPage() {
   const [stopId, setStopId] = useState<string>("place-denrd");
 
   const { data, isLoading } = useSWR<{
     data: MBTAPrediction[];
-    included: MBTARoute[];
-  }>(`/api/arrivals/${stopId}?include=route`, fetcher, {
+    included: any[];
+  }>(`/api/arrivals/${stopId}?include=trip,route`, fetcher, {
     refreshInterval: 15000,
   });
 
   const predictions = data?.data ?? [];
-
-  const inbound = predictions.filter((p) => p.attributes?.direction_id === 0);
-
-  const outbound = predictions.filter((p) => p.attributes?.direction_id === 1);
+  const included = data?.included ?? [];
 
   return (
     <div className="max-w-xl mx-auto p-6 text-white">
-      <h1 className="text-3xl font-bold  justify-center mb-6">
-        Train Arrivals
-      </h1>
+      <h1 className="text-3xl font-bold justify-center mb-6">Train Arrivals</h1>
 
+      {/* Stop Selector */}
       <div className="mb-6">
         <label className="block mb-2 font-medium">Choose a stop:</label>
         <select
@@ -55,84 +66,56 @@ export default function GreenCPage() {
           onChange={(e) => setStopId(e.target.value)}
           className="p-2 border rounded-md text-black bg-white dark:text-white dark:bg-gray-900 w-full"
         >
-          {greenCStops.map(
-            (stop: { id: string; attributes: { name: string } }) => (
-              <option key={stop.id} value={stop.id}>
-                {stop.attributes.name}
-              </option>
-            ),
-          )}
+          {greenCStops.map((stop) => (
+            <option key={stop.id} value={stop.id}>
+              {stop.attributes.name}
+            </option>
+          ))}
         </select>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Inbound */}
-        <div className="p-4 bg-gray-800 rounded-lg">
-          <h2 className="text-xl font-semibold mb-2">Inbound (Downtown)</h2>
+      {/* New unified layout */}
+      <div className="grid grid-cols-1 gap-6">
+        {isLoading ? (
+          <p>Loading…</p>
+        ) : predictions.length === 0 ? (
+          <p>No trains predicted.</p>
+        ) : (
+          predictions.map((p) => {
+            const route = p.relationships.route?.data?.id ?? "Unknown";
+            const headsign = getHeadsign(p, included);
+            const direction = getDirectionLabel(p.attributes.direction_id);
+            const vehicle = p.relationships.vehicle?.data?.id ?? "Unknown";
 
-          {isLoading ? (
-            <p>Loading…</p>
-          ) : inbound.length === 0 ? (
-            <p>No inbound trains predicted.</p>
-          ) : (
-            inbound.map((p) => (
-              <div key={p.id} className="mb-3 p-2 bg-gray-700 rounded">
+            return (
+              <div key={p.id} className="p-4 bg-gray-800 rounded-lg">
+                <h2 className="text-xl font-semibold mb-2">
+                  {direction}
+                  {headsign && ` — ${headsign}`}
+                </h2>
+
                 <p>
-                  <strong>Route:</strong>{" "}
-                  {p.relationships.route?.data?.id ?? "Unknown"}
+                  <strong>Route:</strong> {route}
                 </p>
+
                 <p>
                   <strong>Arrives:</strong>{" "}
                   {getCountdown(p.attributes.arrival_time)}
                 </p>
+
                 <p>
                   {p.attributes.arrival_time
                     ? new Date(p.attributes.arrival_time).toLocaleTimeString()
                     : "—"}
                 </p>
+
                 <p>
-                  <strong>Vehicle:</strong>{" "}
-                  {p.relationships.vehicle?.data?.id ?? "Unknown"}
+                  <strong>Vehicle:</strong> {vehicle}
                 </p>
               </div>
-            ))
-          )}
-        </div>
-
-        {/* Outbound */}
-        <div className="p-4 bg-gray-800 rounded-lg">
-          <h2 className="text-xl font-semibold mb-2">
-            Outbound (Cleveland Circle)
-          </h2>
-
-          {isLoading ? (
-            <p>Loading…</p>
-          ) : outbound.length === 0 ? (
-            <p>No outbound trains predicted.</p>
-          ) : (
-            outbound.map((p) => (
-              <div key={p.id} className="mb-3 p-2 bg-gray-700 rounded">
-                <p>
-                  <strong>Route:</strong>{" "}
-                  {p.relationships.route?.data?.id ?? "Unknown"}
-                </p>
-                <p>
-                  <strong>Arrives:</strong>{" "}
-                  {getCountdown(p.attributes.arrival_time)}
-                </p>
-                <p>
-                  {p.attributes.arrival_time
-                    ? new Date(p.attributes.arrival_time).toLocaleTimeString()
-                    : "—"}
-                </p>
-                <p>
-                  <strong>Vehicle:</strong>{" "}
-                  {p.relationships.vehicle?.data?.id ?? "Unknown"}
-                </p>
-              </div>
-            ))
-          )}
-        </div>
+            );
+          })
+        )}
       </div>
     </div>
   );
@@ -152,15 +135,5 @@ type MBTAPrediction = {
     stop: { data: { id: string } };
     trip: { data: { id: string } };
     vehicle?: { data?: { id: string } };
-  };
-};
-
-type MBTARoute = {
-  id: string;
-  attributes: {
-    long_name: string;
-    short_name: string;
-    direction_names: string[];
-    direction_destinations: string[];
   };
 };
