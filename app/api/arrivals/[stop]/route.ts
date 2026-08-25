@@ -1,58 +1,53 @@
 /*
  * @FilePath: \my-new-app\app\api\arrivals\[stop]\route.ts
- * @LastEditTime: 2026-08-24 17:45:19
+ * @LastEditTime: 2026-08-25 15:29:10
  */
 import { NextResponse } from "next/server";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 export async function GET(request: Request) {
-  // Extract stop ID directly from the URL
-  const { pathname } = new URL(request.url);
-  const stopId = pathname.split("/").pop(); // "place-denrd"
+  const { searchParams } = new URL(request.url);
+  const stopId = searchParams.get("stop");
 
-  console.log("### ARRIVALS ROUTE ### stopId =", stopId);
+  const requestUrl = `https://api-v3.mbta.com/predictions?filter[stop]=${stopId}&include=route`;
 
-  if (!stopId) {
-    return Response.json({ error: "Missing stop ID" }, { status: 400 });
-  }
-  const built = await buildUniversalContext(request as any, "mbta");
-  let jei = 0;
+  const res = await fetch(requestUrl);
+  const predictions: {
+    data?: Array<{
+      attributes?: { direction_id?: number };
+      relationships?: { route?: { data?: { id?: string } } };
+    }>;
+  } = await res.json();
 
-  try {
-    await logj({
-      domain: "arrivals",
-      level: "info",
-      message: `Arrivals GET started stopid: ${stopId}`,
-      file: "app/api/arrivals/[stop]/route.ts",
-      line: 23,
-      payload: {
-        stopid: stopId,
-        URL: request.url,
+  console.info(
+    "[MBTA DEBUG]",
+    JSON.stringify(
+      {
+        stopId,
+        requestUrl,
+        timestamp: new Date().toISOString(),
+        responseSummary: {
+          hasData:
+            Array.isArray(predictions?.data) && predictions.data.length > 0,
+          count: predictions?.data?.length ?? 0,
+          directions: [
+            ...new Set(
+              predictions?.data?.map((p) => p?.attributes?.direction_id),
+            ),
+          ],
+          routes: [
+            ...new Set(
+              predictions?.data?.map((p) => p?.relationships?.route?.data?.id),
+            ),
+          ],
+        },
+        raw: predictions,
       },
-      meta: { built: { ...(built ?? {}), eventIndex: ++jei } },
-    });
-  } catch (err) {
-    console.error("logj: THREW", err);
-  }
-  // Build MBTA API request
-  const url = new URL("https://api-v3.mbta.com/predictions");
-  url.searchParams.set("filter[stop]", stopId);
-  url.searchParams.set("include", "trip");
-  url.searchParams.set("sort", "arrival_time");
+      null,
+      2,
+    ),
+  );
 
-  const res = await fetch(url.toString(), {
-    headers: { accept: "application/json" },
-    next: { revalidate: 0 },
-  });
-
-  if (!res.ok) {
-    return Response.json(
-      { error: "Failed to fetch MBTA arrivals" },
-      { status: res.status },
-    );
-  }
-
-  const json = await res.json();
-  return Response.json(json);
+  return Response.json(predictions);
 }
