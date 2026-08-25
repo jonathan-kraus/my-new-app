@@ -54,7 +54,7 @@ export async function GET(request: Request) {
   await logj({
     domain: "arrivals",
     level: "info",
-    message: "Arrivals GET completed for stopId: {stopId}",
+    message: `Arrivals GET completed for stopId: ${stopId}`,
     file: "app/api/arrivals/[stop]/route.ts",
     line: 54,
     payload: {
