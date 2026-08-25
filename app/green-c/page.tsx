@@ -1,34 +1,44 @@
-/*
- * @FilePath: \my-new-app\app\green-c\page.tsx
- * @LastEditTime: 2026-08-25 14:32:03
- */
 "use client";
 
+import { useState } from "react";
 import useSWR from "swr";
-import { MBTAPrediction } from "@/lib/mbta/types";
 import { splitInboundOutbound } from "@/lib/mbta/splitInboundOutbound";
-import { ArrivalCard } from "@/app/components/ArrivalCard";
+import { ArrivalCard } from "@/components/ArrivalCard";
+import { greenCStops } from "@/lib/mbta/stops"; // your stops list
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 export default function GreenCPage() {
-  const { data, isLoading } = useSWR(
-    "/api/arrivals/place-denrd?include=trip",
-    fetcher,
-    { refreshInterval: 15000 },
-  );
+  const [stopId, setStopId] = useState("place-denrd");
 
-  if (isLoading) return <div>Loading…</div>;
-  if (!data) return <div>No data.</div>;
+  const { data, isLoading } = useSWR(`/api/arrivals/${stopId}`, fetcher, {
+    refreshInterval: 15000,
+  });
 
-  const predictions: MBTAPrediction[] = data.data;
-
+  const predictions = data?.data ?? [];
   const { inbound, outbound } = splitInboundOutbound(predictions);
 
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">Green Line C — Dean Road</h1>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">Green Line C — Dean Road</h1>
 
+      {/* ⭐ STOP SELECTOR (this is what disappeared) */}
+      <div className="mb-6">
+        <label className="block mb-2 font-medium">Choose a stop:</label>
+        <select
+          value={stopId}
+          onChange={(e) => setStopId(e.target.value)}
+          className="p-2 border rounded-md"
+        >
+          {greenCStops.map((stop) => (
+            <option key={stop.id} value={stop.id}>
+              {stop.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* ⭐ Two-column layout */}
       <div className="grid grid-cols-2 gap-6">
         <div>
           <h2 className="font-semibold mb-2">Inbound (Downtown)</h2>
