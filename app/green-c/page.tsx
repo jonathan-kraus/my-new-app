@@ -4,7 +4,7 @@ import { useState } from "react";
 import useSWR from "swr";
 import { splitInboundOutbound } from "@/lib/mbta/splitInboundOutbound";
 import { ArrivalCard } from "@/components/ArrivalCard";
-import { greenCStops } from "@/lib/mbta/stops"; // your stops list
+import { greenCStops } from "@/lib/mbta/types";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -20,7 +20,7 @@ export default function GreenCPage() {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Green Line C — Dean Road</h1>
+      <h1 className="text-2xl font-bold mb-4">T T T</h1>
 
       {/* ⭐ STOP SELECTOR (this is what disappeared) */}
       <div className="mb-6">
@@ -32,7 +32,7 @@ export default function GreenCPage() {
         >
           {greenCStops.map((stop) => (
             <option key={stop.id} value={stop.id}>
-              {stop.name}
+              {stop.attributes.name}
             </option>
           ))}
         </select>
