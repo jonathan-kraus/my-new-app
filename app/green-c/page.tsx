@@ -27,7 +27,7 @@ function getCountdown(arrival: string | null): string {
 }
 
 export default function GreenCPage() {
-  const [stopId, setStopId] = useState<string>("place-cool");
+  const [stopId, setStopId] = useState<string>("place-denrd");
 
   const { data, isLoading } = useSWR<{
     data: MBTAPrediction[];
