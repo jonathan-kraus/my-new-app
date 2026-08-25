@@ -1,3 +1,7 @@
+/*
+ * @FilePath: \my-new-app\app\green-c\page.tsx
+ * @LastEditTime: 2026-08-25 19:40:30
+ */
 "use client";
 
 import { useState } from "react";
@@ -56,7 +60,7 @@ export default function GreenCPage() {
 
   return (
     <div className="max-w-xl mx-auto p-6 text-white">
-      <h1 className="text-3xl font-bold justify-center mb-6">Train Arrivals</h1>
+      <h1 className="text-3xl font-bold text-center mb-6">Train Arrivals</h1>
 
       {/* Stop Selector */}
       <div className="mb-6">
@@ -74,7 +78,7 @@ export default function GreenCPage() {
         </select>
       </div>
 
-      {/* New unified layout */}
+      {/* Unified layout */}
       <div className="grid grid-cols-1 gap-6">
         {isLoading ? (
           <p>Loading…</p>
