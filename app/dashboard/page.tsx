@@ -172,6 +172,8 @@ export default async function DashboardPage(req: Request) {
       domain: "dashboard",
       level: "info",
       message: `New Version ${name} → ${version}`,
+      file: "app/dashboard/page.tsx",
+      line: 171,
       payload: {
         name,
         baseName,
