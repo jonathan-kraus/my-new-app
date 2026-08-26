@@ -7,6 +7,6 @@ export default defineConfig({
     seed: "tsx prisma/seed.ts",
   },
   datasource: {
-    url: env("MBTA_KEY"),
+    url: env("DATABASE_URL"),
   },
 });
