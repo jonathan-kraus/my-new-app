@@ -114,7 +114,6 @@ export default function GreenCPage() {
                 </h2>
 
                 <p>
-                  {/* <strong>Route:</strong> {route} */}
                   <RouteBadge route={route} />
                 </p>
 
