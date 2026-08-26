@@ -1,11 +1,10 @@
 /*
  * @FilePath: \my-new-app\app\api\arrivals\[stop]\route.ts
- * @LastEditTime: 2026-08-25 23:53:06
+ * @LastEditTime: 2026-08-26 00:37:23
  */
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { getStopName } from "@/lib/mbta/types";
-import { greenCStops } from "@/lib/mbta/types";
 
 export async function GET(request: Request) {
   // Extract stop ID from the URL path
@@ -57,13 +56,13 @@ export async function GET(request: Request) {
       2,
     ),
   );
-const JStop = getStopName(stopId);
+  const JStop = getStopName(stopId);
   await logj({
     domain: "arrivals",
     level: "info",
     message: `Arrivals GET started for stopId: ${JStop}`,
     file: "app/api/arrivals/[stop]/route.ts",
-    line: 64,
+    line: 61,
     payload: {
       stopId: stopId,
       computedstop: getStopName(stopId),
@@ -73,7 +72,6 @@ const JStop = getStopName(stopId);
     },
     meta: { built: { ...(built ?? {}), eventIndex: ++jei } },
   });
-
 
   return Response.json(predictions);
 }
