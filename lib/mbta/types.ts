@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\lib\mbta\types.ts
- * @LastEditTime: 2026-08-25 14:48:39
+ * @LastEditTime: 2026-08-25 23:50:05
  */
 export interface MBTAStop {
   id: string;
@@ -35,6 +35,10 @@ export interface MBTAPrediction {
       } | null;
     };
   };
+}
+export function getStopName(stopId: string) {
+  const stop = greenCStops.find((s) => s.id === stopId);
+  return stop?.attributes?.name ?? stopId;
 }
 
 export const greenCStops: MBTAStop[] = [
