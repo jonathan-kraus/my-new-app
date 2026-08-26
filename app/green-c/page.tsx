@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\green-c\page.tsx
- * @LastEditTime: 2026-08-25 19:40:30
+ * @LastEditTime: 2026-08-26 01:18:22
  */
 "use client";
 
@@ -43,6 +43,21 @@ function getHeadsign(prediction: MBTAPrediction, included: any[]) {
 
 function getDirectionLabel(dir: number) {
   return dir === 0 ? "Outbound" : "Inbound";
+}
+export const routeColors: Record<string, string> = {
+  "Green-B": "bg-yellow-600",
+  "Green-C": "bg-green-600",
+  "Green-D": "bg-green-700",
+  "Green-E": "bg-teal-600",
+};
+export function RouteBadge({ route }: { route: string }) {
+  const color = routeColors[route] ?? "bg-gray-600";
+
+  return (
+    <span className={`px-2 py-1 rounded text-sm font-semibold ${color}`}>
+      {route}
+    </span>
+  );
 }
 
 export default function GreenCPage() {
@@ -99,7 +114,8 @@ export default function GreenCPage() {
                 </h2>
 
                 <p>
-                  <strong>Route:</strong> {route}
+                  {/* <strong>Route:</strong> {route} */}
+                  <RouteBadge route={route} />
                 </p>
 
                 <p>

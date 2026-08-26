@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\lib\mbta\types.ts
- * @LastEditTime: 2026-08-25 23:50:05
+ * @LastEditTime: 2026-08-26 01:14:05
  */
 export interface MBTAStop {
   id: string;
