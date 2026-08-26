@@ -55,12 +55,18 @@ export async function GET(request: Request) {
       2,
     ),
   );
+  const stopUrl = new URL(`https://api-v3.mbta.com/stops/${stopId}`);
+  const stopRes = await fetch(stopUrl.toString());
+  const stopJson = await stopRes.json();
+
+  const stopName = stopJson?.data?.attributes?.name ?? stopId;
+
   await logj({
     domain: "arrivals",
     level: "info",
-    message: `Arrivals GET completed for stopId: ${stopId}`,
+    message: `Arrivals GET completed for stopId: ${stopName}`,
     file: "app/api/arrivals/[stop]/route.ts",
-    line: 54,
+    line: 64,
     payload: {
       stopId: stopId,
       requestUrl: requestUrl,
