@@ -155,7 +155,7 @@
     "eslint-plugin-react": "7.37.5",
     "eslint-plugin-unused-imports": "4.4.1",
     "husky": "9.1.7",
-    "js-yaml": "5.4.0",
+    "js-yaml": "5.4.1",
     "prettier": "3.9.6",
     "prisma": "7.10.0",
     "tailwindcss": "4.3.3",
@@ -166,5 +166,8 @@
     "typescript-eslint": "8.68.0",
     "vitest": "4.1.11",
     "yaml": "2.9.0"
+  },
+  "bin": {
+    "jup": "./scripts/jup.cjs"
   }
 }
