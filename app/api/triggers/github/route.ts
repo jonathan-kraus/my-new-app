@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\triggers\github\route.ts
- * @LastEditTime: 2026-08-26 20:09:21
+ * @LastEditTime: 2026-08-26 20:12:45
  */
 export async function POST(req: Request) {
   const headers = {
@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     signature: req.headers.get("x-hub-signature-256"),
   };
 
-  console.log("=== Unknown Webhook Source ===");
+  console.log("=== Unknown Webhook Source ==X=");
   console.log("Path:", req.url);
   console.log("Method:", req.method);
 
