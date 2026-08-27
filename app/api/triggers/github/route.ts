@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\triggers\github\route.ts
- * @LastEditTime: 2026-08-26 20:12:45
+ * @LastEditTime: 2026-08-27 00:04:39
  */
 export async function POST(req: Request) {
   const headers = {
@@ -13,7 +13,6 @@ export async function POST(req: Request) {
   console.log("=== Unknown Webhook Source ==X=");
   console.log("Path:", req.url);
   console.log("Method:", req.method);
-
   console.log("X-GitHub-Delivery:", headers.delivery);
   console.log("X-GitHub-Event:", headers.event);
   console.log("User-Agent:", headers.userAgent);
