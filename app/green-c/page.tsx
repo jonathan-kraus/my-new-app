@@ -6,7 +6,7 @@
 
 import { useState } from "react";
 import useSWR from "swr";
-import { greenCStops } from "@/lib/mbta/types";
+import { greenCStops } from "@/lib/mbta/stops";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
