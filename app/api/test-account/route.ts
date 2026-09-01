@@ -15,6 +15,7 @@ export const GET = withLogging(async (req: Request) => {
     line: 10,
     payload: {
       ip: built.ip,
+      req: req,
     },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
