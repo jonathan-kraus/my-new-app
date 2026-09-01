@@ -4,7 +4,7 @@
  */
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
-import { getStopName } from "@/lib/mbta/types";
+import { getStopName } from "@/lib/mbta/stops";
 
 export async function GET(request: Request) {
   // Extract stop ID from the URL path
