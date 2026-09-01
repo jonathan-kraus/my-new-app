@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-###
- # @FilePath: \my-new-app\scripts\mn.sh
+##
+ # @FilePath:  \my-new-app\scripts\mn.sh
  # @LastEditTime: 2026-08-04 21:48:41
-### 
+###
 set -euo pipefail
 
 # Colors

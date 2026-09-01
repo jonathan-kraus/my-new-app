@@ -162,8 +162,8 @@ importers:
         specifier: 3.7.2
         version: 3.7.2
       mailersend:
-        specifier: 3.2.0
-        version: 3.2.0(supports-color@7.2.0)
+        specifier: 3.3.0
+        version: 3.3.0(supports-color@7.2.0)
       mailparser:
         specifier: 3.9.19
         version: 3.9.19
@@ -3933,8 +3933,8 @@ packages:
   magicast@0.5.4:
     resolution: {integrity: sha512-llBEhWm1SacoRwgHUoQJYtwp4PBLF4faQi5TCpIGyGs9n4y5+juI0tDgyKIfpqxckRHaHzouUEph3THklWh03w==}
 
-  mailersend@3.2.0:
-    resolution: {integrity: sha512-vkojD+UARwMFLxiZcyqa9vTi5zS4/5clRvSwOLg/x0EoL7eCGPwXi46bbIqnACOHYbnFKGqm/DXbFL60vhxvgw==}
+  mailersend@3.3.0:
+    resolution: {integrity: sha512-prTDK9T/CRhXhnLj5ViDAwDATQzUCUTC2NaYPb5bwCgAUgAFk1QuWqFwQ1wenPc/eUeaOXr7OkpcItuT+mBpJg==}
 
   mailparser@3.9.19:
     resolution: {integrity: sha512-ik490D4yTo2B9aTdI8au8fOt6xIiC1EbBizi51ZjxX2zBd7k0qvatfvXVH3snXe4NNEovQ7rlP56dChp10pl9A==}
@@ -8656,7 +8656,7 @@ snapshots:
       '@babel/types': 7.29.8
       source-map-js: 1.2.1
 
-  mailersend@3.2.0(supports-color@7.2.0):
+  mailersend@3.3.0(supports-color@7.2.0):
     dependencies:
       gaxios: 7.3.1(supports-color@7.2.0)
       qs: 6.16.0
