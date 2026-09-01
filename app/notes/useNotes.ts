@@ -2,8 +2,7 @@
 // app/notes/useNotes.ts
 
 import { useEffect, useState } from "react";
-import { logit } from "@/lib/log/logit.client";
-const eventIndex = 22;
+import { logj } from "@/lib/log/logj";
 
 export type Note = {
   id: string;
@@ -19,26 +18,21 @@ type NotesState =
   | { status: "unauthorized" }
   | { status: "error" }
   | { status: "ready"; notes: Note[] };
-const ctx = {
-  requestId: crypto.randomUUID(),
-  page: "useNotes",
-  userId: null,
-};
+
 export function useNotes(): NotesState {
   const [state, setState] = useState<NotesState>({ status: "loading" });
 
   useEffect(() => {
-    logit(
-      "notes",
-      {
-        level: "info",
-        message: "Notes page mounted",
-      },
-      { loc: "/notes" },
-      {
-        ctx,
-      },
-    );
+    let jei = 0;
+    logj({
+      domain: "notes",
+      level: "info",
+      message: "Notes page mounted",
+      file: "app/notes/useNotes.ts",
+      line: 27,
+      payload: { loc: "/notes" },
+      meta: { built: { eventIndex: ++jei } },
+    });
 
     async function load() {
       try {
@@ -61,17 +55,16 @@ export function useNotes(): NotesState {
       } catch {
         setState({ status: "error" });
 
-        logit(
-          "notes",
-          {
-            level: "info",
-            message: "Notes page mounted",
-          },
-          { loc: "/notes" },
-          {
-            ctx,
-          },
-        );
+        let jei = 0;
+        logj({
+          domain: "notes",
+          level: "error",
+          message: "Notes page error",
+          file: "app/notes/useNotes.ts",
+          line: 59,
+          payload: { loc: "/notes" },
+          meta: { built: { eventIndex: ++jei } },
+        });
       }
     }
 

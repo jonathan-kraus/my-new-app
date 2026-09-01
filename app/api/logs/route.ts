@@ -2,7 +2,8 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { logit } from "@/lib/log/logit";
+import { logj } from "@/lib/log/logj";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 export async function GET(req: NextRequest) {
   const search = req.nextUrl.searchParams.get("q") ?? "";
@@ -46,9 +47,19 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { domain, event, payload, meta } = body ?? {};
+    const { domain, level, message, payload } = body ?? {};
+    const built = await buildUniversalContext(req as any, "logs-post");
+    let jei = 0;
 
-    await logit(domain ?? "client", event ?? {}, payload ?? {}, meta ?? {});
+    await logj({
+      domain: domain ?? "client",
+      level: level ?? "info",
+      message: message ?? "Client log",
+      file: "app/api/logs/route.ts",
+      line: 54,
+      payload: payload ?? {},
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
 
     return NextResponse.json({ ok: true });
   } catch (err) {

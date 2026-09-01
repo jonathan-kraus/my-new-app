@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { logit } from "@/lib/log/logit";
+import { logj } from "@/lib/log/logj";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import {
   getTableDataWithPrisma,
   getModelForTable,
@@ -11,19 +12,18 @@ export async function GET(
   { params }: { params: Promise<{ name: string }> },
 ) {
   const { name } = await params;
+  const built = await buildUniversalContext(request as any, "db-table");
+  let jei = 0;
 
-  await logit(
-    "jonathan",
-    { level: "info", message: "In db table detail for ${ name }", name },
-    { moreinfo: "more info ", eventIndex: 22 },
-    {
-      requestId: crypto.randomUUID(),
-      zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
-    },
-  );
+  await logj({
+    domain: "jonathan",
+    level: "info",
+    message: `In db table detail for ${name}`,
+    file: "app/api/db/table/[name]/route.ts",
+    line: 18,
+    payload: { name, moreinfo: "more info" },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
 
   const modelName = getModelForTable(name);
   if (!modelName) {

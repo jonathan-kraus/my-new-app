@@ -4,12 +4,13 @@
  */
 // app/api/fa/count/route.ts
 import { NextResponse } from "next/server";
-import { logit } from "@/lib/log/logit";
+import { logj } from "@/lib/log/logj";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { getConfig } from "@/lib/runtime/config";
 
 export async function GET(req: Request) {
-  const eventIndex = 22;
-  const requestId = crypto.randomUUID();
+  const built = await buildUniversalContext(req as any, "fa-count");
+  let jei = 0;
   const minLat = await getConfig("minLat", "40.0893");
   const minLon = await getConfig("minLon", "-105.7435");
   const maxLat = await getConfig("maxLat", "40.7142");
@@ -22,27 +23,21 @@ export async function GET(req: Request) {
     url: req.url,
   });
 
-  await logit(
-    "fa",
-    {
-      level: "info",
-      message: "Missing lat/long parameters",
-      minLat: minLat,
-      minLon: minLon,
-      maxLat: maxLat,
-      maxLon: maxLon,
+  await logj({
+    domain: "fa",
+    level: "info",
+    message: "Missing lat/long parameters",
+    file: "app/api/fa/count/route.ts",
+    line: 26,
+    payload: {
+      minLat,
+      minLon,
+      maxLat,
+      maxLon,
       url: req.url,
     },
-    { eventIndex },
-    {
-      requestId: requestId,
-      userId: undefined,
-      zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
-    },
-  );
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
 
   if (!minLat || !minLon || !maxLat || !maxLon) {
     return NextResponse.json(

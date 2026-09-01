@@ -8,49 +8,39 @@
  */
 import { NextResponse } from "next/server";
 import { ingestTravelEmails } from "@/lib/travel/ingest/email-ingest";
-import { logit } from "@/lib/log/logit";
+import { logj } from "@/lib/log/logj";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 export const dynamic = "force-dynamic";
-const eventIndex = 22;
-const requestId = crypto.randomUUID();
 export async function POST(req: Request) {
-  await logit(
-    "jonathan",
-    {
-      level: "info",
-      message: "travel-ingest-start",
+  const built = await buildUniversalContext(req as any, "travel-ingest");
+  let jei = 0;
+
+  await logj({
+    domain: "jonathan",
+    level: "info",
+    message: "travel-ingest-start",
+    file: "lib/travel/ingest/route.ts",
+    line: 19,
+    payload: {
       url: req.url,
       someatent: "somevalue",
     },
-    { eventIndex },
-    {
-      notused: "notused",
-      requestId: requestId,
-      zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
-    },
-  );
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
   const result = await ingestTravelEmails();
 
-  await logit(
-    "jonathan",
-    {
-      level: "info",
-      message: "travel-ingest-end",
-      result: result,
+  await logj({
+    domain: "jonathan",
+    level: "info",
+    message: "travel-ingest-end",
+    file: "lib/travel/ingest/route.ts",
+    line: 33,
+    payload: {
+      result,
       someatent: "somevalue",
     },
-    { eventIndex },
-    {
-      notused: "notused",
-      requestId: requestId,
-      zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
-    },
-  );
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
   return NextResponse.json({ ok: true, result });
 }

@@ -2,33 +2,25 @@
  * @FilePath: \my-new-app\app\api\fa\status\route.ts
  * @LastEditTime: 2026-07-24 17:04:24
  */
-import { logit } from "@/lib/log/logit";
+import { logj } from "@/lib/log/logj";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { getConfig } from "@/lib/runtime/config";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
+  const built = await buildUniversalContext(req as any, "fa-status");
+  let jei = 0;
   const ident = await getConfig("flight-ID", "flight-ID");
   console.log("FINAL IDENT:", ident);
-  const eventIndex = 22;
-  const requestId = crypto.randomUUID();
-  await logit(
-    "jonathan",
-    {
-      level: "info",
-      message: "API FA status route accessed",
-      ident: ident,
-    },
-    { eventIndex },
-    {
-      requestId: requestId,
-      route: "app/api/fa/status/route.ts",
-      userId: "JK",
-      zulu: new Date().toISOString(),
-      local: new Date().toLocaleString("en-US", {
-        timeZone: "America/New_York",
-      }),
-    },
-  );
+  await logj({
+    domain: "jonathan",
+    level: "info",
+    message: "API FA status route accessed",
+    file: "app/api/fa/status/route.ts",
+    line: 15,
+    payload: { ident },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
   if (!ident) {
     return NextResponse.json({ error: "Missing ident" }, { status: 400 });
   }

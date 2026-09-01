@@ -1,30 +1,24 @@
 "use client";
 
 import { toast } from "react-hot-toast";
-import { logit } from "@/lib/log/logit.client";
+import { logj } from "@/lib/log/logj";
 
 export function EmailSideNavLink() {
   async function handleClick() {
     try {
       const res = await fetch("/api/email/test", { method: "POST" });
       const data = await res.json();
-      const eventIndex = 22;
-      const ctx = {
-        page: "/sidenav/email-test",
-        file: "app/components/sidenav/EmailLink.tsx",
-      };
+      let jei = 0;
       // Log client-side as well (optional but nice)
-      logit(
-        "email_test_clicked",
-        { data },
-        { eventIndex },
-        {
-          zulu: new Date().toISOString(),
-          local: new Date().toLocaleString("en-US", {
-            timeZone: "America/New_York",
-          }),
-        },
-      );
+      logj({
+        domain: "email_test_clicked",
+        level: "info",
+        message: "Email test clicked",
+        file: "app/components/sidenav/EmailLink.tsx",
+        line: 13,
+        payload: { data },
+        meta: { built: { eventIndex: ++jei } },
+      });
 
       toast.custom(
         () => (
@@ -44,23 +38,17 @@ export function EmailSideNavLink() {
         { duration: Infinity },
       );
     } catch (err) {
-      const eventIndex = 222;
-      const requestId = crypto.randomUUID();
+      let jei = 0;
       toast.error("Failed to send test email");
-      logit(
-        "email_test_error",
-        { error: String(err) },
-        { eventIndex },
-        {
-          requestId: requestId,
-          route: "/sidenav/email-test",
-          userId: "JK",
-          zulu: new Date().toISOString(),
-          local: new Date().toLocaleString("en-US", {
-            timeZone: "America/New_York",
-          }),
-        },
-      );
+      logj({
+        domain: "email_test_error",
+        level: "error",
+        message: "Failed to send test email",
+        file: "app/components/sidenav/EmailLink.tsx",
+        line: 43,
+        payload: { error: String(err) },
+        meta: { built: { eventIndex: ++jei } },
+      });
     }
   }
 
