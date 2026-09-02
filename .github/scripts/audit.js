@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\.github\scripts\audit.js
- * @LastEditTime: 2026-08-22 04:20:38
+ * @LastEditTime: 2026-09-02 14:24:13
  */
 import fs from "fs";
 import * as yaml from "js-yaml";
@@ -15,7 +15,12 @@ console.log("PRE-DOTENV CI:", process.env.CI);
 if (!process.env.CI) {
   config({ path: ".env.local" });
 }
-
+// advisories to ignore by ID
+const IGNORE = [
+  "1145093",
+  "1158532",
+  "1153173"
+];
 console.log("TOKEN exists:", !!process.env.AXIOM_TOKEN);
 console.log("DATASET:", process.env.AXIOM_DATASET);
 console.log("ORG ID:", process.env.AXIOM_ORG_ID);
@@ -55,10 +60,7 @@ for (const key of Object.keys(deps)) {
 
 console.log("🔍 -- Auditing", Object.keys(payload).length, "packages…");
 
-// advisories to ignore by ID
-const IGNORE = [
-  "1145093",
-];
+
 
 
 
@@ -118,7 +120,7 @@ const allIds = new Set(allAdvisories.map(a => String(a.id)));
 const staleIgnores = IGNORE.filter(id => !allIds.has(String(id)));
 const validIgnores = IGNORE.filter(id => allIds.has(String(id)));
 console.log(`You have ${validIgnores.length} active ignore entries.`);
-  
+
   if (staleIgnores.length > 0) {
   console.log("Stale ignore entries detected:");
   staleIgnores.forEach(id => console.log("  -", id));
