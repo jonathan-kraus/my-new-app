@@ -120,16 +120,6 @@ export function ForecastCard({
         </button>
       </div>
 
-      {/* Current */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <p className="text-sm opacity-80">Current Temperature</p>
-        </div>
-        <div className="text-right">
-          <p className="text-sm opacity-80">Wind</p>
-        </div>
-      </div>
-
       {/* Forecast Table */}
       <div className="overflow-hidden rounded-xl border border-white/10">
         <table className="w-full text-left">
