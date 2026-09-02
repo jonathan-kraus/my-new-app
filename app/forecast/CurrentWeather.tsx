@@ -21,7 +21,7 @@ const DEFAULTS = {
 
 function formatNumber(value: number, maximumFractionDigits = 0) {
   return new Intl.NumberFormat(undefined, { maximumFractionDigits }).format(
-    Math.round(value)
+    Math.round(value),
   );
 }
 
@@ -42,11 +42,11 @@ export const CurrentWeather = React.memo(function CurrentWeather({
 
   const isWindy = useMemo(
     () => windValue !== null && windValue > windyThreshold,
-    [windValue, windyThreshold]
+    [windValue, windyThreshold],
   );
   const isSnowmanMode = useMemo(
     () => tempValue !== null && tempValue < snowmanThreshold,
-    [tempValue, snowmanThreshold]
+    [tempValue, snowmanThreshold],
   );
 
   // Keep using your count-up hook for the visual animation
@@ -64,7 +64,9 @@ export const CurrentWeather = React.memo(function CurrentWeather({
         className="mb-8 bg-white/80 backdrop-blur-xl rounded-3xl p-6 shadow-lg border border-white/60"
       >
         <p className="text-sm text-gray-600 mb-1">Current Conditions</p>
-        <div className="text-sm text-gray-700">No current observations available.</div>
+        <div className="text-sm text-gray-700">
+          No current observations available.
+        </div>
       </section>
     );
   }
@@ -113,13 +115,20 @@ export const CurrentWeather = React.memo(function CurrentWeather({
               🌬️
             </span>
             <p className="text-sm text-gray-700">
-              Wind {windValue !== null ? `${formatNumber(windValue)} ${windUnit}` : "—"}
+              Wind{" "}
+              {windValue !== null
+                ? `${formatNumber(windValue)} ${windUnit}`
+                : "—"}
             </p>
           </div>
         </div>
 
         {/* main sky icon: not purely decorative – give a label for screen readers */}
-        <div role="img" aria-label="Partly sunny" className="text-6xl select-none">
+        <div
+          role="img"
+          aria-label="Partly sunny"
+          className="text-6xl select-none"
+        >
           🌤️
         </div>
       </div>

@@ -124,11 +124,9 @@ export function ForecastCard({
       <div className="flex items-center justify-between mb-6">
         <div>
           <p className="text-sm opacity-80">Current Temperature</p>
-          <p className="text-4xl font-black">{current.temperature}°</p>
         </div>
         <div className="text-right">
           <p className="text-sm opacity-80">Wind</p>
-          <p className="text-xl font-semibold">{current.windspeed} mph</p>
         </div>
       </div>
 
