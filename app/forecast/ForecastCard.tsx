@@ -141,7 +141,7 @@ export function ForecastCard({
 
                 <td className="py-3 px-4 block md:table-cell">
                   <span className="opacity-90">
-                    {row.max.toFixed(1)}° / {row.min.toFixed(1)}°
+                    {row.max}° / {row.min}°
                   </span>
                 </td>
 
