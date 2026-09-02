@@ -8,7 +8,7 @@ import { SolarArcBar } from "@/app/components/SolarArcBar";
 import { logj } from "@/lib/log/client";
 import { auth } from "@/auth";
 import type { NextRequest } from "next/server";
-import { staticUniversalContext } from "@/lib/log/buildj";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 export const dynamic = "force-dynamic"; // ensure cookies + fresh SSR
 export const revalidate = 60;
@@ -19,7 +19,7 @@ async function fetchWithRetry(req: NextRequest, station: string) {
   if (!session || !session.user) {
     throw new Error("No active session found.");
   }
-  const built = staticUniversalContext("ASTRONOMY");
+  const built = buildUniversalContext(req, "ASTRONOMY");
   let jei = 0;
   await logj({
     domain: "jonathan",
