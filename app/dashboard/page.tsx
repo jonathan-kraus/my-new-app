@@ -1,7 +1,3 @@
-/*
- * @FilePath: \my-new-app\app\dashboard\page.tsx
- * @LastEditTime: 2026-09-02 18:49:22
- */
 // app/dashboard/page.tsx
 import { getDashboardData } from "@/lib/dashboard";
 import { getFullPackageData } from "@/lib/version/get-full-package-data";
@@ -15,61 +11,77 @@ import { auth } from "@/auth";
 import BuildCard from "../components/dashboard/build-card";
 import { db } from "@/lib/db";
 import { LocationSchema, WeatherSchema } from "@/lib/schemas/page-schemas";
-import { LogsCard } from "./components/LogsCard";
+import { getWeatherForLocation } from "@/lib/weather/get-weather";
+import type { z } from "zod";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Dashboard " };
-let jei = 0;
 
-export default async function DashboardPage(req: Request) {
+// Precompile ignore regexes once at module load
+const IGNORE_PATTERNS = [
+  /^@radix-ui\//,
+  /^@types\//,
+  /^@typescript-eslint\//,
+] as const;
+
+type Location = z.infer<typeof LocationSchema>;
+type Weather = z.infer<typeof WeatherSchema>;
+
+export default async function DashboardPage() {
+  // Request-scoped counter (avoid shared mutable module state)
+  let eventIndex = 0;
+
   const built = staticUniversalContext("DASHBOARD");
+
+  // Authenticate early (server-side)
   const session = await auth();
-  // run verbose logs only sometimes (sample ~10% of requests)
+  const userId = session?.user?.id ?? null;
+
+  // Sample verbose logging ~10%
   const verbose = Math.random() < 0.1;
+
   await logj({
     domain: "dashboard",
     level: "info",
     message: "Dashboard page loaded",
     file: "app/dashboard/page.tsx",
     line: 28,
-    payload: { title: metadata.title, a: "b", user: session?.user },
-    meta: { built: { ...built, eventIndex: ++jei } },
+    // Avoid logging entire user object — keep only an identifier
+    payload: { title: metadata.title, userId },
+    meta: { built: { ...built, eventIndex: ++eventIndex } },
   });
 
-  const data = await getDashboardData();
-  const location = await db.location.findFirst({
-    where: { isDefault: true },
-  });
-  LocationSchema.parse(location);
-  if (!location) {
+  // Run independent reads concurrently
+  const [data, locationRes] = await Promise.all([
+    getDashboardData(),
+    db.location.findFirst({ where: { isDefault: true } }),
+  ]);
+
+  // Validate location exists before parsing schema
+  if (!locationRes) {
     return <div>No default location configured.</div>;
   }
-  let weather: any = null;
+  // Parse/validate shape (throws if invalid)
+  LocationSchema.parse(locationRes);
+  const location = locationRes as Location;
 
+  // Fetch weather for the default location (server-side)
+  let weather: Weather | null = null;
   try {
-    const weatherRes = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/weather?locationId=${location.id}`,
-      { cache: "no-store" },
-    );
+    const weatherResult = await getWeatherForLocation(location.id);
+    weather = weatherResult as unknown as Weather;
 
-    if (!weatherRes.ok) {
-      throw new Error(`Weather API returned ${weatherRes.status}`);
-    }
-
-    const raw = await weatherRes.json();
-    console.log("Raw weather data:", raw);
     await logj({
       domain: "dashboard",
       level: "info",
-      message: "Dashboard received weather data from API...",
+      message: "Dashboard received weather data (internal)",
       file: "app/dashboard/page.tsx",
       line: 60,
-      payload: { "Raw weather data": raw },
-      meta: { built: { ...built, eventIndex: ++jei } },
+      payload: { locationId: location.id },
+      meta: { built: { ...built, eventIndex: ++eventIndex } },
     });
-    WeatherSchema.parse(raw);
-    weather = raw;
   } catch (err) {
+    // Keep rendering even if weather fetch fails
     console.error("Weather API failed:", err);
     weather = null;
   }
@@ -80,17 +92,14 @@ export default async function DashboardPage(req: Request) {
     message: "Dashboard page data fetched",
     file: "app/dashboard/page.tsx",
     line: 76,
-    payload: { data: data },
-    meta: { built: { ...built, eventIndex: ++jei } },
+    payload: { userId, dataSummary: { build: !!data.build, astronomy: !!data.astronomy } },
+    meta: { built: { ...built, eventIndex: ++eventIndex } },
   });
 
-  // 1. Full data that will be given to VercelCard AND the DB loop
-  // ---------------------------------------------------------------
+  // 1. Full package data
   const fullPackageData = getFullPackageData();
 
-  // ---------------------------------------------------------------
-  // 2. Small curated list (still available for other cards / UI)
-  // ---------------------------------------------------------------
+  // 2. Curated important tools
   const importantTools = data.build?.tools ?? {
     node: "unknown",
     pnpm: "unknown",
@@ -101,17 +110,7 @@ export default async function DashboardPage(req: Request) {
     prisma: "unknown",
   };
 
-  // ---------------------------------------------------------------
-  // 3. Build the list that will be written to the database
-  //    (full list + optional filtering)
-  // ---------------------------------------------------------------
-  const IGNORE = [
-    /^@radix-ui\//,
-    /^@types\//,
-    /^@typescript-eslint\//,
-    // add more patterns you don't want to track
-  ];
-
+  // 3. Build the list that will be examined/written to the database
   const fullTools: Record<string, string> = {
     ...fullPackageData.dependencies,
     ...fullPackageData.devDependencies,
@@ -119,113 +118,140 @@ export default async function DashboardPage(req: Request) {
   };
 
   const toolEntries = Object.entries(fullTools)
-    .filter(([name]) => !IGNORE.some((re) => re.test(name)))
-    .map(([name, version]) => ({
-      name,
-      version: String(version),
-    }));
+    .filter(([name]) => !IGNORE_PATTERNS.some((re) => re.test(name)))
+    .map(([name, version]) => ({ name, version: String(version) }));
 
-  // ---------------------------------------------------------------
-  // 4. Database populater (with base* logic)
-  // ---------------------------------------------------------------
-  for (const { name, version } of toolEntries) {
-    const current = await db.toolVersion.findUnique({ where: { name } });
+  // 4. Batch DB operations for toolVersion (reduce round-trips)
+  if (toolEntries.length > 0) {
+    try {
+      const toolNames = toolEntries.map((t) => t.name);
+      const baseNames = toolNames.map((n) => `base${n}`);
+      const namesToLookup = Array.from(new Set([...toolNames, ...baseNames]));
 
-    if (!current) {
-      await db.toolVersion.create({
-        data: {
-          name,
-          version,
-          added_at: new Date(),
-          verified_at: new Date(),
-        },
+      // Fetch any existing rows for these names (including base* entries)
+      const existing = await db.toolVersion.findMany({
+        where: { name: { in: namesToLookup } },
       });
-      continue;
-    }
-    if (verbose) {
+
+      const existingByName = new Map(existing.map((r) => [r.name, r]));
+
+      // Prepare transactional operations
+      const ops: Promise<any>[] = [];
+      const createManyData: Array<{ name: string; version: string; added_at: Date; verified_at: Date }> = [];
+
+      for (const { name, version } of toolEntries) {
+        const current = existingByName.get(name);
+
+        // New tool — create later via createMany
+        if (!current) {
+          createManyData.push({
+            name,
+            version,
+            added_at: new Date(),
+            verified_at: new Date(),
+          });
+          continue;
+        }
+
+        // Same version → just update verified_at
+        if (current.version === version) {
+          ops.push(
+            db.toolVersion.update({
+              where: { name },
+              data: { verified_at: new Date() },
+            }),
+          );
+          continue;
+        }
+
+        // Version changed: ensure there is a base entry for the old version, then update the main row
+        const baseName = `base${name}`;
+        // Upsert base entry to preserve previous version
+        ops.push(
+          db.toolVersion.upsert({
+            where: { name: baseName },
+            create: {
+              name: baseName,
+              version: current.version, // old version
+              added_at: current.added_at ?? new Date(),
+              verified_at: new Date(),
+            },
+            update: {
+              version: current.version,
+              verified_at: new Date(),
+            },
+          }),
+        );
+
+        // Update the main name to the new version
+        ops.push(
+          db.toolVersion.update({
+            where: { name },
+            data: {
+              version,
+              added_at: new Date(),
+              verified_at: new Date(),
+            },
+          }),
+        );
+
+        if (verbose) {
+          await logj({
+            domain: "dashboard",
+            level: "info",
+            message: `New Version ${name} → ${version}`,
+            file: "app/dashboard/page.tsx",
+            payload: { name, oldVersion: current.version, newVersion: version, userId },
+            meta: { built: { ...built, eventIndex: ++eventIndex } },
+          });
+        }
+      }
+
+      // Prepend createMany if there are new tools
+      if (createManyData.length > 0) {
+        // createMany cannot be mixed with other operations in one transaction if using some databases,
+        // but on Prisma with supported DBs it is allowed in $transaction. We still push it first.
+        ops.unshift(
+          db.toolVersion.createMany({
+            data: createManyData,
+            skipDuplicates: true,
+          }),
+        );
+      }
+
+      if (ops.length > 0) {
+        // Execute all writes in a single transaction
+        await db.$transaction(ops);
+      }
+    } catch (err) {
+      // Non-fatal: log and continue rendering. DB writes are helpful but not required for the page.
+      console.error("Failed to sync tool versions:", err);
       await logj({
         domain: "dashboard",
-        level: "info",
-        message: `Same Version  --  ${name} ${current.version}`,
+        level: "warn",
+        message: "Failed to sync tool versions",
         file: "app/dashboard/page.tsx",
-        line: 145,
-        payload: {
-          name: name,
-          version: current.version,
-          verified: current.verified_at,
-        },
-        meta: { built: { ...built, eventIndex: ++jei } },
+        line: 230,
+        payload: { error: String((err as Error)?.message ?? err), userId },
+        meta: { built: { ...built, eventIndex: ++eventIndex } },
       });
     }
-
-    if (current.version === version) {
-      await db.toolVersion.update({
-        where: { name },
-        data: { verified_at: new Date() },
-      });
-      continue;
-    }
-
-    // Version changed → keep the old one as base*
-    const baseName = `base${name}`;
-
-    await logj({
-      domain: "dashboard",
-      level: "info",
-      message: `New Version ${name} →→ ${version}`,
-      file: "app/dashboard/page.tsx",
-      line: 171,
-      payload: {
-        name,
-        baseName,
-        oldVersion: current.version,
-        newVersion: version,
-        added: current.added_at,
-      },
-      meta: { built: { ...built, eventIndex: ++jei } },
-    });
-    await db.toolVersion.upsert({
-      where: { name: baseName },
-      create: {
-        name: baseName,
-        version: current.version, // old version
-        added_at: current.added_at,
-        verified_at: new Date(),
-      },
-      update: {
-        version: current.version, // old version
-        verified_at: new Date(),
-      },
-    });
-
-    await db.toolVersion.update({
-      where: { name },
-      data: {
-        version,
-        added_at: new Date(),
-        verified_at: new Date(),
-      },
-    });
   }
 
-  // ---------------------------------------------------------------
-  // 5. Fetch logs
-  // ---------------------------------------------------------------
+  // 5. Fetch recent logs (read-only)
   const logs = await db.log.findMany({
     orderBy: { created_at: "desc" },
     take: 50,
   });
 
-  // ---------------------------------------------------------------
-  // 6. Render
-  // ---------------------------------------------------------------
-
+  // 6. Render the dashboard
+  // Note: CurrentWeatherCard receives location and (optionally) server-fetched weather.
+  // If CurrentWeatherCard doesn't accept a `weather` prop yet, you can remove it and let the card fetch itself.
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 p-6">
       <AstronomyCard data={data.astronomy} />
-      {/* Small curated tools still available if you want them */}
       <BuildCard build={{ ...data.build, tools: importantTools }} />
-      <CurrentWeatherCard location={location} />
+      <CurrentWeatherCard location={location} weather={weather} />
       <VersionCard />
       <LogsCard logs={logs} />
     </div>
