@@ -61,17 +61,10 @@ export async function GET(req: Request) {
         error: err.message,
       },
       meta: { built: { ...built, eventIndex: ++jei } },
-      {
-        requestId: requestId,
-        zulu: new Date().toISOString(),
-        local: new Date().toLocaleString("en-US", {
-          timeZone: "America/New_York",
-        }),
-      },
-    );
+    });
 
     return NextResponse.json(
-      { ok: false, requestId, error: err.message },
+      { ok: false, error: err.message },
       { status: 500 },
     );
   }
