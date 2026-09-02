@@ -2,7 +2,7 @@
 // app/notes/useNotes.ts
 
 import { useEffect, useState } from "react";
-import { logj } from "@/lib/log/logj";
+import { logj } from "@/lib/log/client";
 
 export type Note = {
   id: string;

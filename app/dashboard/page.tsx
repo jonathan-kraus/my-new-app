@@ -4,8 +4,8 @@ import { getFullPackageData } from "@/lib/version/get-full-package-data";
 import { AstronomyCard } from "@/app/astronomy/AstronomyCard";
 import CurrentWeatherCard from "@/app/components/dashboard/current-weather-card";
 import VersionCard from "@/app/components/dashboard/version-card";
-import { logj } from "@/lib/log/logj";
-import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { logj } from "@/lib/log/client";
+import { staticUniversalContext } from "@/lib/log/buildj";
 import type { Metadata } from "next";
 import { auth } from "@/auth";
 import BuildCard from "../components/dashboard/build-card";
@@ -21,7 +21,7 @@ export const metadata: Metadata = { title: "Dashboard " };
 let jei = 0;
 
 export default async function DashboardPage(req: Request) {
-  const built = await buildUniversalContext(req as any, "DASHBOARD");
+  const built = staticUniversalContext("DASHBOARD");
   const session = await auth();
   // run verbose logs only sometimes (sample ~10% of requests)
   const verbose = Math.random() < 0.1;

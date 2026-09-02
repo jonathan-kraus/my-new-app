@@ -5,10 +5,10 @@ import { NextEventCard } from "@/components/astronomy/NextEventCard";
 import { format, parseISO } from "date-fns";
 import { formatInTimeZone } from "date-fns-tz";
 import { SolarArcBar } from "@/app/components/SolarArcBar";
-import { logj } from "@/lib/log/logj";
+import { logj } from "@/lib/log/client";
 import { auth } from "@/auth";
 import type { NextRequest } from "next/server";
-import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { staticUniversalContext } from "@/lib/log/buildj";
 
 export const dynamic = "force-dynamic"; // ensure cookies + fresh SSR
 export const revalidate = 60;
@@ -19,7 +19,7 @@ async function fetchWithRetry(req: NextRequest, station: string) {
   if (!session || !session.user) {
     throw new Error("No active session found.");
   }
-  const built = await buildUniversalContext(req as any, "ASTRONOMY");
+  const built = staticUniversalContext("ASTRONOMY");
   let jei = 0;
   await logj({
     domain: "jonathan",
