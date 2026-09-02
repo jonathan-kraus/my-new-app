@@ -24,24 +24,6 @@ const TomorrowRealtimeSchema = z.object({
   }),
 });
 
-const TomorrowTimelineSchema = z.object({
-  data: z.object({
-    timelines: z.array(
-      z.object({
-        intervals: z.array(
-          z.object({
-            values: z.object({
-              sunriseTime: z.string().datetime(),
-              sunsetTime: z.string().datetime(),
-              moonriseTime: z.string().datetime().nullable(),
-              moonsetTime: z.string().datetime().nullable(),
-            }),
-          }),
-        ),
-      }),
-    ),
-  }),
-});
 // Default cache windows
 const CURRENT_CACHE_MIN = 30;
 const FORECAST_CACHE_MINUTES = 30;

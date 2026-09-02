@@ -1,3 +1,7 @@
+/*
+ * @FilePath: \my-new-app\app\dashboard\page.tsx
+ * @LastEditTime: 2026-09-02 18:49:22
+ */
 // app/dashboard/page.tsx
 import { getDashboardData } from "@/lib/dashboard";
 import { getFullPackageData } from "@/lib/version/get-full-package-data";
@@ -11,9 +15,6 @@ import { auth } from "@/auth";
 import BuildCard from "../components/dashboard/build-card";
 import { db } from "@/lib/db";
 import { LocationSchema, WeatherSchema } from "@/lib/schemas/page-schemas";
-
-//import { GitHubCard } from "./components/GitHubCard";
-//import { WeatherCard } from "./components/WeatherCard";
 import { LogsCard } from "./components/LogsCard";
 
 export const dynamic = "force-dynamic";
