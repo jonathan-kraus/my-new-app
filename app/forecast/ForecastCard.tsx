@@ -84,7 +84,7 @@ export function ForecastCard({
         }))
       : [];
 
-  const onSendEmail = () => {
+  const onSendEmail = async () => {
     const form = new FormData();
     form.set("locationName", location.name);
     form.set("temperature", String(current.temperature));
@@ -101,7 +101,13 @@ export function ForecastCard({
     form.set("moonPhaseName", astronomy.moonPhaseName ?? "");
     form.set("moonPhaseEmoji", astronomy.moonPhaseEmoji ?? "");
 
-    sendForecastEmailAction(form);
+    try {
+      await sendForecastEmailAction(form);
+      // Optional: Show success feedback to user
+    } catch (error) {
+      console.error("Failed to send forecast email:", error);
+      // Optional: Show error feedback to user
+    }
   };
 
   return (
