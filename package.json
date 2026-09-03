@@ -131,7 +131,7 @@
     "zod": "4.5.4"
   },
   "devDependencies": {
-    "@eslint/plugin-kit": "0.7.2",
+    "@eslint/plugin-kit": "0.7.3",
     "@prisma/client": "7.10.0",
     "@tailwindcss/postcss": "4.3.3",
     "@types/jest": "30.0.0",
