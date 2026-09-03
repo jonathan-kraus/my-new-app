@@ -5,7 +5,7 @@ import { NextEventCard } from "@/components/astronomy/NextEventCard";
 import { format, parseISO } from "date-fns";
 import { formatInTimeZone } from "date-fns-tz";
 import { SolarArcBar } from "@/app/components/SolarArcBar";
-import { logj } from "@/lib/log/client";
+import { logj } from "@/lib/log/logj";
 import { auth } from "@/auth";
 import type { NextRequest } from "next/server";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";

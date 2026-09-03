@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\dashboard\page.tsx
- * @LastEditTime: 2026-09-02 18:49:22
+ * @LastEditTime: 2026-09-03 17:59:35
  */
 // app/dashboard/page.tsx
 /*
@@ -13,8 +13,8 @@ import { getFullPackageData } from "@/lib/version/get-full-package-data";
 import { AstronomyCard } from "@/app/astronomy/AstronomyCard";
 import CurrentWeatherCard from "@/app/components/dashboard/current-weather-card";
 import VersionCard from "@/app/components/dashboard/version-card";
-import { logj } from "@/lib/log/client";
-import { staticUniversalContext } from "@/lib/log/buildj";
+import { logj } from "@/lib/log/logj";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import type { Metadata } from "next";
 import { auth } from "@/auth";
 import BuildCard from "../components/dashboard/build-card";
@@ -38,7 +38,7 @@ function hrElapsed(start: number) {
 
 export default async function DashboardPage(req: Request) {
   const pageStart = nowMs();
-  const built = staticUniversalContext("DASHBOARD");
+  const built = buildUniversalContext(req as any, "DASHBOARD");
   const session = await auth();
   const verbose = Math.random() < 0.1; // (sample ~10% of requests)
   await logj({
