@@ -1,9 +1,10 @@
 /*
  * @FilePath: \my-new-app\app\forecast\page.tsx
- * @LastEditTime: 2026-08-13 14:23:19
+ * @LastEditTime: 2026-09-03 13:52:05
  */
 // app/forecast/page.tsx
 import { auth } from "@/auth";
+import { redirect } from "next/navigation";
 import ForecastClient from "./ForecastClient";
 import { buildWeatherEmail } from "./buildWeatherEmail";
 import { sendWeatherEmail } from "./mailersend";
@@ -28,6 +29,7 @@ export async function sendForecastEmailAction(formData: FormData) {
   "use server";
 
   const session = await auth();
+  if (!session) redirect("/signin");
   const to = session?.user?.email;
 
   if (!to) {
