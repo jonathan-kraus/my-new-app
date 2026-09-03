@@ -3,6 +3,11 @@
  * @LastEditTime: 2026-09-02 18:49:22
  */
 // app/dashboard/page.tsx
+/*
+ * @FilePath: \my-new-app\app\dashboard\page.tsx
+ * @LastEditTime: 2026-09-02 18:49:22
+ */
+// app/dashboard/page.tsx
 import { getDashboardData } from "@/lib/dashboard";
 import { getFullPackageData } from "@/lib/version/get-full-package-data";
 import { AstronomyCard } from "@/app/astronomy/AstronomyCard";
@@ -21,7 +26,18 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Dashboard " };
 let jei = 0;
 
+function nowMs() {
+  const [s, ns] = process.hrtime();
+  return s * 1_000 + ns / 1_000_000;
+}
+
+function hrElapsed(start: number) {
+  const elapsed = nowMs() - start;
+  return `${elapsed.toFixed(1)} ms`;
+}
+
 export default async function DashboardPage(req: Request) {
+  const pageStart = nowMs();
   const built = staticUniversalContext("DASHBOARD");
   const session = await auth();
   // run verbose logs only sometimes (sample ~10% of requests)
@@ -36,6 +52,8 @@ export default async function DashboardPage(req: Request) {
     meta: { built: { ...built, eventIndex: ++jei } },
   });
 
+  // Phase 1: Data fetching
+  const dataStart = nowMs();
   const data = await getDashboardData();
   const location = await db.location.findFirst({
     where: { isDefault: true },
@@ -74,23 +92,21 @@ export default async function DashboardPage(req: Request) {
     weather = null;
   }
 
+  const dataElapsed = hrElapsed(dataStart);
   await logj({
     domain: "dashboard",
     level: "info",
     message: "Dashboard page data fetched",
     file: "app/dashboard/page.tsx",
     line: 76,
-    payload: { data: data },
+    payload: { data: data, elapsed: dataElapsed },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
 
-  // 1. Full data that will be given to VercelCard AND the DB loop
-  // ---------------------------------------------------------------
+  // Phase 2: Build tool entries
+  const toolStart = nowMs();
   const fullPackageData = getFullPackageData();
 
-  // ---------------------------------------------------------------
-  // 2. Small curated list (still available for other cards / UI)
-  // ---------------------------------------------------------------
   const importantTools = data.build?.tools ?? {
     node: "unknown",
     pnpm: "unknown",
@@ -101,10 +117,6 @@ export default async function DashboardPage(req: Request) {
     prisma: "unknown",
   };
 
-  // ---------------------------------------------------------------
-  // 3. Build the list that will be written to the database
-  //    (full list + optional filtering)
-  // ---------------------------------------------------------------
   const IGNORE = [
     /^@radix-ui\//,
     /^@types\//,
@@ -125,99 +137,168 @@ export default async function DashboardPage(req: Request) {
       version: String(version),
     }));
 
-  // ---------------------------------------------------------------
-  // 4. Database populater (with base* logic)
-  // ---------------------------------------------------------------
-  for (const { name, version } of toolEntries) {
-    const current = await db.toolVersion.findUnique({ where: { name } });
+  const toolElapsed = hrElapsed(toolStart);
+  if (verbose) {
+    await logj({
+      domain: "dashboard",
+      level: "info",
+      message: `Built ${toolEntries.length} tool entries`,
+      file: "app/dashboard/page.tsx",
+      line: 127,
+      payload: { count: toolEntries.length, elapsed: toolElapsed },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
+  }
 
-    if (!current) {
-      await db.toolVersion.create({
-        data: {
+  // Phase 3: Database operations (batched)
+  const dbStart = nowMs();
+  if (toolEntries.length > 0) {
+    const names = toolEntries.map((t) => t.name);
+    const existing = await db.toolVersion.findMany({
+      where: { name: { in: names } },
+    });
+    const existingMap: Record<string, any> = Object.fromEntries(
+      existing.map((e) => [e.name, e]),
+    );
+
+    const toCreate: any[] = [];
+    const verifyNames: string[] = [];
+    const toChange: { name: string; version: string; current: any }[] = [];
+
+    for (const { name, version } of toolEntries) {
+      const current = existingMap[name];
+      if (!current) {
+        toCreate.push({
           name,
           version,
           added_at: new Date(),
           verified_at: new Date(),
-        },
-      });
-      continue;
-    }
-    if (verbose) {
-      await logj({
-        domain: "dashboard",
-        level: "info",
-        message: `Same Version  --  ${name} ${current.version}`,
-        file: "app/dashboard/page.tsx",
-        line: 145,
-        payload: {
-          name: name,
-          version: current.version,
-          verified: current.verified_at,
-        },
-        meta: { built: { ...built, eventIndex: ++jei } },
-      });
+        });
+      } else if (current.version === version) {
+        verifyNames.push(name);
+      } else {
+        toChange.push({ name, version, current });
+      }
     }
 
-    if (current.version === version) {
-      await db.toolVersion.update({
-        where: { name },
-        data: { verified_at: new Date() },
-      });
-      continue;
-    }
+    await db.$transaction(async (tx) => {
+      // Create new entries
+      if (toCreate.length > 0) {
+        await tx.toolVersion.createMany({
+          data: toCreate,
+          skipDuplicates: true,
+        });
+      }
 
-    // Version changed → keep the old one as base*
-    const baseName = `base${name}`;
+      // Update verified_at for unchanged versions
+      if (verifyNames.length > 0) {
+        await tx.toolVersion.updateMany({
+          where: { name: { in: verifyNames } },
+          data: { verified_at: new Date() },
+        });
 
-    await logj({
-      domain: "dashboard",
-      level: "info",
-      message: `New Version ${name} →→ ${version}`,
-      file: "app/dashboard/page.tsx",
-      line: 171,
-      payload: {
-        name,
-        baseName,
-        oldVersion: current.version,
-        newVersion: version,
-        added: current.added_at,
-      },
-      meta: { built: { ...built, eventIndex: ++jei } },
-    });
-    await db.toolVersion.upsert({
-      where: { name: baseName },
-      create: {
-        name: baseName,
-        version: current.version, // old version
-        added_at: current.added_at,
-        verified_at: new Date(),
-      },
-      update: {
-        version: current.version, // old version
-        verified_at: new Date(),
-      },
-    });
+        if (verbose) {
+          await logj({
+            domain: "dashboard",
+            level: "info",
+            message: `Verified ${verifyNames.length} tool versions`,
+            file: "app/dashboard/page.tsx",
+            line: 160,
+            payload: { count: verifyNames.length },
+            meta: { built: { ...built, eventIndex: ++jei } },
+          });
+        }
+      }
 
-    await db.toolVersion.update({
-      where: { name },
-      data: {
-        version,
-        added_at: new Date(),
-        verified_at: new Date(),
-      },
+      // Handle version changes
+      for (const { name, version, current } of toChange) {
+        const baseName = `base${name}`;
+
+        await logj({
+          domain: "dashboard",
+          level: "info",
+          message: `New Version ${name} →→ ${version}`,
+          file: "app/dashboard/page.tsx",
+          line: 171,
+          payload: {
+            name,
+            baseName,
+            oldVersion: current.version,
+            newVersion: version,
+            added: current.added_at,
+          },
+          meta: { built: { ...built, eventIndex: ++jei } },
+        });
+
+        await tx.toolVersion.upsert({
+          where: { name: baseName },
+          create: {
+            name: baseName,
+            version: current.version, // old version
+            added_at: current.added_at,
+            verified_at: new Date(),
+          },
+          update: {
+            version: current.version, // old version
+            verified_at: new Date(),
+          },
+        });
+
+        await tx.toolVersion.update({
+          where: { name },
+          data: {
+            version,
+            added_at: new Date(),
+            verified_at: new Date(),
+          },
+        });
+      }
     });
   }
 
-  // ---------------------------------------------------------------
-  // 5. Fetch logs
-  // ---------------------------------------------------------------
+  const dbElapsed = hrElapsed(dbStart);
+  await logj({
+    domain: "dashboard",
+    level: "info",
+    message: "Database sync complete",
+    file: "app/dashboard/page.tsx",
+    line: 220,
+    payload: {
+      elapsed: dbElapsed,
+      toCreate: toolEntries.length > 0 ? "batched" : "skipped",
+    },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
+
+  // Phase 4: Fetch logs
+  const logsStart = nowMs();
   const logs = await db.log.findMany({
     orderBy: { created_at: "desc" },
     take: 50,
   });
+  const logsElapsed = hrElapsed(logsStart);
+
+  const totalElapsed = hrElapsed(pageStart);
+  await logj({
+    domain: "dashboard",
+    level: "info",
+    message: "Dashboard page render complete",
+    file: "app/dashboard/page.tsx",
+    line: 250,
+    payload: {
+      total: totalElapsed,
+      phases: {
+        data: dataElapsed,
+        tools: toolElapsed,
+        database: dbElapsed,
+        logs: logsElapsed,
+      },
+    },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
 
   // ---------------------------------------------------------------
-  // 6. Render
+  // Render
   // ---------------------------------------------------------------
 
   return (
