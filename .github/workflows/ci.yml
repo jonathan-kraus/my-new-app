@@ -49,11 +49,11 @@ jobs:
           key: pnpm-store-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
             pnpm-store-${{ runner.os }}-
-      
+
       - name: Install dependencies
         run: |
           pnpm install --frozen-lockfile
-      
+
       - name: Lint code
         run: pnpm exec eslint . || true
 
@@ -81,13 +81,13 @@ jobs:
         run: |
           pnpm run type-check
 
-      - name: Audit
-        env:
-          AXIOM_TOKEN: ${{ secrets.AXIOM_TOKEN }}
-          AXIOM_DATASET: ${{ secrets.AXIOM_DATASET }}
-          AXIOM_ORG_ID: ${{ secrets.AXIOM_ORG_ID }}
-        run: |
-          node .github/scripts/audit.js
+      # - name: Audit
+      #   env:
+      #     AXIOM_TOKEN: ${{ secrets.AXIOM_TOKEN }}
+      #     AXIOM_DATASET: ${{ secrets.AXIOM_DATASET }}
+      #     AXIOM_ORG_ID: ${{ secrets.AXIOM_ORG_ID }}
+      #   run: |
+      #     node .github/scripts/audit.js
 
       - name: Show workspace files for diagnostics
         run: |

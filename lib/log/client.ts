@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\lib\log\client.ts
- * @LastEditTime: 2026-08-23 23:36:28
+ * @LastEditTime: 2026-09-03 18:16:03
  */
 import type { LogjInput } from "@/lib/log/types";
 
@@ -8,8 +8,11 @@ import type { LogjInput } from "@/lib/log/types";
 async function clientLog(input: LogjInput): Promise<void> {
   if (typeof window === "undefined") {
     console.warn("[log/client] skipped: no window (server import?)");
+    console.warn("Imported from:", __filename);
+    console.warn(new Error("Import stack").stack);
     return;
   }
+
   try {
     await fetch("/api/log", {
       method: "POST",
