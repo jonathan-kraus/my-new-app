@@ -21,7 +21,18 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Dashboard " };
 let jei = 0;
 
+function nowMs() {
+  const [s, ns] = process.hrtime();
+  return s * 1_000 + ns / 1_000_000;
+}
+
+function hrElapsed(start: number) {
+  const elapsed = nowMs() - start;
+  return `${elapsed.toFixed(1)} ms`;
+}
+
 export default async function DashboardPage(req: Request) {
+  const pageStart = nowMs();
   const built = staticUniversalContext("DASHBOARD");
   const session = await auth();
   // run verbose logs only sometimes (sample ~10% of requests)
@@ -36,6 +47,8 @@ export default async function DashboardPage(req: Request) {
     meta: { built: { ...built, eventIndex: ++jei } },
   });
 
+  // Phase 1: Data fetching
+  const dataStart = nowMs();
   const data = await getDashboardData();
   const location = await db.location.findFirst({
     where: { isDefault: true },
@@ -74,23 +87,21 @@ export default async function DashboardPage(req: Request) {
     weather = null;
   }
 
+  const dataElapsed = hrElapsed(dataStart);
   await logj({
     domain: "dashboard",
     level: "info",
     message: "Dashboard page data fetched",
     file: "app/dashboard/page.tsx",
     line: 76,
-    payload: { data: data },
+    payload: { data: data, elapsed: dataElapsed },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
 
-  // 1. Full data that will be given to VercelCard AND the DB loop
-  // ---------------------------------------------------------------
+  // Phase 2: Build tool entries
+  const toolStart = nowMs();
   const fullPackageData = getFullPackageData();
 
-  // ---------------------------------------------------------------
-  // 2. Small curated list (still available for other cards / UI)
-  // ---------------------------------------------------------------
   const importantTools = data.build?.tools ?? {
     node: "unknown",
     pnpm: "unknown",
@@ -101,10 +112,6 @@ export default async function DashboardPage(req: Request) {
     prisma: "unknown",
   };
 
-  // ---------------------------------------------------------------
-  // 3. Build the list that will be written to the database
-  //    (full list + optional filtering)
-  // ---------------------------------------------------------------
   const IGNORE = [
     /^@radix-ui\//,
     /^@types\//,
@@ -125,9 +132,21 @@ export default async function DashboardPage(req: Request) {
       version: String(version),
     }));
 
-  // ---------------------------------------------------------------
-  // 4. Database populater (batched with transaction)
-  // ---------------------------------------------------------------
+  const toolElapsed = hrElapsed(toolStart);
+  if (verbose) {
+    await logj({
+      domain: "dashboard",
+      level: "info",
+      message: `Built ${toolEntries.length} tool entries`,
+      file: "app/dashboard/page.tsx",
+      line: 127,
+      payload: { count: toolEntries.length, elapsed: toolElapsed },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
+  }
+
+  // Phase 3: Database operations (batched)
+  const dbStart = nowMs();
   if (toolEntries.length > 0) {
     const names = toolEntries.map((t) => t.name);
     const existing = await db.toolVersion.findMany({
@@ -232,16 +251,49 @@ export default async function DashboardPage(req: Request) {
     });
   }
 
-  // ---------------------------------------------------------------
-  // 5. Fetch logs
-  // ---------------------------------------------------------------
+  const dbElapsed = hrElapsed(dbStart);
+  await logj({
+    domain: "dashboard",
+    level: "info",
+    message: "Database sync complete",
+    file: "app/dashboard/page.tsx",
+    line: 220,
+    payload: {
+      elapsed: dbElapsed,
+      toCreate: toolEntries.length > 0 ? "batched" : "skipped",
+    },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
+
+  // Phase 4: Fetch logs
+  const logsStart = nowMs();
   const logs = await db.log.findMany({
     orderBy: { created_at: "desc" },
     take: 50,
   });
+  const logsElapsed = hrElapsed(logsStart);
+
+  const totalElapsed = hrElapsed(pageStart);
+  await logj({
+    domain: "dashboard",
+    level: "info",
+    message: "Dashboard page render complete",
+    file: "app/dashboard/page.tsx",
+    line: 250,
+    payload: {
+      total: totalElapsed,
+      phases: {
+        data: dataElapsed,
+        tools: toolElapsed,
+        database: dbElapsed,
+        logs: logsElapsed,
+      },
+    },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
 
   // ---------------------------------------------------------------
-  // 6. Render
+  // Render
   // ---------------------------------------------------------------
 
   return (
