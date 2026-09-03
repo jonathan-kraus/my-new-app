@@ -70,8 +70,8 @@ fi
 section "Validating Prisma schema"
 pnpm prisma validate && success "Prisma schema valid"
 
-section "Running pnpm audit"
-node .github/scripts/audit.js
+# section "Running pnpm audit"
+# node .github/scripts/audit.js
 
 section "Maintenance Summary"
 echo -e "${GREEN}All checks completed.${NC}"

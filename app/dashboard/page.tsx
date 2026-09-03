@@ -1,12 +1,8 @@
 /*
  * @FilePath: \my-new-app\app\dashboard\page.tsx
- * @LastEditTime: 2026-09-03 17:59:35
+ * @LastEditTime: 2026-09-03 19:24:12
  */
-// app/dashboard/page.tsx
-/*
- * @FilePath: \my-new-app\app\dashboard\page.tsx
- * @LastEditTime: 2026-09-02 18:49:22
- */
+
 // app/dashboard/page.tsx
 import { getDashboardData } from "@/lib/dashboard";
 import { getFullPackageData } from "@/lib/version/get-full-package-data";
