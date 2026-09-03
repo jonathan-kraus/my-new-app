@@ -102,11 +102,12 @@ export function ForecastCard({
     form.set("moonPhaseEmoji", astronomy.moonPhaseEmoji ?? "");
 
     try {
+      console.log("Sending forecast email with form data:", source);
       await sendForecastEmailAction(form);
-      // Optional: Show success feedback to user
+      console.log("Email sent successfully");
     } catch (error) {
       console.error("Failed to send forecast email:", error);
-      // Optional: Show error feedback to user
+      console.log("Error details:", error);
     }
   };
 
