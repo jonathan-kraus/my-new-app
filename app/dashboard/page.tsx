@@ -126,85 +126,109 @@ export default async function DashboardPage(req: Request) {
     }));
 
   // ---------------------------------------------------------------
-  // 4. Database populater (with base* logic)
+  // 4. Database populater (batched with transaction)
   // ---------------------------------------------------------------
-  for (const { name, version } of toolEntries) {
-    const current = await db.toolVersion.findUnique({ where: { name } });
+  if (toolEntries.length > 0) {
+    const names = toolEntries.map((t) => t.name);
+    const existing = await db.toolVersion.findMany({
+      where: { name: { in: names } },
+    });
+    const existingMap: Record<string, any> = Object.fromEntries(
+      existing.map((e) => [e.name, e]),
+    );
 
-    if (!current) {
-      await db.toolVersion.create({
-        data: {
+    const toCreate: any[] = [];
+    const verifyNames: string[] = [];
+    const toChange: { name: string; version: string; current: any }[] = [];
+
+    for (const { name, version } of toolEntries) {
+      const current = existingMap[name];
+      if (!current) {
+        toCreate.push({
           name,
           version,
           added_at: new Date(),
           verified_at: new Date(),
-        },
-      });
-      continue;
-    }
-    if (verbose) {
-      await logj({
-        domain: "dashboard",
-        level: "info",
-        message: `Same Version  --  ${name} ${current.version}`,
-        file: "app/dashboard/page.tsx",
-        line: 145,
-        payload: {
-          name: name,
-          version: current.version,
-          verified: current.verified_at,
-        },
-        meta: { built: { ...built, eventIndex: ++jei } },
-      });
+        });
+      } else if (current.version === version) {
+        verifyNames.push(name);
+      } else {
+        toChange.push({ name, version, current });
+      }
     }
 
-    if (current.version === version) {
-      await db.toolVersion.update({
-        where: { name },
-        data: { verified_at: new Date() },
-      });
-      continue;
-    }
+    await db.$transaction(async (tx) => {
+      // Create new entries
+      if (toCreate.length > 0) {
+        await tx.toolVersion.createMany({
+          data: toCreate,
+          skipDuplicates: true,
+        });
+      }
 
-    // Version changed → keep the old one as base*
-    const baseName = `base${name}`;
+      // Update verified_at for unchanged versions
+      if (verifyNames.length > 0) {
+        await tx.toolVersion.updateMany({
+          where: { name: { in: verifyNames } },
+          data: { verified_at: new Date() },
+        });
 
-    await logj({
-      domain: "dashboard",
-      level: "info",
-      message: `New Version ${name} →→ ${version}`,
-      file: "app/dashboard/page.tsx",
-      line: 171,
-      payload: {
-        name,
-        baseName,
-        oldVersion: current.version,
-        newVersion: version,
-        added: current.added_at,
-      },
-      meta: { built: { ...built, eventIndex: ++jei } },
-    });
-    await db.toolVersion.upsert({
-      where: { name: baseName },
-      create: {
-        name: baseName,
-        version: current.version, // old version
-        added_at: current.added_at,
-        verified_at: new Date(),
-      },
-      update: {
-        version: current.version, // old version
-        verified_at: new Date(),
-      },
-    });
+        if (verbose) {
+          await logj({
+            domain: "dashboard",
+            level: "info",
+            message: `Verified ${verifyNames.length} tool versions`,
+            file: "app/dashboard/page.tsx",
+            line: 160,
+            payload: { count: verifyNames.length },
+            meta: { built: { ...built, eventIndex: ++jei } },
+          });
+        }
+      }
 
-    await db.toolVersion.update({
-      where: { name },
-      data: {
-        version,
-        added_at: new Date(),
-        verified_at: new Date(),
-      },
+      // Handle version changes
+      for (const { name, version, current } of toChange) {
+        const baseName = `base${name}`;
+
+        await logj({
+          domain: "dashboard",
+          level: "info",
+          message: `New Version ${name} →→ ${version}`,
+          file: "app/dashboard/page.tsx",
+          line: 171,
+          payload: {
+            name,
+            baseName,
+            oldVersion: current.version,
+            newVersion: version,
+            added: current.added_at,
+          },
+          meta: { built: { ...built, eventIndex: ++jei } },
+        });
+
+        await tx.toolVersion.upsert({
+          where: { name: baseName },
+          create: {
+            name: baseName,
+            version: current.version, // old version
+            added_at: current.added_at,
+            verified_at: new Date(),
+          },
+          update: {
+            version: current.version, // old version
+            verified_at: new Date(),
+          },
+        });
+
+        await tx.toolVersion.update({
+          where: { name },
+          data: {
+            version,
+            added_at: new Date(),
+            verified_at: new Date(),
+          },
+        });
+      }
     });
   }
 
