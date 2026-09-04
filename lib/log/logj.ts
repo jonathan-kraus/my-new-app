@@ -3,14 +3,6 @@
  * Decides server vs client at runtime
  */
 
-/*
- * Universal logger entry point
- */
-
-/*
- * Universal logger entry point
- */
-
 import type { LogjInput } from "@/lib/log/types";
 import { clientLog } from "./client";
 
