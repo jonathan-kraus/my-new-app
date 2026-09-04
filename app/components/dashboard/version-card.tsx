@@ -8,7 +8,7 @@ import { getFullPackageData } from "@/lib/version/get-full-package-data";
 
 export default function VersionCard() {
   const data = getFullPackageData();
-
+  console.log("version-carddata", data);
   return (
     <div className="rounded-lg border bg-card p-4 text-sm">
       <div className="font-mono text-xs mb-2">
