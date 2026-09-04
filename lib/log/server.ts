@@ -6,8 +6,6 @@
  * Server-side logger
  * Writes to DB + Axiom
  */
-
-import "server-only";
 import { db } from "@/lib/db";
 import { axiomIngest } from "@/lib/axiom";
 import { z } from "zod";
