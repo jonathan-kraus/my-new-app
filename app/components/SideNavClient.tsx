@@ -66,7 +66,7 @@ export default function SideNavClient({
       prefetch: false,
     },
     { href: "/forecast", label: "Forecast", icon: "🌤️" },
-    { href: "/profile", label: "Profile", icon: "�" },
+    { href: "/profile", label: "Profile", icon: "👤" },
     { href: "/logview", label: "Logview", icon: "📘" },
     { href: "/notes", label: "Notes", icon: "📝" },
     { href: "/github", label: "GitHub", icon: "🐙" },
@@ -97,7 +97,7 @@ export default function SideNavClient({
   useEffect(() => {
     if (!formattedVersion) return;
     const built = staticUniversalContext("side-nav");
-    await logj({
+    logj({
       domain: "SideNavClient",
       level: "info",
       message: `In SideNavClient useEffect, first nav item: ${first.label} (${first.href})`,
