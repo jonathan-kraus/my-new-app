@@ -1,7 +1,7 @@
 "use client";
 /*
  * @FilePath: \my-new-app\app\components\SideNavClient.tsx
- * @LastEditTime: 2026-09-04 02:17:16
+ * @LastEditTime: 2026-09-04 08:49:01
  */
 
 import Link from "next/link";
@@ -92,7 +92,6 @@ export default function SideNavClient({
   ];
 
   let jei = 0;
-  const first = assertNonEmptyArray(navItems, "navItems")[0]!;
 
   useEffect(() => {
     if (!formattedVersion) return;
