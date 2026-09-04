@@ -7,19 +7,22 @@
  * Universal logger entry point
  */
 
+/*
+ * Universal logger entry point
+ */
+
 import type { LogjInput } from "@/lib/log/types";
-import { serverLog, safeForNeon } from "./server";
 import { clientLog } from "./client";
 
 export async function logj(input: LogjInput) {
   if (typeof window === "undefined") {
+    // Lazy import — only on server
+    const { serverLog } = await import("./server");
     return serverLog(input);
   }
+
   return clientLog(input);
 }
-
-// Re-export for tests
-export { safeForNeon };
 
 // Shorthand methods
 logj.info = (input: Omit<LogjInput, "level">) =>

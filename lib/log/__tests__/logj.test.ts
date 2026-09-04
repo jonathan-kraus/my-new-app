@@ -18,7 +18,8 @@ vi.mock("@/lib/axiom", () => ({
 
 import { db } from "@/lib/db";
 import { axiomIngest } from "@/lib/axiom";
-import { logj, safeForNeon } from "@/lib/log/logj";
+import { safeForNeon } from "@/lib/log/server";
+import { logj } from "@/lib/log/logj";
 
 beforeEach(() => {
   vi.clearAllMocks();
