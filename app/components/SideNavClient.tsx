@@ -1,7 +1,7 @@
 "use client";
 /*
  * @FilePath: \my-new-app\app\components\SideNavClient.tsx
- * @LastEditTime: 2026-09-04 02:07:37
+ * @LastEditTime: 2026-09-04 02:17:16
  */
 
 import Link from "next/link";
@@ -100,9 +100,9 @@ export default function SideNavClient({
     logj({
       domain: "SideNavClient",
       level: "info",
-      message: `In SideNavClient useEffect, first nav item: ${first.label} (${first.href})`,
+      message: `🧭 in SideNav ${pathname}`,
       file: "app/components/SideNavClient.tsx",
-      line: 99,
+      line: 100,
       payload: {
         version: formattedVersion,
         activations,
