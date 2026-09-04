@@ -42,7 +42,7 @@ export default async function DashboardPage(req: Request) {
     level: "info",
     message: "Dashboard page loaded",
     file: "app/dashboard/page.tsx",
-    line: 45,
+    line: 40,
     payload: { title: metadata.title, a: "b", user: session?.user },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -76,7 +76,7 @@ export default async function DashboardPage(req: Request) {
       level: "info",
       message: "Dashboard received weather data from API...",
       file: "app/dashboard/page.tsx",
-      line: 79,
+      line: 74,
       payload: { "Raw weather data": raw },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -93,7 +93,7 @@ export default async function DashboardPage(req: Request) {
     level: "info",
     message: "Dashboard page data fetched",
     file: "app/dashboard/page.tsx",
-    line: 96,
+    line: 91,
     payload: { data: data, elapsed: dataElapsed },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -139,7 +139,7 @@ export default async function DashboardPage(req: Request) {
       level: "info",
       message: `Built ${toolEntries.length} tool entries`,
       file: "app/dashboard/page.tsx",
-      line: 142,
+      line: 137,
       payload: { count: toolEntries.length, elapsed: toolElapsed },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -198,7 +198,7 @@ export default async function DashboardPage(req: Request) {
             level: "info",
             message: `Verified ${verifyNames.length} tool versions`,
             file: "app/dashboard/page.tsx",
-            line: 201,
+            line: 196,
             payload: { count: verifyNames.length },
             meta: { built: { ...built, eventIndex: ++jei } },
           });
@@ -214,7 +214,7 @@ export default async function DashboardPage(req: Request) {
           level: "info",
           message: `New Version ${name} →→ ${version}`,
           file: "app/dashboard/page.tsx",
-          line: 217,
+          line: 212,
           payload: {
             name,
             baseName,
@@ -257,7 +257,7 @@ export default async function DashboardPage(req: Request) {
     level: "info",
     message: "Database sync complete",
     file: "app/dashboard/page.tsx",
-    line: 260,
+    line: 255,
     payload: {
       elapsed: dbElapsed,
       toCreate: toolEntries.length > 0 ? "batched" : "skipped",
@@ -279,7 +279,7 @@ export default async function DashboardPage(req: Request) {
     level: "info",
     message: "Dashboard page render complete",
     file: "app/dashboard/page.tsx",
-    line: 282,
+    line: 277,
     payload: {
       total: totalElapsed,
       phases: {

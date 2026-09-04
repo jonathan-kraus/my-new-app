@@ -1,6 +1,6 @@
 "use client";
 import type { Prisma } from "@prisma/client/";
-import React, { useState } from "react";
+import { useState } from "react";
 
 export interface LogEntry {
   id: number;

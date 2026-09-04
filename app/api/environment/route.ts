@@ -174,6 +174,7 @@ export async function GET(nextReq: Request) {
           postgresVersion, // from Prisma
         }
       : { postgresVersion };
+    console.log("env Neon Project Info:", neon);
     await logj({
       domain: "environment",
       level: "info",
