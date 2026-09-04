@@ -1,16 +1,19 @@
 /*
  * @FilePath: \my-new-app\lib\log\client.ts
- * @LastEditTime: 2026-09-04 00:10:38
+ * @LastEditTime: 2026-09-04 01:32:13
  */
 import type { LogjInput } from "@/lib/log/types";
 
-// Prevent SSR from calling /api/log
-async function clientLog(input: LogjInput): Promise<void> {
+/*
+ * Client-side logger
+ * Sends logs to /api/log
+ */
+
+export async function clientLog(input: LogjInput) {
   if (typeof window === "undefined") {
     console.warn("[log/client] skipped: no window (server import?)");
-    console.warn("Imported from:", __filename);
     console.warn("[log/client] attempted message:", input);
-    console.warn("2 [log/client] attempted message:", input.message);
+    console.warn("Imported from:", __filename);
     console.warn(new Error("Import stack").stack);
     return;
   }
@@ -23,24 +26,6 @@ async function clientLog(input: LogjInput): Promise<void> {
       body: JSON.stringify(input),
     });
   } catch (err) {
-    console.error("[log] Failed to send client log:", err);
+    console.error("[log/client] Failed to send client log:", err);
   }
 }
-
-// --- Main exported logger ---
-export async function logj(input: LogjInput): Promise<void> {
-  await clientLog(input);
-}
-
-// --- Convenience helpers ---
-logj.info = (input: Omit<LogjInput, "level">) =>
-  logj({ ...input, level: "info" });
-
-logj.warn = (input: Omit<LogjInput, "level">) =>
-  logj({ ...input, level: "warn" });
-
-logj.error = (input: Omit<LogjInput, "level">) =>
-  logj({ ...input, level: "error" });
-
-logj.debug = (input: Omit<LogjInput, "level">) =>
-  logj({ ...input, level: "debug" });

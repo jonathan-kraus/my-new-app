@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "react-hot-toast";
-import { logj } from "@/lib/log/client";
+import { logj } from "@/lib/log/logj";
 
 export function EmailSideNavLink() {
   async function handleClick() {

@@ -5,7 +5,7 @@
 "use client";
 import { parse, intervalToDuration, formatDuration } from "date-fns";
 import { useState, useEffect } from "react";
-import { logj } from "@/lib/log/client";
+import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
 import type { ParsedTravelSnapshot } from "@/lib/travel/parser/aa";
 const built = await staticUniversalContext("dashboard");

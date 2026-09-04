@@ -1,10 +1,7 @@
 "use client";
 // app/logs/page.tsx
-import { logFromClient } from "@/app/actions/log";
-import { logj } from "@/lib/log/client";
 import { staticUniversalContext } from "@/lib/log/buildj";
 import { useEffect, useMemo, useState } from "react";
-import { isSchedulerRunning } from "@/lib/log/scheduler";
 
 type LogRecord = {
   id: string;

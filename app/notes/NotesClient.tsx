@@ -7,7 +7,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
-import { logj } from "@/lib/log/client";
+import { logj } from "@/lib/log/logj";
 
 type Note = {
   id: string;
