@@ -1,15 +1,18 @@
 /*
  * @FilePath: \my-new-app\app\forecast\page.tsx
- * @LastEditTime: 2026-09-03 13:52:05
+ * @LastEditTime: 2026-09-04 00:27:19
  */
 // app/forecast/page.tsx
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import ForecastClient from "./ForecastClient";
+import dynamic from "next/dynamic";
 import { buildWeatherEmail } from "./buildWeatherEmail";
 import { sendWeatherEmail } from "./mailersend";
 import { db } from "@/lib/db";
 
+const ForecastClient = dynamic(() => import("./ForecastClient"), {
+  ssr: false,
+});
 //
 // ⭐ SERVER ACTION — must stay in a server component
 //
