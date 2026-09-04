@@ -1,25 +1,10 @@
 /*
  * @FilePath: \my-new-app\app\components\dashboard\version-card.tsx
- * @LastEditTime: 2026-09-04 00:46:06
+ * @LastEditTime: 2026-09-04 01:13:30
  */
 "use client";
 // app\components\dashboard\version-card.tsx
 import { getFullPackageData } from "@/lib/version/get-full-package-data";
-import { logj } from "@/lib/log/client";
-import { staticUniversalContext } from "@/lib/log/buildj";
-
-const built = staticUniversalContext("dashboard");
-let jei = 0;
-
-logj({
-  domain: "dashboard",
-  level: "info",
-  message: "VersionCard loaded",
-  file: "app/components/dashboard/version-card.tsx",
-  line: 14,
-  payload: { some: "Version Card loaded" },
-  meta: { built: { ...built, eventIndex: ++jei } },
-});
 
 export default function VersionCard() {
   const data = getFullPackageData();

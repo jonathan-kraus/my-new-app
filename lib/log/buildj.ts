@@ -1,9 +1,8 @@
-"use client";
 import { formatEastern } from "@/lib/utils/global";
 
 /*
  * @FilePath: \my-new-app\lib\log\buildj.ts
- * @LastEditTime: 2026-04-22 16:42:10
+ * @LastEditTime: 2026-09-04 01:14:26
  */
 export function staticUniversalContext(route: string) {
   const now = new Date();
