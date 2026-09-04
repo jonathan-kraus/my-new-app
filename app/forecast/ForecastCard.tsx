@@ -1,4 +1,7 @@
 import type { Location } from "@/lib/types";
+import { sendTestEmail } from "@/lib/server/email/sendTestEmail";
+import { logj } from "@/lib/log/logj";
+import { staticUniversalContext } from "@/lib/log/buildj";
 
 type ForecastRow = {
   date: Date;
@@ -100,6 +103,26 @@ export function ForecastCard({
     form.set("moonset", astronomy.moonset ?? "");
     form.set("moonPhaseName", astronomy.moonPhaseName ?? "");
     form.set("moonPhaseEmoji", astronomy.moonPhaseEmoji ?? "");
+
+    const test_msg1 = "This is a test email FORECASTCARD";
+    const test_subject = "Test Email Subject FORECASTCARD";
+    let jei = 0;
+    const result = await sendTestEmail(test_msg1, test_subject);
+
+    // FIXED: buildUniversalContext now requires (req, routeName)
+    const built = staticUniversalContext("FORECASTCARD");
+
+    await logj({
+      domain: "jonathan",
+      level: "info",
+      message: `Sent test email with message "${test_msg1}". Result: ${JSON.stringify(result)}`,
+      file: "app/api/email/test/route.ts",
+      line: 17,
+      payload: {
+        result: result,
+      },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
 
     try {
       console.log("Sending forecast email with form data:", source);
