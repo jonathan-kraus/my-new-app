@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\components\dashboard\version-card.tsx
- * @LastEditTime: 2026-08-03 20:07:50
+ * @LastEditTime: 2026-09-04 00:46:06
  */
 "use client";
 // app\components\dashboard\version-card.tsx
@@ -8,7 +8,7 @@ import { getFullPackageData } from "@/lib/version/get-full-package-data";
 import { logj } from "@/lib/log/client";
 import { staticUniversalContext } from "@/lib/log/buildj";
 
-const built = await staticUniversalContext("dashboard");
+const built = staticUniversalContext("dashboard");
 let jei = 0;
 
 logj({

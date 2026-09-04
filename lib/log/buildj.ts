@@ -1,3 +1,4 @@
+"use client";
 import { formatEastern } from "@/lib/utils/global";
 
 /*
