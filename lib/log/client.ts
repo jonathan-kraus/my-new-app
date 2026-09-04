@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\lib\log\client.ts
- * @LastEditTime: 2026-09-03 18:16:03
+ * @LastEditTime: 2026-09-04 00:10:38
  */
 import type { LogjInput } from "@/lib/log/types";
 
@@ -9,6 +9,8 @@ async function clientLog(input: LogjInput): Promise<void> {
   if (typeof window === "undefined") {
     console.warn("[log/client] skipped: no window (server import?)");
     console.warn("Imported from:", __filename);
+    console.warn("[log/client] attempted message:", input);
+    console.warn("2 [log/client] attempted message:", input.message);
     console.warn(new Error("Import stack").stack);
     return;
   }
