@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\dashboard\page.tsx
- * @LastEditTime: 2026-09-03 19:24:12
+ * @LastEditTime: 2026-09-03 23:28:42
  */
 
 // app/dashboard/page.tsx
@@ -36,7 +36,7 @@ export default async function DashboardPage(req: Request) {
   const pageStart = nowMs();
   const built = buildUniversalContext(req as any, "DASHBOARD");
   const session = await auth();
-  const verbose = Math.random() < 0.1; // (sample ~10% of requests)
+  const verbose = Math.random() < 0.1; // ( sample ~10% of requests)
   await logj({
     domain: "dashboard",
     level: "info",
