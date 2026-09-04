@@ -1,7 +1,7 @@
 "use client";
 /*
  * @FilePath: \my-new-app\app\components\SideNavClient.tsx
- * @LastEditTime: 2026-08-23 15:23:11
+ * @LastEditTime: 2026-09-04 02:07:37
  */
 
 import Link from "next/link";
@@ -12,6 +12,7 @@ import { EmailSideNavLink } from "@/app/components/sidenav/EmailLink";
 import { staticUniversalContext } from "@/lib/log/buildj";
 import { usePathname } from "next/navigation";
 import { assertNonEmptyArray } from "@/lib/db/safe";
+import { logj } from "@/lib/log/logj";
 type SideNavClientProps = {
   nextEventLabel: string;
   nextEventTime: Date | null;
@@ -96,19 +97,17 @@ export default function SideNavClient({
   useEffect(() => {
     if (!formattedVersion) return;
     const built = staticUniversalContext("side-nav");
-    fetch("/api/log", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      keepalive: true,
-      body: JSON.stringify({
-        domain: "jonathan",
-        message: `🧭 in SideNav ${pathname}`,
-        file: "app/components/SideNavClient.tsx",
-        line: 106,
-        level: "info",
-        payload: { label: first.label, Version: formattedVersion },
-        meta: { built: { ...built, eventIndex: ++jei } },
-      }),
+    await logj({
+      domain: "SideNavClient",
+      level: "info",
+      message: `In SideNavClient useEffect, first nav item: ${first.label} (${first.href})`,
+      file: "app/components/SideNavClient.tsx",
+      line: 99,
+      payload: {
+        version: formattedVersion,
+        activations,
+      },
+      meta: { built: { ...built, eventIndex: ++jei } },
     });
     console.log("SideNavClient loaded with version:", formattedVersion);
   }, [formattedVersion, activations, navItems]);
