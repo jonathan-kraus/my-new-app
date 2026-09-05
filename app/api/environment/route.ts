@@ -4,6 +4,7 @@ import { db } from "@/lib/db"; // your Prisma client
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { getPostgresVersion } from "@/app/db/PgVersion";
+import { getFullPackageData } from "@/lib/version/get-full-package-data";
 
 export async function GET(nextReq: Request) {
   const built = await buildUniversalContext(nextReq as any, "environment");
@@ -185,6 +186,52 @@ export async function GET(nextReq: Request) {
       meta: { built: { ...built, eventIndex: ++jei } },
     });
     //
+    // 5. Filter dependencies (Radix, TS, ESLint, etc.)
+    //
+    const IGNORE_PREFIXES = [
+      "@radix-ui/",
+      "@types/",
+      "@typescript-eslint/",
+      "eslint",
+      "typescript",
+      "ts-node",
+      "vite",
+      "vitest",
+      "tailwindcss",
+      "postcss",
+      "autoprefixer",
+    ];
+
+    const IGNORE_ROOT_FIELDS = [
+      "name",
+      "version",
+      "private",
+      "packageManager",
+      "type",
+      "vercel-build-id",
+      "overrides",
+    ];
+
+    const fullPackageData = await getFullPackageData();
+
+    const cleanRoot = Object.fromEntries(
+      Object.entries(fullPackageData).filter(
+        ([key]) => !IGNORE_ROOT_FIELDS.includes(key),
+      ),
+    );
+
+    const fullDeps = {
+      ...(fullPackageData.dependencies ?? {}),
+      ...(fullPackageData.devDependencies ?? {}),
+    };
+
+    const filteredDeps = Object.fromEntries(
+      Object.entries(fullDeps).filter(
+        ([name]) => !IGNORE_PREFIXES.some((prefix) => name.startsWith(prefix)),
+      ),
+    );
+
+    //
     // Final response
     //
     const payload = {
@@ -214,6 +261,8 @@ export async function GET(nextReq: Request) {
         platform: process.platform,
         arch: process.arch,
       },
+      dependencies: filteredDeps, // ← ADD THIS
+      meta: cleanRoot, // ← ADD THIS
       app: {
         env: process.env.NODE_ENV,
         host: process.env.VERCEL_URL ?? "localhost",
