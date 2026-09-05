@@ -3,6 +3,10 @@
 import { useState } from "react";
 import useSWR from "swr";
 import { stopsByLine, lineNames, type MBTALineId } from "@/lib/mbta/stops";
+import { logj } from "@/lib/log/logj";
+import { staticUniversalContext } from "@/lib/log/buildj";
+const built = staticUniversalContext("LineArrivals");
+let jei = 0;
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -87,6 +91,15 @@ export function LineArrivals({
   defaultStopId?: string;
 }) {
   const stops = stopsByLine[lineId];
+  logj({
+    domain: "LineArrivals",
+    level: "info",
+    message: "LineArrivals loaded",
+    file: "app/components/LineArrivals.tsx",
+    line: 95,
+    payload: { lineId: lineId, defaultStopId: defaultStopId, stops: stops },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
   const [stopId, setStopId] = useState<string>(
     defaultStopId ?? stops[0]?.id ?? "",
   );
