@@ -6,18 +6,17 @@
 
 import { getFullPackageData } from "@/lib/version/get-full-package-data";
 import { logj } from "@/lib/log/logj";
-import { buildUniversalContext } from "@/lib/log/build-universal-context";
-
+import { staticUniversalContext } from "@/lib/log/buildj";
 export default function VersionCard() {
   const data = getFullPackageData();
-  const built = buildUniversalContext({} as any, "VERSION_CARD");
+  const built = staticUniversalContext("VERSION_CARD");
   let jei = 0;
   logj({
     domain: "VERSION_CARD",
     level: "info",
     message: "Version card loaded",
     file: "app/components/dashboard/version-card.tsx",
-    line: 17,
+    line: 14,
     payload: { data: data },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
