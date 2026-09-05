@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\dashboard\page.tsx
- * @LastEditTime: 2026-09-05 13:46:02
+ * @LastEditTime: 2026-09-05 14:34:27
  */
 
 import { getDashboardData } from "@/lib/dashboard";
@@ -149,6 +149,13 @@ export default async function DashboardPage(req: Request) {
     name,
     version: String(version),
   }));
+  // Inject pnpm from build metadata so DB tracks the real version
+  if (data.build?.tools?.pnpm) {
+    toolEntries.push({
+      name: "pnpm",
+      version: data.build.tools.pnpm,
+    });
+  }
 
   const envPayload = {
     buildTime: new Date().toISOString(),
