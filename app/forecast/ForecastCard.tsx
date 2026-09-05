@@ -1,5 +1,5 @@
+"use client";
 import type { Location } from "@/lib/types";
-import { sendTestEmail } from "@/lib/server/email/sendTestEmail";
 
 type ForecastRow = {
   date: Date;
@@ -107,8 +107,8 @@ export function ForecastCard({
     const test_msg1 = "This is a test email FORECASTCARD";
     const test_subject = "Test Email Subject FORECASTCARD";
     let jei = 0;
-    const result = await sendTestEmail(test_msg1, test_subject);
-    console.log("sendTestEmail result FORECASTCARD:", result);
+
+    // console.log("sendTestEmail result FORECASTCARD:", result);
   };
   return (
     <div
