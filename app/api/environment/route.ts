@@ -12,7 +12,7 @@ export async function GET(nextReq: Request) {
   await logj({
     domain: "environment",
     level: "info",
-    message: "** Starting Environment Status Check **",
+    message: "** Environment -- Starting Status Check **",
     file: "app/api/environment/route.ts",
     line: 12,
     payload: { some: "data" },
@@ -28,7 +28,7 @@ export async function GET(nextReq: Request) {
     await logj({
       domain: "environment",
       level: "info",
-      message: "Retrieved Postgres Version",
+      message: "Environment -- Retrieved Postgres Version",
       file: "app/api/environment/route.ts",
       line: 28,
       payload: {
@@ -61,7 +61,7 @@ export async function GET(nextReq: Request) {
     await logj({
       domain: "environment",
       level: "info",
-      message: "Retrieved Vercel Info",
+      message: "Environment -- Retrieved Vercel Info",
       file: "app/api/environment/route.ts",
       line: 61,
       payload: { vercelDeployment },
@@ -107,7 +107,7 @@ export async function GET(nextReq: Request) {
     await logj({
       domain: "environment",
       level: "info",
-      message: "Retrieved GithubInfo",
+      message: "Environment -- Retrieved GithubInfo",
       file: "app/api/environment/route.ts",
       line: 107,
       payload: { github },
@@ -178,9 +178,9 @@ export async function GET(nextReq: Request) {
     await logj({
       domain: "environment",
       level: "info",
-      message: "Retrieved Neon Info",
+      message: "Environment -- Retrieved Neon Info",
       file: "app/api/environment/route.ts",
-      line: 177,
+      line: 178,
       payload: { neon },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -223,7 +223,9 @@ export async function GET(nextReq: Request) {
     await logj({
       domain: "environment",
       level: "info",
-      message: "Expanded environment payload",
+      message: "Environment -- Expanded environment payload",
+      file: "app/api/environment/route.ts",
+      line: 223,
       payload,
       meta: { built: { ...built, eventIndex: ++jei } },
     });
