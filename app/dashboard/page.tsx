@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\dashboard\page.tsx
- * @LastEditTime: 2026-09-03 23:28:42
+ * @LastEditTime: 2026-09-05 13:17:51
  */
 
 // app/dashboard/page.tsx
@@ -112,12 +112,9 @@ export default async function DashboardPage(req: Request) {
     prisma: "unknown",
   };
 
-  const IGNORE = [
-    /^@radix-ui\//,
-    /^@types\//,
-    /^@typescript-eslint\//,
-    // add more patterns you don't want to track
-  ];
+  const IGNORE_PREFIXES = ["@radix-ui/", "@types/", "@typescript-eslint/"];
+
+  const IGNORE = IGNORE_PREFIXES.map((prefix) => new RegExp(`^${prefix}`));
 
   const fullTools: Record<string, string> = {
     ...fullPackageData.dependencies,
