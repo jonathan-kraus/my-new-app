@@ -1,9 +1,8 @@
 /*
  * @FilePath: \my-new-app\app\dashboard\page.tsx
- * @LastEditTime: 2026-09-05 13:21:47
+ * @LastEditTime: 2026-09-05 13:46:02
  */
 
-// app/dashboard/page.tsx
 import { getDashboardData } from "@/lib/dashboard";
 import { getFullPackageData } from "@/lib/version/get-full-package-data";
 import { AstronomyCard } from "@/app/astronomy/AstronomyCard";
@@ -36,7 +35,8 @@ export default async function DashboardPage(req: Request) {
   const pageStart = nowMs();
   const built = buildUniversalContext(req as any, "DASHBOARD");
   const session = await auth();
-  const verbose = Math.random() < 0.1; // ( sample ~10% of requests)
+  const verbose = Math.random() < 0.1; // sample ~10% of requests
+
   await logj({
     domain: "dashboard",
     level: "info",
@@ -57,6 +57,7 @@ export default async function DashboardPage(req: Request) {
   if (!location) {
     return <div>No default location configured.</div>;
   }
+
   let weather: any = null;
 
   try {
@@ -98,48 +99,63 @@ export default async function DashboardPage(req: Request) {
     meta: { built: { ...built, eventIndex: ++jei } },
   });
 
-  // Phase 2: Build tool entries
+  // Phase 2: Build tool entries from package.json
   const toolStart = nowMs();
-  const fullPackageData = getFullPackageData();
 
-  const importantTools = data.build?.tools ?? {
-    node: "unknown",
-    pnpm: "unknown",
-    next: "unknown",
-    typescript: "unknown",
-    eslint: "unknown",
-    openmeteo: "unknown",
-    prisma: "unknown",
+  const IGNORE_PREFIXES = [
+    "@radix-ui/",
+    "@types/",
+    "@typescript-eslint/",
+    "eslint",
+    "typescript",
+    "ts-node",
+    "vite",
+    "vitest",
+    "tailwindcss",
+    "postcss",
+    "autoprefixer",
+  ];
+
+  const IGNORE_ROOT_FIELDS = [
+    "name",
+    "version",
+    "private",
+    "packageManager",
+    "type",
+    "vercel-build-id",
+    "overrides",
+  ];
+
+  const fullPackageData = await getFullPackageData();
+
+  const cleanRoot = Object.fromEntries(
+    Object.entries(fullPackageData).filter(
+      ([key]) => !IGNORE_ROOT_FIELDS.includes(key),
+    ),
+  );
+
+  const fullDeps = {
+    ...(fullPackageData.dependencies ?? {}),
+    ...(fullPackageData.devDependencies ?? {}),
   };
 
-  const IGNORE_PREFIXES = ["@radix-ui/", "@types/", "@typescript-eslint/"];
-
-  const fullTools: Record<string, string> = {
-    ...fullPackageData.dependencies,
-    ...fullPackageData.devDependencies,
-    ...(fullPackageData.overrides ?? {}),
-  };
-
-  const toolEntries = Object.entries(fullTools)
-    .filter(
+  const filteredDeps = Object.fromEntries(
+    Object.entries(fullDeps).filter(
       ([name]) => !IGNORE_PREFIXES.some((prefix) => name.startsWith(prefix)),
-    )
-    .map(([name, version]) => ({
-      name,
-      version: String(version),
-    }));
+    ),
+  );
 
-  if (verbose) {
-    await logj({
-      domain: "dashboard",
-      level: "info",
-      message: `Found ${Object.keys(fullTools).length} tools`,
-      file: "app/dashboard/page.tsx",
-      line: 131,
-      payload: { count: Object.keys(fullTools).length },
-      meta: { built: { ...built, eventIndex: ++jei } },
-    });
-  }
+  const toolEntries = Object.entries(filteredDeps).map(([name, version]) => ({
+    name,
+    version: String(version),
+  }));
+
+  const envPayload = {
+    buildTime: new Date().toISOString(),
+    commit: process.env.VERCEL_GIT_COMMIT_SHA ?? null,
+    dependencies: filteredDeps,
+    meta: cleanRoot,
+  };
 
   const toolElapsed = hrElapsed(toolStart);
   if (verbose) {
@@ -149,13 +165,18 @@ export default async function DashboardPage(req: Request) {
       message: `Built ${toolEntries.length} tool entries`,
       file: "app/dashboard/page.tsx",
       line: 144,
-      payload: { count: toolEntries.length, elapsed: toolElapsed },
+      payload: {
+        count: toolEntries.length,
+        elapsed: toolElapsed,
+        envPayload,
+      },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
   }
 
   // Phase 3: Database operations (batched)
   const dbStart = nowMs();
+
   if (toolEntries.length > 0) {
     const names = toolEntries.map((t) => t.name);
     const existing = await db.toolVersion.findMany({
@@ -186,7 +207,6 @@ export default async function DashboardPage(req: Request) {
     }
 
     await db.$transaction(async (tx) => {
-      // Create new entries
       if (toCreate.length > 0) {
         await tx.toolVersion.createMany({
           data: toCreate,
@@ -194,7 +214,6 @@ export default async function DashboardPage(req: Request) {
         });
       }
 
-      // Update verified_at for unchanged versions
       if (verifyNames.length > 0) {
         await tx.toolVersion.updateMany({
           where: { name: { in: verifyNames } },
@@ -214,7 +233,6 @@ export default async function DashboardPage(req: Request) {
         }
       }
 
-      // Handle version changes
       for (const { name, version, current } of toChange) {
         const baseName = `base${name}`;
 
@@ -238,12 +256,12 @@ export default async function DashboardPage(req: Request) {
           where: { name: baseName },
           create: {
             name: baseName,
-            version: current.version, // old version
+            version: current.version,
             added_at: current.added_at,
             verified_at: new Date(),
           },
           update: {
-            version: current.version, // old version
+            version: current.version,
             verified_at: new Date(),
           },
         });
@@ -297,18 +315,25 @@ export default async function DashboardPage(req: Request) {
         database: dbElapsed,
         logs: logsElapsed,
       },
+      envPayload,
     },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
 
-  // ---------------------------------------------------------------
-  // Render
-  // ---------------------------------------------------------------
+  // Curated tools for BuildCard (you can refine this selection)
+  const importantTools = data.build?.tools ?? {
+    node: filteredDeps.node ?? "unknown",
+    pnpm: filteredDeps.pnpm ?? "unknown",
+    next: filteredDeps.next ?? "unknown",
+    typescript: filteredDeps.typescript ?? "unknown",
+    eslint: filteredDeps.eslint ?? "unknown",
+    openmeteo: filteredDeps.openmeteo ?? "unknown",
+    prisma: filteredDeps["@prisma/adapter-pg"] ?? "unknown",
+  };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 p-6">
       <AstronomyCard data={data.astronomy} />
-      {/* Small curated tools still available if you want them */}
       <BuildCard build={{ ...data.build, tools: importantTools }} />
       <CurrentWeatherCard location={location} />
       <VersionCard />
