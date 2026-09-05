@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\dashboard\page.tsx
- * @LastEditTime: 2026-09-05 13:17:51
+ * @LastEditTime: 2026-09-05 13:21:47
  */
 
 // app/dashboard/page.tsx
@@ -114,8 +114,6 @@ export default async function DashboardPage(req: Request) {
 
   const IGNORE_PREFIXES = ["@radix-ui/", "@types/", "@typescript-eslint/"];
 
-  const IGNORE = IGNORE_PREFIXES.map((prefix) => new RegExp(`^${prefix}`));
-
   const fullTools: Record<string, string> = {
     ...fullPackageData.dependencies,
     ...fullPackageData.devDependencies,
@@ -123,11 +121,25 @@ export default async function DashboardPage(req: Request) {
   };
 
   const toolEntries = Object.entries(fullTools)
-    .filter(([name]) => !IGNORE.some((re) => re.test(name)))
+    .filter(
+      ([name]) => !IGNORE_PREFIXES.some((prefix) => name.startsWith(prefix)),
+    )
     .map(([name, version]) => ({
       name,
       version: String(version),
     }));
+
+  if (verbose) {
+    await logj({
+      domain: "dashboard",
+      level: "info",
+      message: `Found ${Object.keys(fullTools).length} tools`,
+      file: "app/dashboard/page.tsx",
+      line: 131,
+      payload: { count: Object.keys(fullTools).length },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
+  }
 
   const toolElapsed = hrElapsed(toolStart);
   if (verbose) {
@@ -136,7 +148,7 @@ export default async function DashboardPage(req: Request) {
       level: "info",
       message: `Built ${toolEntries.length} tool entries`,
       file: "app/dashboard/page.tsx",
-      line: 137,
+      line: 144,
       payload: { count: toolEntries.length, elapsed: toolElapsed },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -195,7 +207,7 @@ export default async function DashboardPage(req: Request) {
             level: "info",
             message: `Verified ${verifyNames.length} tool versions`,
             file: "app/dashboard/page.tsx",
-            line: 196,
+            line: 203,
             payload: { count: verifyNames.length },
             meta: { built: { ...built, eventIndex: ++jei } },
           });
@@ -211,7 +223,7 @@ export default async function DashboardPage(req: Request) {
           level: "info",
           message: `New Version ${name} →→ ${version}`,
           file: "app/dashboard/page.tsx",
-          line: 212,
+          line: 219,
           payload: {
             name,
             baseName,
@@ -254,7 +266,7 @@ export default async function DashboardPage(req: Request) {
     level: "info",
     message: "Database sync complete",
     file: "app/dashboard/page.tsx",
-    line: 255,
+    line: 262,
     payload: {
       elapsed: dbElapsed,
       toCreate: toolEntries.length > 0 ? "batched" : "skipped",
@@ -276,7 +288,7 @@ export default async function DashboardPage(req: Request) {
     level: "info",
     message: "Dashboard page render complete",
     file: "app/dashboard/page.tsx",
-    line: 277,
+    line: 284,
     payload: {
       total: totalElapsed,
       phases: {
