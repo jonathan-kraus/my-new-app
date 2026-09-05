@@ -1,7 +1,11 @@
 "use client";
 // app/logs/page.tsx
 import { staticUniversalContext } from "@/lib/log/buildj";
+import { logj } from "@/lib/log/logj";
 import { useEffect, useMemo, useState } from "react";
+
+const built = await staticUniversalContext("jonathan");
+let jei = 0;
 
 type LogRecord = {
   id: string;
@@ -96,22 +100,18 @@ export default function LogsPage() {
         const json = await res.json();
         try {
           // new log below
-          const result = await fetch("/api/log", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            keepalive: true,
-            body: JSON.stringify({
-              domain: "jonathan",
-              message: "🌟 in log page",
-              file: "app/logs/page.tsx",
-              line: 94,
-              level: "info",
-              payload: { params: params },
-              meta: { built: { ...built, eventIndex: ++jei } },
-            }),
+          await logj({
+            domain: "jonathan",
+            level: "info",
+            message: "🌟 in log page",
+            file: "app/logs/page.tsx",
+            line: 103,
+            payload: { params: params },
+            meta: { built: { ...built, eventIndex: ++jei } },
           });
+
           // new log above
-          console.log("logFromClient result:", result);
+          console.log("logFromClient result:", json);
         } catch (err) {
           console.error("logFromClient failed:", err);
         }
