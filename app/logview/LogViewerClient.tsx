@@ -1,6 +1,10 @@
 "use client";
+import { staticUniversalContext } from "@/lib/log/buildj";
+import { logj } from "@/lib/log/logj";
 // app\logview\LogViewerClient.tsx
 import { useEffect, useState, useCallback, useRef } from "react";
+const built = await staticUniversalContext("jonathan");
+let jei = 0;
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -121,7 +125,18 @@ function KV({
   );
 }
 
-export default function LogViewerClient() {
+export default async function LogViewerClient() {
+  await logj({
+    domain: "jonathan",
+    level: "info",
+    message: `** In Logviewer **`,
+    file: "app/logview/LogViewerClient.tsx",
+    line: 129,
+    payload: {
+      lastsent: "a",
+    },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
   const [logs, setLogs] = useState<Log[]>([]);
   const [total, setTotal] = useState(0);
   const [domains, setDomains] = useState<{ domain: string; count: number }[]>(
