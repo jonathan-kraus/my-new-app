@@ -63,7 +63,9 @@ export type ForecastCardProps = {
   };
   sendForecastEmailAction: (formData: FormData) => void | Promise<void>;
 };
-
+async function inSendEmail() {
+  console.log("inSendEmail key:", "key");
+}
 export function ForecastCard({
   location,
   current,
@@ -117,7 +119,7 @@ export function ForecastCard({
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold">{location.name}</h2>
         <button
-          onClick={onSendEmail}
+          onClick={inSendEmail}
           className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm font-medium transition"
         >
           Email Forecast
