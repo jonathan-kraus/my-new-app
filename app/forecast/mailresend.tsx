@@ -22,7 +22,6 @@ export async function sendWeatherEmail({
   const fromName = "Weather Bot";
   const toEmail = "jonathankraus2026@outlook.com";
   const resend = new Resend(apiKey);
-  // app\forecast\mailersend.tsx
 
   const { data, error } = await resend.emails.send({
     from: `${fromName} <${fromEmail}>`,

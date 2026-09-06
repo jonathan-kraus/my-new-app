@@ -7,7 +7,7 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import ForecastWrapper from "./ForecastWrapper";
 import { buildWeatherEmail } from "./buildWeatherEmail";
-import { sendWeatherEmail } from "./mailersend";
+import { sendWeatherEmail } from "./mailresend";
 import { db } from "@/lib/db";
 
 //

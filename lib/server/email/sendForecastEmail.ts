@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\lib\server\email\sendForecastEmail.ts
- * @LastEditTime: 2026-09-06 00:27:57
+ * @LastEditTime: 2026-09-06 18:11:43
  */
 // lib/server/email/sendForecastEmail.ts
 "use server";
@@ -370,31 +370,12 @@ export async function sendForecastEmail(form: FormData) {
         ? error.message
         : typeof error === "string"
           ? error
-          : "MailerSend request failed with a non-Error response.";
-
-    const mailerSendResponse =
-      errorRecord?.response && typeof errorRecord.response === "object"
-        ? (errorRecord.response as Record<string, unknown>)
-        : null;
-
-    const mailerSendBody =
-      errorRecord?.body ??
-      errorRecord?.data ??
-      mailerSendResponse?.body ??
-      mailerSendResponse?.data ??
-      null;
-
-    const status =
-      errorRecord?.status ??
-      errorRecord?.statusCode ??
-      mailerSendResponse?.status ??
-      mailerSendResponse?.statusCode ??
-      null;
+          : "Resend request failed with a non-Error response.";
 
     await logj({
       domain: "weather",
       level: "error",
-      message: MESSAGE_PREFIX + "MailerSend error",
+      message: MESSAGE_PREFIX + "Resend error",
       file: "lib/server/email/sendForecastEmail.ts",
       line: 307,
       payload: {
@@ -409,7 +390,6 @@ export async function sendForecastEmail(form: FormData) {
               : typeof error,
         errorName: error instanceof Error ? error.name : null,
         errorKeys: errorRecord ? Object.keys(errorRecord) : [],
-        mailerSendBody,
       },
       meta: {
         built: {
@@ -424,8 +404,8 @@ export async function sendForecastEmail(form: FormData) {
       reason: "error" as const,
       detail:
         typeof status === "number"
-          ? `MailerSend request failed (${status}).`
-          : "MailerSend could not send the email.",
+          ? `Send request failed (${status}).`
+          : "Send could not send the email.",
     };
   }
 }

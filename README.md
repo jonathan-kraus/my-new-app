@@ -137,7 +137,7 @@ Validates with Zod
 Logs changes
 
 /api/admin/test-email
-Sends MailerSend test email
+Sends resend test email
 
 Respects runtime toggle
 
