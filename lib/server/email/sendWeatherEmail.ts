@@ -1,5 +1,5 @@
 "use server";
-
+// lib\server\email\sendWeatherEmail.ts
 import { getConfig, setConfig } from "@/lib/runtime/config";
 import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
 import { buildSendWeatherEmail } from "@/lib/buildSendWeatherEmail";

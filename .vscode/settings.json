@@ -3,16 +3,11 @@
   "workbench.editor.empty.hint": "hidden",
   "terminal.integrated.initialHint": false,
   "terminal.integrated.shellIntegration.enabled": false,
-
   "fileheader.customMade": {
     "FilePath": "",
     "LastEditTime": ""
   },
-
-  "WillLuke.nextjs.addTypesOnSave": true,
-  "WillLuke.nextjs.hasPrompted": true,
   "js/ts.tsdk.path": "node_modules\\typescript\\lib",
-
   "editor.defaultFormatter": "vscode.typescript-language-features",
   "editor.formatOnSave": true
 }
