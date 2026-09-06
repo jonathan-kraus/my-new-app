@@ -1,4 +1,9 @@
-import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
+import { Resend } from "resend";
+import { z } from "zod";
+import { getConfig, setConfig } from "@/lib/runtime/config";
+
+import { logj } from "@/lib/log/logj";
+import { staticUniversalContext } from "@/lib/log/buildj";
 
 import type { buildWeatherEmail } from "./buildWeatherEmail";
 export async function sendWeatherEmail({
@@ -8,19 +13,30 @@ export async function sendWeatherEmail({
   to: string;
   weatherEmail: ReturnType<typeof buildWeatherEmail>;
 }) {
-  const mailerSend = new MailerSend({
-    apiKey: process.env.MAILERSEND_API_KEY!,
-  });
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+
+  if (!apiKey) {
+    throw new Error("RESEND_API_KEY is not configured.");
+  }
+  const fromEmail = "weather@www.kraus.my.id";
+  const fromName = "Weather Bot";
+  const toEmail = "jonathankraus2026@outlook.com";
+  const resend = new Resend(apiKey);
   // app\forecast\mailersend.tsx
-  const sentFrom = new Sender("weather@www.kraus.my.id", "Weather Bot");
-  const recipients = [new Recipient(to)];
 
-  const emailParams = new EmailParams()
-    .setFrom(sentFrom)
-    .setTo(recipients)
-    .setSubject(weatherEmail.subject)
-    .setHtml(weatherEmail.html)
-    .setText(weatherEmail.text);
+  const { data, error } = await resend.emails.send({
+    from: `${fromName} <${fromEmail}>`,
+    to: [toEmail],
+    subject: weatherEmail.subject,
+    text: weatherEmail.text,
+    html: weatherEmail.html,
+  });
 
-  await mailerSend.email.send(emailParams);
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  console.info("Email sent through Resend", {
+    emailId: data?.id,
+  });
 }
