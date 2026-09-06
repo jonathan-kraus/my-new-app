@@ -65,6 +65,7 @@ echo "Checking types..."
 
 if ! pnpm type-check; then
   warn "TypeScript errors detected"
+    exit 1
 fi
 
 section "Validating Prisma schema"
