@@ -5,7 +5,7 @@
 // lib/server/email/sendForecastEmail.ts
 "use server";
 
-import { MailerSend, EmailParams, Recipient, Sender } from "mailersend";
+import { Resend } from "resend";
 import { z } from "zod";
 import { getConfig, setConfig } from "@/lib/runtime/config";
 import { getThrottleStatus } from "./throttle-utils";
@@ -294,29 +294,41 @@ export async function sendForecastEmail(form: FormData) {
     };
   }
 
-  const apiKey = process.env.MAILERSEND_API_KEY;
+  const apiKey = process.env.RESEND_API_KEY?.trim();
 
   if (!apiKey) {
-    return {
-      ok: false as const,
-      reason: "configuration_error" as const,
-      detail: "MAILERSEND_API_KEY is missing.",
-    };
+    throw new Error("RESEND_API_KEY is not configured.");
   }
+
+  const resend = new Resend(apiKey);
 
   try {
     const { subject, text, html } = buildForecastEmail(data);
 
-    const mailerSend = new MailerSend({ apiKey });
+    const apiKey = process.env.RESEND_API_KEY?.trim();
 
-    const emailParams = new EmailParams()
-      .setFrom(new Sender("jonathan@www.kraus.my.id", "Weather Bot"))
-      .setTo([new Recipient("jonathankraus2026@outlook.com", "Jonathan Kraus")])
-      .setSubject(subject)
-      .setText(text)
-      .setHtml(html);
+    if (!apiKey) {
+      throw new Error("RESEND_API_KEY is not configured.");
+    }
 
-    await mailerSend.email.send(emailParams);
+    const resend = new Resend(apiKey);
+
+    const { data: resendData, error } = await resend.emails.send({
+      from: "Weather Bot <forecast@kraus.my.id>",
+      to: ["jonathankraus2026@outlook.com"],
+      subject,
+      text,
+      html,
+    });
+
+    if (error) {
+      console.error("SendForecastEmail -- Resend error:", error);
+      throw new Error(error.message);
+    }
+
+    console.info("SendForecastEmail -- Forecast email sent", {
+      emailId: resendData?.id,
+    });
 
     const sentAt = new Date().toISOString();
 
