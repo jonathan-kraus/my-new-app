@@ -347,9 +347,37 @@ export async function sendForecastEmail(form: FormData) {
       sent: true as const,
       sentAt,
     };
-  } catch (error) {
+  } catch (error: unknown) {
+    const errorRecord =
+      error && typeof error === "object" && !Array.isArray(error)
+        ? (error as Record<string, unknown>)
+        : null;
+
     const detail =
-      error instanceof Error ? error.message : "Unknown MailerSend error";
+      error instanceof Error
+        ? error.message
+        : typeof error === "string"
+          ? error
+          : "MailerSend request failed with a non-Error response.";
+
+    const mailerSendResponse =
+      errorRecord?.response && typeof errorRecord.response === "object"
+        ? (errorRecord.response as Record<string, unknown>)
+        : null;
+
+    const mailerSendBody =
+      errorRecord?.body ??
+      errorRecord?.data ??
+      mailerSendResponse?.body ??
+      mailerSendResponse?.data ??
+      null;
+
+    const status =
+      errorRecord?.status ??
+      errorRecord?.statusCode ??
+      mailerSendResponse?.status ??
+      mailerSendResponse?.statusCode ??
+      null;
 
     await logj({
       domain: "weather",
@@ -359,7 +387,17 @@ export async function sendForecastEmail(form: FormData) {
       line: 307,
       payload: {
         locationName: data.locationName,
-        error: detail,
+        detail,
+        status,
+        errorType:
+          error === null
+            ? "null"
+            : Array.isArray(error)
+              ? "array"
+              : typeof error,
+        errorName: error instanceof Error ? error.name : null,
+        errorKeys: errorRecord ? Object.keys(errorRecord) : [],
+        mailerSendBody,
       },
       meta: {
         built: {
@@ -372,7 +410,10 @@ export async function sendForecastEmail(form: FormData) {
     return {
       ok: false as const,
       reason: "error" as const,
-      detail,
+      detail:
+        typeof status === "number"
+          ? `MailerSend request failed (${status}).`
+          : "MailerSend could not send the email.",
     };
   }
 }
