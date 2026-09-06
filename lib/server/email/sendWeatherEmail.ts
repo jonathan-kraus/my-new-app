@@ -1,7 +1,11 @@
+/*
+ * @FilePath: \my-new-app\lib\server\email\sendWeatherEmail.ts
+ * @LastEditTime: 2026-09-06 17:59:30
+ */
 "use server";
-// lib\server\email\sendWeatherEmail.ts
+
 import { getConfig, setConfig } from "@/lib/runtime/config";
-import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
+import { Resend } from "resend";
 import { buildSendWeatherEmail } from "@/lib/buildSendWeatherEmail";
 import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
@@ -54,7 +58,6 @@ export async function sendWeatherEmail(message?: string, subject?: string) {
   const finalSubject = subject || baseEmail.subject;
   const finalText = message || baseEmail.text;
 
-  // Always include your template, optionally append message
   const finalHtml =
     baseEmail.html +
     (message
@@ -62,20 +65,6 @@ export async function sendWeatherEmail(message?: string, subject?: string) {
            <pre>${message}</pre>
          </div>`
       : "");
-
-  const mailerSend = new MailerSend({
-    apiKey: process.env.MAILERSEND_API_KEY!,
-  });
-
-  const sentFrom = new Sender("jonathan@www.kraus.my.id", "Travel Weather Bot");
-  const recipients = [new Recipient("jonathankraus2026@outlook.com")];
-
-  const emailParams = new EmailParams()
-    .setFrom(sentFrom)
-    .setTo(recipients)
-    .setSubject(finalSubject)
-    .setHtml(finalHtml)
-    .setText(finalText);
 
   // --- 3. Throttle ----------------------------------------------------------
   await logj({
@@ -122,14 +111,22 @@ export async function sendWeatherEmail(message?: string, subject?: string) {
     };
   }
 
-  // --- 4. Send email --------------------------------------------------------
+  // --- 4. Send email via Resend ---------------------------------------------
   try {
-    await mailerSend.email.send(emailParams);
+    const resend = new Resend(process.env.RESEND_API_KEY);
+
+    await resend.emails.send({
+      from: "Travel Weather Bot <jonathan@www.kraus.my.id>",
+      to: ["jonathankraus2026@outlook.com"],
+      subject: finalSubject,
+      html: finalHtml,
+      text: finalText,
+    });
 
     await logj({
       domain: "email",
       level: "info",
-      message: message_begin + "Travel Weather email sent",
+      message: message_begin + "Travel Weather email sent (Resend)",
       file: "lib/server/email/sendWeatherEmail.ts",
       line: 129,
       payload: {
@@ -162,7 +159,7 @@ export async function sendWeatherEmail(message?: string, subject?: string) {
     await logj({
       domain: "email",
       level: "error",
-      message: message_begin + "MailerSend error",
+      message: message_begin + "Resend error",
       file: "lib/server/email/sendWeatherEmail.ts",
       line: 162,
       payload: {
