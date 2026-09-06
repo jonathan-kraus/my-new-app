@@ -1,70 +1,65 @@
 "use server";
 
 import { getConfig, setConfig } from "@/lib/runtime/config";
-import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
+import { Resend } from "resend";
 import { buildTestEmail } from "@/lib/buildTestEmail";
 import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
 import { getThrottleStatus } from "./throttle-utils";
 
 const built = staticUniversalContext("Jonathan");
-let jei = 0;
 const message_begin = "SendTestEmail -- ";
 
-export async function sendTestEmail(message: string, subject: string) {
-  // --- 1. Read flag -----------
+export async function sendTestEmail(message?: string, subject?: string) {
+  let jei = 0;
+
+  // --- 1. Read flag ---------------------------------------------------------
   const enabled = await getConfig("email_enabled", "1");
-  let jei = 1;
+
   if (String(enabled) !== "1") {
     await logj({
       domain: "jonathan",
       level: "info",
       message: message_begin + "Email disabled by flag",
       file: "lib/server/email/sendTestEmail.ts",
-      line: 19,
-      payload: { some: "data" },
+      line: 20,
+      payload: { enabled },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
+
+    return {
+      ok: false,
+      reason: "disabled",
+      detail: "Email sending is disabled.",
+    };
   }
+
   const throttleMinutes = Number(
     await getConfig("email.throttle.minutes", "0"),
   );
+
   const lastSentRaw = await getConfig("email.last_sent_at", "");
 
   // --- 2. Build email -------------------------------------------------------
   const baseEmail = buildTestEmail();
 
   const finalSubject = subject ?? baseEmail.subject;
-
   const finalText = message ?? baseEmail.text;
-
   const finalHtml = message
-    ? `<pre style="font-family: system-ui">${message}</pre>`
+    ? `<pre style="font-family: system-ui; white-space: pre-wrap;">${message}</pre>`
     : baseEmail.html;
 
-  const mailerSend = new MailerSend({
-    apiKey: process.env.MAILERSEND_API_KEY!,
-  });
-
-  const sentFrom = new Sender("jonathan@www.kraus.my.id", "Weather Bot");
-  const recipients = [new Recipient("jonathankraus2026@outlook.com")];
-
-  const emailParams = new EmailParams()
-    .setFrom(sentFrom)
-    .setTo(recipients)
-    .setSubject(finalSubject)
-    .setHtml(finalHtml)
-    .setText(finalText);
-
   // --- 3. Throttle ----------------------------------------------------------
-
   await logj({
     domain: "jonathan",
     level: "info",
     message: message_begin + "Throttle check starting",
     file: "lib/server/email/sendTestEmail.ts",
-    line: 61,
-    payload: { some: "data" },
+    line: 53,
+    payload: {
+      throttleMinutes,
+      lastSentRaw,
+    },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
 
@@ -80,7 +75,7 @@ export async function sendTestEmail(message: string, subject: string) {
     level: "info",
     message: message_begin + "Throttle status computed",
     file: "lib/server/email/sendTestEmail.ts",
-    line: 78,
+    line: 73,
     payload: {
       isThrottled: throttleStatus.isThrottled,
       canSendNow: throttleStatus.canSendNow,
@@ -97,10 +92,11 @@ export async function sendTestEmail(message: string, subject: string) {
       level: "info",
       message: message_begin + "Throttled",
       file: "lib/server/email/sendTestEmail.ts",
-      line: 95,
+      line: 90,
       payload: { throttleStatus },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
+
     return {
       ok: false,
       reason: "throttled",
@@ -108,45 +104,97 @@ export async function sendTestEmail(message: string, subject: string) {
     };
   }
 
-  // --- 4. Send email --------------------------------------------------------
+  // --- 4. Configure Resend --------------------------------------------------
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+
+  if (!apiKey) {
+    await logj({
+      domain: "jonathan",
+      level: "error",
+      message: message_begin + "RESEND_API_KEY is missing",
+      file: "lib/server/email/sendTestEmail.ts",
+      line: 111,
+      payload: {},
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
+
+    return {
+      ok: false,
+      reason: "configuration_error",
+      detail: "RESEND_API_KEY is not configured.",
+    };
+  }
+
+  const resend = new Resend(apiKey);
+
+  // --- 5. Send email --------------------------------------------------------
   try {
-    await mailerSend.email.send(emailParams);
+    const { data: resendData, error } = await resend.emails.send({
+      from: "Weather Bot <weather@kraus.my.id>",
+      to: ["jonathankraus2026@outlook.com"],
+      subject: finalSubject,
+      text: finalText,
+      html: finalHtml,
+    });
+
+    if (error) {
+      throw new Error(error.message);
+    }
 
     await logj({
       domain: "jonathan",
       level: "info",
       message: message_begin + "Test email sent",
       file: "lib/server/email/sendTestEmail.ts",
-      line: 115,
-      payload: { some: "data" },
+      line: 144,
+      payload: {
+        emailId: resendData?.id,
+        recipient: "jonathankraus2026@outlook.com",
+      },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
 
-    // --- 5. Update timestamp --------------------------------------------------
+    // --- 6. Update timestamp ------------------------------------------------
     const newTimestamp = new Date().toISOString();
-    const saved = await setConfig("email.last_sent_at", newTimestamp);
+
+    await setConfig("email.last_sent_at", newTimestamp);
+
     await logj({
       domain: "jonathan",
       level: "info",
       message: message_begin + "Updated last_sent_at",
       file: "lib/server/email/sendTestEmail.ts",
-      line: 128,
-      payload: { some: "data" },
+      line: 162,
+      payload: {
+        lastSentAt: newTimestamp,
+        emailId: resendData?.id,
+      },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
 
-    return { ok: true, sent: true };
-  } catch (err: any) {
+    return {
+      ok: true,
+      sent: true,
+      emailId: resendData?.id,
+    };
+  } catch (err: unknown) {
+    const detail =
+      err instanceof Error ? err.message : "Unknown error while sending email.";
+
     await logj({
       domain: "jonathan",
-      level: "info",
-      message: message_begin + "Mailersend error",
+      level: "error",
+      message: message_begin + "Resend error",
       file: "lib/server/email/sendTestEmail.ts",
-      line: 140,
-      payload: { some: "data" },
+      line: 184,
+      payload: { detail },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
 
-    return { ok: false, reason: "error", detail: err.message };
+    return {
+      ok: false,
+      reason: "error",
+      detail,
+    };
   }
 }
