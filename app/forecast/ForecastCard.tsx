@@ -8,8 +8,7 @@ type ForecastRow = {
   min: number;
   code: number;
 };
-const [isPending, startTransition] = useTransition();
-const [emailMessage, setEmailMessage] = useState<string | null>(null);
+
 const weatherCodeIcons: Record<number, string> = {
   0: "☀️", // Clear sky
   1: "🌤️", // Mainly clear
@@ -73,8 +72,9 @@ export function ForecastCard({
   fetchedAt,
   source,
   astronomy,
-  sendForecastEmailAction,
 }: ForecastCardProps) {
+  const [isPending, startTransition] = useTransition();
+  const [emailMessage, setEmailMessage] = useState<string | null>(null);
   const rows: ForecastRow[] =
     forecast.time.length === forecast.temperature_2m_max.length &&
     forecast.time.length === forecast.temperature_2m_min.length &&
