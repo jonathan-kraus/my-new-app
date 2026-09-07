@@ -20,7 +20,12 @@ export default function GreenCPage() {
     Red: "place-asmnl",
     Blue: "place-wondl",
   };
-
+  console.log(
+    "GreenCPage rendered with lineId:",
+    lineId,
+    "and stopId:",
+    stopId,
+  );
   return (
     <div className="p-6 text-white">
       <h1 className="text-3xl font-bold mb-4">Choose a Line</h1>

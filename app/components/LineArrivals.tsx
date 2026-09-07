@@ -101,7 +101,7 @@ export function LineArrivals({
     meta: { built: { ...built, eventIndex: ++jei } },
   });
   const [stopId, setStopId] = useState<string>(
-    defaultStopId ?? stops[0]?.id ?? "",
+    defaultStopId ?? stops[2]?.id ?? "",
   );
 
   const { data, isLoading } = useSWR<{
