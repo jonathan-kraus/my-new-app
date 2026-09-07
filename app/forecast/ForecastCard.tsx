@@ -105,6 +105,22 @@ export function ForecastCard({
     form.set("moonset", astronomy.moonset ?? "");
     form.set("moonPhaseName", astronomy.moonPhaseName ?? "");
     form.set("moonPhaseEmoji", astronomy.moonPhaseEmoji ?? "");
+    form.set(
+      "forecastRows",
+      JSON.stringify(
+        rows.map((r) => ({
+          date: r.date.toLocaleDateString("en-US", {
+            weekday: "short",
+            month: "short",
+            day: "numeric",
+          }),
+          max: r.max,
+          min: r.min,
+          icon: weatherCodeIcons[r.code] ?? "❓",
+        })),
+      ),
+    );
+
     startTransition(async () => {
       const result = await sendForecastEmail(form);
 

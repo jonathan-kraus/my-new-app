@@ -6,6 +6,7 @@
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
     "noFallthroughCasesInSwitch": true,
+
     /* Module + resolution */
     "module": "ESNext",
     "moduleResolution": "bundler",
@@ -19,29 +20,37 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
+
     /* JSX */
     "jsx": "react-jsx",
-    /* Paths (TS6‑clean + deterministic) */
 
+    /* ⭐ Critical: allow root-level aliasing */
+    "baseUrl": ".",
+
+    /* ⭐ Clean, deterministic alias map */
     "paths": {
       "@/app/*": ["./app/*"],
       "@/auth": ["./auth.ts"],
       "@/components/*": ["./app/components/*"],
       "@/db/*": ["./src/db/*"],
+      "@/emails/*": ["./emails/*"],
       "@/hooks/*": ["./hooks/*"],
       "@/lib/*": ["./lib/*"],
       "@/tests/*": ["./tests/*"],
       "@/types/*": ["./types/*"],
       "@/version.json": ["./version.json"]
     },
+
     "noEmit": true,
     "incremental": true,
+
     "plugins": [
       {
         "name": "next"
       }
     ]
   },
+
   /* Next.js required include */
   "include": [
     "next-env.d.ts",
@@ -50,6 +59,7 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],
+
   /* Exclude build artifacts + generated code */
   "exclude": ["node_modules", ".next", "dist", "coverage"]
 }

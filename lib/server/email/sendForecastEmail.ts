@@ -1,11 +1,12 @@
 /*
  * @FilePath: \my-new-app\lib\server\email\sendForecastEmail.ts
- * @LastEditTime: 2026-09-06 18:11:43
+ * @LastEditTime: 2026-09-06 21:29:50
  */
 // lib/server/email/sendForecastEmail.ts
 "use server";
 
 import { Resend } from "resend";
+import { renderForecastEmail } from "./renderForecastEmail";
 import { z } from "zod";
 import { getConfig, setConfig } from "@/lib/runtime/config";
 import { getThrottleStatus } from "./throttle-utils";
@@ -303,8 +304,6 @@ export async function sendForecastEmail(form: FormData) {
   const resend = new Resend(apiKey);
 
   try {
-    const { subject, text, html } = buildForecastEmail(data);
-
     const apiKey = process.env.RESEND_API_KEY?.trim();
 
     if (!apiKey) {
@@ -313,12 +312,16 @@ export async function sendForecastEmail(form: FormData) {
 
     const resend = new Resend(apiKey);
 
+    const subject = `### NEW NEW NEW Weather and astronomy for ${data.locationName}`;
+    const forecastRowsRaw = form.get("forecastRows");
+    const forecastRows =
+      typeof forecastRowsRaw === "string" ? JSON.parse(forecastRowsRaw) : [];
+
     const { data: resendData, error } = await resend.emails.send({
       from: "Weather Bot <forecast@kraus.my.id>",
       to: ["jonathankraus2026@outlook.com"],
       subject,
-      text,
-      html,
+      react: renderForecastEmail(data, forecastRows),
     });
 
     if (error) {
