@@ -217,7 +217,7 @@ export async function sendForecastEmail(form: FormData) {
       level: "warn",
       message: MESSAGE_PREFIX + "Invalid email data",
       file: "lib/server/email/sendForecastEmail.ts",
-      line: 167,
+      line: 215,
       payload: {
         issues: parsed.error.issues,
       },
@@ -246,7 +246,7 @@ export async function sendForecastEmail(form: FormData) {
       level: "info",
       message: MESSAGE_PREFIX + "Email disabled by flag",
       file: "lib/server/email/sendForecastEmail.ts",
-      line: 196,
+      line: 244,
       payload: {
         locationName: data.locationName,
       },
@@ -339,7 +339,7 @@ export async function sendForecastEmail(form: FormData) {
       level: "info",
       message: MESSAGE_PREFIX + "Forecast email sent",
       file: "lib/server/email/sendForecastEmail.ts",
-      line: 276,
+      line: 337,
       payload: {
         locationName: data.locationName,
         temperature: data.temperature,
@@ -377,7 +377,7 @@ export async function sendForecastEmail(form: FormData) {
       level: "error",
       message: MESSAGE_PREFIX + "Resend error",
       file: "lib/server/email/sendForecastEmail.ts",
-      line: 307,
+      line: 375,
       payload: {
         locationName: data.locationName,
         detail,

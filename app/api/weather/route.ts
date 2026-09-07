@@ -60,7 +60,7 @@ export async function GET(req: NextRequest) {
       level: "info",
       message: "Using cached current weather data",
       file: "app/api/weather/route.ts",
-      line: 76,
+      line: 58,
       payload: {
         some: "data",
       },
@@ -104,7 +104,7 @@ export async function GET(req: NextRequest) {
     level: "info",
     message: "Fetched current weather data",
     file: "app/api/weather/route.ts",
-    line: 120,
+    line: 102,
     payload: {
       some: res.status,
       validated: validated,

@@ -15,7 +15,7 @@ export async function GET(nextReq: Request) {
     level: "info",
     message: "** Environment -- Starting Status Check **",
     file: "app/api/environment/route.ts",
-    line: 12,
+    line: 13,
     payload: { some: "data" },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -31,7 +31,7 @@ export async function GET(nextReq: Request) {
       level: "info",
       message: "Environment -- Retrieved Postgres Version",
       file: "app/api/environment/route.ts",
-      line: 28,
+      line: 29,
       payload: {
         pg: {
           version: postgresVersion,
@@ -64,7 +64,7 @@ export async function GET(nextReq: Request) {
       level: "info",
       message: "Environment -- Retrieved Vercel Info",
       file: "app/api/environment/route.ts",
-      line: 61,
+      line: 62,
       payload: { vercelDeployment },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -110,7 +110,7 @@ export async function GET(nextReq: Request) {
       level: "info",
       message: "Environment -- Retrieved GithubInfo",
       file: "app/api/environment/route.ts",
-      line: 107,
+      line: 108,
       payload: { github },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -181,7 +181,7 @@ export async function GET(nextReq: Request) {
       level: "info",
       message: "Environment -- Retrieved Neon Info",
       file: "app/api/environment/route.ts",
-      line: 178,
+      line: 179,
       payload: { neon },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -274,7 +274,7 @@ export async function GET(nextReq: Request) {
       level: "info",
       message: "Environment -- Expanded environment payload",
       file: "app/api/environment/route.ts",
-      line: 223,
+      line: 272,
       payload,
       meta: { built: { ...built, eventIndex: ++jei } },
     });

@@ -101,7 +101,7 @@ export default function SideNavClient({
       level: "info",
       message: `🧭 in SideNav ${pathname}`,
       file: "app/components/SideNavClient.tsx",
-      line: 100,
+      line: 99,
       payload: {
         version: formattedVersion,
         activations,
