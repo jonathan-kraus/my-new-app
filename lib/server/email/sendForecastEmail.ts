@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\lib\server\email\sendForecastEmail.ts
- * @LastEditTime: 2026-09-06 21:29:50
+ * @LastEditTime: 2026-09-06 21:44:09
  */
 // lib/server/email/sendForecastEmail.ts
 "use server";
@@ -302,7 +302,6 @@ export async function sendForecastEmail(form: FormData) {
   }
 
   const resend = new Resend(apiKey);
-
   try {
     const apiKey = process.env.RESEND_API_KEY?.trim();
 
@@ -310,9 +309,7 @@ export async function sendForecastEmail(form: FormData) {
       throw new Error("RESEND_API_KEY is not configured.");
     }
 
-    const resend = new Resend(apiKey);
-
-    const subject = `### NEW NEW NEW Weather and astronomy for ${data.locationName}`;
+    const subject = `Weather and astronomy for ${data.locationName}`;
     const forecastRowsRaw = form.get("forecastRows");
     const forecastRows =
       typeof forecastRowsRaw === "string" ? JSON.parse(forecastRowsRaw) : [];

@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\emails\WeatherForecastEmail.tsx
- * @LastEditTime: 2026-09-06 20:58:07
+ * @LastEditTime: 2026-09-06 21:49:34
  */
 import {
   Html,
@@ -11,9 +11,7 @@ import {
   Text,
   Heading,
   Hr,
-  Row,
-  Column,
-} from "@react-email/components";
+} from "react-email";
 
 type ForecastRow = {
   date: string; // formatted date string
