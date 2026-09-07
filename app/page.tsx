@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\page.tsx
- * @LastEditTime: 2026-08-20 00:27:10
+ * @LastEditTime: 2026-09-06 22:05:43
  */
 
 import { auth } from "@/auth";
@@ -116,6 +116,7 @@ export default async function HomePage(req: Request) {
         status: weatherRes.status,
         redirected: weatherRes.redirected,
       },
+      meta: { built: { ...built, eventIndex: ++jei } },
     });
     return <div>Weather data could not be parsed.</div>;
   }
@@ -144,7 +145,7 @@ export default async function HomePage(req: Request) {
       level: "error",
       message: "forecastRes.json() failed",
       file: "app/page.tsx",
-      line: 142,
+      line: 143,
       payload: {
         error: String(err),
         body: raw,
@@ -152,6 +153,7 @@ export default async function HomePage(req: Request) {
         status: forecastRes.status,
         redirected: forecastRes.redirected,
       },
+      meta: { built: { ...built, eventIndex: ++jei } },
     });
     return <div>Forecast data could not be parsed.</div>;
   }
@@ -174,7 +176,7 @@ export default async function HomePage(req: Request) {
       level: "error",
       message: "gitRes.json() failed",
       file: "app/page.tsx",
-      line: 172,
+      line: 174,
       payload: {
         error: String(err),
         body: raw,
@@ -182,6 +184,7 @@ export default async function HomePage(req: Request) {
         status: gitRes.status,
         redirected: gitRes.redirected,
       },
+      meta: { built: { ...built, eventIndex: ++jei } },
     });
     return <div>Git activity could not be parsed.</div>;
   }
@@ -202,7 +205,7 @@ export default async function HomePage(req: Request) {
     level: "info",
     message: "Dashboard timing",
     file: "app/page.tsx",
-    line: 200,
+    line: 203,
     payload: {
       dashboardDurationMs: dashboardEnd - dashboardStart,
       sessionDurationMs: sessionEnd - sessionStart,
@@ -212,6 +215,7 @@ export default async function HomePage(req: Request) {
       forecastDurationMs: forecastEnd - forecastStart,
       gitDurationMs: gitDurationMs,
     },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
 
   return (
