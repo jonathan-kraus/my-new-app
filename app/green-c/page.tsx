@@ -50,10 +50,7 @@ export default function GreenCPage() {
       </select>
 
       {/* Arrivals for selected line */}
-      <LineArrivals
-        lineId={lineId}
-        defaultStopId={stopsByLine[lineId][0]?.id}
-      />
+      <LineArrivals lineId={lineId} defaultStopId={stopId} />
     </div>
   );
 }

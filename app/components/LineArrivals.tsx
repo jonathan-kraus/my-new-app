@@ -100,9 +100,7 @@ export function LineArrivals({
     payload: { lineId: lineId, defaultStopId: defaultStopId, stops: stops },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
-  const [stopId, setStopId] = useState<string>(
-    defaultStopId ?? stops[2]?.id ?? "",
-  );
+  const [stopId, setStopId] = useState(defaultStopId);
 
   const { data, isLoading } = useSWR<{
     data: MBTAPrediction[];
