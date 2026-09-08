@@ -7,11 +7,9 @@ import { Resend } from "resend";
 import { getTopTables } from "@/lib/getTopTables";
 import TopTablesEmail from "@/emails/TopTablesEmail";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(req: Request) {
   const { to, firstName } = await req.json();
-
+  const resend = new Resend(process.env.RESEND_API_KEY);
   const top = await getTopTables();
 
   const data = {
