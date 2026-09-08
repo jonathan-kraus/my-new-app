@@ -1,17 +1,32 @@
 /*
  * @FilePath: \my-new-app\app\api\db-tables\send-db-email\route.ts
- * @LastEditTime: 2026-09-07 22:57:43
+ * @LastEditTime: 2026-09-08 11:34:32
  */
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { getTopTables } from "@/lib/getTopTables";
 import TopTablesEmail from "@/emails/TopTablesEmail";
+import { logj } from "@/lib/log/logj";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 export async function POST(req: Request) {
   const { to, firstName } = await req.json();
+  const built = await buildUniversalContext(req as any, "DB-TABLES");
+  let jei = 0;
   const resend = new Resend(process.env.RESEND_API_KEY);
   const top = await getTopTables();
-
+  await logj({
+    domain: "Tables",
+    level: "info",
+    message: `Top tables data retrieved with ${top.length} tables`,
+    file: "app/api/db-tables/send-db-email/route.ts",
+    line: 18,
+    payload: {
+      to: to,
+      firstname: firstName,
+    },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
   const data = {
     first_name: firstName,
     db1: top[0]?.name ?? "N/A",
