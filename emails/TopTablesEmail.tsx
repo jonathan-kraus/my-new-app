@@ -1,6 +1,6 @@
 /*
- * @FilePath: \my-new-app\src\db\TopTablesEmail.tsx
- * @LastEditTime: 2026-09-07 22:17:41
+ * @FilePath: \my-new-app\emails\TopTablesEmail.tsx
+ * @LastEditTime: 2026-09-07 22:32:45
  */
 import { Html, Body, Container, Text } from "react-email";
 interface TopTablesEmailProps {

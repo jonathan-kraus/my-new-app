@@ -1,11 +1,11 @@
 /*
  * @FilePath: \my-new-app\app\api\db-tables\send-db-email\route.ts
- * @LastEditTime: 2026-09-07 22:24:27
+ * @LastEditTime: 2026-09-07 22:33:26
  */
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { getTopTables } from "@/../../src/lib/getTopTables";
-import TopTablesEmail from "@/../../src/db/TopTablesEmail";
+import TopTablesEmail from "@/../../emails/TopTablesEmail";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
