@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\tests\api\weather\forecast-route.test.ts
- * @LastEditTime: 2026-07-09 00:15:29
+ * @LastEditTime: 2026-09-08 00:02:48
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -71,7 +71,7 @@ vi.mock("@/lib/astronomy/getAstronomySnapshot", () => ({
   }),
 }));
 
-import { GET } from "@/app/api/weather/forecast/route";
+import { GET } from "../../../app/api/weather/forecast/route";
 
 describe("GET /api/weather/forecast", () => {
   beforeEach(() => {

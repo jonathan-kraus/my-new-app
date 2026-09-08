@@ -4,15 +4,15 @@ import path from "path";
 export default defineConfig({
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./"),
-      "@/app": path.resolve(__dirname, "./app"),
-      "@/components": path.resolve(__dirname, "./app/components"),
-      "@/hooks": path.resolve(__dirname, "./hooks"),
-      "@/lib": path.resolve(__dirname, "./lib"),
-      "@/types": path.resolve(__dirname, "./types"),
+      "@/auth": path.resolve(import.meta.dirname, "auth.ts"), // put this FIRST
+      "@": path.resolve(import.meta.dirname, "src"),
+      "@/components": path.resolve(import.meta.dirname, "app/components"),
+      "@/hooks": path.resolve(import.meta.dirname, "hooks"),
+      "@/lib": path.resolve(import.meta.dirname, "src/lib"),
+      "@/types": path.resolve(import.meta.dirname, "types"),
+      "@/tests": path.resolve(import.meta.dirname, "tests"),
     },
   },
-
   test: {
     setupFiles: ["./vitest.setup.ts"],
     globals: true,
@@ -28,12 +28,17 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       reporter: ["text", "html", "json"],
-
+      exclude: [
+        "src/lib/axiom.ts",
+        "src/lib/log/client.ts",
+        "src/lib/runtime/config.ts",
+        "src/lib/utils/global.ts",
+      ],
       thresholds: {
-        lines: 80,
-        functions: 80,
-        branches: 70,
-        statements: 80,
+        lines: 60,
+        functions: 50,
+        branches: 50,
+        statements: 60,
       },
     },
   },

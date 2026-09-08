@@ -1,10 +1,26 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-vi.mock("@/lib/db", () => ({
-  db: {
-    runtimeConfig: { findMany: vi.fn() },
-  },
-}));
+vi.mock("@/lib/db", () => {
+  const mockDb = {
+    log: {
+      create: vi.fn().mockResolvedValue({}),
+    },
+    config: {
+      findMany: vi.fn().mockResolvedValue([]),
+    },
+    flight: {
+      findMany: vi.fn().mockResolvedValue([]),
+    },
+    weather: {
+      findMany: vi.fn().mockResolvedValue([]),
+    },
+    runtimeConfig: {
+      findMany: vi.fn().mockResolvedValue([]),
+    },
+  };
+
+  return { db: mockDb };
+});
 
 const { db } = await import("@/lib/db");
 const mockedDb = vi.mocked(db, true);
