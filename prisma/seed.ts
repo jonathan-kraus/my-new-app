@@ -1,5 +1,5 @@
 // prisma/seed.ts
-import { db } from "../lib/db";
+import { db } from "@/lib/db";
 
 async function runtime() {
   await db.runtimeConfig.createMany({

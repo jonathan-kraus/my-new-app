@@ -6,7 +6,7 @@ import {
 } from "@/lib/log/scheduler";
 import { enqueue, clear } from "@/lib/log/queue";
 import { mockAxiom } from "@/tests/log/__mocks__/axiom";
-import { useFakeTimers } from "../../../tests/log/__mocks__/testUtils";
+import { useFakeTimers } from "../../../../tests/log/__mocks__/testUtils";
 import { fakeEvent } from "@/lib/log/test-utils";
 
 vi.mock("@/lib/log/axiomClient", () => ({

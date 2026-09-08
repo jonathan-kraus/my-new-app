@@ -1,6 +1,6 @@
 #!/usr/bin/env tsx
 import "dotenv/config";
-import { db } from "../lib/db";
+import { db } from "@/lib/db";
 
 const idArg = Number(process.argv[2]);
 const id = Number.isFinite(idArg) ? idArg : 15643;

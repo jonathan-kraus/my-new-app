@@ -1,8 +1,8 @@
 /*
- * @FilePath: \my-new-app\lib\version\get-full-package-data.ts
- * @LastEditTime: 2026-08-21 14:42:29
+ * @FilePath: \my-new-app\src\lib\version\get-full-package-data.ts
+ * @LastEditTime: 2026-09-07 23:18:41
  */
-import pkg from "../../package.json";
+import pkg from "../../../package.json";
 export type FullPackageData = {
   name: string;
   version: string;

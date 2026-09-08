@@ -35,7 +35,7 @@
       "@/db/*": ["./src/db/*"],
       "@/emails/*": ["./emails/*"],
       "@/hooks/*": ["./hooks/*"],
-      "@/lib/*": ["./lib/*"],
+      "@/lib/*": ["./src/lib/*"],
       "@/tests/*": ["./tests/*"],
       "@/types/*": ["./types/*"],
       "@/version.json": ["./version.json"]

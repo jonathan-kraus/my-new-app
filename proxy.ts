@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\proxy.ts
- * @LastEditTime: 2026-08-22 19:28:36
+ * @LastEditTime: 2026-09-07 23:17:24
  */
 
 import { Logger } from "next-axiom";
@@ -10,7 +10,7 @@ import { NextResponse } from "next/server";
 import normalizePath from "@/lib/normalizePath";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
-import { getConfig } from "./lib/runtime/config";
+import { getConfig } from "@/lib/runtime/config";
 
 export async function proxy(req: NextRequest) {
   const url2 = req.nextUrl.clone();
