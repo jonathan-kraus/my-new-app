@@ -6,6 +6,7 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { getTopTables } from "@/lib/getTopTables";
 import TopTablesEmail from "@/emails/TopTablesEmail";
+import { db } from "@/lib/db";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
@@ -15,12 +16,27 @@ export async function POST(req: Request) {
   let jei = 0;
   const resend = new Resend(process.env.RESEND_API_KEY);
   const top = await getTopTables();
+  const latestWeatherSnapshot = await db.weatherSnapshot.findFirst({
+    where: { locationId: "KOP" },
+    orderBy: { fetchedAt: "desc" },
+    select: {
+      temperature: true,
+      feelsLike: true,
+      humidity: true,
+      windSpeed: true,
+      windDirection: true,
+      pressure: true,
+      visibility: true,
+      weatherCode: true,
+      fetchedAt: true,
+    },
+  });
   await logj({
     domain: "Tables",
     level: "info",
     message: `Top tables data retrieved with ${top.length} tables`,
     file: "app/api/db-tables/send-db-email/route.ts",
-    line: 18,
+    line: 34,
     payload: {
       to: to,
       firstname: firstName,
@@ -29,6 +45,12 @@ export async function POST(req: Request) {
   });
   const data = {
     first_name: firstName,
+    weatherSnapshot: latestWeatherSnapshot
+      ? {
+          ...latestWeatherSnapshot,
+          fetchedAt: latestWeatherSnapshot.fetchedAt.toISOString(),
+        }
+      : null,
     db1: top[0]?.name ?? "N/A",
     ct1: top[0]?.count ?? 0,
     db2: top[1]?.name ?? "N/A",
