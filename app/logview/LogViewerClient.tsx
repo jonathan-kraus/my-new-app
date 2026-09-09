@@ -252,7 +252,7 @@ export default function LogViewerClient() {
   // Auto-dismiss the "new entries" banner.
   useEffect(() => {
     if (newCount === 0) return;
-    const t = setTimeout(() => setNewCount(0), 2000);
+    const t = setTimeout(() => setNewCount(0), 2500);
     return () => clearTimeout(t);
   }, [newCount]);
 
@@ -485,11 +485,11 @@ export default function LogViewerClient() {
                   <th className="text-left text-[10px] font-sans font-medium tracking-widest uppercase text-zinc-400 px-3 py-2 w-16">
                     Level
                   </th>
-                  <th className="text-left text-[10px] font-sans font-medium tracking-widest uppercase text-zinc-400 px-3 py-2">
-                    Message
-                  </th>
                   <th className="text-left text-[10px] font-sans font-medium tracking-widest uppercase text-zinc-400 px-3 py-2 w-28">
                     Domain
+                  </th>
+                  <th className="text-left text-[10px] font-sans font-medium tracking-widest uppercase text-zinc-400 px-3 py-2">
+                    Message
                   </th>
                   <th className="text-left text-[10px] font-sans font-medium tracking-widest uppercase text-zinc-400 px-3 py-2 w-28">
                     User
