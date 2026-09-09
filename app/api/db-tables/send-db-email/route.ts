@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\db-tables\send-db-email\route.ts
- * @LastEditTime: 2026-09-08 11:34:32
+ * @LastEditTime: 2026-09-09 13:06:42
  */
 import { NextResponse } from "next/server";
 import { Resend } from "resend";

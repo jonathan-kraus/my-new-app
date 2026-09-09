@@ -116,11 +116,11 @@ importers:
         specifier: 2.0.0
         version: 2.0.0
       '@axiomhq/logging':
-        specifier: 0.4.0
-        version: 0.4.0(@axiomhq/js@2.0.0)
+        specifier: 0.4.1
+        version: 0.4.1(@axiomhq/js@2.0.0)
       '@axiomhq/react':
-        specifier: 0.4.0
-        version: 0.4.0(@axiomhq/logging@0.4.0(@axiomhq/js@2.0.0))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: 0.4.1
+        version: 0.4.1(@axiomhq/logging@0.4.1(@axiomhq/js@2.0.0))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@heroicons/react':
         specifier: 2.2.0
         version: 2.2.0(react@19.2.8)
@@ -482,8 +482,8 @@ packages:
     resolution: {integrity: sha512-mhDH0KLFkDko9ytoltgmch2gOiwE6kY6VWhCmTux9lzL9hmjTej68JeQKwq9GGqOY7xwDsya88bNiTnp/zc8+Q==}
     engines: {node: '>=20'}
 
-  '@axiomhq/logging@0.4.0':
-    resolution: {integrity: sha512-exb1qV5pt15ydSX5iIB9AQ0xv+O5iHmslHoyGJAmCgehFlHESivbuiFyb6Kbk0y4MW+zz8/aD5N0dHQLfUb4TA==}
+  '@axiomhq/logging@0.4.1':
+    resolution: {integrity: sha512-lrl63DiVLXwf2Zj2XeuGhbzhngcNyhqrrdkxs1pG9g5qLxs1BxHdRBbIVhp0/1dQbLpd8CT3FvQA1RS9usbTgw==}
     engines: {node: '>=20'}
     peerDependencies:
       '@axiomhq/js': ^1.0.0
@@ -491,11 +491,11 @@ packages:
       '@axiomhq/js':
         optional: true
 
-  '@axiomhq/react@0.4.0':
-    resolution: {integrity: sha512-98YUCh2oiHDocsYOcsdBzCezilniwDQuyYEhCqiU67nNZRlea9+AkJlov5iUrwRKAZKZyT/dcARfU35us9+RjQ==}
+  '@axiomhq/react@0.4.1':
+    resolution: {integrity: sha512-CxJTIOG77GDsTx3mOR7p9kj/uoGd8901+b/OwvBrQjwXZIFTDnfvy7nuGIRDGDKgfQLctPzeiah32HeZvGrvUQ==}
     engines: {node: '>=20'}
     peerDependencies:
-      '@axiomhq/logging': 0.4.0
+      '@axiomhq/logging': 0.4.1
       react: ^18 || ^19
       react-dom: ^18 || ^19
 
@@ -5364,13 +5364,13 @@ snapshots:
     dependencies:
       fetch-retry: 6.0.0
 
-  '@axiomhq/logging@0.4.0(@axiomhq/js@2.0.0)':
+  '@axiomhq/logging@0.4.1(@axiomhq/js@2.0.0)':
     optionalDependencies:
       '@axiomhq/js': 2.0.0
 
-  '@axiomhq/react@0.4.0(@axiomhq/logging@0.4.0(@axiomhq/js@2.0.0))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@axiomhq/react@0.4.1(@axiomhq/logging@0.4.1(@axiomhq/js@2.0.0))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
-      '@axiomhq/logging': 0.4.0(@axiomhq/js@2.0.0)
+      '@axiomhq/logging': 0.4.1(@axiomhq/js@2.0.0)
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
       use-deep-compare: 1.3.0(react@19.2.8)
