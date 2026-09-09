@@ -113,9 +113,9 @@
     "pg": "8.23.0",
     "qs": "6.16.0",
     "quoted-printable": "1.0.1",
-    "react": "19.2.8",
+    "react": "19.3.0",
     "react-day-picker": "10.0.1",
-    "react-dom": "19.2.8",
+    "react-dom": "19.3.0",
     "react-email": "^6.9.3",
     "react-hook-form": "7.87.0",
     "react-hot-toast": "2.6.0",
@@ -130,7 +130,7 @@
     "tailwind-merge": "3.6.0",
     "typescript": "5.9.3",
     "vite": "8.2.2",
-    "zod": "4.5.4"
+    "zod": "4.6.0"
   },
   "devDependencies": {
     "@eslint/plugin-kit": "0.7.3",
@@ -141,8 +141,8 @@
     "@types/node": "26.5.0",
     "@types/pg": "8.23.1",
     "@types/quoted-printable": "1.0.2",
-    "@types/react": "19.2.18",
-    "@types/react-dom": "19.2.7",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
     "@types/semver": "7.8.0",
     "@typescript-eslint/eslint-plugin": "8.70.0",
     "@typescript-eslint/parser": "8.70.0",

@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\db-tables\send-db-email\route.ts
- * @LastEditTime: 2026-09-09 13:06:42
+ * @LastEditTime: 2026-09-09 16:06:42
  */
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
   await logj({
     domain: "Tables",
     level: "info",
-    message: `Top tables data retrieved with ${top.length} tables`,
+    message: ` Top tables data retrieved with ${top.length} tables`,
     file: "app/api/db-tables/send-db-email/route.ts",
     line: 34,
     payload: {
