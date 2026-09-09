@@ -520,11 +520,11 @@ export default function LogViewerClient() {
                         {log.level}
                       </span>
                     </td>
-                    <td className="px-3 py-1.5 text-zinc-700 dark:text-zinc-300 max-w-xs truncate">
-                      {log.message}
-                    </td>
                     <td className="px-3 py-1.5 text-[11px] text-zinc-400 whitespace-nowrap">
                       {log.domain}
+                    </td>
+                    <td className="px-3 py-1.5 text-zinc-700 dark:text-zinc-300 max-w-xs truncate">
+                      {log.message}
                     </td>
                     <td className="px-3 py-1.5 text-[11px] text-zinc-400 truncate max-w-[7rem]">
                       {log.sessionUser ?? log.userId ?? "—"}

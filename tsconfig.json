@@ -24,9 +24,6 @@
     /* JSX */
     "jsx": "react-jsx",
 
-    /* ⭐ Critical: allow root-level aliasing */
-    "baseUrl": ".",
-
     /* ⭐ Clean, deterministic alias map */
     "paths": {
       "@/app/*": ["./app/*"],
