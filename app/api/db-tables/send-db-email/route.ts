@@ -45,6 +45,7 @@ export async function POST(req: Request) {
   });
   const data = {
     first_name: firstName,
+middleInit: middleInit,
     weatherSnapshot: latestWeatherSnapshot
       ? {
           ...latestWeatherSnapshot,
