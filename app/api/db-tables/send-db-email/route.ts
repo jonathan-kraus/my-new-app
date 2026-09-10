@@ -14,7 +14,7 @@ export async function POST(req: Request) {
   const { to, firstName } = await req.json();
   const built = await buildUniversalContext(req as any, "DB-TABLES");
   let jei = 0;
-const middleInit = "C"
+  const middleInit = "C";
   const resend = new Resend(process.env.RESEND_API_KEY);
   const top = await getTopTables();
   const latestWeatherSnapshot = await db.weatherSnapshot.findFirst({
@@ -46,7 +46,7 @@ const middleInit = "C"
   });
   const data = {
     first_name: firstName,
-middle_init: middleInit,
+    middle_init: middleInit,
     weatherSnapshot: latestWeatherSnapshot
       ? {
           ...latestWeatherSnapshot,

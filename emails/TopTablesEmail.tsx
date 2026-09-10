@@ -5,7 +5,7 @@
 import { Html, Body, Container, Text } from "react-email";
 interface TopTablesEmailProps {
   first_name: string;
-middle_init: string;
+  middle_init: string;
   weatherSnapshot: {
     temperature: number;
     feelsLike: number | null;

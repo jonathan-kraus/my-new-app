@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\db-tables\route.ts
- * @LastEditTime: 2026-08-12 14:24:34
+ * @LastEditTime: 2026-09-10 16:21:13
  */
 import { neon } from "@neondatabase/serverless";
 import { logj } from "@/lib/log/logj";
@@ -21,7 +21,6 @@ export async function GET(req: NextRequest) {
   console.log("db-tables module loaded");
 
   const db = neon(process.env.DATABASE_URL!);
-
   const built = await buildUniversalContext(req, "dbtables");
   let jei = 0;
 
