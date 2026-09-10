@@ -1,4 +1,4 @@
-/*
+j/*
  * @FilePath: \my-new-app\app\api\db-tables\send-db-email\route.ts
  * @LastEditTime: 2026-09-09 16:06:42
  */
@@ -45,7 +45,7 @@ export async function POST(req: Request) {
   });
   const data = {
     first_name: firstName,
-middleInit: middleInit,
+middle_init: middleInit,
     weatherSnapshot: latestWeatherSnapshot
       ? {
           ...latestWeatherSnapshot,
