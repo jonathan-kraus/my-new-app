@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\emails\TopTablesEmail.tsx
- * @LastEditTime: 2026-09-07 22:32:45
+ * @LastEditTime: 2026-09-10 21:56:29
  */
 import { Html, Body, Container, Text } from "react-email";
 interface TopTablesEmailProps {
@@ -31,6 +31,7 @@ interface TopTablesEmailProps {
 
 export default function TopTablesEmail({
   first_name,
+  middle_init,
   weatherSnapshot,
   db1,
   ct1,
@@ -77,7 +78,7 @@ export default function TopTablesEmail({
             )}
 
             <Text>
-              {db1} — {ct1}
+              {db1} — {ct1} {middle_init}
             </Text>
             <Text>
               {db2} — {ct2}
