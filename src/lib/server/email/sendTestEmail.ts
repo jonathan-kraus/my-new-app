@@ -121,7 +121,7 @@ export async function sendTestEmail(message?: string, subject?: string) {
     return {
       ok: false,
       reason: "configuration_error",
-      detail: "RESEND_API_KEY is not configured!",
+      detail: "RESEND_API_KEY is not configured!!",
     };
   }
 
