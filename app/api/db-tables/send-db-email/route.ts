@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\db-tables\send-db-email\route.ts
- * @LastEditTime: 2026-09-09 16:06:42
+ * @LastEditTime: 2026-09-10 21:46:40
  */
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
@@ -67,7 +67,7 @@ export async function POST(req: Request) {
   const tojk = "jonathankraus2026@outlook.com";
   await resend.emails.send({
     from: "my-new-app <dbemail@kraus.my.id>",
-    to: tojk,
+    to: to,
     subject: "Top 5 Tables",
     react: TopTablesEmail(data),
   });
