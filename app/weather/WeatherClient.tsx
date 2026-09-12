@@ -12,6 +12,8 @@ import {
 import { useEffect, useState } from "react";
 import { LocationSelector } from "@/components/LocationSelector";
 import type { Location } from "@/lib/types";
+import { logj } from "@/lib/log/logj";
+import { staticUniversalContext } from "@/lib/log/buildj";
 
 type WeatherPoint = {
   time: string;
@@ -85,7 +87,12 @@ export default function WeatherClient({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
-
+  const built = staticUniversalContext("WeatherClient");
+  let jei = 0;
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    localStorage.setItem("lastLocationId", selectedId ?? "");
+  }, [selectedId]);
   useEffect(() => {
     if (selectedId) localStorage.setItem("lastLocationId", selectedId);
   }, [selectedId]);
@@ -99,7 +106,15 @@ export default function WeatherClient({
       setLoading(true);
       setError(null);
     });
-
+    logj({
+      domain: "jonathan",
+      level: "info",
+      message: "Loading FA dashboard route",
+      file: "app/api/fa/dashboard/route.ts",
+      line: 110,
+      payload: { some: "data" },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
     fetch(`/api/weather/detail?locationId=${selectedId}`, {
       signal: controller.signal,
       cache: "no-store",
