@@ -1,11 +1,11 @@
 import { Resend } from "resend";
-import { z } from "zod";
+
 import { getConfig, setConfig } from "@/lib/runtime/config";
 
 import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
-
 import type { buildWeatherEmail } from "./buildWeatherEmail";
+import { log } from "../../src/lib/log/logger";
 export async function sendWeatherEmail({
   to,
   weatherEmail,
@@ -20,12 +20,14 @@ export async function sendWeatherEmail({
   }
   const fromEmail = "weather@www.kraus.my.id";
   const fromName = "Weather Bot";
-  const toEmail = "jonathankraus2026@outlook.com";
+
+  const built = staticUniversalContext("SendWeatherEmail");
+  let jei = 0;
   const resend = new Resend(apiKey);
 
   const { data, error } = await resend.emails.send({
     from: `${fromName} <${fromEmail}>`,
-    to: [toEmail],
+    to: [to],
     subject: weatherEmail.subject,
     text: weatherEmail.text,
     html: weatherEmail.html,
@@ -34,8 +36,18 @@ export async function sendWeatherEmail({
   if (error) {
     throw new Error(error.message);
   }
-
-  console.info("Email sent through Resend", {
+  await logj({
+    domain: "email",
+    level: "info",
+    message: "Email sent through Resend",
+    file: "app/forecast/mailresend.tsx",
+    line: 39,
+    payload: {
+      emailId: data?.id,
+    },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
+  console.log("Email sent through Resend", {
     emailId: data?.id,
   });
 }
