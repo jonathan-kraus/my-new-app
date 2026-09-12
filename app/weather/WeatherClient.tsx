@@ -77,27 +77,28 @@ export default function WeatherClient({
 }: {
   locations: Location[];
 }) {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(() => {
+    if (typeof window === "undefined") return locations[0]?.id ?? null;
+    return localStorage.getItem("lastLocationId") ?? locations[0]?.id ?? null;
+  });
   const [weather, setWeather] = useState<WeatherResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
-    const saved = localStorage.getItem("lastLocationId");
-    setSelectedId(saved ?? locations[0]?.id ?? null);
-  }, [locations]);
-
-  useEffect(() => {
     if (selectedId) localStorage.setItem("lastLocationId", selectedId);
-  }, [refreshKey, selectedId]);
+  }, [selectedId]);
 
   useEffect(() => {
     if (!selectedId) return;
 
     const controller = new AbortController();
-    setLoading(true);
-    setError(null);
+    queueMicrotask(() => {
+      if (controller.signal.aborted) return;
+      setLoading(true);
+      setError(null);
+    });
 
     fetch(`/api/weather/detail?locationId=${selectedId}`, {
       signal: controller.signal,
@@ -122,7 +123,7 @@ export default function WeatherClient({
       .finally(() => setLoading(false));
 
     return () => controller.abort();
-  }, [selectedId]);
+  }, [refreshKey, selectedId]);
 
   const condition = weatherDescription(weather?.current.weatherCode);
   const current = weather?.current;

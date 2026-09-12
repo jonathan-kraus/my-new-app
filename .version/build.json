@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-09-12T16:54:14.002Z",
+  "timestamp": "2026-09-12T17:06:21.075Z",
   "git": {
-    "commit": "b8c1c82c35cbfa99bd2492c11447bd566ace1b9f",
+    "commit": "446eb2562259ec5d4d038c3b0e275a02fd78577a",
     "branch": "main"
   },
   "tools": {
@@ -9,7 +9,7 @@
     "pnpm": "12.4.1",
     "next": "Next.js v16.3.5",
     "typescript": "Version 5.9.3",
-    "eslint": "v10.10.0",
+    "eslint": "v9.39.1",
     "openmeteo": "1.2.3",
     "prisma": "7.10.0"
   }
