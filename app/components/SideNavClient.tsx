@@ -65,6 +65,7 @@ export default function SideNavClient({
       icon: "🌐",
       prefetch: false,
     },
+    { href: "/weather", label: "Weather", icon: "🌡️" },
     { href: "/forecast", label: "Forecast", icon: "🌤️" },
     { href: "/profile", label: "Profile", icon: "👤" },
     { href: "/logview", label: "Logview", icon: "📘" },
