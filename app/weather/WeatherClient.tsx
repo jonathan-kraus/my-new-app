@@ -109,9 +109,9 @@ export default function WeatherClient({
     logj({
       domain: "jonathan",
       level: "info",
-      message: "Loading FA dashboard route",
-      file: "app/api/fa/dashboard/route.ts",
-      line: 110,
+      message: "Loading weather for selected location",
+      file: "app/api/weather/WeatherClient.tsx",
+      line: 109,
       payload: { some: "data" },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
