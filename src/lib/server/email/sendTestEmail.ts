@@ -113,7 +113,7 @@ export async function sendTestEmail(message?: string, subject?: string) {
       level: "error",
       message: message_begin + "RESEND_API_KEY is missing",
       file: "lib/server/email/sendTestEmail.ts",
-      line: 111,
+      line: 1111,
       payload: {},
       meta: { built: { ...built, eventIndex: ++jei } },
     });
