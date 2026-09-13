@@ -109,7 +109,7 @@ export default function WeatherClient({
     logj({
       domain: "weather",
       level: "info",
-      message: "Loading weather for selected location",
+      message: "Loading weather for ${selectedId}",
       file: "app/weather/WeatherClient.tsx",
       line: 109,
       payload: { some: "data" },
@@ -126,7 +126,7 @@ export default function WeatherClient({
         logj({
           domain: "weather",
           level: "info",
-          message: " weather response for selected location",
+          message: " weather response ${selectedId}",
           file: "app/weather/WeatherClient.tsx",
           line: 126,
           payload: { response: response, payload: payload },
