@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\notes\route.ts
- * @LastEditTime: 2026-08-12 14:14:48
+ * @LastEditTime: 2026-09-13 01:43:08
  */
 
 import { NextResponse } from "next/server";
@@ -51,8 +51,19 @@ export const GET = withLogging(async (req: Request) => {
       meta: { built: { ...built, eventIndex: ++jei } },
     });
     return NextResponse.json({ notes });
-  } catch (err: any) {
-    // await log.api("notes", "Notes GET failed", { error: err.message });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : JSON.stringify(err);
+    await logj({
+      domain: "notes",
+      level: "error",
+      message: `Notes GET failed with error: ${msg}`,
+      file: "app/api/notes/route.ts",
+      line: 42,
+      payload: {
+        error: msg,
+      },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
     return NextResponse.json(
       { error: "Failed to load notes" },
       { status: 500 },
@@ -111,8 +122,19 @@ export const POST = withLogging(async (req: Request) => {
     });
 
     return NextResponse.json({ note });
-  } catch (err: any) {
-    // await log.api("notes", "Notes POST failed", { error: err.message });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : JSON.stringify(err);
+    await logj({
+      domain: "notes",
+      level: "error",
+      message: `Notes GET failed with error: ${msg}`,
+      file: "app/api/notes/route.ts",
+      line: 42,
+      payload: {
+        error: msg,
+      },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
     return NextResponse.json(
       { error: "Failed to create note" },
       { status: 500 },
@@ -150,8 +172,6 @@ export const PUT = withLogging(async (req: Request) => {
       return NextResponse.json({ error: "Note ID required" }, { status: 400 });
     }
 
-    const original = await db.note.findUnique({ where: { id } });
-
     const updated = await db.note.updateMany({
       where: { id, userEmail: email },
       data: {
@@ -187,8 +207,19 @@ export const PUT = withLogging(async (req: Request) => {
       meta: { built: { ...built, eventIndex: ++jei } },
     });
     return NextResponse.json({ note: updatedNote });
-  } catch (err: any) {
-    // await log.api("notes", "Notes PUT failed", { error: err.message });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : JSON.stringify(err);
+    await logj({
+      domain: "notes",
+      level: "error",
+      message: `Notes PUT failed with error: ${msg}`,
+      file: "app/api/notes/route.ts",
+      line: 42,
+      payload: {
+        error: msg,
+      },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
     return NextResponse.json(
       { error: "Failed to update note" },
       { status: 500 },
@@ -244,15 +275,21 @@ export const DELETE = withLogging(async (req: Request) => {
       payload: { title: noteToDelete?.title, userEmail: email },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
-    // await log.api("notes", "Note deleted", {
-    //   noteId: id,
-    //   title: noteToDelete?.title,
-    //   userEmail: email,
-    // });
 
     return NextResponse.json({ success: true });
-  } catch (err: any) {
-    // await log.api("notes", "Notes DELETE failed", { error: err.message });
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : JSON.stringify(err);
+    await logj({
+      domain: "notes",
+      level: "error",
+      message: `Notes DELETE failed with error: ${msg}`,
+      file: "app/api/notes/route.ts",
+      line: 42,
+      payload: {
+        error: msg,
+      },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
     return NextResponse.json(
       { error: "Failed to delete note" },
       { status: 500 },
