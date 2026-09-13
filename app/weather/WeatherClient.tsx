@@ -109,10 +109,10 @@ export default function WeatherClient({
     logj({
       domain: "weather",
       level: "info",
-      message: "Loading weather for ${selectedId}",
+      message: `Loading weather for ${selectedId}`,
       file: "app/weather/WeatherClient.tsx",
       line: 109,
-      payload: { some: "data" },
+      payload: { locationId: selectedId },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
     fetch(`/api/weather/detail?locationId=${selectedId}`, {
@@ -126,10 +126,15 @@ export default function WeatherClient({
         logj({
           domain: "weather",
           level: "info",
-          message: " weather response ${selectedId}",
+          message: `Received weather response ${selectedId}`,
           file: "app/weather/WeatherClient.tsx",
           line: 126,
-          payload: { response: response, payload: payload },
+          payload: {
+            locationId: selectedId,
+            status: response.status,
+            ok: response.ok,
+            data: payload,
+          },
           meta: { built: { ...built, eventIndex: ++jei } },
         });
         if (!response.ok)
