@@ -110,7 +110,7 @@ export default function WeatherClient({
       domain: "jonathan",
       level: "info",
       message: "Loading weather for selected location",
-      file: "app/api/weather/WeatherClient.tsx",
+      file: "app/weather/WeatherClient.tsx",
       line: 109,
       payload: { some: "data" },
       meta: { built: { ...built, eventIndex: ++jei } },
@@ -123,6 +123,15 @@ export default function WeatherClient({
         const payload = (await response.json()) as WeatherResponse & {
           error?: string;
         };
+        logj({
+          domain: "jonathan",
+          level: "info",
+          message: " weather response for selected location",
+          file: "app/weather/WeatherClient.tsx",
+          line: 126,
+          payload: { response: response, payload: payload },
+          meta: { built: { ...built, eventIndex: ++jei } },
+        });
         if (!response.ok)
           throw new Error(payload.error ?? "Weather unavailable");
         return payload;
