@@ -73,7 +73,8 @@ function formatUpdated(value: string) {
     minute: "2-digit",
   });
 }
-
+const built = staticUniversalContext("WeatherClient");
+let jei = 0;
 export default function WeatherClient({
   locations,
 }: {
@@ -87,8 +88,7 @@ export default function WeatherClient({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
-  const built = staticUniversalContext("WeatherClient");
-  let jei = 0;
+
   useEffect(() => {
     if (typeof window === "undefined") return;
     localStorage.setItem("lastLocationId", selectedId ?? "");

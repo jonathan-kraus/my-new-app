@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\weather\detail\route.ts
- * @LastEditTime: 2026-09-12 20:25:48
+ * @LastEditTime: 2026-09-13 02:01:36
  */
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
@@ -9,21 +9,6 @@ import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { logj } from "@/lib/log/logj";
 
 const API_KEY = process.env.TOMORROWIO_APIKEY;
-
-type TimelineInterval = {
-  startTime: string;
-  values: {
-    temperature?: number;
-    temperatureApparent?: number;
-    humidity?: number;
-    windSpeed?: number;
-    windDirection?: number;
-    precipitationProbability?: number;
-    precipitationIntensity?: number;
-    cloudCover?: number;
-    weatherCode?: number;
-  };
-};
 
 type TimelineResponse = {
   timelines?: {

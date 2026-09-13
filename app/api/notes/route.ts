@@ -1,9 +1,9 @@
 /*
  * @FilePath: \my-new-app\app\api\notes\route.ts
- * @LastEditTime: 2026-09-13 01:43:08
+ * @LastEditTime: 2026-09-13 02:00:00
  */
 
-import { NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { logj } from "@/lib/log/logj";
@@ -12,7 +12,10 @@ import { withLogging } from "@/lib/logging/withLogging";
 
 export const GET = withLogging(async (req: Request) => {
   // Build context INSIDE the request handler
-  const built = await buildUniversalContext(req as any, "NOTES");
+  const built = await buildUniversalContext(
+    req as unknown as NextRequest,
+    "NOTES",
+  );
   let jei = 0;
   await logj({
     domain: "notes",
@@ -71,7 +74,10 @@ export const GET = withLogging(async (req: Request) => {
   }
 });
 export const POST = withLogging(async (req: Request) => {
-  const built = await buildUniversalContext(req as any, "NOTES");
+  const built = await buildUniversalContext(
+    req as unknown as NextRequest,
+    "NOTES",
+  );
   let jei = 20;
   await logj({
     domain: "notes",
@@ -106,7 +112,10 @@ export const POST = withLogging(async (req: Request) => {
         color: body.color ?? null,
       },
     });
-    const built = await buildUniversalContext(req as any, "NOTES");
+    const built = await buildUniversalContext(
+      req as unknown as NextRequest,
+      "NOTES",
+    );
     await logj({
       domain: "notes",
       level: "info",
@@ -143,7 +152,10 @@ export const POST = withLogging(async (req: Request) => {
 });
 export const PUT = withLogging(async (req: Request) => {
   let jei = 40;
-  const built = await buildUniversalContext(req as any, "NOTES");
+  const built = await buildUniversalContext(
+    req as unknown as NextRequest,
+    "NOTES",
+  );
   await logj({
     domain: "notes",
     level: "info",
@@ -228,7 +240,10 @@ export const PUT = withLogging(async (req: Request) => {
 });
 export const DELETE = withLogging(async (req: Request) => {
   let jei = 60;
-  const built = await buildUniversalContext(req as any, "NOTES");
+  const built = await buildUniversalContext(
+    req as unknown as NextRequest,
+    "NOTES",
+  );
   await logj({
     domain: "notes",
     level: "info",
@@ -265,7 +280,10 @@ export const DELETE = withLogging(async (req: Request) => {
     if (deleted.count === 0) {
       return NextResponse.json({ error: "Note not found" }, { status: 404 });
     }
-    const built = await buildUniversalContext(req as any, "NOTES");
+    const built = await buildUniversalContext(
+      req as unknown as NextRequest,
+      "NOTES",
+    );
     await logj({
       domain: "notes",
       level: "info",
