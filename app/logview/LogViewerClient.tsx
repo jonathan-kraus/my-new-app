@@ -129,7 +129,7 @@ export default function LogViewerClient() {
   );
   const [levelCounts, setLevelCounts] = useState<Record<string, number>>({});
   const [last10, setLast10] = useState(0);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const [selectedLevel, setSelectedLevel] = useState("all");
@@ -531,6 +531,16 @@ export default function LogViewerClient() {
                     </td>
                   </tr>
                 ))}
+                {loading && (
+                  <tr>
+                    <td
+                      colSpan={5}
+                      className="text-center py-16 text-zinc-400 font-sans text-sm"
+                    >
+                      Loading logs...
+                    </td>
+                  </tr>
+                )}
                 {!loading && logs.length === 0 && (
                   <tr>
                     <td
