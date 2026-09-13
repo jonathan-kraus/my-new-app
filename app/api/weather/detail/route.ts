@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\weather\detail\route.ts
- * @LastEditTime: 2026-09-12 12:45:39
+ * @LastEditTime: 2026-09-12 20:25:48
  */
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
@@ -26,10 +26,25 @@ type TimelineInterval = {
 };
 
 type TimelineResponse = {
-  data?: {
-    timelines?: Array<{
-      intervals?: TimelineInterval[];
+  timelines?: {
+    hourly?: Array<{
+      time: string;
+      values: {
+        temperature?: number;
+        temperatureApparent?: number;
+        humidity?: number;
+        windSpeed?: number;
+        windDirection?: number;
+        precipitationProbability?: number;
+        precipitationIntensity?: number;
+        cloudCover?: number;
+        weatherCode?: number;
+      };
     }>;
+  };
+  location?: {
+    lat?: number;
+    lon?: number;
   };
 };
 
@@ -184,20 +199,20 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const intervals = payload.data?.timelines?.[0]?.intervals ?? [];
+  const hourlyTimeline = payload.timelines?.hourly ?? [];
 
-  if (intervals.length === 0) {
+  if (hourlyTimeline.length === 0) {
     await logj({
       domain: "weather",
       level: "error",
-      message: "Tomorrow.io detail response contained no hourly intervals",
+      message: "Tomorrow.io detail response contained no hourly timeline",
       file: "app/api/weather/detail/route.ts",
       line: 190,
       payload: {
         status: response.status,
         body: responseText.slice(0, 1000),
         topLevelKeys: Object.keys(payload),
-        timelineCount: payload.data?.timelines?.length ?? 0,
+        timelineCount: payload.timelines?.hourly?.length ?? 0,
       },
       meta: { built: { ...built, eventIndex: ++eventIndex } },
     });
@@ -205,7 +220,7 @@ export async function GET(req: NextRequest) {
     try {
       const hourly = await fetchOpenMeteoHourly(location);
       const current = hourly[0];
-      if (!current) throw new Error("Open-Meteo returned no hourly intervals");
+      if (!current) throw new Error("Open-Meteo returned no hourly timeline");
 
       await logj({
         domain: "weather",
@@ -241,8 +256,8 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  const hourly = intervals.slice(0, 24).map(({ startTime, values }) => ({
-    time: startTime,
+  const hourly = hourlyTimeline.slice(0, 24).map(({ time, values }) => ({
+    time,
     ...values,
   }));
   const current = hourly[0];
