@@ -133,7 +133,6 @@ export default function WeatherClient({
             locationId: selectedId,
             status: response.status,
             ok: response.ok,
-            data: payload,
           },
           meta: { built: { ...built, eventIndex: ++jei } },
         });
