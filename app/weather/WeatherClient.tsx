@@ -107,7 +107,7 @@ export default function WeatherClient({
       setError(null);
     });
     logj({
-      domain: "jonathan",
+      domain: "weather",
       level: "info",
       message: "Loading weather for selected location",
       file: "app/weather/WeatherClient.tsx",
@@ -124,7 +124,7 @@ export default function WeatherClient({
           error?: string;
         };
         logj({
-          domain: "jonathan",
+          domain: "weather",
           level: "info",
           message: " weather response for selected location",
           file: "app/weather/WeatherClient.tsx",
