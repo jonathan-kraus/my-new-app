@@ -24,10 +24,6 @@ const TomorrowRealtimeSchema = z.object({
   }),
 });
 
-// Default cache windows
-const CURRENT_CACHE_MIN = 30;
-const FORECAST_CACHE_MINUTES = 30;
-
 export async function GET(req: NextRequest) {
   const built = await buildUniversalContext(req, "WEATHER");
   const { searchParams } = new URL(req.url);

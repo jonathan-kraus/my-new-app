@@ -34,7 +34,7 @@ async function baseLog(
   payload: any,
   route: string,
 ) {
-  const built = await buildUniversalContext(req as any, route);
+  const built = await buildUniversalContext(req, route);
   const { file, line } = getCallerInfo();
 
   return logit(

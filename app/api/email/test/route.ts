@@ -12,7 +12,7 @@ export const POST = withLogging(async (req: Request) => {
   const result = await sendTestEmail(test_msg1, test_subject);
 
   // FIXED: buildUniversalContext now requires (req, routeName)
-  const built = await buildUniversalContext(req as any, "EMAILTEST");
+  const built = await buildUniversalContext(req, "EMAILTEST");
 
   await logj({
     domain: "jonathan",

@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 export async function GET(req: Request) {
-  const built = await buildUniversalContext(req as any, "travel-next");
+  const built = await buildUniversalContext(req, "travel-next");
   let jei = 0;
 
   await logj({

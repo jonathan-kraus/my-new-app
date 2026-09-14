@@ -9,7 +9,7 @@ import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { getConfig } from "@/lib/runtime/config";
 
 export async function GET(req: Request) {
-  const built = await buildUniversalContext(req as any, "fa-count");
+  const built = await buildUniversalContext(req, "fa-count");
   let jei = 0;
   const minLat = await getConfig("minLat", "40.0893");
   const minLon = await getConfig("minLon", "-105.7435");

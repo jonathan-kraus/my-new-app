@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { domain, level, message, payload } = body ?? {};
-    const built = await buildUniversalContext(req as any, "logs-post");
+    const built = await buildUniversalContext(req, "logs-post");
     let jei = 0;
 
     await logj({

@@ -26,8 +26,7 @@ const fcm = Number(await getConfig("FORECAST_CACHE_MINUTES", "10"));
 const FORECAST_CACHE_MINUTES = fcm;
 
 export async function GET(req: Request) {
-  const session = await auth();
-  const built = await buildUniversalContext(req as any, "FORECAST");
+  const built = await buildUniversalContext(req, "FORECAST");
   let jei = 0;
   const requestId = req.headers.get("x-app-request-id");
 

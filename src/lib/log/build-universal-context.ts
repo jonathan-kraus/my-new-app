@@ -1,21 +1,19 @@
 /*
- * @FilePath: \my-new-app\lib\log\build-universal-context.ts
- * @LastEditTime: 2026-04-04 00:48:46
+ * @FilePath: \my-new-app\src\lib\log\build-universal-context.ts
+ * @LastEditTime: 2026-09-13 20:15:13
  */
 import crypto from "crypto";
-import type { NextRequest } from "next/server";
 import { auth } from "@/auth";
 import { enrichContext } from "./context";
 
-export async function buildUniversalContext(req: NextRequest, route: string) {
+export async function buildUniversalContext(req: Request, route: string) {
   const now = new Date();
 
   try {
     // Always attempt to load the session
-    // NextAuth v5-safe: returns null if no session
     const session = await auth();
 
-    // Always enrich request context
+    // Correct call — no type annotation inside the call
     const ctx = await enrichContext(req);
 
     return {
@@ -26,8 +24,9 @@ export async function buildUniversalContext(req: NextRequest, route: string) {
       sessionUser: session?.user?.name ?? null,
       route,
     };
-  } catch (err) {
-    // Fallback for pages, client-contaminated files, or edge failures
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+
     return {
       ip: null,
       url: null,
@@ -43,6 +42,7 @@ export async function buildUniversalContext(req: NextRequest, route: string) {
         node: process.version,
         region: process.env.VERCEL_REGION ?? "local",
       },
+      error: message,
     };
   }
 }

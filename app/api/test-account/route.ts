@@ -5,7 +5,7 @@ import { withLogging } from "@/lib/logging/withLogging";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 export const GET = withLogging(async (req: Request) => {
-  const built = await buildUniversalContext(req as any, "JONATHAN");
+  const built = await buildUniversalContext(req, "JONATHAN");
   let jei = 0;
   await logj({
     domain: "jonathan",

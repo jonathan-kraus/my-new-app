@@ -49,7 +49,7 @@ export default async function HomePage(req: Request) {
   // UNIVERSAL CONTEXT TIMING
   // ---------------------------
   const contextStart = performance.now();
-  const built = await buildUniversalContext(req as any, "DASHBOARD");
+  const built = await buildUniversalContext(req, "DASHBOARD");
   const contextEnd = performance.now();
 
   let jei = 0;

@@ -24,7 +24,7 @@ export default async function RuntimeAdminPage(req: NextRequest) {
   const throttle = Number(
     configs.find((c) => c.key === "email.throttle.minutes")?.value ?? "0",
   );
-  const built = await buildUniversalContext(req as any, "RUNTIME");
+  const built = await buildUniversalContext(req, "RUNTIME");
 
   await logj({
     domain: "jonathan",

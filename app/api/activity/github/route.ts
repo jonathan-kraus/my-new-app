@@ -11,7 +11,7 @@ export async function GET(req: NextRequest) {
       orderBy: { updatedAt: "desc" },
       take: 50,
     });
-    const built = await buildUniversalContext(req as any, "GITHUB_ACTIVITY");
+    const built = await buildUniversalContext(req, "GITHUB_ACTIVITY");
     let jei = 0;
     await logj({
       domain: "jonathan",

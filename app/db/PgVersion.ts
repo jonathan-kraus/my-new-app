@@ -9,7 +9,7 @@ import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 export async function getPostgresVersion(req: NextRequest) {
   const sql = neon(process.env.DATABASE_URL!);
-  const built = await buildUniversalContext(req as any, "PGVersion");
+  const built = await buildUniversalContext(req, "PGVersion");
   let jei = 0;
   await logj({
     domain: "jonathan",

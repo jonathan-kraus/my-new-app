@@ -8,7 +8,7 @@ import { getConfig } from "@/lib/runtime/config";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
-  const built = await buildUniversalContext(req as any, "fa-status");
+  const built = await buildUniversalContext(req, "fa-status");
   let jei = 0;
   const ident = await getConfig("flight-ID", "flight-ID");
   console.log("FINAL IDENT:", ident);

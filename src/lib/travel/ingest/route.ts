@@ -13,7 +13,7 @@ import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 export const dynamic = "force-dynamic";
 export async function POST(req: Request) {
-  const built = await buildUniversalContext(req as any, "travel-ingest");
+  const built = await buildUniversalContext(req, "travel-ingest");
   let jei = 0;
 
   await logj({

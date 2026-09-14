@@ -1,22 +1,21 @@
-import type { NextRequest } from "next/server";
 import { auth } from "@/auth";
-import { startRequest, getDuration } from "@/lib/log/timing";
+import { startRequest } from "@/lib/log/timing";
 import versionInfo from "@/version.json";
 
 export const version = versionInfo.version;
 
 const requestCounters = new Map<string, number>();
 
-export async function enrichContext(req: NextRequest) {
+export async function enrichContext(req: Request) {
   const requestId = req.headers.get("x-request-id") ?? crypto.randomUUID();
 
   // Start timing for this request
   startRequest(requestId);
 
-  // Basic request metadata
-  const route = req.nextUrl.pathname ?? undefined;
+  const url = new URL(req.url);
+  const route = url.pathname;
+
   const method = req.method;
-  const url = req.url;
 
   const ip =
     req.headers.get("x-forwarded-for") ??
