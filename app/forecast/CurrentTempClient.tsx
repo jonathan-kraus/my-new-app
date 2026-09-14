@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\forecast\CurrentTempClient.tsx
- * @LastEditTime: 2026-07-19 23:39:42
+ * @LastEditTime: 2026-09-14 14:09:43
  */
 // app/forecast/CurrentTempClient.tsx
 "use client";
@@ -32,7 +32,7 @@ export default function CurrentTempClient() {
     <>
       <h1>King of Prussia, PA</h1>
       {temp === null ? (
-        <p>Loading temperature...</p>
+        <p>Loading temperature....</p>
       ) : (
         <p className="text-7xl font-light mt-4">{temp}°F</p>
       )}
