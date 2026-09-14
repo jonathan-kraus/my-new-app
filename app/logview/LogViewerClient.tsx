@@ -1,7 +1,7 @@
 "use client";
 // app\logview\LogViewerClient.tsx
 import { useEffect, useState, useCallback, useRef } from "react";
-
+import { Spinner } from "@/components/ui/spinner";
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface Log {
@@ -533,11 +533,13 @@ export default function LogViewerClient() {
                 ))}
                 {loading && (
                   <tr>
-                    <td colSpan={5} className="py-16">
-                      <div className="animate-pulse space-y-4">
-                        <div className="h-4 bg-zinc-800 rounded w-1/3 mx-auto" />
-                        <div className="h-4 bg-zinc-800 rounded w-2/3 mx-auto" />
-                        <div className="h-4 bg-zinc-800 rounded w-1/2 mx-auto" />
+                    <td
+                      colSpan={5}
+                      className="text-center py-16 text-zinc-400 font-sans text-sm"
+                    >
+                      <div className="flex flex-col items-center gap-3">
+                        <Spinner className="size-6 text-zinc-400" />
+                        <span>Loading logs…</span>
                       </div>
                     </td>
                   </tr>
