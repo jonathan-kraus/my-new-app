@@ -12,7 +12,7 @@ export async function GET(
   { params }: { params: Promise<{ name: string }> },
 ) {
   const { name } = await params;
-  const built = await buildUniversalContext(request as any, "db-table");
+  const built = await buildUniversalContext(request, "db-table");
   let jei = 0;
 
   await logj({

@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\notes\route.ts
- * @LastEditTime: 2026-09-13 02:00:00
+ * @LastEditTime: 2026-09-13 20:33:28
  */
 
 import { type NextRequest, NextResponse } from "next/server";
@@ -12,10 +12,7 @@ import { withLogging } from "@/lib/logging/withLogging";
 
 export const GET = withLogging(async (req: Request) => {
   // Build context INSIDE the request handler
-  const built = await buildUniversalContext(
-    req as unknown as NextRequest,
-    "NOTES",
-  );
+  const built = await buildUniversalContext(req, "NOTES");
   let jei = 0;
   await logj({
     domain: "notes",
@@ -61,7 +58,7 @@ export const GET = withLogging(async (req: Request) => {
       level: "error",
       message: `Notes GET failed with error: ${msg}`,
       file: "app/api/notes/route.ts",
-      line: 42,
+      line: 56,
       payload: {
         error: msg,
       },
@@ -74,17 +71,14 @@ export const GET = withLogging(async (req: Request) => {
   }
 });
 export const POST = withLogging(async (req: Request) => {
-  const built = await buildUniversalContext(
-    req as unknown as NextRequest,
-    "NOTES",
-  );
+  const built = await buildUniversalContext(req, "NOTES");
   let jei = 20;
   await logj({
     domain: "notes",
     level: "info",
     message: "🎶 Notes POST started 🎶",
     file: "app/api/notes/route.ts",
-    line: 65,
+    line: 76,
     payload: {
       some: "data",
     },
@@ -112,16 +106,13 @@ export const POST = withLogging(async (req: Request) => {
         color: body.color ?? null,
       },
     });
-    const built = await buildUniversalContext(
-      req as unknown as NextRequest,
-      "NOTES",
-    );
+    const built = await buildUniversalContext(req, "NOTES");
     await logj({
       domain: "notes",
       level: "info",
       message: "🎶 Note created 🎶",
       file: "app/api/notes/route.ts",
-      line: 99,
+      line: 110,
       payload: {
         noteId: note.id,
         title: note.title,
@@ -138,7 +129,7 @@ export const POST = withLogging(async (req: Request) => {
       level: "error",
       message: `Notes GET failed with error: ${msg}`,
       file: "app/api/notes/route.ts",
-      line: 42,
+      line: 127,
       payload: {
         error: msg,
       },
@@ -152,16 +143,13 @@ export const POST = withLogging(async (req: Request) => {
 });
 export const PUT = withLogging(async (req: Request) => {
   let jei = 40;
-  const built = await buildUniversalContext(
-    req as unknown as NextRequest,
-    "NOTES",
-  );
+  const built = await buildUniversalContext(req, "NOTES");
   await logj({
     domain: "notes",
     level: "info",
     message: "🎶 Notes PUT started 🎶",
     file: "app/api/notes/route.ts",
-    line: 125,
+    line: 147,
     payload: {
       some: "data",
     },
@@ -208,7 +196,7 @@ export const PUT = withLogging(async (req: Request) => {
       level: "info",
       message: `🎶 Note updated - ${updatedNote?.title} 🎶`,
       file: "app/api/notes/route.ts",
-      line: 174,
+      line: 194,
       payload: {
         noteId: id,
         title: updatedNote?.title,
@@ -226,7 +214,7 @@ export const PUT = withLogging(async (req: Request) => {
       level: "error",
       message: `Notes PUT failed with error: ${msg}`,
       file: "app/api/notes/route.ts",
-      line: 42,
+      line: 212,
       payload: {
         error: msg,
       },
@@ -240,16 +228,13 @@ export const PUT = withLogging(async (req: Request) => {
 });
 export const DELETE = withLogging(async (req: Request) => {
   let jei = 60;
-  const built = await buildUniversalContext(
-    req as unknown as NextRequest,
-    "NOTES",
-  );
+  const built = await buildUniversalContext(req, "NOTES");
   await logj({
     domain: "notes",
     level: "info",
     message: "🎶 Notes DELETE started 🎶",
     file: "app/api/notes/route.ts",
-    line: 201,
+    line: 232,
     payload: {
       some: "data",
     },
@@ -280,16 +265,13 @@ export const DELETE = withLogging(async (req: Request) => {
     if (deleted.count === 0) {
       return NextResponse.json({ error: "Note not found" }, { status: 404 });
     }
-    const built = await buildUniversalContext(
-      req as unknown as NextRequest,
-      "NOTES",
-    );
+    const built = await buildUniversalContext(req, "NOTES");
     await logj({
       domain: "notes",
       level: "info",
       message: "Note deleted",
       file: "app/api/notes/route.ts",
-      line: 238,
+      line: 269,
       payload: { title: noteToDelete?.title, userEmail: email },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -302,7 +284,7 @@ export const DELETE = withLogging(async (req: Request) => {
       level: "error",
       message: `Notes DELETE failed with error: ${msg}`,
       file: "app/api/notes/route.ts",
-      line: 42,
+      line: 282,
       payload: {
         error: msg,
       },

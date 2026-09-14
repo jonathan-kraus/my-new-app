@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\arrivals\[stop]\route.ts
- * @LastEditTime: 2026-08-26 15:09:57
+ * @LastEditTime: 2026-09-13 20:26:21
  */
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
@@ -12,7 +12,7 @@ export async function GET(request: Request) {
   const parts = url.pathname.split("/").filter(Boolean);
   const stopId = parts[2] ?? ""; // always a string
 
-  const built = await buildUniversalContext(request as any, "mbta");
+  const built = await buildUniversalContext(request, "mbta");
   let jei = 0;
   const requestUrl = new URL("https://api-v3.mbta.com/predictions");
 

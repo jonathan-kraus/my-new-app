@@ -6,8 +6,8 @@ import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { getPostgresVersion } from "@/app/db/PgVersion";
 import { getFullPackageData } from "@/lib/version/get-full-package-data";
 
-export async function GET(nextReq: Request) {
-  const built = await buildUniversalContext(nextReq as any, "environment");
+export async function GET(req: Request) {
+  const built = await buildUniversalContext(req, "environment");
   let jei = 0;
 
   await logj({
