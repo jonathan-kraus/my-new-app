@@ -6,8 +6,8 @@ minimumReleaseAge: 0
 allowBuilds:
   "@prisma/engines": true
   esbuild: true
-  msgpackr-extract: set this to true or false
+  msgpackr-extract: false
   prisma: true
   sharp: true
   unrs-resolver: true
-  workerd: set this to true or false
+  workerd: false

@@ -69,7 +69,7 @@ if ! pnpm type-check; then
 fi
 
 section "Validating Prisma schema"
-pnpm prisma validate && success "Prisma schema valid"
+pnpm prisma7 validate && success "Prisma schema valid"
 
 # section "Running pnpm audit"
 # node .github/scripts/audit.js
