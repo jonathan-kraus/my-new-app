@@ -185,14 +185,14 @@ model Log {
 }
 
 model Note {
-  id          String        @id(map: "Note_pkey")
+  id String @id(map: "Note_pkey") @default(uuid())
   userId      String
   userEmail   String
   title       String?
   content     String
-  createdAt   Timestamp(3)  @default(now())
-  updatedAt   Timestamp(3)
-  followUpAt  Timestamp(3)?
+createdAt   TimestampString(3) @default(now())
+  updatedAt   TimestampString(3)
+  followUpAt  TimestampString(3)?
   isCompleted Boolean       @default(false)
   isArchived  Boolean       @default(false)
   pinned      Boolean       @default(false)

@@ -1318,7 +1318,7 @@
               "createdAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/timestamp-temporal@1",
+                  "codecId": "pg/timestamp-string@1",
                   "kind": "scalar",
                   "typeParams": {
                     "precision": 3
@@ -1328,7 +1328,7 @@
               "followUpAt": {
                 "nullable": true,
                 "type": {
-                  "codecId": "pg/timestamp-temporal@1",
+                  "codecId": "pg/timestamp-string@1",
                   "kind": "scalar",
                   "typeParams": {
                     "precision": 3
@@ -1381,7 +1381,7 @@
               "updatedAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/timestamp-temporal@1",
+                  "codecId": "pg/timestamp-string@1",
                   "kind": "scalar",
                   "typeParams": {
                     "precision": 3
@@ -3132,7 +3132,7 @@
                   "nullable": false
                 },
                 "createdAt": {
-                  "codecId": "pg/timestamp-temporal@1",
+                  "codecId": "pg/timestamp-string@1",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
@@ -3144,7 +3144,7 @@
                   }
                 },
                 "followUpAt": {
-                  "codecId": "pg/timestamp-temporal@1",
+                  "codecId": "pg/timestamp-string@1",
                   "nativeType": "timestamp",
                   "nullable": true,
                   "typeParams": {
@@ -3200,7 +3200,7 @@
                   "nullable": true
                 },
                 "updatedAt": {
-                  "codecId": "pg/timestamp-temporal@1",
+                  "codecId": "pg/timestamp-string@1",
                   "nativeType": "timestamp",
                   "nullable": false,
                   "typeParams": {
@@ -3846,7 +3846,25 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "d10b02f9dc248fc184a5027ee90c46a4b8fd817407448c2bb1484f127c52b168"
+    "storageHash": "1526bb58dfb6bf984a0e9c6ebe3cb531c75a27ca1efba2650662e2234b0b5ab2"
+  },
+  "execution": {
+    "executionHash": "8499dcc414473f3d3afc33e08a8ab1580ac1537d512b45f8a325cc79599c0af6",
+    "mutations": {
+      "defaults": [
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "column": "id",
+            "namespace": "public",
+            "table": "Note"
+          }
+        }
+      ]
+    }
   },
   "capabilities": {
     "postgres": {

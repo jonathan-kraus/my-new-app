@@ -34,8 +34,9 @@ import type {
 } from "@prisma/orm-postgres/contract/types";
 
 export type StorageHash =
-  StorageHashBase<"d10b02f9dc248fc184a5027ee90c46a4b8fd817407448c2bb1484f127c52b168">;
-export type ExecutionHash = ExecutionHashBase<string>;
+  StorageHashBase<"1526bb58dfb6bf984a0e9c6ebe3cb531c75a27ca1efba2650662e2234b0b5ab2">;
+export type ExecutionHash =
+  ExecutionHashBase<"8499dcc414473f3d3afc33e08a8ab1580ac1537d512b45f8a325cc79599c0af6">;
 export type ProfileHash =
   ProfileHashBase<"3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2">;
 
@@ -653,10 +654,9 @@ export type FieldOutputTypes = {
       readonly userEmail: CodecTypes["pg/text@1"]["output"];
       readonly title: CodecTypes["pg/text@1"]["output"] | null;
       readonly content: CodecTypes["pg/text@1"]["output"];
-      readonly createdAt: CodecTypes["pg/timestamp-temporal@1"]["output"];
-      readonly updatedAt: CodecTypes["pg/timestamp-temporal@1"]["output"];
-      readonly followUpAt:
-        CodecTypes["pg/timestamp-temporal@1"]["output"] | null;
+      readonly createdAt: TimestampString<3>;
+      readonly updatedAt: TimestampString<3>;
+      readonly followUpAt: TimestampString<3> | null;
       readonly isCompleted: CodecTypes["pg/bool@1"]["output"];
       readonly isArchived: CodecTypes["pg/bool@1"]["output"];
       readonly pinned: CodecTypes["pg/bool@1"]["output"];
@@ -876,10 +876,9 @@ export type FieldInputTypes = {
       readonly userEmail: CodecTypes["pg/text@1"]["input"];
       readonly title: CodecTypes["pg/text@1"]["input"] | null;
       readonly content: CodecTypes["pg/text@1"]["input"];
-      readonly createdAt: CodecTypes["pg/timestamp-temporal@1"]["input"];
-      readonly updatedAt: CodecTypes["pg/timestamp-temporal@1"]["input"];
-      readonly followUpAt:
-        CodecTypes["pg/timestamp-temporal@1"]["input"] | null;
+      readonly createdAt: CodecTypes["pg/timestamp-string@1"]["input"];
+      readonly updatedAt: CodecTypes["pg/timestamp-string@1"]["input"];
+      readonly followUpAt: CodecTypes["pg/timestamp-string@1"]["input"] | null;
       readonly isCompleted: CodecTypes["pg/bool@1"]["input"];
       readonly isArchived: CodecTypes["pg/bool@1"]["input"];
       readonly pinned: CodecTypes["pg/bool@1"]["input"];
@@ -1096,16 +1095,15 @@ export type StorageColumnTypes = {
     readonly Note: {
       readonly color: CodecTypes["pg/text@1"]["output"] | null;
       readonly content: CodecTypes["pg/text@1"]["output"];
-      readonly createdAt: CodecTypes["pg/timestamp-temporal@1"]["output"];
-      readonly followUpAt:
-        CodecTypes["pg/timestamp-temporal@1"]["output"] | null;
+      readonly createdAt: TimestampString<3>;
+      readonly followUpAt: TimestampString<3> | null;
       readonly id: CodecTypes["pg/text@1"]["output"];
       readonly isArchived: CodecTypes["pg/bool@1"]["output"];
       readonly isCompleted: CodecTypes["pg/bool@1"]["output"];
       readonly pinned: CodecTypes["pg/bool@1"]["output"];
       readonly tags: ReadonlyArray<CodecTypes["pg/text@1"]["output"]>;
       readonly title: CodecTypes["pg/text@1"]["output"] | null;
-      readonly updatedAt: CodecTypes["pg/timestamp-temporal@1"]["output"];
+      readonly updatedAt: TimestampString<3>;
       readonly userEmail: CodecTypes["pg/text@1"]["output"];
       readonly userId: CodecTypes["pg/text@1"]["output"];
     };
@@ -1319,16 +1317,15 @@ export type StorageColumnInputTypes = {
     readonly Note: {
       readonly color: CodecTypes["pg/text@1"]["input"] | null;
       readonly content: CodecTypes["pg/text@1"]["input"];
-      readonly createdAt: CodecTypes["pg/timestamp-temporal@1"]["input"];
-      readonly followUpAt:
-        CodecTypes["pg/timestamp-temporal@1"]["input"] | null;
+      readonly createdAt: CodecTypes["pg/timestamp-string@1"]["input"];
+      readonly followUpAt: CodecTypes["pg/timestamp-string@1"]["input"] | null;
       readonly id: CodecTypes["pg/text@1"]["input"];
       readonly isArchived: CodecTypes["pg/bool@1"]["input"];
       readonly isCompleted: CodecTypes["pg/bool@1"]["input"];
       readonly pinned: CodecTypes["pg/bool@1"]["input"];
       readonly tags: ReadonlyArray<CodecTypes["pg/text@1"]["input"]>;
       readonly title: CodecTypes["pg/text@1"]["input"] | null;
-      readonly updatedAt: CodecTypes["pg/timestamp-temporal@1"]["input"];
+      readonly updatedAt: CodecTypes["pg/timestamp-string@1"]["input"];
       readonly userEmail: CodecTypes["pg/text@1"]["input"];
       readonly userId: CodecTypes["pg/text@1"]["input"];
     };
@@ -1570,9 +1567,9 @@ export namespace Models {
     userEmail: CodecTypes["pg/text@1"]["output"];
     title: CodecTypes["pg/text@1"]["output"] | null;
     content: CodecTypes["pg/text@1"]["output"];
-    createdAt: CodecTypes["pg/timestamp-temporal@1"]["output"];
-    updatedAt: CodecTypes["pg/timestamp-temporal@1"]["output"];
-    followUpAt: CodecTypes["pg/timestamp-temporal@1"]["output"] | null;
+    createdAt: TimestampString<3>;
+    updatedAt: TimestampString<3>;
+    followUpAt: TimestampString<3> | null;
     isCompleted: CodecTypes["pg/bool@1"]["output"];
     isArchived: CodecTypes["pg/bool@1"]["output"];
     pinned: CodecTypes["pg/bool@1"]["output"];
@@ -2514,7 +2511,7 @@ type ContractBase = Omit<
                 };
                 readonly createdAt: {
                   readonly nativeType: "timestamp";
-                  readonly codecId: "pg/timestamp-temporal@1";
+                  readonly codecId: "pg/timestamp-string@1";
                   readonly nullable: false;
                   readonly default: {
                     readonly kind: "function";
@@ -2524,13 +2521,13 @@ type ContractBase = Omit<
                 };
                 readonly updatedAt: {
                   readonly nativeType: "timestamp";
-                  readonly codecId: "pg/timestamp-temporal@1";
+                  readonly codecId: "pg/timestamp-string@1";
                   readonly nullable: false;
                   readonly typeParams: { readonly precision: 3 };
                 };
                 readonly followUpAt: {
                   readonly nativeType: "timestamp";
-                  readonly codecId: "pg/timestamp-temporal@1";
+                  readonly codecId: "pg/timestamp-string@1";
                   readonly nullable: true;
                   readonly typeParams: { readonly precision: 3 };
                 };
@@ -4316,7 +4313,7 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: {
                   readonly kind: "scalar";
-                  readonly codecId: "pg/timestamp-temporal@1";
+                  readonly codecId: "pg/timestamp-string@1";
                   readonly typeParams: { readonly precision: 3 };
                 };
               };
@@ -4324,7 +4321,7 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: {
                   readonly kind: "scalar";
-                  readonly codecId: "pg/timestamp-temporal@1";
+                  readonly codecId: "pg/timestamp-string@1";
                   readonly typeParams: { readonly precision: 3 };
                 };
               };
@@ -4332,7 +4329,7 @@ type ContractBase = Omit<
                 readonly nullable: true;
                 readonly type: {
                   readonly kind: "scalar";
-                  readonly codecId: "pg/timestamp-temporal@1";
+                  readonly codecId: "pg/timestamp-string@1";
                   readonly typeParams: { readonly precision: 3 };
                 };
               };
@@ -5130,6 +5127,24 @@ type ContractBase = Omit<
     };
   };
   readonly extensions: {};
+  readonly execution: {
+    readonly executionHash: ExecutionHash;
+    readonly mutations: {
+      readonly defaults: readonly [
+        {
+          readonly ref: {
+            readonly namespace: "public";
+            readonly table: "Note";
+            readonly column: "id";
+          };
+          readonly onCreate: {
+            readonly kind: "generator";
+            readonly id: "uuidv4";
+          };
+        },
+      ];
+    };
+  };
   readonly meta: {};
 
   readonly profileHash: ProfileHash;

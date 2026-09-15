@@ -1,14 +1,17 @@
 /*
  * @FilePath: \my-new-app\app\api\notes\route.ts
- * @LastEditTime: 2026-09-13 20:33:28
+ * @LastEditTime: 2026-09-15 16:03:49
  */
 
 import { type NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { db } from "@/lib/db";
+import { db8 } from "@/lib/db.prisma8";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { withLogging } from "@/lib/logging/withLogging";
+
+const timestampString = (value: string) =>
+  value as `${string}` & { readonly __timestampStringPrecision: 3 };
 
 export const GET = withLogging(async (req: Request) => {
   // Build context INSIDE the request handler
@@ -19,7 +22,7 @@ export const GET = withLogging(async (req: Request) => {
     level: "info",
     message: "🎶 Notes GET started 🎶",
     file: "app/api/notes/route.ts",
-    line: 17,
+    line: 21,
     payload: {
       some: "data",
     },
@@ -34,17 +37,21 @@ export const GET = withLogging(async (req: Request) => {
     }
 
     const email = session.user.email!;
-    const notes = await db.note.findMany({
-      where: { userEmail: email, isArchived: false },
-      orderBy: { createdAt: "desc" },
-    });
+    const notes = await db8.orm.public.Note.where({
+      userEmail: email,
+      isArchived: false,
+    })
+      .orderBy((note) => note.createdAt.desc())
+      .all();
+
+    console.log("DB8 NOTES:", notes);
 
     await logj({
       domain: "notes",
       level: "info",
       message: `Notes GET completed with ${notes.length} notes`,
       file: "app/api/notes/route.ts",
-      line: 42,
+      line: 51,
       payload: {
         count: notes.length,
       },
@@ -58,7 +65,7 @@ export const GET = withLogging(async (req: Request) => {
       level: "error",
       message: `Notes GET failed with error: ${msg}`,
       file: "app/api/notes/route.ts",
-      line: 56,
+      line: 65,
       payload: {
         error: msg,
       },
@@ -78,7 +85,7 @@ export const POST = withLogging(async (req: Request) => {
     level: "info",
     message: "🎶 Notes POST started 🎶",
     file: "app/api/notes/route.ts",
-    line: 76,
+    line: 85,
     payload: {
       some: "data",
     },
@@ -96,15 +103,16 @@ export const POST = withLogging(async (req: Request) => {
     const userId = session.user.id!;
     const body = await req.json();
 
-    const note = await db.note.create({
-      data: {
-        userId,
-        userEmail: email,
-        title: body.title ?? "",
-        content: body.content ?? "",
-        followUpAt: body.followUpAt ? new Date(body.followUpAt) : null,
-        color: body.color ?? null,
-      },
+    const note = await db8.orm.public.Note.create({
+      userId,
+      userEmail: email,
+      title: body.title ?? "",
+      content: body.content ?? "",
+      followUpAt: body.followUpAt
+        ? timestampString(new Date(body.followUpAt).toISOString())
+        : null,
+      color: body.color ?? null,
+      updatedAt: timestampString(new Date().toISOString()),
     });
     const built = await buildUniversalContext(req, "NOTES");
     await logj({
@@ -112,7 +120,7 @@ export const POST = withLogging(async (req: Request) => {
       level: "info",
       message: "🎶 Note created 🎶",
       file: "app/api/notes/route.ts",
-      line: 110,
+      line: 120,
       payload: {
         noteId: note.id,
         title: note.title,
@@ -129,7 +137,7 @@ export const POST = withLogging(async (req: Request) => {
       level: "error",
       message: `Notes GET failed with error: ${msg}`,
       file: "app/api/notes/route.ts",
-      line: 127,
+      line: 137,
       payload: {
         error: msg,
       },
@@ -149,7 +157,7 @@ export const PUT = withLogging(async (req: Request) => {
     level: "info",
     message: "🎶 Notes PUT started 🎶",
     file: "app/api/notes/route.ts",
-    line: 147,
+    line: 157,
     payload: {
       some: "data",
     },
@@ -172,31 +180,35 @@ export const PUT = withLogging(async (req: Request) => {
       return NextResponse.json({ error: "Note ID required" }, { status: 400 });
     }
 
-    const updated = await db.note.updateMany({
-      where: { id, userEmail: email },
-      data: {
-        ...(title !== undefined && { title }),
-        ...(content !== undefined && { content }),
-        ...(followUpAt !== undefined && {
-          followUpAt: followUpAt ? new Date(followUpAt) : null,
-        }),
-        ...(isArchived !== undefined && { isArchived }),
-        ...(isCompleted !== undefined && { isCompleted }),
-        ...(color !== undefined && { color }),
-      },
-    });
+    const updateData = {
+      ...(title !== undefined && { title }),
+      ...(content !== undefined && { content }),
+      ...(followUpAt !== undefined && {
+        followUpAt: followUpAt
+          ? timestampString(new Date(followUpAt).toISOString())
+          : null,
+      }),
+      ...(isArchived !== undefined && { isArchived }),
+      ...(isCompleted !== undefined && { isCompleted }),
+      ...(color !== undefined && { color }),
+    };
 
-    if (updated.count === 0) {
+    const updated = await db8.orm.public.Note.where({
+      id,
+      userEmail: email,
+    }).update(updateData);
+
+    if (!updated) {
       return NextResponse.json({ error: "Note not found" }, { status: 404 });
     }
 
-    const updatedNote = await db.note.findUnique({ where: { id } });
+    const updatedNote = updated;
     await logj({
       domain: "notes",
       level: "info",
       message: `🎶 Note updated - ${updatedNote?.title} 🎶`,
       file: "app/api/notes/route.ts",
-      line: 194,
+      line: 213,
       payload: {
         noteId: id,
         title: updatedNote?.title,
@@ -214,7 +226,7 @@ export const PUT = withLogging(async (req: Request) => {
       level: "error",
       message: `Notes PUT failed with error: ${msg}`,
       file: "app/api/notes/route.ts",
-      line: 212,
+      line: 231,
       payload: {
         error: msg,
       },
@@ -234,7 +246,7 @@ export const DELETE = withLogging(async (req: Request) => {
     level: "info",
     message: "🎶 Notes DELETE started 🎶",
     file: "app/api/notes/route.ts",
-    line: 232,
+    line: 251,
     payload: {
       some: "data",
     },
@@ -256,13 +268,14 @@ export const DELETE = withLogging(async (req: Request) => {
       return NextResponse.json({ error: "Note ID required" }, { status: 400 });
     }
 
-    const noteToDelete = await db.note.findUnique({ where: { id } });
+    const noteToDelete = await db8.orm.public.Note.where({ id }).first();
 
-    const deleted = await db.note.deleteMany({
-      where: { id, userEmail: email },
-    });
+    const deleted = await db8.orm.public.Note.where({
+      id,
+      userEmail: email,
+    }).delete();
 
-    if (deleted.count === 0) {
+    if (!deleted) {
       return NextResponse.json({ error: "Note not found" }, { status: 404 });
     }
     const built = await buildUniversalContext(req, "NOTES");
@@ -271,7 +284,7 @@ export const DELETE = withLogging(async (req: Request) => {
       level: "info",
       message: "Note deleted",
       file: "app/api/notes/route.ts",
-      line: 269,
+      line: 293,
       payload: { title: noteToDelete?.title, userEmail: email },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -284,7 +297,7 @@ export const DELETE = withLogging(async (req: Request) => {
       level: "error",
       message: `Notes DELETE failed with error: ${msg}`,
       file: "app/api/notes/route.ts",
-      line: 282,
+      line: 306,
       payload: {
         error: msg,
       },
