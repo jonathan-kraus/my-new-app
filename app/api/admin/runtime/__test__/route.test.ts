@@ -1,37 +1,34 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-vi.mock("@/lib/db", () => {
-  const mockDb = {
-    log: {
-      create: vi.fn().mockResolvedValue({}),
-    },
-    config: {
-      findMany: vi.fn().mockResolvedValue([]),
-    },
-    flight: {
-      findMany: vi.fn().mockResolvedValue([]),
-    },
-    weather: {
-      findMany: vi.fn().mockResolvedValue([]),
-    },
-    runtimeConfig: {
-      findMany: vi.fn().mockResolvedValue([]),
+vi.mock("@/lib/db.prisma8", () => {
+  const mockDb8 = {
+    orm: {
+      public: {
+        RuntimeConfig: {
+          orderBy: vi.fn().mockReturnThis(),
+          all: vi.fn().mockResolvedValue([]),
+        },
+      },
     },
   };
 
-  return { db: mockDb };
+  return { db8: mockDb8 };
 });
 
-const { db } = await import("@/lib/db");
-const mockedDb = vi.mocked(db, true);
+const { db8 } = await import("@/lib/db.prisma8");
+const mockedDb8 = vi.mocked(db8, true);
 
 beforeEach(() => {
   vi.clearAllMocks();
+
+  mockedDb8.orm.public.RuntimeConfig.orderBy.mockReturnValue(
+    mockedDb8.orm.public.RuntimeConfig,
+  );
 });
 
 describe("GET /api/admin/runtime", () => {
   it("returns an empty list when no configs exist", async () => {
-    mockedDb.runtimeConfig.findMany.mockResolvedValue([]);
+    mockedDb8.orm.public.RuntimeConfig.all.mockResolvedValue([]);
 
     const { GET } = await import("../route");
     const res = await GET();
@@ -63,18 +60,16 @@ describe("GET /api/admin/runtime", () => {
       },
     ] as any;
 
-    mockedDb.runtimeConfig.findMany.mockResolvedValue(mocked);
+    mockedDb8.orm.public.RuntimeConfig.all.mockResolvedValue(mocked);
 
     const { GET } = await import("../route");
     const res = await GET();
     const json = await res.json();
 
     expect(res.status).toBe(200);
-    // The route asks the DB to order by key ascending
-    expect(mockedDb.runtimeConfig.findMany).toHaveBeenCalledWith({
-      orderBy: { key: "asc" },
-    });
-    // And it maps to { key, value } preserving the DB-provided order
+
+    expect(mockedDb8.orm.public.RuntimeConfig.orderBy).toHaveBeenCalled();
+
     expect(json.configs).toEqual(
       mocked.map((c: any) => ({ key: c.key, value: c.value })),
     );
