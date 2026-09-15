@@ -1,0 +1,331 @@
+// use prisma-8
+// Contract inferred from the live database schema. Edit as needed, then run `prisma contract emit`.
+model User {
+  id            String        @id(map: "User_pkey")
+  name          String?
+  email         String?
+  emailVerified Timestamp(3)?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+
+  @@index([email], map: "User_email_key", unique: true)
+
+  @@map("User")
+}
+
+model Account {
+  id                String  @id(map: "Account_pkey")
+  userId            String
+  _type             String  @map("type")
+  provider          String
+  providerAccountId String
+  refreshToken      String? @map("refresh_token")
+  accessToken       String? @map("access_token")
+  expiresAt         Int?    @map("expires_at")
+  tokenType         String? @map("token_type")
+  scope             String?
+  idToken           String? @map("id_token")
+  sessionState      String? @map("session_state")
+  user              User    @relation(fields:[userId], references:[id], onDelete: Restrict, onUpdate: Cascade, map: "Account_userId_fkey", index: false)
+
+  @@index([provider, providerAccountId], map: "Account_provider_providerAccountId_key", unique: true)
+
+  @@map("Account")
+}
+
+model Location {
+  id                 String              @id(map: "Location_pkey")
+  key                String
+  name               String
+  latitude           Float
+  longitude          Float
+  timezone           String
+  isDefault          Boolean             @default(false)
+  createdAt          Timestamp(3)        @default(now())
+  updatedAt          Timestamp(3)
+  astronomySnapshots AstronomySnapshot[]
+  forecastSnapshots  ForecastSnapshot[]
+  weatherSnapshots   WeatherSnapshot[]
+
+  @@index([key], map: "Location_key_key", unique: true)
+
+  @@map("Location")
+}
+
+model AstronomySnapshot {
+  id                 String       @id(map: "AstronomySnapshot_pkey")
+  locationId         String
+  fetchedAt          Timestamp(3)
+  sunrise            String
+  sunset             String
+  moonrise           String?
+  moonset            String?
+  moonPhase          Float?
+  sunriseBlueStart   String?
+  sunriseBlueEnd     String?
+  sunriseGoldenStart String?
+  sunriseGoldenEnd   String?
+  sunsetGoldenStart  String?
+  sunsetGoldenEnd    String?
+  sunsetBlueStart    String?
+  sunsetBlueEnd      String?
+  solarNoon          String?
+  illumination       Float?
+  phaseName          String?
+  dateString         VarChar(10)
+  location           Location     @relation(fields:[locationId], references:[id], onDelete: Restrict, onUpdate: Cascade, map: "AstronomySnapshot_locationId_fkey", index: false)
+
+  @@index([locationId, dateString], map: "AstronomySnapshot_locationId_dateString_key", unique: true)
+
+  @@map("AstronomySnapshot")
+}
+
+model DbTableStats {
+  id           String       @id(map: "DbTableStats_pkey")
+  tableName    String
+  rowEstimate  Int
+  totalBytes   BigInt
+  indexBytes   BigInt
+  tableBytes   BigInt
+  toastBytes   BigInt
+  snapshotDate Timestamp(3)
+  createdAt    Timestamp(3) @default(now())
+
+  @@index([tableName, snapshotDate], map: "DbTableStats_tableName_snapshotDate_idx")
+  @@index([tableName, snapshotDate], map: "DbTableStats_tableName_snapshotDate_key", unique: true)
+
+  @@map("DbTableStats")
+}
+
+model EphemerisDebug {
+  id                 String       @id(map: "EphemerisDebug_pkey")
+  locationId         String?
+  fetchedAt          String?
+  createdAt          String?
+  date               String?
+  sunrise            String?
+  sunset             String?
+  moonrise           String?
+  moonset            String?
+  moonPhase          Float?
+  sunriseBlueStart   String?
+  sunriseBlueEnd     String?
+  sunriseGoldenStart String?
+  sunriseGoldenEnd   String?
+  sunsetGoldenStart  String?
+  sunsetGoldenEnd    String?
+  sunsetBlueStart    String?
+  sunsetBlueEnd      String?
+  raw                Jsonb
+  receivedAt         Timestamp(3) @default(now())
+
+  @@map("EphemerisDebug")
+}
+
+model ForecastSnapshot {
+  id         String       @id(map: "ForecastSnapshot_pkey")
+  locationId String
+  fetchedAt  Timestamp(3) @default(now())
+  payload    Jsonb
+  location   Location     @relation(fields:[locationId], references:[id], onDelete: Restrict, onUpdate: Cascade, map: "ForecastSnapshot_locationId_fkey", index: false)
+
+  @@map("ForecastSnapshot")
+}
+
+model GithubEvent {
+  id            String       @id(map: "GithubEvent_pkey")
+  eventId       String
+  _type         String       @map("type")
+  repo          String
+  actor         String?
+  status        String?
+  conclusion    String?
+  commitSha     String?
+  commitMessage String?
+  url           String?
+  createdAt     Timestamp(3) @default(now())
+  updatedAt     Timestamp(3)
+  raw           Jsonb?
+  title         String?
+  jobName       String?
+
+  @@index([eventId], map: "GithubEvent_eventId_key", unique: true)
+
+  @@map("GithubEvent")
+}
+
+model Log {
+  id           Int          @id(map: "Log_pkey") @default(autoincrement())
+  level        String
+  message      String
+  requestId    String?
+  domain       String
+  payload      Jsonb
+  meta         Jsonb?
+  userId       String?
+  sessionEmail String?
+  sessionUser  String?
+  file         String?
+  line         Int?
+  createdAt    Timestamp(3) @default(now()) @map("created_at")
+
+  @@index([createdAt], map: "Log_created_at_idx")
+  @@index([domain], map: "Log_domain_idx")
+  @@index([file], map: "Log_file_idx")
+  @@index([level], map: "Log_level_idx")
+  @@index([meta], map: "Log_meta_idx", type: "gin")
+  @@index([payload], map: "Log_payload_idx", type: "gin")
+  @@index([requestId], map: "Log_requestId_idx")
+  @@index([sessionEmail], map: "Log_sessionEmail_idx")
+  @@index([sessionUser], map: "Log_sessionUser_idx")
+  @@index([userId], map: "Log_userId_idx")
+
+  @@map("Log")
+}
+
+model Note {
+  id          String        @id(map: "Note_pkey")
+  userId      String
+  userEmail   String
+  title       String?
+  content     String
+  createdAt   Timestamp(3)  @default(now())
+  updatedAt   Timestamp(3)
+  followUpAt  Timestamp(3)?
+  isCompleted Boolean       @default(false)
+  isArchived  Boolean       @default(false)
+  pinned      Boolean       @default(false)
+  tags        String[]      @default([]) @noCheck(elementNotNull)
+  color       String?
+
+  @@index([followUpAt], map: "Note_followUpAt_idx")
+  @@index([isArchived], map: "Note_isArchived_idx")
+  @@index([isCompleted], map: "Note_isCompleted_idx")
+  @@index([userEmail], map: "Note_userEmail_idx")
+  @@index([userId], map: "Note_userId_idx")
+
+  @@map("Note")
+}
+
+model RuntimeConfig {
+  key       String       @id(map: "RuntimeConfig_pkey")
+  value     String
+  updatedAt TimestampString(3)
+  createdAt TimestampString(3) @default(now())
+
+  @@map("RuntimeConfig")
+}
+
+model Session {
+  id           String       @id(map: "Session_pkey")
+  sessionToken String
+  userId       String
+  expires      Timestamp(3)
+  user         User         @relation(fields:[userId], references:[id], onDelete: Restrict, onUpdate: Cascade, map: "Session_userId_fkey", index: false)
+
+  @@index([sessionToken], map: "Session_sessionToken_key", unique: true)
+
+  @@map("Session")
+}
+
+model ToolVersion {
+  id         Int          @id(map: "ToolVersion_pkey") @default(autoincrement())
+  name       String
+  version    String
+  addedAt    Timestamp(3) @default(now()) @map("added_at")
+  verifiedAt Timestamp(3) @default(now()) @map("verified_at")
+
+  @@index([name], map: "ToolVersion_name_key", unique: true)
+
+  @@map("ToolVersion")
+}
+
+model TravelSnapshot {
+  id               String          @id(map: "TravelSnapshot_pkey")
+  source           String
+  receivedAt       Timestamp(3)
+  confirmationCode String
+  issuedDate       String
+  passengers       Jsonb
+  payment          Jsonb
+  bags             Jsonb
+  rawHtml          String
+  travelSegments   TravelSegment[]
+
+  @@index([confirmationCode], map: "TravelSnapshot_confirmationCode_key", unique: true)
+  @@index([receivedAt], map: "TravelSnapshot_receivedAt_idx")
+
+  @@map("TravelSnapshot")
+}
+
+model TravelSegment {
+  id               String         @id(map: "TravelSegment_pkey")
+  snapshotId       String
+  date             String
+  departureAirport String
+  departureCity    String
+  departureTime    String
+  arrivalAirport   String
+  arrivalCity      String
+  arrivalTime      String
+  flightNumber     String
+  operatedBy       String?
+  marketedAs       String?
+  cabin            String?
+  fareClass        String?
+  seats            String[]       @noCheck(elementNotNull)
+  snapshot         TravelSnapshot @relation(fields:[snapshotId], references:[id], onDelete: Restrict, onUpdate: Cascade, map: "TravelSegment_snapshotId_fkey", index: false)
+
+  @@map("TravelSegment")
+}
+
+model UserRole {
+  email String @id(map: "UserRole_pkey")
+  role  String
+
+  @@map("UserRole")
+}
+
+model Verification {
+  id         String       @id(map: "verification_pkey")
+  identifier String
+  value      String
+  expiresAt  Timestamp(3)
+  createdAt  Timestamp(3) @default(now())
+  updatedAt  Timestamp(3)
+
+  @@index([identifier], map: "verification_identifier_idx")
+  @@map("verification")
+}
+
+// WARNING: This table has no primary key in the database
+model VerificationToken {
+  identifier String
+  token      String
+  expires    Timestamp(3)
+
+  @@index([identifier, token], map: "VerificationToken_identifier_token_key", unique: true)
+  @@index([token], map: "VerificationToken_token_key", unique: true)
+
+  @@map("VerificationToken")
+}
+
+model WeatherSnapshot {
+  id            String       @id(map: "WeatherSnapshot_pkey")
+  locationId    String
+  temperature   Float
+  feelsLike     Float?
+  humidity      Float?
+  windSpeed     Float?
+  windDirection Float?
+  pressure      Float?
+  visibility    Float?
+  weatherCode   Int?
+  fetchedAt     Timestamp(3) @default(now())
+  location      Location     @relation(fields:[locationId], references:[id], onDelete: Cascade, onUpdate: Cascade, map: "WeatherSnapshot_locationId_fkey", index: false)
+
+  @@index([locationId, fetchedAt], map: "WeatherSnapshot_locationId_fetchedAt_idx")
+
+  @@map("WeatherSnapshot")
+}

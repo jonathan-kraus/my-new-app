@@ -1,0 +1,3876 @@
+{
+  "schemaVersion": "1",
+  "targetFamily": "sql",
+  "target": "postgres",
+  "profileHash": "3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2",
+  "roots": {
+    "Account": {
+      "model": "Account",
+      "namespace": "public"
+    },
+    "AstronomySnapshot": {
+      "model": "AstronomySnapshot",
+      "namespace": "public"
+    },
+    "DbTableStats": {
+      "model": "DbTableStats",
+      "namespace": "public"
+    },
+    "EphemerisDebug": {
+      "model": "EphemerisDebug",
+      "namespace": "public"
+    },
+    "ForecastSnapshot": {
+      "model": "ForecastSnapshot",
+      "namespace": "public"
+    },
+    "GithubEvent": {
+      "model": "GithubEvent",
+      "namespace": "public"
+    },
+    "Location": {
+      "model": "Location",
+      "namespace": "public"
+    },
+    "Log": {
+      "model": "Log",
+      "namespace": "public"
+    },
+    "Note": {
+      "model": "Note",
+      "namespace": "public"
+    },
+    "RuntimeConfig": {
+      "model": "RuntimeConfig",
+      "namespace": "public"
+    },
+    "Session": {
+      "model": "Session",
+      "namespace": "public"
+    },
+    "ToolVersion": {
+      "model": "ToolVersion",
+      "namespace": "public"
+    },
+    "TravelSegment": {
+      "model": "TravelSegment",
+      "namespace": "public"
+    },
+    "TravelSnapshot": {
+      "model": "TravelSnapshot",
+      "namespace": "public"
+    },
+    "User": {
+      "model": "User",
+      "namespace": "public"
+    },
+    "UserRole": {
+      "model": "UserRole",
+      "namespace": "public"
+    },
+    "VerificationToken": {
+      "model": "VerificationToken",
+      "namespace": "public"
+    },
+    "WeatherSnapshot": {
+      "model": "WeatherSnapshot",
+      "namespace": "public"
+    },
+    "verification": {
+      "model": "Verification",
+      "namespace": "public"
+    }
+  },
+  "domain": {
+    "namespaces": {
+      "public": {
+        "models": {
+          "Account": {
+            "fields": {
+              "_type": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "accessToken": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "expiresAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "idToken": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "provider": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "providerAccountId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "refreshToken": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "scope": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "sessionState": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "tokenType": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "userId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "user": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": ["userId"],
+                  "targetFields": ["id"]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "_type": {
+                  "column": "type"
+                },
+                "accessToken": {
+                  "column": "access_token"
+                },
+                "expiresAt": {
+                  "column": "expires_at"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "idToken": {
+                  "column": "id_token"
+                },
+                "provider": {
+                  "column": "provider"
+                },
+                "providerAccountId": {
+                  "column": "providerAccountId"
+                },
+                "refreshToken": {
+                  "column": "refresh_token"
+                },
+                "scope": {
+                  "column": "scope"
+                },
+                "sessionState": {
+                  "column": "session_state"
+                },
+                "tokenType": {
+                  "column": "token_type"
+                },
+                "userId": {
+                  "column": "userId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "Account"
+            }
+          },
+          "AstronomySnapshot": {
+            "fields": {
+              "dateString": {
+                "nullable": false,
+                "type": {
+                  "codecId": "sql/varchar@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "length": 10
+                  }
+                }
+              },
+              "fetchedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "illumination": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/float8@1",
+                  "kind": "scalar"
+                }
+              },
+              "locationId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "moonPhase": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/float8@1",
+                  "kind": "scalar"
+                }
+              },
+              "moonrise": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "moonset": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "phaseName": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "solarNoon": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "sunrise": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "sunriseBlueEnd": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "sunriseBlueStart": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "sunriseGoldenEnd": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "sunriseGoldenStart": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "sunset": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "sunsetBlueEnd": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "sunsetBlueStart": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "sunsetGoldenEnd": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "sunsetGoldenStart": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "location": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": ["locationId"],
+                  "targetFields": ["id"]
+                },
+                "to": {
+                  "model": "Location",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "dateString": {
+                  "column": "dateString"
+                },
+                "fetchedAt": {
+                  "column": "fetchedAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "illumination": {
+                  "column": "illumination"
+                },
+                "locationId": {
+                  "column": "locationId"
+                },
+                "moonPhase": {
+                  "column": "moonPhase"
+                },
+                "moonrise": {
+                  "column": "moonrise"
+                },
+                "moonset": {
+                  "column": "moonset"
+                },
+                "phaseName": {
+                  "column": "phaseName"
+                },
+                "solarNoon": {
+                  "column": "solarNoon"
+                },
+                "sunrise": {
+                  "column": "sunrise"
+                },
+                "sunriseBlueEnd": {
+                  "column": "sunriseBlueEnd"
+                },
+                "sunriseBlueStart": {
+                  "column": "sunriseBlueStart"
+                },
+                "sunriseGoldenEnd": {
+                  "column": "sunriseGoldenEnd"
+                },
+                "sunriseGoldenStart": {
+                  "column": "sunriseGoldenStart"
+                },
+                "sunset": {
+                  "column": "sunset"
+                },
+                "sunsetBlueEnd": {
+                  "column": "sunsetBlueEnd"
+                },
+                "sunsetBlueStart": {
+                  "column": "sunsetBlueStart"
+                },
+                "sunsetGoldenEnd": {
+                  "column": "sunsetGoldenEnd"
+                },
+                "sunsetGoldenStart": {
+                  "column": "sunsetGoldenStart"
+                }
+              },
+              "namespaceId": "public",
+              "table": "AstronomySnapshot"
+            }
+          },
+          "DbTableStats": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "indexBytes": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int8@1",
+                  "kind": "scalar"
+                }
+              },
+              "rowEstimate": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "snapshotDate": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "tableBytes": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int8@1",
+                  "kind": "scalar"
+                }
+              },
+              "tableName": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "toastBytes": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int8@1",
+                  "kind": "scalar"
+                }
+              },
+              "totalBytes": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int8@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {},
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "indexBytes": {
+                  "column": "indexBytes"
+                },
+                "rowEstimate": {
+                  "column": "rowEstimate"
+                },
+                "snapshotDate": {
+                  "column": "snapshotDate"
+                },
+                "tableBytes": {
+                  "column": "tableBytes"
+                },
+                "tableName": {
+                  "column": "tableName"
+                },
+                "toastBytes": {
+                  "column": "toastBytes"
+                },
+                "totalBytes": {
+                  "column": "totalBytes"
+                }
+              },
+              "namespaceId": "public",
+              "table": "DbTableStats"
+            }
+          },
+          "EphemerisDebug": {
+            "fields": {
+              "createdAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "date": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "fetchedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "locationId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "moonPhase": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/float8@1",
+                  "kind": "scalar"
+                }
+              },
+              "moonrise": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "moonset": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "raw": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/jsonb@1",
+                  "kind": "scalar"
+                }
+              },
+              "receivedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "sunrise": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "sunriseBlueEnd": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "sunriseBlueStart": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "sunriseGoldenEnd": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "sunriseGoldenStart": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "sunset": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "sunsetBlueEnd": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "sunsetBlueStart": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "sunsetGoldenEnd": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "sunsetGoldenStart": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {},
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "date": {
+                  "column": "date"
+                },
+                "fetchedAt": {
+                  "column": "fetchedAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "locationId": {
+                  "column": "locationId"
+                },
+                "moonPhase": {
+                  "column": "moonPhase"
+                },
+                "moonrise": {
+                  "column": "moonrise"
+                },
+                "moonset": {
+                  "column": "moonset"
+                },
+                "raw": {
+                  "column": "raw"
+                },
+                "receivedAt": {
+                  "column": "receivedAt"
+                },
+                "sunrise": {
+                  "column": "sunrise"
+                },
+                "sunriseBlueEnd": {
+                  "column": "sunriseBlueEnd"
+                },
+                "sunriseBlueStart": {
+                  "column": "sunriseBlueStart"
+                },
+                "sunriseGoldenEnd": {
+                  "column": "sunriseGoldenEnd"
+                },
+                "sunriseGoldenStart": {
+                  "column": "sunriseGoldenStart"
+                },
+                "sunset": {
+                  "column": "sunset"
+                },
+                "sunsetBlueEnd": {
+                  "column": "sunsetBlueEnd"
+                },
+                "sunsetBlueStart": {
+                  "column": "sunsetBlueStart"
+                },
+                "sunsetGoldenEnd": {
+                  "column": "sunsetGoldenEnd"
+                },
+                "sunsetGoldenStart": {
+                  "column": "sunsetGoldenStart"
+                }
+              },
+              "namespaceId": "public",
+              "table": "EphemerisDebug"
+            }
+          },
+          "ForecastSnapshot": {
+            "fields": {
+              "fetchedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "locationId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "payload": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/jsonb@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "location": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": ["locationId"],
+                  "targetFields": ["id"]
+                },
+                "to": {
+                  "model": "Location",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "fetchedAt": {
+                  "column": "fetchedAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "locationId": {
+                  "column": "locationId"
+                },
+                "payload": {
+                  "column": "payload"
+                }
+              },
+              "namespaceId": "public",
+              "table": "ForecastSnapshot"
+            }
+          },
+          "GithubEvent": {
+            "fields": {
+              "_type": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "actor": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "commitMessage": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "commitSha": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "conclusion": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "eventId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "jobName": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "raw": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/jsonb@1",
+                  "kind": "scalar"
+                }
+              },
+              "repo": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "status": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "title": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "url": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {},
+            "storage": {
+              "fields": {
+                "_type": {
+                  "column": "type"
+                },
+                "actor": {
+                  "column": "actor"
+                },
+                "commitMessage": {
+                  "column": "commitMessage"
+                },
+                "commitSha": {
+                  "column": "commitSha"
+                },
+                "conclusion": {
+                  "column": "conclusion"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "eventId": {
+                  "column": "eventId"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "jobName": {
+                  "column": "jobName"
+                },
+                "raw": {
+                  "column": "raw"
+                },
+                "repo": {
+                  "column": "repo"
+                },
+                "status": {
+                  "column": "status"
+                },
+                "title": {
+                  "column": "title"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                },
+                "url": {
+                  "column": "url"
+                }
+              },
+              "namespaceId": "public",
+              "table": "GithubEvent"
+            }
+          },
+          "Location": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "isDefault": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "key": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "latitude": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/float8@1",
+                  "kind": "scalar"
+                }
+              },
+              "longitude": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/float8@1",
+                  "kind": "scalar"
+                }
+              },
+              "name": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "timezone": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              }
+            },
+            "relations": {
+              "astronomySnapshots": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": ["id"],
+                  "targetFields": ["locationId"]
+                },
+                "to": {
+                  "model": "AstronomySnapshot",
+                  "namespace": "public"
+                }
+              },
+              "forecastSnapshots": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": ["id"],
+                  "targetFields": ["locationId"]
+                },
+                "to": {
+                  "model": "ForecastSnapshot",
+                  "namespace": "public"
+                }
+              },
+              "weatherSnapshots": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": ["id"],
+                  "targetFields": ["locationId"]
+                },
+                "to": {
+                  "model": "WeatherSnapshot",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "isDefault": {
+                  "column": "isDefault"
+                },
+                "key": {
+                  "column": "key"
+                },
+                "latitude": {
+                  "column": "latitude"
+                },
+                "longitude": {
+                  "column": "longitude"
+                },
+                "name": {
+                  "column": "name"
+                },
+                "timezone": {
+                  "column": "timezone"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "Location"
+            }
+          },
+          "Log": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "domain": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "file": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "level": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "line": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "message": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "meta": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/jsonb@1",
+                  "kind": "scalar"
+                }
+              },
+              "payload": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/jsonb@1",
+                  "kind": "scalar"
+                }
+              },
+              "requestId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "sessionEmail": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "sessionUser": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "userId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {},
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "created_at"
+                },
+                "domain": {
+                  "column": "domain"
+                },
+                "file": {
+                  "column": "file"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "level": {
+                  "column": "level"
+                },
+                "line": {
+                  "column": "line"
+                },
+                "message": {
+                  "column": "message"
+                },
+                "meta": {
+                  "column": "meta"
+                },
+                "payload": {
+                  "column": "payload"
+                },
+                "requestId": {
+                  "column": "requestId"
+                },
+                "sessionEmail": {
+                  "column": "sessionEmail"
+                },
+                "sessionUser": {
+                  "column": "sessionUser"
+                },
+                "userId": {
+                  "column": "userId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "Log"
+            }
+          },
+          "Note": {
+            "fields": {
+              "color": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "content": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "followUpAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "isArchived": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "isCompleted": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "pinned": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/bool@1",
+                  "kind": "scalar"
+                }
+              },
+              "tags": {
+                "many": true,
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "title": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "userEmail": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "userId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {},
+            "storage": {
+              "fields": {
+                "color": {
+                  "column": "color"
+                },
+                "content": {
+                  "column": "content"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "followUpAt": {
+                  "column": "followUpAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "isArchived": {
+                  "column": "isArchived"
+                },
+                "isCompleted": {
+                  "column": "isCompleted"
+                },
+                "pinned": {
+                  "column": "pinned"
+                },
+                "tags": {
+                  "column": "tags"
+                },
+                "title": {
+                  "column": "title"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                },
+                "userEmail": {
+                  "column": "userEmail"
+                },
+                "userId": {
+                  "column": "userId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "Note"
+            }
+          },
+          "RuntimeConfig": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamp-string@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "key": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamp-string@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "value": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {},
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "key": {
+                  "column": "key"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                },
+                "value": {
+                  "column": "value"
+                }
+              },
+              "namespaceId": "public",
+              "table": "RuntimeConfig"
+            }
+          },
+          "Session": {
+            "fields": {
+              "expires": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "sessionToken": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "userId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "user": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": ["userId"],
+                  "targetFields": ["id"]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "expires": {
+                  "column": "expires"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "sessionToken": {
+                  "column": "sessionToken"
+                },
+                "userId": {
+                  "column": "userId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "Session"
+            }
+          },
+          "ToolVersion": {
+            "fields": {
+              "addedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "name": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "verifiedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "version": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {},
+            "storage": {
+              "fields": {
+                "addedAt": {
+                  "column": "added_at"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "name": {
+                  "column": "name"
+                },
+                "verifiedAt": {
+                  "column": "verified_at"
+                },
+                "version": {
+                  "column": "version"
+                }
+              },
+              "namespaceId": "public",
+              "table": "ToolVersion"
+            }
+          },
+          "TravelSegment": {
+            "fields": {
+              "arrivalAirport": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "arrivalCity": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "arrivalTime": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "cabin": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "date": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "departureAirport": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "departureCity": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "departureTime": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "fareClass": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "flightNumber": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "marketedAs": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "operatedBy": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "seats": {
+                "many": true,
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "snapshotId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "snapshot": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": ["snapshotId"],
+                  "targetFields": ["id"]
+                },
+                "to": {
+                  "model": "TravelSnapshot",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "arrivalAirport": {
+                  "column": "arrivalAirport"
+                },
+                "arrivalCity": {
+                  "column": "arrivalCity"
+                },
+                "arrivalTime": {
+                  "column": "arrivalTime"
+                },
+                "cabin": {
+                  "column": "cabin"
+                },
+                "date": {
+                  "column": "date"
+                },
+                "departureAirport": {
+                  "column": "departureAirport"
+                },
+                "departureCity": {
+                  "column": "departureCity"
+                },
+                "departureTime": {
+                  "column": "departureTime"
+                },
+                "fareClass": {
+                  "column": "fareClass"
+                },
+                "flightNumber": {
+                  "column": "flightNumber"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "marketedAs": {
+                  "column": "marketedAs"
+                },
+                "operatedBy": {
+                  "column": "operatedBy"
+                },
+                "seats": {
+                  "column": "seats"
+                },
+                "snapshotId": {
+                  "column": "snapshotId"
+                }
+              },
+              "namespaceId": "public",
+              "table": "TravelSegment"
+            }
+          },
+          "TravelSnapshot": {
+            "fields": {
+              "bags": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/jsonb@1",
+                  "kind": "scalar"
+                }
+              },
+              "confirmationCode": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "issuedDate": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "passengers": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/jsonb@1",
+                  "kind": "scalar"
+                }
+              },
+              "payment": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/jsonb@1",
+                  "kind": "scalar"
+                }
+              },
+              "rawHtml": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "receivedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "source": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "travelSegments": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": ["id"],
+                  "targetFields": ["snapshotId"]
+                },
+                "to": {
+                  "model": "TravelSegment",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "bags": {
+                  "column": "bags"
+                },
+                "confirmationCode": {
+                  "column": "confirmationCode"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "issuedDate": {
+                  "column": "issuedDate"
+                },
+                "passengers": {
+                  "column": "passengers"
+                },
+                "payment": {
+                  "column": "payment"
+                },
+                "rawHtml": {
+                  "column": "rawHtml"
+                },
+                "receivedAt": {
+                  "column": "receivedAt"
+                },
+                "source": {
+                  "column": "source"
+                }
+              },
+              "namespaceId": "public",
+              "table": "TravelSnapshot"
+            }
+          },
+          "User": {
+            "fields": {
+              "email": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "emailVerified": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "image": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "name": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "accounts": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": ["id"],
+                  "targetFields": ["userId"]
+                },
+                "to": {
+                  "model": "Account",
+                  "namespace": "public"
+                }
+              },
+              "sessions": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": ["id"],
+                  "targetFields": ["userId"]
+                },
+                "to": {
+                  "model": "Session",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "email": {
+                  "column": "email"
+                },
+                "emailVerified": {
+                  "column": "emailVerified"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "image": {
+                  "column": "image"
+                },
+                "name": {
+                  "column": "name"
+                }
+              },
+              "namespaceId": "public",
+              "table": "User"
+            }
+          },
+          "UserRole": {
+            "fields": {
+              "email": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "role": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {},
+            "storage": {
+              "fields": {
+                "email": {
+                  "column": "email"
+                },
+                "role": {
+                  "column": "role"
+                }
+              },
+              "namespaceId": "public",
+              "table": "UserRole"
+            }
+          },
+          "Verification": {
+            "fields": {
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "expiresAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "identifier": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "value": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {},
+            "storage": {
+              "fields": {
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "expiresAt": {
+                  "column": "expiresAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "identifier": {
+                  "column": "identifier"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                },
+                "value": {
+                  "column": "value"
+                }
+              },
+              "namespaceId": "public",
+              "table": "verification"
+            }
+          },
+          "VerificationToken": {
+            "fields": {
+              "expires": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "identifier": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "token": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {},
+            "storage": {
+              "fields": {
+                "expires": {
+                  "column": "expires"
+                },
+                "identifier": {
+                  "column": "identifier"
+                },
+                "token": {
+                  "column": "token"
+                }
+              },
+              "namespaceId": "public",
+              "table": "VerificationToken"
+            }
+          },
+          "WeatherSnapshot": {
+            "fields": {
+              "feelsLike": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/float8@1",
+                  "kind": "scalar"
+                }
+              },
+              "fetchedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "humidity": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/float8@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "locationId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "pressure": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/float8@1",
+                  "kind": "scalar"
+                }
+              },
+              "temperature": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/float8@1",
+                  "kind": "scalar"
+                }
+              },
+              "visibility": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/float8@1",
+                  "kind": "scalar"
+                }
+              },
+              "weatherCode": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "windDirection": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/float8@1",
+                  "kind": "scalar"
+                }
+              },
+              "windSpeed": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/float8@1",
+                  "kind": "scalar"
+                }
+              }
+            },
+            "relations": {
+              "location": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": ["locationId"],
+                  "targetFields": ["id"]
+                },
+                "to": {
+                  "model": "Location",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "feelsLike": {
+                  "column": "feelsLike"
+                },
+                "fetchedAt": {
+                  "column": "fetchedAt"
+                },
+                "humidity": {
+                  "column": "humidity"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "locationId": {
+                  "column": "locationId"
+                },
+                "pressure": {
+                  "column": "pressure"
+                },
+                "temperature": {
+                  "column": "temperature"
+                },
+                "visibility": {
+                  "column": "visibility"
+                },
+                "weatherCode": {
+                  "column": "weatherCode"
+                },
+                "windDirection": {
+                  "column": "windDirection"
+                },
+                "windSpeed": {
+                  "column": "windSpeed"
+                }
+              },
+              "namespaceId": "public",
+              "table": "WeatherSnapshot"
+            }
+          }
+        }
+      }
+    }
+  },
+  "storage": {
+    "namespaces": {
+      "public": {
+        "entries": {
+          "table": {
+            "Account": {
+              "columns": {
+                "access_token": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "expires_at": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "id_token": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "provider": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "providerAccountId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "refresh_token": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "scope": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "session_state": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "token_type": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "type": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "userId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "name": "Account_userId_fkey",
+                  "onDelete": "restrict",
+                  "onUpdate": "cascade",
+                  "source": {
+                    "columns": ["userId"],
+                    "namespaceId": "public",
+                    "tableName": "Account"
+                  },
+                  "target": {
+                    "columns": ["id"],
+                    "namespaceId": "public",
+                    "tableName": "User"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": ["provider", "providerAccountId"],
+                  "name": "Account_provider_providerAccountId_key",
+                  "unique": true
+                }
+              ],
+              "primaryKey": {
+                "columns": ["id"],
+                "name": "Account_pkey"
+              },
+              "uniques": []
+            },
+            "AstronomySnapshot": {
+              "columns": {
+                "dateString": {
+                  "codecId": "sql/varchar@1",
+                  "nativeType": "character varying",
+                  "nullable": false,
+                  "typeParams": {
+                    "length": 10
+                  }
+                },
+                "fetchedAt": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "nativeType": "timestamp",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "illumination": {
+                  "codecId": "pg/float8@1",
+                  "nativeType": "float8",
+                  "nullable": true
+                },
+                "locationId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "moonPhase": {
+                  "codecId": "pg/float8@1",
+                  "nativeType": "float8",
+                  "nullable": true
+                },
+                "moonrise": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "moonset": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "phaseName": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "solarNoon": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "sunrise": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "sunriseBlueEnd": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "sunriseBlueStart": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "sunriseGoldenEnd": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "sunriseGoldenStart": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "sunset": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "sunsetBlueEnd": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "sunsetBlueStart": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "sunsetGoldenEnd": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "sunsetGoldenStart": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                }
+              },
+              "foreignKeys": [
+                {
+                  "name": "AstronomySnapshot_locationId_fkey",
+                  "onDelete": "restrict",
+                  "onUpdate": "cascade",
+                  "source": {
+                    "columns": ["locationId"],
+                    "namespaceId": "public",
+                    "tableName": "AstronomySnapshot"
+                  },
+                  "target": {
+                    "columns": ["id"],
+                    "namespaceId": "public",
+                    "tableName": "Location"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": ["locationId", "dateString"],
+                  "name": "AstronomySnapshot_locationId_dateString_key",
+                  "unique": true
+                }
+              ],
+              "primaryKey": {
+                "columns": ["id"],
+                "name": "AstronomySnapshot_pkey"
+              },
+              "uniques": []
+            },
+            "DbTableStats": {
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamp",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "indexBytes": {
+                  "codecId": "pg/int8@1",
+                  "nativeType": "int8",
+                  "nullable": false
+                },
+                "rowEstimate": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "snapshotDate": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "nativeType": "timestamp",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "tableBytes": {
+                  "codecId": "pg/int8@1",
+                  "nativeType": "int8",
+                  "nullable": false
+                },
+                "tableName": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "toastBytes": {
+                  "codecId": "pg/int8@1",
+                  "nativeType": "int8",
+                  "nullable": false
+                },
+                "totalBytes": {
+                  "codecId": "pg/int8@1",
+                  "nativeType": "int8",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [
+                {
+                  "columns": ["tableName", "snapshotDate"],
+                  "name": "DbTableStats_tableName_snapshotDate_idx",
+                  "unique": false
+                },
+                {
+                  "columns": ["tableName", "snapshotDate"],
+                  "name": "DbTableStats_tableName_snapshotDate_key",
+                  "unique": true
+                }
+              ],
+              "primaryKey": {
+                "columns": ["id"],
+                "name": "DbTableStats_pkey"
+              },
+              "uniques": []
+            },
+            "EphemerisDebug": {
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "date": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "fetchedAt": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "locationId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "moonPhase": {
+                  "codecId": "pg/float8@1",
+                  "nativeType": "float8",
+                  "nullable": true
+                },
+                "moonrise": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "moonset": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "raw": {
+                  "codecId": "pg/jsonb@1",
+                  "nativeType": "jsonb",
+                  "nullable": false
+                },
+                "receivedAt": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamp",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "sunrise": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "sunriseBlueEnd": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "sunriseBlueStart": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "sunriseGoldenEnd": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "sunriseGoldenStart": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "sunset": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "sunsetBlueEnd": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "sunsetBlueStart": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "sunsetGoldenEnd": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "sunsetGoldenStart": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [],
+              "primaryKey": {
+                "columns": ["id"],
+                "name": "EphemerisDebug_pkey"
+              },
+              "uniques": []
+            },
+            "ForecastSnapshot": {
+              "columns": {
+                "fetchedAt": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamp",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "locationId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "payload": {
+                  "codecId": "pg/jsonb@1",
+                  "nativeType": "jsonb",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "name": "ForecastSnapshot_locationId_fkey",
+                  "onDelete": "restrict",
+                  "onUpdate": "cascade",
+                  "source": {
+                    "columns": ["locationId"],
+                    "namespaceId": "public",
+                    "tableName": "ForecastSnapshot"
+                  },
+                  "target": {
+                    "columns": ["id"],
+                    "namespaceId": "public",
+                    "tableName": "Location"
+                  }
+                }
+              ],
+              "indexes": [],
+              "primaryKey": {
+                "columns": ["id"],
+                "name": "ForecastSnapshot_pkey"
+              },
+              "uniques": []
+            },
+            "GithubEvent": {
+              "columns": {
+                "actor": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "commitMessage": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "commitSha": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "conclusion": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamp",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "eventId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "jobName": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "raw": {
+                  "codecId": "pg/jsonb@1",
+                  "nativeType": "jsonb",
+                  "nullable": true
+                },
+                "repo": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "status": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "title": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "type": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "nativeType": "timestamp",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "url": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [
+                {
+                  "columns": ["eventId"],
+                  "name": "GithubEvent_eventId_key",
+                  "unique": true
+                }
+              ],
+              "primaryKey": {
+                "columns": ["id"],
+                "name": "GithubEvent_pkey"
+              },
+              "uniques": []
+            },
+            "Location": {
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamp",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "isDefault": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "key": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "latitude": {
+                  "codecId": "pg/float8@1",
+                  "nativeType": "float8",
+                  "nullable": false
+                },
+                "longitude": {
+                  "codecId": "pg/float8@1",
+                  "nativeType": "float8",
+                  "nullable": false
+                },
+                "name": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "timezone": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "nativeType": "timestamp",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [
+                {
+                  "columns": ["key"],
+                  "name": "Location_key_key",
+                  "unique": true
+                }
+              ],
+              "primaryKey": {
+                "columns": ["id"],
+                "name": "Location_pkey"
+              },
+              "uniques": []
+            },
+            "Log": {
+              "columns": {
+                "created_at": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamp",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "domain": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "file": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "level": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "line": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": true
+                },
+                "message": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "meta": {
+                  "codecId": "pg/jsonb@1",
+                  "nativeType": "jsonb",
+                  "nullable": true
+                },
+                "payload": {
+                  "codecId": "pg/jsonb@1",
+                  "nativeType": "jsonb",
+                  "nullable": false
+                },
+                "requestId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "sessionEmail": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "sessionUser": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "userId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [
+                {
+                  "columns": ["created_at"],
+                  "name": "Log_created_at_idx",
+                  "unique": false
+                },
+                {
+                  "columns": ["domain"],
+                  "name": "Log_domain_idx",
+                  "unique": false
+                },
+                {
+                  "columns": ["file"],
+                  "name": "Log_file_idx",
+                  "unique": false
+                },
+                {
+                  "columns": ["level"],
+                  "name": "Log_level_idx",
+                  "unique": false
+                },
+                {
+                  "columns": ["meta"],
+                  "name": "Log_meta_idx",
+                  "type": "gin",
+                  "unique": false
+                },
+                {
+                  "columns": ["payload"],
+                  "name": "Log_payload_idx",
+                  "type": "gin",
+                  "unique": false
+                },
+                {
+                  "columns": ["requestId"],
+                  "name": "Log_requestId_idx",
+                  "unique": false
+                },
+                {
+                  "columns": ["sessionEmail"],
+                  "name": "Log_sessionEmail_idx",
+                  "unique": false
+                },
+                {
+                  "columns": ["sessionUser"],
+                  "name": "Log_sessionUser_idx",
+                  "unique": false
+                },
+                {
+                  "columns": ["userId"],
+                  "name": "Log_userId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": ["id"],
+                "name": "Log_pkey"
+              },
+              "uniques": []
+            },
+            "Note": {
+              "columns": {
+                "color": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "content": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamp",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "followUpAt": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "nativeType": "timestamp",
+                  "nullable": true,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "isArchived": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "isCompleted": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "pinned": {
+                  "codecId": "pg/bool@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": false
+                  },
+                  "nativeType": "bool",
+                  "nullable": false
+                },
+                "tags": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": []
+                  },
+                  "many": true,
+                  "nativeType": "text",
+                  "noCheck": ["elementNotNull"],
+                  "nullable": false
+                },
+                "title": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "nativeType": "timestamp",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "userEmail": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "userId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [
+                {
+                  "columns": ["followUpAt"],
+                  "name": "Note_followUpAt_idx",
+                  "unique": false
+                },
+                {
+                  "columns": ["isArchived"],
+                  "name": "Note_isArchived_idx",
+                  "unique": false
+                },
+                {
+                  "columns": ["isCompleted"],
+                  "name": "Note_isCompleted_idx",
+                  "unique": false
+                },
+                {
+                  "columns": ["userEmail"],
+                  "name": "Note_userEmail_idx",
+                  "unique": false
+                },
+                {
+                  "columns": ["userId"],
+                  "name": "Note_userId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": ["id"],
+                "name": "Note_pkey"
+              },
+              "uniques": []
+            },
+            "RuntimeConfig": {
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamp-string@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamp",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "key": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamp-string@1",
+                  "nativeType": "timestamp",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "value": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [],
+              "primaryKey": {
+                "columns": ["key"],
+                "name": "RuntimeConfig_pkey"
+              },
+              "uniques": []
+            },
+            "Session": {
+              "columns": {
+                "expires": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "nativeType": "timestamp",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "sessionToken": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "userId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "name": "Session_userId_fkey",
+                  "onDelete": "restrict",
+                  "onUpdate": "cascade",
+                  "source": {
+                    "columns": ["userId"],
+                    "namespaceId": "public",
+                    "tableName": "Session"
+                  },
+                  "target": {
+                    "columns": ["id"],
+                    "namespaceId": "public",
+                    "tableName": "User"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": ["sessionToken"],
+                  "name": "Session_sessionToken_key",
+                  "unique": true
+                }
+              ],
+              "primaryKey": {
+                "columns": ["id"],
+                "name": "Session_pkey"
+              },
+              "uniques": []
+            },
+            "ToolVersion": {
+              "columns": {
+                "added_at": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamp",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "id": {
+                  "codecId": "pg/int4@1",
+                  "default": {
+                    "expression": "autoincrement()",
+                    "kind": "function"
+                  },
+                  "nativeType": "int4",
+                  "nullable": false
+                },
+                "name": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "verified_at": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamp",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "version": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [
+                {
+                  "columns": ["name"],
+                  "name": "ToolVersion_name_key",
+                  "unique": true
+                }
+              ],
+              "primaryKey": {
+                "columns": ["id"],
+                "name": "ToolVersion_pkey"
+              },
+              "uniques": []
+            },
+            "TravelSegment": {
+              "columns": {
+                "arrivalAirport": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "arrivalCity": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "arrivalTime": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "cabin": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "date": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "departureAirport": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "departureCity": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "departureTime": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "fareClass": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "flightNumber": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "marketedAs": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "operatedBy": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "seats": {
+                  "codecId": "pg/text@1",
+                  "many": true,
+                  "nativeType": "text",
+                  "noCheck": ["elementNotNull"],
+                  "nullable": false
+                },
+                "snapshotId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [
+                {
+                  "name": "TravelSegment_snapshotId_fkey",
+                  "onDelete": "restrict",
+                  "onUpdate": "cascade",
+                  "source": {
+                    "columns": ["snapshotId"],
+                    "namespaceId": "public",
+                    "tableName": "TravelSegment"
+                  },
+                  "target": {
+                    "columns": ["id"],
+                    "namespaceId": "public",
+                    "tableName": "TravelSnapshot"
+                  }
+                }
+              ],
+              "indexes": [],
+              "primaryKey": {
+                "columns": ["id"],
+                "name": "TravelSegment_pkey"
+              },
+              "uniques": []
+            },
+            "TravelSnapshot": {
+              "columns": {
+                "bags": {
+                  "codecId": "pg/jsonb@1",
+                  "nativeType": "jsonb",
+                  "nullable": false
+                },
+                "confirmationCode": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "issuedDate": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "passengers": {
+                  "codecId": "pg/jsonb@1",
+                  "nativeType": "jsonb",
+                  "nullable": false
+                },
+                "payment": {
+                  "codecId": "pg/jsonb@1",
+                  "nativeType": "jsonb",
+                  "nullable": false
+                },
+                "rawHtml": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "receivedAt": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "nativeType": "timestamp",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "source": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [
+                {
+                  "columns": ["confirmationCode"],
+                  "name": "TravelSnapshot_confirmationCode_key",
+                  "unique": true
+                },
+                {
+                  "columns": ["receivedAt"],
+                  "name": "TravelSnapshot_receivedAt_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": ["id"],
+                "name": "TravelSnapshot_pkey"
+              },
+              "uniques": []
+            },
+            "User": {
+              "columns": {
+                "email": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "emailVerified": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "nativeType": "timestamp",
+                  "nullable": true,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "image": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                },
+                "name": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": true
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [
+                {
+                  "columns": ["email"],
+                  "name": "User_email_key",
+                  "unique": true
+                }
+              ],
+              "primaryKey": {
+                "columns": ["id"],
+                "name": "User_pkey"
+              },
+              "uniques": []
+            },
+            "UserRole": {
+              "columns": {
+                "email": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "role": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [],
+              "primaryKey": {
+                "columns": ["email"],
+                "name": "UserRole_pkey"
+              },
+              "uniques": []
+            },
+            "VerificationToken": {
+              "columns": {
+                "expires": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "nativeType": "timestamp",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "identifier": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "token": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [
+                {
+                  "columns": ["identifier", "token"],
+                  "name": "VerificationToken_identifier_token_key",
+                  "unique": true
+                },
+                {
+                  "columns": ["token"],
+                  "name": "VerificationToken_token_key",
+                  "unique": true
+                }
+              ],
+              "uniques": []
+            },
+            "WeatherSnapshot": {
+              "columns": {
+                "feelsLike": {
+                  "codecId": "pg/float8@1",
+                  "nativeType": "float8",
+                  "nullable": true
+                },
+                "fetchedAt": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamp",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "humidity": {
+                  "codecId": "pg/float8@1",
+                  "nativeType": "float8",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "locationId": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "pressure": {
+                  "codecId": "pg/float8@1",
+                  "nativeType": "float8",
+                  "nullable": true
+                },
+                "temperature": {
+                  "codecId": "pg/float8@1",
+                  "nativeType": "float8",
+                  "nullable": false
+                },
+                "visibility": {
+                  "codecId": "pg/float8@1",
+                  "nativeType": "float8",
+                  "nullable": true
+                },
+                "weatherCode": {
+                  "codecId": "pg/int4@1",
+                  "nativeType": "int4",
+                  "nullable": true
+                },
+                "windDirection": {
+                  "codecId": "pg/float8@1",
+                  "nativeType": "float8",
+                  "nullable": true
+                },
+                "windSpeed": {
+                  "codecId": "pg/float8@1",
+                  "nativeType": "float8",
+                  "nullable": true
+                }
+              },
+              "foreignKeys": [
+                {
+                  "name": "WeatherSnapshot_locationId_fkey",
+                  "onDelete": "cascade",
+                  "onUpdate": "cascade",
+                  "source": {
+                    "columns": ["locationId"],
+                    "namespaceId": "public",
+                    "tableName": "WeatherSnapshot"
+                  },
+                  "target": {
+                    "columns": ["id"],
+                    "namespaceId": "public",
+                    "tableName": "Location"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": ["locationId", "fetchedAt"],
+                  "name": "WeatherSnapshot_locationId_fetchedAt_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": ["id"],
+                "name": "WeatherSnapshot_pkey"
+              },
+              "uniques": []
+            },
+            "verification": {
+              "columns": {
+                "createdAt": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "default": {
+                    "expression": "now()",
+                    "kind": "function"
+                  },
+                  "nativeType": "timestamp",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "expiresAt": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "nativeType": "timestamp",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "identifier": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamp-temporal@1",
+                  "nativeType": "timestamp",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "value": {
+                  "codecId": "pg/text@1",
+                  "nativeType": "text",
+                  "nullable": false
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [
+                {
+                  "columns": ["identifier"],
+                  "name": "verification_identifier_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": ["id"],
+                "name": "verification_pkey"
+              },
+              "uniques": []
+            }
+          }
+        },
+        "id": "public",
+        "kind": "postgres-schema"
+      }
+    },
+    "storageHash": "d10b02f9dc248fc184a5027ee90c46a4b8fd817407448c2bb1484f127c52b168"
+  },
+  "capabilities": {
+    "postgres": {
+      "distinctOn": true,
+      "jsonAgg": true,
+      "lateral": true,
+      "limit": true,
+      "orderBy": true,
+      "returning": true
+    },
+    "sql": {
+      "checkConstraint": true,
+      "defaultInInsert": true,
+      "enums": true,
+      "lateral": true,
+      "returning": true,
+      "scalarList": true
+    }
+  },
+  "extensions": {},
+  "meta": {},
+  "_generated": {
+    "warning": "⚠️  GENERATED FILE - DO NOT EDIT",
+    "message": "This file is automatically generated by \"prisma contract emit\".",
+    "regenerate": "To regenerate, run: prisma contract emit"
+  }
+}
