@@ -32,7 +32,7 @@ export default function CurrentTempClient() {
     <>
       <h1>King of Prussia, PA</h1>
       {temp === null ? (
-        <p>Loading temperature....</p>
+        <p>Loading temperature...</p>
       ) : (
         <p className="text-7xl font-light mt-4">{temp}°F</p>
       )}
