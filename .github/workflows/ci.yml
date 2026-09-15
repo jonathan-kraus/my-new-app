@@ -59,7 +59,7 @@ jobs:
 
       - name: Generate Prisma Client
         run: |
-          pnpm exec prisma generate
+          pnpm exec prisma7 generate
 
       - name: Check for outdated dependencies
         run: |
