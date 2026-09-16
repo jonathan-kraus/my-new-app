@@ -3,7 +3,7 @@
  * @LastEditTime: 2026-08-06 00:16:21
  */
 // app/admin/runtime/page.tsx
-import { db } from "@/lib/db";
+import { db8 } from "@/lib/db.prisma8";
 import { ConfigTable } from "./ConfigTable";
 import { EmailThrottleCountdown } from "./EmailThrottleCountdown";
 import type { NextRequest } from "next/server";
@@ -14,9 +14,9 @@ import { buildUniversalContext } from "@/lib/log/build-universal-context";
 export const dynamic = "force-dynamic";
 
 export default async function RuntimeAdminPage(req: NextRequest) {
-  const configs = await db.runtimeConfig.findMany({
-    orderBy: { key: "asc" },
-  });
+  const configs = await db8.orm.public.RuntimeConfig.orderBy((config) =>
+    config.key.asc(),
+  ).all();
 
   let jei = 0;
   const lastSent =
