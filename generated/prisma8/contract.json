@@ -1019,7 +1019,7 @@
               "createdAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/timestamp-temporal@1",
+                  "codecId": "pg/timestamp-string@1",
                   "kind": "scalar",
                   "typeParams": {
                     "precision": 3
@@ -1078,7 +1078,7 @@
               "updatedAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/timestamp-temporal@1",
+                  "codecId": "pg/timestamp-string@1",
                   "kind": "scalar",
                   "typeParams": {
                     "precision": 3
@@ -1160,7 +1160,7 @@
               "createdAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/timestamp-temporal@1",
+                  "codecId": "pg/timestamp-string@1",
                   "kind": "scalar",
                   "typeParams": {
                     "precision": 3
@@ -1579,7 +1579,7 @@
               "addedAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/timestamp-temporal@1",
+                  "codecId": "pg/timestamp-string@1",
                   "kind": "scalar",
                   "typeParams": {
                     "precision": 3
@@ -1603,7 +1603,7 @@
               "verifiedAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/timestamp-temporal@1",
+                  "codecId": "pg/timestamp-string@1",
                   "kind": "scalar",
                   "typeParams": {
                     "precision": 3
@@ -2186,7 +2186,7 @@
               "fetchedAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/timestamp-temporal@1",
+                  "codecId": "pg/timestamp-string@1",
                   "kind": "scalar",
                   "typeParams": {
                     "precision": 3
@@ -2906,7 +2906,7 @@
             "Location": {
               "columns": {
                 "createdAt": {
-                  "codecId": "pg/timestamp-temporal@1",
+                  "codecId": "pg/timestamp-string@1",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
@@ -2957,7 +2957,7 @@
                   "nullable": false
                 },
                 "updatedAt": {
-                  "codecId": "pg/timestamp-temporal@1",
+                  "codecId": "pg/timestamp-string@1",
                   "nativeType": "timestamp",
                   "nullable": false,
                   "typeParams": {
@@ -2982,7 +2982,7 @@
             "Log": {
               "columns": {
                 "created_at": {
-                  "codecId": "pg/timestamp-temporal@1",
+                  "codecId": "pg/timestamp-string@1",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
@@ -3352,7 +3352,7 @@
             "ToolVersion": {
               "columns": {
                 "added_at": {
-                  "codecId": "pg/timestamp-temporal@1",
+                  "codecId": "pg/timestamp-string@1",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
@@ -3378,7 +3378,7 @@
                   "nullable": false
                 },
                 "verified_at": {
-                  "codecId": "pg/timestamp-temporal@1",
+                  "codecId": "pg/timestamp-string@1",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
@@ -3693,7 +3693,7 @@
                   "nullable": true
                 },
                 "fetchedAt": {
-                  "codecId": "pg/timestamp-temporal@1",
+                  "codecId": "pg/timestamp-string@1",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
@@ -3846,7 +3846,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "1526bb58dfb6bf984a0e9c6ebe3cb531c75a27ca1efba2650662e2234b0b5ab2"
+    "storageHash": "a30c1c7c4420cd93a538d4642729e85431368fb8dba17232a49d938d7dece504"
   },
   "execution": {
     "executionHash": "8499dcc414473f3d3afc33e08a8ab1580ac1537d512b45f8a325cc79599c0af6",

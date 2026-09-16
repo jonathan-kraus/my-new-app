@@ -59,6 +59,7 @@
     "@heroicons/react": "2.2.0",
     "@neondatabase/postgrest-js": "0.2.0-beta",
     "@neondatabase/serverless": "1.1.0",
+    "@paralleldrive/cuid2": "^3.3.0",
     "@prisma/adapter-pg": "7.10.0",
     "@prisma/orm-postgres": "8.0.0-rc.11",
     "@radix-ui/react-accordion": "1.2.20",

@@ -1,7 +1,8 @@
 // app/api/weather/route.ts
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { createId } from "@paralleldrive/cuid2";
+import { db8 } from "@/lib/db.prisma8";
 import { z } from "zod";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
@@ -23,7 +24,8 @@ const TomorrowRealtimeSchema = z.object({
     }),
   }),
 });
-
+const timestampString = (value: string) =>
+  value as `${string}` & { readonly __timestampStringPrecision: 3 };
 export async function GET(req: NextRequest) {
   const built = await buildUniversalContext(req, "WEATHER");
   const { searchParams } = new URL(req.url);
@@ -33,7 +35,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Missing locationId" }, { status: 400 });
   }
 
-  const location = await db.location.findUnique({ where: { id: locationId } });
+  const location = await db8.orm.public.Location.where({
+    id: locationId,
+  }).first();
+
   if (!location) {
     return NextResponse.json({ error: "Invalid locationId" }, { status: 404 });
   }
@@ -42,12 +47,19 @@ export async function GET(req: NextRequest) {
   let jei = 0;
   const currentCutoff = new Date(Date.now() - currentCacheMin * 60_000);
 
-  const currentCached = await db.weatherSnapshot.findFirst({
-    where: { locationId, fetchedAt: { gte: currentCutoff } },
-    orderBy: { fetchedAt: "desc" },
-  });
+  const currentCached = await db8.orm.public.WeatherSnapshot.where((snapshot) =>
+    snapshot.locationId.eq(locationId),
+  )
+    .where((snapshot) =>
+      snapshot.fetchedAt.gte(timestampString(currentCutoff.toISOString())),
+    )
+    .orderBy((snapshot) => snapshot.fetchedAt.desc())
+    .first();
+
   const currentAge = currentCached
-    ? Math.round((Date.now() - currentCached.fetchedAt.getTime()) / 60000)
+    ? Math.round(
+        (Date.now() - new Date(currentCached.fetchedAt).getTime()) / 60000,
+      )
     : null;
 
   if (currentCached) {
@@ -56,7 +68,7 @@ export async function GET(req: NextRequest) {
       level: "info",
       message: "Using cached current weather data",
       file: "app/api/weather/route.ts",
-      line: 58,
+      line: 67,
       payload: {
         some: "data",
       },
@@ -87,8 +99,11 @@ export async function GET(req: NextRequest) {
   );
 
   if (!res.ok) {
+    const errorText = await res.text();
+    console.error("Tomorrow.io weather failed:", res.status, errorText);
+
     return NextResponse.json(
-      { error: "Weather fetch failed" },
+      { error: "Weather fetch failed", status: res.status },
       { status: 500 },
     );
   }
@@ -100,7 +115,7 @@ export async function GET(req: NextRequest) {
     level: "info",
     message: "Fetched current weather data",
     file: "app/api/weather/route.ts",
-    line: 102,
+    line: 114,
     payload: {
       some: res.status,
       validated: validated,
@@ -116,18 +131,17 @@ export async function GET(req: NextRequest) {
 
   const v = validated.data.data.values;
 
-  const current = await db.weatherSnapshot.create({
-    data: {
-      locationId,
-      temperature: v.temperature,
-      feelsLike: v.temperatureApparent,
-      humidity: v.humidity,
-      windSpeed: v.windSpeed,
-      windDirection: v.windDirection,
-      pressure: v.pressureSurfaceLevel,
-      visibility: v.visibility,
-      weatherCode: v.weatherCode,
-    },
+  const current = await db8.orm.public.WeatherSnapshot.create({
+    id: createId(),
+    locationId,
+    temperature: v.temperature,
+    feelsLike: v.temperatureApparent,
+    humidity: v.humidity,
+    windSpeed: v.windSpeed,
+    windDirection: v.windDirection,
+    pressure: v.pressureSurfaceLevel,
+    visibility: v.visibility,
+    weatherCode: v.weatherCode,
   });
 
   return NextResponse.json({

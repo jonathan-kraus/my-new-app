@@ -1,8 +1,7 @@
 /*
  * @FilePath: \my-new-app\app\components\dashboard\version-card.tsx
- * @LastEditTime: 2026-09-05 15:05:40
+ * @LastEditTime: 2026-09-15 18:52:19
  */
-"use client";
 
 import { getFullPackageData } from "@/lib/version/get-full-package-data";
 import { logj } from "@/lib/log/logj";

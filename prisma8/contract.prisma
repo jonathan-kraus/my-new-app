@@ -42,8 +42,8 @@ model Location {
   longitude          Float
   timezone           String
   isDefault          Boolean             @default(false)
-  createdAt          Timestamp(3)        @default(now())
-  updatedAt          Timestamp(3)
+  createdAt          TimestampString(3)        @default(now())
+  updatedAt          TimestampString(3)
   astronomySnapshots AstronomySnapshot[]
   forecastSnapshots  ForecastSnapshot[]
   weatherSnapshots   WeatherSnapshot[]
@@ -168,7 +168,7 @@ model Log {
   sessionUser  String?
   file         String?
   line         Int?
-  createdAt    Timestamp(3) @default(now()) @map("created_at")
+  createdAt    TimestampString(3) @default(now()) @map("created_at")
 
   @@index([createdAt], map: "Log_created_at_idx")
   @@index([domain], map: "Log_domain_idx")
@@ -233,8 +233,8 @@ model ToolVersion {
   id         Int          @id(map: "ToolVersion_pkey") @default(autoincrement())
   name       String
   version    String
-  addedAt    Timestamp(3) @default(now()) @map("added_at")
-  verifiedAt Timestamp(3) @default(now()) @map("verified_at")
+  addedAt    TimestampString(3) @default(now()) @map("added_at")
+  verifiedAt TimestampString(3) @default(now()) @map("verified_at")
 
   @@index([name], map: "ToolVersion_name_key", unique: true)
 
@@ -322,7 +322,7 @@ model WeatherSnapshot {
   pressure      Float?
   visibility    Float?
   weatherCode   Int?
-  fetchedAt     Timestamp(3) @default(now())
+  fetchedAt     TimestampString(3) @default(now())
   location      Location     @relation(fields:[locationId], references:[id], onDelete: Cascade, onUpdate: Cascade, map: "WeatherSnapshot_locationId_fkey", index: false)
 
   @@index([locationId, fetchedAt], map: "WeatherSnapshot_locationId_fetchedAt_idx")

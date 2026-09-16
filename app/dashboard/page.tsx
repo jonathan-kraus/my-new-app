@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\dashboard\page.tsx
- * @LastEditTime: 2026-09-05 14:34:27
+ * @LastEditTime: 2026-09-15 18:36:47
  */
 
 import { getDashboardData } from "@/lib/dashboard";
@@ -16,11 +16,13 @@ import BuildCard from "../components/dashboard/build-card";
 import { db } from "@/lib/db";
 import { LocationSchema, WeatherSchema } from "@/lib/schemas/page-schemas";
 import { LogsCard } from "./components/LogsCard";
+import { db8 } from "@/lib/db.prisma8";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Dashboard " };
 let jei = 0;
-
+const timestampString = (value: string) =>
+  value as `${string}` & { readonly __timestampStringPrecision: 3 };
 function nowMs() {
   const [s, ns] = process.hrtime();
   return s * 1_000 + ns / 1_000_000;
@@ -42,7 +44,7 @@ export default async function DashboardPage(req: Request) {
     level: "info",
     message: "Dashboard page loaded",
     file: "app/dashboard/page.tsx",
-    line: 40,
+    line: 41,
     payload: { title: metadata.title, a: "b", user: session?.user },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -50,16 +52,22 @@ export default async function DashboardPage(req: Request) {
   // Phase 1: Data fetching
   const dataStart = nowMs();
   const data = await getDashboardData();
-  const location = await db.location.findFirst({
-    where: { isDefault: true },
-  });
-  LocationSchema.parse(location);
+  const location = await db8.orm.public.Location.where({
+    isDefault: true,
+  }).first();
+
   if (!location) {
     return <div>No default location configured.</div>;
   }
 
-  let weather: any = null;
+  LocationSchema.parse(location);
 
+  const weatherLocation = {
+    ...location,
+    createdAt: new Date(location.createdAt),
+    updatedAt: new Date(location.updatedAt),
+  };
+  let weather: any = null;
   try {
     const weatherRes = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/weather?locationId=${location.id}`,
@@ -77,7 +85,7 @@ export default async function DashboardPage(req: Request) {
       level: "info",
       message: "Dashboard received weather data from API...",
       file: "app/dashboard/page.tsx",
-      line: 75,
+      line: 84,
       payload: { "Raw weather data": raw },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -94,7 +102,7 @@ export default async function DashboardPage(req: Request) {
     level: "info",
     message: "Dashboard page data fetched",
     file: "app/dashboard/page.tsx",
-    line: 92,
+    line: 101,
     payload: { data: data, elapsed: dataElapsed },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -171,7 +179,7 @@ export default async function DashboardPage(req: Request) {
       level: "info",
       message: `Built ${toolEntries.length} tool entries`,
       file: "app/dashboard/page.tsx",
-      line: 169,
+      line: 178,
       payload: {
         count: toolEntries.length,
         elapsed: toolElapsed,
@@ -186,9 +194,9 @@ export default async function DashboardPage(req: Request) {
 
   if (toolEntries.length > 0) {
     const names = toolEntries.map((t) => t.name);
-    const existing = await db.toolVersion.findMany({
-      where: { name: { in: names } },
-    });
+    const existing = await db8.orm.public.ToolVersion.where((tool) =>
+      tool.name.in(names),
+    ).all();
     const existingMap: Record<string, any> = Object.fromEntries(
       existing.map((e) => [e.name, e]),
     );
@@ -213,19 +221,19 @@ export default async function DashboardPage(req: Request) {
       }
     }
 
-    await db.$transaction(async (tx) => {
+    await db8.transaction(async (tx) => {
       if (toCreate.length > 0) {
-        await tx.toolVersion.createMany({
-          data: toCreate,
-          skipDuplicates: true,
-        });
+        await tx.orm.public.ToolVersion.createAll(toCreate);
       }
 
       if (verifyNames.length > 0) {
-        await tx.toolVersion.updateMany({
-          where: { name: { in: verifyNames } },
-          data: { verified_at: new Date() },
-        });
+        for (const name of verifyNames) {
+          await tx.orm.public.ToolVersion.where({
+            name,
+          }).update({
+            verifiedAt: timestampString(new Date().toISOString()),
+          });
+        }
 
         if (verbose) {
           await logj({
@@ -233,7 +241,7 @@ export default async function DashboardPage(req: Request) {
             level: "info",
             message: `Verified ${verifyNames.length} tool versions`,
             file: "app/dashboard/page.tsx",
-            line: 231,
+            line: 240,
             payload: { count: verifyNames.length },
             meta: { built: { ...built, eventIndex: ++jei } },
           });
@@ -248,7 +256,7 @@ export default async function DashboardPage(req: Request) {
           level: "info",
           message: `New Version ${name} →→ ${version}`,
           file: "app/dashboard/page.tsx",
-          line: 246,
+          line: 255,
           payload: {
             name,
             baseName,
@@ -259,27 +267,27 @@ export default async function DashboardPage(req: Request) {
           meta: { built: { ...built, eventIndex: ++jei } },
         });
 
-        await tx.toolVersion.upsert({
-          where: { name: baseName },
+        await tx.orm.public.ToolVersion.where({
+          name: baseName,
+        }).upsert({
           create: {
             name: baseName,
             version: current.version,
-            added_at: current.added_at,
-            verified_at: new Date(),
+            addedAt: timestampString(new Date(current.addedAt).toISOString()),
+            verifiedAt: timestampString(new Date().toISOString()),
           },
           update: {
             version: current.version,
-            verified_at: new Date(),
+            verifiedAt: timestampString(new Date().toISOString()),
           },
         });
 
-        await tx.toolVersion.update({
-          where: { name },
-          data: {
-            version,
-            added_at: new Date(),
-            verified_at: new Date(),
-          },
+        await tx.orm.public.ToolVersion.where({
+          name,
+        }).update({
+          version,
+          addedAt: timestampString(new Date().toISOString()),
+          verifiedAt: timestampString(new Date().toISOString()),
         });
       }
     });
@@ -291,7 +299,7 @@ export default async function DashboardPage(req: Request) {
     level: "info",
     message: "Database sync complete",
     file: "app/dashboard/page.tsx",
-    line: 289,
+    line: 298,
     payload: {
       elapsed: dbElapsed,
       toCreate: toolEntries.length > 0 ? "batched" : "skipped",
@@ -313,7 +321,7 @@ export default async function DashboardPage(req: Request) {
     level: "info",
     message: "Dashboard page render complete",
     file: "app/dashboard/page.tsx",
-    line: 311,
+    line: 320,
     payload: {
       total: totalElapsed,
       phases: {
@@ -342,7 +350,7 @@ export default async function DashboardPage(req: Request) {
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 p-6">
       <AstronomyCard data={data.astronomy} />
       <BuildCard build={{ ...data.build, tools: importantTools }} />
-      <CurrentWeatherCard location={location} />
+      <CurrentWeatherCard location={weatherLocation} />
       <VersionCard />
       <LogsCard logs={logs} />
     </div>
