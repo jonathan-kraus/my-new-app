@@ -1,43 +1,29 @@
 /*
  * @FilePath: \my-new-app\tests\api\weather\forecast-route.test.ts
- * @LastEditTime: 2026-09-08 00:02:48
+ * @LastEditTime: 2026-09-15 23:43:43
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const {
-  locationFindUnique,
-  forecastSnapshotFindFirst,
-  forecastSnapshotCreate,
-  logj,
-} = vi.hoisted(() => ({
-  locationFindUnique: vi.fn(),
-  forecastSnapshotFindFirst: vi.fn(),
-  forecastSnapshotCreate: vi.fn(),
-  logj: vi.fn(),
-}));
+const { locationWhere, forecastSnapshotWhere, forecastSnapshotCreate, logj } =
+  vi.hoisted(() => ({
+    locationWhere: vi.fn(),
+    forecastSnapshotWhere: vi.fn(),
+    forecastSnapshotCreate: vi.fn(),
+    logj: vi.fn(),
+  }));
 
-vi.mock("@/lib/db", () => ({
-  db: {
-    location: {
-      findUnique: locationFindUnique,
-    },
-    forecastSnapshot: {
-      findFirst: forecastSnapshotFindFirst,
-      create: forecastSnapshotCreate,
-    },
-    astronomySnapshot: {
-      findUnique: vi.fn().mockResolvedValue({
-        id: "astro-1",
-        locationId: "db-location-123",
-        dateString: "2026-07-09",
-        sunrise: "06:30",
-        sunset: "20:30",
-        moonrise: "10:00",
-        moonset: "23:00",
-        moonPhase: 0.5,
-        phaseName: "Full Moon",
-        fetchedAt: new Date(),
-      }),
+vi.mock("@/lib/db.prisma8", () => ({
+  db8: {
+    orm: {
+      public: {
+        Location: {
+          where: locationWhere,
+        },
+        ForecastSnapshot: {
+          where: forecastSnapshotWhere,
+          create: forecastSnapshotCreate,
+        },
+      },
     },
   },
 }));
@@ -76,16 +62,34 @@ import { GET } from "../../../app/api/weather/forecast/route";
 describe("GET /api/weather/forecast", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    forecastSnapshotFindFirst.mockResolvedValue(null);
-    forecastSnapshotCreate.mockResolvedValue({
-      id: "snapshot-1",
-      fetchedAt: new Date("2026-07-09T00:00:00.000Z"),
-    });
-    locationFindUnique.mockResolvedValue({
+
+    const locationFirst = vi.fn().mockResolvedValue({
       id: "db-location-123",
       latitude: 40.7,
       longitude: -74.0,
     });
+
+    locationWhere.mockReturnValue({
+      first: locationFirst,
+    });
+
+    const forecastFirst = vi.fn().mockResolvedValue(null);
+    const forecastOrderBy = vi.fn().mockReturnValue({
+      first: forecastFirst,
+    });
+    const forecastSecondWhere = vi.fn().mockReturnValue({
+      orderBy: forecastOrderBy,
+    });
+
+    forecastSnapshotWhere.mockReturnValue({
+      where: forecastSecondWhere,
+    });
+
+    forecastSnapshotCreate.mockResolvedValue({
+      id: "snapshot-1",
+      fetchedAt: new Date("2026-07-09T00:00:00.000Z"),
+    });
+
     global.fetch = vi.fn().mockResolvedValue({
       json: async () => ({
         current: {
@@ -111,18 +115,19 @@ describe("GET /api/weather/forecast", () => {
     );
 
     expect(response.status).toBe(200);
+
     expect(forecastSnapshotCreate).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({
-          locationId: "db-location-123",
-        }),
+        locationId: "db-location-123",
       }),
     );
 
     expect(logj).toHaveBeenCalledWith(
       expect.objectContaining({
         message: "🌟 Forecast API parsed",
-        payload: expect.objectContaining({ locationId: "db-location-123" }),
+        payload: expect.objectContaining({
+          locationId: "db-location-123",
+        }),
       }),
     );
   });

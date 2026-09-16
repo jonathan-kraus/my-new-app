@@ -6,24 +6,18 @@ import type { Mock } from "vitest";
 // MODULE MOCKS
 // ---------------------------------------------------------------------------
 
-vi.mock("@/lib/db", () => ({
-  db: {
-    location: { findUnique: vi.fn() },
-    forecastSnapshot: { findFirst: vi.fn(), create: vi.fn() },
-    runtimeConfig: { findUnique: vi.fn().mockResolvedValue(null) },
-    astronomySnapshot: {
-      findUnique: vi.fn().mockResolvedValue({
-        id: "astro-1",
-        locationId: "KOP",
-        dateString: "2026-01-24",
-        sunrise: "06:30",
-        sunset: "20:30",
-        moonrise: "10:00",
-        moonset: "23:00",
-        moonPhase: 0.5,
-        phaseName: "Full Moon",
-        fetchedAt: new Date(),
-      }),
+vi.mock("@/lib/db.prisma8", () => ({
+  db8: {
+    orm: {
+      public: {
+        Location: {
+          where: vi.fn(),
+        },
+        ForecastSnapshot: {
+          where: vi.fn(),
+          create: vi.fn(),
+        },
+      },
     },
   },
 }));
@@ -33,8 +27,12 @@ vi.mock("@/auth", () => ({
     user: { id: "u1", name: "Jonathan", email: "jonathan@kraus.my.id" },
   }),
 }));
-
-vi.mock("@/lib/log/logj", () => ({ logj: vi.fn() }));
+vi.mock("@/lib/runtime/config", () => ({
+  getConfig: vi.fn().mockResolvedValue("10"),
+}));
+vi.mock("@/lib/log/logj", () => ({
+  logj: vi.fn(),
+}));
 
 vi.mock("@/lib/log/context", () => ({
   enrichContext: vi.fn().mockResolvedValue({
@@ -64,19 +62,18 @@ global.fetch = vi.fn();
 // IMPORTS AFTER MOCKS
 // ---------------------------------------------------------------------------
 
-const { db } = await import("@/lib/db");
+const { db8 } = await import("@/lib/db.prisma8");
 const { logj } = await import("@/lib/log/logj");
 
 // ---------------------------------------------------------------------------
 // TYPED MOCK HELPERS
 // ---------------------------------------------------------------------------
 
-const mockedDb = vi.mocked(db, true);
 const mockedFetch = global.fetch as Mock;
 const mockedLog = vi.mocked(logj, true);
 
 // ---------------------------------------------------------------------------
-// FACTORY HELPERS (MATCH REAL PRISMA TYPES)
+// FACTORY HELPERS
 // ---------------------------------------------------------------------------
 
 const makeLocation = (overrides = {}) => ({
@@ -97,7 +94,11 @@ const makeSnapshot = (overrides = {}) => ({
   locationId: "KOP",
   fetchedAt: new Date(),
   payload: {
-    current: { temperature: 30, windspeed: 5, humidity: 60 },
+    current: {
+      temperature: 30,
+      windspeed: 5,
+      humidity: 60,
+    },
     forecast: {
       time: ["2026-01-24"],
       temperature_2m_max: [40],
@@ -126,11 +127,55 @@ const mockApiResponse = (overrides = {}) => ({
 const makeRequest = (url: string) => new Request(url);
 
 // ---------------------------------------------------------------------------
+// PRISMA 8 MOCK CHAIN HELPERS
+// ---------------------------------------------------------------------------
+
+const mockLocationLookup = (
+  location: ReturnType<typeof makeLocation> | null,
+) => {
+  const first = vi.fn().mockResolvedValue(location);
+
+  vi.mocked(db8.orm.public.Location.where).mockReturnValue({
+    first,
+  } as any);
+
+  return first;
+};
+
+const mockForecastLookup = (
+  snapshot: ReturnType<typeof makeSnapshot> | null,
+) => {
+  const first = vi.fn().mockResolvedValue(snapshot);
+
+  const orderBy = vi.fn().mockReturnValue({
+    first,
+  });
+
+  const secondWhere = vi.fn().mockReturnValue({
+    orderBy,
+  });
+
+  vi.mocked(db8.orm.public.ForecastSnapshot.where).mockReturnValue({
+    where: secondWhere,
+  } as any);
+
+  return {
+    first,
+    orderBy,
+    secondWhere,
+  };
+};
+
+// ---------------------------------------------------------------------------
 // RESET BEFORE EACH TEST
 // ---------------------------------------------------------------------------
 
 beforeEach(() => {
   vi.clearAllMocks();
+
+  vi.mocked(db8.orm.public.Location.where).mockReset();
+  vi.mocked(db8.orm.public.ForecastSnapshot.where).mockReset();
+  vi.mocked(db8.orm.public.ForecastSnapshot.create).mockReset();
 });
 
 // ---------------------------------------------------------------------------
@@ -147,7 +192,7 @@ describe("GET /api/weather/forecast", () => {
   });
 
   it("returns 404 when location does not exist", async () => {
-    mockedDb.location.findUnique.mockResolvedValue(null);
+    mockLocationLookup(null);
 
     const res = await GET(
       makeRequest("http://localhost/api/weather/forecast?locationId=KOP"),
@@ -159,8 +204,8 @@ describe("GET /api/weather/forecast", () => {
   });
 
   it("returns cached forecast when snapshot exists", async () => {
-    mockedDb.location.findUnique.mockResolvedValue(makeLocation());
-    mockedDb.forecastSnapshot.findFirst.mockResolvedValue(makeSnapshot());
+    mockLocationLookup(makeLocation());
+    mockForecastLookup(makeSnapshot());
 
     const res = await GET(
       makeRequest("http://localhost/api/weather/forecast?locationId=KOP"),
@@ -176,15 +221,15 @@ describe("GET /api/weather/forecast", () => {
   });
 
   it("fetches external API and stores snapshot on cache miss", async () => {
-    mockedDb.location.findUnique.mockResolvedValue(makeLocation());
-    mockedDb.forecastSnapshot.findFirst.mockResolvedValue(null);
+    mockLocationLookup(makeLocation());
+    mockForecastLookup(null);
 
     mockedFetch.mockResolvedValue({
       json: () => Promise.resolve(mockApiResponse()),
-    });
+    } as Response);
 
-    mockedDb.forecastSnapshot.create.mockResolvedValue(
-      makeSnapshot({ id: "snap-1" }),
+    vi.mocked(db8.orm.public.ForecastSnapshot.create).mockResolvedValue(
+      makeSnapshot({ id: "snap-1" }) as any,
     );
 
     const res = await GET(
@@ -197,16 +242,27 @@ describe("GET /api/weather/forecast", () => {
     expect(json.current.temperature).toBe(32);
 
     expect(mockedLog).toHaveBeenCalledTimes(5);
-    expect(mockedDb.forecastSnapshot.create).toHaveBeenCalled();
+    expect(db8.orm.public.ForecastSnapshot.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        locationId: "KOP",
+        payload: expect.objectContaining({
+          current: expect.objectContaining({
+            temperature: 32,
+            windspeed: 5,
+            humidity: 65,
+          }),
+        }),
+      }),
+    );
   });
 
   it("returns 502 when external API response is invalid", async () => {
-    mockedDb.location.findUnique.mockResolvedValue(makeLocation());
-    mockedDb.forecastSnapshot.findFirst.mockResolvedValue(null);
+    mockLocationLookup(makeLocation());
+    mockForecastLookup(null);
 
     mockedFetch.mockResolvedValue({
       json: () => Promise.resolve({ bad: "data" }),
-    });
+    } as Response);
 
     const res = await GET(
       makeRequest("http://localhost/api/weather/forecast?locationId=KOP"),
