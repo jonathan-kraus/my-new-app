@@ -13,7 +13,7 @@ function getMoonEmoji(phaseName: string | null): string {
   const name = phaseName.toLowerCase();
   if (name.includes("new")) return "🌑";
   if (name.includes("waxing crescent")) return "🌒";
-  if (name.includes("first quarter")) return "🌓";
+  if (name.includes("first_quarter")) return "🌓";
   if (name.includes("waxing gibbous")) return "🌔";
   if (name.includes("full")) return "🌕";
   if (name.includes("waning gibbous")) return "🌖";
@@ -83,7 +83,7 @@ export async function GET(req: Request) {
         locationId: resolvedLocationId,
         data: cached.payload,
         cutoff: cutoff.toISOString(),
-        cachedFetchedAt: cached.fetchedAt.toISOString(),
+        cachedFetchedAt: cached.fetchedAt,
       },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -159,7 +159,7 @@ export async function GET(req: Request) {
         weathercode: weather.forecast.weathercode || [],
       },
       astronomy,
-      fetchedAt: cached.fetchedAt.toISOString(),
+      fetchedAt: cached.fetchedAt,
     });
   }
 
@@ -401,6 +401,6 @@ export async function GET(req: Request) {
       weathercode: weather.daily.weathercode,
     },
     astronomy,
-    fetchedAt: snapshot.fetchedAt.toISOString(),
+    fetchedAt: snapshot.fetchedAt,
   });
 }

@@ -785,7 +785,7 @@
               "fetchedAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/timestamp-temporal@1",
+                  "codecId": "pg/timestamp-string@1",
                   "kind": "scalar",
                   "typeParams": {
                     "precision": 3
@@ -2750,7 +2750,7 @@
             "ForecastSnapshot": {
               "columns": {
                 "fetchedAt": {
-                  "codecId": "pg/timestamp-temporal@1",
+                  "codecId": "pg/timestamp-string@1",
                   "default": {
                     "expression": "now()",
                     "kind": "function"
@@ -3846,7 +3846,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "a30c1c7c4420cd93a538d4642729e85431368fb8dba17232a49d938d7dece504"
+    "storageHash": "dda5f98260527d6f868c48a017fc6c46e19ee15c0aee82419c726d3cb1fd6c9d"
   },
   "execution": {
     "executionHash": "8499dcc414473f3d3afc33e08a8ab1580ac1537d512b45f8a325cc79599c0af6",

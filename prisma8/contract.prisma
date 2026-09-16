@@ -126,7 +126,7 @@ model EphemerisDebug {
 model ForecastSnapshot {
   id         String       @id(map: "ForecastSnapshot_pkey")
   locationId String
-  fetchedAt  Timestamp(3) @default(now())
+  fetchedAt  TimestampString(3) @default(now())
   payload    Jsonb
   location   Location     @relation(fields:[locationId], references:[id], onDelete: Restrict, onUpdate: Cascade, map: "ForecastSnapshot_locationId_fkey", index: false)
 

@@ -34,7 +34,7 @@ import type {
 } from "@prisma/orm-postgres/contract/types";
 
 export type StorageHash =
-  StorageHashBase<"a30c1c7c4420cd93a538d4642729e85431368fb8dba17232a49d938d7dece504">;
+  StorageHashBase<"dda5f98260527d6f868c48a017fc6c46e19ee15c0aee82419c726d3cb1fd6c9d">;
 export type ExecutionHash =
   ExecutionHashBase<"8499dcc414473f3d3afc33e08a8ab1580ac1537d512b45f8a325cc79599c0af6">;
 export type ProfileHash =
@@ -602,7 +602,7 @@ export type FieldOutputTypes = {
     readonly ForecastSnapshot: {
       readonly id: CodecTypes["pg/text@1"]["output"];
       readonly locationId: CodecTypes["pg/text@1"]["output"];
-      readonly fetchedAt: CodecTypes["pg/timestamp-temporal@1"]["output"];
+      readonly fetchedAt: TimestampString<3>;
       readonly payload: CodecTypes["pg/jsonb@1"]["output"];
     };
     readonly GithubEvent: {
@@ -824,7 +824,7 @@ export type FieldInputTypes = {
     readonly ForecastSnapshot: {
       readonly id: CodecTypes["pg/text@1"]["input"];
       readonly locationId: CodecTypes["pg/text@1"]["input"];
-      readonly fetchedAt: CodecTypes["pg/timestamp-temporal@1"]["input"];
+      readonly fetchedAt: CodecTypes["pg/timestamp-string@1"]["input"];
       readonly payload: CodecTypes["pg/jsonb@1"]["input"];
     };
     readonly GithubEvent: {
@@ -1044,7 +1044,7 @@ export type StorageColumnTypes = {
       readonly sunsetGoldenStart: CodecTypes["pg/text@1"]["output"] | null;
     };
     readonly ForecastSnapshot: {
-      readonly fetchedAt: CodecTypes["pg/timestamp-temporal@1"]["output"];
+      readonly fetchedAt: TimestampString<3>;
       readonly id: CodecTypes["pg/text@1"]["output"];
       readonly locationId: CodecTypes["pg/text@1"]["output"];
       readonly payload: CodecTypes["pg/jsonb@1"]["output"];
@@ -1266,7 +1266,7 @@ export type StorageColumnInputTypes = {
       readonly sunsetGoldenStart: CodecTypes["pg/text@1"]["input"] | null;
     };
     readonly ForecastSnapshot: {
-      readonly fetchedAt: CodecTypes["pg/timestamp-temporal@1"]["input"];
+      readonly fetchedAt: CodecTypes["pg/timestamp-string@1"]["input"];
       readonly id: CodecTypes["pg/text@1"]["input"];
       readonly locationId: CodecTypes["pg/text@1"]["input"];
       readonly payload: CodecTypes["pg/jsonb@1"]["input"];
@@ -1522,7 +1522,7 @@ export namespace Models {
   export type public_ForecastSnapshot = {
     id: CodecTypes["pg/text@1"]["output"];
     locationId: CodecTypes["pg/text@1"]["output"];
-    fetchedAt: CodecTypes["pg/timestamp-temporal@1"]["output"];
+    fetchedAt: TimestampString<3>;
     payload: CodecTypes["pg/jsonb@1"]["output"];
     location: public_Location;
     readonly [RelationKeys]?: "location";
@@ -2138,7 +2138,7 @@ type ContractBase = Omit<
                 };
                 readonly fetchedAt: {
                   readonly nativeType: "timestamp";
-                  readonly codecId: "pg/timestamp-temporal@1";
+                  readonly codecId: "pg/timestamp-string@1";
                   readonly nullable: false;
                   readonly default: {
                     readonly kind: "function";
@@ -3867,7 +3867,7 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: {
                   readonly kind: "scalar";
-                  readonly codecId: "pg/timestamp-temporal@1";
+                  readonly codecId: "pg/timestamp-string@1";
                   readonly typeParams: { readonly precision: 3 };
                 };
               };

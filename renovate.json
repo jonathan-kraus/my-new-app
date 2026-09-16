@@ -20,10 +20,9 @@
       ]
     },
     {
-      "groupName": "Prisma",
-      "matchUpdateTypes": ["major"],
-      "enabled": false,
-      "matchPackageNames": ["/^prisma$/", "/^@prisma\\//"]
+      "description": "Manage Prisma 7 development package manually",
+      "matchPackageNames": ["@prisma/prisma7"],
+      "enabled": false
     },
     {
       "groupName": "Vitest",
