@@ -5,10 +5,10 @@ export async function axiomIngest<T extends AxiomEvent>(
   datasetOverride?: string,
 ) {
   const token = process.env.AXIOM_TOKEN?.trim();
-  const orgId = process.env.AXIOM_ORG_ID?.trim();
   const dataset = (datasetOverride ?? process.env.AXIOM_DATASET)?.trim();
+  const baseUrl = process.env.AXIOM_URL?.trim();
 
-  if (!token || !orgId || !dataset) {
+  if (!token || !dataset || !baseUrl) {
     return {
       ok: true as const,
       skipped: true as const,
@@ -17,17 +17,21 @@ export async function axiomIngest<T extends AxiomEvent>(
   }
 
   if (!events.length) {
-    return { ok: true as const, skipped: true as const, reason: "no_events" };
+    return {
+      ok: true as const,
+      skipped: true as const,
+      reason: "no_events",
+    };
   }
 
-  const url = `https://api.axiom.co/v1/datasets/${encodeURIComponent(dataset)}/ingest`;
+  const url =
+    `${baseUrl.replace(/\/$/, "")}/v1/ingest/` + encodeURIComponent(dataset);
 
   try {
     const res = await fetch(url, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
-        "X-Axiom-Org-Id": orgId,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(events),
@@ -35,12 +39,17 @@ export async function axiomIngest<T extends AxiomEvent>(
 
     if (!res.ok) {
       const text = await res.text();
+
       throw new Error(
-        `Axiom ingest failed for dataset "${dataset}": ${res.status} ${text.slice(0, 1000)}`,
+        `Axiom ingest failed for dataset "${dataset}": ` +
+          `${res.status} ${text.slice(0, 1000)}`,
       );
     }
 
-    return { ok: true as const, skipped: false as const };
+    return {
+      ok: true as const,
+      skipped: false as const,
+    };
   } catch (error) {
     throw new Error(
       `Axiom ingest request failed for dataset "${dataset}": ${

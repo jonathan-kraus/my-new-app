@@ -1,11 +1,12 @@
 /*
- * @FilePath: \my-new-app\lib\log\server.ts
- * @LastEditTime: 2026-09-04 01:30:48
+ * @FilePath: \my-new-app\src\lib\log\server.ts
+ * @LastEditTime: 2026-09-16 17:48:15
  */
 /*
  * Server-side logger
- * Writes to DB + Axiom
+ * Writes independently to DB + Axiom
  */
+
 import { db } from "@/lib/db";
 import { axiomIngest } from "@/lib/axiom";
 import { z } from "zod";
@@ -13,7 +14,10 @@ import type { LogjInput } from "@/lib/log/types";
 
 const NEON_MAX_JSON = 200_000;
 
+// --------------------------------------------------
 // Canonical schema
+// --------------------------------------------------
+
 export const CanonicalLogRecordSchema = z.object({
   domain: z.string().min(1),
   level: z.enum(["info", "warn", "error", "debug"]),
@@ -33,7 +37,10 @@ export const CanonicalLogRecordSchema = z.object({
 
 export type CanonicalLogRecord = z.infer<typeof CanonicalLogRecordSchema>;
 
-// Safe JSON helpers
+// --------------------------------------------------
+// Safe JSON helper
+// --------------------------------------------------
+
 export function safeForNeon(value: unknown): unknown {
   try {
     if (
@@ -42,28 +49,38 @@ export function safeForNeon(value: unknown): unknown {
       value instanceof Headers ||
       value instanceof ReadableStream
     ) {
-      return { unsupported: true, type: value.constructor.name };
+      return {
+        unsupported: true,
+        type: value.constructor.name,
+      };
     }
 
     if (typeof value === "object" && value !== null) {
       const plain: Record<string, unknown> = {};
 
-      for (const [k, v] of Object.entries(value)) {
+      for (const [key, item] of Object.entries(value)) {
         if (
-          v instanceof Request ||
-          v instanceof Response ||
-          v instanceof Headers ||
-          v instanceof ReadableStream
+          item instanceof Request ||
+          item instanceof Response ||
+          item instanceof Headers ||
+          item instanceof ReadableStream
         ) {
-          plain[k] = { unsupported: true, type: v.constructor.name };
+          plain[key] = {
+            unsupported: true,
+            type: item.constructor.name,
+          };
         } else {
-          plain[k] = v;
+          plain[key] = item;
         }
       }
 
       const json = JSON.stringify(plain);
+
       if (json.length > NEON_MAX_JSON) {
-        return { truncated: true, originalSize: json.length };
+        return {
+          truncated: true,
+          originalSize: json.length,
+        };
       }
 
       return plain;
@@ -71,91 +88,125 @@ export function safeForNeon(value: unknown): unknown {
 
     return value;
   } catch {
-    return { truncated: true, error: "serialization_failed" };
+    return {
+      truncated: true,
+      error: "serialization_failed",
+    };
   }
 }
 
+// --------------------------------------------------
 // Main server logger
+// --------------------------------------------------
+
 export async function serverLog(input: LogjInput) {
+  const {
+    domain,
+    level,
+    message,
+    file = null,
+    line = null,
+    payload = {},
+    meta = {},
+  } = input;
+
+  const canonicalUserId = (payload.userId ??
+    payload.session?.user?.id ??
+    meta.built?.userId ??
+    null) as string | null;
+
+  const canonicalSessionEmail = (payload.sessionEmail ??
+    payload.session?.user?.email ??
+    meta.built?.sessionEmail ??
+    null) as string | null;
+
+  const canonicalSessionUser = (payload.sessionUser ??
+    payload.session?.user?.name ??
+    meta.built?.sessionUser ??
+    null) as string | null;
+
+  const requestId = (payload.requestId ??
+    meta.requestId ??
+    meta.built?.requestId ??
+    null) as string | null;
+
+  const eventIndex = Number(meta.built?.eventIndex ?? 0);
+
+  const prefixedMessage =
+    eventIndex > 0 ? `#${eventIndex} ${message}` : message;
+
+  const canonical: CanonicalLogRecord = {
+    domain,
+    level,
+    message: prefixedMessage,
+    file,
+    line,
+    requestId,
+    userId: canonicalUserId,
+    sessionEmail: canonicalSessionEmail,
+    sessionUser: canonicalSessionUser,
+    payload: safeForNeon(payload) as Record<string, unknown>,
+    meta: safeForNeon(meta) as Record<string, unknown>,
+  };
+
+  // --------------------------------------------------
+  // Validate once before sending anywhere
+  // --------------------------------------------------
+
+  const parsed = CanonicalLogRecordSchema.safeParse(canonical);
+
+  if (!parsed.success) {
+    console.error("Invalid log record", parsed.error.flatten());
+    return;
+  }
+
+  const record = parsed.data;
+
+  // --------------------------------------------------
+  // Neon
+  // --------------------------------------------------
+
   try {
-    const {
-      domain,
-      level,
-      message,
-      file = null,
-      line = null,
-      payload = {},
-      meta = {},
-    } = input;
-
-    const canonicalUserId = (payload.userId ??
-      payload.session?.user?.id ??
-      meta.built?.userId ??
-      "canu") as string;
-
-    const canonicalSessionEmail = (payload.sessionEmail ??
-      payload.session?.user?.email ??
-      meta.built?.sessionEmail ??
-      "canse") as string;
-
-    const canonicalSessionUser = (payload.sessionUser ??
-      payload.session?.user?.name ??
-      meta.built?.sessionUser ??
-      "cansu") as string;
-
-    const requestId = (payload.requestId ??
-      meta.requestId ??
-      meta.built?.requestId ??
-      "canr") as string;
-
-    const canonical: CanonicalLogRecord = {
-      domain,
-      level,
-      message,
-      file,
-      line,
-      requestId,
-      userId: canonicalUserId,
-      sessionEmail: canonicalSessionEmail,
-      sessionUser: canonicalSessionUser,
-      payload: safeForNeon(payload) as Record<string, unknown>,
-      meta: safeForNeon(meta) as Record<string, unknown>,
-    };
-
-    const parsed = CanonicalLogRecordSchema.safeParse(canonical);
-    if (!parsed.success) {
-      console.error("Invalid log record", parsed.error.flatten());
-      return;
-    }
-
-    const record = parsed.data;
-
-    const eventIndex = (meta.built?.eventIndex ?? 0) as number;
-    const prefixedMessage =
-      eventIndex > 0 ? `#${eventIndex} ${message}` : message;
-
     await db.log.create({
       data: {
         ...record,
-        message: prefixedMessage,
         payload: record.payload as any,
         meta: record.meta as any,
       },
     });
+  } catch (err) {
+    console.error("NEON LOG ERROR:", err);
+  }
 
+  // --------------------------------------------------
+  // Axiom
+  //
+  // Keep useful fields directly queryable.
+  // Do not make Axiom dependent on the Neon write.
+  // --------------------------------------------------
+
+  try {
     await axiomIngest([
       {
-        domain,
-        level,
-        message: prefixedMessage,
-        file,
-        line,
-        eventIndex: meta.built?.eventIndex ?? 0,
-        meta_json: JSON.stringify(record.meta),
-        payload_json: JSON.stringify(record.payload),
+        domain: record.domain,
+        level: record.level,
+        message: record.message,
+
+        file: record.file,
+        line: record.line,
+
+        requestId: record.requestId ?? null,
+        userId: record.userId,
+        sessionEmail: record.sessionEmail,
+        sessionUser: record.sessionUser,
+
+        eventIndex,
+
+        payload: record.payload,
+        meta: record.meta,
       },
     ]);
   } catch (err) {
-    console.error("LOG ERROR:", err);
+    console.error("AXIOM LOG ERROR:", err);
   }
 }
