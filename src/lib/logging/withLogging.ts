@@ -1,5 +1,4 @@
 // lib/logging/withLogging.ts
-import { log } from "@/lib/log/logger";
 
 export function withLogging(handler: (req: Request) => Promise<Response>) {
   return async function wrapped(req: Request) {

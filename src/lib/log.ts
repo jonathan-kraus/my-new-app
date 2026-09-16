@@ -1,9 +1,8 @@
 /*
- * @FilePath: \my-new-app\lib\log.ts
- * @LastEditTime: 2026-04-02 00:37:54
+ * @FilePath: \my-new-app\src\lib\log.ts
+ * @LastEditTime: 2026-09-16 14:55:58
  */
 // lib/log.ts
-// Universal logger — works on both client and server.
 // On the server it calls logj() directly.
 // On the client it POSTs to /api/log so the server can write to Neon + Axiom.
 

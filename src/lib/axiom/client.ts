@@ -2,7 +2,6 @@
 
 /**
  * Client-side logging:
- * - No Logger
  * - No transports
  * - No Axiom client
  * - Just sends events to the server

@@ -1,11 +1,11 @@
 /*
- * @FilePath: \my-new-app\lib\log\client.ts
- * @LastEditTime: 2026-09-04 01:32:13
+ * @FilePath: \my-new-app\src\lib\log\client.ts
+ * @LastEditTime: 2026-09-16 14:57:12
  */
 import type { LogjInput } from "@/lib/log/types";
 
 /*
- * Client-side logger
+ * Client-side log
  * Sends logs to /api/log
  */
 

@@ -1,5 +1,5 @@
 /*
- * Universal logger entry point
+ * Universal log entry point
  * Decides server vs client at runtime
  */
 

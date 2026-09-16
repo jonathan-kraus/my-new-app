@@ -1,7 +1,6 @@
 // lib/buildAstronomySnapshot.ts
 import { combineDateTime } from "@/lib/ephemeris/utils/combineDateTime";
 import { format } from "date-fns";
-import { log } from "@/lib/log/logger";
 import { setLogFile } from "@/lib/log/set-logfile";
 import { DateTime } from "luxon";
 

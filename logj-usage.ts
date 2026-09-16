@@ -1,9 +1,8 @@
 /*
  * @FilePath: \my-new-app\logj-usage.ts
- * @LastEditTime: 2026-06-20 15:14:35
+ * @LastEditTime: 2026-09-16 14:54:03
  */
 // logj-usage.ts
-// Examples of how to use the logj logger throughout your app.
 
 import { logj } from "@/lib/log/logj";
 

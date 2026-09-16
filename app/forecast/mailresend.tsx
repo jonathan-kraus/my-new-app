@@ -1,11 +1,8 @@
 import { Resend } from "resend";
-
-import { getConfig, setConfig } from "@/lib/runtime/config";
-
 import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
 import type { buildWeatherEmail } from "./buildWeatherEmail";
-import { log } from "../../src/lib/log/logger";
+
 export async function sendWeatherEmail({
   to,
   weatherEmail,

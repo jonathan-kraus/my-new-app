@@ -12,9 +12,7 @@ function getCallerInfo() {
     // Skip node_modules
     if (cleaned.includes("node_modules")) continue;
 
-    // Skip logger internals
-    if (cleaned.includes("lib/log/logger")) continue;
-    if (cleaned.includes("lib/log/logit")) continue;
+    // Skip log internals
     if (cleaned.includes("lib/log/build-universal-context")) continue;
 
     // Extract file + line
