@@ -332,6 +332,7 @@ export async function GET(req: Request) {
   const snapshot = await db8.orm.public.ForecastSnapshot.create({
     id: createId(),
     locationId: resolvedLocationId,
+    fetchedAt: timestampString(new Date().toISOString()),
     payload: {
       current: {
         temperature: weather.current.temperature,
@@ -353,7 +354,7 @@ export async function GET(req: Request) {
     level: "info",
     message: "🌟 Forecast snapshot stored",
     file: "app/api/weather/forecast/route.ts",
-    line: 350,
+    line: 352,
     payload: {
       snapshotId: snapshot.id,
       cacheWindowMinutes: FORECAST_CACHE_MINUTES,
