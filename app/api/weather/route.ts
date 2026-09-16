@@ -47,27 +47,14 @@ export async function GET(req: NextRequest) {
   let jei = 0;
   const currentCutoff = new Date(Date.now() - currentCacheMin * 60_000);
 
-  const recentSnapshots = await db8.orm.public.WeatherSnapshot.where(
-    (snapshot) => snapshot.locationId.eq(locationId),
+  const currentCached = await db8.orm.public.WeatherSnapshot.where((snapshot) =>
+    snapshot.locationId.eq(locationId),
   )
     .where((snapshot) =>
       snapshot.fetchedAt.gte(timestampString(currentCutoff.toISOString())),
     )
     .orderBy((snapshot) => snapshot.fetchedAt.desc())
-    .all();
-
-  console.log(
-    "Recent WeatherSnapshots:",
-    recentSnapshots.map((snapshot) => ({
-      id: snapshot.id,
-      locationId: snapshot.locationId,
-      fetchedAt: snapshot.fetchedAt,
-      temperature: snapshot.temperature,
-      humidity: snapshot.humidity,
-    })),
-  );
-
-  const currentCached = recentSnapshots[0] ?? null;
+    .first();
 
   const currentAge = currentCached
     ? Math.round(
