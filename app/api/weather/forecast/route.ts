@@ -1,7 +1,7 @@
 // app/api/weather/forecast/route.ts
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { auth } from "@/auth";
+import { db8 } from "@/lib/db.prisma8";
+import { createId } from "@paralleldrive/cuid2";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { ForecastResponseSchema } from "@/lib/weather/zodschema";
@@ -21,7 +21,8 @@ function getMoonEmoji(phaseName: string | null): string {
   if (name.includes("waning crescent")) return "🌘";
   return "🌑";
 }
-
+const timestampString = (value: string) =>
+  value as `${string}` & { readonly __timestampStringPrecision: 3 };
 const fcm = Number(await getConfig("FORECAST_CACHE_MINUTES", "10"));
 const FORECAST_CACHE_MINUTES = fcm;
 
@@ -44,7 +45,9 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Missing location" }, { status: 400 });
   }
 
-  const location = await db.location.findUnique({ where: { id: locationId } });
+  const location = await db8.orm.public.Location.where({
+    id: locationId,
+  }).first();
 
   if (!location) {
     return NextResponse.json({ error: "Invalid location" }, { status: 404 });
@@ -55,10 +58,14 @@ export async function GET(req: Request) {
   // ----------------------------------------
   const resolvedLocationId = location.id;
   const cutoff = new Date(Date.now() - FORECAST_CACHE_MINUTES * 60_000);
-  const cached = await db.forecastSnapshot.findFirst({
-    where: { locationId: resolvedLocationId, fetchedAt: { gte: cutoff } },
-    orderBy: { fetchedAt: "desc" },
-  });
+  const cached = await db8.orm.public.ForecastSnapshot.where((snapshot) =>
+    snapshot.locationId.eq(resolvedLocationId),
+  )
+    .where((snapshot) =>
+      snapshot.fetchedAt.gte(timestampString(cutoff.toISOString())),
+    )
+    .orderBy((snapshot) => snapshot.fetchedAt.desc())
+    .first();
 
   if (cached) {
     console.log(
@@ -71,7 +78,7 @@ export async function GET(req: Request) {
       level: "info",
       message: "🌟 Forecast cache hit",
       file: "app/api/weather/forecast/route.ts",
-      line: 70,
+      line: 76,
       payload: {
         locationId: resolvedLocationId,
         data: cached.payload,
@@ -164,7 +171,7 @@ export async function GET(req: Request) {
     level: "warn",
     message: "🌟 Forecast cache miss → fetching external API",
     file: "app/api/weather/forecast/route.ts",
-    line: 163,
+    line: 169,
     payload: { locationId: resolvedLocationId },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -200,7 +207,7 @@ export async function GET(req: Request) {
         level: "error",
         message: "Open-Meteo JSON parse failed",
         file: "app/api/weather/forecast/route.ts",
-        line: 199,
+        line: 205,
         payload: { error: String(err) },
         meta: { built: { ...built, eventIndex: ++jei } },
       });
@@ -216,7 +223,7 @@ export async function GET(req: Request) {
       level: "error",
       message: "Open-Meteo fetch threw",
       file: "app/api/weather/forecast/route.ts",
-      line: 215,
+      line: 221,
       payload: { error: String(err) },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -236,7 +243,7 @@ export async function GET(req: Request) {
     level: "info",
     message: "🌟 Forecast API response",
     file: "app/api/weather/forecast/route.ts",
-    line: 235,
+    line: 241,
     payload: { raw, locationId: resolvedLocationId },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -257,7 +264,7 @@ export async function GET(req: Request) {
     level: "info",
     message: "Forecast page data completed",
     file: "app/api/weather/forecast/route.ts",
-    line: 256,
+    line: 262,
     payload: {
       requestId: requestId || undefined,
       forecastDurationMs: Number(forecastDurationMs.toFixed(3)),
@@ -271,7 +278,7 @@ export async function GET(req: Request) {
       level: "error",
       message: "Forecast unavailable",
       file: "app/api/weather/forecast/route.ts",
-      line: 270,
+      line: 276,
       payload: { raw, issues: parsed.error.flatten() },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -295,7 +302,7 @@ export async function GET(req: Request) {
       level: "error",
       message: "Forecast unavailable (missing daily block)",
       file: "app/api/weather/forecast/route.ts",
-      line: 294,
+      line: 300,
       payload: { raw },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -314,7 +321,7 @@ export async function GET(req: Request) {
     level: "info",
     message: "🌟 Forecast API parsed",
     file: "app/api/weather/forecast/route.ts",
-    line: 313,
+    line: 319,
     payload: { locationId: resolvedLocationId },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -322,22 +329,21 @@ export async function GET(req: Request) {
   // ----------------------------------------
   // STORE SNAPSHOT
   // ----------------------------------------
-  const snapshot = await db.forecastSnapshot.create({
-    data: {
-      locationId: resolvedLocationId,
-      payload: {
-        current: {
-          temperature: weather.current.temperature,
-          windspeed: weather.current.wind_speed_10m,
-          humidity: weather.current.relative_humidity_2m,
-        },
-        forecast: {
-          time: weather.daily.time,
-          temperature_2m_max: weather.daily.temperature_2m_max,
-          temperature_2m_min: weather.daily.temperature_2m_min,
-          weathercode: weather.daily.weathercode,
-        } as any,
+  const snapshot = await db8.orm.public.ForecastSnapshot.create({
+    id: createId(),
+    locationId: resolvedLocationId,
+    payload: {
+      current: {
+        temperature: weather.current.temperature,
+        windspeed: weather.current.wind_speed_10m,
+        humidity: weather.current.relative_humidity_2m ?? null,
       },
+      forecast: {
+        time: weather.daily.time,
+        temperature_2m_max: weather.daily.temperature_2m_max,
+        temperature_2m_min: weather.daily.temperature_2m_min,
+        weathercode: weather.daily.weathercode,
+      } as any,
     },
   });
 
@@ -347,7 +353,7 @@ export async function GET(req: Request) {
     level: "info",
     message: "🌟 Forecast snapshot stored",
     file: "app/api/weather/forecast/route.ts",
-    line: 346,
+    line: 350,
     payload: {
       snapshotId: snapshot.id,
       cacheWindowMinutes: FORECAST_CACHE_MINUTES,
