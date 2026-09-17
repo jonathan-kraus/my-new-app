@@ -138,6 +138,7 @@ export function ForecastCard({
         return;
       }
       let message: string;
+      message = "initial message";
       if (result.reason === "disabled") {
         setEmailMessage("Forecast email sending is disabled.");
         message = "Forecast email sending is disabled.";
