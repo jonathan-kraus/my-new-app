@@ -1,6 +1,6 @@
 // lib/ephemeris/writeEphemerisDebugEvent.ts
 
-import { db } from "@/lib/db";
+import { db8 } from "@/lib/db.prisma8";
 
 // -----------------------------
 // Exported helpers for tests
@@ -75,29 +75,27 @@ export async function writeEphemerisDebugEvent(data: DebugEventInput) {
   const now = new Date();
   console.log("writeEphemerisDebugEvent: called with data:", data);
   try {
-    const row = await db.ephemerisDebug.create({
-      data: {
-        raw: toJsonSafe(data.raw),
-        id: data.id,
-        createdAt: toIsoString(data.createdAt ?? null),
-        date: toIsoString(data.date ?? null),
-        locationId: data.locationId ?? null,
-        fetchedAt: toIsoString(data.fetchedAt ?? null),
-        sunrise: toIsoString(data.sunrise ?? null),
-        sunset: toIsoString(data.sunset ?? null),
-        moonrise: toIsoString(data.moonrise ?? null),
-        moonset: toIsoString(data.moonset ?? null),
-        moonPhase: data.moonPhase ?? null,
-        sunriseBlueStart: toIsoString(data.sunriseBlueStart ?? null),
-        sunriseBlueEnd: toIsoString(data.sunriseBlueEnd ?? null),
-        sunriseGoldenStart: toIsoString(data.sunriseGoldenStart ?? null),
-        sunriseGoldenEnd: toIsoString(data.sunriseGoldenEnd ?? null),
-        sunsetGoldenStart: toIsoString(data.sunsetGoldenStart ?? null),
-        sunsetGoldenEnd: toIsoString(data.sunsetGoldenEnd ?? null),
-        sunsetBlueStart: toIsoString(data.sunsetBlueStart ?? null),
-        sunsetBlueEnd: toIsoString(data.sunsetBlueEnd ?? null),
-        receivedAt: now,
-      },
+    const row = await db8.orm.public.EphemerisDebug.create({
+      raw: toJsonSafe(data.raw),
+      id: data.id,
+      createdAt: toIsoString(data.createdAt ?? null),
+      date: toIsoString(data.date ?? null),
+      locationId: data.locationId ?? null,
+      fetchedAt: toIsoString(data.fetchedAt ?? null),
+      sunrise: toIsoString(data.sunrise ?? null),
+      sunset: toIsoString(data.sunset ?? null),
+      moonrise: toIsoString(data.moonrise ?? null),
+      moonset: toIsoString(data.moonset ?? null),
+      moonPhase: data.moonPhase ?? null,
+      sunriseBlueStart: toIsoString(data.sunriseBlueStart ?? null),
+      sunriseBlueEnd: toIsoString(data.sunriseBlueEnd ?? null),
+      sunriseGoldenStart: toIsoString(data.sunriseGoldenStart ?? null),
+      sunriseGoldenEnd: toIsoString(data.sunriseGoldenEnd ?? null),
+      sunsetGoldenStart: toIsoString(data.sunsetGoldenStart ?? null),
+      sunsetGoldenEnd: toIsoString(data.sunsetGoldenEnd ?? null),
+      sunsetBlueStart: toIsoString(data.sunsetBlueStart ?? null),
+      sunsetBlueEnd: toIsoString(data.sunsetBlueEnd ?? null),
+      receivedAt: now,
     });
 
     // Log success asynchronously (don't await to avoid blocking)

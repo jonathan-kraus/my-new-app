@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\db-stats\page.tsx
- * @LastEditTime: 2026-09-17 17:47:24
+ * @LastEditTime: 2026-09-17 17:53:00
  */
 "use client";
 
@@ -253,7 +253,10 @@ export default function DbStatsPage() {
 
         if (data.length > 0) {
           const names = [...new Set(data.map((row) => row.tableName))].sort();
-          setSelectedTable((current) => current || names[0] || "");
+          setSelectedTable(
+            (current) =>
+              current || (names.includes("Log") ? "Log" : names[0] || ""),
+          );
         }
       } catch (err) {
         setError(
