@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\dashboard\page.tsx
- * @LastEditTime: 2026-09-15 18:36:47
+ * @LastEditTime: 2026-09-16 22:49:43
  */
 
 import { getDashboardData } from "@/lib/dashboard";
@@ -13,7 +13,6 @@ import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import type { Metadata } from "next";
 import { auth } from "@/auth";
 import BuildCard from "../components/dashboard/build-card";
-import { db } from "@/lib/db";
 import { LocationSchema, WeatherSchema } from "@/lib/schemas/page-schemas";
 import { LogsCard } from "./components/LogsCard";
 import { db8 } from "@/lib/db.prisma8";
@@ -309,10 +308,9 @@ export default async function DashboardPage(req: Request) {
 
   // Phase 4: Fetch logs
   const logsStart = nowMs();
-  const logs = await db.log.findMany({
-    orderBy: { created_at: "desc" },
-    take: 50,
-  });
+  const logs = await db8.orm.public.Log.orderBy((log) => log.createdAt.desc())
+    .limit(50)
+    .all();
   const logsElapsed = hrElapsed(logsStart);
 
   const totalElapsed = hrElapsed(pageStart);

@@ -4,14 +4,14 @@ import { useState } from "react";
 
 export interface LogEntry {
   id: number;
-  created_at: string | Date;
+  createdAt: string | Date;
   domain: string;
   level: string;
   message: string;
   file: string | null;
   line: number | null;
-  payload: Prisma.JsonValue;
-  meta: Prisma.JsonValue;
+  payload: unknown;
+  meta: unknown;
 }
 
 interface LogsCardProps {
@@ -55,7 +55,7 @@ function LogRow({ log }: { log: LogEntry }) {
           <span className="font-medium">{log.message}</span>
 
           <span className="text-xs text-muted-foreground">
-            {new Date(log.created_at).toLocaleString()} — {log.domain}
+            {new Date(log.createdAt).toLocaleString()} — {log.domain}
           </span>
 
           <span className="text-xs text-muted-foreground">file:{log.file}</span>

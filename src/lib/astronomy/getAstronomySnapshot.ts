@@ -1,30 +1,26 @@
 // lib/astronomy/getAstronomySnapshot.ts
 
 import { unstable_cache } from "next/cache";
-import { db } from "@/lib/db";
+import { db8 } from "@/lib/db.prisma8";
 import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
 import { format, addDays } from "date-fns";
 
+const varchar10 = (value: string) =>
+  value as `${string}` & { readonly __varcharLength: 10 };
 const getCachedAstronomySnapshot = unstable_cache(
   async (locationId: string, todayStr: string, tomorrowStr: string) => {
-    const today = await db.astronomySnapshot.findUnique({
-      where: {
-        locationId_dateString: {
-          locationId,
-          dateString: todayStr,
-        },
-      },
-    });
+    const today = await db8.orm.public.AstronomySnapshot.where((snapshot) =>
+      snapshot.locationId.eq(locationId),
+    )
+      .where((snapshot) => snapshot.dateString.eq(varchar10(todayStr)))
+      .first();
 
-    const tomorrow = await db.astronomySnapshot.findUnique({
-      where: {
-        locationId_dateString: {
-          locationId,
-          dateString: tomorrowStr,
-        },
-      },
-    });
+    const tomorrow = await db8.orm.public.AstronomySnapshot.where((snapshot) =>
+      snapshot.locationId.eq(locationId),
+    )
+      .where((snapshot) => snapshot.dateString.eq(varchar10(tomorrowStr)))
+      .first();
 
     // This should now only run on a real cache miss
     const built = await staticUniversalContext("ASTRONOMY_SNAPSHOT");
@@ -52,23 +48,17 @@ async function getAstronomySnapshotInternal(
   todayStr: string,
   tomorrowStr: string,
 ) {
-  const today = await db.astronomySnapshot.findUnique({
-    where: {
-      locationId_dateString: {
-        locationId,
-        dateString: todayStr,
-      },
-    },
-  });
+  const today = await db8.orm.public.AstronomySnapshot.where((snapshot) =>
+    snapshot.locationId.eq(locationId),
+  )
+    .where((snapshot) => snapshot.dateString.eq(varchar10(todayStr)))
+    .first();
 
-  const tomorrow = await db.astronomySnapshot.findUnique({
-    where: {
-      locationId_dateString: {
-        locationId,
-        dateString: tomorrowStr,
-      },
-    },
-  });
+  const tomorrow = await db8.orm.public.AstronomySnapshot.where((snapshot) =>
+    snapshot.locationId.eq(locationId),
+  )
+    .where((snapshot) => snapshot.dateString.eq(varchar10(tomorrowStr)))
+    .first();
 
   const built = await staticUniversalContext("ASTRONOMY_SNAPSHOT");
   await logj({

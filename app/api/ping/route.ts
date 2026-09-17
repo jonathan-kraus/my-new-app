@@ -6,7 +6,7 @@ import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { auth } from "@/auth";
 import { headers, cookies } from "next/headers";
 import { fetchWeatherApi } from "openmeteo";
-import { db } from "@/lib/db";
+import { db8 } from "@/lib/db.prisma8";
 
 export const runtime = "nodejs";
 
@@ -111,9 +111,9 @@ export async function GET(req: NextRequest) {
   }
 
   // Fetch location from database
-  const location = await db.location.findFirst({
-    where: { key },
-  });
+  const location = await db8.orm.public.Location.where({
+    key,
+  }).first();
 
   const latitude = location?.latitude ?? 40.15;
   const longitude = location?.longitude ?? -75.1;
