@@ -1,14 +1,19 @@
 // app/api/cron/astronomy/route.ts
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db8 } from "@/lib/db.prisma8";
 import { logj } from "@/lib/log/logj";
+import { createId } from "@paralleldrive/cuid2";
 import { staticUniversalContext } from "@/lib/log/buildj";
 import { addDays, format } from "date-fns";
 import { buildAstronomySnapshot } from "@/lib/buildAstronomySnapshot";
 import { getConfig, setConfig } from "@/lib/runtime/config";
 
 export const runtime = "nodejs";
+const timestampString = (value: string) =>
+  value as `${string}` & { readonly __timestampStringPrecision: 3 };
+const varchar10 = (value: string) =>
+  value as string & { readonly __varcharLength: 10 };
 
 // Force a date to local midnight
 function atLocalMidnight(d: Date) {
@@ -18,19 +23,18 @@ async function cleanupOldLogs(days: number, built: any) {
   const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
   let jei = 0;
   // Count before
-  const beforeCount = await db.log.count();
 
-  // Delete
-  const result = await db.log.deleteMany({
-    where: {
-      created_at: {
-        lt: cutoff,
-      },
-    },
-  });
+  const { total: beforeCount } = await db8.orm.public.Log.aggregate((agg) => ({
+    total: agg.count(),
+  }));
 
-  // Count after
-  const afterCount = await db.log.count();
+  const deleteCount = await db8.orm.public.Log.where((log) =>
+    log.createdAt.lt(timestampString(cutoff.toISOString())),
+  ).deleteAndCount();
+
+  const { total: afterCount } = await db8.orm.public.Log.aggregate((agg) => ({
+    total: agg.count(),
+  }));
 
   // Log the cleanup
   await logj({
@@ -38,145 +42,154 @@ async function cleanupOldLogs(days: number, built: any) {
     level: "info",
     message: `Log cleanup completed`,
     file: "app/api/cron/astronomy/route.ts",
-    line: 36,
+    line: 40,
     payload: {
       beforeCount,
-      deleted: result.count,
+      deleted: deleteCount,
       afterCount,
       cutoff: cutoff.toISOString(),
     },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
 
-  return result.count;
+  return deleteCount;
 }
 async function cleanupEphem(days: number, built: any) {
   const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
   let jei = 1;
   // Count before
-  const beforeCount = await db.ephemerisDebug.count();
 
-  // Delete
-  const result = await db.ephemerisDebug.deleteMany({
-    where: {
-      receivedAt: {
-        lt: cutoff,
-      },
-    },
-  });
+  const { total: beforeCount } = await db8.orm.public.EphemerisDebug.aggregate(
+    (agg) => ({
+      total: agg.count(),
+    }),
+  );
 
-  // Count after
-  const afterCount = await db.ephemerisDebug.count();
+  const deleteCount = await db8.orm.public.EphemerisDebug.where((log) =>
+    log.createdAt.lt(timestampString(cutoff.toISOString())),
+  ).deleteAndCount();
 
+  const { total: afterCount } = await db8.orm.public.EphemerisDebug.aggregate(
+    (agg) => ({
+      total: agg.count(),
+    }),
+  );
   // Log the cleanup
   await logj({
     domain: "ephemeris",
     level: "info",
     message: `Ephemeris cleanup completed`,
     file: "app/api/cron/astronomy/route.ts",
-    line: 72,
+    line: 78,
     payload: {
       beforeCount,
-      deleted: result.count,
+      deleted: deleteCount,
       afterCount,
       cutoff: cutoff.toISOString(),
     },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
 
-  return result.count;
+  return deleteCount;
 }
 export async function GET(req: NextRequest) {
   const start = Date.now();
   const built = staticUniversalContext("ASTRONOMY");
   let jei = 1;
-  const locations = await db.location.findMany();
+  const locations = await db8.orm.public.Location.all();
+
   const durationMs = Date.now() - start;
+
   for (const location of locations) {
     await logj({
       domain: "ephemeris",
       level: "info",
       message: `Astronomy cron location started for ${location.name}`,
       file: "app/api/cron/astronomy/route.ts",
-      line: 96,
+      line: 104,
       payload: {
         name: location.name,
       },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
+
     const base = atLocalMidnight(new Date());
 
     for (let i = 0; i < 7; i++) {
       const targetDate = addDays(base, i);
-      const dateString = format(targetDate, "yyyy-MM-dd");
+      const dateString = varchar10(format(targetDate, "yyyy-MM-dd"));
 
       await logj({
         domain: "ephemeris",
         level: "info",
-        message: `Astronomy cron day started for ${location.name} count: ${i + 1} `,
+        message: `Astronomy cron day started for ${location.name} count: ${i + 1}`,
         file: "app/api/cron/astronomy/route.ts",
-        line: 113,
+        line: 122,
         payload: {
           count: i,
         },
         meta: { built: { ...built, eventIndex: ++jei } },
       });
 
-      // Build the full solar/lunar snapshot
       const snapshot = await buildAstronomySnapshot(location, targetDate);
 
-      // Inject dateString into the snapshot before writing
       const row = {
         ...snapshot,
         locationId: location.id,
         dateString,
       };
 
-      await db.astronomySnapshot.upsert({
-        where: {
-          locationId_dateString: {
-            locationId: location.id,
-            dateString,
-          },
+      const existing = await db8.orm.public.AstronomySnapshot.where(
+        (snapshot) => snapshot.locationId.eq(location.id),
+      )
+        .where((snapshot) => snapshot.dateString.eq(dateString))
+        .first();
+
+      if (existing) {
+        await db8.orm.public.AstronomySnapshot.where({
+          id: existing.id,
+        }).update(row);
+      } else {
+        await db8.orm.public.AstronomySnapshot.create({
+          ...row,
+          id: createId(),
+        });
+      }
+
+      await logj({
+        domain: "ephemeris",
+        level: "info",
+        message: `Astronomy cron location upsert for ${location.name} completed`,
+        file: "app/api/cron/astronomy/route.ts",
+        line: 159,
+        payload: {
+          duration: durationMs,
         },
-        update: row,
-        create: row,
+        meta: { built: { ...built, eventIndex: ++jei } },
       });
+      const logDays = await getConfig("logDays", "61");
+      const logDaysNum = logDays?.toString() ?? "61";
+      const cleanupDays = Number.isNaN(logDaysNum)
+        ? 61
+        : parseInt(logDaysNum, 10);
+      const deleted = await cleanupOldLogs(cleanupDays, built);
+
+      await logj({
+        domain: "ephemeris",
+        level: "info",
+        message: `Astronomy cron completed deleted ${deleted} logs`,
+        file: "app/api/cron/astronomy/route.ts",
+        line: 177,
+        payload: {
+          durationMs,
+          logDays: logDays,
+          logDaysNum: logDaysNum,
+          cleanupDays: cleanupDays,
+          logsDeleted: deleted,
+        },
+        meta: { built: { ...built, eventIndex: ++jei } },
+      });
+      return NextResponse.json({ ok: true, durationMs });
     }
-
-    await logj({
-      domain: "ephemeris",
-      level: "info",
-      message: `Astronomy cron location upsert for ${location.name} completed`,
-      file: "app/api/cron/astronomy/route.ts",
-      line: 147,
-      payload: {
-        duration: durationMs,
-      },
-      meta: { built: { ...built, eventIndex: ++jei } },
-    });
-    const logDays = await getConfig("logDays", "61");
-    const logDaysNum = logDays?.toString() ?? "61";
-    const cleanupDays = Number.isNaN(logDaysNum)
-      ? 61
-      : parseInt(logDaysNum, 10);
-    const deleted = await cleanupOldLogs(cleanupDays, built);
-
-    await logj({
-      domain: "ephemeris",
-      level: "info",
-      message: `Astronomy cron completed deleted ${deleted} logs`,
-      file: "app/api/cron/astronomy/route.ts",
-      line: 165,
-      payload: {
-        durationMs,
-        logDays: logDays,
-        logDaysNum: logDaysNum,
-        cleanupDays: cleanupDays,
-        logsDeleted: deleted,
-      },
-      meta: { built: { ...built, eventIndex: ++jei } },
-    });
-    return NextResponse.json({ ok: true, durationMs });
   }
 }
