@@ -13,8 +13,8 @@ type CurrentWeatherCardProps = {
     longitude: number;
     timezone: string;
     isDefault: boolean;
-    createdAt: Date;
-    updatedAt: Date;
+    // createdAt: Date;
+    // updatedAt: Date;
   } | null;
 };
 

@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\page.tsx
- * @LastEditTime: 2026-09-06 22:05:43
+ * @LastEditTime: 2026-09-17 18:31:30
  */
 
 import { auth } from "@/auth";
@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { UIProvider } from "@/components/providers/ui-provider";
 import CurrentWeatherCard from "@/app/components/dashboard/current-weather-card";
 import Link from "next/link";
-import { db } from "@/lib/db";
+import { db8 } from "@/lib/db.prisma8";
 import { RecentActivity } from "@/components/activity/RecentActivity";
 import {
   SessionSchema,
@@ -68,9 +68,10 @@ export default async function HomePage(req: Request) {
   // DB TIMING
   // ---------------------------
   const dbStart = performance.now();
-  const location = await db.location.findFirst({
-    where: { isDefault: true },
-  });
+
+  const location = await db8.orm.public.Location.where({
+    isDefault: true,
+  }).first();
   const dbEnd = performance.now();
 
   LocationSchema.parse(location);
