@@ -231,7 +231,7 @@ model Session {
 
 model ToolVersion {
   id         Int          @id(map: "ToolVersion_pkey") @default(autoincrement())
-  name       String
+  name       String       @unique
   version    String
   addedAt    TimestampString(3) @default(now()) @map("added_at")
   verifiedAt TimestampString(3) @default(now()) @map("verified_at")

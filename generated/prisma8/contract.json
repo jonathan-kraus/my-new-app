@@ -3407,7 +3407,11 @@
                 "columns": ["id"],
                 "name": "ToolVersion_pkey"
               },
-              "uniques": []
+              "uniques": [
+                {
+                  "columns": ["name"]
+                }
+              ]
             },
             "TravelSegment": {
               "columns": {
@@ -3846,7 +3850,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "dda5f98260527d6f868c48a017fc6c46e19ee15c0aee82419c726d3cb1fd6c9d"
+    "storageHash": "74e39121d4f85b0270aa6ff612dc3bdd0038e36c3ace5887a563926809479e52"
   },
   "execution": {
     "executionHash": "8499dcc414473f3d3afc33e08a8ab1580ac1537d512b45f8a325cc79599c0af6",

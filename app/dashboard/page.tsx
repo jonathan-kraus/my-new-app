@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\dashboard\page.tsx
- * @LastEditTime: 2026-09-16 22:49:43
+ * @LastEditTime: 2026-09-17 00:37:25
  */
 
 import { getDashboardData } from "@/lib/dashboard";
@@ -261,23 +261,24 @@ export default async function DashboardPage(req: Request) {
             baseName,
             oldVersion: current.version,
             newVersion: version,
-            added: current.added_at,
+            added: current.addedAt,
           },
           meta: { built: { ...built, eventIndex: ++jei } },
         });
-
-        await tx.orm.public.ToolVersion.where({
-          name: baseName,
-        }).upsert({
+        const now = timestampString(new Date().toISOString());
+        await tx.orm.public.ToolVersion.upsert({
           create: {
             name: baseName,
             version: current.version,
-            addedAt: timestampString(new Date(current.addedAt).toISOString()),
-            verifiedAt: timestampString(new Date().toISOString()),
+            addedAt: current.addedAt,
+            verifiedAt: now,
           },
           update: {
             version: current.version,
-            verifiedAt: timestampString(new Date().toISOString()),
+            verifiedAt: now,
+          },
+          conflictOn: {
+            name: baseName,
           },
         });
 
