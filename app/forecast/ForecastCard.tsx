@@ -137,10 +137,12 @@ export function ForecastCard({
         );
         return;
       }
-
+      let message: string;
       if (result.reason === "disabled") {
         setEmailMessage("Forecast email sending is disabled.");
-        return;
+        message = "Forecast email sending is disabled.";
+      } else {
+        message = result.detail ?? "Unable to send forecast email.";
       }
 
       setEmailMessage(result.detail ?? "Unable to send forecast email.");
@@ -151,7 +153,7 @@ export function ForecastCard({
   logj({
     domain: "forecast",
     level: "info",
-    message: "  " + emailMessage,
+    message: `message`,
     file: "app/forecast/ForecastCard.tsx",
     line: 151,
     payload: {
