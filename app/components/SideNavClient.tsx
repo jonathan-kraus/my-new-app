@@ -1,7 +1,7 @@
 "use client";
 /*
  * @FilePath: \my-new-app\app\components\SideNavClient.tsx
- * @LastEditTime: 2026-09-04 08:49:01
+ * @LastEditTime: 2026-09-17 17:43:29
  */
 
 import Link from "next/link";
@@ -11,7 +11,6 @@ import { useSideNavActivationCounter } from "@/app/hooks/useSideNavActivationCou
 import { EmailSideNavLink } from "@/app/components/sidenav/EmailLink";
 import { staticUniversalContext } from "@/lib/log/buildj";
 import { usePathname } from "next/navigation";
-import { assertNonEmptyArray } from "@/lib/db/safe";
 import { logj } from "@/lib/log/logj";
 type SideNavClientProps = {
   nextEventLabel: string;
@@ -83,6 +82,7 @@ export default function SideNavClient({
     { href: "/admin/runtime", label: "Runtime", icon: "🛠️" },
     { href: "/config/create", label: "Config/create", icon: "🛠️" },
     { href: "/config/read", label: "Config/read", icon: "🛠️" },
+    { href: "/db-stats", label: "DB Stats", icon: "🛢️" },
     { href: "/admin/db", label: "Tables", icon: "🛢️" },
     {
       href: "/database-explorer",

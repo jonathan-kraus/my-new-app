@@ -1,36 +1,39 @@
 /*
- * @FilePath     : \my-new-app\app\api\db-stats\history\route.ts
- * @Author       : Jonathan
- * @Date         : 2026-02-07 01:52:50
- * @Description  :
- * @LastEditors  : Jonathan
- * @LastEditTime : 2026-02-08 19:50:03
+ * @FilePath: \my-new-app\app\api\db-stats\history\route.ts
  */
-//j
-// app/api/db-stats/history/route.ts
+
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db8 } from "@/lib/db.prisma8";
 
 export const runtime = "nodejs";
-function sanitizeBigInt(obj: any) {
+
+function sanitizeBigInt(obj: unknown) {
   return JSON.parse(
     JSON.stringify(obj, (_, v) => (typeof v === "bigint" ? Number(v) : v)),
   );
 }
+
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
-  const table = searchParams.get("table"); // optional
+  const table = searchParams.get("table");
 
-  const where = table ? { tableName: table } : {};
+  const rows = table
+    ? await db8.orm.public.DbTableStats.where((stat) =>
+        stat.tableName.eq(table),
+      )
+        .orderBy((stat) => stat.snapshotDate.asc())
+        .all()
+    : await db8.orm.public.DbTableStats.orderBy((stat) =>
+        stat.snapshotDate.asc(),
+      ).all();
 
-  const rows = await db.dbTableStats.findMany({
-    where,
-    orderBy: { snapshotDate: "asc" },
-  });
+  // Track previous snapshot independently for each table.
+  const previousByTable = new Map<string, (typeof rows)[number]>();
 
-  // Compute deltas (today vs yesterday)
-  const withDeltas = rows.map((row, i) => {
-    const prev = rows[i - 1];
+  const withDeltas = rows.map((row) => {
+    const prev = previousByTable.get(row.tableName);
+
+    previousByTable.set(row.tableName, row);
 
     if (!prev) {
       return {
@@ -42,7 +45,7 @@ export async function GET(req: Request) {
 
     return {
       ...row,
-      deltaRows: row.rowEstimate - prev.rowEstimate,
+      deltaRows: Number(row.rowEstimate) - Number(prev.rowEstimate),
       deltaBytes: Number(row.totalBytes) - Number(prev.totalBytes),
     };
   });
