@@ -1,4 +1,4 @@
-import { db } from "@/lib/db";
+import { db8 } from "@/lib/db.prisma8";
 import WeatherClient from "./WeatherClient";
 
 export const metadata = {
@@ -6,9 +6,7 @@ export const metadata = {
 };
 
 export default async function WeatherPage() {
-  const locations = await db.location.findMany({
-    orderBy: { name: "asc" },
-  });
-
+  const locations = await db8.orm.public.Location.all();
+  console.log({ locations });
   return <WeatherClient locations={locations} />;
 }
