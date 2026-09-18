@@ -1,5 +1,5 @@
 // lib/buildSendWeatherEmail.ts
-import { db } from "@/lib/db";
+import { db8 } from "./db.prisma8";
 
 const API_KEY = process.env.TOMORROWIO_APIKEY!;
 
@@ -29,10 +29,9 @@ async function fetchWeatherForCity(city: string) {
 
 export async function buildSendWeatherEmail() {
   // 1. Get the most recent snapshot
-  const snapshot = await db.travelSnapshot.findFirst({
-    orderBy: { receivedAt: "desc" },
-    include: { segments: true },
-  });
+  const snapshot = await db8.orm.public.TravelSnapshot.include("travelSegments")
+    .orderBy((snapshot) => snapshot.receivedAt.desc())
+    .first();
 
   if (!snapshot) {
     return {
@@ -42,7 +41,7 @@ export async function buildSendWeatherEmail() {
     };
   }
 
-  const segments = snapshot.segments
+  const segments = snapshot.travelSegments
     .sort((a: any, b: any) => a.departureTime - b.departureTime)
     .sort((a: any, b: any) => a.departureTime.localeCompare(b.departureTime));
 

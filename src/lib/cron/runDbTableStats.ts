@@ -1,7 +1,8 @@
 import { neon } from "@neondatabase/serverless";
 import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
-import { db } from "@/lib/db";
+import { db8 } from "@/lib/db.prisma8";
+import { createId } from "@paralleldrive/cuid2";
 
 const sql = neon(process.env.DATABASE_URL!);
 
@@ -15,10 +16,6 @@ type TableStatRow = {
   table_bytes: number | string;
   index_bytes: number | string;
   toast_bytes: number | string;
-};
-
-type CountRow = {
-  count: number;
 };
 
 export async function runDbTableStats(ctx: {
@@ -61,7 +58,6 @@ export async function runDbTableStats(ctx: {
 
   for (const row of stats) {
     const tableName = row.table_name;
-    const quoted = `"${tableName.replace(/"/g, '""')}"::regclass`;
 
     // Log BEFORE count query
     await logj({
@@ -76,10 +72,6 @@ export async function runDbTableStats(ctx: {
 
     try {
       // COUNT rows
-      const countRows = await sql`
-  SELECT COUNT(*)::int AS count
-  FROM ${sql.unsafe(`public."${tableName.replace(/"/g, '""')}"`)}
-`;
 
       const count =
         (
@@ -101,31 +93,32 @@ export async function runDbTableStats(ctx: {
       });
 
       // INSERT stats
-      await db.dbTableStats.upsert({
-        where: {
-          tableName_snapshotDate: {
-            tableName: row.table_name,
-            snapshotDate,
-          },
-        },
-        update: {
-          rowEstimate: count,
-          totalBytes: BigInt(row.total_bytes),
-          tableBytes: BigInt(row.table_bytes),
-          indexBytes: BigInt(row.index_bytes),
-          toastBytes: BigInt(row.toast_bytes),
-        },
-        create: {
-          tableName: row.table_name,
-          snapshotDate,
-          rowEstimate: count,
-          totalBytes: BigInt(row.total_bytes),
-          tableBytes: BigInt(row.table_bytes),
-          indexBytes: BigInt(row.index_bytes),
-          toastBytes: BigInt(row.toast_bytes),
-        },
-      });
+      const existing = await db8.orm.public.DbTableStats.where((stat) =>
+        stat.tableName.eq(row.table_name),
+      )
+        .where((stat) => stat.snapshotDate.eq(snapshotDate))
+        .first();
 
+      const values = {
+        tableName: row.table_name,
+        snapshotDate,
+        rowEstimate: count,
+        totalBytes: BigInt(row.total_bytes),
+        tableBytes: BigInt(row.table_bytes),
+        indexBytes: BigInt(row.index_bytes),
+        toastBytes: BigInt(row.toast_bytes),
+      };
+
+      if (existing) {
+        await db8.orm.public.DbTableStats.where({ id: existing.id }).update(
+          values,
+        );
+      } else {
+        await db8.orm.public.DbTableStats.create({
+          id: createId(),
+          ...values,
+        });
+      }
       tablesProcessed++;
     } catch (err: any) {
       // Log per-table error
