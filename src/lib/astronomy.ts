@@ -22,7 +22,7 @@ export async function refreshAstronomySnapshotsForLocation(
         // Convert the date to YYYY-MM-DD
         const dateString = format(day.date, "yyyy-MM-dd");
 
-        // Build the snapshot using the actual Date object
+        // Build the snapshot using the actual Date object.
         const snapshot = await buildAstronomySnapshot(location, day.date);
 
         return db.astronomySnapshot.upsert({
