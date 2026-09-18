@@ -3,11 +3,10 @@ export const runtime = "nodejs";
 
 import NextAuth from "next-auth";
 import GitHub from "next-auth/providers/github";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { db } from "@/lib/db.server";
+import { Prisma8Adapter } from "@/lib/auth-prisma8-adapter";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  adapter: PrismaAdapter(db),
+  adapter: Prisma8Adapter(),
 
   providers: [
     GitHub({
