@@ -1,7 +1,9 @@
 // app/api/logs/latest/route.ts
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db8 } from "@/lib/db.prisma8";
+import { or } from "@prisma/orm-postgres/orm-client";
+import { timestampString } from "@/lib/timestampString";
 import { logFromClient } from "@/app/actions/log";
 
 export const dynamic = "force-dynamic";
@@ -11,29 +13,35 @@ export async function GET(req: NextRequest) {
     const since = req.nextUrl.searchParams.get("since");
     const search = req.nextUrl.searchParams.get("q") ?? "";
 
-    const where: any = {};
+    let query = db8.orm.public.Log;
 
     if (since) {
-      where.created_at = { gt: new Date(since) };
+      const cutoff = timestampString(new Date(since).toISOString());
+      query = query.where((log) => log.createdAt.gt(cutoff));
     }
 
     if (search) {
-      where.OR = [
-        { message: { contains: search } },
-        { level: { contains: search } },
-        { file: { contains: search } },
-        { requestId: { contains: search } },
-      ];
+      const pattern = `%${search}%`;
+      query = query.where((log) =>
+        or(
+          log.message.like(pattern),
+          log.level.like(pattern),
+          log.file.like(pattern),
+          log.requestId.like(pattern),
+        ),
+      );
     }
 
-    const logs = await db.log.findMany({
-      where, // ⭐ THIS is the fix
-      orderBy: { created_at: "desc" },
-      take: 75,
-    });
+    const logs = await query
+      .orderBy((log) => log.createdAt.desc())
+      .limit(75)
+      .all();
 
     return NextResponse.json({
-      logs: logs.map((l) => ({ ...l, created_at: l.created_at.toISOString() })),
+      logs: logs.map(({ createdAt, ...log }) => ({
+        ...log,
+        created_at: new Date(`${createdAt}Z`).toISOString(),
+      })),
     });
   } catch (err: any) {
     try {

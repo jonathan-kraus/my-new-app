@@ -1,7 +1,8 @@
 // app/api/logs/route.ts
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db8 } from "@/lib/db.prisma8";
+import { not, or } from "@prisma/orm-postgres/orm-client";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
@@ -11,35 +12,32 @@ export async function GET(req: NextRequest) {
   const limit = 80;
   const skip = page * limit;
 
-  const where = search
-    ? {
-        OR: [
-          { message: { contains: search } },
-          { level: { contains: search } },
-          { file: { contains: search } },
-          { requestId: { contains: search } },
-        ],
-      }
-    : undefined;
+  let query = db8.orm.public.Log.where((log) =>
+    not(log.message.like("REQUEST END%")),
+  );
 
-  const logs = await db.log.findMany({
-    where: {
-      NOT: {
-        message: {
-          startsWith: "REQUEST END",
-        },
-      },
-      ...where,
-    },
-    orderBy: { created_at: "desc" },
-    skip,
-    take: limit,
-  });
+  if (search) {
+    const pattern = `%${search}%`;
+    query = query.where((log) =>
+      or(
+        log.message.like(pattern),
+        log.level.like(pattern),
+        log.file.like(pattern),
+        log.requestId.like(pattern),
+      ),
+    );
+  }
+
+  const logs = await query
+    .orderBy((log) => log.createdAt.desc())
+    .offset(skip)
+    .limit(limit)
+    .all();
 
   return NextResponse.json({
-    logs: logs.map((l) => ({
-      ...l,
-      created_at: l.created_at.toISOString(), // ← FIX
+    logs: logs.map(({ createdAt, ...log }) => ({
+      ...log,
+      created_at: new Date(`${createdAt}Z`).toISOString(),
     })),
   });
 }
