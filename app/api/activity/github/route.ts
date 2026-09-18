@@ -1,16 +1,18 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db8 } from "@/lib/db.prisma8";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 // GET — return recent GitHub events from the database
 export async function GET(req: NextRequest) {
   try {
-    const events = await db.githubEvent.findMany({
-      orderBy: { updatedAt: "desc" },
-      take: 50,
-    });
+    const events = await db8.orm.public.GithubEvent.orderBy((githubEvent) =>
+      githubEvent.updatedAt.desc(),
+    )
+      .limit(50)
+      .all();
+
     const built = await buildUniversalContext(req, "GITHUB_ACTIVITY");
     let jei = 0;
     await logj({
@@ -27,11 +29,11 @@ export async function GET(req: NextRequest) {
     // Normalize to the shape your UI expects
     const normalized = events.map((e) => ({
       id: e.id,
-      name: e.type, // your UI uses "name" for workflow name / event type
+      name: e._type, // your UI uses "name" for workflow name / event type
       repo: e.repo,
       status: e.status,
       conclusion: e.conclusion,
-      event: e.type,
+      event: e._type,
       actor: e.actor,
       commitMessage: e.commitMessage,
       commitSha: e.commitSha,
