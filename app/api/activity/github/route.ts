@@ -41,7 +41,7 @@ export async function GET(req: NextRequest) {
       level: "info",
       message: `Prisma returned ${events.length} events`,
       file: "app/api/activity/github/route.ts",
-      line: 38,
+      line: 39,
       payload: { count: events.length },
       meta: { built: { ...built, eventIndex: ++eventIndex } },
     });
@@ -68,7 +68,7 @@ export async function GET(req: NextRequest) {
       level: "debug",
       message: "Normalized GitHub events",
       file: "app/api/activity/github/route.ts",
-      line: 65,
+      line: 66,
       payload: { sample: normalized[0] ?? null },
       meta: { built: { ...built, eventIndex: ++eventIndex } },
     });
@@ -86,7 +86,19 @@ export async function GET(req: NextRequest) {
 
       const existing = bySha.get(sha);
       const isSuccess = (x: any) => x.conclusion === "success";
-
+      let jei = 111;
+      await logj({
+        domain: "GITHUB_ACTIVITY",
+        level: "info",
+        message: "Before GitHub event dedupe",
+        file: "app/api/activity/github/route.ts",
+        line: 89,
+        payload: {
+          updatedAt: item.updatedAt.toString(),
+          existingUpdatedAt: existing.updatedAt.toString(),
+        },
+        meta: { built: { ...built, eventIndex: ++jei } },
+      });
       if (isSuccess(item) && !isSuccess(existing)) {
         bySha.set(sha, item);
         continue;
@@ -104,7 +116,7 @@ export async function GET(req: NextRequest) {
       level: "info",
       message: "Deduplication complete",
       file: "app/api/activity/github/route.ts",
-      line: 101,
+      line: 113,
       payload: {
         before: normalized.length,
         after: activity.length,
@@ -120,7 +132,7 @@ export async function GET(req: NextRequest) {
       level: "info",
       message: `GitHub activity request completed in ${duration.toFixed(2)}ms`,
       file: "app/api/activity/github/route.ts",
-      line: 117,
+      line: 129,
       meta: { built: { ...built, eventIndex: ++eventIndex } },
     });
 
@@ -135,7 +147,7 @@ export async function GET(req: NextRequest) {
       level: "error",
       message: `GitHub activity failed: ${message}`,
       file: "app/api/activity/github/route.ts",
-      line: 132,
+      line: 144,
       payload: {
         error: message,
         stack: err instanceof Error ? err.stack : null,
