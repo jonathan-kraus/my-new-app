@@ -76,9 +76,9 @@ jobs:
           files: ./coverage/coverage-final.json
           fail_ci_if_error: true
 
-      - name: Type check
-        run: |
-          pnpm run type-check
+      # - name: Type check this is done in mn script
+      #   run: |
+      #     pnpm run type-check
 
       # - name: Audit
       #   env:

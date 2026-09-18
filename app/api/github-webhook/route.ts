@@ -1,21 +1,21 @@
 /*
  * @FilePath: \my-new-app\app\api\github-webhook\route.ts
- * @LastEditTime: 2026-08-01 13:48:15
+ * @LastEditTime: 2026-09-17 23:31:17
  */
 // app/api/github-webhook/route.ts
 export const runtime = "nodejs";
 
 import crypto from "crypto";
-import { Axiom } from "@axiomhq/js";
 import { logj } from "@/lib/log/logj";
+import { createId } from "@paralleldrive/cuid2";
+import { timestampString } from "../../../src/lib/timestampString";
 import { staticUniversalContext } from "@/lib/log/buildj";
 import { withLogging } from "@/lib/logging/withLogging";
 import { getConfig } from "@/lib/runtime/config";
 import { normalizeGitHubEvent } from "@/lib/github/normalize";
-import { db } from "@/lib/db";
+import { db8 } from "@/lib/db.prisma8";
 
 const gw = Number(await getConfig("github_webhook", "0"));
-const axiom = new Axiom({ token: process.env.AXIOM_TOKEN! });
 
 export const POST = withLogging(async (req: Request) => {
   const built = staticUniversalContext("GITHUB");
@@ -39,16 +39,44 @@ export const POST = withLogging(async (req: Request) => {
       event +
       (normalized.title ? ` - ${JSON.stringify(normalized.title)}` : ""),
     file: "app/api/github-webhook/route.ts",
-    line: 34,
+    line: 35,
     payload: { event, type: normalized.type, gw },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
+  const { type, ...rest } = normalized;
 
+  const now = timestampString(new Date().toISOString());
+
+  const normalized8 = {
+    ...rest,
+    _type: type,
+    updatedAt: now,
+  };
   try {
-    await db.githubEvent.upsert({
-      where: { eventId: deliveryId },
-      update: normalized,
-      create: { eventId: deliveryId, ...normalized },
+    const existing = await db8.orm.public.GithubEvent.where((event) =>
+      event.eventId.eq(deliveryId),
+    ).first();
+
+    if (existing) {
+      await db8.orm.public.GithubEvent.where({ id: existing.id }).update(
+        normalized8,
+      );
+    } else {
+      await db8.orm.public.GithubEvent.create({
+        id: createId(),
+        eventId: deliveryId,
+        ...normalized8,
+      });
+    }
+
+    logj({
+      domain: "github",
+      level: "info",
+      message: "Github event upserted",
+      file: "app/api/github-webhook/route.ts",
+      line: 60,
+      payload: { event, type: normalized.type, gw },
+      meta: { built: { ...built, eventIndex: ++jei } },
     });
   } catch (err) {
     console.error("DB ERROR:", err);
