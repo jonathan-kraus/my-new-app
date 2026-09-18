@@ -6,8 +6,17 @@ import { NextResponse } from "next/server";
 import { queryAxiom } from "@/lib/axiom/query";
 
 export async function GET() {
+  const dataset = process.env.AXIOM_DATASET?.trim();
+  if (!dataset) {
+    console.error("[GET /api/logs/live] AXIOM_DATASET is not configured");
+    return NextResponse.json(
+      { error: "Log dataset is not configured" },
+      { status: 503 },
+    );
+  }
+
   const q2 = `
-  ['myapp-logs']
+  [${JSON.stringify(dataset)}]
   | where isnotnull(domain)
   | sort by _time desc
   | limit 50

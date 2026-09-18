@@ -4,9 +4,10 @@
  */
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import { Temporal } from "temporal-polyfill";
 import { getTopTables } from "@/lib/getTopTables";
 import TopTablesEmail from "@/emails/TopTablesEmail";
-import { db } from "@/lib/db";
+import { db8 } from "@/lib/db.prisma8";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
@@ -17,21 +18,22 @@ export async function POST(req: Request) {
   const middleInit = "C";
   const resend = new Resend(process.env.RESEND_API_KEY);
   const top = await getTopTables();
-  const latestWeatherSnapshot = await db.weatherSnapshot.findFirst({
-    where: { locationId: "KOP" },
-    orderBy: { fetchedAt: "desc" },
-    select: {
-      temperature: true,
-      feelsLike: true,
-      humidity: true,
-      windSpeed: true,
-      windDirection: true,
-      pressure: true,
-      visibility: true,
-      weatherCode: true,
-      fetchedAt: true,
-    },
-  });
+  const latestWeatherSnapshot = await db8.orm.public.WeatherSnapshot.where({
+    locationId: "KOP",
+  })
+    .orderBy((snapshot) => snapshot.fetchedAt.desc())
+    .select(
+      "temperature",
+      "feelsLike",
+      "humidity",
+      "windSpeed",
+      "windDirection",
+      "pressure",
+      "visibility",
+      "weatherCode",
+      "fetchedAt",
+    )
+    .first();
   await logj({
     domain: "Tables",
     level: "info",
@@ -50,7 +52,12 @@ export async function POST(req: Request) {
     weatherSnapshot: latestWeatherSnapshot
       ? {
           ...latestWeatherSnapshot,
-          fetchedAt: latestWeatherSnapshot.fetchedAt.toISOString(),
+          fetchedAt: Temporal.PlainDateTime.from(
+            latestWeatherSnapshot.fetchedAt,
+          )
+            .toZonedDateTime("UTC")
+            .toInstant()
+            .toString({ smallestUnit: "millisecond" }),
         }
       : null,
     db1: top[0]?.name ?? "N/A",

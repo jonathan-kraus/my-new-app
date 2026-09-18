@@ -2,25 +2,26 @@
  * @FilePath: \my-new-app\src\lib\getTopTables.ts
  * @LastEditTime: 2026-09-07 22:03:01
  */
-import { db } from "@/lib/db";
+import { db8 } from "@/lib/db.prisma8";
 
 export async function getTopTables() {
-  const rows = await db.$queryRawUnsafe<
-    {
-      table_name: string;
-      estimated_rows: number;
-    }[]
-  >(`
+  const plan = db8.raw.sql`
     SELECT
-      c.relname AS table_name,
-      c.reltuples AS estimated_rows
+      c.relname::text AS table_name,
+      c.reltuples::double precision AS estimated_rows
     FROM pg_class c
     JOIN pg_namespace n ON n.oid = c.relnamespace
     WHERE c.relkind = 'r'
       AND n.nspname = 'public'
     ORDER BY c.reltuples DESC
     LIMIT 5;
-  `);
+  `
+    .returnsRow({
+      table_name: "pg/text@1",
+      estimated_rows: "pg/float8@1",
+    })
+    .build();
+  const rows = await db8.runtime().query(plan);
   console.log("getTopTables rows:", rows);
   return rows.map((r) => ({
     name: r.table_name,

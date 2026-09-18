@@ -5,6 +5,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@/auth": path.resolve(import.meta.dirname, "auth.ts"), // put this FIRST
+      "@/emails": path.resolve(import.meta.dirname, "emails"),
       "@": path.resolve(import.meta.dirname, "src"),
       "@/components": path.resolve(import.meta.dirname, "app/components"),
       "@/hooks": path.resolve(import.meta.dirname, "hooks"),
