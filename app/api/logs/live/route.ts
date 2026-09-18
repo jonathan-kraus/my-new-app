@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\logs\live\route.ts
- * @LastEditTime: 2026-04-24 18:13:38
+ * @LastEditTime: 2026-09-18 16:48:45
  */
 import { NextResponse } from "next/server";
 import { queryAxiom } from "@/lib/axiom/query";
@@ -8,11 +8,31 @@ import { queryAxiom } from "@/lib/axiom/query";
 export async function GET() {
   const q2 = `
   ['myapp-logs']
-  | where isnotnull(domain) and isnotnull(meta_json)
+  | where isnotnull(domain)
+  | where level in ('info', 'warn', 'error')
   | sort by _time desc
   | limit 50
 `;
 
-  const logs = await queryAxiom(q2);
-  return NextResponse.json({ logs });
+  const startedAt = Date.now();
+  try {
+    const logs = await queryAxiom(q2);
+    return NextResponse.json({ logs });
+  } catch (error) {
+    console.error("[GET /api/logs/live] Axiom query failed", {
+      elapsedMs: Date.now() - startedAt,
+      query: q2,
+      hasAxiomToken: Boolean(process.env.AXIOM_TOKEN),
+      hasAxiomOrgId: Boolean(process.env.AXIOM_ORG_ID),
+      name: error instanceof Error ? error.name : undefined,
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      status:
+        error instanceof Error && "status" in error ? error.status : undefined,
+    });
+    return NextResponse.json(
+      { error: "Unable to fetch logs" },
+      { status: 500 },
+    );
+  }
 }
