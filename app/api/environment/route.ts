@@ -1,6 +1,6 @@
 // app/api/environment/route.ts
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db"; // your Prisma client
+import { db8 } from "@/lib/db.prisma8";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { getPostgresVersion } from "@/app/db/PgVersion";
@@ -72,15 +72,17 @@ export async function GET(req: Request) {
     //
     // 3. GitHub info from your GithubEvent table
     //
-    const latestCommit = await db.githubEvent.findFirst({
-      where: { type: "push" },
-      orderBy: { createdAt: "desc" },
-    });
+    const latestCommit = await db8.orm.public.GithubEvent.where((githubEvent) =>
+      githubEvent._type.eq("push"),
+    )
+      .orderBy((githubEvent) => githubEvent.createdAt.desc())
+      .first();
 
-    const latestWorkflow = await db.githubEvent.findFirst({
-      where: { type: "workflow_run" },
-      orderBy: { createdAt: "desc" },
-    });
+    const latestWorkflow = await db8.orm.public.GithubEvent.where(
+      (githubEvent) => githubEvent._type.eq("workflow_run"),
+    )
+      .orderBy((githubEvent) => githubEvent.createdAt.desc())
+      .first();
 
     const github = {
       latestCommit: latestCommit
