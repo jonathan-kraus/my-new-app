@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\github-webhook\route.ts
- * @LastEditTime: 2026-09-17 23:31:17
+ * @LastEditTime: 2026-09-18 00:02:03
  */
 // app/api/github-webhook/route.ts
 export const runtime = "nodejs";
@@ -8,7 +8,7 @@ export const runtime = "nodejs";
 import crypto from "crypto";
 import { logj } from "@/lib/log/logj";
 import { createId } from "@paralleldrive/cuid2";
-import { timestampString } from "../../../src/lib/timestampString";
+import { timestampString } from "@/lib/timestampString";
 import { staticUniversalContext } from "@/lib/log/buildj";
 import { withLogging } from "@/lib/logging/withLogging";
 import { getConfig } from "@/lib/runtime/config";

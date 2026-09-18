@@ -5,6 +5,7 @@ import { createId } from "@paralleldrive/cuid2";
 import { db8 } from "@/lib/db.prisma8";
 import { z } from "zod";
 import { logj } from "@/lib/log/logj";
+import { timestampString } from "@/lib/timestampString";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 const API_KEY = process.env.TOMORROWIO_APIKEY!;
@@ -24,8 +25,7 @@ const TomorrowRealtimeSchema = z.object({
     }),
   }),
 });
-const timestampString = (value: string) =>
-  value as `${string}` & { readonly __timestampStringPrecision: 3 };
+
 export async function GET(req: NextRequest) {
   const built = await buildUniversalContext(req, "WEATHER");
   const { searchParams } = new URL(req.url);

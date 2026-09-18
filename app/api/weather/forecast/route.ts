@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { db8 } from "@/lib/db.prisma8";
 import { createId } from "@paralleldrive/cuid2";
 import { logj } from "@/lib/log/logj";
+import { timestampString } from "@/lib/timestampString";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { ForecastResponseSchema } from "@/lib/weather/zodschema";
 import { getConfig } from "@/lib/runtime/config";
@@ -21,8 +22,7 @@ function getMoonEmoji(phaseName: string | null): string {
   if (name.includes("waning crescent")) return "🌘";
   return "🌑";
 }
-const timestampString = (value: string) =>
-  value as `${string}` & { readonly __timestampStringPrecision: 3 };
+
 const fcm = Number(await getConfig("FORECAST_CACHE_MINUTES", "10"));
 const FORECAST_CACHE_MINUTES = fcm;
 

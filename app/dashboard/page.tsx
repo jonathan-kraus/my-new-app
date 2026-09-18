@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\dashboard\page.tsx
- * @LastEditTime: 2026-09-17 00:37:25
+ * @LastEditTime: 2026-09-18 00:06:27
  */
 
 import { getDashboardData } from "@/lib/dashboard";
@@ -9,6 +9,7 @@ import { AstronomyCard } from "@/app/astronomy/AstronomyCard";
 import CurrentWeatherCard from "@/app/components/dashboard/current-weather-card";
 import VersionCard from "@/app/components/dashboard/version-card";
 import { logj } from "@/lib/log/logj";
+import { timestampString } from "@/lib/timestampString";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import type { Metadata } from "next";
 import { auth } from "@/auth";
@@ -20,8 +21,7 @@ import { db8 } from "@/lib/db.prisma8";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Dashboard " };
 let jei = 0;
-const timestampString = (value: string) =>
-  value as `${string}` & { readonly __timestampStringPrecision: 3 };
+
 function nowMs() {
   const [s, ns] = process.hrtime();
   return s * 1_000 + ns / 1_000_000;

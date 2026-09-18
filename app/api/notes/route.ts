@@ -1,17 +1,15 @@
 /*
  * @FilePath: \my-new-app\app\api\notes\route.ts
- * @LastEditTime: 2026-09-15 16:03:49
+ * @LastEditTime: 2026-09-18 00:03:19
  */
 
 import { type NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { db8 } from "@/lib/db.prisma8";
 import { logj } from "@/lib/log/logj";
+import { timestampString } from "@/lib/timestampString";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { withLogging } from "@/lib/logging/withLogging";
-
-const timestampString = (value: string) =>
-  value as `${string}` & { readonly __timestampStringPrecision: 3 };
 
 export const GET = withLogging(async (req: Request) => {
   // Build context INSIDE the request handler

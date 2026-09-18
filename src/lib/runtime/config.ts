@@ -1,11 +1,8 @@
 "use server";
 
 import { db8 } from "@/lib/db.prisma8";
-
+import { timestampString } from "@/lib/timestampString";
 export type RuntimeValue = string | number | boolean;
-
-const timestampString = (value: string) =>
-  value as `${string}` & { readonly __timestampStringPrecision: 3 };
 
 export async function getConfig(key: string, fallback?: RuntimeValue) {
   const row = await db8.orm.public.RuntimeConfig.where({

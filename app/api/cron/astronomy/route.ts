@@ -5,13 +5,13 @@ import { db8 } from "@/lib/db.prisma8";
 import { logj } from "@/lib/log/logj";
 import { createId } from "@paralleldrive/cuid2";
 import { staticUniversalContext } from "@/lib/log/buildj";
+import { timestampString } from "@/lib/timestampString";
 import { addDays, format } from "date-fns";
 import { buildAstronomySnapshot } from "@/lib/buildAstronomySnapshot";
 import { getConfig, setConfig } from "@/lib/runtime/config";
 
 export const runtime = "nodejs";
-const timestampString = (value: string) =>
-  value as `${string}` & { readonly __timestampStringPrecision: 3 };
+
 const varchar10 = (value: string) =>
   value as string & { readonly __varcharLength: 10 };
 
