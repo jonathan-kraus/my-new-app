@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\logj-usage.ts
- * @LastEditTime: 2026-09-16 14:54:03
+ * @LastEditTime: 2026-09-18 16:57:09
  */
 // logj-usage.ts
 
@@ -44,7 +44,7 @@ import { logj } from "@/lib/log/logj";
 // });
 
 // logj.error("Axiom ingestion failed", {
-//   dataset: "myapp_logs",
+//   dataset: "myapp-logs",
 //   reason: "401 unauthorized",
 // });
 
