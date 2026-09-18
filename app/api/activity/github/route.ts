@@ -86,19 +86,7 @@ export async function GET(req: NextRequest) {
 
       const existing = bySha.get(sha);
       const isSuccess = (x: any) => x.conclusion === "success";
-      let jei = 111;
-      await logj({
-        domain: "GITHUB_ACTIVITY",
-        level: "info",
-        message: "Before GitHub event dedupe",
-        file: "app/api/activity/github/route.ts",
-        line: 89,
-        payload: {
-          updatedAt: item.updatedAt.toString(),
-          existingUpdatedAt: existing.updatedAt.toString(),
-        },
-        meta: { built: { ...built, eventIndex: ++jei } },
-      });
+
       if (isSuccess(item) && !isSuccess(existing)) {
         bySha.set(sha, item);
         continue;
