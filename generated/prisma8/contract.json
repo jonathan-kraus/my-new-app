@@ -946,7 +946,7 @@
               "updatedAt": {
                 "nullable": false,
                 "type": {
-                  "codecId": "pg/timestamp-temporal@1",
+                  "codecId": "pg/timestamp-string@1",
                   "kind": "scalar",
                   "typeParams": {
                     "precision": 3
@@ -2876,7 +2876,7 @@
                   "nullable": false
                 },
                 "updatedAt": {
-                  "codecId": "pg/timestamp-temporal@1",
+                  "codecId": "pg/timestamp-string@1",
                   "nativeType": "timestamp",
                   "nullable": false,
                   "typeParams": {
@@ -3850,7 +3850,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "74e39121d4f85b0270aa6ff612dc3bdd0038e36c3ace5887a563926809479e52"
+    "storageHash": "0b5f601319e18acb552518c7b2240bc7ef17392137435f25680de88fdd37f0fb"
   },
   "execution": {
     "executionHash": "8499dcc414473f3d3afc33e08a8ab1580ac1537d512b45f8a325cc79599c0af6",

@@ -34,7 +34,7 @@ import type {
 } from "@prisma/orm-postgres/contract/types";
 
 export type StorageHash =
-  StorageHashBase<"74e39121d4f85b0270aa6ff612dc3bdd0038e36c3ace5887a563926809479e52">;
+  StorageHashBase<"0b5f601319e18acb552518c7b2240bc7ef17392137435f25680de88fdd37f0fb">;
 export type ExecutionHash =
   ExecutionHashBase<"8499dcc414473f3d3afc33e08a8ab1580ac1537d512b45f8a325cc79599c0af6">;
 export type ProfileHash =
@@ -617,7 +617,7 @@ export type FieldOutputTypes = {
       readonly commitMessage: CodecTypes["pg/text@1"]["output"] | null;
       readonly url: CodecTypes["pg/text@1"]["output"] | null;
       readonly createdAt: CodecTypes["pg/timestamp-temporal@1"]["output"];
-      readonly updatedAt: CodecTypes["pg/timestamp-temporal@1"]["output"];
+      readonly updatedAt: TimestampString<3>;
       readonly raw: CodecTypes["pg/jsonb@1"]["output"] | null;
       readonly title: CodecTypes["pg/text@1"]["output"] | null;
       readonly jobName: CodecTypes["pg/text@1"]["output"] | null;
@@ -839,7 +839,7 @@ export type FieldInputTypes = {
       readonly commitMessage: CodecTypes["pg/text@1"]["input"] | null;
       readonly url: CodecTypes["pg/text@1"]["input"] | null;
       readonly createdAt: CodecTypes["pg/timestamp-temporal@1"]["input"];
-      readonly updatedAt: CodecTypes["pg/timestamp-temporal@1"]["input"];
+      readonly updatedAt: CodecTypes["pg/timestamp-string@1"]["input"];
       readonly raw: CodecTypes["pg/jsonb@1"]["input"] | null;
       readonly title: CodecTypes["pg/text@1"]["input"] | null;
       readonly jobName: CodecTypes["pg/text@1"]["input"] | null;
@@ -1063,7 +1063,7 @@ export type StorageColumnTypes = {
       readonly status: CodecTypes["pg/text@1"]["output"] | null;
       readonly title: CodecTypes["pg/text@1"]["output"] | null;
       readonly type: CodecTypes["pg/text@1"]["output"];
-      readonly updatedAt: CodecTypes["pg/timestamp-temporal@1"]["output"];
+      readonly updatedAt: TimestampString<3>;
       readonly url: CodecTypes["pg/text@1"]["output"] | null;
     };
     readonly Location: {
@@ -1285,7 +1285,7 @@ export type StorageColumnInputTypes = {
       readonly status: CodecTypes["pg/text@1"]["input"] | null;
       readonly title: CodecTypes["pg/text@1"]["input"] | null;
       readonly type: CodecTypes["pg/text@1"]["input"];
-      readonly updatedAt: CodecTypes["pg/timestamp-temporal@1"]["input"];
+      readonly updatedAt: CodecTypes["pg/timestamp-string@1"]["input"];
       readonly url: CodecTypes["pg/text@1"]["input"] | null;
     };
     readonly Location: {
@@ -1539,7 +1539,7 @@ export namespace Models {
     commitMessage: CodecTypes["pg/text@1"]["output"] | null;
     url: CodecTypes["pg/text@1"]["output"] | null;
     createdAt: CodecTypes["pg/timestamp-temporal@1"]["output"];
-    updatedAt: CodecTypes["pg/timestamp-temporal@1"]["output"];
+    updatedAt: TimestampString<3>;
     raw: CodecTypes["pg/jsonb@1"]["output"] | null;
     title: CodecTypes["pg/text@1"]["output"] | null;
     jobName: CodecTypes["pg/text@1"]["output"] | null;
@@ -2238,7 +2238,7 @@ type ContractBase = Omit<
                 };
                 readonly updatedAt: {
                   readonly nativeType: "timestamp";
-                  readonly codecId: "pg/timestamp-temporal@1";
+                  readonly codecId: "pg/timestamp-string@1";
                   readonly nullable: false;
                   readonly typeParams: { readonly precision: 3 };
                 };
@@ -3988,7 +3988,7 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: {
                   readonly kind: "scalar";
-                  readonly codecId: "pg/timestamp-temporal@1";
+                  readonly codecId: "pg/timestamp-string@1";
                   readonly typeParams: { readonly precision: 3 };
                 };
               };

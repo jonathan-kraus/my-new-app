@@ -145,7 +145,7 @@ model GithubEvent {
   commitMessage String?
   url           String?
   createdAt     Timestamp(3) @default(now())
-  updatedAt     Timestamp(3)
+  updatedAt     TimestampString(3)
   raw           Jsonb?
   title         String?
   jobName       String?
