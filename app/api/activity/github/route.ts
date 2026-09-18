@@ -69,7 +69,7 @@ export async function GET(req: NextRequest) {
       message: "Normalized GitHub events",
       file: "app/api/activity/github/route.ts",
       line: 66,
-      payload: { sample: normalized[0] ?? null },
+      payload: { sample: normalized[0] ?? null, count: normalized.length },
       meta: { built: { ...built, eventIndex: ++eventIndex } },
     });
 

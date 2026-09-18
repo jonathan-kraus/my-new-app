@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\forecast\page.tsx
- * @LastEditTime: 2026-09-04 00:35:02
+ * @LastEditTime: 2026-09-17 22:35:46
  */
 // app/forecast/page.tsx
 import { auth } from "@/auth";
@@ -8,21 +8,22 @@ import { redirect } from "next/navigation";
 import ForecastWrapper from "./ForecastWrapper";
 import { buildWeatherEmail } from "./buildWeatherEmail";
 import { sendWeatherEmail } from "./mailresend";
-import { db } from "@/lib/db";
+import { db8 } from "@/lib/db.prisma8";
 
 //
 // ⭐ SERVER ACTION — must stay in a server component
 //
 export async function generateMetadata() {
-  const temperature = await db.weatherSnapshot.findFirst({
-    select: { temperature: true },
-    where: { locationId: "KOP" },
-    orderBy: { fetchedAt: "desc" },
-  });
+  const latestWeather = await db8.orm.public.WeatherSnapshot.where((snapshot) =>
+    snapshot.locationId.eq("KOP"),
+  )
+    .orderBy((snapshot) => snapshot.fetchedAt.desc())
+    .first();
 
-  const temp = Math.round(temperature?.temperature ?? 0);
+  const temperature = latestWeather?.temperature ?? null;
+  // const temp = Math.round(temperature?.temperature ?? 0);
 
-  return { title: `Forecast - ${temp}°F` };
+  return { title: `Forecast - ${temperature}°F` };
 }
 
 export async function sendForecastEmailAction(formData: FormData) {
@@ -65,13 +66,10 @@ export async function sendForecastEmailAction(formData: FormData) {
 // ⭐ PAGE COMPONENT — pure server component
 //
 export default async function ForecastPage() {
-  const session = await auth();
-
   // Prisma is safe here because this file is server-only
-  const locations = await db.location.findMany({
-    orderBy: { name: "asc" },
-  });
-
+  const locations = await db8.orm.public.Location.orderBy((location) =>
+    location.name.asc(),
+  ).all();
   return (
     <ForecastWrapper
       locations={locations}
