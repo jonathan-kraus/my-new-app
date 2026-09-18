@@ -92,7 +92,7 @@ export async function GET(req: NextRequest) {
         continue;
       }
 
-      if (new Date(item.updatedAt) > new Date(existing.updatedAt)) {
+      if (item.updatedAt.toString() > existing.updatedAt.toString()) {
         bySha.set(sha, item);
       }
     }
