@@ -4,7 +4,7 @@
  */
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db8 } from "@/lib/db.prisma8";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { logj } from "@/lib/log/logj";
 
@@ -115,7 +115,9 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  const location = await db.location.findUnique({ where: { id: locationId } });
+  const location = await db8.orm.public.Location.where({
+    id: locationId,
+  }).first();
   if (!location) {
     return NextResponse.json({ error: "Invalid locationId" }, { status: 404 });
   }

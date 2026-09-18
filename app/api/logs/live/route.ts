@@ -7,7 +7,7 @@ import { queryAxiom } from "@/lib/axiom/query";
 
 export async function GET() {
   const q2 = `
-  ['myapp_logs']
+  ['myapp-logs']
   | where isnotnull(domain) and isnotnull(meta_json)
   | sort by _time desc
   | limit 50
