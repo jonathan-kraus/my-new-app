@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\logs\live\route.ts
- * @LastEditTime: 2026-09-18 16:48:45
+ * @LastEditTime: 2026-09-18 17:30:53
  */
 import { NextResponse } from "next/server";
 import { queryAxiom } from "@/lib/axiom/query";
@@ -9,7 +9,6 @@ export async function GET() {
   const q2 = `
   ['myapp-logs']
   | where isnotnull(domain)
-  | where level in ('info', 'warn', 'error')
   | sort by _time desc
   | limit 50
 `;
