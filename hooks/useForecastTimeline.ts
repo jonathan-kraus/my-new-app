@@ -1,4 +1,12 @@
-export function useForecastTimeline(forecast: any) {
+type ForecastTimelineInput = {
+  time: string[];
+  temperature_2m_max: number[];
+  temperature_2m_min: number[];
+};
+
+export function useForecastTimeline(
+  forecast: ForecastTimelineInput | null | undefined,
+) {
   if (!forecast) return null;
   const highs = forecast.temperature_2m_max;
   const lows = forecast.temperature_2m_min;
@@ -8,15 +16,26 @@ export function useForecastTimeline(forecast: any) {
 
   const warmestDay = forecast.time[warmestIndex];
   const coldestDay = forecast.time[coldestIndex];
+  const firstHigh = highs[0];
+  const lastHigh = highs[highs.length - 1];
+
+  if (
+    warmestDay === undefined ||
+    coldestDay === undefined ||
+    firstHigh === undefined ||
+    lastHigh === undefined
+  ) {
+    return null;
+  }
 
   const avgHigh =
     highs.reduce((a: number, b: number) => a + b, 0) / highs.length;
   const avgLow = lows.reduce((a: number, b: number) => a + b, 0) / lows.length;
 
   const trend =
-    highs[highs.length - 1] > highs[0]
+    lastHigh > firstHigh
       ? "warming"
-      : highs[highs.length - 1] < highs[0]
+      : lastHigh < firstHigh
         ? "cooling"
         : "steady";
 

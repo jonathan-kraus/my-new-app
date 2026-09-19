@@ -74,17 +74,17 @@ export default function CurrentWeatherCard({
   });
 
   // Toast once when temperature arrives
+  const temperature = data?.current?.temperature;
   useEffect(() => {
-    const temp = (data as WeatherData)?.current?.temperature;
-    if (!temp) return;
+    if (temperature == null) return;
     if (hasToasted.current) return;
 
-    toast.success(`🌡️ ${Math.round(temp)}° in ${location?.name}`, {
+    toast.success(`🌡️ ${Math.round(temperature)}° in ${location?.name}`, {
       duration: 4000,
     });
 
     hasToasted.current = true;
-  }, [(data as WeatherData)?.current?.temperature, location?.name]);
+  }, [temperature, location?.name]);
 
   // Loading skeleton
   if (loading) {

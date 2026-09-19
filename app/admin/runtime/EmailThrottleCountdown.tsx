@@ -4,7 +4,7 @@
  * @LastEditTime: 2026-08-19 00:30:09
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 
 export function EmailThrottleCountdown({
@@ -14,14 +14,13 @@ export function EmailThrottleCountdown({
   lastSent: string | null;
   throttleMinutes: number;
 }) {
-  // Parse timestamp once (pure)
-  const last = lastSent ? new Date(lastSent) : null;
-
-  // Compute nextAllowed once (pure)
-  const nextAllowed =
-    last && !isNaN(last.getTime())
+  // Keep the timer dependency stable between countdown renders.
+  const nextAllowed = useMemo(() => {
+    const last = lastSent ? new Date(lastSent) : null;
+    return last && !isNaN(last.getTime())
       ? new Date(last.getTime() + throttleMinutes * 60 * 1000)
       : null;
+  }, [lastSent, throttleMinutes]);
 
   // Initial derived state (pure, lazy)
   const [remaining, setRemaining] = useState<string>(() => {

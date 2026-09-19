@@ -1,7 +1,6 @@
 "use client";
 // app/components/SolarArcBar.tsx
 
-import { format } from "date-fns";
 import { formatInTimeZone } from "date-fns-tz";
 
 export function SolarArcBar({
