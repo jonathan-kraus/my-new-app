@@ -177,8 +177,12 @@
                 "cardinality": "N:1",
                 "nullable": false,
                 "on": {
-                  "localFields": ["userId"],
-                  "targetFields": ["id"]
+                  "localFields": [
+                    "userId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
                 },
                 "to": {
                   "model": "User",
@@ -383,8 +387,12 @@
                 "cardinality": "N:1",
                 "nullable": false,
                 "on": {
-                  "localFields": ["locationId"],
-                  "targetFields": ["id"]
+                  "localFields": [
+                    "locationId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
                 },
                 "to": {
                   "model": "Location",
@@ -819,8 +827,12 @@
                 "cardinality": "N:1",
                 "nullable": false,
                 "on": {
-                  "localFields": ["locationId"],
-                  "targetFields": ["id"]
+                  "localFields": [
+                    "locationId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
                 },
                 "to": {
                   "model": "Location",
@@ -1090,8 +1102,12 @@
               "astronomySnapshots": {
                 "cardinality": "1:N",
                 "on": {
-                  "localFields": ["id"],
-                  "targetFields": ["locationId"]
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "locationId"
+                  ]
                 },
                 "to": {
                   "model": "AstronomySnapshot",
@@ -1101,8 +1117,12 @@
               "forecastSnapshots": {
                 "cardinality": "1:N",
                 "on": {
-                  "localFields": ["id"],
-                  "targetFields": ["locationId"]
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "locationId"
+                  ]
                 },
                 "to": {
                   "model": "ForecastSnapshot",
@@ -1112,8 +1132,12 @@
               "weatherSnapshots": {
                 "cardinality": "1:N",
                 "on": {
-                  "localFields": ["id"],
-                  "targetFields": ["locationId"]
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "locationId"
+                  ]
                 },
                 "to": {
                   "model": "WeatherSnapshot",
@@ -1546,8 +1570,12 @@
                 "cardinality": "N:1",
                 "nullable": false,
                 "on": {
-                  "localFields": ["userId"],
-                  "targetFields": ["id"]
+                  "localFields": [
+                    "userId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
                 },
                 "to": {
                   "model": "User",
@@ -1755,8 +1783,12 @@
                 "cardinality": "N:1",
                 "nullable": false,
                 "on": {
-                  "localFields": ["snapshotId"],
-                  "targetFields": ["id"]
+                  "localFields": [
+                    "snapshotId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
                 },
                 "to": {
                   "model": "TravelSnapshot",
@@ -1889,8 +1921,12 @@
               "travelSegments": {
                 "cardinality": "1:N",
                 "on": {
-                  "localFields": ["id"],
-                  "targetFields": ["snapshotId"]
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "snapshotId"
+                  ]
                 },
                 "to": {
                   "model": "TravelSegment",
@@ -1977,8 +2013,12 @@
               "accounts": {
                 "cardinality": "1:N",
                 "on": {
-                  "localFields": ["id"],
-                  "targetFields": ["userId"]
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "userId"
+                  ]
                 },
                 "to": {
                   "model": "Account",
@@ -1988,8 +2028,12 @@
               "sessions": {
                 "cardinality": "1:N",
                 "on": {
-                  "localFields": ["id"],
-                  "targetFields": ["userId"]
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "userId"
+                  ]
                 },
                 "to": {
                   "model": "Session",
@@ -2262,8 +2306,12 @@
                 "cardinality": "N:1",
                 "nullable": false,
                 "on": {
-                  "localFields": ["locationId"],
-                  "targetFields": ["id"]
+                  "localFields": [
+                    "locationId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
                 },
                 "to": {
                   "model": "Location",
@@ -2389,12 +2437,16 @@
                   "onDelete": "restrict",
                   "onUpdate": "cascade",
                   "source": {
-                    "columns": ["userId"],
+                    "columns": [
+                      "userId"
+                    ],
                     "namespaceId": "public",
                     "tableName": "Account"
                   },
                   "target": {
-                    "columns": ["id"],
+                    "columns": [
+                      "id"
+                    ],
                     "namespaceId": "public",
                     "tableName": "User"
                   }
@@ -2402,13 +2454,18 @@
               ],
               "indexes": [
                 {
-                  "columns": ["provider", "providerAccountId"],
+                  "columns": [
+                    "provider",
+                    "providerAccountId"
+                  ],
                   "name": "Account_provider_providerAccountId_key",
                   "unique": true
                 }
               ],
               "primaryKey": {
-                "columns": ["id"],
+                "columns": [
+                  "id"
+                ],
                 "name": "Account_pkey"
               },
               "uniques": []
@@ -2528,12 +2585,16 @@
                   "onDelete": "restrict",
                   "onUpdate": "cascade",
                   "source": {
-                    "columns": ["locationId"],
+                    "columns": [
+                      "locationId"
+                    ],
                     "namespaceId": "public",
                     "tableName": "AstronomySnapshot"
                   },
                   "target": {
-                    "columns": ["id"],
+                    "columns": [
+                      "id"
+                    ],
                     "namespaceId": "public",
                     "tableName": "Location"
                   }
@@ -2541,13 +2602,18 @@
               ],
               "indexes": [
                 {
-                  "columns": ["locationId", "dateString"],
+                  "columns": [
+                    "locationId",
+                    "dateString"
+                  ],
                   "name": "AstronomySnapshot_locationId_dateString_key",
                   "unique": true
                 }
               ],
               "primaryKey": {
-                "columns": ["id"],
+                "columns": [
+                  "id"
+                ],
                 "name": "AstronomySnapshot_pkey"
               },
               "uniques": []
@@ -2613,18 +2679,26 @@
               "foreignKeys": [],
               "indexes": [
                 {
-                  "columns": ["tableName", "snapshotDate"],
+                  "columns": [
+                    "tableName",
+                    "snapshotDate"
+                  ],
                   "name": "DbTableStats_tableName_snapshotDate_idx",
                   "unique": false
                 },
                 {
-                  "columns": ["tableName", "snapshotDate"],
+                  "columns": [
+                    "tableName",
+                    "snapshotDate"
+                  ],
                   "name": "DbTableStats_tableName_snapshotDate_key",
                   "unique": true
                 }
               ],
               "primaryKey": {
-                "columns": ["id"],
+                "columns": [
+                  "id"
+                ],
                 "name": "DbTableStats_pkey"
               },
               "uniques": []
@@ -2742,7 +2816,9 @@
               "foreignKeys": [],
               "indexes": [],
               "primaryKey": {
-                "columns": ["id"],
+                "columns": [
+                  "id"
+                ],
                 "name": "EphemerisDebug_pkey"
               },
               "uniques": []
@@ -2783,12 +2859,16 @@
                   "onDelete": "restrict",
                   "onUpdate": "cascade",
                   "source": {
-                    "columns": ["locationId"],
+                    "columns": [
+                      "locationId"
+                    ],
                     "namespaceId": "public",
                     "tableName": "ForecastSnapshot"
                   },
                   "target": {
-                    "columns": ["id"],
+                    "columns": [
+                      "id"
+                    ],
                     "namespaceId": "public",
                     "tableName": "Location"
                   }
@@ -2796,7 +2876,9 @@
               ],
               "indexes": [],
               "primaryKey": {
-                "columns": ["id"],
+                "columns": [
+                  "id"
+                ],
                 "name": "ForecastSnapshot_pkey"
               },
               "uniques": []
@@ -2892,13 +2974,17 @@
               "foreignKeys": [],
               "indexes": [
                 {
-                  "columns": ["eventId"],
+                  "columns": [
+                    "eventId"
+                  ],
                   "name": "GithubEvent_eventId_key",
                   "unique": true
                 }
               ],
               "primaryKey": {
-                "columns": ["id"],
+                "columns": [
+                  "id"
+                ],
                 "name": "GithubEvent_pkey"
               },
               "uniques": []
@@ -2968,13 +3054,17 @@
               "foreignKeys": [],
               "indexes": [
                 {
-                  "columns": ["key"],
+                  "columns": [
+                    "key"
+                  ],
                   "name": "Location_key_key",
                   "unique": true
                 }
               ],
               "primaryKey": {
-                "columns": ["id"],
+                "columns": [
+                  "id"
+                ],
                 "name": "Location_pkey"
               },
               "uniques": []
@@ -3061,60 +3151,82 @@
               "foreignKeys": [],
               "indexes": [
                 {
-                  "columns": ["created_at"],
+                  "columns": [
+                    "created_at"
+                  ],
                   "name": "Log_created_at_idx",
                   "unique": false
                 },
                 {
-                  "columns": ["domain"],
+                  "columns": [
+                    "domain"
+                  ],
                   "name": "Log_domain_idx",
                   "unique": false
                 },
                 {
-                  "columns": ["file"],
+                  "columns": [
+                    "file"
+                  ],
                   "name": "Log_file_idx",
                   "unique": false
                 },
                 {
-                  "columns": ["level"],
+                  "columns": [
+                    "level"
+                  ],
                   "name": "Log_level_idx",
                   "unique": false
                 },
                 {
-                  "columns": ["meta"],
+                  "columns": [
+                    "meta"
+                  ],
                   "name": "Log_meta_idx",
                   "type": "gin",
                   "unique": false
                 },
                 {
-                  "columns": ["payload"],
+                  "columns": [
+                    "payload"
+                  ],
                   "name": "Log_payload_idx",
                   "type": "gin",
                   "unique": false
                 },
                 {
-                  "columns": ["requestId"],
+                  "columns": [
+                    "requestId"
+                  ],
                   "name": "Log_requestId_idx",
                   "unique": false
                 },
                 {
-                  "columns": ["sessionEmail"],
+                  "columns": [
+                    "sessionEmail"
+                  ],
                   "name": "Log_sessionEmail_idx",
                   "unique": false
                 },
                 {
-                  "columns": ["sessionUser"],
+                  "columns": [
+                    "sessionUser"
+                  ],
                   "name": "Log_sessionUser_idx",
                   "unique": false
                 },
                 {
-                  "columns": ["userId"],
+                  "columns": [
+                    "userId"
+                  ],
                   "name": "Log_userId_idx",
                   "unique": false
                 }
               ],
               "primaryKey": {
-                "columns": ["id"],
+                "columns": [
+                  "id"
+                ],
                 "name": "Log_pkey"
               },
               "uniques": []
@@ -3191,7 +3303,9 @@
                   },
                   "many": true,
                   "nativeType": "text",
-                  "noCheck": ["elementNotNull"],
+                  "noCheck": [
+                    "elementNotNull"
+                  ],
                   "nullable": false
                 },
                 "title": {
@@ -3221,33 +3335,45 @@
               "foreignKeys": [],
               "indexes": [
                 {
-                  "columns": ["followUpAt"],
+                  "columns": [
+                    "followUpAt"
+                  ],
                   "name": "Note_followUpAt_idx",
                   "unique": false
                 },
                 {
-                  "columns": ["isArchived"],
+                  "columns": [
+                    "isArchived"
+                  ],
                   "name": "Note_isArchived_idx",
                   "unique": false
                 },
                 {
-                  "columns": ["isCompleted"],
+                  "columns": [
+                    "isCompleted"
+                  ],
                   "name": "Note_isCompleted_idx",
                   "unique": false
                 },
                 {
-                  "columns": ["userEmail"],
+                  "columns": [
+                    "userEmail"
+                  ],
                   "name": "Note_userEmail_idx",
                   "unique": false
                 },
                 {
-                  "columns": ["userId"],
+                  "columns": [
+                    "userId"
+                  ],
                   "name": "Note_userId_idx",
                   "unique": false
                 }
               ],
               "primaryKey": {
-                "columns": ["id"],
+                "columns": [
+                  "id"
+                ],
                 "name": "Note_pkey"
               },
               "uniques": []
@@ -3288,7 +3414,9 @@
               "foreignKeys": [],
               "indexes": [],
               "primaryKey": {
-                "columns": ["key"],
+                "columns": [
+                  "key"
+                ],
                 "name": "RuntimeConfig_pkey"
               },
               "uniques": []
@@ -3325,12 +3453,16 @@
                   "onDelete": "restrict",
                   "onUpdate": "cascade",
                   "source": {
-                    "columns": ["userId"],
+                    "columns": [
+                      "userId"
+                    ],
                     "namespaceId": "public",
                     "tableName": "Session"
                   },
                   "target": {
-                    "columns": ["id"],
+                    "columns": [
+                      "id"
+                    ],
                     "namespaceId": "public",
                     "tableName": "User"
                   }
@@ -3338,13 +3470,17 @@
               ],
               "indexes": [
                 {
-                  "columns": ["sessionToken"],
+                  "columns": [
+                    "sessionToken"
+                  ],
                   "name": "Session_sessionToken_key",
                   "unique": true
                 }
               ],
               "primaryKey": {
-                "columns": ["id"],
+                "columns": [
+                  "id"
+                ],
                 "name": "Session_pkey"
               },
               "uniques": []
@@ -3398,18 +3534,24 @@
               "foreignKeys": [],
               "indexes": [
                 {
-                  "columns": ["name"],
+                  "columns": [
+                    "name"
+                  ],
                   "name": "ToolVersion_name_key",
                   "unique": true
                 }
               ],
               "primaryKey": {
-                "columns": ["id"],
+                "columns": [
+                  "id"
+                ],
                 "name": "ToolVersion_pkey"
               },
               "uniques": [
                 {
-                  "columns": ["name"]
+                  "columns": [
+                    "name"
+                  ]
                 }
               ]
             },
@@ -3484,7 +3626,9 @@
                   "codecId": "pg/text@1",
                   "many": true,
                   "nativeType": "text",
-                  "noCheck": ["elementNotNull"],
+                  "noCheck": [
+                    "elementNotNull"
+                  ],
                   "nullable": false
                 },
                 "snapshotId": {
@@ -3499,12 +3643,16 @@
                   "onDelete": "restrict",
                   "onUpdate": "cascade",
                   "source": {
-                    "columns": ["snapshotId"],
+                    "columns": [
+                      "snapshotId"
+                    ],
                     "namespaceId": "public",
                     "tableName": "TravelSegment"
                   },
                   "target": {
-                    "columns": ["id"],
+                    "columns": [
+                      "id"
+                    ],
                     "namespaceId": "public",
                     "tableName": "TravelSnapshot"
                   }
@@ -3512,7 +3660,9 @@
               ],
               "indexes": [],
               "primaryKey": {
-                "columns": ["id"],
+                "columns": [
+                  "id"
+                ],
                 "name": "TravelSegment_pkey"
               },
               "uniques": []
@@ -3571,18 +3721,24 @@
               "foreignKeys": [],
               "indexes": [
                 {
-                  "columns": ["confirmationCode"],
+                  "columns": [
+                    "confirmationCode"
+                  ],
                   "name": "TravelSnapshot_confirmationCode_key",
                   "unique": true
                 },
                 {
-                  "columns": ["receivedAt"],
+                  "columns": [
+                    "receivedAt"
+                  ],
                   "name": "TravelSnapshot_receivedAt_idx",
                   "unique": false
                 }
               ],
               "primaryKey": {
-                "columns": ["id"],
+                "columns": [
+                  "id"
+                ],
                 "name": "TravelSnapshot_pkey"
               },
               "uniques": []
@@ -3621,13 +3777,17 @@
               "foreignKeys": [],
               "indexes": [
                 {
-                  "columns": ["email"],
+                  "columns": [
+                    "email"
+                  ],
                   "name": "User_email_key",
                   "unique": true
                 }
               ],
               "primaryKey": {
-                "columns": ["id"],
+                "columns": [
+                  "id"
+                ],
                 "name": "User_pkey"
               },
               "uniques": []
@@ -3648,7 +3808,9 @@
               "foreignKeys": [],
               "indexes": [],
               "primaryKey": {
-                "columns": ["email"],
+                "columns": [
+                  "email"
+                ],
                 "name": "UserRole_pkey"
               },
               "uniques": []
@@ -3677,12 +3839,17 @@
               "foreignKeys": [],
               "indexes": [
                 {
-                  "columns": ["identifier", "token"],
+                  "columns": [
+                    "identifier",
+                    "token"
+                  ],
                   "name": "VerificationToken_identifier_token_key",
                   "unique": true
                 },
                 {
-                  "columns": ["token"],
+                  "columns": [
+                    "token"
+                  ],
                   "name": "VerificationToken_token_key",
                   "unique": true
                 }
@@ -3760,12 +3927,16 @@
                   "onDelete": "cascade",
                   "onUpdate": "cascade",
                   "source": {
-                    "columns": ["locationId"],
+                    "columns": [
+                      "locationId"
+                    ],
                     "namespaceId": "public",
                     "tableName": "WeatherSnapshot"
                   },
                   "target": {
-                    "columns": ["id"],
+                    "columns": [
+                      "id"
+                    ],
                     "namespaceId": "public",
                     "tableName": "Location"
                   }
@@ -3773,13 +3944,18 @@
               ],
               "indexes": [
                 {
-                  "columns": ["locationId", "fetchedAt"],
+                  "columns": [
+                    "locationId",
+                    "fetchedAt"
+                  ],
                   "name": "WeatherSnapshot_locationId_fetchedAt_idx",
                   "unique": false
                 }
               ],
               "primaryKey": {
-                "columns": ["id"],
+                "columns": [
+                  "id"
+                ],
                 "name": "WeatherSnapshot_pkey"
               },
               "uniques": []
@@ -3833,13 +4009,17 @@
               "foreignKeys": [],
               "indexes": [
                 {
-                  "columns": ["identifier"],
+                  "columns": [
+                    "identifier"
+                  ],
                   "name": "verification_identifier_idx",
                   "unique": false
                 }
               ],
               "primaryKey": {
-                "columns": ["id"],
+                "columns": [
+                  "id"
+                ],
                 "name": "verification_pkey"
               },
               "uniques": []

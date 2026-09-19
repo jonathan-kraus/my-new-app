@@ -7,12 +7,12 @@ export async function GET() {
     nextPublicAppUrl: process.env.NEXT_PUBLIC_APP_URL ?? null,
     vercel: !!process.env.VERCEL,
     databaseUrlPresent: !!process.env.DATABASE_URL,
-    prismaClientPresent: (() => {
+    prismaClientPresent: await (async () => {
       try {
-        // check if Prisma client is importable without exposing client
+        // Check the Prisma 8 runtime without opening a database connection.
 
-        const pkg = require("@prisma/client");
-        return !!pkg?.PrismaClient;
+        const pkg = await import("@prisma/orm-postgres/runtime");
+        return typeof pkg.default === "function";
       } catch (e) {
         return false;
       }

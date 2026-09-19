@@ -57,9 +57,9 @@ jobs:
       - name: Lint code
         run: pnpm exec eslint . || true
 
-      - name: Generate Prisma Client
+      - name: Generate Prisma 8 contract
         run: |
-          pnpm exec prisma7 generate
+          pnpm exec prisma contract emit
 
       - name: Check for outdated dependencies
         run: |

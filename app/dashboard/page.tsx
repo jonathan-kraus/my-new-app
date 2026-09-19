@@ -343,7 +343,7 @@ export default async function DashboardPage(req: Request) {
     typescript: filteredDeps.typescript ?? "unknown",
     eslint: filteredDeps.eslint ?? "unknown",
     openmeteo: filteredDeps.openmeteo ?? "unknown",
-    prisma: filteredDeps["@prisma/adapter-pg"] ?? "unknown",
+    prisma: filteredDeps["@prisma/orm-postgres"] ?? "unknown",
   };
 
   return (
