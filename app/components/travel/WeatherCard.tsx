@@ -1,7 +1,7 @@
-import type { Prisma } from "@prisma/client";
+
 import type { ParsedTravelSnapshot } from "@/lib/travel/parser/aa";
 
-type TravelSegment = Prisma.TravelSegmentGetPayload<{}>;
+type TravelSegment = ParsedTravelSnapshot["segments"][number];
 
 type Props = {
   snapshot: ParsedTravelSnapshot;

@@ -20,7 +20,6 @@ import { db8 } from "@/lib/db.prisma8";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Dashboard " };
-let jei = 0;
 
 function nowMs() {
   const [s, ns] = process.hrtime();
@@ -33,6 +32,7 @@ function hrElapsed(start: number) {
 }
 
 export default async function DashboardPage(req: Request) {
+  let jei = 0;
   const pageStart = nowMs();
   const built = buildUniversalContext(req as any, "DASHBOARD");
   const session = await auth();

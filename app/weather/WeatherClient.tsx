@@ -9,7 +9,7 @@ import {
   Thermometer,
   Wind,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LocationSelector } from "@/components/LocationSelector";
 import type { Location } from "@/lib/types";
 import { logj } from "@/lib/log/logj";
@@ -73,13 +73,13 @@ function formatUpdated(value: string) {
     minute: "2-digit",
   });
 }
-const built = staticUniversalContext("WeatherClient");
-let jei = 0;
 export default function WeatherClient({
   locations,
 }: {
   locations: Location[];
 }) {
+  const [built] = useState(() => staticUniversalContext("WeatherClient"));
+  const eventIndex = useRef(0);
   const [selectedId, setSelectedId] = useState<string | null>(() => {
     if (typeof window === "undefined") return locations[0]?.id ?? null;
     return localStorage.getItem("lastLocationId") ?? locations[0]?.id ?? null;
@@ -113,7 +113,7 @@ export default function WeatherClient({
       file: "app/weather/WeatherClient.tsx",
       line: 109,
       payload: { locationId: selectedId },
-      meta: { built: { ...built, eventIndex: ++jei } },
+      meta: { built: { ...built, eventIndex: ++eventIndex.current } },
     });
     fetch(`/api/weather/detail?locationId=${selectedId}`, {
       signal: controller.signal,
@@ -134,7 +134,7 @@ export default function WeatherClient({
             status: response.status,
             ok: response.ok,
           },
-          meta: { built: { ...built, eventIndex: ++jei } },
+          meta: { built: { ...built, eventIndex: ++eventIndex.current } },
         });
         if (!response.ok)
           throw new Error(payload.error ?? "Weather unavailable");
@@ -151,7 +151,7 @@ export default function WeatherClient({
       .finally(() => setLoading(false));
 
     return () => controller.abort();
-  }, [refreshKey, selectedId]);
+  }, [built, refreshKey, selectedId]);
 
   const condition = weatherDescription(weather?.current.weatherCode);
   const current = weather?.current;

@@ -89,7 +89,7 @@ model DbTableStats {
   indexBytes   BigInt
   tableBytes   BigInt
   toastBytes   BigInt
-  snapshotDate Timestamp(3)
+ snapshotDate TimestampString(3)
   createdAt    Timestamp(3) @default(now())
 
   @@index([tableName, snapshotDate], map: "DbTableStats_tableName_snapshotDate_idx")

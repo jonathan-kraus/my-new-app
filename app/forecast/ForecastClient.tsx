@@ -45,8 +45,8 @@ export default function ForecastClient({
   locations: Location[];
   sendForecastEmailAction: (formData: FormData) => void | Promise<void>;
 }) {
-  const built = staticUniversalContext("ForecastClient");
-  let jei = 0;
+  const [built] = useState(() => staticUniversalContext("ForecastClient"));
+  const eventIndex = useRef(0);
   const isReady = useSyncExternalStore(
     subscribeToHydration,
     clientSnapshot,
@@ -61,29 +61,33 @@ export default function ForecastClient({
     locations[1]?.id ??
     locations[0]?.id ??
     null;
-  logj({
-    domain: "forecast",
-    level: "info",
-    message: "Locations received by ForecastClient",
-    file: "app/forecast/ForecastClient.tsx",
-    line: 51,
-    payload: {
-      count: locations.length,
-      ids: locations.map((l) => l.id),
-      names: locations.map((l) => l.name),
-    },
-    meta: { built: { ...built, eventIndex: ++jei } },
-  });
+  useEffect(() => {
+    logj({
+      domain: "forecast",
+      level: "info",
+      message: "Locations received by ForecastClient",
+      file: "app/forecast/ForecastClient.tsx",
+      line: 51,
+      payload: {
+        count: locations.length,
+        ids: locations.map((l) => l.id),
+        names: locations.map((l) => l.name),
+      },
+      meta: { built: { ...built, eventIndex: ++eventIndex.current } },
+    });
+  }, [built, locations]);
 
-  logj({
-    domain: "forecast",
-    level: "info",
-    message: "Forecast client loaded",
-    file: "app/forecast/ForecastClient.tsx",
-    line: 65,
-    payload: { selectedId },
-    meta: { built: { ...built, eventIndex: ++jei } },
-  });
+  useEffect(() => {
+    logj({
+      domain: "forecast",
+      level: "info",
+      message: "Forecast client loaded",
+      file: "app/forecast/ForecastClient.tsx",
+      line: 65,
+      payload: { selectedId },
+      meta: { built: { ...built, eventIndex: ++eventIndex.current } },
+    });
+  }, [built, selectedId]);
   const [forecast, setForecast] = useState<ForecastResponse | null>(null);
   const latestForecastRequestRef = useRef(0);
 
@@ -121,10 +125,10 @@ export default function ForecastClient({
       file: "app/forecast/ForecastClient.tsx",
       line: 113,
       payload: { selectedId },
-      meta: { built: { ...built, eventIndex: ++jei } },
+      meta: { built: { ...built, eventIndex: ++eventIndex.current } },
     });
     return () => controller.abort();
-  }, [selectedId]);
+  }, [built, selectedId]);
 
   const timeline = useForecastTimeline(forecast?.forecast);
 

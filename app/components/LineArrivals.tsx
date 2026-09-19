@@ -1,12 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useSWR from "swr";
 import { stopsByLine, lineNames, type MBTALineId } from "@/lib/mbta/stops";
 import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
-const built = staticUniversalContext("LineArrivals");
-let jei = 0;
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -91,15 +89,19 @@ export function LineArrivals({
   defaultStopId?: string;
 }) {
   const stops = stopsByLine[lineId];
-  logj({
-    domain: "LineArrivals",
-    level: "info",
-    message: "LineArrivals loaded",
-    file: "app/components/LineArrivals.tsx",
-    line: 94,
-    payload: { lineId: lineId, defaultStopId: defaultStopId, stops: stops },
-    meta: { built: { ...built, eventIndex: ++jei } },
-  });
+  const [built] = useState(() => staticUniversalContext("LineArrivals"));
+  const eventIndex = useRef(0);
+  useEffect(() => {
+    logj({
+      domain: "LineArrivals",
+      level: "info",
+      message: "LineArrivals loaded",
+      file: "app/components/LineArrivals.tsx",
+      line: 94,
+      payload: { lineId: lineId, defaultStopId: defaultStopId, stops: stops },
+      meta: { built: { ...built, eventIndex: ++eventIndex.current } },
+    });
+  }, [built, lineId, defaultStopId, stops]);
   const [stopId, setStopId] = useState(defaultStopId);
 
   const { data, isLoading } = useSWR<{

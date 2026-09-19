@@ -1,6 +1,6 @@
 "use client";
 import type { Location } from "@/lib/types";
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { sendForecastEmail } from "@/lib/server/email/sendForecastEmail";
 import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
@@ -145,25 +145,26 @@ export function ForecastCard({
     });
   }
 
-  let message = "initial message";
-  let jei = 0;
-  const built = staticUniversalContext("ForecastCard");
-  logj({
-    domain: "forecast",
-    level: "info",
-    message: `${message}`,
-    file: "app/forecast/ForecastCard.tsx",
-    line: 151,
-    payload: {
-      location: location,
-      current: current,
-      forecast: forecast,
-      fetchedAt: fetchedAt,
-      source: source,
-      astronomy: astronomy,
-    },
-    meta: { built: { ...built, eventIndex: ++jei } },
-  });
+  const eventIndex = useRef(0);
+  const [built] = useState(() => staticUniversalContext("ForecastCard"));
+  useEffect(() => {
+    logj({
+      domain: "forecast",
+      level: "info",
+      message: "Forecast card data updated",
+      file: "app/forecast/ForecastCard.tsx",
+      line: 151,
+      payload: {
+        location: location,
+        current: current,
+        forecast: forecast,
+        fetchedAt: fetchedAt,
+        source: source,
+        astronomy: astronomy,
+      },
+      meta: { built: { ...built, eventIndex: ++eventIndex.current } },
+    });
+  }, [built, location, current, forecast, fetchedAt, source, astronomy]);
 
   // console.log("sendTestEmail result FORECASTCARD:", result);
 

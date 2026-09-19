@@ -7,7 +7,7 @@
  * Writes independently to DB + Axiom
  */
 
-import { db } from "@/lib/db";
+import { db8 } from "@/lib/db.prisma8";
 import { axiomIngest } from "@/lib/axiom";
 import { z } from "zod";
 import type { LogjInput } from "@/lib/log/types";
@@ -167,12 +167,10 @@ export async function serverLog(input: LogjInput) {
   // --------------------------------------------------
 
   try {
-    await db.log.create({
-      data: {
+    await db8.orm.public.Log.create({
         ...record,
         payload: record.payload as any,
         meta: record.meta as any,
-      },
     });
   } catch (err) {
     console.error("NEON LOG ERROR:", err);

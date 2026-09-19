@@ -1,6 +1,7 @@
 import { fetchAstronomyMultiDay } from "./astronomy-provider";
 import { computeGoldenBlueHours } from "@/lib/computeGoldenBlueHours";
-import { db } from "./db";
+import { db8 } from "./db.prisma8";
+import { createId } from "@paralleldrive/cuid2";
 import { buildAstronomySnapshot } from "./buildAstronomySnapshot";
 import { format, addDays } from "date-fns";
 
@@ -25,15 +26,14 @@ export async function refreshAstronomySnapshotsForLocation(
         // Build the snapshot using the actual Date object.
         const snapshot = await buildAstronomySnapshot(location, day.date);
 
-        return db.astronomySnapshot.upsert({
-          where: {
-            locationId_dateString: {
-              locationId: location.id,
-              dateString,
-            },
+        return db8.orm.public.AstronomySnapshot.upsert({
+          conflictOn: {
+            locationId: location.id,
+            dateString,
           },
           update: snapshot,
           create: {
+            id: createId(),
             ...snapshot,
             locationId: location.id,
             dateString,
@@ -62,10 +62,13 @@ export async function getLatestLocation() {
 }
 
 export async function getAstronomyForDashboard(locationId: string) {
-  const snapshots = await db.astronomySnapshot.findMany({
-    where: { locationId },
-    orderBy: { dateString: "asc" },
-  });
+  const rows = await db8.orm.public.AstronomySnapshot.where({ locationId })
+    .orderBy((snapshot) => snapshot.dateString.asc())
+    .all();
+  const snapshots = rows.map(({ fetchedAt, ...snapshot }) => ({
+    ...snapshot,
+    fetchedAt: new Date(`${fetchedAt}Z`),
+  }));
 
   if (snapshots.length === 0) {
     return {
@@ -90,3 +93,5 @@ export async function getAstronomyForDashboard(locationId: string) {
     allSnapshots: snapshots,
   };
 }
+
+export type AstronomySnapshot = Awaited<ReturnType<typeof getAstronomyForDashboard>>["allSnapshots"][number];

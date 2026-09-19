@@ -3,7 +3,8 @@
 import fs from "fs";
 import path from "path";
 import { simpleParser } from "mailparser";
-import { db } from "@/lib/db";
+import { db8 } from "@/lib/db.prisma8";
+import { createId } from "@paralleldrive/cuid2";
 import { parseAAEmail } from "@/lib/travel/parser/aa";
 import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
@@ -108,9 +109,9 @@ export async function ingestTravelEmails() {
   console.log("INGEST: parsed.segments count =", parsed.segments?.length);
 
   // 8️⃣ Dedupe check
-  const existing = await db.travelSnapshot.findUnique({
-    where: { confirmationCode: parsed.confirmationCode },
-  });
+  const existing = await db8.orm.public.TravelSnapshot.where({
+    confirmationCode: parsed.confirmationCode,
+  }).first();
 
   console.log(
     "INGEST: dedupe check result =",
@@ -127,22 +128,29 @@ export async function ingestTravelEmails() {
   });
   if (existing) {
     console.log("Skipping insert — snapshot already exists");
-    return existing;
+    return { ...existing, receivedAt: new Date(`${existing.receivedAt}Z`) };
   }
 
   // 9️⃣ DB insert attempt
   console.log("INGEST: inserting new snapshot into DB");
 
-  const created = await db.travelSnapshot.create({
-    data: {
+  const created = await db8.transaction(async (tx) => {
+    const snapshot = await tx.orm.public.TravelSnapshot.create({
+      id: createId(),
       source: parsed.source,
       receivedAt: parsed.receivedAt,
       confirmationCode: parsed.confirmationCode,
       issuedDate: parsed.issuedDate,
       rawHtml: parsed.rawHtml,
 
-      segments: {
-        create: parsed.segments.map((seg) => ({
+      passengers: parsed.passengers,
+      payment: parsed.payment,
+      bags: parsed.bags,
+    });
+    for (const seg of parsed.segments) {
+      await tx.orm.public.TravelSegment.create({
+          id: createId(),
+          snapshotId: snapshot.id,
           date: seg.date,
           departureAirport: seg.departureAirport,
           departureCity: seg.departureCity,
@@ -153,26 +161,9 @@ export async function ingestTravelEmails() {
           flightNumber: seg.flightNumber,
           operatedBy: seg.operatedBy,
           seats: seg.seats,
-        })),
-      },
-
-      passengers: {
-        create: parsed.passengers.map((p) => ({ name: p.name })),
-      },
-
-      payment: {
-        create: parsed.payment.map((p) => ({
-          label: p.label,
-          amount: p.amount,
-        })),
-      },
-
-      bags: {
-        create: parsed.bags.map((b) => ({
-          description: b.description,
-        })),
-      },
-    },
+      });
+    }
+    return { ...snapshot, receivedAt: new Date(`${snapshot.receivedAt}Z`) };
   });
 
   // 🔟 DB insert success

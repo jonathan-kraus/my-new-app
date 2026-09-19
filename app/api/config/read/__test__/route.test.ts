@@ -5,6 +5,10 @@ vi.mock("@/lib/axiom/query", () => ({
   queryAxiom: vi.fn(),
 }));
 
+vi.mock("@/lib/log/logj", () => ({
+  logj: vi.fn().mockResolvedValue(undefined),
+}));
+
 const { queryAxiom } = await import("@/lib/axiom/query");
 
 describe("GET /api/config/read", () => {

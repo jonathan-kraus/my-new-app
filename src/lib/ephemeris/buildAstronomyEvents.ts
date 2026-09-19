@@ -1,5 +1,5 @@
 // lib/ephemeris/buildAstronomyEvents.ts
-import type { AstronomySnapshot } from "@prisma/client";
+import type { AstronomySnapshot } from "@/lib/astronomy";
 
 export type AstronomyEvent = {
   label: string;
