@@ -2,8 +2,19 @@
 
 import { useEffect, useState } from "react";
 
+type GitHubActivity = {
+  id: number;
+  type: "github";
+  name: string;
+  status: string;
+  conclusion: string;
+  createdAt: string;
+  updatedAt: string;
+  repo: string;
+};
+
 export function RecentActivity() {
-  const [items, setItems] = useState<any[]>([]);
+  const [items, setItems] = useState<GitHubActivity[]>([]);
 
   useEffect(() => {
     async function load() {
@@ -13,7 +24,7 @@ export function RecentActivity() {
 
         const safe = Array.isArray(data) ? data : [];
 
-        const normalized = safe.map((d: any) => ({
+        const normalized: GitHubActivity[] = safe.map((d) => ({
           id: d.id,
           type: "github",
           name: d.name,

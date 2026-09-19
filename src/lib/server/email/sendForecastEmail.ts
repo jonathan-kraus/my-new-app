@@ -1,6 +1,6 @@
 /*
- * @FilePath: \my-new-app\lib\server\email\sendForecastEmail.ts
- * @LastEditTime: 2026-09-06 21:44:09
+ * @FilePath: \my-new-app\src\lib\server\email\sendForecastEmail.ts
+ * @LastEditTime: 2026-09-19 18:42:06
  */
 // lib/server/email/sendForecastEmail.ts
 "use server";
@@ -39,31 +39,6 @@ export type ForecastEmailData = z.infer<typeof forecastEmailSchema>;
 function readFormValue(form: FormData, key: string) {
   const value = form.get(key);
   return typeof value === "string" ? value : "";
-}
-
-function escapeHtml(value: string) {
-  return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-function formatTemperature(value: number) {
-  return `${Math.round(value)}°F`;
-}
-
-function formatPercent(value: number) {
-  return `${Math.round(value)}%`;
-}
-
-function formatWind(value: number) {
-  return `${Math.round(value)} mph`;
-}
-
-function formatTime(value?: string) {
-  return value?.trim() || "—";
 }
 
 export async function sendForecastEmail(form: FormData) {
