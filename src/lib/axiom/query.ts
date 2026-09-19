@@ -1,6 +1,6 @@
 /*
- * @FilePath: \my-new-app\lib\axiom\query.ts
- * @LastEditTime: 2026-08-04 13:49:08
+ * @FilePath: \my-new-app\src\lib\axiom\query.ts
+ * @LastEditTime: 2026-09-19 18:35:14
  */
 import { Axiom } from "@axiomhq/js";
 
@@ -43,5 +43,12 @@ function tabularToRows(res: {
 
 export async function queryAxiom(apl: string) {
   const res = await client.query(apl);
-  return tabularToRows(res as any);
+  return tabularToRows(
+    res as {
+      tables?: Array<{
+        fields: Array<{ name: string }>;
+        columns: unknown[][];
+      }>;
+    },
+  );
 }

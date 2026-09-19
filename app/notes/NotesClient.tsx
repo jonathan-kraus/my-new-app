@@ -1,10 +1,10 @@
 /*
  * @FilePath: \my-new-app\app\notes\NotesClient.tsx
- * @LastEditTime: 2026-07-24 17:48:35
+ * @LastEditTime: 2026-09-19 18:21:01
  */
 // app/notes/NotesClient.tsx
 "use client";
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
@@ -22,7 +22,6 @@ type Note = {
 };
 
 export default function NotesClient() {
-  const router = useRouter();
   const [authorized, setAuthorized] = useState<boolean | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -260,7 +259,7 @@ export default function NotesClient() {
       <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex gap-2 flex-wrap">
           <button
-            onClick={() => (window.location.href = "/notes/new")}
+            onClick={() => redirect("/notes/new")}
             className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 transition"
           >
             New Note

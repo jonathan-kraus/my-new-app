@@ -1,5 +1,4 @@
-import type { GitHubCommit } from "@/lib/github/payload";
-import type { GitHubPayload } from "@/lib/github/payload";
+import type { GitHubCommit, GitHubPayload } from "@/lib/github/payload";
 // lib/github.ts
 
 /**

@@ -151,6 +151,7 @@ export default async function HomePage(req: Request) {
       payload: {
         error: String(err),
         body: raw,
+        urld: forecastData.url,
         url: forecastRes.url,
         status: forecastRes.status,
         redirected: forecastRes.redirected,
@@ -182,6 +183,7 @@ export default async function HomePage(req: Request) {
       payload: {
         error: String(err),
         body: raw,
+        urld: gitData.url,
         url: gitRes.url,
         status: gitRes.status,
         redirected: gitRes.redirected,
