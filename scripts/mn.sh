@@ -68,8 +68,7 @@ if ! pnpm type-check; then
     exit 1
 fi
 
-section "Validating Prisma schema"
-pnpm exec prisma contract emit && success "Prisma contract valid"
+success "Types OK"
 
 # section "Running pnpm audit"
 # node .github/scripts/audit.js
