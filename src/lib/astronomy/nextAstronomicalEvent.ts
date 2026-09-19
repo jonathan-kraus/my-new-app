@@ -1,4 +1,7 @@
-export function getUnifiedNextEvent(solar: any, lunar: any) {
+export function getUnifiedNextEvent(
+  solar: { sunrise: Date; sunset: Date; nextSunrise: Date },
+  lunar: { moonrise: Date; moonset: Date; nextMoonrise: Date },
+) {
   const now = new Date();
 
   const events = [

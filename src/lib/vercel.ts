@@ -48,9 +48,20 @@ export async function vercelRequest<T>(
   return json as T;
 }
 
+export type VercelDeployment = {
+  uid: string;
+  url: string;
+  state: string;
+  created: number;
+  meta?: {
+    githubCommitAuthorName?: string;
+    githubCommitMessage?: string;
+    githubCommitSha?: string;
+  };
+};
 export interface VercelDeploymentsResponse {
-  deployments: any[];
-  pagination: any;
+  deployments: VercelDeployment[];
+  pagination: unknown;
 }
 
 export async function getVercelDeployments(): Promise<VercelDeploymentsResponse> {

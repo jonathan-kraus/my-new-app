@@ -1,9 +1,11 @@
+import type { GitHubCommit } from "@/lib/github/payload";
+import type { GitHubPayload } from "@/lib/github/payload";
 // lib/github.ts
 
 /**
  * Resolve the commit SHA from different GitHub webhook event payloads.
  */
-export function getSha(payload: any): string | undefined {
+export function getSha(payload: GitHubPayload): string | undefined {
   return (
     // status/deployment events
     // check_run events
@@ -26,15 +28,17 @@ function isZeroSha(sha: string | undefined): boolean {
 /**
  * Get repository info from payload
  */
-export function getRepoInfo(payload: any): {
+export function getRepoInfo(payload: GitHubPayload): {
   owner: string;
   repo: string;
 } | null {
   const repository = payload.repository;
   if (!repository) return null;
+  const owner = repository.owner?.login || repository.owner?.name;
+  if (!owner) return null;
 
   return {
-    owner: repository.owner?.login || repository.owner?.name,
+    owner,
     repo: repository.name,
   };
 }
@@ -43,7 +47,7 @@ export function getRepoInfo(payload: any): {
  * Resolve the commit message from payload or GitHub API fallback.
  */
 export async function getCommitMessage(
-  payload: any,
+  payload: GitHubPayload,
 ): Promise<string | undefined> {
   // 1. Try direct fields first
   const direct =
@@ -92,7 +96,7 @@ export async function getCommitDetails(
   owner: string,
   repo: string,
   sha: string,
-): Promise<any> {
+): Promise<GitHubCommit> {
   try {
     const res = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/commits/${sha}`,
@@ -122,7 +126,7 @@ export async function getRecentCommits(
   owner: string,
   repo: string,
   limit: number = 10,
-): Promise<any[]> {
+): Promise<GitHubCommit[]> {
   try {
     const res = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/commits?per_page=${limit}&sort=created&direction=desc`,
@@ -151,7 +155,7 @@ export async function getRecentCommits(
 export async function getRecentActivity(
   username: string,
   limit: number = 20,
-): Promise<any[]> {
+): Promise<unknown[]> {
   try {
     const res = await fetch(
       `https://api.github.com/users/${username}/events?per_page=${limit}`,
@@ -180,7 +184,7 @@ export async function getRecentActivity(
 export async function getRepositoryActivity(
   repositories: { owner: string; repo: string }[],
   limit: number = 10,
-): Promise<any[]> {
+): Promise<unknown[]> {
   try {
     const activities = await Promise.all(
       repositories.map(async ({ owner, repo }) => {
@@ -222,7 +226,7 @@ export async function getRecentWorkflowRuns(
   owner: string,
   repo: string,
   limit: number = 10,
-): Promise<any[]> {
+): Promise<unknown[]> {
   try {
     const res = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/actions/runs?per_page=${limit}`,

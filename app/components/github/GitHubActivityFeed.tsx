@@ -1,10 +1,31 @@
 "use client";
 // app\components\github\GitHubActivityFeed.tsx
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { GitHubActivityCard } from "./GitHubActivityCard";
 import type { GitHubActivityEvent } from "@/lib/types";
 import { staticUniversalContext } from "@/lib/log/buildj";
 
+type ActivityResponse = {
+  id?: string;
+  name?: string;
+  repository?: { owner?: { login?: string }; name?: string };
+  status?: string;
+  conclusion?: string;
+  actor?: { login?: string };
+  head_commit?: { message?: string };
+  head_sha?: string;
+  html_url?: string;
+  created_at?: string;
+  updated_at?: string;
+  sha?: string;
+  owner?: string;
+  repo?: string;
+  type: string;
+  author: string;
+  message: string;
+  url: string;
+  date: string;
+};
 export default function GitHubActivityFeed() {
   const [activities, setActivities] = useState<GitHubActivityEvent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -17,7 +38,7 @@ export default function GitHubActivityFeed() {
   const [workflowOwner, setWorkflowOwner] = useState("jonathan-kraus");
   const [workflowRepo, setWorkflowRepo] = useState("my-new-app");
 
-  const fetchActivity = async () => {
+  const fetchActivity = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -59,7 +80,7 @@ export default function GitHubActivityFeed() {
       let jei = 0;
 
       const transformedActivities: GitHubActivityEvent[] = data.data.map(
-        (item: any, index: number) => {
+        (item: ActivityResponse, index: number) => {
           if (type === "workflows") {
             return {
               id: item.id || `workflow-${index}`,
@@ -114,16 +135,16 @@ export default function GitHubActivityFeed() {
       );
 
       setActivities(transformedActivities);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : String(err));
     } finally {
       setLoading(false);
     }
-  };
+  }, [type, username, repos, workflowOwner, workflowRepo]);
 
   useEffect(() => {
     queueMicrotask(fetchActivity);
-  }, [type, username, repos, workflowOwner, workflowRepo]);
+  }, [fetchActivity]);
 
   if (loading) {
     return (

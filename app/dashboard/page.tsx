@@ -34,7 +34,7 @@ function hrElapsed(start: number) {
 export default async function DashboardPage(req: Request) {
   let jei = 0;
   const pageStart = nowMs();
-  const built = buildUniversalContext(req as any, "DASHBOARD");
+  const built = buildUniversalContext(req, "DASHBOARD");
   const session = await auth();
   // eslint-disable-next-line react-hooks/purity -- Sample request logs in this dynamic server page.
   const verbose = Math.random() < 0.1; // sample ~10% of requests
@@ -67,7 +67,7 @@ export default async function DashboardPage(req: Request) {
     createdAt: new Date(location.createdAt),
     updatedAt: new Date(location.updatedAt),
   };
-  let weather: any = null;
+  let weather: unknown = null;
   try {
     const weatherRes = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/weather?locationId=${location.id}`,
@@ -197,13 +197,18 @@ export default async function DashboardPage(req: Request) {
     const existing = await db8.orm.public.ToolVersion.where((tool) =>
       tool.name.in(names),
     ).all();
-    const existingMap: Record<string, any> = Object.fromEntries(
-      existing.map((e) => [e.name, e]),
-    );
+    const existingMap: Record<string, (typeof existing)[number]> =
+      Object.fromEntries(existing.map((e) => [e.name, e]));
 
-    const toCreate: any[] = [];
+    const toCreate: Parameters<
+      typeof db8.orm.public.ToolVersion.createAll
+    >[0][number][] = [];
     const verifyNames: string[] = [];
-    const toChange: { name: string; version: string; current: any }[] = [];
+    const toChange: {
+      name: string;
+      version: string;
+      current: (typeof existing)[number];
+    }[] = [];
 
     for (const { name, version } of toolEntries) {
       const current = existingMap[name];
@@ -211,8 +216,8 @@ export default async function DashboardPage(req: Request) {
         toCreate.push({
           name,
           version,
-          added_at: new Date(),
-          verified_at: new Date(),
+          addedAt: timestampString(new Date().toISOString()),
+          verifiedAt: timestampString(new Date().toISOString()),
         });
       } else if (current.version === version) {
         verifyNames.push(name);

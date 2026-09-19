@@ -19,7 +19,7 @@ type TableStatRow = {
   toast_bytes: number | string;
 };
 
-export async function runDbTableStats(ctx: {
+export async function runDbTableStats(_ctx: {
   requestId?: string;
   route?: string;
   userId?: string;
@@ -132,7 +132,7 @@ export async function runDbTableStats(ctx: {
       }
 
       tablesProcessed++;
-    } catch (err: any) {
+    } catch (err: unknown) {
       await logj({
         domain: "jonathan",
         level: "error",

@@ -4,9 +4,6 @@ import { staticUniversalContext } from "@/lib/log/buildj";
 import { logj } from "@/lib/log/logj";
 import { useEffect, useMemo, useState } from "react";
 
-const built = await staticUniversalContext("jonathan");
-let jei = 0;
-
 type LogRecord = {
   id: string;
   timestamp: string;
@@ -20,14 +17,8 @@ type LogRecord = {
   userId: string;
   sessionEmail: string | null;
   sessionUser: string | null;
-  data: any | null;
+  data: unknown | null;
 };
-const ctx = {
-  requestId: crypto.randomUUID(),
-  page: "log",
-  userId: null,
-};
-
 type LogLevel = "info" | "warn" | "error" | "debug" | "trace";
 
 type LevelStyle = {
@@ -64,18 +55,8 @@ const levelStyles: Record<LogLevel, LevelStyle> = {
   },
 };
 
-const levelIcons: Record<LogLevel, string> = {
-  info: "ℹ️",
-  warn: "⚠️",
-  error: "⛔",
-  debug: "🐛",
-  trace: "🔍",
-};
-
 export default function LogsPage() {
-  const built = staticUniversalContext("jonathan");
   const [newCount, setNewCount] = useState(0);
-  let jei = 0;
   const [logs, setLogs] = useState<LogRecord[]>([]);
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
@@ -88,6 +69,8 @@ export default function LogsPage() {
     let cancelled = false;
 
     const load = async () => {
+      const built = await staticUniversalContext("jonathan");
+      let jei = 0;
       if (page === 0) setIsLoading(true);
       else setIsLoadingMore(true);
 

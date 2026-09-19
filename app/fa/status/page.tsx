@@ -4,10 +4,11 @@
  */
 "use client";
 
+import type { Flight } from "@/lib/flight/types";
 import { useState } from "react";
 
 export default function FlightStatusPage() {
-  const [status, setStatus] = useState<any>(null);
+  const [status, setStatus] = useState<Flight | null>(null);
 
   async function fetchStatus() {
     const res = await fetch(`/api/fa/status?ident=AA877`);

@@ -13,7 +13,7 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
-import { formatDate, formatNumber, formatBytes } from "@/lib/format";
+import { formatNumber, formatBytes } from "@/lib/format";
 import { BarChart3 } from "lucide-react";
 
 interface HistoryEntry {
@@ -27,14 +27,6 @@ interface TableGrowthChartProps {
   history: HistoryEntry[];
   tables: string[];
 }
-
-const CHART_COLORS = [
-  "var(--color-chart-1)",
-  "var(--color-chart-2)",
-  "var(--color-chart-3)",
-  "var(--color-chart-4)",
-  "var(--color-chart-5)",
-];
 
 export function TableGrowthChart({ history, tables }: TableGrowthChartProps) {
   // Get latest snapshot per table

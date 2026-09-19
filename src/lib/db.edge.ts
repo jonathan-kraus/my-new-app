@@ -3,7 +3,7 @@
  * @LastEditTime: 2026-05-09 11:35:13
  */
 // lib/db.edge.ts
-export async function sql<T = any>(query: string, params?: any[]) {
+export async function sql<T = unknown>(query: string, params?: unknown[]) {
   const url = `${process.env.NEON_DATA_API_URL}/sql`;
 
   const res = await fetch(url, {

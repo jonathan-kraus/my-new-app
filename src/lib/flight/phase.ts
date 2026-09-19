@@ -1,14 +1,13 @@
+import type { FlightPosition } from "./types";
 /*
  * @FilePath: \my-new-app\lib\flight\phase.ts
  * @LastEditTime: 2026-03-12 21:05:14
  */
-export function detectFlightPhase(live: any) {
+export function detectFlightPhase(live: FlightPosition | null) {
   if (!live) return "unknown";
 
   const alt = live.altitude * 100; // convert hundreds → feet
   const gs = live.groundspeed ?? 0;
-  const hdg = live.heading ?? 0;
-
   // On ground
   if (alt < 200) {
     if (gs < 40) return "taxi";

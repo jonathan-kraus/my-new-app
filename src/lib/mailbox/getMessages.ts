@@ -19,7 +19,7 @@ export async function getMailboxMessages(): Promise<MailboxMessage[]> {
 
   for (const filename of files) {
     const fullPath = path.join(dir, filename);
-    const raw = fs.readFileSync(fullPath);
+    fs.readFileSync(fullPath);
 
     //const parsed = await simpleParser(raw);
 

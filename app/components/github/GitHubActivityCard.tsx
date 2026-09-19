@@ -11,7 +11,7 @@ export function GitHubActivityCard({ event }: { event: GitHubActivityEvent }) {
     event: eventType,
     actor,
     commitMessage,
-    commitSha,
+    commitSha: _commitSha,
     url,
     updatedAt,
   } = event;

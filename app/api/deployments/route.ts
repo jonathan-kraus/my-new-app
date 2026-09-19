@@ -28,28 +28,38 @@ export async function GET() {
 
   // Fetch statuses for each deployment
   const enriched = await Promise.all(
-    deployments.map(async (d: any) => {
-      const statusRes = await fetch(d.statuses_url, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/vnd.github+json",
-        },
-      });
+    deployments.map(
+      async (d: {
+        id: number;
+        sha: string;
+        ref: string;
+        environment: string;
+        created_at: string;
+        statuses_url: string;
+        creator?: { login: string };
+      }) => {
+        const statusRes = await fetch(d.statuses_url, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/vnd.github+json",
+          },
+        });
 
-      const statuses = await statusRes.json();
-      const latest = statuses[0];
+        const statuses = await statusRes.json();
+        const latest = statuses[0];
 
-      return {
-        id: d.id,
-        sha: d.sha,
-        ref: d.ref,
-        environment: d.environment,
-        created_at: d.created_at,
-        creator: d.creator?.login,
-        status: latest?.state ?? "unknown",
-        log_url: latest?.log_url ?? null,
-      };
-    }),
+        return {
+          id: d.id,
+          sha: d.sha,
+          ref: d.ref,
+          environment: d.environment,
+          created_at: d.created_at,
+          creator: d.creator?.login,
+          status: latest?.state ?? "unknown",
+          log_url: latest?.log_url ?? null,
+        };
+      },
+    ),
   );
 
   return NextResponse.json(enriched);

@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 import NewNoteClient from "./NewNoteClient";
 
 export default async function NewNotePage() {
-  const h = await headers(); // ✅ await the Promise
+  await headers(); // ✅ await the Promise
   const session = await auth();
 
   return (

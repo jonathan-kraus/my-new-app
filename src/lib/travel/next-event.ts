@@ -13,7 +13,7 @@ function parseSegmentDateTime(segment: {
   }
 }
 
-export async function getNextTravelEvent(requestId?: string) {
+export async function getNextTravelEvent(_requestId?: string) {
   const rows = await db8.orm.public.TravelSnapshot.orderBy((snapshot) =>
     snapshot.receivedAt.desc(),
   )

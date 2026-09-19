@@ -1,11 +1,11 @@
 "use client";
 
+import type { Flight } from "@/lib/flight/types";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import router from "next/dist/shared/lib/router/router";
 
 export default function Skybox() {
-  const [planes, setPlanes] = useState<any[]>([]);
+  const [planes, setPlanes] = useState<Flight[]>([]);
   const router = useRouter();
   async function loadSkybox() {
     const res = await fetch("/api/fa/dashboard");
@@ -65,7 +65,9 @@ export default function Skybox() {
                 <td className="p-2">{p.aircraft_type || "—"}</td>
                 <td className="p-2">{alt}</td>
                 <td className="p-2">{gs}</td>
-                <td className="p-2">{alt > 0 ? "Enroute" : "On Ground"}</td>
+                <td className="p-2">
+                  {typeof alt === "number" && alt > 0 ? "Enroute" : "On Ground"}
+                </td>
               </tr>
             );
           })}

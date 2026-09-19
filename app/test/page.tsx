@@ -1,7 +1,7 @@
 // app/test/page.jsx
 import React from "react";
 import { getConfig } from "@/lib/runtime/config";
-import { ArrivalCard } from "@/components/ArrivalCard";
+
 export default async function TestPage() {
   // Replace this with your flag/variable later
 

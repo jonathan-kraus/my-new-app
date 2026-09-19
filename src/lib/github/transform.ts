@@ -1,4 +1,5 @@
-export function transformGitHubRun(payload: any) {
+import type { GitHubPayload } from "@/lib/github/payload";
+export function transformGitHubRun(payload: GitHubPayload) {
   const wr = payload.workflow_run;
   if (!wr) return null;
 

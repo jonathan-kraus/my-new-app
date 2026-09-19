@@ -3,9 +3,6 @@
  * @LastEditTime: 2026-09-18 16:57:09
  */
 // logj-usage.ts
-
-import { logj } from "@/lib/log/logj";
-
 // -----------------------------
 // Simple messages
 // -----------------------------

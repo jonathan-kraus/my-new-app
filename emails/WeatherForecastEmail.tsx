@@ -185,22 +185,22 @@ const styles = {
     width: "100%",
     borderCollapse: "collapse",
     fontSize: "14px",
-  } as any,
+  } as React.CSSProperties,
   th: {
     textAlign: "left",
     padding: "8px 4px",
     borderBottom: "1px solid #e5e7eb",
     color: "#374151",
-  } as any,
+  } as React.CSSProperties,
   td: {
     padding: "8px 4px",
     borderBottom: "1px solid #f3f4f6",
     color: "#4b5563",
-  } as any,
+  } as React.CSSProperties,
   footer: {
     fontSize: "12px",
     color: "#6b7280",
     textAlign: "center",
     marginTop: "20px",
-  } as any,
+  } as React.CSSProperties,
 };

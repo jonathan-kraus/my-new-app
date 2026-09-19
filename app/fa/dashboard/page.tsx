@@ -1,11 +1,12 @@
 "use client";
 // app\fa\dashboard\page.tsx
+import type { FlightDashboardData } from "@/lib/flight/types";
 import { useEffect, useState } from "react";
 import Skybox from "@/components/skybox";
 import { getConfig } from "@/lib/runtime/config";
 
 export default function FlightDashboard() {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<FlightDashboardData | null>(null);
   const [identInput, setIdentInput] = useState("");
 
   async function load() {
@@ -33,7 +34,7 @@ export default function FlightDashboard() {
       body: JSON.stringify({ ident: identInput }),
     });
 
-    window.location.href = "/fa/dashboard";
+    await load();
   }
 
   return (
@@ -70,7 +71,7 @@ export default function FlightDashboard() {
               </p>
               <p>
                 <strong className="text-white">Gate:</strong>{" "}
-                {data.gate_out || "—"} → {data.gate_in || "—"}
+                {data.gate_origin || "—"} → {data.gate_destination || "—"}
               </p>
             </div>
 

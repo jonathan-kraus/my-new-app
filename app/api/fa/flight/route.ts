@@ -1,9 +1,10 @@
+import type { Flight, FlightPosition } from "@/lib/flight/types";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { getConfig } from "@/lib/runtime/config";
 import { detectFlightPhase } from "@/lib/flight/phase";
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   const identRaw = await getConfig("flight-ID", "ident");
   const identStr = identRaw != null ? String(identRaw) : "";
   const identUpper = identStr.toUpperCase();
@@ -29,7 +30,7 @@ export async function GET(request: NextRequest) {
   const metaText = await metaRes.text();
   console.log("FA META RESPONSE:", metaText);
 
-  let metaData: any = null;
+  let metaData: { flights?: Flight[] } | null = null;
   try {
     metaData = JSON.parse(metaText);
   } catch {
@@ -44,7 +45,7 @@ export async function GET(request: NextRequest) {
   //
   // 2. Helper: detect active flights
   //
-  function isActive(f: any) {
+  function isActive(f: Flight) {
     const s = (f.status ?? "").toLowerCase();
 
     return (
@@ -60,7 +61,7 @@ export async function GET(request: NextRequest) {
   //
   // 3. Helper: detect today's flight in origin's local timezone
   //
-  function isTodayLocal(flight: any) {
+  function isTodayLocal(flight: Flight) {
     const tz = flight.origin?.timezone;
     if (!tz || !flight.scheduled_out) return false;
 
@@ -81,7 +82,7 @@ export async function GET(request: NextRequest) {
   //
   // 4. Fetch track for each flight (in parallel)
   //
-  async function getTrack(flightId: string) {
+  async function getTrack(flightId: string): Promise<FlightPosition[]> {
     const res = await fetch(
       `https://aeroapi.flightaware.com/aeroapi/flights/${flightId}/track`,
       { headers },
@@ -98,7 +99,7 @@ export async function GET(request: NextRequest) {
   }
 
   const tracks = await Promise.all(
-    flights.map((f: any) => getTrack(f.fa_flight_id)),
+    flights.map((f: Flight) => getTrack(f.fa_flight_id)),
   );
 
   //
@@ -116,7 +117,7 @@ export async function GET(request: NextRequest) {
   });
 
   const freshestFlight = flights[bestIndex];
-  const freshestTrack = tracks[bestIndex];
+  const freshestTrack = tracks[bestIndex] ?? [];
   const freshestLive = freshestTrack[freshestTrack.length - 1] ?? null;
 
   //
@@ -128,6 +129,7 @@ export async function GET(request: NextRequest) {
 
   // Final selection: telemetry freshness wins
   const flight = freshestFlight ?? active ?? todayFlight ?? nextScheduled;
+  if (!flight) return NextResponse.json({ error: "No flight found" });
   const live = freshestLive;
   const phase = detectFlightPhase(live);
 

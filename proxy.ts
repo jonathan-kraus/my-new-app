@@ -177,7 +177,7 @@ export async function proxy(req: NextRequest) {
   //
   // 8. Session enforcement (ONLY for non-auth routes)
   //
-  const session = await auth();
+  await auth();
 
   // if (!session) {
   //   return NextResponse.redirect("https://kraus.my.id/api/auth/signin");

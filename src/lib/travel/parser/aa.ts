@@ -47,13 +47,17 @@ function clean(text: string): string {
     .trim();
 }
 
-function debugTree(node: cheerio.Cheerio<any>, $: cheerio.CheerioAPI) {
+function debugTree(
+  node: ReturnType<cheerio.CheerioAPI>,
+  _$: cheerio.CheerioAPI,
+) {
   const chain: string[] = [];
-  let cur: cheerio.Cheerio<any> = node;
+  let cur: ReturnType<cheerio.CheerioAPI> = node;
 
   for (let depth = 0; depth < 12; depth++) {
     if (!cur.length) break;
-    const tag = cur[0].tagName;
+    const current = cur[0];
+    const tag = current && "tagName" in current ? current.tagName : "";
     const classes = (cur.attr("class") || "").trim();
     chain.push(`${tag}${classes ? "." + classes.replace(/\s+/g, ".") : ""}`);
     cur = cur.parent();

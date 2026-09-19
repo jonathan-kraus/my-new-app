@@ -1,8 +1,6 @@
 // lib/ephemeris/utils/combineDateTime.ts
 
 import { getConfig } from "@/lib/runtime/config";
-import { formatEastern } from "@/lib/utils/global";
-
 let dl: number | null = null;
 
 function loadDebugLevelSync() {
@@ -29,9 +27,7 @@ function loadDebugLevelSync() {
   return dl;
 }
 
-const domain = "ephemeris";
-const eventIndex = 22;
-const requestId = crypto.randomUUID();
+crypto.randomUUID();
 /**
  * Combines a JS Date (representing the *day*) with a time string
  * that already includes a timezone offset (e.g. "07:09:00-05:00").

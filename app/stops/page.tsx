@@ -19,7 +19,7 @@ export default function StopsPage() {
     <div>
       <h1>Choose a Stop</h1>
       <ul>
-        {stops.map((stop: any) => (
+        {stops.map((stop: { id: string; attributes: { name: string } }) => (
           <li key={stop.id}>
             <a href={`/arrivals/${stop.id}`}>{stop.attributes.name}</a>
           </li>

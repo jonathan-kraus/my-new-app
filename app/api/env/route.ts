@@ -13,7 +13,7 @@ export async function GET() {
 
         const pkg = await import("@prisma/orm-postgres/runtime");
         return typeof pkg.default === "function";
-      } catch (e) {
+      } catch {
         return false;
       }
     })(),

@@ -1,3 +1,4 @@
+import type { GitHubPayload } from "@/lib/github/payload";
 /*
  * @FilePath: \my-new-app\lib\github\normalize\issueComment.ts
  * @LastEditTime: 2026-04-02 23:11:55
@@ -5,7 +6,9 @@
 // lib/github/normalize/issueComment.ts
 import type { BaseNormalizedGitHubEvent } from "./types";
 
-export function normalizeIssueComment(payload: any): BaseNormalizedGitHubEvent {
+export function normalizeIssueComment(
+  payload: GitHubPayload,
+): BaseNormalizedGitHubEvent {
   const issue = payload.issue;
 
   return {

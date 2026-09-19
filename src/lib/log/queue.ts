@@ -2,7 +2,7 @@
 
 export type QueueEvent = {
   domain: string;
-  dataj: Record<string, any>;
+  dataj: Record<string, unknown>;
 };
 
 let queue: QueueEvent[] = [];

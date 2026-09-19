@@ -1,3 +1,4 @@
+import type { VercelDeployment } from "@/lib/vercel";
 import { NextResponse } from "next/server";
 
 export async function GET() {
@@ -23,7 +24,7 @@ export async function GET() {
 
   const { deployments } = await res.json();
 
-  const mapped = deployments.map((d: any) => ({
+  const mapped = deployments.map((d: VercelDeployment) => ({
     id: d.uid,
     url: d.url,
     state: d.state,

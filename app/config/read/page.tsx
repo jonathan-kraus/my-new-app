@@ -11,7 +11,7 @@ type ConfigRow = {
   Variable02?: string;
   Variable03?: string;
   _time?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 };
 
 type Stats = {

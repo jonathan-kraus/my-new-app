@@ -1,3 +1,4 @@
+import type { GitHubPayload } from "@/lib/github/payload";
 /*
  * @FilePath: \my-new-app\lib\github\normalize\workflowJob.ts
  * @LastEditTime: 2026-04-02 23:10:51
@@ -5,7 +6,9 @@
 // lib/github/normalize/workflowJob.ts
 import type { BaseNormalizedGitHubEvent } from "./types";
 
-export function normalizeWorkflowJob(payload: any): BaseNormalizedGitHubEvent {
+export function normalizeWorkflowJob(
+  payload: GitHubPayload,
+): BaseNormalizedGitHubEvent {
   const job = payload.workflow_job;
 
   return {

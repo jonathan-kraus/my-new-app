@@ -9,8 +9,8 @@ export interface CreateLogInput {
   level: string;
   message: string;
   domain: string;
-  payload: Record<string, any>;
-  meta?: Record<string, any> | null;
+  payload: Record<string, unknown>;
+  meta?: Record<string, unknown> | null;
 }
 
 export type Location = {

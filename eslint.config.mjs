@@ -7,6 +7,7 @@ import importPlugin from "eslint-plugin-import";
 export default [
   {
     ignores: [
+      "{.agents,.claude,.cursor,.devin}/skills/**",
       ".next/**",
       "out/**",
       "build/**",
@@ -16,6 +17,7 @@ export default [
       "next-env.d.ts",
       "src/lib/generated/**",
       "lib/generated/**",
+      "generated/**",
     ],
   },
 

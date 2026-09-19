@@ -26,7 +26,7 @@ export async function GET(req: Request) {
   });
 
   try {
-    const event = await getNextTravelEvent((built as any).requestId);
+    const event = await getNextTravelEvent(built.requestId);
 
     await logj({
       domain: "travel",
@@ -44,10 +44,10 @@ export async function GET(req: Request) {
 
     return NextResponse.json({
       ok: true,
-      requestId: (built as any).requestId,
+      requestId: built.requestId,
       event,
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     await logj({
       domain: "travel",
       level: "error",
@@ -58,13 +58,13 @@ export async function GET(req: Request) {
         page: "lib/travel/next/route.ts",
         somedate: new Date().toISOString(),
         somevalue: "somevalue",
-        error: err.message,
+        error: err instanceof Error ? err.message : String(err),
       },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
 
     return NextResponse.json(
-      { ok: false, error: err.message },
+      { ok: false, error: err instanceof Error ? err.message : String(err) },
       { status: 500 },
     );
   }

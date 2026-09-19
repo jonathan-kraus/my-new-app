@@ -11,7 +11,7 @@ export type RawSolarData = {
 };
 
 export async function fetchSolarData(
-  locationId: string = "KOP",
+  _locationId: string = "KOP",
 ): Promise<RawSolarData> {
   // Hardcode your location for now — you can expand this later
   const latitude = 40.0893;

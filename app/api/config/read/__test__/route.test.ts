@@ -24,7 +24,7 @@ describe("GET /api/config/read", () => {
         reason: "Flight",
         message: "flight",
         _time: "2026-03-16T00:00:00Z",
-      } as any,
+      },
     ]);
 
     // Second call → Weather rows
@@ -34,7 +34,7 @@ describe("GET /api/config/read", () => {
         reason: "Weather",
         message: "weather",
         _time: "2026-03-16T00:00:00Z",
-      } as any,
+      },
     ]);
 
     const res = await GET();

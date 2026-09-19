@@ -1,4 +1,5 @@
 "use client";
+import { useRouter } from "next/navigation";
 
 import { useState } from "react";
 
@@ -7,7 +8,8 @@ type Props = {
   userId: string;
 };
 
-export default function NewNoteClient({ authorized, userId }: Props) {
+export default function NewNoteClient({ authorized, userId: _userId }: Props) {
+  const router = useRouter();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [needsFollowUp, setNeedsFollowUp] = useState(false);
@@ -27,9 +29,6 @@ export default function NewNoteClient({ authorized, userId }: Props) {
     { value: "pink", label: "Pink", className: "bg-pink-500" },
     { value: "orange", label: "Orange", className: "bg-orange-500" },
   ];
-  const ctx = {
-    requestId: crypto.randomUUID(),
-  };
 
   async function handleSave() {
     setSaving(true);
@@ -63,10 +62,10 @@ export default function NewNoteClient({ authorized, userId }: Props) {
         setFollowUpDate("");
         setColor("");
         setTimeout(() => {
-          window.location.href = "/notes";
+          router.push("/notes");
         }, 1500);
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("NOTES API ERROR", err);
       setError("Unexpected error");
     } finally {
@@ -172,7 +171,7 @@ export default function NewNoteClient({ authorized, userId }: Props) {
       </button>
 
       <button
-        onClick={() => (window.location.href = "/notes")}
+        onClick={() => router.push("/notes")}
         className="mt-4 ml-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold px-5 py-2 rounded-lg transition-colors"
       >
         Cancel

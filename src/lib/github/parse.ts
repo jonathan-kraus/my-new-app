@@ -1,4 +1,5 @@
-export function getSha(payload: any): string | null {
+import type { GitHubPayload } from "@/lib/github/payload";
+export function getSha(payload: GitHubPayload): string | null {
   if (!payload) return null;
 
   // Push events

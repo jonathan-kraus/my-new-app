@@ -4,5 +4,5 @@
  */
 // lib/log/set-logfile.ts
 export function setLogFile(path: string) {
-  (globalThis as any).__logfile = path;
+  (globalThis as typeof globalThis & { __logfile?: string }).__logfile = path;
 }

@@ -22,7 +22,7 @@ const axiom = new Axiom({
  * - This is what your server logs already use
  * - This is what WebVitals (server-side) will use
  */
-export async function axiomIngest(events: any[]) {
+export async function axiomIngest(events: unknown[]) {
   try {
     await axiom.ingest(process.env.AXIOM_DATASET!, events);
   } catch (err) {

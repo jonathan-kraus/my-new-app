@@ -65,7 +65,7 @@ export async function GET(req: Request) {
   if (todaysFlights.length > 0) {
     const now = Date.now();
 
-    const current = todaysFlights.reduce((closest: Flight, flight: Flight) => {
+    todaysFlights.reduce((closest: Flight, flight: Flight) => {
       const schedTime = new Date(flight.scheduled_out!).getTime();
       const closestTime = new Date(closest.scheduled_out!).getTime();
 

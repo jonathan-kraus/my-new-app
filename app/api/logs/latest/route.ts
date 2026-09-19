@@ -43,14 +43,14 @@ export async function GET(req: NextRequest) {
         created_at: new Date(`${createdAt}Z`).toISOString(),
       })),
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     try {
       const result = await logFromClient(
         "logs",
         "Failed to fetch latest logs",
         "app/api/logs/latest/route.ts",
         45,
-        { error: err.message },
+        { error: err instanceof Error ? err.message : String(err) },
       );
       console.log("logFromClient result:", result);
     } catch (err) {

@@ -1,5 +1,3 @@
-import { randomUUID } from "crypto";
-
 const requestState = new Map<string, { start: number; eventIndex: number }>();
 
 export function startRequest(key: string) {

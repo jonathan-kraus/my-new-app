@@ -41,9 +41,9 @@ export async function buildSendWeatherEmail() {
     };
   }
 
-  const segments = snapshot.travelSegments
-    .sort((a: any, b: any) => a.departureTime - b.departureTime)
-    .sort((a: any, b: any) => a.departureTime.localeCompare(b.departureTime));
+  const segments = snapshot.travelSegments.sort((a, b) =>
+    a.departureTime.localeCompare(b.departureTime),
+  );
 
   if (segments.length === 0) {
     return {
@@ -54,7 +54,10 @@ export async function buildSendWeatherEmail() {
   }
 
   // 2. Fetch weather for each arrival city
-  const weatherByCity: Record<string, any> = {};
+  const weatherByCity: Record<
+    string,
+    Awaited<ReturnType<typeof fetchWeatherForCity>>
+  > = {};
 
   for (const seg of segments) {
     weatherByCity[seg.arrivalCity] = await fetchWeatherForCity(seg.arrivalCity);

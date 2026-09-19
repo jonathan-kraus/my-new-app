@@ -155,7 +155,7 @@ export async function sendWeatherEmail(message?: string, subject?: string) {
     });
 
     return { ok: true, sent: true };
-  } catch (err: any) {
+  } catch (err: unknown) {
     await logj({
       domain: "email",
       level: "error",
@@ -163,12 +163,16 @@ export async function sendWeatherEmail(message?: string, subject?: string) {
       file: "lib/server/email/sendWeatherEmail.ts",
       line: 159,
       payload: {
-        error: err?.message,
-        stack: err?.stack,
+        error: err instanceof Error ? err.message : String(err),
+        stack: err instanceof Error ? err.stack : undefined,
       },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
 
-    return { ok: false, reason: "error", detail: err.message };
+    return {
+      ok: false,
+      reason: "error",
+      detail: err instanceof Error ? err.message : String(err),
+    };
   }
 }

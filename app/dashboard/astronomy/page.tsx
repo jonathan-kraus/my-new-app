@@ -60,7 +60,7 @@ async function fetchWithRetry(req: NextRequest, station: string) {
 }
 
 export default async function DashboardAstronomyPage(req: NextRequest) {
-  const snapshot = await fetchWithRetry(req as any, "KOP");
+  const snapshot = await fetchWithRetry(req, "KOP");
   const solar = snapshot.snapshot?.solar ?? null;
   const lunar = snapshot.snapshot?.lunar ?? null;
 

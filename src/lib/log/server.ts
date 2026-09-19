@@ -1,3 +1,4 @@
+import type { JsonValue } from "@prisma/orm-postgres/target/codec-types";
 /*
  * @FilePath: \my-new-app\src\lib\log\server.ts
  * @LastEditTime: 2026-09-16 17:48:15
@@ -169,8 +170,8 @@ export async function serverLog(input: LogjInput) {
   try {
     await db8.orm.public.Log.create({
       ...record,
-      payload: record.payload as any,
-      meta: record.meta as any,
+      payload: record.payload as JsonValue,
+      meta: record.meta as JsonValue,
     });
   } catch (err) {
     console.error("NEON LOG ERROR:", err);

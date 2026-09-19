@@ -1,6 +1,7 @@
+import type { QueueEvent } from "./queue";
 import { axiomIngest } from "@/lib/axiom";
 
-export async function flush(batch: any[]) {
+export async function flush(batch: QueueEvent[]) {
   if (!batch.length) return;
 
   const events = batch.map((e) => e.dataj);

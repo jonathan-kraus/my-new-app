@@ -6,6 +6,8 @@
 
 import ForecastClient from "./ForecastClient";
 
-export default function ForecastWrapper(props: any) {
+export default function ForecastWrapper(
+  props: React.ComponentProps<typeof ForecastClient>,
+) {
   return <ForecastClient {...props} />;
 }

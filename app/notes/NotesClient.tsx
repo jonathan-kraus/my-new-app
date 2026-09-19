@@ -4,6 +4,7 @@
  */
 // app/notes/NotesClient.tsx
 "use client";
+import { useRouter } from "next/navigation";
 
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
@@ -21,6 +22,7 @@ type Note = {
 };
 
 export default function NotesClient() {
+  const router = useRouter();
   const [authorized, setAuthorized] = useState<boolean | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -30,7 +32,7 @@ export default function NotesClient() {
   const [editFollowUpDate, setEditFollowUpDate] = useState("");
   const [editColor, setEditColor] = useState("");
   const [notes, setNotes] = useState<Note[] | null>(null);
-  const [userId, setUserId] = useState<string | null>(null);
+  const [_userId, setUserId] = useState<string | null>(null);
   const [followupsDueCount, setFollowupsDueCount] = useState<number>(0);
   const [showFollowupsOnly, setShowFollowupsOnly] = useState(false);
 
@@ -140,7 +142,7 @@ export default function NotesClient() {
       } else {
         toast.error("Failed to delete note");
       }
-    } catch (error) {
+    } catch {
       toast.error("Error deleting note");
     }
   };
@@ -177,7 +179,7 @@ export default function NotesClient() {
       } else {
         toast.error("Failed to archive note");
       }
-    } catch (error) {
+    } catch {
       toast.error("Error archiving note");
     }
   };
@@ -216,7 +218,7 @@ export default function NotesClient() {
       } else {
         toast.error("Failed to update note");
       }
-    } catch (error) {
+    } catch {
       toast.error("Error updating note");
     }
   };

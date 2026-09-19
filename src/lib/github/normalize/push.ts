@@ -1,3 +1,4 @@
+import type { GitHubPayload } from "@/lib/github/payload";
 /*
  * @FilePath: \my-new-app\lib\github\normalize\push.ts
  * @LastEditTime: 2026-04-02 23:11:12
@@ -5,7 +6,9 @@
 // lib/github/normalize/push.ts
 import type { BaseNormalizedGitHubEvent } from "./types";
 
-export function normalizePush(payload: any): BaseNormalizedGitHubEvent {
+export function normalizePush(
+  payload: GitHubPayload,
+): BaseNormalizedGitHubEvent {
   return {
     type: "push",
     title: payload.head_commit?.message ?? null,

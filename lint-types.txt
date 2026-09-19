@@ -1,0 +1,62 @@
+app/api/cron/astronomy/route.ts(22,78): error TS2304: Cannot find name 'buildUniversalContext'.
+app/api/weather/forecast/__test__/route.test.ts(158,68): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Collection<Contract, "ForecastSnapshot", DefaultModelRow<Contract, "ForecastSnapshot", "public">, WithWhereState<WithNsId<DefaultCollectionTypeState, "public">>>'.
+  Type 'unknown' is not assignable to type 'CollectionImpl<Contract, "ForecastSnapshot", DefaultModelRow<Contract, "ForecastSnapshot", "public">, WithWhereState<WithNsId<DefaultCollectionTypeState, "public">>>'.
+app/api/weather/forecast/__test__/route.test.ts(232,7): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'DefaultModelRow<Contract, "ForecastSnapshot", "public">'.
+app/astronomy/AstronomyCard.tsx(38,7): error TS2365: Operator '<' cannot be applied to types 'Date' and 'number'.
+app/astronomy/AstronomyCard.tsx(41,14): error TS2365: Operator '>=' cannot be applied to types 'Date' and 'number'.
+app/astronomy/AstronomyCard.tsx(41,32): error TS2365: Operator '<=' cannot be applied to types 'Date' and 'number'.
+app/astronomy/AstronomyCard.tsx(43,44): error TS2339: Property 'getTime' does not exist on type 'number'.
+app/components/activity/RecentActivity.tsx(28,18): error TS2345: Argument of type '{ id: string; type: string; name: string; status: string | null; conclusion: string | null; createdAt: string; updatedAt: string; repo: string; }[]' is not assignable to parameter of type 'SetStateAction<GitHubActivityEvent[]>'.
+  Type '{ id: string; type: string; name: string; status: string | null; conclusion: string | null; createdAt: string; updatedAt: string; repo: string; }[]' is not assignable to type 'GitHubActivityEvent[]'.
+    Type '{ id: string; type: string; name: string; status: string | null; conclusion: string | null; createdAt: string; updatedAt: string; repo: string; }' is missing the following properties from type 'GitHubActivityEvent': event, actor, commitMessage, commitSha, and 2 more.
+app/components/db-dashboard.tsx(29,98): error TS2339: Property 'data' does not exist on type 'GrowthChartProps'.
+app/components/growth-chart.tsx(154,57): error TS2345: Argument of type 'string | number' is not assignable to parameter of type 'string | Date'.
+  Type 'number' is not assignable to type 'string | Date'.
+app/components/table-history-chart.tsx(127,59): error TS2345: Argument of type 'string | number' is not assignable to parameter of type 'string | Date'.
+  Type 'number' is not assignable to type 'string | Date'.
+app/components/table-history-chart.tsx(193,59): error TS2345: Argument of type 'string | number' is not assignable to parameter of type 'string | Date'.
+  Type 'number' is not assignable to type 'string | Date'.
+app/components/ui/chart.tsx(168,27): error TS2345: Argument of type 'ReactNode' is not assignable to parameter of type 'string | number'.
+  Type 'undefined' is not assignable to type 'string | number'.
+app/dashboard/components/EnvironmentStatus.tsx(201,76): error TS2339: Property 'name' does not exist on type '{ date?: string | undefined; }'.
+app/database-explorer/page.tsx(71,5): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(callbackfn: (previousValue: Record<string, any>, currentValue: Record<string, any>, currentIndex: number, array: Record<string, any>[]) => Record<string, any>, initialValue: Record<...>): Record<...>', gave the following error.
+    Argument of type '(sum: number, t: TableStat) => number' is not assignable to parameter of type '(previousValue: Record<string, any>, currentValue: Record<string, any>, currentIndex: number, array: Record<string, any>[]) => Record<string, any>'.
+      Types of parameters 'sum' and 'previousValue' are incompatible.
+        Type 'Record<string, any>' is not assignable to type 'number'.
+  Overload 2 of 3, '(callbackfn: (previousValue: number, currentValue: Record<string, any>, currentIndex: number, array: Record<string, any>[]) => number, initialValue: number): number', gave the following error.
+    Argument of type '(sum: number, t: TableStat) => number' is not assignable to parameter of type '(previousValue: number, currentValue: Record<string, any>, currentIndex: number, array: Record<string, any>[]) => number'.
+      Types of parameters 't' and 'currentValue' are incompatible.
+        Type 'Record<string, any>' is missing the following properties from type 'TableStat': table_name, total_bytes, table_bytes, index_bytes, and 2 more.
+app/database-explorer/page.tsx(71,51): error TS2551: Property 'total_size_bytes' does not exist on type 'TableStat'. Did you mean 'total_bytes'?
+app/database-explorer/page.tsx(326,52): error TS2345: Argument of type 'Record<string, any>' is not assignable to parameter of type 'number'.
+app/database-explorer/page.tsx(335,22): error TS2345: Argument of type '(table: TableStat) => JSX.Element' is not assignable to parameter of type '(value: Record<string, any>, index: number, array: Record<string, any>[]) => Element'.
+  Types of parameters 'table' and 'value' are incompatible.
+    Type 'Record<string, any>' is missing the following properties from type 'TableStat': table_name, total_bytes, table_bytes, index_bytes, and 2 more.
+app/database-explorer/page.tsx(341,55): error TS2339: Property 'column_count' does not exist on type 'TableStat'.
+app/database-explorer/page.tsx(345,50): error TS2339: Property 'total_size' does not exist on type 'TableStat'.
+app/database-explorer/page.tsx(359,33): error TS2345: Argument of type '(col: Column) => JSX.Element' is not assignable to parameter of type '(value: TableStat, index: number, array: TableStat[]) => Element'.
+  Types of parameters 'col' and 'value' are incompatible.
+    Type 'TableStat' is missing the following properties from type 'Column': column_name, data_type, is_nullable, column_default, ordinal_position
+src/lib/axiom/query.ts(46,24): error TS2345: Argument of type 'TabularQueryResult' is not assignable to parameter of type '{ tables?: { fields: { name: string; }[]; columns: unknown[][]; }[] | undefined; }'.
+  Types of property 'tables' are incompatible.
+    Type 'APLResultTable[]' is not assignable to type '{ fields: { name: string; }[]; columns: unknown[][]; }[]'.
+      Type 'APLResultTable' is not assignable to type '{ fields: { name: string; }[]; columns: unknown[][]; }'.
+        Types of property 'columns' are incompatible.
+          Type 'any[][] | undefined' is not assignable to type 'unknown[][]'.
+            Type 'undefined' is not assignable to type 'unknown[][]'.
+src/lib/ephemeris/__tests__/normalize.test.ts(58,47): error TS2345: Argument of type '{ id: string; date: Date; createdAt: Date; locationId: string; fetchedAt: Date; sunrise: string; sunset: string; solarNoon: string; sunriseBlueStart: string; sunriseBlueEnd: string; ... 10 more ...; phaseName: string; }' is not assignable to parameter of type '{ fetchedAt: Date; id: string; locationId: string; dateString: Varchar<10>; illumination: number | null; moonPhase: number | null; moonrise: string | null; moonset: string | null; ... 11 more ...; sunsetGoldenStart: string | null; } & { ...; }'.
+  Property 'dateString' is missing in type '{ id: string; date: Date; createdAt: Date; locationId: string; fetchedAt: Date; sunrise: string; sunset: string; solarNoon: string; sunriseBlueStart: string; sunriseBlueEnd: string; ... 10 more ...; phaseName: string; }' but required in type '{ fetchedAt: Date; id: string; locationId: string; dateString: Varchar<10>; illumination: number | null; moonPhase: number | null; moonrise: string | null; moonset: string | null; ... 11 more ...; sunsetGoldenStart: string | null; }'.
+src/lib/ephemeris/__tests__/normalize.test.ts(93,47): error TS2345: Argument of type '{ id: string; date: Date; createdAt: Date; locationId: string; fetchedAt: Date; sunrise: null; sunset: null; solarNoon: null; sunriseBlueStart: null; sunriseBlueEnd: null; sunsetBlueStart: null; ... 9 more ...; phaseName: null; }' is not assignable to parameter of type '{ fetchedAt: Date; id: string; locationId: string; dateString: Varchar<10>; illumination: number | null; moonPhase: number | null; moonrise: string | null; moonset: string | null; ... 11 more ...; sunsetGoldenStart: string | null; } & { ...; }'.
+  Property 'dateString' is missing in type '{ id: string; date: Date; createdAt: Date; locationId: string; fetchedAt: Date; sunrise: null; sunset: null; solarNoon: null; sunriseBlueStart: null; sunriseBlueEnd: null; sunsetBlueStart: null; ... 9 more ...; phaseName: null; }' but required in type '{ fetchedAt: Date; id: string; locationId: string; dateString: Varchar<10>; illumination: number | null; moonPhase: number | null; moonrise: string | null; moonset: string | null; ... 11 more ...; sunsetGoldenStart: string | null; }'.
+tests/logj.test.ts(73,17): error TS2339: Property 'domain' does not exist on type 'never'.
+tests/logj.test.ts(74,17): error TS2339: Property 'level' does not exist on type 'never'.
+tests/logj.test.ts(75,17): error TS2339: Property 'message' does not exist on type 'never'.
+tests/logj.test.ts(87,17): error TS2339: Property 'userId' does not exist on type 'never'.
+tests/logj.test.ts(88,17): error TS2339: Property 'sessionEmail' does not exist on type 'never'.
+tests/logj.test.ts(89,17): error TS2339: Property 'sessionUser' does not exist on type 'never'.
+tests/logj.test.ts(90,17): error TS2339: Property 'requestId' does not exist on type 'never'.
+tests/logj.test.ts(102,17): error TS2339: Property 'message' does not exist on type 'never'.
+tests/write-ephemeris-debug-event.test.ts(76,17): error TS2339: Property 'locationId' does not exist on type 'never'.
+tests/write-ephemeris-debug-event.test.ts(77,17): error TS2339: Property 'fetchedAt' does not exist on type 'never'.
+tests/write-ephemeris-debug-event.test.ts(78,17): error TS2339: Property 'raw' does not exist on type 'never'.

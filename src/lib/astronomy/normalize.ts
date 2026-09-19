@@ -1,3 +1,4 @@
+import type { AstronomySnapshot } from "@/lib/astronomy";
 export function parseLocalDate(dateStr: string): Date {
   // Accepts either "YYYY-MM-DD" or full ISO strings
   const iso = dateStr!.split("T")[0]; // "2026-01-18"
@@ -14,7 +15,9 @@ export interface RawAstronomyRow {
   moonPhase?: number | null;
 }
 
-export function normalizeAstronomySnapshot(row: any) {
+export function normalizeAstronomySnapshot(
+  row: (AstronomySnapshot & { date?: string; createdAt?: Date }) | null,
+) {
   if (!row) return null;
 
   return {

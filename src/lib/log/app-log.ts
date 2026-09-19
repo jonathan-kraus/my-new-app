@@ -1,10 +1,9 @@
 // lib/log/app-log.ts
-type LogLevel = "info" | "warn" | "error";
 
 interface GlobalContext {
   requestId?: string;
   sessionEmail?: string | null;
-  sessionUser?: any | null;
+  sessionUser?: unknown | null;
   userId?: string | null;
 }
 
@@ -18,7 +17,7 @@ export const logger = {
     };
   },
 
-  info(message: string, data: Record<string, any> = {}) {
+  info(message: string, data: Record<string, unknown> = {}) {
     console.log(
       JSON.stringify({
         id: crypto.randomUUID(),
@@ -31,7 +30,7 @@ export const logger = {
     );
   },
 
-  error(message: string, data: Record<string, any> = {}) {
+  error(message: string, data: Record<string, unknown> = {}) {
     console.error(
       JSON.stringify({
         id: crypto.randomUUID(),

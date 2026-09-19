@@ -7,7 +7,7 @@
  * - Just sends events to the server
  */
 
-export async function logToServer(event: any) {
+export async function logToServer(event: unknown) {
   try {
     await fetch("/api/axiom", {
       method: "POST",

@@ -4,6 +4,11 @@
  */
 import WeatherForecastEmail from "@/emails/WeatherForecastEmail";
 
-export function renderForecastEmail(data: any, forecastRows: any[]) {
+export function renderForecastEmail(
+  data: Omit<React.ComponentProps<typeof WeatherForecastEmail>, "forecastRows">,
+  forecastRows: React.ComponentProps<
+    typeof WeatherForecastEmail
+  >["forecastRows"],
+) {
   return <WeatherForecastEmail {...data} forecastRows={forecastRows} />;
 }

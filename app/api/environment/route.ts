@@ -24,7 +24,7 @@ export async function GET(req: Request) {
     //
     // 1. Get Postgres version directly from Neon (via Prisma)
     //
-    const postgresVersion = await getPostgresVersion(1 as any);
+    const postgresVersion = await getPostgresVersion(req);
 
     await logj({
       domain: "environment",

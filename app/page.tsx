@@ -18,7 +18,7 @@ import {
   LocationSchema,
   WeatherSchema,
 } from "@/lib/schemas/page-schemas";
-import { headers, cookies } from "next/headers";
+import { headers } from "next/headers";
 export const dynamic = "force-dynamic";
 function getGreeting(): string {
   const hour = new Date().getHours();

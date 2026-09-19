@@ -1,3 +1,5 @@
+import type { JsonValue } from "@prisma/orm-postgres/target/codec-types";
+import type { LogjPayload } from "@/lib/log/types";
 // lib/ephemeris/writeEphemerisDebugEvent.ts
 
 import { db8 } from "@/lib/db.prisma8";
@@ -11,7 +13,7 @@ export function toIsoString(value: string | null): string | null {
   return isNaN(d.getTime()) ? null : d.toISOString();
 }
 
-export function toJsonSafe(value: unknown): any {
+export function toJsonSafe(value: unknown): JsonValue {
   try {
     return JSON.parse(JSON.stringify(value));
   } catch {
@@ -25,7 +27,7 @@ export function toJsonSafe(value: unknown): any {
 async function logEphemerisEvent(
   level: "info" | "error",
   message: string,
-  payload: any,
+  payload: LogjPayload,
 ) {
   try {
     const { logj } = await import("@/lib/log/logj");

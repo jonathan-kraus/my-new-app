@@ -1,3 +1,4 @@
+import type { EphemerisSnapshot } from "@/lib/ephemeris/types";
 export const dynamic = "force-dynamic";
 
 import { getVercelDeployments } from "./vercel";
@@ -9,14 +10,14 @@ import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
 
 export interface VercelDeploymentsResponse {
-  deployments: any[];
-  pagination: any;
+  deployments: unknown[];
+  pagination: unknown;
 }
 
 export interface DashboardData {
   vercel: VercelDeploymentsResponse | null;
-  github: any[] | null;
-  astronomy: any | null;
+  github: unknown[] | null;
+  astronomy: EphemerisSnapshot | null;
   build: BuildMetadata;
   system: { generatedAt: string };
 }

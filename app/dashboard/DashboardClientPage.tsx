@@ -3,7 +3,7 @@
 import GitHubActivityFeed from "@/app/components/github/GitHubActivityFeed";
 import CurrentWeatherCard from "@/app/components/dashboard/current-weather-card";
 
-export async function DashboardClientPage({ data }: { data: any }) {
+export async function DashboardClientPage({ data: _data }: { data: unknown }) {
   // Default location for weather  (you can make this dynamic later)
   const defaultLocation = {
     id: "KOP",

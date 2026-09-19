@@ -1,4 +1,3 @@
-import { neon } from "@neondatabase/serverless";
 import { db8 } from "@/lib/db.prisma8";
 
 import contract from "../../../generated/prisma8/contract.json" with { type: "json" };

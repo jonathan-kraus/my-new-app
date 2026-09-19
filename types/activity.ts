@@ -22,5 +22,5 @@ export interface ActivityItemData {
   deploymentState?: string;
 
   // Raw payload if you want it
-  raw?: any;
+  raw?: unknown;
 }

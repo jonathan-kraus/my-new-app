@@ -14,7 +14,7 @@ export async function refreshLogRowEstimateForToday() {
     const rows = await sql`select count(*) from "Log"`;
     const count = Number(rows[0]!.count);
 
-    const result = await sql`
+    await sql`
       update "DbTableStats"
       set "rowEstimate" = ${count}
       where "snapshotDate" = current_date

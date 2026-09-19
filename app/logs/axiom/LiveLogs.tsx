@@ -7,8 +7,17 @@
 import { formatEastern } from "@/lib/utils/global";
 import { useEffect, useState } from "react";
 
+type LiveLog = {
+  level: string;
+  domain?: string;
+  _time?: string;
+  message?: string;
+  file?: string;
+  line?: number;
+};
+
 export default function LiveLogs() {
-  const [logs, setLogs] = useState<any[]>([]);
+  const [logs, setLogs] = useState<LiveLog[]>([]);
   const [loading, setLoading] = useState(true);
 
   async function fetchLogs() {
@@ -31,7 +40,7 @@ export default function LiveLogs() {
   if (loading) {
     return <div className="text-gray-400">Loading logs…</div>;
   }
-  const isInfo = (log: any) => log.level === "info";
+  const isInfo = (log: LiveLog) => log.level === "info";
   const jdate = formatEastern(new Date());
   console.log("jdate:", jdate);
   return (
@@ -51,7 +60,7 @@ export default function LiveLogs() {
           <div className="mt-1 text-white">Msg: {log.message}</div>
           <div className="mt-1 text-white">File: {log.file}</div>
           <div className="mt-1 text-white">Line: {log.line}</div>
-          {!isInfo && (
+          {!isInfo(log) && (
             <div className="mt-1 text-xs text-sky-200/80">
               Level: {log.level}
             </div>

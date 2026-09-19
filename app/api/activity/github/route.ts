@@ -74,7 +74,7 @@ export async function GET(req: NextRequest) {
     });
 
     // --- Deduplication -------------------------------------------------------
-    const bySha = new Map<string, any>();
+    const bySha = new Map<string, (typeof normalized)[number]>();
 
     for (const item of normalized) {
       const sha = item.commitSha ?? item.id;
@@ -84,8 +84,9 @@ export async function GET(req: NextRequest) {
         continue;
       }
 
-      const existing = bySha.get(sha);
-      const isSuccess = (x: any) => x.conclusion === "success";
+      const existing = bySha.get(sha)!;
+      const isSuccess = (x: (typeof normalized)[number]) =>
+        x.conclusion === "success";
 
       if (isSuccess(item) && !isSuccess(existing)) {
         bySha.set(sha, item);

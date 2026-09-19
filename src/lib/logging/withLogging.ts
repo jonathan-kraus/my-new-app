@@ -2,7 +2,7 @@
 
 export function withLogging(handler: (req: Request) => Promise<Response>) {
   return async function wrapped(req: Request) {
-    const start = performance.now();
+    performance.now();
 
     // await log.api("system", "Request started", {
     //   url: req.url,
@@ -18,7 +18,7 @@ export function withLogging(handler: (req: Request) => Promise<Response>) {
       // });
 
       return res;
-    } catch (err: any) {
+    } catch (err: unknown) {
       // await log.api("jonathan", "Request failed", {
       //   error: err.message,
       //   durationMs: Math.round(performance.now() - start),

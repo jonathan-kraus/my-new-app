@@ -1,3 +1,4 @@
+import type { GitHubPayload } from "@/lib/github/payload";
 /*
  * @FilePath: \my-new-app\lib\github\normalize\generic.ts
  * @LastEditTime: 2026-04-02 23:12:17
@@ -7,7 +8,7 @@ import type { BaseNormalizedGitHubEvent } from "./types";
 
 export function normalizeGeneric(
   event: string,
-  payload: any,
+  payload: GitHubPayload,
 ): BaseNormalizedGitHubEvent {
   return {
     type: event,

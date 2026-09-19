@@ -58,9 +58,13 @@ describe("GET /api/admin/runtime", () => {
         createdAt: new Date(),
         updatedAt: new Date(),
       },
-    ] as any;
+    ];
 
-    mockedDb8.orm.public.RuntimeConfig.all.mockResolvedValue(mocked);
+    mockedDb8.orm.public.RuntimeConfig.all.mockResolvedValue(
+      mocked as unknown as Awaited<
+        ReturnType<typeof db8.orm.public.RuntimeConfig.all>
+      >,
+    );
 
     const { GET } = await import("../route");
     const res = await GET();
@@ -71,7 +75,7 @@ describe("GET /api/admin/runtime", () => {
     expect(mockedDb8.orm.public.RuntimeConfig.orderBy).toHaveBeenCalled();
 
     expect(json.configs).toEqual(
-      mocked.map((c: any) => ({ key: c.key, value: c.value })),
+      mocked.map((c) => ({ key: c.key, value: c.value })),
     );
   });
 });

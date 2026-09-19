@@ -117,7 +117,7 @@ export async function buildAstronomySnapshot(
     try {
       const dt = DateTime.now().setZone(location.timezone);
       offset = dt.toFormat("ZZ"); // "-05:00" or "-04:00"
-    } catch (err) {
+    } catch {
       // await log.action(
       //   "ephemeris",
       //   "bas - Failed to convert IANA timezone to offset",

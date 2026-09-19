@@ -2,7 +2,6 @@ import { getFullPackageData } from "@/lib/version/get-full-package-data";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import yaml from "yaml";
-import pkg from "../../../package.json"; // keep this if you still need it for single-package lookup
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -13,10 +12,10 @@ export async function GET(request: Request) {
   // 1. No query → just base info
   if (!pkgName) {
     const {
-      dependencies,
-      devDependencies,
-      overrides,
-      workspacePackages,
+      dependencies: _dependencies,
+      devDependencies: _devDependencies,
+      overrides: _overrides,
+      workspacePackages: _workspacePackages,
       ...base
     } = full;
     return Response.json(base);

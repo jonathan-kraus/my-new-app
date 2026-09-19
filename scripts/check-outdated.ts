@@ -35,9 +35,6 @@ try {
 }
 
 const data = JSON.parse(raw || "{}") as Record<string, OutdatedEntry>;
-
-const ignore = new Set(["typescript"]);
-
 const exclusions = {
   packages: new Set(["typescript"]),
   currentVersions: new Set(["7.10.0-dev.58"]),

@@ -11,9 +11,9 @@ import { db8 } from "@/lib/db.prisma8";
 export const runtime = "nodejs";
 
 export async function GET(req: NextRequest) {
-  const h = await headers();
-  const session = await auth();
-  const c = await cookies();
+  await headers();
+  await auth();
+  await cookies();
   let jei = 0;
 
   const built = await buildUniversalContext(req, "PING");
@@ -262,7 +262,7 @@ export async function GET(req: NextRequest) {
       const geoRes = await fetch(geoUrl, {
         headers: { "User-Agent": "jonathan-ping-iss" },
       });
-      const geo = await geoRes.json();
+      await geoRes.json();
 
       await logj({
         domain: "jonathan",

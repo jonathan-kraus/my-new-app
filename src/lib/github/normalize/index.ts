@@ -1,3 +1,4 @@
+import type { GitHubPayload } from "@/lib/github/payload";
 /*
  * @FilePath: \my-new-app\lib\github\normalize\index.ts
  * @LastEditTime: 2026-08-01 13:44:50
@@ -15,7 +16,7 @@ import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
 export function normalizeGitHubEvent(
   event: string,
-  payload: any,
+  payload: GitHubPayload,
 ): NormalizedGitHubEvent {
   const repo = payload.repository?.full_name ?? "unknown";
 

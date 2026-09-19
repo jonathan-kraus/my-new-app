@@ -1,3 +1,4 @@
+import type { GitHubPayload } from "@/lib/github/payload";
 /*
  * @FilePath: \my-new-app\lib\github\normalize\pullRequest.ts
  * @LastEditTime: 2026-04-02 23:11:38
@@ -5,7 +6,9 @@
 // lib/github/normalize/pullRequest.ts
 import type { BaseNormalizedGitHubEvent } from "./types";
 
-export function normalizePullRequest(payload: any): BaseNormalizedGitHubEvent {
+export function normalizePullRequest(
+  payload: GitHubPayload,
+): BaseNormalizedGitHubEvent {
   const pr = payload.pull_request;
 
   return {

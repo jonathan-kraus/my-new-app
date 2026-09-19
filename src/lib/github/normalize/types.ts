@@ -1,3 +1,4 @@
+import type { GitHubPayload } from "@/lib/github/payload";
 export interface BaseNormalizedGitHubEvent {
   type: string;
   title: string | null;
@@ -9,7 +10,7 @@ export interface BaseNormalizedGitHubEvent {
   jobName?: string | null;
   prNumber?: number | null;
   commitMessage?: string | null;
-  raw: any;
+  raw: GitHubPayload;
 }
 
 export interface NormalizedGitHubEvent extends BaseNormalizedGitHubEvent {

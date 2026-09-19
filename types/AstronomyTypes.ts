@@ -27,8 +27,8 @@ export interface LunarTimes {
 }
 
 export interface AstronomyHookResult {
-  today: any | null;
-  tomorrow: any | null;
+  today: unknown | null;
+  tomorrow: unknown | null;
   solar: SolarTimes | null;
   lunar: LunarTimes | null;
 }

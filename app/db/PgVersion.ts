@@ -3,11 +3,11 @@
  * @LastEditTime: 2026-07-17 15:25:36
  */
 import { neon } from "@neondatabase/serverless";
-import type { NextRequest } from "next/server";
+
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
-export async function getPostgresVersion(req: NextRequest) {
+export async function getPostgresVersion(req: Request) {
   const sql = neon(process.env.DATABASE_URL!);
   const built = await buildUniversalContext(req, "PGVersion");
   let jei = 0;

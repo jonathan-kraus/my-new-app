@@ -9,8 +9,6 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { format } from "date-fns";
-import type { ReactNode } from "react";
-
 type Point = {
   date: string;
   value: number;
@@ -47,7 +45,7 @@ export function DbGrowthChart({ data }: { data: Point[] }) {
       <LineChart data={safeData}>
         <XAxis
           dataKey="dateObj"
-          tickFormatter={(value: any) => {
+          tickFormatter={(value: unknown) => {
             const d = toDateSafe(value);
             return d ? format(d, "MMM d") : "";
           }}
@@ -55,7 +53,7 @@ export function DbGrowthChart({ data }: { data: Point[] }) {
           fontSize={12}
         />
         <YAxis
-          tickFormatter={(value: any) => {
+          tickFormatter={(value: unknown) => {
             if (typeof value !== "number") return "";
             return value < 1024 * 1024
               ? `${Math.round(value / 1024)} KB`
@@ -66,11 +64,11 @@ export function DbGrowthChart({ data }: { data: Point[] }) {
         />
 
         <Tooltip
-          labelFormatter={(label: any) => {
+          labelFormatter={(label: unknown) => {
             const d = toDateSafe(label);
             return d ? format(d, "PPP") : "";
           }}
-          formatter={(value: any) => {
+          formatter={(value: unknown) => {
             if (typeof value !== "number") return "";
             return value < 1024 * 1024
               ? `${(value / 1024).toFixed(1)} KB`

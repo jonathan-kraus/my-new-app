@@ -89,8 +89,19 @@ export async function GET(req: Request) {
     });
 
     const weather = cached.payload as {
-      current: any;
-      forecast: any;
+      current: {
+        temperature: number;
+        windspeed: number;
+        humidity?: number | null;
+      };
+      forecast: {
+        time?: string[];
+        temperature_2m_max?: number[];
+        temperature_2m_min?: number[];
+        highs?: number[];
+        lows?: number[];
+        weathercode?: number[];
+      };
     };
 
     // Ensure current data has required fields
@@ -290,9 +301,6 @@ export async function GET(req: Request) {
   }
 
   const weather = parsed.data;
-  const rawAsAny = raw as any;
-  const rawWithCurrent = raw as any;
-
   // ----------------------------------------
   // GUARD AGAINST PARTIAL DAILY BLOCK
   // ----------------------------------------
@@ -344,7 +352,7 @@ export async function GET(req: Request) {
         temperature_2m_max: weather.daily.temperature_2m_max,
         temperature_2m_min: weather.daily.temperature_2m_min,
         weathercode: weather.daily.weathercode,
-      } as any,
+      },
     },
   });
 
