@@ -3,6 +3,7 @@
  * @LastEditTime: 2026-09-17 18:31:30
  */
 
+/* eslint-disable react-hooks/purity -- This dynamic server page measures request durations for telemetry. */
 import { auth } from "@/auth";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";

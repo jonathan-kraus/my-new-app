@@ -1,8 +1,10 @@
-import { db } from "@/lib/db";
-import type { TravelSegment, TravelSnapshot } from "@prisma/client";
+import { db8 } from "@/lib/db.prisma8";
 
 // Parse a combined date + time into a JS Date
-function parseSegmentDateTime(segment: TravelSegment): Date | null {
+function parseSegmentDateTime(segment: {
+  date: string;
+  departureTime: string;
+}): Date | null {
   try {
     const dt = new Date(`${segment.date} ${segment.departureTime}`);
     return isNaN(dt.getTime()) ? null : dt;
@@ -12,14 +14,20 @@ function parseSegmentDateTime(segment: TravelSegment): Date | null {
 }
 
 export async function getNextTravelEvent(requestId?: string) {
-  const snapshots = await db.travelSnapshot.findMany({
-    orderBy: { receivedAt: "desc" },
-    include: { segments: true },
-  });
+  const rows = await db8.orm.public.TravelSnapshot.orderBy((snapshot) =>
+    snapshot.receivedAt.desc(),
+  )
+    .include("travelSegments")
+    .all();
+  const snapshots = rows.map(({ travelSegments, receivedAt, ...snapshot }) => ({
+    ...snapshot,
+    receivedAt: new Date(`${receivedAt}Z`),
+    segments: travelSegments,
+  }));
 
   let nextEvent: {
-    snapshot: TravelSnapshot & { segments: TravelSegment[] };
-    segment: TravelSegment;
+    snapshot: (typeof snapshots)[number];
+    segment: (typeof snapshots)[number]["segments"][number];
     departureDateTime: Date;
   } | null = null;
 

@@ -29,17 +29,8 @@ export function NextEventCountdown({ snapshot }: Props) {
   const next = snapshot.segments[0];
   const [countdown, setCountdown] = useState<string>("");
 
-  // Early return BEFORE JSX and AFTER hooks
-  if (!next) {
-    return (
-      <div className="bg-gray-900 rounded-lg p-4 shadow">
-        <h2 className="text-lg font-semibold mb-3">Next Event</h2>
-        <div className="text-gray-300 text-sm">No upcoming events</div>
-      </div>
-    );
-  }
-
   useEffect(() => {
+    if (!next) return;
     const target = parse(
       `${next.date} ${next.departureTime}`,
       "EEEE, MMMM d, yyyy h:mm a",
@@ -65,6 +56,15 @@ export function NextEventCountdown({ snapshot }: Props) {
     const interval = setInterval(update, 10000);
     return () => clearInterval(interval);
   }, [next]);
+
+  if (!next) {
+    return (
+      <div className="bg-gray-900 rounded-lg p-4 shadow">
+        <h2 className="text-lg font-semibold mb-3">Next Event</h2>
+        <div className="text-gray-300 text-sm">No upcoming events</div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-gray-900 rounded-lg p-4 shadow">

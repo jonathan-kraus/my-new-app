@@ -36,6 +36,7 @@ export default async function DashboardPage(req: Request) {
   const pageStart = nowMs();
   const built = buildUniversalContext(req as any, "DASHBOARD");
   const session = await auth();
+  // eslint-disable-next-line react-hooks/purity -- Sample request logs in this dynamic server page.
   const verbose = Math.random() < 0.1; // sample ~10% of requests
 
   await logj({

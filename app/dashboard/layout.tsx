@@ -2,7 +2,7 @@
  * @FilePath: \my-new-app\app\dashboard\layout.tsx
  * @LastEditTime: 2026-09-03 13:30:46
  */
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 

@@ -1,4 +1,5 @@
 // eslint.config.mjs
+import { fixupConfigRules, fixupPluginRules } from "@eslint/compat";
 import tsParser from "@typescript-eslint/parser";
 import next from "eslint-config-next";
 import importPlugin from "eslint-plugin-import";
@@ -18,7 +19,17 @@ export default [
     ],
   },
 
-  ...next,
+  // Bridge legacy plugin context APIs removed in ESLint 10.
+  ...fixupConfigRules(next),
+
+  {
+    files: ["**/*.{js,jsx,mjs,cjs}"],
+    languageOptions: {
+      // Next's bundled Babel parser uses a scope manager incompatible with ESLint 10.
+      parser: tsParser,
+      parserOptions: { project: false },
+    },
+  },
 
   {
     files: ["**/*.{ts,tsx}"],
@@ -31,7 +42,7 @@ export default [
       },
     },
     plugins: {
-      import: importPlugin,
+      import: fixupPluginRules(importPlugin),
     },
     rules: {
       // Moderate strict TypeScript rules

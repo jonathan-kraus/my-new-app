@@ -1,4 +1,5 @@
 export function useForecastTimeline(forecast: any) {
+  if (!forecast) return null;
   const highs = forecast.temperature_2m_max;
   const lows = forecast.temperature_2m_min;
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { LocationSelector } from "@/components/LocationSelector";
 import { ForecastCard } from "./ForecastCard";
 import { CurrentWeather } from "./CurrentWeather";
@@ -8,6 +8,10 @@ import { useForecastTimeline } from "@/hooks/useForecastTimeline";
 import type { Location } from "@/lib/types";
 import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
+
+const subscribeToHydration = () => () => {};
+const clientSnapshot = () => true;
+const serverSnapshot = () => false;
 
 type ForecastResponse = {
   location: Location;
@@ -43,11 +47,20 @@ export default function ForecastClient({
 }) {
   const built = staticUniversalContext("ForecastClient");
   let jei = 0;
-  const [isReady, setIsReady] = useState(false);
-  const [selectedId, setSelectedId] = useState<string | null>(() => {
+  const isReady = useSyncExternalStore(
+    subscribeToHydration,
+    clientSnapshot,
+    serverSnapshot,
+  );
+  const [savedId, setSelectedId] = useState<string | null>(() => {
     if (typeof window === "undefined") return null;
     return localStorage.getItem("lastLocationId");
   });
+  const selectedId =
+    (locations.some((location) => location.id === savedId) ? savedId : null) ??
+    locations[1]?.id ??
+    locations[0]?.id ??
+    null;
   logj({
     domain: "forecast",
     level: "info",
@@ -73,15 +86,6 @@ export default function ForecastClient({
   });
   const [forecast, setForecast] = useState<ForecastResponse | null>(null);
   const latestForecastRequestRef = useRef(0);
-
-  useEffect(() => setIsReady(true), []);
-
-  // Default location
-  useEffect(() => {
-    if (!selectedId && locations.length > 0) {
-      setSelectedId(locations[1]?.id ?? null);
-    }
-  }, [locations, selectedId]);
 
   // Persist selection
   useEffect(() => {
@@ -122,7 +126,7 @@ export default function ForecastClient({
     return () => controller.abort();
   }, [selectedId]);
 
-  const timeline = forecast ? useForecastTimeline(forecast.forecast) : null;
+  const timeline = useForecastTimeline(forecast?.forecast);
 
   return (
     <div className="min-h-screen bg-linear-to-br from-sky-400 via-blue-500 to-indigo-600 px-4 py-10 text-white">

@@ -2,7 +2,7 @@
  * @FilePath: \my-new-app\lib\mbta\splitInboundOutbound.ts
  * @LastEditTime: 2026-08-25 14:11:55
  */
-import { MBTAPrediction } from "./types";
+import type { MBTAPrediction } from "./types";
 
 export function splitInboundOutbound(predictions: MBTAPrediction[]) {
   const filtered = predictions.filter(
