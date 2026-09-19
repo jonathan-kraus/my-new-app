@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\scripts\check-outdated.ts
- * @LastEditTime: 2026-08-04 21:53:55
+ * @LastEditTime: 2026-09-19 14:32:03
  */
 import { execSync } from "node:child_process";
 
@@ -38,8 +38,17 @@ const data = JSON.parse(raw || "{}") as Record<string, OutdatedEntry>;
 
 const ignore = new Set(["typescript"]);
 
+const exclusions = {
+  packages: new Set(["typescript"]),
+  currentVersions: new Set(["7.10.0-dev.58"]),
+};
 const filtered = Object.fromEntries(
-  Object.entries(data).filter(([name]) => !ignore.has(name)),
+  Object.entries(data).filter(([name, pkg]) => {
+    return (
+      !exclusions.packages.has(name) &&
+      !exclusions.currentVersions.has(pkg.current)
+    );
+  }),
 );
 
 if (Object.keys(filtered).length) {
