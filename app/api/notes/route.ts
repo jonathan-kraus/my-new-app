@@ -3,7 +3,7 @@
  * @LastEditTime: 2026-09-18 00:03:19
  */
 
-import { type NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { db8 } from "@/lib/db.prisma8";
 import { logj } from "@/lib/log/logj";

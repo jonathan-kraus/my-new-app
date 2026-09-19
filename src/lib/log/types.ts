@@ -1,7 +1,7 @@
 export type LogLevel = "info" | "warn" | "error";
 
 export interface LogPayload {
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface LogMeta {

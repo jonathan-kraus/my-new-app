@@ -2,15 +2,19 @@
  * @FilePath: \my-new-app\lib\server\travel\getNextTravelSnapshot.ts
  */
 
-import { db } from "@/lib/db";
+import { db8 } from "@/lib/db.prisma8";
 import { DateTime } from "luxon";
 import type { ParsedTravelSnapshot } from "@/lib/travel/parser/aa";
 
 export async function getNextTravelSnapshot(): Promise<ParsedTravelSnapshot | null> {
   // 1. Fetch snapshots with segments
-  const snapshots = await db.travelSnapshot.findMany({
-    include: { segments: true },
-  });
+  const rows =
+    await db8.orm.public.TravelSnapshot.include("travelSegments").all();
+  const snapshots = rows.map(({ travelSegments, receivedAt, ...snapshot }) => ({
+    ...snapshot,
+    receivedAt: new Date(`${receivedAt}Z`),
+    segments: travelSegments,
+  }));
 
   if (snapshots.length === 0) return null;
 

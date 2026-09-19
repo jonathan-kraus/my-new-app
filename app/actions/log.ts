@@ -8,7 +8,7 @@ export async function logFromClient(
   message: string,
   file: string,
   line: number,
-  payload: any,
+  payload: unknown,
 ) {
   const built = await staticUniversalContext(domain);
   let jei = 0;

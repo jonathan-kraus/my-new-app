@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
       ok: true,
       executedAt: new Date().toISOString(),
     });
-  } catch (error: any) {
+  } catch {
     await logj({
       domain: "jonathan",
       level: "error",

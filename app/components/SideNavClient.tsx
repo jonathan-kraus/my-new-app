@@ -5,7 +5,7 @@
  */
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NextEventCard } from "@/app/components/astronomy/NextEventCard";
 import { useSideNavActivationCounter } from "@/app/hooks/useSideNavActivationCounter";
 import { EmailSideNavLink } from "@/app/components/sidenav/EmailLink";
@@ -92,7 +92,7 @@ export default function SideNavClient({
     },
   ];
 
-  let jei = 0;
+  const eventIndex = useRef(0);
 
   useEffect(() => {
     if (!formattedVersion) return;
@@ -107,10 +107,10 @@ export default function SideNavClient({
         version: formattedVersion,
         activations,
       },
-      meta: { built: { ...built, eventIndex: ++jei } },
+      meta: { built: { ...built, eventIndex: ++eventIndex.current } },
     });
     console.log("SideNavClient loaded with version:", formattedVersion);
-  }, [formattedVersion, activations, navItems]);
+  }, [formattedVersion, activations, pathname]);
 
   return (
     <aside className="w-64 h-screen flex flex-col bg-slate-950 text-white shadow-xl">
