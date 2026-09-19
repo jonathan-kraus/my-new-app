@@ -4,3 +4,6 @@
  */
 export const timestampString = (value: string) =>
   value as `${string}` & { readonly __timestampStringPrecision: 3 };
+
+export const varchar10 = (value: string) =>
+  value as string & { readonly __varcharLength: 10 };

@@ -2,6 +2,7 @@ import { neon } from "@neondatabase/serverless";
 import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
 import { db8 } from "@/lib/db.prisma8";
+import { timestampString } from "@/lib/timestampString";
 import { createId } from "@paralleldrive/cuid2";
 
 const sql = neon(process.env.DATABASE_URL!);
@@ -24,7 +25,13 @@ export async function runDbTableStats(ctx: {
   userId?: string;
 }) {
   const start = Date.now();
+
+  // JavaScript Date for normal application/logging use
   const snapshotDate = atLocalMidnight(new Date());
+
+  // Prisma 8 DbTableStats.snapshotDate is TimestampString(3)
+  const snapshotDate8 = timestampString(snapshotDate.toISOString());
+
   const built = staticUniversalContext("runstats");
   let jei = 1;
 
@@ -34,7 +41,9 @@ export async function runDbTableStats(ctx: {
     message: "dbTables cron started",
     file: "lib/cron/runDbTableStats.ts",
     line: 34,
-    payload: { date: snapshotDate.toISOString() },
+    payload: {
+      date: snapshotDate.toISOString(),
+    },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
 
@@ -59,49 +68,52 @@ export async function runDbTableStats(ctx: {
   for (const row of stats) {
     const tableName = row.table_name;
 
-    // Log BEFORE count query
     await logj({
       domain: "jonathan",
       level: "info",
       message: `dbTables preparing to count rows for table ${tableName}`,
       file: "lib/cron/runDbTableStats.ts",
       line: 67,
-      payload: { name: tableName },
+      payload: {
+        name: tableName,
+      },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
 
     try {
       // COUNT rows
-
       const count =
         (
           await sql`
-    SELECT COUNT(*)::int AS count
-    FROM ${sql.unsafe(`public."${tableName.replace(/"/g, '""')}"`)}
-  `
+            SELECT COUNT(*)::int AS count
+            FROM ${sql.unsafe(
+              `public."${tableName.replace(/"/g, '""')}"`,
+            )}
+          `
         )[0]?.count ?? 0;
 
-      // Log AFTER count query
       await logj({
         domain: "jonathan",
         level: "info",
         message: `dbTables update started for table ${tableName} with ${count} rows`,
         file: "lib/cron/runDbTableStats.ts",
         line: 93,
-        payload: { name: tableName, count },
+        payload: {
+          name: tableName,
+          count,
+        },
         meta: { built: { ...built, eventIndex: ++jei } },
       });
 
-      // INSERT stats
-      const existing = await db8.orm.public.DbTableStats.where((stat) =>
-        stat.tableName.eq(row.table_name),
-      )
-        .where((stat) => stat.snapshotDate.eq(snapshotDate))
+      // Find today's existing snapshot for this table
+      const existing = await db8.orm.public.DbTableStats
+        .where((stat) => stat.tableName.eq(row.table_name))
+        .where((stat) => stat.snapshotDate.eq(snapshotDate8))
         .first();
 
       const values = {
         tableName: row.table_name,
-        snapshotDate,
+        snapshotDate: snapshotDate8,
         rowEstimate: count,
         totalBytes: BigInt(row.total_bytes),
         tableBytes: BigInt(row.table_bytes),
@@ -110,25 +122,28 @@ export async function runDbTableStats(ctx: {
       };
 
       if (existing) {
-        await db8.orm.public.DbTableStats.where({ id: existing.id }).update(
-          values,
-        );
+        await db8.orm.public.DbTableStats
+          .where({ id: existing.id })
+          .update(values);
       } else {
         await db8.orm.public.DbTableStats.create({
           id: createId(),
           ...values,
         });
       }
+
       tablesProcessed++;
     } catch (err: any) {
-      // Log per-table error
       await logj({
         domain: "jonathan",
         level: "error",
         message: `dbTables error for table ${tableName}`,
         file: "lib/cron/runDbTableStats.ts",
         line: 132,
-        payload: { error: String(err), name: tableName },
+        payload: {
+          error: String(err),
+          name: tableName,
+        },
         meta: { built: { ...built, eventIndex: ++jei } },
       });
 
@@ -137,7 +152,6 @@ export async function runDbTableStats(ctx: {
     }
   }
 
-  // Final completion log
   await logj({
     domain: "jonathan",
     level: "info",

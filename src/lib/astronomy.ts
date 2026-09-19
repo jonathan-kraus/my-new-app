@@ -2,6 +2,7 @@ import { fetchAstronomyMultiDay } from "./astronomy-provider";
 import { computeGoldenBlueHours } from "@/lib/computeGoldenBlueHours";
 import { db8 } from "./db.prisma8";
 import { createId } from "@paralleldrive/cuid2";
+import { varchar10 } from "@/lib/timestampString";
 import { buildAstronomySnapshot } from "./buildAstronomySnapshot";
 import { format, addDays } from "date-fns";
 
@@ -21,24 +22,34 @@ export async function refreshAstronomySnapshotsForLocation(
     const results = await Promise.all(
       computedDays.map(async (day) => {
         // Convert the date to YYYY-MM-DD
-        const dateString = format(day.date, "yyyy-MM-dd");
+        const dateString = varchar10(format(day.date, "yyyy-MM-dd"));
 
         // Build the snapshot using the actual Date object.
         const snapshot = await buildAstronomySnapshot(location, day.date);
 
-        return db8.orm.public.AstronomySnapshot.upsert({
-          conflictOn: {
-            locationId: location.id,
-            dateString,
-          },
-          update: snapshot,
-          create: {
-            id: createId(),
-            ...snapshot,
-            locationId: location.id,
-            dateString,
-          },
-        });
+const dateString8 = varchar10(dateString);
+
+const existing = await db8.orm.public.AstronomySnapshot
+  .where((snapshot) => snapshot.locationId.eq(location.id))
+  .where((snapshot) => snapshot.dateString.eq(dateString8))
+  .first();
+
+const snapshot8 = {
+  ...snapshot,
+  locationId: location.id,
+  dateString: dateString8,
+};
+
+if (existing) {
+  return db8.orm.public.AstronomySnapshot
+    .where({ id: existing.id })
+    .update(snapshot8);
+}
+
+return db8.orm.public.AstronomySnapshot.create({
+  id: createId(),
+  ...snapshot8,
+});
       }),
     );
 
