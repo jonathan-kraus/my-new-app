@@ -26,7 +26,10 @@ export type TableInfo = {
   columnCount: number;
 };
 
-type DbDashboardProps = { tables: TableInfo[]; history: any[] };
+type DbDashboardProps = {
+  tables: TableInfo[];
+  history: React.ComponentProps<typeof GrowthChart>["history"];
+};
 
 export function DbDashboard({ tables, history }: DbDashboardProps) {
   const totalTables = tables.length;

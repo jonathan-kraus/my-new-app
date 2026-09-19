@@ -124,7 +124,13 @@ export function TableHistoryChart({
                 content={
                   <ChartTooltipContent
                     formatter={(value) => formatNumber(Number(value))}
-                    labelFormatter={(label) => formatDate(label)}
+                    labelFormatter={(label) =>
+                      formatDate(
+                        typeof label === "number"
+                          ? new Date(label)
+                          : String(label ?? ""),
+                      )
+                    }
                   />
                 }
               />
@@ -190,7 +196,13 @@ export function TableHistoryChart({
                 content={
                   <ChartTooltipContent
                     formatter={(value) => formatBytes(Number(value))}
-                    labelFormatter={(label) => formatDate(label)}
+                    labelFormatter={(label) =>
+                      formatDate(
+                        typeof label === "number"
+                          ? new Date(label)
+                          : String(label ?? ""),
+                      )
+                    }
                   />
                 }
               />

@@ -151,7 +151,13 @@ export function GrowthChart({
               content={
                 <ChartTooltipContent
                   formatter={(value) => formatValue(Number(value))}
-                  labelFormatter={(label) => formatDate(label)}
+                  labelFormatter={(label) =>
+                    formatDate(
+                      typeof label === "number"
+                        ? new Date(label)
+                        : String(label ?? ""),
+                    )
+                  }
                 />
               }
             />

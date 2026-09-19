@@ -8,7 +8,7 @@ import { staticUniversalContext } from "@/lib/log/buildj";
 import { timestampString } from "@/lib/timestampString";
 import { addDays, format } from "date-fns";
 import { buildAstronomySnapshot } from "@/lib/buildAstronomySnapshot";
-import { getConfig, setConfig } from "@/lib/runtime/config";
+import { getConfig } from "@/lib/runtime/config";
 
 export const runtime = "nodejs";
 
@@ -19,7 +19,10 @@ const varchar10 = (value: string) =>
 function atLocalMidnight(d: Date) {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate());
 }
-async function cleanupOldLogs(days: number, built: any) {
+async function cleanupOldLogs(
+  days: number,
+  built: Awaited<ReturnType<typeof staticUniversalContext>>,
+) {
   const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
   let jei = 0;
   // Count before
@@ -54,45 +57,8 @@ async function cleanupOldLogs(days: number, built: any) {
 
   return deleteCount;
 }
-async function cleanupEphem(days: number, built: any) {
-  const cutoff = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
-  let jei = 1;
-  // Count before
 
-  const { total: beforeCount } = await db8.orm.public.EphemerisDebug.aggregate(
-    (agg) => ({
-      total: agg.count(),
-    }),
-  );
-
-  const deleteCount = await db8.orm.public.EphemerisDebug.where((log) =>
-    log.createdAt.lt(timestampString(cutoff.toISOString())),
-  ).deleteAndCount();
-
-  const { total: afterCount } = await db8.orm.public.EphemerisDebug.aggregate(
-    (agg) => ({
-      total: agg.count(),
-    }),
-  );
-  // Log the cleanup
-  await logj({
-    domain: "ephemeris",
-    level: "info",
-    message: `Ephemeris cleanup completed`,
-    file: "app/api/cron/astronomy/route.ts",
-    line: 78,
-    payload: {
-      beforeCount,
-      deleted: deleteCount,
-      afterCount,
-      cutoff: cutoff.toISOString(),
-    },
-    meta: { built: { ...built, eventIndex: ++jei } },
-  });
-
-  return deleteCount;
-}
-export async function GET(req: NextRequest) {
+export async function GET(_req: NextRequest) {
   const start = Date.now();
   const built = staticUniversalContext("ASTRONOMY");
   let jei = 1;

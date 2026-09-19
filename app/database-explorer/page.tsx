@@ -2,7 +2,21 @@
 import { neon } from "@neondatabase/serverless";
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
-import type { TableStat } from "@/db/table-stats";
+type Column = {
+  table_name: string;
+  column_name: string;
+  data_type: string;
+  is_nullable: string;
+  column_default: string | null;
+  ordinal_position: number;
+};
+type TableStat = {
+  table_name: string;
+  total_size_bytes: number | string;
+  estimated_rows: number | string;
+  column_count: number;
+  total_size: string;
+};
 
 const sql = neon(process.env.DATABASE_URL!);
 
@@ -50,7 +64,7 @@ async function getTableStats() {
     ORDER BY table_name, ordinal_position;
   `;
 
-  return { tables, columns };
+  return { tables: tables as TableStat[], columns: columns as Column[] };
 }
 
 export default async function DatabaseExplorerPage() {
@@ -59,15 +73,15 @@ export default async function DatabaseExplorerPage() {
 
   const { tables, columns } = await getTableStats();
 
-  const columnsByTable: Record<string, TableStat[]> = {};
+  const columnsByTable: Record<string, Column[]> = {};
 
-  for (const col of columns as TableStat[]) {
+  for (const col of columns) {
     const key = col.table_name;
-    (columnsByTable[key] ??= [] as TableStat[]).push(col);
+    (columnsByTable[key] ??= [] as Column[]).push(col);
   }
 
   const totalSize = tables.reduce(
-    (sum: number, t: any) => sum + Number(t.total_size_bytes),
+    (sum: number, t: TableStat) => sum + Number(t.total_size_bytes),
     0,
   );
   const formatBytes = (bytes: number) => {
@@ -331,7 +345,7 @@ export default async function DatabaseExplorerPage() {
         {tables.length === 0 ? (
           <div className="empty-state">No tables found in public schema.</div>
         ) : (
-          tables.map((table: any) => {
+          tables.map((table: TableStat) => {
             const cols = columnsByTable[table.table_name] || [];
             return (
               <details key={table.table_name} className="table-card">
@@ -355,7 +369,7 @@ export default async function DatabaseExplorerPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {cols.map((col: any) => (
+                      {cols.map((col: Column) => (
                         <tr key={col.column_name}>
                           <td style={{ color: "#334155" }}>
                             {col.ordinal_position}

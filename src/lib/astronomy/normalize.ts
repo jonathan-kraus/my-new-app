@@ -16,7 +16,14 @@ export interface RawAstronomyRow {
 }
 
 export function normalizeAstronomySnapshot(
-  row: (AstronomySnapshot & { date?: string; createdAt?: Date }) | null,
+  row:
+    | (Partial<Omit<AstronomySnapshot, "sunrise" | "sunset">> & {
+        date?: string | Date;
+        createdAt?: Date;
+        sunrise: string | null;
+        sunset: string | null;
+      })
+    | null,
 ) {
   if (!row) return null;
 

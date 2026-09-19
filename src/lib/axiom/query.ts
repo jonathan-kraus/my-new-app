@@ -16,7 +16,7 @@ const client = new Axiom({
 function tabularToRows(res: {
   tables?: Array<{
     fields: Array<{ name: string }>;
-    columns: unknown[][];
+    columns?: unknown[][];
   }>;
 }): Record<string, unknown>[] {
   const table = res.tables?.[0];
@@ -43,12 +43,5 @@ function tabularToRows(res: {
 
 export async function queryAxiom(apl: string) {
   const res = await client.query(apl);
-  return tabularToRows(
-    res as {
-      tables?: Array<{
-        fields: Array<{ name: string }>;
-        columns: unknown[][];
-      }>;
-    },
-  );
+  return tabularToRows(res);
 }

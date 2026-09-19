@@ -49,7 +49,7 @@ describe("writeEphemerisDebugEvent", () => {
   });
 
   it("toJsonSafe falls back to String(value) when JSON serialization fails", () => {
-    const circular: any = {};
+    const circular: Record<string, unknown> = {};
     circular.self = circular;
     const result = mod.toJsonSafe(circular);
     expect(result).toBe("[object Object]");
@@ -59,8 +59,10 @@ describe("writeEphemerisDebugEvent", () => {
   // Main function tests
   // -----------------------------
   it("writes a debug event with safe values", async () => {
-    const mockRow = { id: "ok" };
-    (db8.orm.public.EphemerisDebug.create as any).mockResolvedValue(mockRow);
+    const mockRow = { id: "ok" } as Awaited<
+      ReturnType<typeof db8.orm.public.EphemerisDebug.create>
+    >;
+    vi.mocked(db8.orm.public.EphemerisDebug.create).mockResolvedValue(mockRow);
 
     const result = await mod.writeEphemerisDebugEvent({
       id: "abc",
@@ -71,7 +73,8 @@ describe("writeEphemerisDebugEvent", () => {
 
     expect(result).toBe(mockRow);
 
-    const call = (db8.orm.public.EphemerisDebug.create as any).mock.calls[0][0];
+    const call = vi.mocked(db8.orm.public.EphemerisDebug.create).mock
+      .calls[0]![0] as { locationId: string; fetchedAt: string; raw: unknown };
 
     expect(call.locationId).toBe("123");
     expect(call.fetchedAt).toBe("2024-01-01T00:00:00.000Z");
@@ -79,7 +82,7 @@ describe("writeEphemerisDebugEvent", () => {
   });
 
   it("logs an error when db write fails", async () => {
-    (db8.orm.public.EphemerisDebug.create as any).mockRejectedValue(
+    vi.mocked(db8.orm.public.EphemerisDebug.create).mockRejectedValue(
       new Error("fail"),
     );
 

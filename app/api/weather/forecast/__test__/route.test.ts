@@ -137,7 +137,7 @@ const mockLocationLookup = (
 
   vi.mocked(db8.orm.public.Location.where).mockReturnValue({
     first,
-  } as any);
+  } as unknown as ReturnType<typeof db8.orm.public.Location.where>);
 
   return first;
 };
@@ -157,7 +157,7 @@ const mockForecastLookup = (
 
   vi.mocked(db8.orm.public.ForecastSnapshot.where).mockReturnValue({
     where: secondWhere,
-  } as any);
+  } as unknown as ReturnType<typeof db8.orm.public.ForecastSnapshot.where>);
 
   return {
     first,
@@ -229,7 +229,9 @@ describe("GET /api/weather/forecast", () => {
     } as Response);
 
     vi.mocked(db8.orm.public.ForecastSnapshot.create).mockResolvedValue(
-      makeSnapshot({ id: "snap-1" }) as any,
+      makeSnapshot({ id: "snap-1" }) as unknown as Awaited<
+        ReturnType<typeof db8.orm.public.ForecastSnapshot.create>
+      >,
     );
 
     const res = await GET(

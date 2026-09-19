@@ -1,9 +1,10 @@
 "use client";
 
+import type { EphemerisSnapshot } from "@/lib/ephemeris/types";
 import { useNow } from "@/hooks/useNow";
 import { Countdown } from "@/app/components/Countdown";
 type AstronomyCardProps = {
-  data: any | null;
+  data: EphemerisSnapshot | null;
 };
 
 export function AstronomyCard({ data }: AstronomyCardProps) {
@@ -21,23 +22,6 @@ export function AstronomyCard({ data }: AstronomyCardProps) {
 
   const safeTime = (ts: string | null | undefined) =>
     ts ? new Date(ts).toLocaleTimeString() : "—";
-
-  const countdownTo = (ts: string | Date | null | undefined) => {
-    if (!ts) return "—";
-
-    const target = ts instanceof Date ? ts : new Date(ts);
-    if (isNaN(target.getTime())) return "—";
-
-    const diff = target.getTime() - now.getTime();
-    if (diff <= 0) return "—";
-
-    const totalMinutes = Math.floor(diff / 1000 / 60);
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = totalMinutes % 60;
-
-    return `${hours}h ${minutes}m`;
-  };
-
   const moonPhaseIcon = (illum: number | null) => {
     if (illum === null) return "○";
     if (illum < 0.1) return "🌑";
@@ -49,8 +33,8 @@ export function AstronomyCard({ data }: AstronomyCardProps) {
     return "🌕";
   };
   let sinceSunrise: string | null = null;
-  const sunrise = solar.sunrise.timestamp;
-  const sunset = solar.sunset.timestamp;
+  const sunrise = new Date(solar.sunrise.timestamp);
+  const sunset = new Date(solar.sunset.timestamp);
   if (now < sunrise) {
     // Before sunrise
     sinceSunrise = null; // or "Until Sunrise: ..."

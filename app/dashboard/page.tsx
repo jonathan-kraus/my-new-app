@@ -67,7 +67,7 @@ export default async function DashboardPage(req: Request) {
     createdAt: new Date(location.createdAt),
     updatedAt: new Date(location.updatedAt),
   };
-  let weather: unknown = null;
+
   try {
     const weatherRes = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}/api/weather?locationId=${location.id}`,
@@ -90,10 +90,8 @@ export default async function DashboardPage(req: Request) {
       meta: { built: { ...built, eventIndex: ++jei } },
     });
     WeatherSchema.parse(raw);
-    weather = raw;
   } catch (err) {
     console.error("Weather API failed:", err);
-    weather = null;
   }
 
   const dataElapsed = hrElapsed(dataStart);

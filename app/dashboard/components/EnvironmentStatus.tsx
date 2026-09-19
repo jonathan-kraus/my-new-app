@@ -4,8 +4,12 @@ import { useEffect, useState } from "react";
 
 type EnvResponse = {
   vercel: {
-    project: any;
-    latestDeployment: any;
+    project: { name?: string; TeamId?: string } | null;
+    latestDeployment: {
+      url?: string;
+      state?: string;
+      meta?: { githubCommitMessage?: string };
+    } | null;
   };
   neon: {
     id: string;
@@ -46,8 +50,16 @@ type EnvResponse = {
     postgresVersion: string; // from Prisma
   };
   github: {
-    latestCommit: any;
-    latestWorkflow: any;
+    latestCommit: {
+      sha?: string;
+      url?: string;
+      commit?: { message?: string; author?: { name?: string; date?: string } };
+    } | null;
+    latestWorkflow: {
+      name?: string;
+      jobName?: string;
+      conclusion?: string;
+    } | null;
   };
   timestamp: string;
 };

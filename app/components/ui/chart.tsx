@@ -119,14 +119,17 @@ type FixedTooltipProps = {
   indicator?: "line" | "dot" | "dashed";
   hideLabel?: boolean;
   hideIndicator?: boolean;
-  labelFormatter?: (label: any, payload: RechartsPayload[]) => React.ReactNode;
+  labelFormatter?: (
+    label: React.ReactNode,
+    payload: RechartsPayload[],
+  ) => React.ReactNode;
   labelClassName?: string;
   formatter?: (
     value: number,
     name: string,
     item: RechartsPayload,
     index: number,
-    raw: any,
+    raw: unknown,
   ) => React.ReactNode;
   color?: string;
   nameKey?: string;
@@ -343,24 +346,20 @@ function getPayloadConfigFromPayload(
 ) {
   if (typeof payload !== "object" || payload === null) return undefined;
 
+  const record = payload as Record<string, unknown>;
+  const nested = record.payload;
   const payloadPayload =
-    "payload" in payload &&
-    typeof (payload as any).payload === "object" &&
-    (payload as any).payload !== null
-      ? (payload as any).payload
+    typeof nested === "object" && nested !== null
+      ? (nested as Record<string, unknown>)
       : undefined;
-
-  let configLabelKey: string = key;
-
-  if (key in (payload as any) && typeof (payload as any)[key] === "string") {
-    configLabelKey = (payload as any)[key] as string;
-  } else if (
-    payloadPayload &&
-    key in payloadPayload &&
-    typeof payloadPayload[key] === "string"
-  ) {
-    configLabelKey = payloadPayload[key] as string;
-  }
+  const directValue = record[key];
+  const nestedValue = payloadPayload?.[key];
+  const configLabelKey =
+    typeof directValue === "string"
+      ? directValue
+      : typeof nestedValue === "string"
+        ? nestedValue
+        : key;
 
   return configLabelKey in config
     ? config[configLabelKey]
