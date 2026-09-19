@@ -51,9 +51,23 @@ export default function ForecastClient({
   logj({
     domain: "forecast",
     level: "info",
-    message: "Forecast client loaded",
+    message: "Locations received by ForecastClient",
     file: "app/forecast/ForecastClient.tsx",
     line: 51,
+    payload: {
+      count: locations.length,
+      ids: locations.map((l) => l.id),
+      names: locations.map((l) => l.name),
+    },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
+
+  logj({
+    domain: "forecast",
+    level: "info",
+    message: "Forecast client loaded",
+    file: "app/forecast/ForecastClient.tsx",
+    line: 65,
     payload: { selectedId },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -101,7 +115,7 @@ export default function ForecastClient({
       level: "info",
       message: "Forecast client completed",
       file: "app/forecast/ForecastClient.tsx",
-      line: 99,
+      line: 113,
       payload: { selectedId },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
