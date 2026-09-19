@@ -294,6 +294,6 @@ export async function getTableHistoryWithPrisma(tableName: string) {
     tableName: h.tableName,
     rowEstimate: h.rowEstimate,
     totalBytes: Number(h.totalBytes),
-    snapshotDate: h.snapshotDate,
+    snapshotDate: new Date(`${h.snapshotDate}Z`).toISOString(),
   }));
 }

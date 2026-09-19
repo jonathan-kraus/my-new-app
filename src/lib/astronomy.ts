@@ -2,7 +2,6 @@ import { fetchAstronomyMultiDay } from "./astronomy-provider";
 import { computeGoldenBlueHours } from "@/lib/computeGoldenBlueHours";
 import { db8 } from "./db.prisma8";
 import { createId } from "@paralleldrive/cuid2";
-import { varchar10 } from "@/lib/timestampString";
 import { buildAstronomySnapshot } from "./buildAstronomySnapshot";
 import { format, addDays } from "date-fns";
 
@@ -22,35 +21,46 @@ export async function refreshAstronomySnapshotsForLocation(
     const results = await Promise.all(
       computedDays.map(async (day) => {
         // Convert the date to YYYY-MM-DD
-        const dateString = varchar10(format(day.date, "yyyy-MM-dd"));
+        const dateString = format(day.date, "yyyy-MM-dd");
 
         // Build the snapshot using the actual Date object.
         const snapshot = await buildAstronomySnapshot(location, day.date);
 
-        const dateString8 = varchar10(dateString);
-
-        const existing = await db8.orm.public.AstronomySnapshot.where(
-          (snapshot) => snapshot.locationId.eq(location.id),
-        )
-          .where((snapshot) => snapshot.dateString.eq(dateString8))
-          .first();
-
-        const snapshot8 = {
-          ...snapshot,
-          locationId: location.id,
-          dateString: dateString8,
-        };
-
-        if (existing) {
-          return db8.orm.public.AstronomySnapshot.where({
-            id: existing.id,
-          }).update(snapshot8);
-        }
-
-        return db8.orm.public.AstronomySnapshot.create({
-          id: createId(),
-          ...snapshot8,
-        });
+        // Atomic upsert on the existing composite unique index.
+        const plan = db8.raw.sql`
+          INSERT INTO "AstronomySnapshot" ("id", "locationId", "dateString", "fetchedAt", "sunrise", "sunset", "solarNoon", "sunriseBlueStart", "sunriseBlueEnd", "sunsetBlueStart", "sunsetBlueEnd", "sunriseGoldenStart", "sunriseGoldenEnd", "sunsetGoldenStart", "sunsetGoldenEnd", "moonrise", "moonset", "illumination", "phaseName", "moonPhase")
+          SELECT "id", "locationId", "dateString", "fetchedAt", "sunrise", "sunset", "solarNoon", "sunriseBlueStart", "sunriseBlueEnd", "sunsetBlueStart", "sunsetBlueEnd", "sunriseGoldenStart", "sunriseGoldenEnd", "sunsetGoldenStart", "sunsetGoldenEnd", "moonrise", "moonset", "illumination", "phaseName", "moonPhase"
+          FROM jsonb_populate_record(NULL::"AstronomySnapshot", ${JSON.stringify(
+            {
+              ...snapshot,
+              id: createId(),
+              locationId: location.id,
+              dateString,
+              fetchedAt: snapshot.fetchedAt.toISOString().slice(0, -1),
+            },
+          )}::jsonb)
+          ON CONFLICT ("locationId", "dateString") DO UPDATE SET
+          "fetchedAt" = EXCLUDED."fetchedAt",
+          "sunrise" = EXCLUDED."sunrise",
+          "sunset" = EXCLUDED."sunset",
+          "solarNoon" = EXCLUDED."solarNoon",
+          "sunriseBlueStart" = EXCLUDED."sunriseBlueStart",
+          "sunriseBlueEnd" = EXCLUDED."sunriseBlueEnd",
+          "sunsetBlueStart" = EXCLUDED."sunsetBlueStart",
+          "sunsetBlueEnd" = EXCLUDED."sunsetBlueEnd",
+          "sunriseGoldenStart" = EXCLUDED."sunriseGoldenStart",
+          "sunriseGoldenEnd" = EXCLUDED."sunriseGoldenEnd",
+          "sunsetGoldenStart" = EXCLUDED."sunsetGoldenStart",
+          "sunsetGoldenEnd" = EXCLUDED."sunsetGoldenEnd",
+          "moonrise" = EXCLUDED."moonrise",
+          "moonset" = EXCLUDED."moonset",
+          "illumination" = EXCLUDED."illumination",
+          "phaseName" = EXCLUDED."phaseName",
+          "moonPhase" = EXCLUDED."moonPhase"
+        `
+          .affectedCount()
+          .build();
+        return db8.runtime().execute(plan);
       }),
     );
 

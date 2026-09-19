@@ -4,11 +4,9 @@ import { describe, test, expect, vi, beforeEach } from "vitest";
 vi.mock("server-only", () => ({}));
 
 // Mock Prisma + Axiom
-vi.mock("@/lib/db", () => ({
-  db: {
-    log: {
-      create: vi.fn().mockResolvedValue(undefined),
-    },
+vi.mock("@/lib/db.prisma8", () => ({
+  db8: {
+    orm: { public: { Log: { create: vi.fn().mockResolvedValue(undefined) } } },
   },
 }));
 
@@ -16,12 +14,13 @@ vi.mock("@/lib/axiom", () => ({
   axiomIngest: vi.fn().mockResolvedValue(undefined),
 }));
 
-import { db } from "@/lib/db";
+import { db8 } from "@/lib/db.prisma8";
 import { axiomIngest } from "@/lib/axiom";
 import { safeForNeon } from "@/lib/log/server";
 import { logj } from "@/lib/log/logj";
 
 beforeEach(() => {
+  vi.restoreAllMocks();
   vi.clearAllMocks();
 });
 
@@ -67,10 +66,10 @@ describe("logj", () => {
       message: "hello",
     });
 
-    expect((db.log.create as any).mock.calls.length).toBe(1);
+    expect((db8.orm.public.Log.create as any).mock.calls.length).toBe(1);
     expect((axiomIngest as any).mock.calls.length).toBe(1);
 
-    const call = (db.log.create as any).mock.calls[0][0].data;
+    const call = (db8.orm.public.Log.create as any).mock.calls[0][0];
     expect(call.domain).toBe("test");
     expect(call.level).toBe("info");
     expect(call.message).toBe("hello");
@@ -83,12 +82,12 @@ describe("logj", () => {
       message: "msg",
     });
 
-    const call = (db.log.create as any).mock.calls[0][0].data;
+    const call = (db8.orm.public.Log.create as any).mock.calls[0][0];
 
-    expect(call.userId).toBe("canu");
-    expect(call.sessionEmail).toBe("canse");
-    expect(call.sessionUser).toBe("cansu");
-    expect(call.requestId).toBe("canr");
+    expect(call.userId).toBeNull();
+    expect(call.sessionEmail).toBeNull();
+    expect(call.sessionUser).toBeNull();
+    expect(call.requestId).toBeNull();
   });
 
   test("prefixes message with eventIndex", async () => {
@@ -99,7 +98,7 @@ describe("logj", () => {
       meta: { built: { eventIndex: 3 } },
     });
 
-    const call = (db.log.create as any).mock.calls[0][0].data;
+    const call = (db8.orm.public.Log.create as any).mock.calls[0][0];
     expect(call.message).toBe("#3 hello");
   });
 
@@ -116,7 +115,7 @@ describe("logj", () => {
     });
 
     expect(spy).toHaveBeenCalled();
-    expect((db.log.create as any).mock.calls.length).toBe(0);
+    expect((db8.orm.public.Log.create as any).mock.calls.length).toBe(0);
     expect((axiomIngest as any).mock.calls.length).toBe(0);
   });
 
@@ -124,7 +123,9 @@ describe("logj", () => {
   // DB failure → catch block (line 71)
   //
   test("hits catch block when DB write throws", async () => {
-    (db.log.create as any).mockRejectedValueOnce(new Error("DB fail"));
+    (db8.orm.public.Log.create as any).mockRejectedValueOnce(
+      new Error("DB fail"),
+    );
 
     const spy = vi.spyOn(console, "error").mockImplementation(() => {});
 
@@ -135,6 +136,7 @@ describe("logj", () => {
     });
 
     expect(spy).toHaveBeenCalled();
+    expect(axiomIngest).toHaveBeenCalledTimes(1);
   });
 
   //

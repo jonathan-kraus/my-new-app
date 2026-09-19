@@ -1,3 +1,7 @@
+vi.mock("@/lib/log/logj", () => ({ logj: vi.fn() }));
+vi.mock("@/lib/log/buildj", () => ({
+  staticUniversalContext: vi.fn().mockReturnValue({}),
+}));
 // lib/ephemeris/__tests__/writeEphemerisDebugEvent.test.ts
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
@@ -6,18 +10,17 @@ vi.mock("@/lib/runtime/config", () => ({
   getConfig: vi.fn().mockReturnValue("0"), // debug off
 }));
 
-vi.mock("@/lib/db", () => ({
-  db: {
-    runtimeConfig: {
-      findUnique: vi.fn().mockResolvedValue(null),
-    },
-    ephemerisDebug: {
-      create: vi.fn(),
+vi.mock("@/lib/db.prisma8", () => ({
+  db8: {
+    orm: {
+      public: {
+        EphemerisDebug: { create: vi.fn().mockResolvedValue(undefined) },
+      },
     },
   },
 }));
 
-import { db } from "@/lib/db";
+import { db8 } from "@/lib/db.prisma8";
 import * as mod from "@/lib/ephemeris/writeEphemerisDebugEvent";
 
 describe("writeEphemerisDebugEvent", () => {
@@ -57,7 +60,7 @@ describe("writeEphemerisDebugEvent", () => {
   // -----------------------------
   it("writes a debug event with safe values", async () => {
     const mockRow = { id: "ok" };
-    (db.ephemerisDebug.create as any).mockResolvedValue(mockRow);
+    (db8.orm.public.EphemerisDebug.create as any).mockResolvedValue(mockRow);
 
     const result = await mod.writeEphemerisDebugEvent({
       id: "abc",
@@ -68,7 +71,7 @@ describe("writeEphemerisDebugEvent", () => {
 
     expect(result).toBe(mockRow);
 
-    const call = (db.ephemerisDebug.create as any).mock.calls[0][0].data;
+    const call = (db8.orm.public.EphemerisDebug.create as any).mock.calls[0][0];
 
     expect(call.locationId).toBe("123");
     expect(call.fetchedAt).toBe("2024-01-01T00:00:00.000Z");
@@ -76,7 +79,9 @@ describe("writeEphemerisDebugEvent", () => {
   });
 
   it("logs an error when db write fails", async () => {
-    (db.ephemerisDebug.create as any).mockRejectedValue(new Error("fail"));
+    (db8.orm.public.EphemerisDebug.create as any).mockRejectedValue(
+      new Error("fail"),
+    );
 
     await expect(
       mod.writeEphemerisDebugEvent({

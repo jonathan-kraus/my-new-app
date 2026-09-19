@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\db-tables\send-db-email\route.ts
- * @LastEditTime: 2026-09-10 21:46:40
+ * @LastEditTime: 2026-09-19 14:19:38
  */
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
@@ -71,7 +71,7 @@ export async function POST(req: Request) {
     db5: top[4]?.name ?? "N/A",
     ct5: top[4]?.count ?? 0,
   };
-  const tojk = "jonathankraus2026@outlook.com";
+
   await resend.emails.send({
     from: "my-new-app <dbemail@kraus.my.id>",
     to: to,
