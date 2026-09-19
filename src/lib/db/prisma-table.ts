@@ -1,9 +1,7 @@
 import { neon } from "@neondatabase/serverless";
 import { db8 } from "@/lib/db.prisma8";
 
-import contract from "../../../generated/prisma8/contract.json" with {
-  type: "json",
-};
+import contract from "../../../generated/prisma8/contract.json" with { type: "json" };
 
 import { excludeTables } from "./utils";
 import { timestampString } from "@/lib/timestampString";
@@ -13,8 +11,7 @@ import { timestampString } from "@/lib/timestampString";
 const tables = {
   AstronomySnapshot: {
     rows: (offset: number, limit: number) =>
-      db8.orm.public.AstronomySnapshot
-        .orderBy((row) => row.id.desc())
+      db8.orm.public.AstronomySnapshot.orderBy((row) => row.id.desc())
         .offset(offset)
         .limit(limit)
         .all(),
@@ -27,8 +24,7 @@ const tables = {
 
   DbTableStats: {
     rows: (offset: number, limit: number) =>
-      db8.orm.public.DbTableStats
-        .orderBy((row) => row.id.desc())
+      db8.orm.public.DbTableStats.orderBy((row) => row.id.desc())
         .offset(offset)
         .limit(limit)
         .all(),
@@ -41,8 +37,7 @@ const tables = {
 
   EphemerisDebug: {
     rows: (offset: number, limit: number) =>
-      db8.orm.public.EphemerisDebug
-        .orderBy((row) => row.id.desc())
+      db8.orm.public.EphemerisDebug.orderBy((row) => row.id.desc())
         .offset(offset)
         .limit(limit)
         .all(),
@@ -55,8 +50,7 @@ const tables = {
 
   ForecastSnapshot: {
     rows: (offset: number, limit: number) =>
-      db8.orm.public.ForecastSnapshot
-        .orderBy((row) => row.id.desc())
+      db8.orm.public.ForecastSnapshot.orderBy((row) => row.id.desc())
         .offset(offset)
         .limit(limit)
         .all(),
@@ -69,8 +63,7 @@ const tables = {
 
   GithubEvent: {
     rows: (offset: number, limit: number) =>
-      db8.orm.public.GithubEvent
-        .orderBy((row) => row.id.desc())
+      db8.orm.public.GithubEvent.orderBy((row) => row.id.desc())
         .offset(offset)
         .limit(limit)
         .all(),
@@ -83,8 +76,7 @@ const tables = {
 
   Location: {
     rows: (offset: number, limit: number) =>
-      db8.orm.public.Location
-        .orderBy((row) => row.id.desc())
+      db8.orm.public.Location.orderBy((row) => row.id.desc())
         .offset(offset)
         .limit(limit)
         .all(),
@@ -97,8 +89,7 @@ const tables = {
 
   Log: {
     rows: (offset: number, limit: number) =>
-      db8.orm.public.Log
-        .orderBy((row) => row.id.desc())
+      db8.orm.public.Log.orderBy((row) => row.id.desc())
         .offset(offset)
         .limit(limit)
         .all(),
@@ -111,8 +102,7 @@ const tables = {
 
   Note: {
     rows: (offset: number, limit: number) =>
-      db8.orm.public.Note
-        .orderBy((row) => row.id.desc())
+      db8.orm.public.Note.orderBy((row) => row.id.desc())
         .offset(offset)
         .limit(limit)
         .all(),
@@ -125,8 +115,7 @@ const tables = {
 
   RuntimeConfig: {
     rows: (offset: number, limit: number) =>
-      db8.orm.public.RuntimeConfig
-        .orderBy((row) => row.key.desc())
+      db8.orm.public.RuntimeConfig.orderBy((row) => row.key.desc())
         .offset(offset)
         .limit(limit)
         .all(),
@@ -139,8 +128,7 @@ const tables = {
 
   ToolVersion: {
     rows: (offset: number, limit: number) =>
-      db8.orm.public.ToolVersion
-        .orderBy((row) => row.id.desc())
+      db8.orm.public.ToolVersion.orderBy((row) => row.id.desc())
         .offset(offset)
         .limit(limit)
         .all(),
@@ -153,8 +141,7 @@ const tables = {
 
   TravelSnapshot: {
     rows: (offset: number, limit: number) =>
-      db8.orm.public.TravelSnapshot
-        .orderBy((row) => row.id.desc())
+      db8.orm.public.TravelSnapshot.orderBy((row) => row.id.desc())
         .offset(offset)
         .limit(limit)
         .all(),
@@ -167,8 +154,7 @@ const tables = {
 
   TravelSegment: {
     rows: (offset: number, limit: number) =>
-      db8.orm.public.TravelSegment
-        .orderBy((row) => row.id.desc())
+      db8.orm.public.TravelSegment.orderBy((row) => row.id.desc())
         .offset(offset)
         .limit(limit)
         .all(),
@@ -181,8 +167,7 @@ const tables = {
 
   WeatherSnapshot: {
     rows: (offset: number, limit: number) =>
-      db8.orm.public.WeatherSnapshot
-        .orderBy((row) => row.id.desc())
+      db8.orm.public.WeatherSnapshot.orderBy((row) => row.id.desc())
         .offset(offset)
         .limit(limit)
         .all(),
@@ -212,10 +197,7 @@ type DomainMetadata = {
 };
 
 export function getModelForTable(tableName: string): TableName | null {
-  if (
-    excludeTables.includes(tableName) ||
-    !Object.hasOwn(tables, tableName)
-  ) {
+  if (excludeTables.includes(tableName) || !Object.hasOwn(tables, tableName)) {
     return null;
   }
 
@@ -245,10 +227,7 @@ export async function getTableDataWithPrisma(
 
   const { total: totalRows } = await model.count();
 
-  const records = await model.rows(
-    (page - 1) * limit,
-    limit,
-  );
+  const records = await model.rows((page - 1) * limit, limit);
 
   const storage = contract.storage.namespaces.public.entries.table[
     modelName
@@ -258,42 +237,33 @@ export async function getTableDataWithPrisma(
     modelName
   ] as DomainMetadata;
 
-  const columns = Object.entries(storage.columns).map(
-    ([name, field]) => ({
-      name,
-      type: field.nativeType,
-      nullable: field.nullable,
-    }),
-  );
+  const columns = Object.entries(storage.columns).map(([name, field]) => ({
+    name,
+    type: field.nativeType,
+    nullable: field.nullable,
+  }));
 
   // Use database column names, serialize bigint losslessly,
   // and preserve UTC timestamps.
   const rows = records.map((record) =>
     Object.fromEntries(
-      Object.entries(domain.storage.fields).map(
-        ([field, mapping]) => {
-          const column = storage.columns[mapping.column];
+      Object.entries(domain.storage.fields).map(([field, mapping]) => {
+        const column = storage.columns[mapping.column];
 
-          let value: unknown = (
-            record as unknown as Record<string, unknown>
-          )[field];
+        let value: unknown = (record as unknown as Record<string, unknown>)[
+          field
+        ];
 
-          if (
-            value != null &&
-            column?.nativeType === "timestamp"
-          ) {
-            value = new Date(
-              `${String(value)}Z`,
-            ).toISOString();
-          }
+        if (value != null && column?.nativeType === "timestamp") {
+          value = new Date(`${String(value)}Z`).toISOString();
+        }
 
-          if (typeof value === "bigint") {
-            value = value.toString();
-          }
+        if (typeof value === "bigint") {
+          value = value.toString();
+        }
 
-          return [mapping.column, value];
-        },
-      ),
+        return [mapping.column, value];
+      }),
     ),
   );
 
@@ -308,24 +278,15 @@ export async function getTableDataWithPrisma(
   };
 }
 
-export async function getTableHistoryWithPrisma(
-  tableName: string,
-) {
+export async function getTableHistoryWithPrisma(tableName: string) {
   const thirtyDaysAgo = new Date();
 
-  thirtyDaysAgo.setDate(
-    thirtyDaysAgo.getDate() - 30,
-  );
+  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-  const thirtyDaysAgo8 = timestampString(
-    thirtyDaysAgo.toISOString(),
-  );
+  const thirtyDaysAgo8 = timestampString(thirtyDaysAgo.toISOString());
 
-  const history = await db8.orm.public.DbTableStats
-    .where({ tableName })
-    .where((row) =>
-      row.snapshotDate.gte(thirtyDaysAgo8),
-    )
+  const history = await db8.orm.public.DbTableStats.where({ tableName })
+    .where((row) => row.snapshotDate.gte(thirtyDaysAgo8))
     .orderBy((row) => row.snapshotDate.asc())
     .all();
 

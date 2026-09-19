@@ -168,9 +168,9 @@ export async function serverLog(input: LogjInput) {
 
   try {
     await db8.orm.public.Log.create({
-        ...record,
-        payload: record.payload as any,
-        meta: record.meta as any,
+      ...record,
+      payload: record.payload as any,
+      meta: record.meta as any,
     });
   } catch (err) {
     console.error("NEON LOG ERROR:", err);

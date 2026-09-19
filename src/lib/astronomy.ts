@@ -27,29 +27,30 @@ export async function refreshAstronomySnapshotsForLocation(
         // Build the snapshot using the actual Date object.
         const snapshot = await buildAstronomySnapshot(location, day.date);
 
-const dateString8 = varchar10(dateString);
+        const dateString8 = varchar10(dateString);
 
-const existing = await db8.orm.public.AstronomySnapshot
-  .where((snapshot) => snapshot.locationId.eq(location.id))
-  .where((snapshot) => snapshot.dateString.eq(dateString8))
-  .first();
+        const existing = await db8.orm.public.AstronomySnapshot.where(
+          (snapshot) => snapshot.locationId.eq(location.id),
+        )
+          .where((snapshot) => snapshot.dateString.eq(dateString8))
+          .first();
 
-const snapshot8 = {
-  ...snapshot,
-  locationId: location.id,
-  dateString: dateString8,
-};
+        const snapshot8 = {
+          ...snapshot,
+          locationId: location.id,
+          dateString: dateString8,
+        };
 
-if (existing) {
-  return db8.orm.public.AstronomySnapshot
-    .where({ id: existing.id })
-    .update(snapshot8);
-}
+        if (existing) {
+          return db8.orm.public.AstronomySnapshot.where({
+            id: existing.id,
+          }).update(snapshot8);
+        }
 
-return db8.orm.public.AstronomySnapshot.create({
-  id: createId(),
-  ...snapshot8,
-});
+        return db8.orm.public.AstronomySnapshot.create({
+          id: createId(),
+          ...snapshot8,
+        });
       }),
     );
 
@@ -105,4 +106,6 @@ export async function getAstronomyForDashboard(locationId: string) {
   };
 }
 
-export type AstronomySnapshot = Awaited<ReturnType<typeof getAstronomyForDashboard>>["allSnapshots"][number];
+export type AstronomySnapshot = Awaited<
+  ReturnType<typeof getAstronomyForDashboard>
+>["allSnapshots"][number];

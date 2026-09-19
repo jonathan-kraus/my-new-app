@@ -149,18 +149,18 @@ export async function ingestTravelEmails() {
     });
     for (const seg of parsed.segments) {
       await tx.orm.public.TravelSegment.create({
-          id: createId(),
-          snapshotId: snapshot.id,
-          date: seg.date,
-          departureAirport: seg.departureAirport,
-          departureCity: seg.departureCity,
-          departureTime: seg.departureTime,
-          arrivalAirport: seg.arrivalAirport,
-          arrivalCity: seg.arrivalCity,
-          arrivalTime: seg.arrivalTime,
-          flightNumber: seg.flightNumber,
-          operatedBy: seg.operatedBy,
-          seats: seg.seats,
+        id: createId(),
+        snapshotId: snapshot.id,
+        date: seg.date,
+        departureAirport: seg.departureAirport,
+        departureCity: seg.departureCity,
+        departureTime: seg.departureTime,
+        arrivalAirport: seg.arrivalAirport,
+        arrivalCity: seg.arrivalCity,
+        arrivalTime: seg.arrivalTime,
+        flightNumber: seg.flightNumber,
+        operatedBy: seg.operatedBy,
+        seats: seg.seats,
       });
     }
     return { ...snapshot, receivedAt: new Date(`${snapshot.receivedAt}Z`) };

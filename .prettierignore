@@ -1,4 +1,8 @@
 pnpm-lock.yaml
+.agents
+.claude
+.cursor
+.devin
 .env*
 .npmrc
 .github/

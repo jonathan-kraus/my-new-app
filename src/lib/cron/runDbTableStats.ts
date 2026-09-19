@@ -86,9 +86,7 @@ export async function runDbTableStats(ctx: {
         (
           await sql`
             SELECT COUNT(*)::int AS count
-            FROM ${sql.unsafe(
-              `public."${tableName.replace(/"/g, '""')}"`,
-            )}
+            FROM ${sql.unsafe(`public."${tableName.replace(/"/g, '""')}"`)}
           `
         )[0]?.count ?? 0;
 
@@ -106,8 +104,9 @@ export async function runDbTableStats(ctx: {
       });
 
       // Find today's existing snapshot for this table
-      const existing = await db8.orm.public.DbTableStats
-        .where((stat) => stat.tableName.eq(row.table_name))
+      const existing = await db8.orm.public.DbTableStats.where((stat) =>
+        stat.tableName.eq(row.table_name),
+      )
         .where((stat) => stat.snapshotDate.eq(snapshotDate8))
         .first();
 
@@ -122,9 +121,9 @@ export async function runDbTableStats(ctx: {
       };
 
       if (existing) {
-        await db8.orm.public.DbTableStats
-          .where({ id: existing.id })
-          .update(values);
+        await db8.orm.public.DbTableStats.where({ id: existing.id }).update(
+          values,
+        );
       } else {
         await db8.orm.public.DbTableStats.create({
           id: createId(),

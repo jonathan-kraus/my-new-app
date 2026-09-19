@@ -4,7 +4,6 @@
  */
 import type { ParsedTravelSnapshot } from "@/lib/travel/parser/aa";
 
-
 type TravelSegment = ParsedTravelSnapshot["segments"][number];
 
 type Props = {
