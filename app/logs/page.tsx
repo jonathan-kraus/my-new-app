@@ -88,7 +88,7 @@ export default function LogsPage() {
             level: "info",
             message: "🌟 in log page",
             file: "app/logs/page.tsx",
-            line: 103,
+            line: 86,
             payload: { params: params },
             meta: { built: { ...built, eventIndex: ++jei } },
           });

@@ -97,7 +97,7 @@ export function LineArrivals({
       level: "info",
       message: "LineArrivals loaded",
       file: "app/components/LineArrivals.tsx",
-      line: 94,
+      line: 95,
       payload: { lineId: lineId, defaultStopId: defaultStopId, stops: stops },
       meta: { built: { ...built, eventIndex: ++eventIndex.current } },
     });

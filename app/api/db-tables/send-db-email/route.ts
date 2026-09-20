@@ -39,7 +39,7 @@ export async function POST(req: Request) {
     level: "info",
     message: ` Top tables data retrieved with ${top.length} tables`,
     file: "app/api/db-tables/send-db-email/route.ts",
-    line: 34,
+    line: 37,
     payload: {
       to: to,
       firstname: firstName,

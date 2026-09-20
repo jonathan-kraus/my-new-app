@@ -28,7 +28,7 @@ async function getTableData(name: string, page: number) {
     level: "info",
     message: "Fetching table data with Prisma",
     file: "app/admin/db/table/[name]/page.tsx",
-    line: 25,
+    line: 26,
     payload: { name: name, page: page },
     meta: { built: { ...built, eventIndex: ++jei } },
   });

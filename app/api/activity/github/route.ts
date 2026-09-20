@@ -105,7 +105,7 @@ export async function GET(req: NextRequest) {
       level: "info",
       message: "Deduplication complete",
       file: "app/api/activity/github/route.ts",
-      line: 113,
+      line: 103,
       payload: {
         before: normalized.length,
         after: activity.length,
@@ -121,7 +121,7 @@ export async function GET(req: NextRequest) {
       level: "info",
       message: `GitHub activity request completed in ${duration.toFixed(2)}ms`,
       file: "app/api/activity/github/route.ts",
-      line: 129,
+      line: 119,
       meta: { built: { ...built, eventIndex: ++eventIndex } },
     });
 
@@ -136,7 +136,7 @@ export async function GET(req: NextRequest) {
       level: "error",
       message: `GitHub activity failed: ${message}`,
       file: "app/api/activity/github/route.ts",
-      line: 144,
+      line: 134,
       payload: {
         error: message,
         stack: err instanceof Error ? err.stack : null,

@@ -112,7 +112,7 @@ export async function GET(req: Request) {
       level: "info",
       message: "Environment -- Retrieved GithubInfo",
       file: "app/api/environment/route.ts",
-      line: 108,
+      line: 110,
       payload: { github },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -183,7 +183,7 @@ export async function GET(req: Request) {
       level: "info",
       message: "Environment -- Retrieved Neon Info",
       file: "app/api/environment/route.ts",
-      line: 179,
+      line: 181,
       payload: { neon },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -276,7 +276,7 @@ export async function GET(req: Request) {
       level: "info",
       message: "Environment -- Expanded environment payload",
       file: "app/api/environment/route.ts",
-      line: 272,
+      line: 274,
       payload,
       meta: { built: { ...built, eventIndex: ++jei } },
     });

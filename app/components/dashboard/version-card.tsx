@@ -15,7 +15,7 @@ export default function VersionCard() {
     level: "info",
     message: "Version card loaded",
     file: "app/components/dashboard/version-card.tsx",
-    line: 14,
+    line: 13,
     payload: { data: data },
     meta: { built: { ...built, eventIndex: ++jei } },
   });

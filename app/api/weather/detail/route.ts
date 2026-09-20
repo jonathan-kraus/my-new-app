@@ -157,7 +157,7 @@ export async function GET(req: NextRequest) {
       level: "error",
       message: "Tomorrow.io detail response was not JSON",
       file: "app/api/weather/detail/route.ts",
-      line: 153,
+      line: 155,
       payload: {
         status: response.status,
         error: String(error),
@@ -173,7 +173,7 @@ export async function GET(req: NextRequest) {
       level: "error",
       message: "Tomorrow.io detail request failed",
       file: "app/api/weather/detail/route.ts",
-      line: 169,
+      line: 171,
       payload: {
         status: response.status,
         body: responseText.slice(0, 1000),
@@ -194,7 +194,7 @@ export async function GET(req: NextRequest) {
       level: "error",
       message: "Tomorrow.io detail response contained no hourly timeline",
       file: "app/api/weather/detail/route.ts",
-      line: 190,
+      line: 192,
       payload: {
         status: response.status,
         body: responseText.slice(0, 1000),
@@ -214,7 +214,7 @@ export async function GET(req: NextRequest) {
         level: "warn",
         message: "Using Open-Meteo hourly fallback",
         file: "app/api/weather/detail/route.ts",
-        line: 210,
+        line: 212,
         payload: { locationId, hourlyCount: hourly.length },
         meta: { built: { ...built, eventIndex: ++eventIndex } },
       });
@@ -232,7 +232,7 @@ export async function GET(req: NextRequest) {
         level: "error",
         message: "Hourly weather fallback failed",
         file: "app/api/weather/detail/route.ts",
-        line: 228,
+        line: 230,
         payload: { locationId, error: String(error) },
         meta: { built: { ...built, eventIndex: ++eventIndex } },
       });

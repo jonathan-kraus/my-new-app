@@ -41,7 +41,7 @@ export function ConfigTable({ configs }: { configs: RuntimeSetting[] }) {
       level: "info",
       message: `** ConfigTable **`,
       file: "app/admin/runtime/ConfigTable.tsx",
-      line: 32,
+      line: 39,
       payload: {
         hasDrafts,
         hasUnsavedChanges,

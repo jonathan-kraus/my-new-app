@@ -67,7 +67,7 @@ export default function ForecastClient({
       level: "info",
       message: "Locations received by ForecastClient",
       file: "app/forecast/ForecastClient.tsx",
-      line: 51,
+      line: 65,
       payload: {
         count: locations.length,
         ids: locations.map((l) => l.id),
@@ -83,7 +83,7 @@ export default function ForecastClient({
       level: "info",
       message: "Forecast client loaded",
       file: "app/forecast/ForecastClient.tsx",
-      line: 65,
+      line: 81,
       payload: { selectedId },
       meta: { built: { ...built, eventIndex: ++eventIndex.current } },
     });
@@ -123,7 +123,7 @@ export default function ForecastClient({
       level: "info",
       message: "Forecast client completed",
       file: "app/forecast/ForecastClient.tsx",
-      line: 113,
+      line: 121,
       payload: { selectedId },
       meta: { built: { ...built, eventIndex: ++eventIndex.current } },
     });

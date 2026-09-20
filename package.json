@@ -118,7 +118,7 @@
     "react-email": "^6.9.5",
     "react-hook-form": "7.88.0",
     "react-hot-toast": "2.6.1",
-    "react-resizable-panels": "4.13.0",
+    "react-resizable-panels": "4.13.1",
     "recharts": "3.10.1",
     "resend": "^6.28.1",
     "semver": "7.8.5",

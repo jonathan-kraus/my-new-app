@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
       level: level ?? "info",
       message: message ?? "Client log",
       file: "app/api/logs/route.ts",
-      line: 54,
+      line: 52,
       payload: payload ?? {},
       meta: { built: { ...built, eventIndex: ++jei } },
     });

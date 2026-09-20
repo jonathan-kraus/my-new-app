@@ -38,7 +38,7 @@ export async function sendWeatherEmail({
     level: "info",
     message: "Email sent through Resend",
     file: "app/forecast/mailresend.tsx",
-    line: 39,
+    line: 36,
     payload: {
       emailId: data?.id,
     },

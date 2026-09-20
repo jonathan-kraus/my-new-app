@@ -44,7 +44,7 @@ export default async function RuntimeAdminPage(req: NextRequest) {
     level: "info",
     message: `** Runtime Admin Page **`,
     file: "app/admin/runtime/page.tsx",
-    line: 29,
+    line: 42,
     payload: {
       lastsent: lastSent,
       throttle: throttle,

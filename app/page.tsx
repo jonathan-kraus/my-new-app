@@ -60,7 +60,7 @@ export default async function HomePage(req: Request) {
     level: "info",
     message: `** Dashboard Start **`,
     file: "app/page.tsx",
-    line: 57,
+    line: 58,
     payload: { some: "data" },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -110,7 +110,7 @@ export default async function HomePage(req: Request) {
       level: "error",
       message: "weatherRes.json() failed",
       file: "app/page.tsx",
-      line: 106,
+      line: 108,
       payload: {
         error: String(err),
         body: raw,
@@ -147,7 +147,7 @@ export default async function HomePage(req: Request) {
       level: "error",
       message: "forecastRes.json() failed",
       file: "app/page.tsx",
-      line: 143,
+      line: 145,
       payload: {
         error: String(err),
         body: raw,
@@ -179,7 +179,7 @@ export default async function HomePage(req: Request) {
       level: "error",
       message: "gitRes.json() failed",
       file: "app/page.tsx",
-      line: 174,
+      line: 177,
       payload: {
         error: String(err),
         body: raw,
@@ -209,7 +209,7 @@ export default async function HomePage(req: Request) {
     level: "info",
     message: "Dashboard timing",
     file: "app/page.tsx",
-    line: 203,
+    line: 207,
     payload: {
       dashboardDurationMs: dashboardEnd - dashboardStart,
       sessionDurationMs: sessionEnd - sessionStart,
