@@ -8,6 +8,7 @@ import Link from "next/link";
 import { logj } from "@/lib/log/logj";
 import { assertNonEmptyArray } from "@/lib/db/safe";
 import { staticUniversalContext } from "@/lib/log/buildj";
+import { getTableSize } from "@/lib/db/overview";
 import {
   getTableDataWithPrisma,
   getTableHistoryWithPrisma,
@@ -37,12 +38,10 @@ async function getTableData(name: string, page: number) {
     return null;
   }
 
-  return {
-    ...data,
-    totalBytes: 0, // Would need separate query for size info
-    indexBytes: 0,
-    tableBytes: 0,
-  };
+  const size = await getTableSize(name);
+  if (!size) return null;
+
+  return { ...data, ...size };
 }
 
 async function getTableHistory(name: string) {
@@ -124,6 +123,7 @@ export default async function TablePage({ params, searchParams }: PageProps) {
             <StatCard
               title="Total Size"
               value={tableData.totalBytes}
+              format="bytes"
               subtitle="Data + indexes"
               icon={HardDrive}
             />

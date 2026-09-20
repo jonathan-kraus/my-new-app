@@ -6,12 +6,12 @@ export default defineConfig({
     alias: {
       "@/auth": path.resolve(import.meta.dirname, "auth.ts"), // put this FIRST
       "@/emails": path.resolve(import.meta.dirname, "emails"),
-      "@": path.resolve(import.meta.dirname, "src"),
       "@/components": path.resolve(import.meta.dirname, "app/components"),
       "@/hooks": path.resolve(import.meta.dirname, "hooks"),
       "@/lib": path.resolve(import.meta.dirname, "src/lib"),
       "@/types": path.resolve(import.meta.dirname, "types"),
       "@/tests": path.resolve(import.meta.dirname, "tests"),
+      "@": path.resolve(import.meta.dirname, "src"),
     },
   },
   test: {

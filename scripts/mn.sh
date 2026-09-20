@@ -38,8 +38,8 @@ corepack prepare pnpm@latest --activate
 section "Checking outdated dependencies"
 pnpm check-out || warn "Some dependencies are outdated"
 
-# section "Update dependencies"
-# pnpm update --latest || warn "Failed to update dependencies"
+#section "Update dependencies"
+#pnpm update --latest || warn "Failed to update dependencies"
 
 echo "=== Running Prettier check ==="
 
@@ -57,8 +57,8 @@ else
   success "Prettier formatting OK"
 fi
 
-# section "Running ESLint"
-# pnpm lint && success "ESLint passed"
+ section "Running ESLint"
+ pnpm lint && success "ESLint passed"
 
 section "Running TypeScript type-check"
 echo "Checking types..."

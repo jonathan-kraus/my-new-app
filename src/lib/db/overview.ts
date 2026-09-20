@@ -1,5 +1,30 @@
 import { sql, excludeTables } from "@/lib/db/utils";
 
+export async function getTableSize(tableName: string) {
+  if (excludeTables.includes(tableName)) return null;
+
+  // Match the overview's live size measurements, using the catalog OID so
+  // mixed-case table names are handled without interpolating SQL identifiers.
+  const rows = await sql`
+    SELECT
+      pg_total_relation_size(c.oid) AS total_bytes,
+      pg_indexes_size(c.oid) AS index_bytes,
+      pg_relation_size(c.oid) AS table_bytes
+    FROM pg_class c
+    JOIN pg_namespace n ON n.oid = c.relnamespace
+    WHERE n.nspname = 'public' AND c.relkind = 'r'
+      AND c.relname = ${tableName}
+  `;
+  const size = rows[0];
+  if (!size) return null;
+
+  return {
+    totalBytes: Number(size.total_bytes),
+    indexBytes: Number(size.index_bytes),
+    tableBytes: Number(size.table_bytes),
+  };
+}
+
 export async function getOverview() {
   const stats = await sql`
     SELECT
