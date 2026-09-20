@@ -2,6 +2,8 @@
 
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { logj } from "@/lib/log/logj";
+import { staticUniversalContext } from "@/lib/log/buildj";
 import {
   createRuntimeSetting,
   deleteRuntimeSetting,
@@ -25,12 +27,27 @@ export function ConfigTable({ configs }: { configs: RuntimeSetting[] }) {
   );
   const hasUnsavedChanges = hasDrafts || newKey !== "" || newValue !== "";
 
+  const built = staticUniversalContext("RUNTIME");
+  let jei = 0;
+
   async function run(operation: () => Promise<void>) {
     if (inFlight.current) return;
     inFlight.current = true;
     setPending(true);
     setError("");
     setStatus("");
+    await logj({
+      domain: "jonathan",
+      level: "info",
+      message: `** ConfigTable **`,
+      file: "app/admin/runtime/ConfigTable.tsx",
+      line: 32,
+      payload: {
+        hasDrafts,
+        hasUnsavedChanges,
+      },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
     try {
       await operation();
     } catch (err) {
