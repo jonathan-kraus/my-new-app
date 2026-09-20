@@ -2,6 +2,26 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ![alt text](https://codecov.io/gh/<jonathan-kraus>/<my-new-app>/graph/badge.svg?token=<token>)
 
+## Runtime settings administrators
+
+The runtime settings page, its server actions, the settings API, and the flight-ID
+endpoint require a signed-in user with `role = admin` in `UserRole`. Membership is
+matched to the email from the server-validated session. Internal scheduled jobs use
+server-only settings helpers and do not need a browser session.
+
+To grant access to an existing account in the database configured by `DATABASE_URL`:
+
+```sh
+pnpm exec tsx scripts/grant-runtime-admin.ts <user-id>
+```
+
+The script resolves the account's email, upserts its role, and verifies it in a
+transaction. It does not create accounts. Remove or change that `UserRole` entry
+to revoke access. An account email change requires updating its membership.
+
+Settings edits remain local until Save is pressed. Failed saves preserve the draft;
+Discard restores the last saved value. Refresh is disabled while edits are unsaved.
+
 ## Schema Map
 
 1. Prisma Models

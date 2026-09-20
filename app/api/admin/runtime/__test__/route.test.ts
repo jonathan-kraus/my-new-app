@@ -1,4 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import type * as RuntimeAdmin from "@/lib/runtime/admin";
+vi.mock("@/lib/runtime/admin", async (importOriginal) => ({
+  ...(await importOriginal<typeof RuntimeAdmin>()),
+  requireRuntimeAdmin: vi.fn(),
+}));
+vi.mock("@/auth", () => ({ auth: vi.fn() }));
+import { requireRuntimeAdmin, RuntimeAccessError } from "@/lib/runtime/admin";
 
 vi.mock("@/lib/db.prisma8", () => {
   const mockDb8 = {
@@ -20,6 +27,7 @@ const mockedDb8 = vi.mocked(db8, true);
 
 beforeEach(() => {
   vi.clearAllMocks();
+  vi.mocked(requireRuntimeAdmin).mockResolvedValue(undefined);
 
   mockedDb8.orm.public.RuntimeConfig.orderBy.mockReturnValue(
     mockedDb8.orm.public.RuntimeConfig,
@@ -27,6 +35,18 @@ beforeEach(() => {
 });
 
 describe("GET /api/admin/runtime", () => {
+  it.each([401, 403] as const)(
+    "rejects access with %s before reading settings",
+    async (status) => {
+      vi.mocked(requireRuntimeAdmin).mockRejectedValue(
+        new RuntimeAccessError(status),
+      );
+      const { GET } = await import("../route");
+      const res = await GET();
+      expect(res.status).toBe(status);
+      expect(mockedDb8.orm.public.RuntimeConfig.all).not.toHaveBeenCalled();
+    },
+  );
   it("returns an empty list when no configs exist", async () => {
     mockedDb8.orm.public.RuntimeConfig.all.mockResolvedValue([]);
 

@@ -1,4 +1,4 @@
-"use server";
+import "server-only";
 
 import { db8 } from "@/lib/db.prisma8";
 import { timestampString } from "@/lib/timestampString";

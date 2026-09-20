@@ -4,6 +4,7 @@
  */
 // app/admin/runtime/page.tsx
 import { db8 } from "@/lib/db.prisma8";
+import { requireRuntimeAdmin, RuntimeAccessError } from "@/lib/runtime/admin";
 import { ConfigTable } from "./ConfigTable";
 import { EmailThrottleCountdown } from "./EmailThrottleCountdown";
 import type { NextRequest } from "next/server";
@@ -14,6 +15,18 @@ import { buildUniversalContext } from "@/lib/log/build-universal-context";
 export const dynamic = "force-dynamic";
 
 export default async function RuntimeAdminPage(req: NextRequest) {
+  try {
+    await requireRuntimeAdmin();
+  } catch (error) {
+    if (error instanceof RuntimeAccessError) {
+      return (
+        <p role="alert" className="p-6">
+          {error.message}
+        </p>
+      );
+    }
+    throw error;
+  }
   const configs = await db8.orm.public.RuntimeConfig.orderBy((config) =>
     config.key.asc(),
   ).all();

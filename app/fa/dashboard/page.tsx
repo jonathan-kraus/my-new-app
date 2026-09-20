@@ -3,20 +3,23 @@
 import type { FlightDashboardData } from "@/lib/flight/types";
 import { useEffect, useState } from "react";
 import Skybox from "@/components/skybox";
-import { getConfig } from "@/lib/runtime/config";
 
 export default function FlightDashboard() {
   const [data, setData] = useState<FlightDashboardData | null>(null);
   const [identInput, setIdentInput] = useState("");
+  const [error, setError] = useState("");
 
   async function load() {
-    const ident = await getConfig("flight-ID", "ident");
-    console.log("IDENT:", ident);
-    if (!ident) return;
-
-    const res = await fetch(`/api/fa/flight/`);
-    const json = await res.json();
-    setData(json);
+    try {
+      // The endpoint reads the configured flight ID on the server.
+      const res = await fetch(`/api/fa/flight/`);
+      if (!res.ok) throw new Error("Could not load flight data.");
+      const json = await res.json();
+      setData(json);
+      setError("");
+    } catch {
+      setError("Could not load flight data. Please try again.");
+    }
   }
 
   useEffect(() => {
@@ -27,19 +30,36 @@ export default function FlightDashboard() {
 
   async function updateFlight() {
     if (!identInput) return;
-
-    await fetch("/api/set-flight-id", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ident: identInput }),
-    });
-
-    await load();
+    try {
+      const res = await fetch("/api/set-flight-id", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ident: identInput }),
+      });
+      if (!res.ok) {
+        setError(
+          res.status === 401
+            ? "Please sign in to change the flight."
+            : res.status === 403
+              ? "Administrator access is required to change the flight."
+              : "Could not save the flight identifier.",
+        );
+        return;
+      }
+      await load();
+    } catch {
+      setError("Could not save the flight identifier. Please try again.");
+    }
   }
 
   return (
     <div className="p-6 text-white space-y-8">
       <h1 className="text-3xl font-bold">✈️ Flight Dashboard</h1>
+      {error && (
+        <p role="alert" className="text-red-400">
+          {error}
+        </p>
+      )}
 
       <button
         onClick={load}
