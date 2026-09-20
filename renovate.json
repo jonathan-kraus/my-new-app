@@ -33,9 +33,9 @@
       "matchPackageNames": ["/^tailwindcss$/", "/^@tailwindcss\\//"]
     },
     {
-      "description": "Pin TypeScript to v5.x (TS 7 breaks ESLint + Next.js tooling)",
+      "description": "Manage TypeScript updates manually",
       "matchPackageNames": ["typescript"],
-      "allowedVersions": "<6.0.0"
+      "enabled": false
     },
     {
       "matchUpdateTypes": ["minor", "patch"],
