@@ -13,6 +13,10 @@ import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { getConfig } from "@/lib/runtime/config";
 
 export async function proxy(req: NextRequest) {
+  // Resend authenticates this endpoint with a signed raw request body.
+  // Avoid session/config lookups before the handler verifies the signature.
+  if (req.nextUrl.pathname === "/api/webhook") return NextResponse.next();
+
   const url2 = req.nextUrl.clone();
   const built = await buildUniversalContext(req, "PROXY");
   let jei = 0;
