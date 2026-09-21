@@ -84,7 +84,14 @@ describe("Resend webhook", () => {
           hasText: true,
           hasHtml: true,
         }),
-        meta: expect.objectContaining({ requestId: "msg_test_delivery" }),
+        meta: expect.objectContaining({
+          requestId: "msg_test_delivery",
+          built: expect.objectContaining({
+            requestId: "msg_test_delivery",
+            eventIndex: 1,
+            route: "resend-webhook",
+          }),
+        }),
       }),
     );
     const logged = JSON.stringify(mocks.log.mock.calls);
@@ -143,7 +150,7 @@ describe("Resend webhook", () => {
 
   it("acknowledges other signed event types without fetching email", async () => {
     const res = await POST(
-      request(JSON.stringify({ ...event, type: "email.delivered" })),
+      request(JSON.stringify({ ...event, type: "contact.created" })),
     );
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ received: true, ignored: true });
@@ -174,5 +181,90 @@ describe("Resend webhook", () => {
   it("returns a retryable failure on network errors", async () => {
     mocks.get.mockRejectedValue(new Error("connection failed"));
     expect((await POST(request())).status).toBe(500);
+  });
+
+  it.each([
+    ["email.sent", "info"],
+    ["email.delivered", "info"],
+    ["email.scheduled", "info"],
+    ["email.bounced", "error"],
+    ["email.failed", "error"],
+    ["email.delivery_delayed", "warn"],
+    ["email.complained", "warn"],
+    ["email.suppressed", "warn"],
+    ["email.opened", "info"],
+    ["email.clicked", "info"],
+  ])(
+    "logs outbound %s without fetching an inbound email",
+    async (type, level) => {
+      const data = {
+        email_id: "outbound-123",
+        from: "my-new-app <dbemail@kraus.my.id>",
+        to: ["recipient@outlook.com"],
+        subject: "Database report",
+        html: "do-not-log-body",
+      };
+      const res = await POST(request(JSON.stringify({ ...event, type, data })));
+      expect(res.status).toBe(200);
+      expect(await res.json()).toEqual({ received: true });
+      expect(mocks.get).not.toHaveBeenCalled();
+      expect(mocks.log).toHaveBeenCalledWith(
+        expect.objectContaining({
+          level,
+          message: `Resend ${type}`,
+          payload: expect.objectContaining({
+            emailId: "outbound-123",
+            eventType: type,
+            to: ["recipient@outlook.com"],
+          }),
+          meta: expect.objectContaining({
+            requestId: "msg_test_delivery",
+            built: expect.objectContaining({
+              eventIndex: 1,
+              requestId: "msg_test_delivery",
+            }),
+          }),
+        }),
+      );
+      expect(JSON.stringify(mocks.log.mock.calls)).not.toContain(
+        "do-not-log-body",
+      );
+    },
+  );
+
+  it("keeps useful bounce reasons in the log", async () => {
+    const bounce = {
+      type: "Permanent",
+      subType: "General",
+      message: "Mailbox unavailable",
+    };
+    await POST(
+      request(
+        JSON.stringify({
+          ...event,
+          type: "email.bounced",
+          data: {
+            ...event.data,
+            to: ["recipient@outlook.com"],
+            subject: "Report",
+            bounce,
+          },
+        }),
+      ),
+    );
+    expect(mocks.log).toHaveBeenCalledWith(
+      expect.objectContaining({ payload: expect.objectContaining({ bounce }) }),
+    );
+  });
+
+  it("rejects malformed outbound metadata before logging success", async () => {
+    const res = await POST(
+      request(JSON.stringify({ ...event, type: "email.delivered", data: {} })),
+    );
+    expect(res.status).toBe(400);
+    expect(mocks.get).not.toHaveBeenCalled();
+    expect(mocks.log).toHaveBeenCalledWith(
+      expect.objectContaining({ level: "warn" }),
+    );
   });
 });
