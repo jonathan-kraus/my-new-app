@@ -50,6 +50,7 @@ export async function POST(request: Request) {
       level,
       message,
       file: "app/api/webhook/route.ts",
+      line: 48,
       payload,
       meta: {
         requestId,

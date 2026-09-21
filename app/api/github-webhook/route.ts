@@ -43,13 +43,22 @@ export const POST = withLogging(async (req: Request) => {
     payload: { event, type: normalized.type, gw },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
-  const { type, ...rest } = normalized;
-
   const now = timestampString(new Date().toISOString());
 
+  // Normalized events also contain display-only fields (such as prNumber).
+  // Persist only contract fields; the original event remains available in raw.
   const normalized8 = {
-    ...rest,
-    _type: type,
+    _type: normalized.type,
+    repo: normalized.repo,
+    title: normalized.title,
+    actor: normalized.actor,
+    commitSha: normalized.commitSha,
+    url: normalized.url,
+    status: normalized.status,
+    conclusion: normalized.conclusion,
+    jobName: normalized.jobName ?? null,
+    commitMessage: normalized.commitMessage ?? null,
+    raw: normalized.raw,
     updatedAt: now,
   };
   try {
@@ -69,7 +78,7 @@ export const POST = withLogging(async (req: Request) => {
       });
     }
 
-    logj({
+    await logj({
       domain: "github",
       level: "info",
       message: "Github event upserted",
@@ -79,7 +88,18 @@ export const POST = withLogging(async (req: Request) => {
       meta: { built: { ...built, eventIndex: ++jei } },
     });
   } catch (err) {
-    console.error("DB ERROR:", err);
+    await logj({
+      domain: "github",
+      level: "error",
+      message: "Github event database write failed",
+      file: "app/api/github-webhook/route.ts",
+      payload: {
+        event,
+        deliveryId,
+        error: err instanceof Error ? err.message : String(err),
+      },
+      meta: { requestId: deliveryId, built: { ...built, eventIndex: ++jei } },
+    });
     throw err;
   }
 
