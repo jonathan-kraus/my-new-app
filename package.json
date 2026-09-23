@@ -4,7 +4,7 @@
   "type": "module",
   "vercel-build-id": "4",
   "private": true,
-  "packageManager": "pnpm@12.5.1+sha512.e3f305bc784a2bc89f5ad3b6138889470fae8d2af5f36b61216ec91c2c3d64089775f9de38aac331044ea40f245cb0d5666392dfdf65824e1907ef6a2c62de5f",
+  "packageManager": "pnpm@12.6.0+sha512.3ef68f951cb111ac204b4a5a16f0b2ddf0da56a96e0413e81d855d9f0b55ef926714709028e1cd00c405c2c5fb7b9e8ec4dc46777c805d0373c2f2ff00fd20ec",
   "overrides": {
     "@eslint/plugin-kit": "0.7.3",
     "ajv": "8.20.0",
@@ -158,7 +158,7 @@
     "eslint-plugin-unused-imports": "4.4.1",
     "husky": "9.1.7",
     "js-yaml": "5.4.2",
-    "prettier": "3.9.8",
+    "prettier": "3.9.9",
     "prisma": "8.0.0-rc.15",
     "tailwindcss": "4.3.3",
     "ts-morph": "28.0.0",
