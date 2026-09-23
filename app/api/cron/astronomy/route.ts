@@ -9,6 +9,9 @@ import { timestampString } from "@/lib/timestampString";
 import { addDays, format } from "date-fns";
 import { buildAstronomySnapshot } from "@/lib/buildAstronomySnapshot";
 import { getConfig } from "@/lib/runtime/config";
+import { Temporal } from "temporal-polyfill";
+import { DateTime } from "luxon";
+import { revalidateTag } from "next/cache";
 
 export const runtime = "nodejs";
 
@@ -16,8 +19,9 @@ const varchar10 = (value: string) =>
   value as string & { readonly __varcharLength: 10 };
 
 // Force a date to local midnight
-function atLocalMidnight(d: Date) {
-  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+function atLocalMidnight(d: Date, timeZone: string) {
+  const local = DateTime.fromJSDate(d, { zone: timeZone });
+  return new Date(local.year, local.month - 1, local.day);
 }
 async function cleanupOldLogs(
   days: number,
@@ -64,7 +68,7 @@ export async function GET(_req: NextRequest) {
   let jei = 1;
   const locations = await db8.orm.public.Location.all();
 
-  const durationMs = Date.now() - start;
+  let daysProcessed = 0;
 
   for (const location of locations) {
     await logj({
@@ -79,7 +83,7 @@ export async function GET(_req: NextRequest) {
       meta: { built: { ...built, eventIndex: ++jei } },
     });
 
-    const base = atLocalMidnight(new Date());
+    const base = atLocalMidnight(new Date(), location.timezone);
 
     for (let i = 0; i < 7; i++) {
       const targetDate = addDays(base, i);
@@ -101,6 +105,9 @@ export async function GET(_req: NextRequest) {
 
       const row = {
         ...snapshot,
+        fetchedAt: Temporal.Instant.from(snapshot.fetchedAt.toISOString())
+          .toZonedDateTimeISO("UTC")
+          .toPlainDateTime(),
         locationId: location.id,
         dateString,
       };
@@ -129,33 +136,38 @@ export async function GET(_req: NextRequest) {
         file: "app/api/cron/astronomy/route.ts",
         line: 125,
         payload: {
-          duration: durationMs,
+          duration: Date.now() - start,
         },
         meta: { built: { ...built, eventIndex: ++jei } },
       });
-      const logDays = await getConfig("logDays", "61");
-      const logDaysNum = logDays?.toString() ?? "61";
-      const cleanupDays = Number.isNaN(logDaysNum)
-        ? 61
-        : parseInt(logDaysNum, 10);
-      const deleted = await cleanupOldLogs(cleanupDays, built);
-
-      await logj({
-        domain: "ephemeris",
-        level: "info",
-        message: `Astronomy cron completed deleted ${deleted} logs`,
-        file: "app/api/cron/astronomy/route.ts",
-        line: 143,
-        payload: {
-          durationMs,
-          logDays: logDays,
-          logDaysNum: logDaysNum,
-          cleanupDays: cleanupDays,
-          logsDeleted: deleted,
-        },
-        meta: { built: { ...built, eventIndex: ++jei } },
-      });
-      return NextResponse.json({ ok: true, durationMs });
+      daysProcessed++;
+      revalidateTag("astronomy-snapshot", { expire: 0 });
     }
   }
+
+  const logDays = await getConfig("logDays", "61");
+  const logDaysNum = logDays?.toString() ?? "61";
+  const cleanupDays = Number.isNaN(logDaysNum) ? 61 : parseInt(logDaysNum, 10);
+  const deleted = await cleanupOldLogs(cleanupDays, built);
+
+  await logj({
+    domain: "ephemeris",
+    level: "info",
+    message: `Astronomy cron completed deleted ${deleted} logs`,
+    file: "app/api/cron/astronomy/route.ts",
+    line: 143,
+    payload: {
+      durationMs: Date.now() - start,
+      logDays: logDays,
+      logDaysNum: logDaysNum,
+      cleanupDays: cleanupDays,
+      logsDeleted: deleted,
+    },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
+  return NextResponse.json({
+    ok: true,
+    durationMs: Date.now() - start,
+    daysProcessed,
+  });
 }

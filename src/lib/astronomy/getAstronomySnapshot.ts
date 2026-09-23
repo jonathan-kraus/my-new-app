@@ -4,7 +4,7 @@ import { unstable_cache } from "next/cache";
 import { db8 } from "@/lib/db.prisma8";
 import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
-import { format, addDays } from "date-fns";
+import { DateTime } from "luxon";
 
 const varchar10 = (value: string) =>
   value as `${string}` & { readonly __varcharLength: 10 };
@@ -77,18 +77,29 @@ async function getAstronomySnapshotInternal(
 export async function getAstronomySnapshot(
   locationId: string,
   now = new Date(),
+  timeZone = "America/New_York",
 ) {
   if (process.env.NEXT_PHASE === "phase-production-build") {
     return { today: null, tomorrow: null };
   }
 
-  const todayStr = format(now, "yyyy-MM-dd");
-  const tomorrowStr = format(addDays(now, 1), "yyyy-MM-dd");
+  const today = DateTime.fromJSDate(now, { zone: timeZone });
+  const todayStr = today.toISODate()!;
+  const tomorrowStr = today.plus({ days: 1 }).toISODate()!;
 
   // In test environment, bypass unstable_cache which doesn't work
   if (process.env.NODE_ENV === "test") {
     return getAstronomySnapshotInternal(locationId, todayStr, tomorrowStr);
   }
 
-  return getCachedAstronomySnapshot(locationId, todayStr, tomorrowStr);
+  const cached = await getCachedAstronomySnapshot(
+    locationId,
+    todayStr,
+    tomorrowStr,
+  );
+  // A missing day may have been populated since this 24-hour cache entry.
+  if (!cached.today || !cached.tomorrow) {
+    return getAstronomySnapshotInternal(locationId, todayStr, tomorrowStr);
+  }
+  return cached;
 }

@@ -64,30 +64,11 @@ export default async function DashboardAstronomyPage(req: NextRequest) {
   const solar = snapshot.snapshot?.solar ?? null;
   const lunar = snapshot.snapshot?.lunar ?? null;
 
-  if (!solar || !lunar) {
+  if (!solar?.sunrise?.timestamp || !solar?.sunset?.timestamp || !lunar) {
     return (
-      <div className="flex flex-col items-center justify-center p-10 text-gray-400">
-        <svg
-          className="animate-spin h-8 w-8 mb-4 text-gray-500"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <circle
-            className="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            strokeWidth="4"
-          />
-          <path
-            className="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 00-8 8z"
-          />
-        </svg>
-        <div>Loading astronomy data…</div>
+      <div className="p-10 text-gray-400" role="status">
+        Astronomy data is unavailable for today or tomorrow. Please try again
+        after the next refresh.
       </div>
     );
   }
@@ -96,15 +77,6 @@ export default async function DashboardAstronomyPage(req: NextRequest) {
     solar.sunrise.dateObj,
     solar.sunset.dateObj,
   );
-
-  if (!solar.sunrise?.timestamp || !solar.sunset?.timestamp || !solarNoon) {
-    return (
-      <div className="flex flex-col items-center justify-center p-10 text-gray-400">
-        <div>Loading astronomy data…</div>
-      </div>
-    );
-  }
-
   return (
     <div className="p-6 space-y-10">
       {/* Header */}
