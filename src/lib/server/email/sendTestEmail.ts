@@ -131,7 +131,8 @@ export async function sendTestEmail(message?: string, subject?: string) {
   try {
     const { data: resendData, error } = await resend.emails.send({
       from: "Weather Bot <weather@kraus.my.id>",
-      to: ["jonathankraus2026@outlook.com"],
+      to: ["bounced@resend.dev"],
+      // to: ["jonathankraus2026@outlook.com"],
       subject: finalSubject,
       text: finalText,
       html: finalHtml,
