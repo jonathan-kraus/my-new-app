@@ -4,7 +4,8 @@ vi.mock("@/lib/log/buildj", () => ({
 }));
 // lib/ephemeris/__tests__/writeEphemerisDebugEvent.test.ts
 
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { Temporal } from "temporal-polyfill";
 
 vi.mock("@/lib/runtime/config", () => ({
   getConfig: vi.fn().mockReturnValue("0"), // debug off
@@ -26,6 +27,10 @@ import * as mod from "@/lib/ephemeris/writeEphemerisDebugEvent";
 describe("writeEphemerisDebugEvent", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   // -----------------------------
@@ -59,6 +64,8 @@ describe("writeEphemerisDebugEvent", () => {
   // Main function tests
   // -----------------------------
   it("writes a debug event with safe values", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-09-22T12:52:35.123-04:00"));
     const mockRow = { id: "ok" } as Awaited<
       ReturnType<typeof db8.orm.public.EphemerisDebug.create>
     >;
@@ -74,11 +81,19 @@ describe("writeEphemerisDebugEvent", () => {
     expect(result).toBe(mockRow);
 
     const call = vi.mocked(db8.orm.public.EphemerisDebug.create).mock
-      .calls[0]![0] as { locationId: string; fetchedAt: string; raw: unknown };
+      .calls[0]![0] as {
+      locationId: string | null;
+      fetchedAt: string | null;
+      raw: unknown;
+      receivedAt: Temporal.PlainDateTime;
+    };
 
     expect(call.locationId).toBe("123");
     expect(call.fetchedAt).toBe("2024-01-01T00:00:00.000Z");
     expect(call.raw).toEqual({ test: true });
+    // Timestamp(3) requires a Temporal value, with UTC wall-clock semantics.
+    expect(call.receivedAt).toBeInstanceOf(Temporal.PlainDateTime);
+    expect(call.receivedAt?.toString()).toBe("2026-09-22T16:52:35.123");
   });
 
   it("logs an error when db write fails", async () => {

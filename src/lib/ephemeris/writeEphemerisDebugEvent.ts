@@ -1,5 +1,6 @@
 import type { JsonValue } from "@prisma/orm-postgres/target/codec-types";
 import type { LogjPayload } from "@/lib/log/types";
+import { Temporal } from "temporal-polyfill";
 // lib/ephemeris/writeEphemerisDebugEvent.ts
 
 import { db8 } from "@/lib/db.prisma8";
@@ -74,7 +75,10 @@ export type DebugEventInput = {
 };
 
 export async function writeEphemerisDebugEvent(data: DebugEventInput) {
-  const now = new Date();
+  // Timestamp(3) expects a PlainDateTime; store the receipt time in UTC.
+  const now = Temporal.Instant.from(new Date().toISOString())
+    .toZonedDateTimeISO("UTC")
+    .toPlainDateTime();
   console.log("writeEphemerisDebugEvent: called with data:", data);
   try {
     const row = await db8.orm.public.EphemerisDebug.create({
