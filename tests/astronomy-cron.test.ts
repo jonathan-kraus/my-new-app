@@ -9,6 +9,9 @@ const mocks = vi.hoisted(() => ({
   first: vi.fn(),
   cleanup: vi.fn(),
   invalidate: vi.fn(),
+  locationFilter: vi.fn(),
+  dateFilter: vi.fn(),
+  cutoffFilter: vi.fn(),
 }));
 vi.mock("@/lib/buildAstronomySnapshot", () => ({
   buildAstronomySnapshot: mocks.build,
@@ -19,7 +22,15 @@ vi.mock("@/lib/runtime/config", () => ({ getConfig: async () => "61" }));
 vi.mock("next/cache", () => ({ revalidateTag: mocks.invalidate }));
 vi.mock("@/lib/db.prisma8", () => {
   const snapshots = {
-    where: vi.fn().mockReturnThis(),
+    where: (predicate: unknown) => {
+      if (typeof predicate === "function") {
+        predicate({
+          locationId: { eq: mocks.locationFilter },
+          dateString: { eq: mocks.dateFilter },
+        });
+      }
+      return snapshots;
+    },
     first: mocks.first,
     create: mocks.create,
     update: mocks.update,
@@ -36,8 +47,13 @@ vi.mock("@/lib/db.prisma8", () => {
           },
           AstronomySnapshot: snapshots,
           Log: {
-            aggregate: async () => ({ total: 0 }),
-            where: () => ({ deleteAndCount: mocks.cleanup }),
+            aggregate: async (
+              select: (agg: { count: () => number }) => unknown,
+            ) => select({ count: () => 0 }),
+            where: (predicate: (fields: unknown) => unknown) => {
+              predicate({ createdAt: { lt: mocks.cutoffFilter } });
+              return { deleteAndCount: mocks.cleanup };
+            },
           },
         },
       },
@@ -90,6 +106,21 @@ it("writes seven days for every location using Temporal timestamps and invalidat
     expect(row.fetchedAt.toString()).toBe("2026-09-23T01:45:00");
   }
   expect(mocks.cleanup).toHaveBeenCalledTimes(1);
+  expect(mocks.locationFilter.mock.calls.map(([id]) => id)).toEqual([
+    ...Array(7).fill("KOP"),
+    ...Array(7).fill("BKL"),
+  ]);
+  expect(mocks.dateFilter.mock.calls.map(([date]) => date)).toEqual([
+    ...rows
+      .filter((row) => row.locationId === "KOP")
+      .map((row) => row.dateString)
+      .sort(),
+    ...rows
+      .filter((row) => row.locationId === "BKL")
+      .map((row) => row.dateString)
+      .sort(),
+  ]);
+  expect(mocks.cutoffFilter).toHaveBeenCalledWith("2026-07-24T01:45:00.000Z");
   expect(mocks.invalidate).toHaveBeenCalledWith("astronomy-snapshot", {
     expire: 0,
   });
