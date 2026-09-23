@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\scripts\check-outdated.ts
- * @LastEditTime: 2026-09-23 02:23:37
+ * @LastEditTime: 2026-09-23 02:28:51
  */
 import { execSync } from "node:child_process";
 
@@ -37,7 +37,7 @@ try {
 const data = JSON.parse(raw || "{}") as Record<string, OutdatedEntry>;
 const exclusions = {
   packages: new Set(["typescript"]),
-  currentVersions: new Set(["7.10.0-dev.57"]),
+  currentVersions: new Set(["7.7.7"]),
 };
 const filtered = Object.fromEntries(
   Object.entries(data).filter(([name, pkg]) => {
@@ -57,5 +57,3 @@ if (Object.keys(filtered).length) {
   // exit cleanly — mn script will print green via success()
   process.exit(0);
 }
-console.log("✓ No outdated dependencies");
-process.exit(0);
