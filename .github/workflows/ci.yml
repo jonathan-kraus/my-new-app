@@ -22,18 +22,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: '24.21.0'
-          cache: pnpm
-          cache-dependency-path: pnpm-lock.yaml
-
-      - name: Checkout repository
-        uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-
       - name: Set up pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -60,16 +48,13 @@ jobs:
         run: pnpm exec eslint .
 
       - name: Generate Prisma 8 contract
-        run: |
-          pnpm exec prisma contract emit
+        run: pnpm exec prisma contract emit
 
       - name: Check for outdated dependencies
-        run: |
-          pnpm outdated | grep -v -E '(prisma|@prisma)' || true
+        run: pnpm outdated | grep -v -E '(prisma|@prisma)' || true
 
       - name: Coverage
-        run: |
-          pnpm coverage
+        run: pnpm coverage
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v7
@@ -78,17 +63,15 @@ jobs:
           files: ./coverage/coverage-final.json
           fail_ci_if_error: true
 
-      - name: Type check this is done in mn script
-        run: |
-          pnpm run type-check
+      - name: Type check
+        run: pnpm run type-check
 
       - name: Audit
         env:
           AXIOM_TOKEN: ${{ secrets.AXIOM_TOKEN }}
           AXIOM_DATASET: ${{ secrets.AXIOM_DATASET }}
           AXIOM_ORG_ID: ${{ secrets.AXIOM_ORG_ID }}
-        run: |
-          node .github/scripts/audit.js
+        run: node .github/scripts/audit.js
 
       - name: Show workspace files for diagnostics
         run: |
@@ -97,12 +80,11 @@ jobs:
           echo "Process environment CI: $CI"
           echo "List coverage dir (if present):"; ls -la coverage || true
 
-      - name: Buildit
+      - name: Build
         env:
           CI: true
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           AXIOM_TOKEN: ${{ secrets.AXIOM_TOKEN }}
           AXIOM_DATASET: ${{ secrets.AXIOM_DATASET }}
           AXIOM_ORG_ID: ${{ secrets.AXIOM_ORG_ID }}
-        run: |
-          pnpm build
+        run: pnpm build
