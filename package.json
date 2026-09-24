@@ -39,7 +39,7 @@
     "check-out": "node ./scripts/check-outdated.ts",
     "smart-commit": "pnpm genmsg && git add . && git commit -F .git/COMMIT_MSG && git push origin main",
     "pfix": "prettier --write . --ignore-path .prettierignore",
-    "postinstall": "prisma contract emit",
+    "postinstall": "echo \"Skipping prisma contract emit during install\"",
     "pchk": "prettier --check . --ignore-path .prettierignore",
     "start": "next start",
     "coverage": "vitest run --coverage",
