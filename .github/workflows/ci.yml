@@ -47,7 +47,7 @@ jobs:
 
       - name: Validate Prisma contract and generated artifacts
         run: |
-          pnpm exec prisma format
+          pnpm exec prisma contract format
           pnpm exec prisma contract emit
           git diff --exit-code -- prisma
 
