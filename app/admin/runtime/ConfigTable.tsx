@@ -75,6 +75,20 @@ export function ConfigTable({ configs }: { configs: RuntimeSetting[] }) {
       const result = await (
         creating ? createRuntimeSetting : saveRuntimeSetting
       )(parsed.data);
+      await logj({
+        domain: "jonathan",
+        level: "info",
+        message: `** ConfigTable -- update  **`,
+        file: "app/admin/runtime/ConfigTable.tsx",
+        line: 78,
+        payload: {
+          result,
+          status,
+          key,
+          value: parsed.data.value,
+        },
+        meta: { built: { ...built, eventIndex: ++jei } },
+      });
       if (!result.ok) {
         setError(result.error);
         return;
