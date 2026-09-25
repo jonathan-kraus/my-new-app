@@ -45,8 +45,11 @@ jobs:
       - name: Lint code
         run: pnpm exec eslint .
 
-      - name: Generate Prisma 8 contract
-        run: pnpm exec prisma contract emit
+      - name: Validate Prisma contract and generated artifacts
+        run: |
+          pnpm exec prisma format
+          pnpm exec prisma contract emit
+          git diff --exit-code -- prisma
 
       - name: Check for outdated dependencies
         run: pnpm outdated | grep -v -E '(prisma|@prisma)' || true
