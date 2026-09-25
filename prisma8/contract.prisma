@@ -42,7 +42,7 @@ model Location {
   longitude          Float
   timezone           String
   isDefault          Boolean             @default(false)
-  createdAt          TimestampString(3)        @default(now())
+  createdAt          TimestampString(3)  @default(now())
   updatedAt          TimestampString(3)
   astronomySnapshots AstronomySnapshot[]
   forecastSnapshots  ForecastSnapshot[]
@@ -82,7 +82,7 @@ model AstronomySnapshot {
 }
 
 model DbTableStats {
-  id           String       @id(map: "DbTableStats_pkey")
+  id           String             @id(map: "DbTableStats_pkey")
   tableName    String
   rowEstimate  Int
   totalBytes   BigInt
@@ -90,7 +90,7 @@ model DbTableStats {
   tableBytes   BigInt
   toastBytes   BigInt
   snapshotDate TimestampString(3)
-  createdAt    Timestamp(3) @default(now())
+  createdAt    Timestamp(3)       @default(now())
 
   @@index([tableName, snapshotDate], map: "DbTableStats_tableName_snapshotDate_idx")
   @@index([tableName, snapshotDate], map: "DbTableStats_tableName_snapshotDate_key", unique: true)
@@ -124,19 +124,19 @@ model EphemerisDebug {
 }
 
 model ForecastSnapshot {
-  id         String       @id(map: "ForecastSnapshot_pkey")
+  id         String             @id(map: "ForecastSnapshot_pkey")
   locationId String
   fetchedAt  TimestampString(3) @default(now())
   payload    Jsonb
-  location   Location     @relation(fields:[locationId], references:[id], onDelete: Restrict, onUpdate: Cascade, map: "ForecastSnapshot_locationId_fkey", index: false)
+  location   Location           @relation(fields:[locationId], references:[id], onDelete: Restrict, onUpdate: Cascade, map: "ForecastSnapshot_locationId_fkey", index: false)
 
   @@map("ForecastSnapshot")
 }
 
 model GithubEvent {
-  id            String       @id(map: "GithubEvent_pkey")
+  id            String             @id(map: "GithubEvent_pkey")
   eventId       String
-  _type         String       @map("type")
+  _type         String             @map("type")
   repo          String
   actor         String?
   status        String?
@@ -144,7 +144,7 @@ model GithubEvent {
   commitSha     String?
   commitMessage String?
   url           String?
-  createdAt     Timestamp(3) @default(now())
+  createdAt     Timestamp(3)       @default(now())
   updatedAt     TimestampString(3)
   raw           Jsonb?
   title         String?
@@ -156,7 +156,7 @@ model GithubEvent {
 }
 
 model Log {
-  id           Int          @id(map: "Log_pkey") @default(autoincrement())
+  id           Int                @id(map: "Log_pkey") @default(autoincrement())
   level        String
   message      String
   requestId    String?
@@ -185,18 +185,18 @@ model Log {
 }
 
 model Note {
-  id String @id(map: "Note_pkey") @default(uuid())
+  id          String              @id(map: "Note_pkey") @default(uuid())
   userId      String
   userEmail   String
   title       String?
   content     String
-createdAt   TimestampString(3) @default(now())
+  createdAt   TimestampString(3)  @default(now())
   updatedAt   TimestampString(3)
   followUpAt  TimestampString(3)?
-  isCompleted Boolean       @default(false)
-  isArchived  Boolean       @default(false)
-  pinned      Boolean       @default(false)
-  tags        String[]      @default([]) @noCheck(elementNotNull)
+  isCompleted Boolean             @default(false)
+  isArchived  Boolean             @default(false)
+  pinned      Boolean             @default(false)
+  tags        String[]            @default([]) @noCheck(elementNotNull)
   color       String?
 
   @@index([followUpAt], map: "Note_followUpAt_idx")
@@ -209,7 +209,7 @@ createdAt   TimestampString(3) @default(now())
 }
 
 model RuntimeConfig {
-  key       String       @id(map: "RuntimeConfig_pkey")
+  key       String             @id(map: "RuntimeConfig_pkey")
   value     String
   updatedAt TimestampString(3)
   createdAt TimestampString(3) @default(now())
@@ -230,8 +230,8 @@ model Session {
 }
 
 model ToolVersion {
-  id         Int          @id(map: "ToolVersion_pkey") @default(autoincrement())
-  name       String       @unique
+  id         Int                @id(map: "ToolVersion_pkey") @default(autoincrement())
+  name       String             @unique
   version    String
   addedAt    TimestampString(3) @default(now()) @map("added_at")
   verifiedAt TimestampString(3) @default(now()) @map("verified_at")
@@ -312,7 +312,7 @@ model VerificationToken {
 }
 
 model WeatherSnapshot {
-  id            String       @id(map: "WeatherSnapshot_pkey")
+  id            String             @id(map: "WeatherSnapshot_pkey")
   locationId    String
   temperature   Float
   feelsLike     Float?
@@ -323,7 +323,7 @@ model WeatherSnapshot {
   visibility    Float?
   weatherCode   Int?
   fetchedAt     TimestampString(3) @default(now())
-  location      Location     @relation(fields:[locationId], references:[id], onDelete: Cascade, onUpdate: Cascade, map: "WeatherSnapshot_locationId_fkey", index: false)
+  location      Location           @relation(fields:[locationId], references:[id], onDelete: Cascade, onUpdate: Cascade, map: "WeatherSnapshot_locationId_fkey", index: false)
 
   @@index([locationId, fetchedAt], map: "WeatherSnapshot_locationId_fetchedAt_idx")
 
