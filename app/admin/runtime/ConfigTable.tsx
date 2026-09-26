@@ -78,7 +78,7 @@ export function ConfigTable({ configs }: { configs: RuntimeSetting[] }) {
       await logj({
         domain: "jonathan",
         level: "info",
-        message: `** ConfigTable -- update  **`,
+        message: `** ConfigTable -- update **`,
         file: "app/admin/runtime/ConfigTable.tsx",
         line: 78,
         payload: {
