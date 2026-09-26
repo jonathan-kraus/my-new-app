@@ -15,7 +15,7 @@ export async function GET(req: Request) {
     domain: "travel",
     level: "info",
     message: "Starting next travel event computation",
-    file: "lib/travel/next/route.ts",
+    file: "src/lib/travel/next/route.ts",
     line: 14,
     payload: {
       page: "lib/travel/next/route.ts",
@@ -32,7 +32,7 @@ export async function GET(req: Request) {
       domain: "travel",
       level: "info",
       message: "Next travel event computed",
-      file: "lib/travel/next/route.ts",
+      file: "src/lib/travel/next/route.ts",
       line: 31,
       payload: {
         page: "lib/travel/next/route.ts",
@@ -52,7 +52,7 @@ export async function GET(req: Request) {
       domain: "travel",
       level: "error",
       message: "Failed to compute next travel event",
-      file: "lib/travel/next/route.ts",
+      file: "src/lib/travel/next/route.ts",
       line: 51,
       payload: {
         page: "lib/travel/next/route.ts",

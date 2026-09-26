@@ -27,8 +27,8 @@ export function normalizeGitHubEvent(
     domain: "github",
     level: "info",
     message: "Github normalize event - " + event,
-    file: "lib/github/normalize/index.ts",
-    line: 25,
+    file: "src/lib/github/normalize/index.ts",
+    line: 26,
     payload: { repo: repo, event: event },
     meta: { built: { ...built, eventIndex: ++jei } },
   });

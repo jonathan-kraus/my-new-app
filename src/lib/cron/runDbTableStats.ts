@@ -39,8 +39,8 @@ export async function runDbTableStats(_ctx: {
     domain: "jonathan",
     level: "info",
     message: "dbTables cron started",
-    file: "lib/cron/runDbTableStats.ts",
-    line: 34,
+    file: "src/lib/cron/runDbTableStats.ts",
+    line: 38,
     payload: {
       date: snapshotDate.toISOString(),
     },
@@ -72,8 +72,8 @@ export async function runDbTableStats(_ctx: {
       domain: "jonathan",
       level: "info",
       message: `dbTables preparing to count rows for table ${tableName}`,
-      file: "lib/cron/runDbTableStats.ts",
-      line: 67,
+      file: "src/lib/cron/runDbTableStats.ts",
+      line: 71,
       payload: {
         name: tableName,
       },
@@ -94,7 +94,7 @@ export async function runDbTableStats(_ctx: {
         domain: "jonathan",
         level: "info",
         message: `dbTables update started for table ${tableName} with ${count} rows`,
-        file: "lib/cron/runDbTableStats.ts",
+        file: "src/lib/cron/runDbTableStats.ts",
         line: 93,
         payload: {
           name: tableName,
@@ -137,8 +137,8 @@ export async function runDbTableStats(_ctx: {
         domain: "jonathan",
         level: "error",
         message: `dbTables error for table ${tableName}`,
-        file: "lib/cron/runDbTableStats.ts",
-        line: 132,
+        file: "src/lib/cron/runDbTableStats.ts",
+        line: 136,
         payload: {
           error: String(err),
           name: tableName,
@@ -155,8 +155,8 @@ export async function runDbTableStats(_ctx: {
     domain: "jonathan",
     level: "info",
     message: "dbTables cron completed",
-    file: "lib/cron/runDbTableStats.ts",
-    line: 148,
+    file: "src/lib/cron/runDbTableStats.ts",
+    line: 154,
     payload: {
       tables: tablesProcessed,
       durationMs: Date.now() - start,

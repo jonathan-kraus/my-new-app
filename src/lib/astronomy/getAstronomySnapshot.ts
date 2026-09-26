@@ -28,8 +28,8 @@ const getCachedAstronomySnapshot = unstable_cache(
       domain: "jonathan",
       level: "info",
       message: "Astronomy snapshot fetched",
-      file: "lib/astronomy/getAstronomySnapshot.ts",
-      line: 31,
+      file: "src/lib/astronomy/getAstronomySnapshot.ts",
+      line: 27,
       payload: { today },
       meta: { built: { ...built, eventIndex: 1 } },
     });
@@ -65,8 +65,8 @@ async function getAstronomySnapshotInternal(
     domain: "jonathan",
     level: "info",
     message: "Astronomy snapshot fetched",
-    file: "lib/astronomy/getAstronomySnapshot.ts",
-    line: 74,
+    file: "src/lib/astronomy/getAstronomySnapshot.ts",
+    line: 64,
     payload: { today },
     meta: { built: { ...built, eventIndex: 1 } },
   });

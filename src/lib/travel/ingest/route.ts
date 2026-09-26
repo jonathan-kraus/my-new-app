@@ -20,7 +20,7 @@ export async function POST(req: Request) {
     domain: "jonathan",
     level: "info",
     message: "travel-ingest-start",
-    file: "lib/travel/ingest/route.ts",
+    file: "src/lib/travel/ingest/route.ts",
     line: 19,
     payload: {
       url: req.url,
@@ -34,7 +34,7 @@ export async function POST(req: Request) {
     domain: "jonathan",
     level: "info",
     message: "travel-ingest-end",
-    file: "lib/travel/ingest/route.ts",
+    file: "src/lib/travel/ingest/route.ts",
     line: 33,
     payload: {
       result,

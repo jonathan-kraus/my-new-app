@@ -28,8 +28,8 @@ export async function logDashboardAstronomy(snapshot: unknown) {
     domain: "DashboardAstronomy",
     level: "info",
     message: "Dashboard Astronomy snapshot",
-    file: "lib/dashboard.ts",
-    line: 26,
+    file: "src/lib/dashboard.ts",
+    line: 27,
     payload: { some: "data1", snapshot },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -48,8 +48,8 @@ export async function getDashboardData(): Promise<DashboardData> {
     domain: "vercel",
     level: "info",
     message: "Dashboard Vercel deployments initial call",
-    file: "lib/dashboard.ts",
-    line: 46,
+    file: "src/lib/dashboard.ts",
+    line: 47,
     payload: {
       vercelResultOk: vercelResult.ok,
       vercelRaw: vercel,

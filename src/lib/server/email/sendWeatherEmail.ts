@@ -23,7 +23,7 @@ export async function sendWeatherEmail(message?: string, subject?: string) {
     domain: "email",
     level: "info",
     message: message_begin + "Checked email_enabled",
-    file: "lib/server/email/sendWeatherEmail.ts",
+    file: "src/lib/server/email/sendWeatherEmail.ts",
     line: 22,
     payload: {
       enabled_raw: enabled,
@@ -39,7 +39,7 @@ export async function sendWeatherEmail(message?: string, subject?: string) {
       domain: "email",
       level: "warn",
       message: message_begin + "Email sending disabled by runtime flag",
-      file: "lib/server/email/sendWeatherEmail.ts",
+      file: "src/lib/server/email/sendWeatherEmail.ts",
       line: 38,
       payload: {},
       meta: { built: { ...built, eventIndex: ++jei } },
@@ -71,7 +71,7 @@ export async function sendWeatherEmail(message?: string, subject?: string) {
     domain: "email",
     level: "info",
     message: message_begin + "Throttle check starting",
-    file: "lib/server/email/sendWeatherEmail.ts",
+    file: "src/lib/server/email/sendWeatherEmail.ts",
     line: 70,
     payload: {
       throttleMinutes,
@@ -91,7 +91,7 @@ export async function sendWeatherEmail(message?: string, subject?: string) {
     domain: "email",
     level: "info",
     message: message_begin + "Throttle status computed",
-    file: "lib/server/email/sendWeatherEmail.ts",
+    file: "src/lib/server/email/sendWeatherEmail.ts",
     line: 90,
     payload: {
       isThrottled: throttleStatus.isThrottled,
@@ -127,7 +127,7 @@ export async function sendWeatherEmail(message?: string, subject?: string) {
       domain: "email",
       level: "info",
       message: message_begin + "Travel Weather email sent (Resend)",
-      file: "lib/server/email/sendWeatherEmail.ts",
+      file: "src/lib/server/email/sendWeatherEmail.ts",
       line: 126,
       payload: {
         subject: finalSubject,
@@ -144,7 +144,7 @@ export async function sendWeatherEmail(message?: string, subject?: string) {
       domain: "email",
       level: "info",
       message: message_begin + "Updated last_sent_at",
-      file: "lib/server/email/sendWeatherEmail.ts",
+      file: "src/lib/server/email/sendWeatherEmail.ts",
       line: 143,
       payload: {
         attempted: newTimestamp,
@@ -160,7 +160,7 @@ export async function sendWeatherEmail(message?: string, subject?: string) {
       domain: "email",
       level: "error",
       message: message_begin + "Resend error",
-      file: "lib/server/email/sendWeatherEmail.ts",
+      file: "src/lib/server/email/sendWeatherEmail.ts",
       line: 159,
       payload: {
         error: err instanceof Error ? err.message : String(err),

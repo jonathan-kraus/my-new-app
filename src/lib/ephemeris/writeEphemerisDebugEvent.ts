@@ -41,7 +41,7 @@ async function logEphemerisEvent(
       domain: "EPHEMERIS",
       level,
       message,
-      file: "lib/ephemeris/writeEphemerisDebugEvent.ts",
+      file: "src/lib/ephemeris/writeEphemerisDebugEvent.ts",
       line: level === "info" ? 55 : 75,
       payload,
       meta: { built: { ...built, eventIndex: jei } },
