@@ -172,6 +172,9 @@ importers:
       '@axiomhq/logging':
         specifier: 0.4.1
         version: 0.4.1(@axiomhq/js@2.0.0)
+      '@axiomhq/nextjs':
+        specifier: ^0.4.1
+        version: 0.4.1(@axiomhq/logging@0.4.1(@axiomhq/js@2.0.0))(next@16.3.6(@babel/core@7.29.7(supports-color@7.2.0))(@types/node@26.6.3)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))
       '@axiomhq/react':
         specifier: 0.4.1
         version: 0.4.1(@axiomhq/logging@0.4.1(@axiomhq/js@2.0.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -658,6 +661,13 @@ packages:
     peerDependenciesMeta:
       '@axiomhq/js':
         optional: true
+
+  '@axiomhq/nextjs@0.4.1':
+    resolution: {integrity: sha512-1R8WzjXC5LFyLMW1rzcx7S/DMDe9JI/vA8oipz06QHE6lN88eF4qFU90bYepSRxWIgIQyYHD/CvE7lrHL5sTUA==}
+    engines: {node: '>=20'}
+    peerDependencies:
+      '@axiomhq/logging': 0.4.1
+      next: '>=13'
 
   '@axiomhq/react@0.4.1':
     resolution: {integrity: sha512-CxJTIOG77GDsTx3mOR7p9kj/uoGd8901+b/OwvBrQjwXZIFTDnfvy7nuGIRDGDKgfQLctPzeiah32HeZvGrvUQ==}
@@ -6579,6 +6589,11 @@ snapshots:
   '@axiomhq/logging@0.4.1(@axiomhq/js@2.0.0)':
     optionalDependencies:
       '@axiomhq/js': 2.0.0
+
+  '@axiomhq/nextjs@0.4.1(@axiomhq/logging@0.4.1(@axiomhq/js@2.0.0))(next@16.3.6(@babel/core@7.29.7(supports-color@7.2.0))(@types/node@26.6.3)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))':
+    dependencies:
+      '@axiomhq/logging': 0.4.1(@axiomhq/js@2.0.0)
+      next: 16.3.6(@babel/core@7.29.7(supports-color@7.2.0))(@types/node@26.6.3)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
 
   '@axiomhq/react@0.4.1(@axiomhq/logging@0.4.1(@axiomhq/js@2.0.0))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)':
     dependencies:

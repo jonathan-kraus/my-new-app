@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\.github\scripts\audit.js
- * @LastEditTime: 2026-09-02 14:24:13
+ * @LastEditTime: 2026-09-26 19:35:42
  */
 import fs from "fs";
 import * as yaml from "js-yaml";
@@ -10,6 +10,7 @@ import { config } from "dotenv";
 
 // Add this BEFORE dotenv
 console.log("PRE-DOTENV TOKEN:", !!process.env.AXIOM_TOKEN);
+console.log("PRE-DOTENV URL:", !!process.env.AXIOM_URL);
 console.log("PRE-DOTENV CI:", process.env.CI);
 // Only load .env.local if NOT in CI
 if (!process.env.CI) {
@@ -18,8 +19,8 @@ if (!process.env.CI) {
 // advisories to ignore by ID
 const IGNORE = [
   "1145093",
-  "1158532",
-  "1153173"
+  // "1158532",
+  // "1153173"
 ];
 console.log("TOKEN exists:", !!process.env.AXIOM_TOKEN);
 console.log("DATASET:", process.env.AXIOM_DATASET);

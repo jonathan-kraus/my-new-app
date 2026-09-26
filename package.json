@@ -53,6 +53,7 @@
   "dependencies": {
     "@axiomhq/js": "2.0.0",
     "@axiomhq/logging": "0.4.1",
+    "@axiomhq/nextjs": "^0.4.1",
     "@axiomhq/react": "0.4.1",
     "@heroicons/react": "2.2.0",
     "@neondatabase/postgrest-js": "0.2.0-beta",
