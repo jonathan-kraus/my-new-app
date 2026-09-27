@@ -1,6 +1,6 @@
 // lib/travel/ingest/email-ingest.ts
 
-import fs from "node:fs";
+import * as fs from "node:fs";
 import path from "node:path";
 import { simpleParser } from "mailparser";
 import { db8 } from "@/lib/db.prisma8";
