@@ -1,0 +1,53 @@
+name: "Unified Summary"
+description: "Add Vitest coverage and weather summary to the GitHub job summary"
+
+inputs:
+  coverage-command:
+    description: "Command to run coverage"
+    required: true
+    default: "pnpm coverage"
+
+  weather-summary:
+    description: "JSON string containing weather summary"
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+  steps:
+    - name: Run coverage
+      id: run_coverage
+      shell: bash
+      run: |
+        echo "Running coverage command: ${{ inputs.coverage-command }}"
+        COVERAGE_OUTPUT="$(${{ inputs.coverage-command }} 2>&1)"
+        echo "$COVERAGE_OUTPUT" > coverage.txt
+
+        # Extract first percentage (Vitest prints e.g. 'Statements   : 92.34%')
+        COVERAGE_PERCENT=$(grep -oE '[0-9]+\.[0-9]+%' coverage.txt | head -n 1)
+
+        echo "coverage_percent=$COVERAGE_PERCENT" >> $GITHUB_OUTPUT
+
+    - name: Add summary
+      shell: bash
+      run: |
+        echo "## CI Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+
+        echo "### Vitest Coverage" >> $GITHUB_STEP_SUMMARY
+        if [ -z "${{ steps.run_coverage.outputs.coverage_percent }}" ]; then
+          echo "- Coverage: **N/A**" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "- Coverage: **${{ steps.run_coverage.outputs.coverage_percent }}**" >> $GITHUB_STEP_SUMMARY
+        fi
+        echo "" >> $GITHUB_STEP_SUMMARY
+
+        if [ -n "${{ inputs.weather-summary }}" ]; then
+          echo "### Weather Summary" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`json" >> $GITHUB_STEP_SUMMARY
+          echo "${{ inputs.weather-summary }}" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+        fi
+
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "_Generated automatically by Unified Summary Action_" >> $GITHUB_STEP_SUMMARY

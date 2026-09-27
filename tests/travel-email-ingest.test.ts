@@ -65,7 +65,7 @@ const parsed = {
 };
 beforeEach(() => {
   vi.resetAllMocks();
-  vi.spyOn(console, "log").mockImplementation(() => { });
+  vi.spyOn(console, "log").mockImplementation(() => {});
   mocks.files.mockReturnValue(["trip.eml"]);
   mocks.read.mockReturnValue("email");
   mocks.stat.mockReturnValue({ mtime: new Date() });
