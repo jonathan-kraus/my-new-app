@@ -7,9 +7,16 @@ runs:
     - name: Write summary
       shell: bash
       run: |
+        if [ -f version.json ]; then
+          APP_VERSION="$(jq -r '.version // "unknown"' version.json)"
+        else
+          APP_VERSION="unknown"
+        fi
+
         {
           echo "## CI Summary"
           echo ""
+          echo "- Current app version: **${APP_VERSION}**"
           echo "- Job summary writing is working ✅"
           echo "- Next step: add coverage data"
         } >> "$GITHUB_STEP_SUMMARY"
