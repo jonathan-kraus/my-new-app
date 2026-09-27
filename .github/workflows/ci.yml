@@ -92,5 +92,3 @@ jobs:
 
       - name: Run Coverage Summary
         uses: ./.github/actions/coverage-summary
-        with:
-          coverage-command: "pnpm coverage"
