@@ -77,9 +77,7 @@ jobs:
       - name: Show workspace files for diagnostics
         run: |
           echo "Working directory: $(pwd)"
-          echo "List root files:"; ls -la
-          echo "Process environment CI: $CI"
-          echo "List coverage dir (if present):"; ls -la coverage || true
+          echo "List root files:"; ls -la  >> $GITHUB_STEP_SUMMARY
 
       - name: Build
         env:
