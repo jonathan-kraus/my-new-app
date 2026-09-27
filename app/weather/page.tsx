@@ -7,6 +7,5 @@ export const metadata = {
 
 export default async function WeatherPage() {
   const locations = await db8.orm.public.Location.all();
-  console.log({ locations });
   return <WeatherClient locations={locations} />;
 }
