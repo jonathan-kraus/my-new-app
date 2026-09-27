@@ -15,13 +15,20 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Run coverage
+    - name: Run coverage (non-fatal)
       id: run_coverage
       shell: bash
       run: |
         echo "Running coverage command: ${{ inputs.coverage-command }}"
+
+        # Run coverage but NEVER fail the job
+        set +e
         COVERAGE_OUTPUT="$(${{ inputs.coverage-command }} 2>&1)"
+        COVERAGE_EXIT=$?
+        set -e
+
         echo "$COVERAGE_OUTPUT" > coverage.txt
+        echo "exit_code=$COVERAGE_EXIT" >> $GITHUB_OUTPUT
 
         # Extract first percentage (Vitest prints e.g. 'Statements   : 92.34%')
         COVERAGE_PERCENT=$(grep -oE '[0-9]+\.[0-9]+%' coverage.txt | head -n 1)
@@ -40,6 +47,8 @@ runs:
         else
           echo "- Coverage: **${{ steps.run_coverage.outputs.coverage_percent }}**" >> $GITHUB_STEP_SUMMARY
         fi
+
+        echo "- Coverage Exit Code: ${{ steps.run_coverage.outputs.exit_code }}" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
 
         if [ -n "${{ inputs.weather-summary }}" ]; then
