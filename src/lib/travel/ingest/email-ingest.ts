@@ -8,6 +8,7 @@ import { createId } from "@paralleldrive/cuid2";
 import { parseAAEmail } from "@/lib/travel/parser/aa";
 import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
+import { Temporal } from "temporal-polyfill";
 
 export async function ingestTravelEmails() {
   console.log("INGEST: starting travel email ingestion");
@@ -25,7 +26,7 @@ export async function ingestTravelEmails() {
       level: "info",
       message: "INGEST aborted: no .eml files found",
       file: "src/lib/travel/ingest/email-ingest.ts",
-      line: 23,
+      line: 24,
       payload: { filesCount: files.length },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -47,7 +48,7 @@ export async function ingestTravelEmails() {
     level: "info",
     message: "Selected email for ingestion: " + filePath,
     file: "src/lib/travel/ingest/email-ingest.ts",
-    line: 39,
+    line: 46,
     payload: { fileName },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -62,7 +63,7 @@ export async function ingestTravelEmails() {
     level: "info",
     message: "INGEST: raw file length = " + raw.length,
     file: "src/lib/travel/ingest/email-ingest.ts",
-    line: 54,
+    line: 61,
     payload: { length: raw.length },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -92,7 +93,7 @@ export async function ingestTravelEmails() {
     level: "info",
     message: `INGEST: extracted HTML length = ${html.length}`,
     file: "src/lib/travel/ingest/email-ingest.ts",
-    line: 84,
+    line: 91,
     payload: { htmlLength: html.length },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -108,7 +109,7 @@ export async function ingestTravelEmails() {
     level: "info",
     message: `INGEST: parsed.confirmationCode = ${parsed.confirmationCode}`,
     file: "src/lib/travel/ingest/email-ingest.ts",
-    line: 100,
+    line: 107,
     payload: { confirmationCode: parsed.confirmationCode },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -128,7 +129,7 @@ export async function ingestTravelEmails() {
     level: "info",
     message: `INGEST: dedupe check result = ${existing ? "FOUND - will update" : "NOT FOUND - will insert"}`,
     file: "src/lib/travel/ingest/email-ingest.ts",
-    line: 120,
+    line: 127,
     payload: {
       confirmationCode: parsed.confirmationCode,
       existing: !!existing,
@@ -139,204 +140,211 @@ export async function ingestTravelEmails() {
   // 9️⃣ DB insert or update attempt
   console.log("INGEST: inserting/updating snapshot in DB");
 
+  // Convert Date to Temporal.PlainDateTime for Prisma 8
+  const receivedAtTemporal = Temporal.Instant.from(
+    parsed.receivedAt.toISOString(),
+  )
+    .toZonedDateTimeISO("UTC")
+    .toPlainDateTime();
+
   let created;
   try {
-    created = await db8.transaction(async (tx) => {
-      let snapshot: any;
-
-      if (existing) {
-        console.log("INGEST: updating existing snapshot", existing.id);
-        await logj({
-          domain: "ingest",
-          level: "info",
-          message: "INGEST: starting snapshot update",
-          file: "src/lib/travel/ingest/email-ingest.ts",
-          line: 139,
-          payload: {
-            existingId: existing.id,
-            confirmationCode: parsed.confirmationCode,
-          },
-          meta: { built: { ...built, eventIndex: ++jei } },
-        });
-
-        // Update existing snapshot
-        await tx.orm.public.TravelSnapshot.where({ id: existing.id }).update({
-          source: parsed.source,
-          receivedAt: parsed.receivedAt,
+    if (existing) {
+      console.log("INGEST: updating existing snapshot", existing.id);
+      await logj({
+        domain: "ingest",
+        level: "info",
+        message: "INGEST: starting snapshot update",
+        file: "src/lib/travel/ingest/email-ingest.ts",
+        line: 154,
+        payload: {
+          existingId: existing.id,
           confirmationCode: parsed.confirmationCode,
-          issuedDate: parsed.issuedDate,
-          rawHtml: parsed.rawHtml,
-          passengers: parsed.passengers,
-          payment: parsed.payment,
-          bags: parsed.bags,
-        });
+        },
+        meta: { built: { ...built, eventIndex: ++jei } },
+      });
 
-        await logj({
-          domain: "ingest",
-          level: "info",
-          message: "INGEST: snapshot update completed",
-          file: "src/lib/travel/ingest/email-ingest.ts",
-          line: 139,
-          payload: { existingId: existing.id },
-          meta: { built: { ...built, eventIndex: ++jei } },
-        });
+      // Update existing snapshot
+      await db8.orm.public.TravelSnapshot.where({ id: existing.id }).update({
+        source: parsed.source,
+        receivedAt: receivedAtTemporal,
+        confirmationCode: parsed.confirmationCode,
+        issuedDate: parsed.issuedDate,
+        rawHtml: parsed.rawHtml,
+        passengers: parsed.passengers,
+        payment: parsed.payment,
+        bags: parsed.bags,
+      });
 
-        // Fetch the updated snapshot
-        snapshot = await tx.orm.public.TravelSnapshot.where({
-          id: existing.id,
-        }).first();
+      await logj({
+        domain: "ingest",
+        level: "info",
+        message: "INGEST: snapshot update completed",
+        file: "src/lib/travel/ingest/email-ingest.ts",
+        line: 179,
+        payload: { existingId: existing.id },
+        meta: { built: { ...built, eventIndex: ++jei } },
+      });
 
-        if (!snapshot) {
-          throw new Error("Failed to fetch updated snapshot");
-        }
+      // Fetch the updated snapshot
+      const snapshot = await db8.orm.public.TravelSnapshot.where({
+        id: existing.id,
+      }).first();
 
-        console.log("INGEST: fetched updated snapshot", snapshot.id);
-        await logj({
-          domain: "ingest",
-          level: "info",
-          message: "INGEST: fetched updated snapshot",
-          file: "src/lib/travel/ingest/email-ingest.ts",
-          line: 139,
-          payload: { snapshotId: snapshot.id },
-          meta: { built: { ...built, eventIndex: ++jei } },
-        });
-
-        // Delete old segments
-        await tx.orm.public.TravelSegment.where({
-          snapshotId: existing.id,
-        }).delete();
-        console.log("INGEST: deleted old segments");
-        await logj({
-          domain: "ingest",
-          level: "info",
-          message: "INGEST: deleted old segments",
-          file: "src/lib/travel/ingest/email-ingest.ts",
-          line: 139,
-          payload: { snapshotId: existing.id },
-          meta: { built: { ...built, eventIndex: ++jei } },
-        });
-
-        // Create new segments
-        let segmentCount = 0;
-        for (const seg of parsed.segments) {
-          await tx.orm.public.TravelSegment.create({
-            id: createId(),
-            snapshotId: snapshot.id,
-            date: seg.date,
-            departureAirport: seg.departureAirport,
-            departureCity: seg.departureCity,
-            departureTime: seg.departureTime,
-            arrivalAirport: seg.arrivalAirport,
-            arrivalCity: seg.arrivalCity,
-            arrivalTime: seg.arrivalTime,
-            flightNumber: seg.flightNumber,
-            operatedBy: seg.operatedBy,
-            seats: seg.seats,
-          });
-          segmentCount++;
-        }
-        console.log("INGEST: created new segments", segmentCount);
-        await logj({
-          domain: "ingest",
-          level: "info",
-          message: "INGEST: created new segments",
-          file: "src/lib/travel/ingest/email-ingest.ts",
-          line: 139,
-          payload: { segmentCount, snapshotId: snapshot.id },
-          meta: { built: { ...built, eventIndex: ++jei } },
-        });
-      } else {
-        console.log("INGEST: creating new snapshot");
-        await logj({
-          domain: "ingest",
-          level: "info",
-          message: "INGEST: starting new snapshot creation",
-          file: "src/lib/travel/ingest/email-ingest.ts",
-          line: 139,
-          payload: { confirmationCode: parsed.confirmationCode },
-          meta: { built: { ...built, eventIndex: ++jei } },
-        });
-
-        // Create new snapshot
-        snapshot = await tx.orm.public.TravelSnapshot.create({
-          id: createId(),
-          source: parsed.source,
-          receivedAt: parsed.receivedAt,
-          confirmationCode: parsed.confirmationCode,
-          issuedDate: parsed.issuedDate,
-          rawHtml: parsed.rawHtml,
-          passengers: parsed.passengers,
-          payment: parsed.payment,
-          bags: parsed.bags,
-        });
-
-        if (!snapshot) {
-          throw new Error("Failed to create snapshot");
-        }
-
-        console.log("INGEST: created snapshot", snapshot.id);
-        await logj({
-          domain: "ingest",
-          level: "info",
-          message: "INGEST: created new snapshot",
-          file: "src/lib/travel/ingest/email-ingest.ts",
-          line: 139,
-          payload: {
-            snapshotId: snapshot.id,
-            confirmationCode: parsed.confirmationCode,
-          },
-          meta: { built: { ...built, eventIndex: ++jei } },
-        });
-
-        let segmentCount = 0;
-        for (const seg of parsed.segments) {
-          await tx.orm.public.TravelSegment.create({
-            id: createId(),
-            snapshotId: snapshot.id,
-            date: seg.date,
-            departureAirport: seg.departureAirport,
-            departureCity: seg.departureCity,
-            departureTime: seg.departureTime,
-            arrivalAirport: seg.arrivalAirport,
-            arrivalCity: seg.arrivalCity,
-            arrivalTime: seg.arrivalTime,
-            flightNumber: seg.flightNumber,
-            operatedBy: seg.operatedBy,
-            seats: seg.seats,
-          });
-          segmentCount++;
-        }
-        console.log("INGEST: created segments", segmentCount);
-        await logj({
-          domain: "ingest",
-          level: "info",
-          message: "INGEST: created segments",
-          file: "src/lib/travel/ingest/email-ingest.ts",
-          line: 139,
-          payload: { segmentCount, snapshotId: snapshot.id },
-          meta: { built: { ...built, eventIndex: ++jei } },
-        });
+      if (!snapshot) {
+        throw new Error("Failed to fetch updated snapshot");
       }
-      return { ...snapshot, receivedAt: new Date(`${snapshot.receivedAt}Z`) };
-    });
-    console.log("INGEST: transaction completed successfully");
+
+      console.log("INGEST: fetched updated snapshot", snapshot.id);
+      await logj({
+        domain: "ingest",
+        level: "info",
+        message: "INGEST: fetched updated snapshot",
+        file: "src/lib/travel/ingest/email-ingest.ts",
+        line: 199,
+        payload: { snapshotId: snapshot.id },
+        meta: { built: { ...built, eventIndex: ++jei } },
+      });
+
+      // Delete old segments
+      await db8.orm.public.TravelSegment.where({
+        snapshotId: existing.id,
+      }).delete();
+      console.log("INGEST: deleted old segments");
+      await logj({
+        domain: "ingest",
+        level: "info",
+        message: "INGEST: deleted old segments",
+        file: "src/lib/travel/ingest/email-ingest.ts",
+        line: 214,
+        payload: { snapshotId: existing.id },
+        meta: { built: { ...built, eventIndex: ++jei } },
+      });
+
+      // Create new segments
+      let segmentCount = 0;
+      for (const seg of parsed.segments) {
+        await db8.orm.public.TravelSegment.create({
+          id: createId(),
+          snapshotId: snapshot.id,
+          date: seg.date,
+          departureAirport: seg.departureAirport,
+          departureCity: seg.departureCity,
+          departureTime: seg.departureTime,
+          arrivalAirport: seg.arrivalAirport,
+          arrivalCity: seg.arrivalCity,
+          arrivalTime: seg.arrivalTime,
+          flightNumber: seg.flightNumber,
+          operatedBy: seg.operatedBy,
+          seats: seg.seats,
+        });
+        segmentCount++;
+      }
+      console.log("INGEST: created new segments", segmentCount);
+      await logj({
+        domain: "ingest",
+        level: "info",
+        message: "INGEST: created new segments",
+        file: "src/lib/travel/ingest/email-ingest.ts",
+        line: 244,
+        payload: { segmentCount, snapshotId: snapshot.id },
+        meta: { built: { ...built, eventIndex: ++jei } },
+      });
+
+      created = { ...snapshot, receivedAt: parsed.receivedAt };
+    } else {
+      console.log("INGEST: creating new snapshot");
+      await logj({
+        domain: "ingest",
+        level: "info",
+        message: "INGEST: starting new snapshot creation",
+        file: "src/lib/travel/ingest/email-ingest.ts",
+        line: 257,
+        payload: { confirmationCode: parsed.confirmationCode },
+        meta: { built: { ...built, eventIndex: ++jei } },
+      });
+
+      // Create new snapshot
+      const snapshot = await db8.orm.public.TravelSnapshot.create({
+        id: createId(),
+        source: parsed.source,
+        receivedAt: receivedAtTemporal,
+        confirmationCode: parsed.confirmationCode,
+        issuedDate: parsed.issuedDate,
+        rawHtml: parsed.rawHtml,
+        passengers: parsed.passengers,
+        payment: parsed.payment,
+        bags: parsed.bags,
+      });
+
+      if (!snapshot) {
+        throw new Error("Failed to create snapshot");
+      }
+
+      console.log("INGEST: created snapshot", snapshot.id);
+      await logj({
+        domain: "ingest",
+        level: "info",
+        message: "INGEST: created new snapshot",
+        file: "src/lib/travel/ingest/email-ingest.ts",
+        line: 285,
+        payload: {
+          snapshotId: snapshot.id,
+          confirmationCode: parsed.confirmationCode,
+        },
+        meta: { built: { ...built, eventIndex: ++jei } },
+      });
+
+      let segmentCount = 0;
+      for (const seg of parsed.segments) {
+        await db8.orm.public.TravelSegment.create({
+          id: createId(),
+          snapshotId: snapshot.id,
+          date: seg.date,
+          departureAirport: seg.departureAirport,
+          departureCity: seg.departureCity,
+          departureTime: seg.departureTime,
+          arrivalAirport: seg.arrivalAirport,
+          arrivalCity: seg.arrivalCity,
+          arrivalTime: seg.arrivalTime,
+          flightNumber: seg.flightNumber,
+          operatedBy: seg.operatedBy,
+          seats: seg.seats,
+        });
+        segmentCount++;
+      }
+      console.log("INGEST: created segments", segmentCount);
+      await logj({
+        domain: "ingest",
+        level: "info",
+        message: "INGEST: created segments",
+        file: "src/lib/travel/ingest/email-ingest.ts",
+        line: 317,
+        payload: { segmentCount, snapshotId: snapshot.id },
+        meta: { built: { ...built, eventIndex: ++jei } },
+      });
+
+      created = { ...snapshot, receivedAt: parsed.receivedAt };
+    }
+
+    console.log("INGEST: database operations completed successfully");
     await logj({
       domain: "ingest",
       level: "info",
-      message: "INGEST: transaction completed successfully",
+      message: "INGEST: database operations completed successfully",
       file: "src/lib/travel/ingest/email-ingest.ts",
-      line: 139,
+      line: 331,
       payload: { confirmationCode: parsed.confirmationCode },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
   } catch (error) {
-    console.error("INGEST: transaction failed", error);
+    console.error("INGEST: database operations failed", error);
     await logj({
       domain: "ingest",
       level: "error",
-      message: "INGEST: transaction failed - " + String(error),
+      message: "INGEST: database operations failed - " + String(error),
       file: "src/lib/travel/ingest/email-ingest.ts",
-      line: 139,
+      line: 342,
       payload: {
         error: String(error),
         confirmationCode: parsed.confirmationCode,
@@ -353,7 +361,7 @@ export async function ingestTravelEmails() {
     level: "info",
     message: `INGEST: transaction completed successfully - created DB row id = ${created.id}`,
     file: "src/lib/travel/ingest/email-ingest.ts",
-    line: 171,
+    line: 359,
     payload: {
       createdId: created.id,
       confirmationCode: parsed.confirmationCode,
