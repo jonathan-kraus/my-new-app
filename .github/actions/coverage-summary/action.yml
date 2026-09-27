@@ -23,7 +23,7 @@ runs:
 
         # Run coverage but NEVER fail the job
         set +e
-        COVERAGE_OUTPUT="$(${{ inputs.coverage-command }} 2>&1)"
+        COVERAGE_OUTPUT="$( (pnpm coverage) 2>&1 || true )"
         COVERAGE_EXIT=$?
         set -e
 

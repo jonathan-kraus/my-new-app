@@ -54,8 +54,9 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
-,     "app/api/weather/weather-detail.json"  ],
+    ".next/dev/types/**/*.ts",
+    "app/api/weather/weather-detail.json"
+  ],
 
   /* Exclude build artifacts + generated code */
   "exclude": ["node_modules", ".next", "dist", "coverage"]
