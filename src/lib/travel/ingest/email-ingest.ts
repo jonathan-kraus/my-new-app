@@ -1,7 +1,7 @@
 // lib/travel/ingest/email-ingest.ts
 
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import { simpleParser } from "mailparser";
 import { db8 } from "@/lib/db.prisma8";
 import { createId } from "@paralleldrive/cuid2";
