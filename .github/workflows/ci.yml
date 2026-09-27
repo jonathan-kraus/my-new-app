@@ -90,7 +90,7 @@ jobs:
           AXIOM_ORG_ID: ${{ secrets.AXIOM_ORG_ID }}
         run: pnpm build
 
-      # - name: Run Coverage Summary
-      #   uses: ./.github/actions/coverage-summary
-      #   with:
-      #     coverage-command: "pnpm coverage"
+      - name: Run Coverage Summary
+        uses: ./.github/actions/coverage-summary
+        with:
+          coverage-command: "pnpm coverage"
