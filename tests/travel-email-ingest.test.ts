@@ -4,15 +4,17 @@ import { ingestTravelEmails } from "@/lib/travel/ingest/email-ingest";
 const mocks = vi.hoisted(() => ({
   files: vi.fn(),
   read: vi.fn(),
+  stat: vi.fn(),
   mime: vi.fn(),
   parse: vi.fn(),
   first: vi.fn(),
-  transaction: vi.fn(),
   snapshot: vi.fn(),
   segment: vi.fn(),
 }));
 vi.mock("fs", () => ({
-  default: { readdirSync: mocks.files, readFileSync: mocks.read },
+  readdirSync: mocks.files,
+  readFileSync: mocks.read,
+  statSync: mocks.stat,
 }));
 vi.mock("mailparser", () => ({ simpleParser: mocks.mime }));
 vi.mock("@/lib/travel/parser/aa", () => ({ parseAAEmail: mocks.parse }));
@@ -23,9 +25,17 @@ vi.mock("@/lib/log/buildj", () => ({
 vi.mock("@/lib/db.prisma8", () => ({
   db8: {
     orm: {
-      public: { TravelSnapshot: { where: () => ({ first: mocks.first }) } },
+      public: {
+        TravelSnapshot: {
+          where: () => ({ first: mocks.first, update: mocks.snapshot }),
+          create: mocks.snapshot,
+        },
+        TravelSegment: {
+          create: mocks.segment,
+          where: () => ({ delete: vi.fn() }),
+        },
+      },
     },
-    transaction: mocks.transaction,
   },
 }));
 
@@ -55,9 +65,10 @@ const parsed = {
 };
 beforeEach(() => {
   vi.resetAllMocks();
-  vi.spyOn(console, "log").mockImplementation(() => {});
+  vi.spyOn(console, "log").mockImplementation(() => { });
   mocks.files.mockReturnValue(["trip.eml"]);
   mocks.read.mockReturnValue("email");
+  mocks.stat.mockReturnValue({ mtime: new Date() });
   mocks.mime.mockResolvedValue({ html: "html" });
   mocks.parse.mockReturnValue(parsed);
   mocks.first.mockResolvedValue(null);
@@ -66,29 +77,18 @@ beforeEach(() => {
     receivedAt: "2026-09-19T12:00:00",
   });
   mocks.segment.mockResolvedValue({});
-  mocks.transaction.mockImplementation((callback) =>
-    callback({
-      orm: {
-        public: {
-          TravelSnapshot: { create: mocks.snapshot },
-          TravelSegment: { create: mocks.segment },
-        },
-      },
-    }),
-  );
 });
 afterEach(() => vi.restoreAllMocks());
 
-it("stores JSON fields and linked segments within the same transaction", async () => {
+it("stores JSON fields and linked segments within the same operation", async () => {
   const result = await ingestTravelEmails();
-  expect(mocks.transaction).toHaveBeenCalledTimes(1);
   expect(mocks.snapshot).toHaveBeenCalledWith(
     expect.objectContaining({
       id: expect.any(String),
       passengers: parsed.passengers,
       payment: parsed.payment,
       bags: parsed.bags,
-      receivedAt: parsed.receivedAt,
+      receivedAt: expect.any(Object), // Temporal.PlainDateTime
     }),
   );
   expect(mocks.segment).toHaveBeenCalledWith({
@@ -104,12 +104,12 @@ it("skips inserts for an existing confirmation code", async () => {
     id: "existing",
     receivedAt: "2026-09-19T12:00:00",
   });
-  expect((await ingestTravelEmails())?.id).toBe("existing");
-  expect(mocks.transaction).not.toHaveBeenCalled();
+  const result = await ingestTravelEmails();
+  expect(result?.id).toBe("existing");
+  expect(mocks.snapshot).toHaveBeenCalledTimes(1); // Updated, not created
 });
 
-it("propagates a failed segment write to the transaction boundary", async () => {
+it("propagates a failed segment write to the operation boundary", async () => {
   mocks.segment.mockRejectedValue(new Error("segment failed"));
   await expect(ingestTravelEmails()).rejects.toThrow("segment failed");
-  expect(mocks.transaction).toHaveBeenCalledTimes(1);
 });
