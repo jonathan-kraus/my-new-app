@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\weather\detail\route.ts
- * @LastEditTime: 2026-09-13 02:01:36
+ * @LastEditTime: 2026-09-26 20:43:02
  */
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
@@ -187,6 +187,57 @@ export async function GET(req: NextRequest) {
   }
 
   const hourlyTimeline = payload.timelines?.hourly ?? [];
+  // Log the raw hourly count
+  await logj({
+    domain: "weather",
+    level: "info",
+    message: "Tomorrow.io hourly timeline count",
+    file: "app/api/weather/detail/route.ts",
+    line: 191,
+    payload: {
+      count: hourlyTimeline.length,
+      hourlyTimeline: hourlyTimeline[7],
+      expected: 24,
+    },
+    meta: { built: { ...built, eventIndex: ++eventIndex } },
+  });
+  if (hourlyTimeline.length > 0 && hourlyTimeline.length < 24) {
+    await logj({
+      domain: "weather",
+      level: "warn",
+      message: "Tomorrow.io returned PARTIAL hourly timeline",
+      file: "app/api/weather/detail/route.ts",
+      line: 205,
+      payload: {
+        count: hourlyTimeline.length,
+        expected: 24,
+        firstHour: hourlyTimeline[0]?.time,
+        lastHour: hourlyTimeline.at(-1)?.time,
+      },
+      meta: { built: { ...built, eventIndex: ++eventIndex } },
+    });
+  }
+  const missingFields = hourlyTimeline
+    .map((h, i) => ({
+      index: i,
+      time: h.time,
+      missing: Object.entries(h.values)
+        .filter(([_, v]) => v == null)
+        .map(([k]) => k),
+    }))
+    .filter((x) => x.missing.length > 0);
+
+  if (missingFields.length > 0) {
+    await logj({
+      domain: "weather",
+      level: "warn",
+      message: "Tomorrow.io hourly entries missing fields",
+      file: "app/api/weather/detail/route.ts",
+      line: 231,
+      payload: { missingFields },
+      meta: { built: { ...built, eventIndex: ++eventIndex } },
+    });
+  }
 
   if (hourlyTimeline.length === 0) {
     await logj({
@@ -194,7 +245,7 @@ export async function GET(req: NextRequest) {
       level: "error",
       message: "Tomorrow.io detail response contained no hourly timeline",
       file: "app/api/weather/detail/route.ts",
-      line: 192,
+      line: 244,
       payload: {
         status: response.status,
         body: responseText.slice(0, 1000),
@@ -214,11 +265,26 @@ export async function GET(req: NextRequest) {
         level: "warn",
         message: "Using Open-Meteo hourly fallback",
         file: "app/api/weather/detail/route.ts",
-        line: 212,
+        line: 264,
         payload: { locationId, hourlyCount: hourly.length },
         meta: { built: { ...built, eventIndex: ++eventIndex } },
       });
-
+      await logj({
+        domain: "weather",
+        level: "info",
+        message: "Final hourly forecast built",
+        file: "app/api/weather/detail/route.ts",
+        line: 273,
+        payload: {
+          hours: hourly.map((h) => ({
+            time: h.time,
+            precipitationProbability: h.precipitationProbability,
+            weatherCode: h.weatherCode,
+          })),
+          source: "Tomorrow.io",
+        },
+        meta: { built: { ...built, eventIndex: ++eventIndex } },
+      });
       return NextResponse.json({
         location,
         current,
@@ -232,7 +298,7 @@ export async function GET(req: NextRequest) {
         level: "error",
         message: "Hourly weather fallback failed",
         file: "app/api/weather/detail/route.ts",
-        line: 230,
+        line: 297,
         payload: { locationId, error: String(error) },
         meta: { built: { ...built, eventIndex: ++eventIndex } },
       });
