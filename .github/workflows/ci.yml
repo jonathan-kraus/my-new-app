@@ -11,7 +11,7 @@ on:
 jobs:
   build:
     name: Run test and build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     env:
       CI: true
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
