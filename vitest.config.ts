@@ -28,7 +28,7 @@ export default defineConfig({
     exclude: ["tests/log/__mocks__/**"],
     coverage: {
       provider: "v8",
-      reporter: ["text", "html", "json"],
+      reporter: ["text", "html", "json", "json-summary"],
       exclude: [
         "src/lib/axiom.ts",
         "src/lib/log/client.ts",
