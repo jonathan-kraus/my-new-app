@@ -77,7 +77,7 @@ jobs:
       - name: Show workspace files for diagnostics
         run: |
           echo "Working directory: $(pwd)"
-          ls -la  >> $GITHUB_STEP_SUMMARY
+          ls -la  # List files
 
       - name: Build
         env:
