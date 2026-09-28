@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\ping\page.tsx
- * @LastEditTime: 2026-08-22 11:38:14
+ * @LastEditTime: 2026-09-28 18:38:17
  */
 // app/ping/page.tsx
 
@@ -11,7 +11,7 @@ export default async function PingPage({
 }) {
   const { run } = await searchParams;
 
-  if (run !== "1") {
+  if (run !== "11") {
     return <p>Ping is idle. Visit /ping?run=1 to run it manually.</p>;
   }
 
