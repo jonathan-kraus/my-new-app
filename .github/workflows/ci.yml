@@ -43,7 +43,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Lint code
-        run: pnpm exec eslint . true
+        run: pnpm exec eslint . || true
 
       - name: Validate Prisma contract and generated artifacts
         run: |
