@@ -36,15 +36,11 @@ try {
 
 const data = JSON.parse(raw || "{}") as Record<string, OutdatedEntry>;
 const exclusions = {
-  packages: new Set(["typescript"]),
-  currentVersions: new Set(["7.7.7"]),
+  latestVersions: new Set(["8.0.0-rc.10", "8.0.0-rc.13"]),
 };
 const filtered = Object.fromEntries(
   Object.entries(data).filter(([name, pkg]) => {
-    return (
-      !exclusions.packages.has(name) &&
-      !exclusions.currentVersions.has(pkg.current)
-    );
+    return !exclusions.latestVersions.has(pkg.latest);
   }),
 );
 
