@@ -1,16 +1,16 @@
 {
-  "timestamp": "2026-09-29T02:01:24.370Z",
+  "timestamp": "2026-09-29T10:52:54.092Z",
   "git": {
-    "commit": "f08234f45e3b28b2d7880f60530bad257602edaa",
+    "commit": "317678016bdadd93b3f357658276b898878ee6a0",
     "branch": "main"
   },
   "tools": {
     "node": "v24.19.0",
     "pnpm": "12.6.0",
-    "next": "Next.js v16.3.6",
+    "next": "Next.js v16.3.7",
     "typescript": "Version 7.0.2",
     "eslint": "v10.11.0",
     "openmeteo": "1.2.3",
-    "prisma": "8.0.0-rc.17"
+    "prisma": "8.0.0-rc.18"
   }
 }
