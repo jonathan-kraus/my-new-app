@@ -4,7 +4,7 @@
   "type": "module",
   "vercel-build-id": "4",
   "private": true,
-  "packageManager": "pnpm@12.6.0+sha512.3ef68f951cb111ac204b4a5a16f0b2ddf0da56a96e0413e81d855d9f0b55ef926714709028e1cd00c405c2c5fb7b9e8ec4dc46777c805d0373c2f2ff00fd20ec",
+  "packageManager": "pnpm@12.8.1",
   "overrides": {
     "@eslint/plugin-kit": "0.7.3",
     "ajv": "8.20.0",
@@ -102,7 +102,7 @@
     "eslint-config-prettier": "10.1.8",
     "fast-uri": "4.2.1",
     "input-otp": "1.5.0",
-    "lucide-react": "1.48.0",
+    "lucide-react": "1.49.0",
     "luxon": "3.7.2",
     "mailparser": "3.9.31",
     "next": "16.3.7",
