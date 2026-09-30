@@ -27,7 +27,7 @@ model Account {
   scope             String?
   idToken           String? @map("id_token")
   sessionState      String? @map("session_state")
-  user              User    @relation(fields:[userId], references:[id], onDelete: Restrict, onUpdate: Cascade, map: "Account_userId_fkey", index: false)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "Account_userId_fkey", index: false)
 
   @@index([provider, providerAccountId], map: "Account_provider_providerAccountId_key", unique: true)
 
@@ -74,7 +74,7 @@ model AstronomySnapshot {
   illumination       Float?
   phaseName          String?
   dateString         VarChar(10)
-  location           Location     @relation(fields:[locationId], references:[id], onDelete: Restrict, onUpdate: Cascade, map: "AstronomySnapshot_locationId_fkey", index: false)
+  location           Location     @relation(fields: [locationId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "AstronomySnapshot_locationId_fkey", index: false)
 
   @@index([locationId, dateString], map: "AstronomySnapshot_locationId_dateString_key", unique: true)
 
@@ -128,7 +128,7 @@ model ForecastSnapshot {
   locationId String
   fetchedAt  TimestampString(3) @default(now())
   payload    Jsonb
-  location   Location           @relation(fields:[locationId], references:[id], onDelete: Restrict, onUpdate: Cascade, map: "ForecastSnapshot_locationId_fkey", index: false)
+  location   Location           @relation(fields: [locationId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "ForecastSnapshot_locationId_fkey", index: false)
 
   @@map("ForecastSnapshot")
 }
@@ -222,7 +222,7 @@ model Session {
   sessionToken String
   userId       String
   expires      Timestamp(3)
-  user         User         @relation(fields:[userId], references:[id], onDelete: Restrict, onUpdate: Cascade, map: "Session_userId_fkey", index: false)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "Session_userId_fkey", index: false)
 
   @@index([sessionToken], map: "Session_sessionToken_key", unique: true)
 
@@ -275,7 +275,7 @@ model TravelSegment {
   cabin            String?
   fareClass        String?
   seats            String[]       @noCheck(elementNotNull)
-  snapshot         TravelSnapshot @relation(fields:[snapshotId], references:[id], onDelete: Restrict, onUpdate: Cascade, map: "TravelSegment_snapshotId_fkey", index: false)
+  snapshot         TravelSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "TravelSegment_snapshotId_fkey", index: false)
 
   @@map("TravelSegment")
 }
@@ -323,7 +323,7 @@ model WeatherSnapshot {
   visibility    Float?
   weatherCode   Int?
   fetchedAt     TimestampString(3) @default(now())
-  location      Location           @relation(fields:[locationId], references:[id], onDelete: Cascade, onUpdate: Cascade, map: "WeatherSnapshot_locationId_fkey", index: false)
+  location      Location           @relation(fields: [locationId], references: [id], onDelete: Cascade, onUpdate: Cascade, map: "WeatherSnapshot_locationId_fkey", index: false)
 
   @@index([locationId, fetchedAt], map: "WeatherSnapshot_locationId_fetchedAt_idx")
 

@@ -3853,7 +3853,7 @@
     "storageHash": "dc3db28244934cde40814a39e05ca5e0881f58c13facbb3ea6e81956f66fc7b9"
   },
   "execution": {
-    "executionHash": "8499dcc414473f3d3afc33e08a8ab1580ac1537d512b45f8a325cc79599c0af6",
+    "executionHash": "e5dd22a80fda336c8f0f71f6abfb478dc0cb73ff0f64c8bdf7b2f68bcc69b3d7",
     "mutations": {
       "defaults": [
         {
@@ -3862,9 +3862,9 @@
             "kind": "generator"
           },
           "ref": {
-            "column": "id",
-            "namespace": "public",
-            "table": "Note"
+            "entry": "Note",
+            "field": "id",
+            "namespace": "public"
           }
         }
       ]

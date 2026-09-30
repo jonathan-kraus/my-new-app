@@ -11,7 +11,7 @@ export function EmailSideNavLink() {
       if (res.status === 401) {
         toast.error("Please sign in to send a test email!");
         logj({
-          domain: "email_test_denied",
+          domain: "email_test",
           level: "warn",
           message: "Email test blocked: no active session",
           file: "app/components/sidenav/EmailLink.tsx",
@@ -24,11 +24,11 @@ export function EmailSideNavLink() {
       const data = await res.json();
       // Log client-side as well (optional but nice)
       logj({
-        domain: "email_test_clicked",
+        domain: "email_test",
         level: "info",
         message: "Email test clicked",
         file: "app/components/sidenav/EmailLink.tsx",
-        line: 25,
+        line: 26,
         payload: { data },
         meta: { built: { eventIndex: ++jei } },
       });
@@ -54,11 +54,11 @@ export function EmailSideNavLink() {
       let jei = 0;
       toast.error("Failed to send test email");
       logj({
-        domain: "email_test_error",
+        domain: "email_test",
         level: "error",
         message: "Failed to send test email",
         file: "app/components/sidenav/EmailLink.tsx",
-        line: 55,
+        line: 56,
         payload: { error: String(err) },
         meta: { built: { eventIndex: ++jei } },
       });
