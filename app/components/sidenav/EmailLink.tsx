@@ -9,7 +9,7 @@ export function EmailSideNavLink() {
       const res = await fetch("/api/email/test", { method: "POST" });
       let jei = 0;
       if (res.status === 401) {
-        toast.error("Please sign in to send a test email");
+        toast.error("Please sign in to send a test email!");
         logj({
           domain: "email_test_denied",
           level: "warn",
