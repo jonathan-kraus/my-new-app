@@ -1,11 +1,21 @@
 // app/api/email/test/route.ts
+// app/api/email/test/route.ts
 import { withLogging } from "@/lib/logging/withLogging";
 import { sendTestEmail } from "@/lib/server/email/sendTestEmail";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 
 export const POST = withLogging(async (req: Request) => {
+  const session = await auth();
+  if (!session?.user) {
+    return NextResponse.json(
+      { ok: false, error: "Sign in required to send a test email." },
+      { status: 401 },
+    );
+  }
+
   const test_msg1 = "This is a test email sent from the Next.js API route.";
   const test_subject = "Test Email Subject";
   let jei = 0;
@@ -19,7 +29,7 @@ export const POST = withLogging(async (req: Request) => {
     level: "info",
     message: `Sent test email with message "${test_msg1}". Result: ${JSON.stringify(result)}`,
     file: "app/api/email/test/route.ts",
-    line: 17,
+    line: 27,
     payload: {
       result: result,
     },

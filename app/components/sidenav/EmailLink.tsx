@@ -1,5 +1,5 @@
 "use client";
-
+// app\components\sidenav\EmailLink.tsx
 import { toast } from "react-hot-toast";
 import { logj } from "@/lib/log/logj";
 
@@ -7,15 +7,28 @@ export function EmailSideNavLink() {
   async function handleClick() {
     try {
       const res = await fetch("/api/email/test", { method: "POST" });
-      const data = await res.json();
       let jei = 0;
+      if (res.status === 401) {
+        toast.error("Please sign in to send a test email");
+        logj({
+          domain: "email_test_denied",
+          level: "warn",
+          message: "Email test blocked: no active session",
+          file: "app/components/sidenav/EmailLink.tsx",
+          line: 12,
+          payload: {},
+          meta: { built: { eventIndex: ++jei } },
+        });
+        return;
+      }
+      const data = await res.json();
       // Log client-side as well (optional but nice)
       logj({
         domain: "email_test_clicked",
         level: "info",
         message: "Email test clicked",
         file: "app/components/sidenav/EmailLink.tsx",
-        line: 13,
+        line: 25,
         payload: { data },
         meta: { built: { eventIndex: ++jei } },
       });
@@ -45,7 +58,7 @@ export function EmailSideNavLink() {
         level: "error",
         message: "Failed to send test email",
         file: "app/components/sidenav/EmailLink.tsx",
-        line: 43,
+        line: 55,
         payload: { error: String(err) },
         meta: { built: { eventIndex: ++jei } },
       });
