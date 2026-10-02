@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\scripts\check-outdated.ts
- * @LastEditTime: 2026-09-28 15:18:34
+ * @LastEditTime: 2026-10-02 19:04:56
  */
 import { execSync } from "node:child_process";
 
@@ -36,7 +36,7 @@ try {
 
 const data = JSON.parse(raw || "{}") as Record<string, OutdatedEntry>;
 const exclusions = {
-  latestVersions: new Set(["8.0.0-rc.10", "8.0.0-rc.13"]),
+  latestVersions: new Set(["8.0.0-rc.14", "8.0.0-rc.13"]),
 };
 const filtered = Object.fromEntries(
   Object.entries(data).filter(([name, pkg]) => {
@@ -49,6 +49,6 @@ if (Object.keys(filtered).length) {
   console.log(JSON.stringify(filtered, null, 2));
   process.exit(1);
 } else {
-  console.log("✓✓ No outdated dependencies");
+  console.log("✓✓ No outdated dependencies found.");
   process.exit(0);
 }
