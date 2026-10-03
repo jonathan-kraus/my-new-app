@@ -65,7 +65,7 @@ if (-not $response.message) {
 $message = $response.message.content.Trim()
 
 if (-not $message) {
-    Write-Error "Commit message is empty. Aborting commit!!!"
+    Write-Error "Commit message is empty. Aborting commit."
     exit 1
 }
 
