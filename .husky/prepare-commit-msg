@@ -1,7 +1,0 @@
-
-
-# Generate the message
-node scripts/gen-commit-msg.js
-
-# Copy it into Git’s commit message file
-cp .git/COMMIT_MSG "$1"

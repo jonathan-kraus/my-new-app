@@ -33,7 +33,7 @@
     "build": "pnpm next build",
     "dev": "next dev",
     "lint": "eslint",
-    "genmsg": "node scripts/gen-commit-msg.js",
+    "genmsg": "powershell -ExecutionPolicy Bypass -File scripts/gen-commit-msg.ps1",
     "commit": "git commit -F .git/COMMIT_MSG",
     "mn": "bash ./scripts/mn.sh",
     "check-out": "node ./scripts/check-outdated.ts",
