@@ -1,9 +1,8 @@
 param(
-    [string]$Model = "gemma4:31b",   # cloud model example from docs
+    [string]$Model = "gemma4:31b",
     [string]$ApiKey = $env:OLLAMA_API_KEY
 )
 
-# Abort if no API key
 if (-not $ApiKey) {
     Write-Error "OLLAMA_API_KEY is not set."
     exit 1
@@ -12,11 +11,18 @@ if (-not $ApiKey) {
 # Get staged diff
 $diff = git diff --cached
 
+# Strict fallback for empty diffs
 if (-not $diff) {
-    $prompt = "Write a commit message for an empty diff."
-} else {
-    $prompt = "Write a concise, high-quality commit message describing these changes:\n\n$diff"
+    $message = "chore: empty commit"
+    $commitFile = ".git/COMMIT_MSG"
+    Set-Content -Path $commitFile -Value $message -Encoding UTF8
+    Write-Host "Commit message written to $commitFile"
+    Write-Host "`n$message`n"
+    exit 0
 }
+
+# Build prompt
+$prompt = "Write a concise, high-quality commit message describing these changes:\n\n$diff"
 
 # Build request body
 $body = @{
@@ -46,7 +52,6 @@ catch {
     exit 1
 }
 
-# Validate response
 if (-not $response) {
     Write-Error "Commit message generation returned null response."
     exit 1
@@ -59,13 +64,11 @@ if (-not $response.message) {
 
 $message = $response.message.content.Trim()
 
-# Abort if empty
 if (-not $message) {
     Write-Error "Commit message is empty. Aborting commit."
     exit 1
 }
 
-# Write commit message
 $commitFile = ".git/COMMIT_MSG"
 Set-Content -Path $commitFile -Value $message -Encoding UTF8
 
