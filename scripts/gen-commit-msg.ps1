@@ -14,10 +14,8 @@ $CYAN    = "Cyan"
 $MAGENTA = "Magenta"
 
 # ANSI accents (optional but pretty)
-$BOLD    = "`e[1m"
-$RESET   = "`e[0m"
-
-
+$BOLD  = '`e[1m'
+$RESET = '`e[0m'
 
 # ============================
 # API Key Check
