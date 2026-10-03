@@ -14,8 +14,11 @@ $CYAN    = "Cyan"
 $MAGENTA = "Magenta"
 
 # ANSI accents (optional but pretty)
-$BOLD  = '`e[1m'
-$RESET = '`e[0m'
+
+function Bold($text) {
+    return "`e[1m$text`e[0m"
+}
+
 
 # ============================
 # API Key Check
@@ -73,7 +76,8 @@ else {
 # ============================
 # Build Request Body
 # ============================
-Write-Host "$BOLD[INFO]$RESET Generating commit message from staged diff..." -ForegroundColor $BLUE
+Write-Host (Bold "[INFO]") -ForegroundColor Blue
+Write-Host "Generating commit message..."
 
 $body = @{
     model = $Model
