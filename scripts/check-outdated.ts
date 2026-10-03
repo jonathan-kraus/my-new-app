@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\scripts\check-outdated.ts
- * @LastEditTime: 2026-10-02 19:04:56
+ * @LastEditTime: 2026-10-03 11:09:29
  */
 import { execSync } from "node:child_process";
 
@@ -49,6 +49,6 @@ if (Object.keys(filtered).length) {
   console.log(JSON.stringify(filtered, null, 2));
   process.exit(1);
 } else {
-  console.log("✓✓ No outdated dependencies found.");
+  console.log("✓✓ No outdated dependencies found (after filtering).");
   process.exit(0);
 }
