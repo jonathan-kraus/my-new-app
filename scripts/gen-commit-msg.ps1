@@ -20,19 +20,25 @@ if (-not $diff) {
 # Build request body
 $body = @{
     model = $Model
-    prompt = $prompt
-    stream = $false
+    messages = @(
+        @{
+            role    = "user"
+            content = $prompt
+        }
+    )
 } | ConvertTo-Json -Depth 10
 
-# Correct hosted API endpoint
+# Hosted API endpoint (FORCE HTTPS)
+$uri = "https://api.ollama.com/v1/chat"
+
 $response = Invoke-RestMethod `
-    -Uri "https://api.ollama.com/v1/generate" `
+    -Uri $uri `
     -Method POST `
     -Headers @{ "Authorization" = "Bearer $ApiKey" } `
     -ContentType "application/json" `
     -Body $body
 
-$message = $response.response.Trim()
+$message = $response.choices[0].message.content.Trim()
 
 # Write commit message
 $commitFile = ".git/COMMIT_MSG"
