@@ -1,8 +1,9 @@
 param(
-    [string]$Model = "llama3.1",
+    [string]$Model = "gemma4:31b",   # cloud model example from docs
     [string]$ApiKey = $env:OLLAMA_API_KEY
 )
 
+# Abort if no API key
 if (-not $ApiKey) {
     Write-Error "OLLAMA_API_KEY is not set."
     exit 1
@@ -26,19 +27,43 @@ $body = @{
             content = $prompt
         }
     )
+    stream = $false
 } | ConvertTo-Json -Depth 10
 
-# Hosted API endpoint (FORCE HTTPS)
-$uri = "https://api.ollama.com/v1/chat"
+# Correct Ollama Cloud endpoint
+$uri = [Uri]::new("https://ollama.com/api/chat")
 
-$response = Invoke-RestMethod `
-    -Uri $uri `
-    -Method POST `
-    -Headers @{ "Authorization" = "Bearer $ApiKey" } `
-    -ContentType "application/json" `
-    -Body $body
+try {
+    $response = Invoke-RestMethod `
+        -Uri $uri `
+        -Method POST `
+        -Headers @{ "Authorization" = "Bearer $ApiKey" } `
+        -ContentType "application/json" `
+        -Body $body
+}
+catch {
+    Write-Error "Commit message generation failed: $($_.Exception.Message)"
+    exit 1
+}
 
-$message = $response.choices[0].message.content.Trim()
+# Validate response
+if (-not $response) {
+    Write-Error "Commit message generation returned null response."
+    exit 1
+}
+
+if (-not $response.message) {
+    Write-Error "Commit message generation returned no message field."
+    exit 1
+}
+
+$message = $response.message.content.Trim()
+
+# Abort if empty
+if (-not $message) {
+    Write-Error "Commit message is empty. Aborting commit."
+    exit 1
+}
 
 # Write commit message
 $commitFile = ".git/COMMIT_MSG"
