@@ -70,7 +70,7 @@ else {
 # ============================
 # Build Request Body
 # ============================
-Write-Host "[INFO] Generating commit message..." -ForegroundColor Blue
+Write-Host "[INFO] Generating commit message..." -ForegroundColor Magenta
 
 $body = @{
     model = $Model
