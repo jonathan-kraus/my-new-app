@@ -14,11 +14,9 @@ $CYAN    = "Cyan"
 $MAGENTA = "Magenta"
 
 # ANSI accents (optional but pretty)
-$BOLD  = "`e[1m"
-$RESET = "`e[0m"
 
 function Bold($text) {
-    return $BOLD + "[INFO]" + $RESET
+    return "`e[1m + $text + `e[0m"
 }
 
 
