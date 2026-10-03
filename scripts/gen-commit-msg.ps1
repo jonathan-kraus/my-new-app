@@ -16,7 +16,7 @@ $MAGENTA = "Magenta"
 # ANSI accents (optional but pretty)
 
 function Bold($text) {
-    return "`e[1m$text`e[0m"
+    return "`e[1m + $text + `e[0m"
 }
 
 
