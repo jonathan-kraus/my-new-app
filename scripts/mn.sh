@@ -71,6 +71,8 @@ case "$answer" in
     echo
     section "Staging changes"
     git add .
+    CHANGED_COUNT=$(git diff --name-only HEAD | wc -l)
+echo -e "${GREEN}✔ Staged $CHANGED_COUNT file(s)${NC}"
 
     section "Running pnpm smart-commit"
     pnpm smart-commit

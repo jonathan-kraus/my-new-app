@@ -71,6 +71,6 @@ if (-not $message) {
 
 $commitFile = ".git/COMMIT_MSG"
 Set-Content -Path $commitFile -Value $message -Encoding UTF8
-
+RED="\033[0;31m"
 Write-Host "Commit message written to $commitFile"
-Write-Host "`n$message`n"
+Write-Host "`n$RED$message`n"
