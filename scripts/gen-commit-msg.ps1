@@ -8,36 +8,31 @@ if (-not $ApiKey) {
     exit 1
 }
 
-# Get the staged diff
+# Get staged diff
 $diff = git diff --cached
 
 if (-not $diff) {
-    Write-Host "No staged changes. Writing generic commit message."
     $prompt = "Write a commit message for an empty diff."
 } else {
-    $prompt = "Write a concise, high‑quality commit message describing these changes:\n\n$diff"
+    $prompt = "Write a concise, high-quality commit message describing these changes:\n\n$diff"
 }
 
 # Build request body
 $body = @{
-    model    = $Model
-    messages = @(
-        @{
-            role    = "user"
-            content = $prompt
-        }
-    )
+    model = $Model
+    prompt = $prompt
+    stream = $false
 } | ConvertTo-Json -Depth 10
 
-# Call Ollama API
+# Correct hosted API endpoint
 $response = Invoke-RestMethod `
-    -Uri "https://api.ollama.com/v1/chat/completions" `
+    -Uri "https://api.ollama.com/v1/generate" `
     -Method POST `
     -Headers @{ "Authorization" = "Bearer $ApiKey" } `
     -ContentType "application/json" `
     -Body $body
 
-$message = $response.choices[0].message.content.Trim()
+$message = $response.response.Trim()
 
 # Write commit message
 $commitFile = ".git/COMMIT_MSG"
