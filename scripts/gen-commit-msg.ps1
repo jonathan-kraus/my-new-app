@@ -22,7 +22,7 @@ if (-not $diff) {
 }
 
 # Build prompt
-$prompt = "Write a concise, high-quality commit message describing these changes:\n\n$diff"
+$prompt = "Write a concise, humorous, and high-quality commit message describing these changes:\n\n$diff"
 
 # Build request body
 $body = @{
