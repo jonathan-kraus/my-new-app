@@ -13,18 +13,12 @@ $BLUE    = "Blue"
 $CYAN    = "Cyan"
 $MAGENTA = "Magenta"
 
-# ANSI accents (optional but pretty)
-
-function Bold($text) {
-    return "`e[1m + $text + `e[0m"
-}
-
 
 # ============================
 # API Key Check
 # ============================
 if (-not $ApiKey) {
-    Write-Host "$BOLD[ERROR]$RESET OLLAMA_API_KEY is not set." -ForegroundColor $RED
+    Write-Host "[ERROR] OLLAMA_API_KEY is not set." -ForegroundColor $RED
     exit 1
 }
 
@@ -37,14 +31,14 @@ $changedFiles = git diff --cached --name-only
 if (-not $diff) {
     $message = "chore: empty commit"
 
-    Write-Host "$BOLD[INFO]$RESET No staged changes detected." -ForegroundColor $YELLOW
-    Write-Host "$BOLD[INFO]$RESET Using fallback commit message:" -ForegroundColor $BLUE
+    Write-Host "[INFO] No staged changes detected." -ForegroundColor $YELLOW
+    Write-Host "[INFO] Using fallback commit message:" -ForegroundColor $BLUE
     Write-Host "`n$message`n" -ForegroundColor $GREEN
 
     $commitFile = ".git/COMMIT_MSG"
     Set-Content -Path $commitFile -Value $message -Encoding UTF8
 
-    Write-Host "$BOLD[SAVED]$RESET Commit message written to $commitFile" -ForegroundColor $CYAN
+    Write-Host "[SAVED] Commit message written to $commitFile" -ForegroundColor $CYAN
     exit 0
 }
 
@@ -52,11 +46,11 @@ if (-not $diff) {
 # Special Handling: package.json
 # ============================
 if ($changedFiles -contains "package.json") {
-    Write-Host "$BOLD[INFO]$RESET Detected package.json changes" -ForegroundColor $YELLOW
+    Write-Host "[INFO] Detected package.json changes" -ForegroundColor $YELLOW
 
     $pkgDiff = git diff --cached package.json
 
-    Write-Host "$BOLD[INFO]$RESET Extracting dependency diff..." -ForegroundColor $CYAN
+    Write-Host "[INFO] Extracting dependency diff..." -ForegroundColor $CYAN
 
     $prompt = @"
 Write a concise, high-quality commit message describing the dependency changes in package.json.
@@ -76,8 +70,7 @@ else {
 # ============================
 # Build Request Body
 # ============================
-Write-Host (Bold "[INFO]")
-Write-Host $($BOLD)"Generating commit message..."$($RESET) -ForegroundColor Blue
+Write-Host "[INFO] Generating commit message..." -ForegroundColor Blue
 
 $body = @{
     model = $Model
@@ -96,7 +89,7 @@ $body = @{
 $uri = [Uri]::new("https://ollama.com/api/chat")
 
 try {
-    Write-Host "$BOLD[INFO]$RESET Contacting Ollama Cloud..." -ForegroundColor $CYAN
+    Write-Host "[INFO] Contacting Ollama Cloud..." -ForegroundColor $CYAN
 
     $response = Invoke-RestMethod `
         -Uri $uri `
@@ -106,7 +99,7 @@ try {
         -Body $body
 }
 catch {
-    Write-Host "$BOLD[ERROR]$RESET Commit message generation failed:" -ForegroundColor $RED
+    Write-Host "[ERROR] Commit message generation failed:" -ForegroundColor $RED
     Write-Host $_.Exception.Message -ForegroundColor $RED
     exit 1
 }
@@ -115,19 +108,19 @@ catch {
 # Validate Response
 # ============================
 if (-not $response) {
-    Write-Host "$BOLD[ERROR]$RESET Null response from API." -ForegroundColor $RED
+    Write-Host "[ERROR] Null response from API." -ForegroundColor $RED
     exit 1
 }
 
 if (-not $response.message) {
-    Write-Host "$BOLD[ERROR]$RESET No message field in API response." -ForegroundColor $RED
+    Write-Host "[ERROR] No message field in API response." -ForegroundColor $RED
     exit 1
 }
 
 $message = $response.message.content.Trim()
 
 if (-not $message) {
-    Write-Host "$BOLD[ERROR]$RESET Commit message is empty. Aborting commit!!!" -ForegroundColor $RED
+    Write-Host "[ERROR] Commit message is empty. Aborting commit!!!" -ForegroundColor $RED
     exit 1
 }
 
@@ -137,5 +130,5 @@ if (-not $message) {
 $commitFile = ".git/COMMIT_MSG"
 Set-Content -Path $commitFile -Value $message -Encoding UTF8
 
-Write-Host "$BOLD[SAVED]$RESET Commit message written to $commitFile" -ForegroundColor $CYAN
+Write-Host "[SAVED] Commit message written to $commitFile" -ForegroundColor $CYAN
 Write-Host "`n$message`n" -ForegroundColor $GREEN
