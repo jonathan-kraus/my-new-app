@@ -52,19 +52,35 @@ if ($changedFiles -contains "package.json") {
 
     Write-Host "[INFO] Extracting dependency diff..." -ForegroundColor $CYAN
 
-    $prompt = @"
-Write a concise, high-quality commit message describing the dependency changes in package.json.
+$prompt = @"
+Write a single, concise, high-quality commit message describing the changes.
 
-Focus ONLY on what changed inside the file.
+Return exactly ONE commit message.
+Do NOT provide multiple options, alternatives, or variations.
+Do NOT include explanations or commentary.
+Output ONLY the commit message text.
 
-Here is the exact diff:
+Here is the diff:
 
 $pkgDiff
 "@
+
 }
 else {
     # Normal diff-based commit message
-    $prompt = "Write a concise, high-quality commit message describing these changes:`n`n$diff"
+    $prompt = @"
+Write a single, concise, high-quality commit message describing these changes.
+
+Return exactly ONE commit message.
+Do NOT provide multiple options, alternatives, or variations.
+Do NOT include explanations or commentary.
+Output ONLY the commit message text.
+
+Diff:
+
+$diff
+"@
+
 }
 
 # ============================
