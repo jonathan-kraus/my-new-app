@@ -53,7 +53,7 @@ if ($changedFiles -contains "package.json") {
     Write-Host "[INFO] Extracting dependency diff..." -ForegroundColor $CYAN
 
 $prompt = @"
-Write a single, concise, high-quality commit message describing the changes.
+Write a single, concise, funny, and high-quality commit message describing the changes.
 
 Return exactly ONE commit message.
 Do NOT provide multiple options, alternatives, or variations.
@@ -69,7 +69,7 @@ $pkgDiff
 else {
     # Normal diff-based commit message
     $prompt = @"
-Write a single, concise, high-quality commit message describing these changes.
+Write a single, concise, funny, and high-quality commit message describing these changes.
 
 Return exactly ONE commit message.
 Do NOT provide multiple options, alternatives, or variations.

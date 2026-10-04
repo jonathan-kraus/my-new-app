@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\dashboard\page.tsx
- * @LastEditTime: 2026-09-18 00:06:27
+ * @LastEditTime: 2026-10-04 01:46:21
  */
 
 import { getDashboardData } from "@/lib/dashboard";
@@ -86,7 +86,7 @@ export default async function DashboardPage(req: Request) {
       message: "Dashboard received weather data from API...",
       file: "app/dashboard/page.tsx",
       line: 83,
-      payload: { "Raw weather data": raw },
+      payload: { " Raw weather data": raw },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
     WeatherSchema.parse(raw);
