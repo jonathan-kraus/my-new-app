@@ -4,7 +4,7 @@
  */
 import type { ReactNode } from "react";
 import { requireRuntimeAdmin, RuntimeAccessError } from "@/lib/runtime/admin";
-
+console.log("Admin layout initialized.");
 export default async function AdminLayout({
   children,
 }: {
