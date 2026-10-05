@@ -21,7 +21,7 @@
     },
     {
       "description": "Manage Prisma development package manually",
-      "matchPackageNames": ["@prisma/orm-postgres"],
+      "matchPackageNames": ["prisma", "@prisma/orm-postgres"],
       "enabled": false
     },
     {
