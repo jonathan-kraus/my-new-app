@@ -36,7 +36,7 @@ try {
 
 const data = JSON.parse(raw || "{}") as Record<string, OutdatedEntry>;
 const exclusions = {
-  latestVersions: new Set(["8.0.0-rc.14", "8.0.0-rc.13"]),
+  latestVersions: new Set(["8.0.0-rc.14", "8.0.0-rc.20"]),
 };
 const filtered = Object.fromEntries(
   Object.entries(data).filter(([name, pkg]) => {
