@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\config\readj\actions.ts
- * @LastEditTime: 2026-08-05 01:54:39
+ * @LastEditTime: 2026-10-06 14:09:35
  */
 "use server";
 
@@ -17,7 +17,7 @@ export type ConfigEntry = {
   Variable01: string;
   Variable02: string;
   Variable03: string;
-  [key: string]: unknown; // allow extra Axiom fields
+  [key: string]: unknown;
 };
 
 export async function readFlightConfig(): Promise<ConfigEntry | null> {
