@@ -6,7 +6,20 @@ export const maxDuration = 300;
 
 export async function GET(request: Request) {
   const secret = process.env.CRON_SECRET;
-  if (!secret || request.headers.get("authorization") !== `Bearer ${secret}`) {
+  const authorization = request.headers.get("authorization");
+  if (!secret || authorization !== `Bearer ${secret}`) {
+    const suppliedSecret = authorization?.startsWith("Bearer ")
+      ? authorization.slice(7)
+      : null;
+    const suffix = (value: string | null | undefined) =>
+      !value ? null : value.length <= 5 ? "[too short]" : value.slice(-5);
+    console.warn("MBTA cron authorization rejected", {
+      secretConfigured: Boolean(secret),
+      authorizationPresent: Boolean(authorization),
+      bearerFormatValid: Boolean(authorization?.startsWith("Bearer ")),
+      configuredSecretSuffix: suffix(secret),
+      suppliedSecretSuffix: suffix(suppliedSecret),
+    });
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
   try {

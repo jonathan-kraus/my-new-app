@@ -28,7 +28,10 @@ beforeEach(() => {
   mocks.authorize.mockResolvedValue(undefined);
   mocks.sync.mockResolvedValue({ stopCount: 390 });
 });
-afterEach(() => vi.unstubAllEnvs());
+afterEach(() => {
+  vi.unstubAllEnvs();
+  vi.restoreAllMocks();
+});
 const request = (origin = "http://localhost") =>
   new Request("http://localhost/api/admin/mbta", {
     method: "POST",
@@ -63,6 +66,44 @@ describe("administrator refresh", () => {
   });
 });
 describe("scheduled refresh", () => {
+  it("logs only secret suffixes on rejected requests", async () => {
+    const warning = vi.spyOn(console, "warn").mockImplementation(() => {});
+    vi.stubEnv("CRON_SECRET", "configured-private-abcde");
+    const response = await cron(
+      new Request("http://localhost/api/cron/mbta", {
+        headers: { authorization: "Bearer supplied-private-vwxyz" },
+      }),
+    );
+    expect(response.status).toBe(401);
+    expect(warning).toHaveBeenCalledWith("MBTA cron authorization rejected", {
+      secretConfigured: true,
+      authorizationPresent: true,
+      bearerFormatValid: true,
+      configuredSecretSuffix: "abcde",
+      suppliedSecretSuffix: "vwxyz",
+    });
+    expect(JSON.stringify(warning.mock.calls)).not.toContain("private");
+    expect(await response.json()).toEqual({ error: "Unauthorized" });
+    expect(mocks.sync).not.toHaveBeenCalled();
+  });
+  it("does not expose short secrets or malformed authorization headers", async () => {
+    const warning = vi.spyOn(console, "warn").mockImplementation(() => {});
+    vi.stubEnv("CRON_SECRET", "tiny");
+    await cron(
+      new Request("http://localhost/api/cron/mbta", {
+        headers: { authorization: "Basic private-header" },
+      }),
+    );
+    expect(warning).toHaveBeenCalledWith("MBTA cron authorization rejected", {
+      secretConfigured: true,
+      authorizationPresent: true,
+      bearerFormatValid: false,
+      configuredSecretSuffix: "[too short]",
+      suppliedSecretSuffix: null,
+    });
+    expect(JSON.stringify(warning.mock.calls)).not.toContain("tiny");
+    expect(JSON.stringify(warning.mock.calls)).not.toContain("private-header");
+  });
   it("fails closed if CRON_SECRET is missing", async () => {
     vi.stubEnv("CRON_SECRET", "");
     expect(
