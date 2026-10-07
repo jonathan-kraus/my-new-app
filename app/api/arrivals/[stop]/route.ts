@@ -20,7 +20,16 @@ export async function GET(request: Request) {
   requestUrl.searchParams.set("include", "trip,route");
   requestUrl.searchParams.set("fields[trip]", "headsign,destination");
   requestUrl.searchParams.set("sort", "arrival_time");
-  const res = await fetch(requestUrl);
+  const res = await fetch(requestUrl, {
+    headers: process.env.MBTA_KEY ? { "x-api-key": process.env.MBTA_KEY } : {},
+    cache: "no-store",
+    signal: AbortSignal.timeout(15000),
+  });
+  if (!res.ok)
+    return Response.json(
+      { error: "Live arrivals are temporarily unavailable." },
+      { status: 502 },
+    );
   const predictions: {
     data?: Array<{
       attributes?: { direction_id?: number };
@@ -56,7 +65,7 @@ export async function GET(request: Request) {
       2,
     ),
   );
-  const JStop = getStopName(stopId);
+  const JStop = await getStopName(stopId).catch(() => stopId);
   await logj({
     domain: "arrivals",
     level: "info",
@@ -65,7 +74,7 @@ export async function GET(request: Request) {
     line: 60,
     payload: {
       stopId: stopId,
-      computedstop: getStopName(stopId),
+      computedstop: JStop,
       requestUrl: requestUrl,
       count: predictions?.data?.length ?? 0,
       raw: predictions,

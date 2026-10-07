@@ -1,6 +1,10 @@
 {
   "crons": [
     {
+      "path": "/api/cron/mbta",
+      "schedule": "0 8 * * *"
+    },
+    {
       "path": "/api/cron/astronomy",
       "schedule": "0 3 * * *"
     }

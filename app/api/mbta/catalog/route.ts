@@ -3,13 +3,16 @@ import { CatalogUnavailableError, getMbtaCatalog } from "@/lib/mbta/catalog";
 export const runtime = "nodejs";
 export async function GET() {
   try {
-    const catalog = await getMbtaCatalog();
-    return Response.json({ data: catalog.stops, syncedAt: catalog.syncedAt });
+    return Response.json(await getMbtaCatalog(), {
+      headers: { "Cache-Control": "no-store" },
+    });
   } catch (error) {
     if (!(error instanceof CatalogUnavailableError))
-      console.error("MBTA stops read failed", error);
+      console.error("MBTA catalog read failed", error);
     return Response.json(
-      { error: "Stop catalog is temporarily unavailable." },
+      {
+        error: "The MBTA stop catalog is unavailable. Please try again later.",
+      },
       { status: 503 },
     );
   }

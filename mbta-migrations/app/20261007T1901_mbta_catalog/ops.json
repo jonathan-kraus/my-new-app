@@ -1,0 +1,499 @@
+[
+  {
+    "id": "schema.public",
+    "label": "Create schema \"public\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "Create schema \"public\"",
+        "sql": "CREATE SCHEMA IF NOT EXISTS \"public\"",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "table.MbtaPattern",
+    "label": "Create table \"MbtaPattern\"",
+    "summary": "Creates table \"MbtaPattern\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "MbtaPattern"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"MbtaPattern\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"MbtaPattern\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"MbtaPattern\"",
+        "sql": "CREATE TABLE \"public\".\"MbtaPattern\" (\n  \"directionId\" int4 NOT NULL,\n  \"id\" text NOT NULL,\n  \"name\" text NOT NULL,\n  \"routeId\" text NOT NULL,\n  \"sortOrder\" int4 NOT NULL,\n  \"typicality\" int4 NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"MbtaPattern\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"MbtaPattern\""]
+      }
+    ]
+  },
+  {
+    "id": "table.MbtaPatternStop",
+    "label": "Create table \"MbtaPatternStop\"",
+    "summary": "Creates table \"MbtaPatternStop\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "MbtaPatternStop"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"MbtaPatternStop\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"MbtaPatternStop\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"MbtaPatternStop\"",
+        "sql": "CREATE TABLE \"public\".\"MbtaPatternStop\" (\n  \"id\" text NOT NULL,\n  \"patternId\" text NOT NULL,\n  \"position\" int4 NOT NULL,\n  \"stopId\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"MbtaPatternStop\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"MbtaPatternStop\""]
+      }
+    ]
+  },
+  {
+    "id": "table.MbtaRoute",
+    "label": "Create table \"MbtaRoute\"",
+    "summary": "Creates table \"MbtaRoute\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "MbtaRoute"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"MbtaRoute\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"MbtaRoute\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"MbtaRoute\"",
+        "sql": "CREATE TABLE \"public\".\"MbtaRoute\" (\n  \"attributes\" jsonb NOT NULL,\n  \"color\" text NOT NULL,\n  \"id\" text NOT NULL,\n  \"name\" text NOT NULL,\n  \"routeType\" int4 NOT NULL,\n  \"sortOrder\" int4 NOT NULL,\n  \"textColor\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"MbtaRoute\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"MbtaRoute\""]
+      }
+    ]
+  },
+  {
+    "id": "table.MbtaStop",
+    "label": "Create table \"MbtaStop\"",
+    "summary": "Creates table \"MbtaStop\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "MbtaStop"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"MbtaStop\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"MbtaStop\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"MbtaStop\"",
+        "sql": "CREATE TABLE \"public\".\"MbtaStop\" (\n  \"attributes\" jsonb NOT NULL,\n  \"id\" text NOT NULL,\n  \"latitude\" float8,\n  \"locationType\" int4 NOT NULL,\n  \"longitude\" float8,\n  \"name\" text NOT NULL,\n  \"parentStationId\" text,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"MbtaStop\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"MbtaStop\""]
+      }
+    ]
+  },
+  {
+    "id": "table.MbtaSyncState",
+    "label": "Create table \"MbtaSyncState\"",
+    "summary": "Creates table \"MbtaSyncState\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "MbtaSyncState"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"MbtaSyncState\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"MbtaSyncState\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"MbtaSyncState\"",
+        "sql": "CREATE TABLE \"public\".\"MbtaSyncState\" (\n  \"id\" text NOT NULL,\n  \"lastAttemptAt\" text NOT NULL,\n  \"lastError\" text,\n  \"lastSuccessAt\" text,\n  \"patternCount\" int4 NOT NULL,\n  \"routeCount\" int4 NOT NULL,\n  \"stopCount\" int4 NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"MbtaSyncState\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"MbtaSyncState\""]
+      }
+    ]
+  },
+  {
+    "id": "index.MbtaPattern.MbtaPattern_routeId_idx_91ae2fd6",
+    "label": "Create index \"MbtaPattern_routeId_idx_91ae2fd6\" on \"MbtaPattern\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "MbtaPattern_routeId_idx_91ae2fd6",
+        "table": "MbtaPattern"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"MbtaPattern_routeId_idx_91ae2fd6\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"MbtaPattern_routeId_idx_91ae2fd6\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"MbtaPattern_routeId_idx_91ae2fd6\"",
+        "sql": "CREATE INDEX \"MbtaPattern_routeId_idx_91ae2fd6\" ON \"public\".\"MbtaPattern\" (\"routeId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"MbtaPattern_routeId_idx_91ae2fd6\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"MbtaPattern_routeId_idx_91ae2fd6\""]
+      }
+    ]
+  },
+  {
+    "id": "index.MbtaPatternStop.MbtaPatternStop_patternId_idx_31993061",
+    "label": "Create index \"MbtaPatternStop_patternId_idx_31993061\" on \"MbtaPatternStop\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "MbtaPatternStop_patternId_idx_31993061",
+        "table": "MbtaPatternStop"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"MbtaPatternStop_patternId_idx_31993061\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"MbtaPatternStop_patternId_idx_31993061\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"MbtaPatternStop_patternId_idx_31993061\"",
+        "sql": "CREATE INDEX \"MbtaPatternStop_patternId_idx_31993061\" ON \"public\".\"MbtaPatternStop\" (\"patternId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"MbtaPatternStop_patternId_idx_31993061\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"MbtaPatternStop_patternId_idx_31993061\""]
+      }
+    ]
+  },
+  {
+    "id": "index.MbtaPatternStop.MbtaPatternStop_patternId_position_idx_f5b2ee9d",
+    "label": "Create index \"MbtaPatternStop_patternId_position_idx_f5b2ee9d\" on \"MbtaPatternStop\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "MbtaPatternStop_patternId_position_idx_f5b2ee9d",
+        "table": "MbtaPatternStop"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"MbtaPatternStop_patternId_position_idx_f5b2ee9d\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"MbtaPatternStop_patternId_position_idx_f5b2ee9d\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"MbtaPatternStop_patternId_position_idx_f5b2ee9d\"",
+        "sql": "CREATE UNIQUE INDEX \"MbtaPatternStop_patternId_position_idx_f5b2ee9d\" ON \"public\".\"MbtaPatternStop\" (\"patternId\", \"position\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"MbtaPatternStop_patternId_position_idx_f5b2ee9d\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"MbtaPatternStop_patternId_position_idx_f5b2ee9d\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.MbtaPatternStop.MbtaPatternStop_stopId_idx_8804d4e7",
+    "label": "Create index \"MbtaPatternStop_stopId_idx_8804d4e7\" on \"MbtaPatternStop\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "MbtaPatternStop_stopId_idx_8804d4e7",
+        "table": "MbtaPatternStop"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"MbtaPatternStop_stopId_idx_8804d4e7\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"MbtaPatternStop_stopId_idx_8804d4e7\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"MbtaPatternStop_stopId_idx_8804d4e7\"",
+        "sql": "CREATE INDEX \"MbtaPatternStop_stopId_idx_8804d4e7\" ON \"public\".\"MbtaPatternStop\" (\"stopId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"MbtaPatternStop_stopId_idx_8804d4e7\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"MbtaPatternStop_stopId_idx_8804d4e7\""]
+      }
+    ]
+  },
+  {
+    "id": "index.MbtaStop.MbtaStop_parentStationId_idx_8eb11c00",
+    "label": "Create index \"MbtaStop_parentStationId_idx_8eb11c00\" on \"MbtaStop\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "MbtaStop_parentStationId_idx_8eb11c00",
+        "table": "MbtaStop"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"MbtaStop_parentStationId_idx_8eb11c00\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"MbtaStop_parentStationId_idx_8eb11c00\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"MbtaStop_parentStationId_idx_8eb11c00\"",
+        "sql": "CREATE INDEX \"MbtaStop_parentStationId_idx_8eb11c00\" ON \"public\".\"MbtaStop\" (\"parentStationId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"MbtaStop_parentStationId_idx_8eb11c00\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"MbtaStop_parentStationId_idx_8eb11c00\""]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.MbtaPattern.MbtaPattern_routeId_fkey",
+    "label": "Add foreign key \"MbtaPattern_routeId_fkey\" on \"MbtaPattern\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "MbtaPattern_routeId_fkey",
+        "table": "MbtaPattern"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"MbtaPattern_routeId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "MbtaPattern_routeId_fkey",
+          "public",
+          "\"public\".\"MbtaPattern\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"MbtaPattern_routeId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"MbtaPattern\"\nADD CONSTRAINT \"MbtaPattern_routeId_fkey\"\nFOREIGN KEY (\"routeId\")\nREFERENCES \"public\".\"MbtaRoute\" (\"id\")\nON DELETE CASCADE\nON UPDATE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"MbtaPattern_routeId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "MbtaPattern_routeId_fkey",
+          "public",
+          "\"public\".\"MbtaPattern\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.MbtaPatternStop.MbtaPatternStop_patternId_fkey",
+    "label": "Add foreign key \"MbtaPatternStop_patternId_fkey\" on \"MbtaPatternStop\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "MbtaPatternStop_patternId_fkey",
+        "table": "MbtaPatternStop"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"MbtaPatternStop_patternId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "MbtaPatternStop_patternId_fkey",
+          "public",
+          "\"public\".\"MbtaPatternStop\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"MbtaPatternStop_patternId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"MbtaPatternStop\"\nADD CONSTRAINT \"MbtaPatternStop_patternId_fkey\"\nFOREIGN KEY (\"patternId\")\nREFERENCES \"public\".\"MbtaPattern\" (\"id\")\nON DELETE CASCADE\nON UPDATE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"MbtaPatternStop_patternId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "MbtaPatternStop_patternId_fkey",
+          "public",
+          "\"public\".\"MbtaPatternStop\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.MbtaPatternStop.MbtaPatternStop_stopId_fkey",
+    "label": "Add foreign key \"MbtaPatternStop_stopId_fkey\" on \"MbtaPatternStop\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "MbtaPatternStop_stopId_fkey",
+        "table": "MbtaPatternStop"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"MbtaPatternStop_stopId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "MbtaPatternStop_stopId_fkey",
+          "public",
+          "\"public\".\"MbtaPatternStop\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"MbtaPatternStop_stopId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"MbtaPatternStop\"\nADD CONSTRAINT \"MbtaPatternStop_stopId_fkey\"\nFOREIGN KEY (\"stopId\")\nREFERENCES \"public\".\"MbtaStop\" (\"id\")\nON DELETE RESTRICT\nON UPDATE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"MbtaPatternStop_stopId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "MbtaPatternStop_stopId_fkey",
+          "public",
+          "\"public\".\"MbtaPatternStop\""
+        ]
+      }
+    ]
+  }
+]

@@ -11,7 +11,7 @@ export default function ClientLayout({
   children: React.ReactNode;
 }) {
   return (
-    <main className="p-6 flex-1 min-h-screen bg-blue-950">
+    <main className="min-w-0 flex-1 min-h-screen bg-blue-950 p-2 sm:p-6">
       <ToastProvider>{children}</ToastProvider>
       <Analytics />
       <SpeedInsights />

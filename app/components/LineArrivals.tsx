@@ -1,132 +1,87 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import useSWR from "swr";
-import { stopsByLine, lineNames, type MBTALineId } from "@/lib/mbta/stops";
-import { logj } from "@/lib/log/logj";
-import { staticUniversalContext } from "@/lib/log/buildj";
+import type { MbtaCatalog } from "@/lib/mbta/catalog-types";
+import { stopsForRoute } from "@/lib/mbta/catalog-types";
+import { mbtaFetcher } from "@/lib/mbta/fetcher";
+import { StopDetails } from "@/components/mbta/StopDetails";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
-
-function getCountdown(arrival: string | null): string {
-  if (!arrival) return "—";
-
-  const arrivalDate = new Date(arrival).getTime();
-  const now = Date.now();
-  const diffMs = arrivalDate - now;
-
-  if (diffMs <= 0) return "Arriving now";
-
-  const diffMin = Math.floor(diffMs / 60000);
-
-  if (diffMin === 0) return "Less than 1 min";
-  if (diffMin === 1) return "1 min";
-
-  return `${diffMin} min`;
-}
-
-type MBTAIncluded = {
-  id: string;
-  type: string;
-  attributes?: { headsign?: string; destination?: string };
-};
-
-type MBTAPrediction = {
+type Prediction = {
   id: string;
   attributes: {
     arrival_time: string | null;
     departure_time: string | null;
     direction_id: number;
-    stop_sequence: number;
-    status: string | null;
+    status?: string | null;
   };
   relationships: {
-    route: { data: { id: string } };
-    stop: { data: { id: string } };
-    trip?: { data?: { id: string } };
-    vehicle?: { data?: { id: string } };
+    route?: { data: { id: string } | null };
+    trip?: { data: { id: string } | null };
+    vehicle?: { data: { id: string } | null };
   };
 };
-
-function getHeadsign(prediction: MBTAPrediction, included: MBTAIncluded[]) {
-  const trip = included?.find(
-    (i) =>
-      i.type === "trip" && i.id === prediction.relationships.trip?.data?.id,
-  );
-  return trip?.attributes?.headsign || trip?.attributes?.destination || null;
-}
-
-function getDirectionLabel(dir: number) {
-  return dir === 0 ? "Outbound" : "Inbound";
-}
-
-export const routeColors: Record<string, string> = {
-  Red: "bg-red-600",
-  Mattapan: "bg-red-400",
-  Orange: "bg-orange-600",
-  Blue: "bg-blue-600",
-  "Green-B": "bg-yellow-600",
-  "Green-C": "bg-green-600",
-  "Green-D": "bg-green-700",
-  "Green-E": "bg-teal-600",
+type Included = {
+  id: string;
+  type: string;
+  attributes?: { headsign?: string };
 };
 
-export function RouteBadge({ route }: { route: string }) {
-  const color = routeColors[route] ?? "bg-gray-600";
-
-  return (
-    <span className={`px-2 py-1 rounded text-sm font-semibold ${color}`}>
-      {route}
-    </span>
-  );
+function countdown(time: string | null) {
+  if (!time) return "—";
+  const minutes = Math.floor((new Date(time).getTime() - Date.now()) / 60000);
+  return minutes < 0
+    ? "Arriving now"
+    : minutes === 0
+      ? "Less than 1 min"
+      : `${minutes} min`;
 }
 
 export function LineArrivals({
+  catalog,
   lineId,
-  defaultStopId,
+  stopId,
+  onStopChange,
 }: {
-  lineId: MBTALineId;
-  defaultStopId?: string;
+  catalog: MbtaCatalog;
+  lineId: string;
+  stopId: string;
+  onStopChange: (id: string) => void;
 }) {
-  const stops = stopsByLine[lineId];
-  const [built] = useState(() => staticUniversalContext("LineArrivals"));
-  const eventIndex = useRef(0);
-  useEffect(() => {
-    logj({
-      domain: "LineArrivals",
-      level: "info",
-      message: "LineArrivals loaded",
-      file: "app/components/LineArrivals.tsx",
-      line: 95,
-      payload: { lineId: lineId, defaultStopId: defaultStopId, stops: stops },
-      meta: { built: { ...built, eventIndex: ++eventIndex.current } },
-    });
-  }, [built, lineId, defaultStopId, stops]);
-  const [stopId, setStopId] = useState(defaultStopId);
-
-  const { data, isLoading } = useSWR<{
-    data: MBTAPrediction[];
-    included: MBTAIncluded[];
-  }>(`/api/arrivals/${stopId}?include=trip,route`, fetcher, {
-    refreshInterval: 15000,
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const route = catalog.routes.find((candidate) => candidate.id === lineId);
+  const stops = stopsForRoute(catalog, lineId);
+  const selectedStop = stops.find((stop) => stop.id === stopId);
+  const { data, error, isLoading, isValidating } = useSWR<{
+    data: Prediction[];
+    included?: Included[];
+  }>(
+    selectedStop
+      ? `/api/arrivals/${encodeURIComponent(selectedStop.id)}`
+      : null,
+    mbtaFetcher,
+    { refreshInterval: 15000, keepPreviousData: false },
+  );
+  const predictions = [...(data?.data ?? [])].sort((a, b) => {
+    const time = (prediction: Prediction) =>
+      new Date(
+        prediction.attributes.arrival_time ??
+          prediction.attributes.departure_time ??
+          "9999-01-01",
+      ).getTime();
+    return time(a) - time(b);
   });
-
-  const predictions = data?.data ?? [];
-  const included = data?.included ?? [];
-
   return (
-    <div className="max-w-xl mx-auto p-6 text-white">
-      <h1 className="text-3xl font-bold text-center mb-6">
-        {lineNames[lineId]} Arrivals
-      </h1>
-
-      {/* Stop Selector */}
-      <div className="mb-6">
-        <label className="block mb-2 font-medium">Choose a stop:</label>
+    <section className="space-y-5" aria-label="Stop arrivals">
+      <div>
+        <label htmlFor="mbta-stop" className="mb-2 block font-medium">
+          Choose a stop
+        </label>
         <select
+          id="mbta-stop"
           value={stopId}
-          onChange={(e) => setStopId(e.target.value)}
-          className="p-2 border rounded-md text-black bg-white dark:text-white dark:bg-gray-900 w-full"
+          onChange={(event) => onStopChange(event.target.value)}
+          className="w-full rounded-lg border border-blue-400/40 bg-blue-950 p-3"
         >
           {stops.map((stop) => (
             <option key={stop.id} value={stop.id}>
@@ -135,49 +90,107 @@ export function LineArrivals({
           ))}
         </select>
       </div>
-
-      <div className="grid grid-cols-1 gap-6">
-        {isLoading ? (
-          <p>Loading…</p>
-        ) : predictions.length === 0 ? (
-          <p>No trains predicted.</p>
-        ) : (
-          predictions.map((p) => {
-            const route = p.relationships.route?.data?.id ?? "Unknown";
-            const headsign = getHeadsign(p, included);
-            const direction = getDirectionLabel(p.attributes.direction_id);
-            const vehicle = p.relationships.vehicle?.data?.id ?? "Unknown";
-
-            return (
-              <div key={p.id} className="p-4 bg-gray-800 rounded-lg">
-                <h2 className="text-xl font-semibold mb-2">
-                  {direction}
-                  {headsign && ` — ${headsign}`}
-                </h2>
-
-                <p>
-                  <RouteBadge route={route} />
-                </p>
-
-                <p>
-                  <strong>Arrives:</strong>{" "}
-                  {getCountdown(p.attributes.arrival_time)}
-                </p>
-
-                <p>
-                  {p.attributes.arrival_time
-                    ? new Date(p.attributes.arrival_time).toLocaleTimeString()
-                    : "—"}
-                </p>
-
-                <p>
-                  <strong>Vehicle:</strong> {vehicle}
-                </p>
-              </div>
-            );
-          })
-        )}
-      </div>
-    </div>
+      {selectedStop && (
+        <>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="text-2xl font-semibold">
+                {selectedStop.attributes.name}
+              </h2>
+              <p className="text-sm text-blue-200">
+                Live arrivals · updates every 15 seconds
+              </p>
+            </div>
+            <button
+              type="button"
+              aria-expanded={detailsOpen}
+              aria-controls="mbta-stop-details"
+              onClick={() => setDetailsOpen(!detailsOpen)}
+              className="rounded-lg border border-blue-400/50 px-4 py-2 hover:bg-blue-900"
+            >
+              {detailsOpen ? "Hide details" : "Stop details"}
+            </button>
+          </div>
+          {detailsOpen && (
+            <div id="mbta-stop-details">
+              <StopDetails key={stopId} stopId={stopId} />
+            </div>
+          )}
+          {isLoading && <p role="status">Loading arrivals…</p>}
+          {error && (
+            <p role="alert" className="text-amber-200">
+              Live arrivals are temporarily unavailable.
+              {data && " Showing the last received predictions."}
+            </p>
+          )}
+          {!isLoading && !error && predictions.length === 0 && (
+            <p>No trains predicted at this stop right now.</p>
+          )}
+          <div className="grid gap-3 sm:grid-cols-2">
+            {predictions.map((prediction) => {
+              const routeId =
+                prediction.relationships.route?.data?.id ?? lineId;
+              const predictionRoute = catalog.routes.find(
+                (candidate) => candidate.id === routeId,
+              );
+              const trip = data?.included?.find(
+                (item) =>
+                  item.type === "trip" &&
+                  item.id === prediction.relationships.trip?.data?.id,
+              );
+              const direction =
+                predictionRoute?.directionNames[
+                  prediction.attributes.direction_id
+                ] ??
+                route?.directionNames[prediction.attributes.direction_id] ??
+                "";
+              const arrival =
+                prediction.attributes.arrival_time ??
+                prediction.attributes.departure_time;
+              return (
+                <article
+                  key={prediction.id}
+                  className="space-y-2 rounded-xl bg-blue-900/60 p-4"
+                >
+                  <span
+                    className="inline-block rounded px-2 py-1 text-sm font-semibold"
+                    style={{
+                      backgroundColor: `#${predictionRoute?.color ?? "374151"}`,
+                      color: `#${predictionRoute?.textColor ?? "FFFFFF"}`,
+                    }}
+                  >
+                    {predictionRoute?.name ?? routeId}
+                  </span>
+                  <h3 className="font-semibold">
+                    {trip?.attributes?.headsign || direction || "Train arrival"}
+                  </h3>
+                  <p className="text-2xl font-bold">
+                    {prediction.attributes.status || countdown(arrival)}
+                  </p>
+                  {arrival && (
+                    <p className="text-sm text-blue-200">
+                      {new Date(arrival).toLocaleTimeString([], {
+                        hour: "numeric",
+                        minute: "2-digit",
+                      })}
+                    </p>
+                  )}
+                  {prediction.relationships.vehicle?.data?.id && (
+                    <p className="text-xs text-blue-200">
+                      Vehicle {prediction.relationships.vehicle.data.id}
+                    </p>
+                  )}
+                </article>
+              );
+            })}
+          </div>
+          {isValidating && !isLoading && (
+            <p role="status" className="text-xs text-blue-200">
+              Updating arrivals…
+            </p>
+          )}
+        </>
+      )}
+    </section>
   );
 }
