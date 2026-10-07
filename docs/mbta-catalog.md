@@ -59,9 +59,15 @@ records a generic failure and retains the previous successful snapshot.
 
 ## Scheduled refresh
 
-`vercel.json` schedules `/api/cron/mbta` daily at **08:00 UTC**. Set a nonempty
-`CRON_SECRET` in the Vercel production environment; Vercel supplies it as the
-Bearer token. The endpoint refuses requests when the secret is missing or wrong.
-The schedule becomes active when this application change is deployed.
+Use cron-job.org to call `https://www.kraus.my.id/api/cron/mbta` with GET once
+daily, for example at **04:00 America/New_York**. Set a nonempty `CRON_SECRET`
+in the Vercel production environment, and configure the job's custom header
+`Authorization: Bearer YOUR_CRON_SECRET` using that same value. No request body
+is needed. The endpoint refuses requests when the secret is missing or wrong.
+Deploy the endpoint and environment variable before testing the external job;
+a successful test returns HTTP 200.
+
+The existing astronomy job remains the only schedule in `vercel.json`; MBTA
+does not consume an additional Vercel cron slot.
 
 Raw snapshots in S3 are optional and are not required by this implementation.
