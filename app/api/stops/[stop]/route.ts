@@ -7,9 +7,10 @@ import { NextResponse } from "next/server";
 console.log("*api/stops/[stop]/route.ts loaded");
 export async function GET(
   _req: Request,
-  { params }: { params: { stop: string } },
+  { params }: { params: Promise<{ stop: string }> },
 ) {
-  const url = `https://api-v3.mbta.com/stops/${params.stop}?api_key=${process.env.MBTA_KEY}`;
+  const { stop } = await params;
+  const url = `https://api-v3.mbta.com/stops/${stop}?api_key=${process.env.MBTA_KEY}`;
 
   const res = await fetch(url);
   const data = await res.json();
