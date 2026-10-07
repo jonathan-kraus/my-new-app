@@ -7,6 +7,9 @@ export const maxDuration = 300;
 export async function GET(request: Request) {
   const secret = process.env.CRON_SECRET;
   const authorization = request.headers.get("authorization");
+  if (secret) {
+    console.log("Scheduled MBTA refresh triggered");
+  }
   if (!secret || authorization !== `Bearer ${secret}`) {
     const suppliedSecret = authorization?.startsWith("Bearer ")
       ? authorization.slice(7)
