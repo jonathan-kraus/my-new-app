@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { formatDistance, parseISO } from "date-fns";
 
 export interface LogEntry {
   id: number;
@@ -19,6 +20,19 @@ interface LogsCardProps {
 }
 
 export function LogsCard({ title = "Logs", logs }: LogsCardProps) {
+  const [now, setNow] = useState<number | null>(null);
+
+  useEffect(() => {
+    // Keep server and initial browser markup identical; format in the browser.
+    const update = () => setNow(Date.now());
+    const initial = window.setTimeout(update, 0);
+    const interval = window.setInterval(update, 60_000);
+    return () => {
+      window.clearTimeout(initial);
+      window.clearInterval(interval);
+    };
+  }, []);
+
   return (
     <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-4">
       <h2 className="text-lg font-semibold mb-3">{title}</h2>
@@ -29,15 +43,31 @@ export function LogsCard({ title = "Logs", logs }: LogsCardProps) {
 
       <ul className="space-y-3">
         {logs.map((log) => (
-          <LogRow key={log.id} log={log} />
+          <LogRow key={log.id} log={log} now={now} />
         ))}
       </ul>
     </div>
   );
 }
 
-function LogRow({ log }: { log: LogEntry }) {
+function LogRow({ log, now }: { log: LogEntry; now: number | null }) {
   const [open, setOpen] = useState(false);
+  const raw = typeof log.createdAt === "string" ? log.createdAt.trim() : "";
+  // Database timestamps without an offset are UTC; preserve explicit offsets.
+  const date =
+    log.createdAt instanceof Date
+      ? log.createdAt
+      : parseISO(
+          /^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}/.test(raw) &&
+            !/(?:Z|[+-]\d{2}(?::?\d{2})?)$/i.test(raw)
+            ? `${raw}Z`
+            : raw,
+        );
+  const validDate = Number.isFinite(date.getTime());
+  const localTime =
+    validDate && now !== null
+      ? date.toLocaleString(undefined, { timeZoneName: "short" })
+      : null;
   const metaObj =
     log.meta && typeof log.meta === "object" && !Array.isArray(log.meta)
       ? (log.meta as Record<string, unknown>)
@@ -53,9 +83,23 @@ function LogRow({ log }: { log: LogEntry }) {
         <div className="flex flex-col">
           <span className="font-medium">{log.message}</span>
 
-          <span className="text-xs text-muted-foreground">
-            {new Date(log.createdAt).toLocaleString()} — {log.domain}
-          </span>
+          {validDate ? (
+            <time dateTime={date.toISOString()} title={localTime ?? undefined}>
+              <span className="block text-sm font-medium">
+                {now === null
+                  ? "Loading time…"
+                  : formatDistance(date, now, { addSuffix: true })}
+              </span>
+              {localTime && (
+                <span className="block text-xs text-muted-foreground">
+                  {localTime}
+                </span>
+              )}
+            </time>
+          ) : (
+            <span className="text-xs text-muted-foreground">Unknown time</span>
+          )}
+          <span className="text-xs text-muted-foreground">{log.domain}</span>
 
           <span className="text-xs text-muted-foreground">file:{log.file}</span>
           <span className="text-xs text-muted-foreground">line:{log.line}</span>

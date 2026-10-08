@@ -300,7 +300,7 @@ export default async function DashboardPage(req: Request) {
     level: "info",
     message: "Database sync complete",
     file: "app/dashboard/page.tsx",
-    line: 301,
+    line: 298,
     payload: {
       elapsed: dbElapsed,
       toCreate: toolEntries.length > 0 ? "batched" : "skipped",
@@ -321,7 +321,7 @@ export default async function DashboardPage(req: Request) {
     level: "info",
     message: "Dashboard page render complete",
     file: "app/dashboard/page.tsx",
-    line: 322,
+    line: 319,
     payload: {
       total: totalElapsed,
       phases: {
