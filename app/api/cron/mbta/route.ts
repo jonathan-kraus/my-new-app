@@ -29,12 +29,20 @@ export async function GET(request: Request) {
       : null;
     const suffix = (value: string | null | undefined) =>
       !value ? null : value.length <= 5 ? "[too short]" : value.slice(-5);
-    console.warn("MBTA cron authorization rejected", {
-      secretConfigured: Boolean(secret),
-      authorizationPresent: Boolean(authorization),
-      bearerFormatValid: Boolean(authorization?.startsWith("Bearer ")),
-      configuredSecretSuffix: suffix(secret),
-      suppliedSecretSuffix: suffix(suppliedSecret),
+    logj({
+      domain: "MBTA",
+      level: "info",
+      message: `Cron authorization rejected`,
+      file: "app/api/cron/mbta/route.ts",
+      line: 32,
+      payload: {
+        secretConfigured: Boolean(secret),
+        authorizationPresent: Boolean(authorization),
+        bearerFormatValid: Boolean(authorization?.startsWith("Bearer ")),
+        configuredSecretSuffix: suffix(secret),
+        suppliedSecretSuffix: suffix(suppliedSecret),
+      },
+      meta: { built: { ...built, eventIndex: ++jei } },
     });
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
