@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\scripts\check-outdated.ts
- * @LastEditTime: 2026-10-05 13:07:36
+ * @LastEditTime: 2026-10-07 23:13:06
  */
 import { execSync } from "node:child_process";
 
@@ -37,7 +37,7 @@ try {
 const data = JSON.parse(raw || "{}") as Record<string, OutdatedEntry>;
 const exclusions = {
   latestVersions: new Set(["8.0.0-rc.11"]),
-  names: new Set(["prisma", "@prisma/orm-postgres"]),
+  names: new Set(["prisma", "@prisma/orm-postgres", "typescript"]),
 };
 const filtered = Object.fromEntries(
   Object.entries(data).filter(([name, pkg]) => {
