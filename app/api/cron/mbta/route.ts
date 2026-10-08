@@ -1,14 +1,27 @@
+import { logj } from "@/lib/log/logj";
+import { staticUniversalContext } from "@/lib/log/buildj";
 import { CatalogSyncBusyError } from "@/lib/mbta/catalog";
 import { syncMbtaCatalog } from "@/lib/mbta/sync";
-
 export const runtime = "nodejs";
 export const maxDuration = 300;
 
 export async function GET(request: Request) {
+  const built = staticUniversalContext("side-nav");
+  let jei = 0;
   const secret = process.env.CRON_SECRET;
   const authorization = request.headers.get("authorization");
   if (secret) {
-    console.log("Scheduled MBTA refresh triggered");
+    logj({
+      domain: "MBTA",
+      level: "info",
+      message: `Cron job triggered`,
+      file: "app/api/cron/mbta/route.ts",
+      line: 14,
+      payload: {
+        method: built.method,
+      },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
   }
   if (!secret || authorization !== `Bearer ${secret}`) {
     const suppliedSecret = authorization?.startsWith("Bearer ")
