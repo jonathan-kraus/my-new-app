@@ -1,0 +1,28 @@
+[
+  {
+    "id": "legacy-prisma-history.ensure-table",
+    "label": "Preserve existing Prisma history; create an empty table only if absent",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "_prisma_migrations"
+      }
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "Create legacy history only for a fresh database",
+        "sql": "CREATE TABLE IF NOT EXISTS \"public\".\"_prisma_migrations\" (\n            \"id\" character varying(36) NOT NULL,\n            \"checksum\" character varying(64) NOT NULL,\n            \"finished_at\" timestamptz,\n            \"migration_name\" character varying(255) NOT NULL,\n            \"logs\" text,\n            \"rolled_back_at\" timestamptz,\n            \"started_at\" timestamptz DEFAULT now() NOT NULL,\n            \"applied_steps_count\" int4 DEFAULT 0 NOT NULL,\n            CONSTRAINT \"_prisma_migrations_pkey\" PRIMARY KEY (\"id\")\n          )"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "Verify the preserved history table exists",
+        "sql": "SELECT to_regclass('public._prisma_migrations') IS NOT NULL AS result"
+      }
+    ]
+  }
+]

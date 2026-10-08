@@ -14,20 +14,23 @@ branched lines have a single linear stop order.
 
 ## Database setup
 
-The MBTA catalog uses a separate Prisma 8 contract and migration directory so its
-schema can be verified and migrated independently of existing application tables.
-Both runtimes use the same `DATABASE_URL`. Use **the MBTA config** for every MBTA
-schema command:
+The MBTA catalog shares the application's Prisma 8 contract, connection pool,
+and migration history. All current models live in `prisma8/contract.prisma`,
+generated types in `generated/prisma8`, and migrations in `migrations/app`.
+The CLI loads `.env.local` before `.env`, matching the Next.js development app.
+Use the default configuration for all schema changes:
 
 ```sh
-pnpm exec prisma contract emit --config prisma.mbta.config.ts
-pnpm exec prisma db migrate --config prisma.mbta.config.ts
+pnpm exec prisma contract emit
+pnpm exec prisma migration plan --name describe_your_change
+# Review the generated migration before applying it.
+pnpm exec prisma db migrate --advance-ref db
 ```
 
-The generated files are committed under `generated/mbta`. Regenerate them whenever
-`prisma8/mbta.prisma` changes. Keep the application contract in `prisma8/contract.prisma`
-separate; the MBTA config's default `app` marker describes only the catalog contract.
-Do not sign that marker with the unrelated application contract.
+Generated files, migration packages, snapshots, and the `db` ref are committed
+together. The default `app` marker now describes the full application schema.
+See [Neon schema adoption](neon-schema-adoption.md) for the historical checkpoint
+and the one-time setup for another database that already contains these tables.
 
 ## Initial import and manual refresh
 

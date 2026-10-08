@@ -18,6 +18,7 @@ export default [
       "src/lib/generated/**",
       "lib/generated/**",
       "generated/**",
+      "migrations/snapshots/**",
     ],
   },
 

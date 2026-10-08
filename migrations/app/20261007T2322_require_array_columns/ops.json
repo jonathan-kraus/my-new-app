@@ -1,0 +1,80 @@
+[
+  {
+    "id": "alterNullability.setNotNull.Note.tags",
+    "label": "Set NOT NULL on \"Note\".\"tags\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "tags",
+        "table": "Note"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"tags\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": ["public", "Note", "tags"]
+      },
+      {
+        "description": "ensure no NULL values in \"tags\"",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"public\".\"Note\" WHERE \"tags\" IS NULL) AS \"result\"",
+        "params": []
+      }
+    ],
+    "execute": [
+      {
+        "description": "set NOT NULL on \"tags\"",
+        "sql": "ALTER TABLE \"public\".\"Note\" ALTER COLUMN \"tags\" SET NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"tags\" is NOT NULL",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"is_nullable\" = $4)) AS \"result\"",
+        "params": ["public", "Note", "tags", "NO"]
+      }
+    ]
+  },
+  {
+    "id": "alterNullability.setNotNull.TravelSegment.seats",
+    "label": "Set NOT NULL on \"TravelSegment\".\"seats\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "seats",
+        "table": "TravelSegment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"seats\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": ["public", "TravelSegment", "seats"]
+      },
+      {
+        "description": "ensure no NULL values in \"seats\"",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"public\".\"TravelSegment\" WHERE \"seats\" IS NULL) AS \"result\"",
+        "params": []
+      }
+    ],
+    "execute": [
+      {
+        "description": "set NOT NULL on \"seats\"",
+        "sql": "ALTER TABLE \"public\".\"TravelSegment\" ALTER COLUMN \"seats\" SET NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"seats\" is NOT NULL",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"is_nullable\" = $4)) AS \"result\"",
+        "params": ["public", "TravelSegment", "seats", "NO"]
+      }
+    ]
+  }
+]

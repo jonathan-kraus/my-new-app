@@ -1,10 +1,3 @@
 import "server-only";
-import "dotenv/config";
-import postgres from "@prisma/orm-postgres/runtime";
-import type { Contract } from "../../../generated/mbta/contract.d";
-import contractJson from "../../../generated/mbta/contract.json" with { type: "json" };
-
-export const mbtaDb = postgres<Contract>({
-  contractJson,
-  url: process.env.DATABASE_URL!,
-});
+// The catalog shares the application's contract and connection pool.
+export { db8 as mbtaDb } from "../db.prisma8";

@@ -34,7 +34,7 @@ import type {
 } from "@prisma/orm-postgres/contract/types";
 
 export type StorageHash =
-  StorageHashBase<"7a928caa763c87b6ce3ae0136554818170f0c9241eb8269a4a5eaf8f39132ff2">;
+  StorageHashBase<"275e5eb401e0f50193fcd3ac0146bd29fc847cdbe39cb1815c6edad6815ab3c3">;
 export type ExecutionHash =
   ExecutionHashBase<"e5dd22a80fda336c8f0f71f6abfb478dc0cb73ff0f64c8bdf7b2f68bcc69b3d7">;
 export type ProfileHash =
@@ -630,18 +630,6 @@ export type FieldOutputTypes = {
       readonly updatedAt: TimestampString<3>;
       readonly url: CodecTypes["pg/text@1"]["output"] | null;
     };
-    readonly LegacyPrismaMigration: {
-      readonly appliedStepsCount: CodecTypes["pg/int4@1"]["output"];
-      readonly checksum: Varchar<64>;
-      readonly finishedAt:
-        CodecTypes["pg/timestamptz-string@1"]["output"] | null;
-      readonly id: Varchar<36>;
-      readonly logs: CodecTypes["pg/text@1"]["output"] | null;
-      readonly migrationName: Varchar<255>;
-      readonly rolledBackAt:
-        CodecTypes["pg/timestamptz-string@1"]["output"] | null;
-      readonly startedAt: CodecTypes["pg/timestamptz-string@1"]["output"];
-    };
     readonly Location: {
       readonly createdAt: TimestampString<3>;
       readonly id: CodecTypes["pg/text@1"]["output"];
@@ -905,18 +893,6 @@ export type FieldInputTypes = {
       readonly updatedAt: CodecTypes["pg/timestamp-string@1"]["input"];
       readonly url: CodecTypes["pg/text@1"]["input"] | null;
     };
-    readonly LegacyPrismaMigration: {
-      readonly appliedStepsCount: CodecTypes["pg/int4@1"]["input"];
-      readonly checksum: CodecTypes["sql/varchar@1"]["input"];
-      readonly finishedAt:
-        CodecTypes["pg/timestamptz-string@1"]["input"] | null;
-      readonly id: CodecTypes["sql/varchar@1"]["input"];
-      readonly logs: CodecTypes["pg/text@1"]["input"] | null;
-      readonly migrationName: CodecTypes["sql/varchar@1"]["input"];
-      readonly rolledBackAt:
-        CodecTypes["pg/timestamptz-string@1"]["input"] | null;
-      readonly startedAt: CodecTypes["pg/timestamptz-string@1"]["input"];
-    };
     readonly Location: {
       readonly createdAt: CodecTypes["pg/timestamp-string@1"]["input"];
       readonly id: CodecTypes["pg/text@1"]["input"];
@@ -1088,18 +1064,6 @@ export type FieldInputTypes = {
 };
 export type StorageColumnTypes = {
   readonly public: {
-    readonly _prisma_migrations: {
-      readonly applied_steps_count: CodecTypes["pg/int4@1"]["output"];
-      readonly checksum: Varchar<64>;
-      readonly finished_at:
-        CodecTypes["pg/timestamptz-string@1"]["output"] | null;
-      readonly id: Varchar<36>;
-      readonly logs: CodecTypes["pg/text@1"]["output"] | null;
-      readonly migration_name: Varchar<255>;
-      readonly rolled_back_at:
-        CodecTypes["pg/timestamptz-string@1"]["output"] | null;
-      readonly started_at: CodecTypes["pg/timestamptz-string@1"]["output"];
-    };
     readonly Account: {
       readonly access_token: CodecTypes["pg/text@1"]["output"] | null;
       readonly expires_at: CodecTypes["pg/int4@1"]["output"] | null;
@@ -1363,18 +1327,6 @@ export type StorageColumnTypes = {
 };
 export type StorageColumnInputTypes = {
   readonly public: {
-    readonly _prisma_migrations: {
-      readonly applied_steps_count: CodecTypes["pg/int4@1"]["input"];
-      readonly checksum: CodecTypes["sql/varchar@1"]["input"];
-      readonly finished_at:
-        CodecTypes["pg/timestamptz-string@1"]["input"] | null;
-      readonly id: CodecTypes["sql/varchar@1"]["input"];
-      readonly logs: CodecTypes["pg/text@1"]["input"] | null;
-      readonly migration_name: CodecTypes["sql/varchar@1"]["input"];
-      readonly rolled_back_at:
-        CodecTypes["pg/timestamptz-string@1"]["input"] | null;
-      readonly started_at: CodecTypes["pg/timestamptz-string@1"]["input"];
-    };
     readonly Account: {
       readonly access_token: CodecTypes["pg/text@1"]["input"] | null;
       readonly expires_at: CodecTypes["pg/int4@1"]["input"] | null;
@@ -1739,17 +1691,6 @@ export namespace Models {
     url: CodecTypes["pg/text@1"]["output"] | null;
     readonly [RelationKeys]?: never;
   };
-  export type public_LegacyPrismaMigration = {
-    appliedStepsCount: CodecTypes["pg/int4@1"]["output"];
-    checksum: Varchar<64>;
-    finishedAt: CodecTypes["pg/timestamptz-string@1"]["output"] | null;
-    id: Varchar<36>;
-    logs: CodecTypes["pg/text@1"]["output"] | null;
-    migrationName: Varchar<255>;
-    rolledBackAt: CodecTypes["pg/timestamptz-string@1"]["output"] | null;
-    startedAt: CodecTypes["pg/timestamptz-string@1"]["output"];
-    readonly [RelationKeys]?: never;
-  };
   export type public_Location = {
     createdAt: TimestampString<3>;
     id: CodecTypes["pg/text@1"]["output"];
@@ -1960,7 +1901,6 @@ export declare const models: {
     EphemerisDebug: Models.public_EphemerisDebug;
     ForecastSnapshot: Models.public_ForecastSnapshot;
     GithubEvent: Models.public_GithubEvent;
-    LegacyPrismaMigration: Models.public_LegacyPrismaMigration;
     Location: Models.public_Location;
     Log: Models.public_Log;
     MbtaPattern: Models.public_MbtaPattern;
@@ -2000,68 +1940,6 @@ type ContractBase = Omit<
         readonly kind: "postgres-schema";
         readonly entries: {
           readonly table: {
-            readonly _prisma_migrations: {
-              columns: {
-                readonly applied_steps_count: {
-                  readonly nativeType: "int4";
-                  readonly codecId: "pg/int4@1";
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: "literal";
-                    readonly value: DefaultLiteralValue<"pg/int4@1", 0>;
-                  };
-                };
-                readonly checksum: {
-                  readonly nativeType: "character varying";
-                  readonly codecId: "sql/varchar@1";
-                  readonly nullable: false;
-                  readonly typeParams: { readonly length: 64 };
-                };
-                readonly finished_at: {
-                  readonly nativeType: "timestamptz";
-                  readonly codecId: "pg/timestamptz-string@1";
-                  readonly nullable: true;
-                };
-                readonly id: {
-                  readonly nativeType: "character varying";
-                  readonly codecId: "sql/varchar@1";
-                  readonly nullable: false;
-                  readonly typeParams: { readonly length: 36 };
-                };
-                readonly logs: {
-                  readonly nativeType: "text";
-                  readonly codecId: "pg/text@1";
-                  readonly nullable: true;
-                };
-                readonly migration_name: {
-                  readonly nativeType: "character varying";
-                  readonly codecId: "sql/varchar@1";
-                  readonly nullable: false;
-                  readonly typeParams: { readonly length: 255 };
-                };
-                readonly rolled_back_at: {
-                  readonly nativeType: "timestamptz";
-                  readonly codecId: "pg/timestamptz-string@1";
-                  readonly nullable: true;
-                };
-                readonly started_at: {
-                  readonly nativeType: "timestamptz";
-                  readonly codecId: "pg/timestamptz-string@1";
-                  readonly nullable: false;
-                  readonly default: {
-                    readonly kind: "function";
-                    readonly expression: "now()";
-                  };
-                };
-              };
-              primaryKey: {
-                readonly columns: readonly ["id"];
-                readonly name: "_prisma_migrations_pkey";
-              };
-              uniques: readonly [];
-              indexes: readonly [];
-              foreignKeys: readonly [];
-            };
             readonly Account: {
               columns: {
                 readonly access_token: {
@@ -3886,10 +3764,6 @@ type ContractBase = Omit<
       readonly namespace: "public" & NamespaceId;
       readonly model: "WeatherSnapshot";
     };
-    readonly _prisma_migrations: {
-      readonly namespace: "public" & NamespaceId;
-      readonly model: "LegacyPrismaMigration";
-    };
     readonly verification: {
       readonly namespace: "public" & NamespaceId;
       readonly model: "Verification";
@@ -4675,86 +4549,6 @@ type ContractBase = Omit<
                 readonly title: { readonly column: "title" };
                 readonly updatedAt: { readonly column: "updatedAt" };
                 readonly url: { readonly column: "url" };
-              };
-            };
-          };
-          readonly LegacyPrismaMigration: {
-            readonly fields: {
-              readonly appliedStepsCount: {
-                readonly nullable: false;
-                readonly type: {
-                  readonly kind: "scalar";
-                  readonly codecId: "pg/int4@1";
-                };
-              };
-              readonly checksum: {
-                readonly nullable: false;
-                readonly type: {
-                  readonly kind: "scalar";
-                  readonly codecId: "sql/varchar@1";
-                  readonly typeParams: { readonly length: 64 };
-                };
-              };
-              readonly finishedAt: {
-                readonly nullable: true;
-                readonly type: {
-                  readonly kind: "scalar";
-                  readonly codecId: "pg/timestamptz-string@1";
-                };
-              };
-              readonly id: {
-                readonly nullable: false;
-                readonly type: {
-                  readonly kind: "scalar";
-                  readonly codecId: "sql/varchar@1";
-                  readonly typeParams: { readonly length: 36 };
-                };
-              };
-              readonly logs: {
-                readonly nullable: true;
-                readonly type: {
-                  readonly kind: "scalar";
-                  readonly codecId: "pg/text@1";
-                };
-              };
-              readonly migrationName: {
-                readonly nullable: false;
-                readonly type: {
-                  readonly kind: "scalar";
-                  readonly codecId: "sql/varchar@1";
-                  readonly typeParams: { readonly length: 255 };
-                };
-              };
-              readonly rolledBackAt: {
-                readonly nullable: true;
-                readonly type: {
-                  readonly kind: "scalar";
-                  readonly codecId: "pg/timestamptz-string@1";
-                };
-              };
-              readonly startedAt: {
-                readonly nullable: false;
-                readonly type: {
-                  readonly kind: "scalar";
-                  readonly codecId: "pg/timestamptz-string@1";
-                };
-              };
-            };
-            readonly relations: Record<string, never>;
-            readonly storage: {
-              readonly table: "_prisma_migrations";
-              readonly namespaceId: "public";
-              readonly fields: {
-                readonly appliedStepsCount: {
-                  readonly column: "applied_steps_count";
-                };
-                readonly checksum: { readonly column: "checksum" };
-                readonly finishedAt: { readonly column: "finished_at" };
-                readonly id: { readonly column: "id" };
-                readonly logs: { readonly column: "logs" };
-                readonly migrationName: { readonly column: "migration_name" };
-                readonly rolledBackAt: { readonly column: "rolled_back_at" };
-                readonly startedAt: { readonly column: "started_at" };
               };
             };
           };

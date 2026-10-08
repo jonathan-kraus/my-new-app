@@ -270,21 +270,18 @@ export default async function DashboardPage(req: Request) {
           meta: { built: { ...built, eventIndex: ++jei } },
         });
         const now = timestampString(new Date().toISOString());
-        await tx.orm.public.ToolVersion.upsert({
-          create: {
-            name: baseName,
-            version: current.version,
-            addedAt: current.addedAt,
-            verifiedAt: now,
-          },
-          update: {
-            version: current.version,
-            verifiedAt: now,
-          },
-          conflictOn: {
-            name: baseName,
-          },
-        });
+        // ON CONFLICT can target the existing unique index on name; Prisma's
+        // ORM upsert currently requires a declared unique constraint instead.
+        await tx.execute(
+          db8.raw.sql`
+            INSERT INTO public."ToolVersion" ("name", "version", "added_at", "verified_at")
+            VALUES (${baseName}, ${current.version}, ${current.addedAt}, ${now})
+            ON CONFLICT ("name") DO UPDATE
+            SET "version" = EXCLUDED."version", "verified_at" = EXCLUDED."verified_at"
+          `
+            .affectedCount()
+            .build(),
+        );
 
         await tx.orm.public.ToolVersion.where({
           name,

@@ -1,0 +1,1953 @@
+[
+  {
+    "id": "table.Account",
+    "label": "Create table \"Account\"",
+    "summary": "Creates table \"Account\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Account"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Account\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"Account\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Account\"",
+        "sql": "CREATE TABLE \"public\".\"Account\" (\n  \"access_token\" text,\n  \"expires_at\" int4,\n  \"id\" text NOT NULL,\n  \"id_token\" text,\n  \"provider\" text NOT NULL,\n  \"providerAccountId\" text NOT NULL,\n  \"refresh_token\" text,\n  \"scope\" text,\n  \"session_state\" text,\n  \"token_type\" text,\n  \"type\" text NOT NULL,\n  \"userId\" text NOT NULL,\n  CONSTRAINT \"Account_pkey\" PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Account\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"Account\""]
+      }
+    ]
+  },
+  {
+    "id": "table.AstronomySnapshot",
+    "label": "Create table \"AstronomySnapshot\"",
+    "summary": "Creates table \"AstronomySnapshot\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "AstronomySnapshot"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"AstronomySnapshot\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"AstronomySnapshot\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"AstronomySnapshot\"",
+        "sql": "CREATE TABLE \"public\".\"AstronomySnapshot\" (\n  \"dateString\" character varying(10) NOT NULL,\n  \"fetchedAt\" timestamp(3) NOT NULL,\n  \"id\" text NOT NULL,\n  \"illumination\" float8,\n  \"locationId\" text NOT NULL,\n  \"moonPhase\" float8,\n  \"moonrise\" text,\n  \"moonset\" text,\n  \"phaseName\" text,\n  \"solarNoon\" text,\n  \"sunrise\" text NOT NULL,\n  \"sunriseBlueEnd\" text,\n  \"sunriseBlueStart\" text,\n  \"sunriseGoldenEnd\" text,\n  \"sunriseGoldenStart\" text,\n  \"sunset\" text NOT NULL,\n  \"sunsetBlueEnd\" text,\n  \"sunsetBlueStart\" text,\n  \"sunsetGoldenEnd\" text,\n  \"sunsetGoldenStart\" text,\n  CONSTRAINT \"AstronomySnapshot_pkey\" PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"AstronomySnapshot\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"AstronomySnapshot\""]
+      }
+    ]
+  },
+  {
+    "id": "table.DbTableStats",
+    "label": "Create table \"DbTableStats\"",
+    "summary": "Creates table \"DbTableStats\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "DbTableStats"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"DbTableStats\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"DbTableStats\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"DbTableStats\"",
+        "sql": "CREATE TABLE \"public\".\"DbTableStats\" (\n  \"createdAt\" timestamp(3) DEFAULT (now()) NOT NULL,\n  \"id\" text NOT NULL,\n  \"indexBytes\" int8 NOT NULL,\n  \"rowEstimate\" int4 NOT NULL,\n  \"snapshotDate\" timestamp(3) NOT NULL,\n  \"tableBytes\" int8 NOT NULL,\n  \"tableName\" text NOT NULL,\n  \"toastBytes\" int8 NOT NULL,\n  \"totalBytes\" int8 NOT NULL,\n  CONSTRAINT \"DbTableStats_pkey\" PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"DbTableStats\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"DbTableStats\""]
+      }
+    ]
+  },
+  {
+    "id": "table.EphemerisDebug",
+    "label": "Create table \"EphemerisDebug\"",
+    "summary": "Creates table \"EphemerisDebug\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "EphemerisDebug"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"EphemerisDebug\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"EphemerisDebug\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"EphemerisDebug\"",
+        "sql": "CREATE TABLE \"public\".\"EphemerisDebug\" (\n  \"createdAt\" text,\n  \"date\" text,\n  \"fetchedAt\" text,\n  \"id\" text NOT NULL,\n  \"locationId\" text,\n  \"moonPhase\" float8,\n  \"moonrise\" text,\n  \"moonset\" text,\n  \"raw\" jsonb NOT NULL,\n  \"receivedAt\" timestamp(3) DEFAULT (now()) NOT NULL,\n  \"sunrise\" text,\n  \"sunriseBlueEnd\" text,\n  \"sunriseBlueStart\" text,\n  \"sunriseGoldenEnd\" text,\n  \"sunriseGoldenStart\" text,\n  \"sunset\" text,\n  \"sunsetBlueEnd\" text,\n  \"sunsetBlueStart\" text,\n  \"sunsetGoldenEnd\" text,\n  \"sunsetGoldenStart\" text,\n  CONSTRAINT \"EphemerisDebug_pkey\" PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"EphemerisDebug\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"EphemerisDebug\""]
+      }
+    ]
+  },
+  {
+    "id": "table.ForecastSnapshot",
+    "label": "Create table \"ForecastSnapshot\"",
+    "summary": "Creates table \"ForecastSnapshot\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "ForecastSnapshot"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"ForecastSnapshot\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"ForecastSnapshot\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"ForecastSnapshot\"",
+        "sql": "CREATE TABLE \"public\".\"ForecastSnapshot\" (\n  \"fetchedAt\" timestamp(3) DEFAULT (now()) NOT NULL,\n  \"id\" text NOT NULL,\n  \"locationId\" text NOT NULL,\n  \"payload\" jsonb NOT NULL,\n  CONSTRAINT \"ForecastSnapshot_pkey\" PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"ForecastSnapshot\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"ForecastSnapshot\""]
+      }
+    ]
+  },
+  {
+    "id": "table.GithubEvent",
+    "label": "Create table \"GithubEvent\"",
+    "summary": "Creates table \"GithubEvent\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "GithubEvent"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"GithubEvent\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"GithubEvent\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"GithubEvent\"",
+        "sql": "CREATE TABLE \"public\".\"GithubEvent\" (\n  \"actor\" text,\n  \"commitMessage\" text,\n  \"commitSha\" text,\n  \"conclusion\" text,\n  \"createdAt\" timestamp(3) DEFAULT (now()) NOT NULL,\n  \"eventId\" text NOT NULL,\n  \"id\" text NOT NULL,\n  \"jobName\" text,\n  \"raw\" jsonb,\n  \"repo\" text NOT NULL,\n  \"status\" text,\n  \"title\" text,\n  \"type\" text NOT NULL,\n  \"updatedAt\" timestamp(3) NOT NULL,\n  \"url\" text,\n  CONSTRAINT \"GithubEvent_pkey\" PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"GithubEvent\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"GithubEvent\""]
+      }
+    ]
+  },
+  {
+    "id": "table.Location",
+    "label": "Create table \"Location\"",
+    "summary": "Creates table \"Location\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Location"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Location\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"Location\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Location\"",
+        "sql": "CREATE TABLE \"public\".\"Location\" (\n  \"createdAt\" timestamp(3) DEFAULT (now()) NOT NULL,\n  \"id\" text NOT NULL,\n  \"isDefault\" bool DEFAULT false NOT NULL,\n  \"key\" text NOT NULL,\n  \"latitude\" float8 NOT NULL,\n  \"longitude\" float8 NOT NULL,\n  \"name\" text NOT NULL,\n  \"timezone\" text NOT NULL,\n  \"updatedAt\" timestamp(3) NOT NULL,\n  CONSTRAINT \"Location_pkey\" PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Location\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"Location\""]
+      }
+    ]
+  },
+  {
+    "id": "table.Log",
+    "label": "Create table \"Log\"",
+    "summary": "Creates table \"Log\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Log"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Log\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"Log\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Log\"",
+        "sql": "CREATE TABLE \"public\".\"Log\" (\n  \"created_at\" timestamp(3) DEFAULT (now()) NOT NULL,\n  \"domain\" text NOT NULL,\n  \"file\" text,\n  \"id\" SERIAL NOT NULL,\n  \"level\" text NOT NULL,\n  \"line\" int4,\n  \"message\" text NOT NULL,\n  \"meta\" jsonb,\n  \"payload\" jsonb NOT NULL,\n  \"requestId\" text,\n  \"sessionEmail\" text,\n  \"sessionUser\" text,\n  \"userId\" text,\n  CONSTRAINT \"Log_pkey\" PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Log\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"Log\""]
+      }
+    ]
+  },
+  {
+    "id": "table.Note",
+    "label": "Create table \"Note\"",
+    "summary": "Creates table \"Note\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Note"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Note\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"Note\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Note\"",
+        "sql": "CREATE TABLE \"public\".\"Note\" (\n  \"color\" text,\n  \"content\" text NOT NULL,\n  \"createdAt\" timestamp(3) DEFAULT (now()) NOT NULL,\n  \"followUpAt\" timestamp(3),\n  \"id\" text NOT NULL,\n  \"isArchived\" bool DEFAULT false NOT NULL,\n  \"isCompleted\" bool DEFAULT false NOT NULL,\n  \"pinned\" bool DEFAULT false NOT NULL,\n  \"tags\" text[] DEFAULT '{}',\n  \"title\" text,\n  \"updatedAt\" timestamp(3) NOT NULL,\n  \"userEmail\" text NOT NULL,\n  \"userId\" text NOT NULL,\n  CONSTRAINT \"Note_pkey\" PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Note\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"Note\""]
+      }
+    ]
+  },
+  {
+    "id": "table.RuntimeConfig",
+    "label": "Create table \"RuntimeConfig\"",
+    "summary": "Creates table \"RuntimeConfig\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "RuntimeConfig"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"RuntimeConfig\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"RuntimeConfig\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"RuntimeConfig\"",
+        "sql": "CREATE TABLE \"public\".\"RuntimeConfig\" (\n  \"createdAt\" timestamp(3) DEFAULT (now()) NOT NULL,\n  \"key\" text NOT NULL,\n  \"updatedAt\" timestamp(3) NOT NULL,\n  \"value\" text NOT NULL,\n  CONSTRAINT \"RuntimeConfig_pkey\" PRIMARY KEY (\"key\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"RuntimeConfig\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"RuntimeConfig\""]
+      }
+    ]
+  },
+  {
+    "id": "table.Session",
+    "label": "Create table \"Session\"",
+    "summary": "Creates table \"Session\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Session"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Session\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"Session\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Session\"",
+        "sql": "CREATE TABLE \"public\".\"Session\" (\n  \"expires\" timestamp(3) NOT NULL,\n  \"id\" text NOT NULL,\n  \"sessionToken\" text NOT NULL,\n  \"userId\" text NOT NULL,\n  CONSTRAINT \"Session_pkey\" PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Session\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"Session\""]
+      }
+    ]
+  },
+  {
+    "id": "table.ToolVersion",
+    "label": "Create table \"ToolVersion\"",
+    "summary": "Creates table \"ToolVersion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "ToolVersion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"ToolVersion\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"ToolVersion\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"ToolVersion\"",
+        "sql": "CREATE TABLE \"public\".\"ToolVersion\" (\n  \"added_at\" timestamp(3) DEFAULT (now()) NOT NULL,\n  \"id\" SERIAL NOT NULL,\n  \"name\" text NOT NULL,\n  \"verified_at\" timestamp(3) DEFAULT (now()) NOT NULL,\n  \"version\" text NOT NULL,\n  CONSTRAINT \"ToolVersion_pkey\" PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"ToolVersion\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"ToolVersion\""]
+      }
+    ]
+  },
+  {
+    "id": "table.TravelSegment",
+    "label": "Create table \"TravelSegment\"",
+    "summary": "Creates table \"TravelSegment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "TravelSegment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"TravelSegment\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"TravelSegment\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"TravelSegment\"",
+        "sql": "CREATE TABLE \"public\".\"TravelSegment\" (\n  \"arrivalAirport\" text NOT NULL,\n  \"arrivalCity\" text NOT NULL,\n  \"arrivalTime\" text NOT NULL,\n  \"cabin\" text,\n  \"date\" text NOT NULL,\n  \"departureAirport\" text NOT NULL,\n  \"departureCity\" text NOT NULL,\n  \"departureTime\" text NOT NULL,\n  \"fareClass\" text,\n  \"flightNumber\" text NOT NULL,\n  \"id\" text NOT NULL,\n  \"marketedAs\" text,\n  \"operatedBy\" text,\n  \"seats\" text[],\n  \"snapshotId\" text NOT NULL,\n  CONSTRAINT \"TravelSegment_pkey\" PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"TravelSegment\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"TravelSegment\""]
+      }
+    ]
+  },
+  {
+    "id": "table.TravelSnapshot",
+    "label": "Create table \"TravelSnapshot\"",
+    "summary": "Creates table \"TravelSnapshot\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "TravelSnapshot"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"TravelSnapshot\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"TravelSnapshot\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"TravelSnapshot\"",
+        "sql": "CREATE TABLE \"public\".\"TravelSnapshot\" (\n  \"bags\" jsonb NOT NULL,\n  \"confirmationCode\" text NOT NULL,\n  \"id\" text NOT NULL,\n  \"issuedDate\" text NOT NULL,\n  \"passengers\" jsonb NOT NULL,\n  \"payment\" jsonb NOT NULL,\n  \"rawHtml\" text NOT NULL,\n  \"receivedAt\" timestamp(3) NOT NULL,\n  \"source\" text NOT NULL,\n  CONSTRAINT \"TravelSnapshot_pkey\" PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"TravelSnapshot\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"TravelSnapshot\""]
+      }
+    ]
+  },
+  {
+    "id": "table.User",
+    "label": "Create table \"User\"",
+    "summary": "Creates table \"User\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "User"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"User\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"User\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"User\"",
+        "sql": "CREATE TABLE \"public\".\"User\" (\n  \"email\" text,\n  \"emailVerified\" timestamp(3),\n  \"id\" text NOT NULL,\n  \"image\" text,\n  \"name\" text,\n  CONSTRAINT \"User_pkey\" PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"User\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"User\""]
+      }
+    ]
+  },
+  {
+    "id": "table.UserRole",
+    "label": "Create table \"UserRole\"",
+    "summary": "Creates table \"UserRole\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "UserRole"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"UserRole\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"UserRole\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"UserRole\"",
+        "sql": "CREATE TABLE \"public\".\"UserRole\" (\n  \"email\" text NOT NULL,\n  \"role\" text NOT NULL,\n  CONSTRAINT \"UserRole_pkey\" PRIMARY KEY (\"email\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"UserRole\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"UserRole\""]
+      }
+    ]
+  },
+  {
+    "id": "table.VerificationToken",
+    "label": "Create table \"VerificationToken\"",
+    "summary": "Creates table \"VerificationToken\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "VerificationToken"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"VerificationToken\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"VerificationToken\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"VerificationToken\"",
+        "sql": "CREATE TABLE \"public\".\"VerificationToken\" (\n  \"expires\" timestamp(3) NOT NULL,\n  \"identifier\" text NOT NULL,\n  \"token\" text NOT NULL\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"VerificationToken\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"VerificationToken\""]
+      }
+    ]
+  },
+  {
+    "id": "table.WeatherSnapshot",
+    "label": "Create table \"WeatherSnapshot\"",
+    "summary": "Creates table \"WeatherSnapshot\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "WeatherSnapshot"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"WeatherSnapshot\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"WeatherSnapshot\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"WeatherSnapshot\"",
+        "sql": "CREATE TABLE \"public\".\"WeatherSnapshot\" (\n  \"feelsLike\" float8,\n  \"fetchedAt\" timestamp(3) DEFAULT (now()) NOT NULL,\n  \"humidity\" float8,\n  \"id\" text NOT NULL,\n  \"locationId\" text NOT NULL,\n  \"pressure\" float8,\n  \"temperature\" float8 NOT NULL,\n  \"visibility\" float8,\n  \"weatherCode\" int4,\n  \"windDirection\" float8,\n  \"windSpeed\" float8,\n  CONSTRAINT \"WeatherSnapshot_pkey\" PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"WeatherSnapshot\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"WeatherSnapshot\""]
+      }
+    ]
+  },
+  {
+    "id": "table.verification",
+    "label": "Create table \"verification\"",
+    "summary": "Creates table \"verification\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "verification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"verification\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"verification\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"verification\"",
+        "sql": "CREATE TABLE \"public\".\"verification\" (\n  \"createdAt\" timestamp(3) DEFAULT (now()) NOT NULL,\n  \"expiresAt\" timestamp(3) NOT NULL,\n  \"id\" text NOT NULL,\n  \"identifier\" text NOT NULL,\n  \"updatedAt\" timestamp(3) NOT NULL,\n  \"value\" text NOT NULL,\n  CONSTRAINT \"verification_pkey\" PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"verification\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"verification\""]
+      }
+    ]
+  },
+  {
+    "id": "index.Account.Account_provider_providerAccountId_key",
+    "label": "Create index \"Account_provider_providerAccountId_key\" on \"Account\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Account_provider_providerAccountId_key",
+        "table": "Account"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Account_provider_providerAccountId_key\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"Account_provider_providerAccountId_key\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Account_provider_providerAccountId_key\"",
+        "sql": "CREATE UNIQUE INDEX \"Account_provider_providerAccountId_key\" ON \"public\".\"Account\" (\"provider\", \"providerAccountId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Account_provider_providerAccountId_key\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"Account_provider_providerAccountId_key\""]
+      }
+    ]
+  },
+  {
+    "id": "index.AstronomySnapshot.AstronomySnapshot_locationId_dateString_key",
+    "label": "Create index \"AstronomySnapshot_locationId_dateString_key\" on \"AstronomySnapshot\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "AstronomySnapshot_locationId_dateString_key",
+        "table": "AstronomySnapshot"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"AstronomySnapshot_locationId_dateString_key\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"AstronomySnapshot_locationId_dateString_key\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"AstronomySnapshot_locationId_dateString_key\"",
+        "sql": "CREATE UNIQUE INDEX \"AstronomySnapshot_locationId_dateString_key\" ON \"public\".\"AstronomySnapshot\" (\"locationId\", \"dateString\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"AstronomySnapshot_locationId_dateString_key\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"AstronomySnapshot_locationId_dateString_key\""]
+      }
+    ]
+  },
+  {
+    "id": "index.DbTableStats.DbTableStats_tableName_snapshotDate_idx",
+    "label": "Create index \"DbTableStats_tableName_snapshotDate_idx\" on \"DbTableStats\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "DbTableStats_tableName_snapshotDate_idx",
+        "table": "DbTableStats"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"DbTableStats_tableName_snapshotDate_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"DbTableStats_tableName_snapshotDate_idx\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"DbTableStats_tableName_snapshotDate_idx\"",
+        "sql": "CREATE INDEX \"DbTableStats_tableName_snapshotDate_idx\" ON \"public\".\"DbTableStats\" (\"tableName\", \"snapshotDate\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"DbTableStats_tableName_snapshotDate_idx\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"DbTableStats_tableName_snapshotDate_idx\""]
+      }
+    ]
+  },
+  {
+    "id": "index.DbTableStats.DbTableStats_tableName_snapshotDate_key",
+    "label": "Create index \"DbTableStats_tableName_snapshotDate_key\" on \"DbTableStats\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "DbTableStats_tableName_snapshotDate_key",
+        "table": "DbTableStats"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"DbTableStats_tableName_snapshotDate_key\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"DbTableStats_tableName_snapshotDate_key\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"DbTableStats_tableName_snapshotDate_key\"",
+        "sql": "CREATE UNIQUE INDEX \"DbTableStats_tableName_snapshotDate_key\" ON \"public\".\"DbTableStats\" (\"tableName\", \"snapshotDate\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"DbTableStats_tableName_snapshotDate_key\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"DbTableStats_tableName_snapshotDate_key\""]
+      }
+    ]
+  },
+  {
+    "id": "index.GithubEvent.GithubEvent_eventId_key",
+    "label": "Create index \"GithubEvent_eventId_key\" on \"GithubEvent\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "GithubEvent_eventId_key",
+        "table": "GithubEvent"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"GithubEvent_eventId_key\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"GithubEvent_eventId_key\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"GithubEvent_eventId_key\"",
+        "sql": "CREATE UNIQUE INDEX \"GithubEvent_eventId_key\" ON \"public\".\"GithubEvent\" (\"eventId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"GithubEvent_eventId_key\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"GithubEvent_eventId_key\""]
+      }
+    ]
+  },
+  {
+    "id": "index.Location.Location_key_key",
+    "label": "Create index \"Location_key_key\" on \"Location\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Location_key_key",
+        "table": "Location"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Location_key_key\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"Location_key_key\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Location_key_key\"",
+        "sql": "CREATE UNIQUE INDEX \"Location_key_key\" ON \"public\".\"Location\" (\"key\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Location_key_key\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"Location_key_key\""]
+      }
+    ]
+  },
+  {
+    "id": "index.Log.Log_created_at_idx",
+    "label": "Create index \"Log_created_at_idx\" on \"Log\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Log_created_at_idx",
+        "table": "Log"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Log_created_at_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"Log_created_at_idx\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Log_created_at_idx\"",
+        "sql": "CREATE INDEX \"Log_created_at_idx\" ON \"public\".\"Log\" (\"created_at\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Log_created_at_idx\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"Log_created_at_idx\""]
+      }
+    ]
+  },
+  {
+    "id": "index.Log.Log_domain_idx",
+    "label": "Create index \"Log_domain_idx\" on \"Log\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Log_domain_idx",
+        "table": "Log"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Log_domain_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"Log_domain_idx\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Log_domain_idx\"",
+        "sql": "CREATE INDEX \"Log_domain_idx\" ON \"public\".\"Log\" (\"domain\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Log_domain_idx\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"Log_domain_idx\""]
+      }
+    ]
+  },
+  {
+    "id": "index.Log.Log_file_idx",
+    "label": "Create index \"Log_file_idx\" on \"Log\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Log_file_idx",
+        "table": "Log"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Log_file_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"Log_file_idx\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Log_file_idx\"",
+        "sql": "CREATE INDEX \"Log_file_idx\" ON \"public\".\"Log\" (\"file\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Log_file_idx\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"Log_file_idx\""]
+      }
+    ]
+  },
+  {
+    "id": "index.Log.Log_level_idx",
+    "label": "Create index \"Log_level_idx\" on \"Log\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Log_level_idx",
+        "table": "Log"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Log_level_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"Log_level_idx\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Log_level_idx\"",
+        "sql": "CREATE INDEX \"Log_level_idx\" ON \"public\".\"Log\" (\"level\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Log_level_idx\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"Log_level_idx\""]
+      }
+    ]
+  },
+  {
+    "id": "index.Log.Log_meta_idx",
+    "label": "Create index \"Log_meta_idx\" on \"Log\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Log_meta_idx",
+        "table": "Log"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Log_meta_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"Log_meta_idx\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Log_meta_idx\"",
+        "sql": "CREATE INDEX \"Log_meta_idx\" ON \"public\".\"Log\" USING \"gin\" (\"meta\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Log_meta_idx\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"Log_meta_idx\""]
+      }
+    ]
+  },
+  {
+    "id": "index.Log.Log_payload_idx",
+    "label": "Create index \"Log_payload_idx\" on \"Log\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Log_payload_idx",
+        "table": "Log"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Log_payload_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"Log_payload_idx\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Log_payload_idx\"",
+        "sql": "CREATE INDEX \"Log_payload_idx\" ON \"public\".\"Log\" USING \"gin\" (\"payload\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Log_payload_idx\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"Log_payload_idx\""]
+      }
+    ]
+  },
+  {
+    "id": "index.Log.Log_requestId_idx",
+    "label": "Create index \"Log_requestId_idx\" on \"Log\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Log_requestId_idx",
+        "table": "Log"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Log_requestId_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"Log_requestId_idx\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Log_requestId_idx\"",
+        "sql": "CREATE INDEX \"Log_requestId_idx\" ON \"public\".\"Log\" (\"requestId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Log_requestId_idx\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"Log_requestId_idx\""]
+      }
+    ]
+  },
+  {
+    "id": "index.Log.Log_sessionEmail_idx",
+    "label": "Create index \"Log_sessionEmail_idx\" on \"Log\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Log_sessionEmail_idx",
+        "table": "Log"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Log_sessionEmail_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"Log_sessionEmail_idx\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Log_sessionEmail_idx\"",
+        "sql": "CREATE INDEX \"Log_sessionEmail_idx\" ON \"public\".\"Log\" (\"sessionEmail\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Log_sessionEmail_idx\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"Log_sessionEmail_idx\""]
+      }
+    ]
+  },
+  {
+    "id": "index.Log.Log_sessionUser_idx",
+    "label": "Create index \"Log_sessionUser_idx\" on \"Log\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Log_sessionUser_idx",
+        "table": "Log"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Log_sessionUser_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"Log_sessionUser_idx\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Log_sessionUser_idx\"",
+        "sql": "CREATE INDEX \"Log_sessionUser_idx\" ON \"public\".\"Log\" (\"sessionUser\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Log_sessionUser_idx\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"Log_sessionUser_idx\""]
+      }
+    ]
+  },
+  {
+    "id": "index.Log.Log_userId_idx",
+    "label": "Create index \"Log_userId_idx\" on \"Log\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Log_userId_idx",
+        "table": "Log"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Log_userId_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"Log_userId_idx\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Log_userId_idx\"",
+        "sql": "CREATE INDEX \"Log_userId_idx\" ON \"public\".\"Log\" (\"userId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Log_userId_idx\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"Log_userId_idx\""]
+      }
+    ]
+  },
+  {
+    "id": "index.Note.Note_followUpAt_idx",
+    "label": "Create index \"Note_followUpAt_idx\" on \"Note\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Note_followUpAt_idx",
+        "table": "Note"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Note_followUpAt_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"Note_followUpAt_idx\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Note_followUpAt_idx\"",
+        "sql": "CREATE INDEX \"Note_followUpAt_idx\" ON \"public\".\"Note\" (\"followUpAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Note_followUpAt_idx\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"Note_followUpAt_idx\""]
+      }
+    ]
+  },
+  {
+    "id": "index.Note.Note_isArchived_idx",
+    "label": "Create index \"Note_isArchived_idx\" on \"Note\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Note_isArchived_idx",
+        "table": "Note"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Note_isArchived_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"Note_isArchived_idx\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Note_isArchived_idx\"",
+        "sql": "CREATE INDEX \"Note_isArchived_idx\" ON \"public\".\"Note\" (\"isArchived\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Note_isArchived_idx\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"Note_isArchived_idx\""]
+      }
+    ]
+  },
+  {
+    "id": "index.Note.Note_isCompleted_idx",
+    "label": "Create index \"Note_isCompleted_idx\" on \"Note\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Note_isCompleted_idx",
+        "table": "Note"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Note_isCompleted_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"Note_isCompleted_idx\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Note_isCompleted_idx\"",
+        "sql": "CREATE INDEX \"Note_isCompleted_idx\" ON \"public\".\"Note\" (\"isCompleted\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Note_isCompleted_idx\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"Note_isCompleted_idx\""]
+      }
+    ]
+  },
+  {
+    "id": "index.Note.Note_userEmail_idx",
+    "label": "Create index \"Note_userEmail_idx\" on \"Note\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Note_userEmail_idx",
+        "table": "Note"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Note_userEmail_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"Note_userEmail_idx\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Note_userEmail_idx\"",
+        "sql": "CREATE INDEX \"Note_userEmail_idx\" ON \"public\".\"Note\" (\"userEmail\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Note_userEmail_idx\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"Note_userEmail_idx\""]
+      }
+    ]
+  },
+  {
+    "id": "index.Note.Note_userId_idx",
+    "label": "Create index \"Note_userId_idx\" on \"Note\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Note_userId_idx",
+        "table": "Note"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Note_userId_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"Note_userId_idx\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Note_userId_idx\"",
+        "sql": "CREATE INDEX \"Note_userId_idx\" ON \"public\".\"Note\" (\"userId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Note_userId_idx\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"Note_userId_idx\""]
+      }
+    ]
+  },
+  {
+    "id": "index.Session.Session_sessionToken_key",
+    "label": "Create index \"Session_sessionToken_key\" on \"Session\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Session_sessionToken_key",
+        "table": "Session"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Session_sessionToken_key\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"Session_sessionToken_key\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Session_sessionToken_key\"",
+        "sql": "CREATE UNIQUE INDEX \"Session_sessionToken_key\" ON \"public\".\"Session\" (\"sessionToken\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Session_sessionToken_key\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"Session_sessionToken_key\""]
+      }
+    ]
+  },
+  {
+    "id": "index.ToolVersion.ToolVersion_name_key",
+    "label": "Create index \"ToolVersion_name_key\" on \"ToolVersion\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "ToolVersion_name_key",
+        "table": "ToolVersion"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"ToolVersion_name_key\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"ToolVersion_name_key\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"ToolVersion_name_key\"",
+        "sql": "CREATE UNIQUE INDEX \"ToolVersion_name_key\" ON \"public\".\"ToolVersion\" (\"name\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"ToolVersion_name_key\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"ToolVersion_name_key\""]
+      }
+    ]
+  },
+  {
+    "id": "index.TravelSnapshot.TravelSnapshot_confirmationCode_key",
+    "label": "Create index \"TravelSnapshot_confirmationCode_key\" on \"TravelSnapshot\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "TravelSnapshot_confirmationCode_key",
+        "table": "TravelSnapshot"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"TravelSnapshot_confirmationCode_key\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"TravelSnapshot_confirmationCode_key\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"TravelSnapshot_confirmationCode_key\"",
+        "sql": "CREATE UNIQUE INDEX \"TravelSnapshot_confirmationCode_key\" ON \"public\".\"TravelSnapshot\" (\"confirmationCode\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"TravelSnapshot_confirmationCode_key\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"TravelSnapshot_confirmationCode_key\""]
+      }
+    ]
+  },
+  {
+    "id": "index.TravelSnapshot.TravelSnapshot_receivedAt_idx",
+    "label": "Create index \"TravelSnapshot_receivedAt_idx\" on \"TravelSnapshot\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "TravelSnapshot_receivedAt_idx",
+        "table": "TravelSnapshot"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"TravelSnapshot_receivedAt_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"TravelSnapshot_receivedAt_idx\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"TravelSnapshot_receivedAt_idx\"",
+        "sql": "CREATE INDEX \"TravelSnapshot_receivedAt_idx\" ON \"public\".\"TravelSnapshot\" (\"receivedAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"TravelSnapshot_receivedAt_idx\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"TravelSnapshot_receivedAt_idx\""]
+      }
+    ]
+  },
+  {
+    "id": "index.User.User_email_key",
+    "label": "Create index \"User_email_key\" on \"User\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "User_email_key",
+        "table": "User"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"User_email_key\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"User_email_key\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"User_email_key\"",
+        "sql": "CREATE UNIQUE INDEX \"User_email_key\" ON \"public\".\"User\" (\"email\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"User_email_key\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"User_email_key\""]
+      }
+    ]
+  },
+  {
+    "id": "index.VerificationToken.VerificationToken_identifier_token_key",
+    "label": "Create index \"VerificationToken_identifier_token_key\" on \"VerificationToken\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "VerificationToken_identifier_token_key",
+        "table": "VerificationToken"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"VerificationToken_identifier_token_key\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"VerificationToken_identifier_token_key\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"VerificationToken_identifier_token_key\"",
+        "sql": "CREATE UNIQUE INDEX \"VerificationToken_identifier_token_key\" ON \"public\".\"VerificationToken\" (\"identifier\", \"token\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"VerificationToken_identifier_token_key\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"VerificationToken_identifier_token_key\""]
+      }
+    ]
+  },
+  {
+    "id": "index.VerificationToken.VerificationToken_token_key",
+    "label": "Create index \"VerificationToken_token_key\" on \"VerificationToken\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "VerificationToken_token_key",
+        "table": "VerificationToken"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"VerificationToken_token_key\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"VerificationToken_token_key\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"VerificationToken_token_key\"",
+        "sql": "CREATE UNIQUE INDEX \"VerificationToken_token_key\" ON \"public\".\"VerificationToken\" (\"token\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"VerificationToken_token_key\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"VerificationToken_token_key\""]
+      }
+    ]
+  },
+  {
+    "id": "index.WeatherSnapshot.WeatherSnapshot_locationId_fetchedAt_idx",
+    "label": "Create index \"WeatherSnapshot_locationId_fetchedAt_idx\" on \"WeatherSnapshot\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "WeatherSnapshot_locationId_fetchedAt_idx",
+        "table": "WeatherSnapshot"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"WeatherSnapshot_locationId_fetchedAt_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"WeatherSnapshot_locationId_fetchedAt_idx\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"WeatherSnapshot_locationId_fetchedAt_idx\"",
+        "sql": "CREATE INDEX \"WeatherSnapshot_locationId_fetchedAt_idx\" ON \"public\".\"WeatherSnapshot\" (\"locationId\", \"fetchedAt\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"WeatherSnapshot_locationId_fetchedAt_idx\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"WeatherSnapshot_locationId_fetchedAt_idx\""]
+      }
+    ]
+  },
+  {
+    "id": "index.verification.verification_identifier_idx",
+    "label": "Create index \"verification_identifier_idx\" on \"verification\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "verification_identifier_idx",
+        "table": "verification"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"verification_identifier_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": ["\"public\".\"verification_identifier_idx\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"verification_identifier_idx\"",
+        "sql": "CREATE INDEX \"verification_identifier_idx\" ON \"public\".\"verification\" (\"identifier\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"verification_identifier_idx\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": ["\"public\".\"verification_identifier_idx\""]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Account.Account_userId_fkey",
+    "label": "Add foreign key \"Account_userId_fkey\" on \"Account\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Account_userId_fkey",
+        "table": "Account"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Account_userId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": ["Account_userId_fkey", "public", "\"public\".\"Account\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Account_userId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Account\"\nADD CONSTRAINT \"Account_userId_fkey\"\nFOREIGN KEY (\"userId\")\nREFERENCES \"public\".\"User\" (\"id\")\nON DELETE RESTRICT\nON UPDATE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Account_userId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": ["Account_userId_fkey", "public", "\"public\".\"Account\""]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.AstronomySnapshot.AstronomySnapshot_locationId_fkey",
+    "label": "Add foreign key \"AstronomySnapshot_locationId_fkey\" on \"AstronomySnapshot\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "AstronomySnapshot_locationId_fkey",
+        "table": "AstronomySnapshot"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"AstronomySnapshot_locationId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "AstronomySnapshot_locationId_fkey",
+          "public",
+          "\"public\".\"AstronomySnapshot\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"AstronomySnapshot_locationId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"AstronomySnapshot\"\nADD CONSTRAINT \"AstronomySnapshot_locationId_fkey\"\nFOREIGN KEY (\"locationId\")\nREFERENCES \"public\".\"Location\" (\"id\")\nON DELETE RESTRICT\nON UPDATE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"AstronomySnapshot_locationId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "AstronomySnapshot_locationId_fkey",
+          "public",
+          "\"public\".\"AstronomySnapshot\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.ForecastSnapshot.ForecastSnapshot_locationId_fkey",
+    "label": "Add foreign key \"ForecastSnapshot_locationId_fkey\" on \"ForecastSnapshot\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "ForecastSnapshot_locationId_fkey",
+        "table": "ForecastSnapshot"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"ForecastSnapshot_locationId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ForecastSnapshot_locationId_fkey",
+          "public",
+          "\"public\".\"ForecastSnapshot\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"ForecastSnapshot_locationId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"ForecastSnapshot\"\nADD CONSTRAINT \"ForecastSnapshot_locationId_fkey\"\nFOREIGN KEY (\"locationId\")\nREFERENCES \"public\".\"Location\" (\"id\")\nON DELETE RESTRICT\nON UPDATE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"ForecastSnapshot_locationId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "ForecastSnapshot_locationId_fkey",
+          "public",
+          "\"public\".\"ForecastSnapshot\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Session.Session_userId_fkey",
+    "label": "Add foreign key \"Session_userId_fkey\" on \"Session\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Session_userId_fkey",
+        "table": "Session"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Session_userId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": ["Session_userId_fkey", "public", "\"public\".\"Session\""]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Session_userId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Session\"\nADD CONSTRAINT \"Session_userId_fkey\"\nFOREIGN KEY (\"userId\")\nREFERENCES \"public\".\"User\" (\"id\")\nON DELETE RESTRICT\nON UPDATE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Session_userId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": ["Session_userId_fkey", "public", "\"public\".\"Session\""]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.TravelSegment.TravelSegment_snapshotId_fkey",
+    "label": "Add foreign key \"TravelSegment_snapshotId_fkey\" on \"TravelSegment\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "TravelSegment_snapshotId_fkey",
+        "table": "TravelSegment"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"TravelSegment_snapshotId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "TravelSegment_snapshotId_fkey",
+          "public",
+          "\"public\".\"TravelSegment\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"TravelSegment_snapshotId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"TravelSegment\"\nADD CONSTRAINT \"TravelSegment_snapshotId_fkey\"\nFOREIGN KEY (\"snapshotId\")\nREFERENCES \"public\".\"TravelSnapshot\" (\"id\")\nON DELETE RESTRICT\nON UPDATE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"TravelSegment_snapshotId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "TravelSegment_snapshotId_fkey",
+          "public",
+          "\"public\".\"TravelSegment\""
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.WeatherSnapshot.WeatherSnapshot_locationId_fkey",
+    "label": "Add foreign key \"WeatherSnapshot_locationId_fkey\" on \"WeatherSnapshot\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "WeatherSnapshot_locationId_fkey",
+        "table": "WeatherSnapshot"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"WeatherSnapshot_locationId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "WeatherSnapshot_locationId_fkey",
+          "public",
+          "\"public\".\"WeatherSnapshot\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"WeatherSnapshot_locationId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"WeatherSnapshot\"\nADD CONSTRAINT \"WeatherSnapshot_locationId_fkey\"\nFOREIGN KEY (\"locationId\")\nREFERENCES \"public\".\"Location\" (\"id\")\nON DELETE CASCADE\nON UPDATE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"WeatherSnapshot_locationId_fkey\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "WeatherSnapshot_locationId_fkey",
+          "public",
+          "\"public\".\"WeatherSnapshot\""
+        ]
+      }
+    ]
+  }
+]
