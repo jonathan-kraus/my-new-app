@@ -34,7 +34,7 @@ export async function GET(request: Request) {
       level: "warn",
       message: `Cron authorization rejected`,
       file: "app/api/cron/mbta/route.ts",
-      line: 372,
+      line: 32,
       payload: {
         secretConfigured: Boolean(secret),
         authorizationPresent: Boolean(authorization),
