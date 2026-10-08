@@ -4,6 +4,7 @@ const mocks = vi.hoisted(() => ({
   authorize: vi.fn(),
   sync: vi.fn(),
   status: vi.fn(),
+  log: vi.fn(),
 }));
 vi.mock("@/lib/runtime/admin", () => ({
   requireRuntimeAdmin: mocks.authorize,
@@ -18,6 +19,7 @@ vi.mock("@/lib/mbta/catalog", () => ({
   CatalogSyncBusyError: class extends Error {},
 }));
 vi.mock("@/lib/mbta/sync", () => ({ syncMbtaCatalog: mocks.sync }));
+vi.mock("@/lib/log/logj", () => ({ logj: mocks.log }));
 import { GET, POST } from "../../app/api/admin/mbta/route";
 import { GET as cron } from "../../app/api/cron/mbta/route";
 import { RuntimeAccessError } from "@/lib/runtime/admin";
@@ -27,6 +29,7 @@ beforeEach(() => {
   vi.resetAllMocks();
   mocks.authorize.mockResolvedValue(undefined);
   mocks.sync.mockResolvedValue({ stopCount: 390 });
+  mocks.log.mockResolvedValue(undefined);
 });
 afterEach(() => {
   vi.unstubAllEnvs();
@@ -67,7 +70,6 @@ describe("administrator refresh", () => {
 });
 describe("scheduled refresh", () => {
   it("logs only secret suffixes on rejected requests", async () => {
-    const warning = vi.spyOn(console, "warn").mockImplementation(() => {});
     vi.stubEnv("CRON_SECRET", "configured-private-abcde");
     const response = await cron(
       new Request("http://localhost/api/cron/mbta", {
@@ -75,34 +77,49 @@ describe("scheduled refresh", () => {
       }),
     );
     expect(response.status).toBe(401);
-    expect(warning).toHaveBeenCalledWith("MBTA cron authorization rejected", {
-      secretConfigured: true,
-      authorizationPresent: true,
-      bearerFormatValid: true,
-      configuredSecretSuffix: "abcde",
-      suppliedSecretSuffix: "vwxyz",
-    });
-    expect(JSON.stringify(warning.mock.calls)).not.toContain("private");
+    expect(mocks.log).toHaveBeenCalledWith(
+      expect.objectContaining({
+        domain: "MBTA",
+        level: "warn",
+        message: "Cron authorization rejected",
+        payload: {
+          secretConfigured: true,
+          authorizationPresent: true,
+          bearerFormatValid: true,
+          configuredSecretSuffix: "abcde",
+          suppliedSecretSuffix: "vwxyz",
+        },
+      }),
+    );
+    expect(JSON.stringify(mocks.log.mock.calls)).not.toContain("private");
     expect(await response.json()).toEqual({ error: "Unauthorized" });
     expect(mocks.sync).not.toHaveBeenCalled();
   });
   it("does not expose short secrets or malformed authorization headers", async () => {
-    const warning = vi.spyOn(console, "warn").mockImplementation(() => {});
     vi.stubEnv("CRON_SECRET", "tiny");
     await cron(
       new Request("http://localhost/api/cron/mbta", {
         headers: { authorization: "Basic private-header" },
       }),
     );
-    expect(warning).toHaveBeenCalledWith("MBTA cron authorization rejected", {
-      secretConfigured: true,
-      authorizationPresent: true,
-      bearerFormatValid: false,
-      configuredSecretSuffix: "[too short]",
-      suppliedSecretSuffix: null,
-    });
-    expect(JSON.stringify(warning.mock.calls)).not.toContain("tiny");
-    expect(JSON.stringify(warning.mock.calls)).not.toContain("private-header");
+    expect(mocks.log).toHaveBeenCalledWith(
+      expect.objectContaining({
+        domain: "MBTA",
+        level: "warn",
+        message: "Cron authorization rejected",
+        payload: {
+          secretConfigured: true,
+          authorizationPresent: true,
+          bearerFormatValid: false,
+          configuredSecretSuffix: "[too short]",
+          suppliedSecretSuffix: null,
+        },
+      }),
+    );
+    expect(JSON.stringify(mocks.log.mock.calls)).not.toContain("tiny");
+    expect(JSON.stringify(mocks.log.mock.calls)).not.toContain(
+      "private-header",
+    );
   });
   it("fails closed if CRON_SECRET is missing", async () => {
     vi.stubEnv("CRON_SECRET", "");

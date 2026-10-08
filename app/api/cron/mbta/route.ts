@@ -31,7 +31,7 @@ export async function GET(request: Request) {
       !value ? null : value.length <= 5 ? "[too short]" : value.slice(-5);
     logj({
       domain: "MBTA",
-      level: "info",
+      level: "warn",
       message: `Cron authorization rejected`,
       file: "app/api/cron/mbta/route.ts",
       line: 32,
