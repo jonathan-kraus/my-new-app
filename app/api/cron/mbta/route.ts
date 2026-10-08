@@ -14,7 +14,7 @@ export async function GET(request: Request) {
     logj({
       domain: "MBTA",
       level: "info",
-      message: `Cron job triggered`,
+      message: `🚇 Cron job triggered`,
       file: "app/api/cron/mbta/route.ts",
       line: 14,
       payload: {
