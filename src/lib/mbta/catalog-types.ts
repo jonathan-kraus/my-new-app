@@ -34,6 +34,7 @@ export type CatalogPattern = {
   name: string;
   directionId: number;
   typicality: number;
+  canonical: boolean | null;
   sortOrder: number;
   stopIds: string[];
 };
@@ -60,10 +61,25 @@ export function stationId(stop: CatalogStop) {
   return stop.parentStationId ?? stop.id;
 }
 
+/** Canonical patterns define the line map, including regular branches/closed stops. */
+function displayPatterns(catalog: MbtaCatalog) {
+  const canonicalRoutes = new Set(
+    catalog.patterns
+      .filter((pattern) => pattern.canonical === true)
+      .map((pattern) => pattern.routeId),
+  );
+  return catalog.patterns.filter((pattern) =>
+    canonicalRoutes.has(pattern.routeId)
+      ? pattern.canonical === true
+      : // Older snapshots and routes without canonical metadata use typical service.
+        pattern.canonical == null && pattern.typicality === 1,
+  );
+}
+
 /** Preserve pattern order, resolving boarding platforms to their stations. */
 export function stopsForRoute(catalog: MbtaCatalog, routeId: string) {
   const byId = new Map(catalog.stops.map((stop) => [stop.id, stop]));
-  const patterns = catalog.patterns
+  const patterns = displayPatterns(catalog)
     .filter((pattern) => pattern.routeId === routeId)
     .sort(
       (a, b) =>
@@ -94,7 +110,7 @@ export function routesForStop(catalog: MbtaCatalog, stopId: string) {
       .map((candidate) => candidate.id),
   );
   const routeIds = new Set(
-    catalog.patterns
+    displayPatterns(catalog)
       .filter((pattern) => pattern.stopIds.some((id) => ids.has(id)))
       .map((pattern) => pattern.routeId),
   );

@@ -8,9 +8,18 @@ The catalog currently covers MBTA subway and trolley routes (route types 0 and 1
 One stop record is stored per MBTA ID, with station/platform relationships and the
 complete stop attributes. Ordered platform memberships belong to route patterns,
 so directions and branches remain distinct. The station picker deduplicates each
-pattern's platforms to their parent stations. It orders the typical outbound
-pattern first, then appends stops unique to other patterns; it does not pretend
-branched lines have a single linear stop order.
+pattern's platforms to their parent stations. Stop pickers and station route badges
+use only canonical patterns, retaining all canonical branches (including temporarily
+closed stops). Typical outbound patterns appear first. Occasional B/C trips to
+Medford/Tufts remain stored but do not add E-branch stations to the B/C line maps.
+If canonical metadata is unavailable, only typical patterns with an unknown
+canonical value are used. Explicitly noncanonical patterns are never promoted.
+Live arrival predictions remain unchanged.
+
+The nullable `MbtaPattern.canonical` column preserves MBTA's true/false/unknown
+designation. Apply the canonical-field migration before deploying the updated
+client, then refresh the catalog to populate it. Existing rows use the typical
+service fallback until their first refresh.
 
 ## Database setup
 

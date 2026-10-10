@@ -1,0 +1,36 @@
+[
+  {
+    "id": "column.public.MbtaPattern.canonical",
+    "label": "Add column \"canonical\" to \"MbtaPattern\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "canonical",
+        "table": "MbtaPattern"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"canonical\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": ["public", "MbtaPattern", "canonical"]
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"canonical\"",
+        "sql": "ALTER TABLE \"public\".\"MbtaPattern\" ADD COLUMN \"canonical\" bool"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"canonical\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": ["public", "MbtaPattern", "canonical"]
+      }
+    ]
+  }
+]

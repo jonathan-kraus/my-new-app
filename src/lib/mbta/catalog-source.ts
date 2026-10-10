@@ -51,6 +51,7 @@ const patternAttributes = z.object({
   name: z.string(),
   direction_id: z.number().int().min(0).max(1),
   typicality: z.number().int(),
+  canonical: z.boolean().nullable().default(null),
   sort_order: z.number().int(),
 });
 
@@ -161,6 +162,7 @@ export async function fetchMbtaCatalog(fetcher = fetch): Promise<MbtaCatalog> {
       name: attrs.name,
       directionId: attrs.direction_id,
       typicality: attrs.typicality,
+      canonical: attrs.canonical,
       sortOrder: attrs.sort_order,
       stopIds: stopData.map((stop) => stop.id),
     };

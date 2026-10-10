@@ -360,6 +360,7 @@ model MbtaPattern {
   name        String
   directionId Int
   typicality  Int
+  canonical   Boolean?
   sortOrder   Int
   route       MbtaRoute @relation(fields: [routeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   stops       MbtaPatternStop[]

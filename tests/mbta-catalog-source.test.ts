@@ -22,7 +22,7 @@ describe("MBTA station relationships", () => {
       routesForStop(mbtaFixture, "platform-hynes").map((route) => route.id),
     ).toEqual(["Green-C", "Green-B"]);
   });
-  it("retains branch stops that are not in the first pattern", () => {
+  it("retains every canonical branch, including a temporarily closed branch", () => {
     const catalog = {
       ...mbtaFixture,
       patterns: [
@@ -30,6 +30,7 @@ describe("MBTA station relationships", () => {
         {
           ...mbtaFixture.patterns[0]!,
           id: "branch",
+          typicality: 5,
           stopIds: ["place-pktrm", "place-alfcl"],
         },
       ],
@@ -37,6 +38,80 @@ describe("MBTA station relationships", () => {
     expect(stopsForRoute(catalog, "Green-C").map((stop) => stop.id)).toContain(
       "place-alfcl",
     );
+  });
+});
+
+describe("canonical branch membership", () => {
+  const catalog = {
+    ...mbtaFixture,
+    routes: [
+      ...mbtaFixture.routes,
+      { ...mbtaFixture.routes[0]!, id: "Green-E" },
+    ],
+    stops: [
+      ...mbtaFixture.stops,
+      {
+        ...mbtaFixture.stops[0]!,
+        id: "place-mgngl",
+        attributes: {
+          ...mbtaFixture.stops[0]!.attributes,
+          name: "Magoun Square",
+        },
+      },
+    ],
+    patterns: [
+      ...mbtaFixture.patterns,
+      ...["Green-B", "Green-C", "Green-E"].map((routeId) => ({
+        ...mbtaFixture.patterns[0]!,
+        id: routeId + "-magoun",
+        routeId,
+        canonical: routeId === "Green-E",
+        typicality: routeId === "Green-E" ? 1 : 3,
+        stopIds: ["place-mgngl", "place-pktrm"],
+      })),
+    ],
+  };
+  it("excludes occasional B/C patterns from the picker and station badges", () => {
+    expect(
+      routesForStop(catalog, "place-mgngl").map((route) => route.id),
+    ).toEqual(["Green-E"]);
+    expect(stopsForRoute(catalog, "Green-C").map((stop) => stop.id)).toEqual([
+      "place-pktrm",
+      "place-hymnl",
+      "place-denrd",
+    ]);
+    expect(
+      stopsForRoute(catalog, "Green-B").map((stop) => stop.id),
+    ).not.toContain("place-mgngl");
+    expect(stopsForRoute(catalog, "Green-E").map((stop) => stop.id)).toContain(
+      "place-mgngl",
+    );
+  });
+  it("uses typical service for old snapshots without admitting atypical patterns", () => {
+    const legacy = {
+      ...catalog,
+      patterns: catalog.patterns.map((pattern) => ({
+        ...pattern,
+        canonical: null,
+      })),
+    };
+    expect(
+      routesForStop(legacy, "place-mgngl").map((route) => route.id),
+    ).toEqual(["Green-E"]);
+    expect(
+      stopsForRoute(legacy, "Green-C").map((stop) => stop.id),
+    ).not.toContain("place-mgngl");
+  });
+  it("does not promote explicitly noncanonical patterns into the line map", () => {
+    const noncanonical = {
+      ...catalog,
+      patterns: catalog.patterns.map((pattern) => ({
+        ...pattern,
+        canonical: false,
+      })),
+    };
+    expect(stopsForRoute(noncanonical, "Green-C")).toEqual([]);
+    expect(routesForStop(noncanonical, "place-mgngl")).toEqual([]);
   });
 });
 
@@ -117,6 +192,7 @@ describe("MBTA importer", () => {
         name: pattern.name,
         direction_id: pattern.directionId,
         typicality: pattern.typicality,
+        canonical: pattern.canonical,
         sort_order: pattern.sortOrder,
       },
       relationships: {
@@ -145,9 +221,16 @@ describe("MBTA importer", () => {
       );
     });
     const catalog = await fetchMbtaCatalog(fetcher);
-    expect(catalog.patterns[0]?.stopIds).toEqual(fixture.patterns[0]?.stopIds);
+    expect(catalog.patterns).toEqual(fixture.patterns);
     expect(catalog.stops).toHaveLength(fixture.stops.length);
     expect(catalog.routes).toEqual(fixture.routes);
+    patternData[0]!.attributes.canonical = false;
+    expect((await fetchMbtaCatalog(fetcher)).patterns[0]?.canonical).toBe(
+      false,
+    );
+    // Canonical is nullable when upstream has no designation for a route.
+    Reflect.deleteProperty(patternData[0]!.attributes, "canonical");
+    expect((await fetchMbtaCatalog(fetcher)).patterns[0]?.canonical).toBeNull();
     // One missing representative trip must reject the entire import.
     trips.pop();
     await expect(fetchMbtaCatalog(fetcher)).rejects.toThrow(
