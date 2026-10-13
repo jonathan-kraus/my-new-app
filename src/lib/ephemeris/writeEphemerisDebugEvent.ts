@@ -1,10 +1,9 @@
-import type { JsonValue } from "@prisma/orm-postgres/target/codec-types";
-import type { LogjPayload } from "@/lib/log/types";
-import { Temporal } from "temporal-polyfill";
 // lib/ephemeris/writeEphemerisDebugEvent.ts
 
+import { Temporal } from "temporal-polyfill";
 import { db8 } from "@/lib/db.prisma8";
-
+import { logj } from "@/lib/log/logj";
+import type { JsonValue } from "@prisma/orm-postgres/target/codec-types";
 // -----------------------------
 // Exported helpers for tests
 // -----------------------------
@@ -21,36 +20,19 @@ export function toJsonSafe(value: unknown): JsonValue {
     return String(value);
   }
 }
+const { staticUniversalContext } = await import("@/lib/log/buildj");
+const built = staticUniversalContext("EPHEMERIS");
+let jei = 0;
 
-// -----------------------------
-// Logging helper (dynamic import to avoid server-only issues in tests)
-// -----------------------------
-async function logEphemerisEvent(
-  level: "info" | "error",
-  message: string,
-  payload: LogjPayload,
-) {
-  try {
-    const { logj } = await import("@/lib/log/logj");
-    const { staticUniversalContext } = await import("@/lib/log/buildj");
-
-    const built = staticUniversalContext("EPHEMERIS");
-    const jei = 0; // Reset for each call
-
-    await logj({
-      domain: "EPHEMERIS",
-      level,
-      message,
-      file: "src/lib/ephemeris/writeEphemerisDebugEvent.ts",
-      line: level === "info" ? 55 : 75,
-      payload,
-      meta: { built: { ...built, eventIndex: jei } },
-    });
-  } catch (logErr) {
-    // Silently fail logging to avoid breaking the main functionality
-    console.warn("Failed to log ephemeris event:", logErr);
-  }
-}
+await logj({
+  domain: "EPHEMERIS",
+  level: "info",
+  message: "Wrote ephemeris debug event",
+  file: "src/lib/ephemeris/writeEphemerisDebugEvent.ts",
+  line: 28,
+  payload: { receivedAt: "data" },
+  meta: { built: { ...built, eventIndex: ++jei } },
+});
 
 export type DebugEventInput = {
   raw: unknown;
@@ -104,21 +86,18 @@ export async function writeEphemerisDebugEvent(data: DebugEventInput) {
       receivedAt: now,
     });
 
-    // Log success asynchronously (don't await to avoid blocking)
-    logEphemerisEvent("info", "Wrote ephemeris debug event", {
-      id: data.id,
-      locationId: data.locationId,
+    await logj({
+      domain: "ephemeris",
+      level: "info",
+      message: "Wrote ephemeris debug event",
+      file: "src/lib/ephemeris/writeEphemerisDebugEvent.ts",
+      line: 91,
+      payload: { receivedAt: row.receivedAt },
+      meta: { built: { ...built, eventIndex: ++jei } },
     });
 
     return row;
   } catch (err) {
-    // Log error asynchronously (don't await to avoid blocking)
-    logEphemerisEvent("error", "Failed to write ephemeris debug event", {
-      id: data.id,
-      locationId: data.locationId,
-      error: err,
-    });
-
     throw err;
   }
 }

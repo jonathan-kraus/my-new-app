@@ -281,6 +281,7 @@ export async function GET(req: Request) {
       forecastDurationMs: Number(forecastDurationMs.toFixed(3)),
       totalDurationMs,
     },
+    meta: { built: { ...built, eventIndex: ++jei } },
   });
   if (!parsed.success) {
     // log #3 in invalid-case test
