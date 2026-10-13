@@ -26,6 +26,14 @@ function getMoonEmoji(phaseName: string | null): string {
 const fcm = Number(await getConfig("FORECAST_CACHE_MINUTES", "10"));
 const FORECAST_CACHE_MINUTES = fcm;
 
+// ForecastSnapshot stores UTC in a PostgreSQL timestamp without a time zone.
+// Include the zone in API responses so browsers do not interpret it as local time.
+function snapshotTimestamp(value: string) {
+  return new Date(
+    value.replace(" ", "T").replace(/Z$/, "") + "Z",
+  ).toISOString();
+}
+
 export async function GET(req: Request) {
   const built = await buildUniversalContext(req, "FORECAST");
   let jei = 0;
@@ -170,7 +178,7 @@ export async function GET(req: Request) {
         weathercode: weather.forecast.weathercode || [],
       },
       astronomy,
-      fetchedAt: cached.fetchedAt,
+      fetchedAt: snapshotTimestamp(cached.fetchedAt),
     });
   }
 
@@ -410,6 +418,6 @@ export async function GET(req: Request) {
       weathercode: weather.daily.weathercode,
     },
     astronomy,
-    fetchedAt: snapshot.fetchedAt,
+    fetchedAt: snapshotTimestamp(snapshot.fetchedAt),
   });
 }

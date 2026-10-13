@@ -92,7 +92,7 @@ const makeLocation = (overrides = {}) => ({
 const makeSnapshot = (overrides = {}) => ({
   id: "snap-1",
   locationId: "KOP",
-  fetchedAt: new Date(),
+  fetchedAt: "2026-10-13 20:28:39.779",
   payload: {
     current: {
       temperature: 30,
@@ -214,6 +214,7 @@ describe("GET /api/weather/forecast", () => {
 
     expect(res.status).toBe(200);
     expect(json.source).toBe("cache");
+    expect(json.fetchedAt).toBe("2026-10-13T20:28:39.779Z");
     expect(json.current.temperature).toBe(30);
     expect(json.forecast.temperature_2m_max).toEqual([40]);
     expect(json.astronomy).toBeDefined();
@@ -241,6 +242,7 @@ describe("GET /api/weather/forecast", () => {
 
     expect(res.status).toBe(200);
     expect(json.source).toBe("api");
+    expect(json.fetchedAt).toBe("2026-10-13T20:28:39.779Z");
     expect(json.current.temperature).toBe(32);
 
     expect(mockedLog).toHaveBeenCalledTimes(5);
