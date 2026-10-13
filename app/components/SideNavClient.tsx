@@ -1,7 +1,7 @@
 "use client";
 /*
  * @FilePath: \my-new-app\app\components\SideNavClient.tsx
- * @LastEditTime: 2026-09-17 17:43:29
+ * @LastEditTime: 2026-10-12 20:07:54
  */
 
 import Link from "next/link";
@@ -35,7 +35,6 @@ export default function SideNavClient({
           string,
           string,
         ];
-
         const formatted = [
           major.padStart(2, "0"),
           minor.padStart(2, "0"),
