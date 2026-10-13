@@ -87,7 +87,7 @@ describe("GET /api/weather/forecast", () => {
 
     forecastSnapshotCreate.mockResolvedValue({
       id: "snapshot-1",
-      fetchedAt: new Date("2026-07-09T00:00:00.000Z"),
+      fetchedAt: "2026-07-09 00:00:00.000",
     });
 
     global.fetch = vi.fn().mockResolvedValue({
@@ -115,6 +115,7 @@ describe("GET /api/weather/forecast", () => {
     );
 
     expect(response.status).toBe(200);
+    expect((await response.json()).fetchedAt).toBe("2026-07-09T00:00:00.000Z");
 
     expect(forecastSnapshotCreate).toHaveBeenCalledWith(
       expect.objectContaining({
