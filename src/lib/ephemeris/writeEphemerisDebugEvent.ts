@@ -21,15 +21,15 @@ export function toJsonSafe(value: unknown): JsonValue {
   }
 }
 const { staticUniversalContext } = await import("@/lib/log/buildj");
-const built = staticUniversalContext("EPHEMERIS");
+const built = staticUniversalContext("ephemeris");
 let jei = 0;
 
 await logj({
-  domain: "EPHEMERIS",
+  domain: "ephemeris",
   level: "info",
   message: "Wrote ephemeris debug event",
   file: "src/lib/ephemeris/writeEphemerisDebugEvent.ts",
-  line: 28,
+  line: 27,
   payload: { receivedAt: "data" },
   meta: { built: { ...built, eventIndex: ++jei } },
 });
@@ -91,7 +91,7 @@ export async function writeEphemerisDebugEvent(data: DebugEventInput) {
       level: "info",
       message: "Wrote ephemeris debug event",
       file: "src/lib/ephemeris/writeEphemerisDebugEvent.ts",
-      line: 91,
+      line: 89,
       payload: { receivedAt: row.receivedAt },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
