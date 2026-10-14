@@ -22,6 +22,7 @@ export default defineConfig({
     include: [
       "app/**/*.test.{ts,tsx}",
       "lib/**/*.test.{ts,tsx}",
+      "src/**/*.test.{ts,tsx}",
       "app/**/__test__/**/*.{ts,tsx}",
       "tests/**/*.{ts,tsx}",
     ],

@@ -91,7 +91,7 @@ export async function writeEphemerisDebugEvent(data: DebugEventInput) {
       level: "info",
       message: "Wrote ephemeris debug event",
       file: "src/lib/ephemeris/writeEphemerisDebugEvent.ts",
-      line: 892,
+      line: 89,
       payload: { receivedAt: row.receivedAt },
       meta: { built: { ...built, eventIndex: ++jei } },
     });

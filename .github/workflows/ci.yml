@@ -2,16 +2,23 @@ name: CI
 
 on:
   push:
-    branches: ['**']
+    branches: [main]
   pull_request:
     types: [opened, synchronize, reopened]
-    branches-ignore:
-      - 'renovate/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
     name: Run test and build
     runs-on: ubuntu-26.04
+    timeout-minutes: 30
     env:
       CI: true
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
@@ -50,10 +57,8 @@ jobs:
         run: |
           pnpm exec prisma contract format
           pnpm exec prisma contract emit
-          git diff --exit-code -- prisma
-
-      - name: Check for outdated dependencies
-        run: pnpm outdated | grep -v -E '(prisma|@prisma)' || true
+          pnpm exec prettier --write generated/prisma8/contract.d.ts generated/prisma8/contract.json
+          git diff --exit-code -- prisma8 generated/prisma8
 
       - name: Coverage
         run: pnpm coverage
@@ -75,11 +80,6 @@ jobs:
           AXIOM_ORG_ID: ${{ secrets.AXIOM_ORG_ID }}
         run: node .github/scripts/audit.js
 
-      - name: Show workspace files for diagnostics
-        run: |
-          echo "Working directory: $(pwd)"
-          ls -la  # List files
-
       - name: Cache Next.js build
         uses: actions/cache@v6
         with:
@@ -98,4 +98,5 @@ jobs:
         run: pnpm build
 
       - name: Run Coverage Summary
+        if: ${{ !cancelled() }}
         uses: ./.github/actions/coverage-summary
