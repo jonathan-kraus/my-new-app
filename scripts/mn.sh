@@ -58,6 +58,15 @@ if ! pnpm type-check; then
 fi
 
 success "Types OK"
+section "Running build"
+echo "Building project..."
+
+if ! pnpm build; then
+  fail "Build failed"
+  exit 1
+fi
+
+success "Build OK"
 
 section "Maintenance Summary"
 echo -e "${GREEN}All checks completed.${NC}"
