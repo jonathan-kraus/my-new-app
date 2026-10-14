@@ -98,23 +98,18 @@ echo ""
 echo -e "${GREEN}All checks completed.${NC}"
 
 echo
-read -r -p "Run pnpm smart-commit? [Y/n] " answer
+read -r -p "Commit changes and create/update a PR? [Y/n] " answer
 answer=${answer:-Y}
 
 case "$answer" in
   [Yy]|[Yy][Ee][Ss])
     echo
-    section "Staging changes"
-    git add .
-    CHANGED_COUNT=$(git diff --name-only HEAD | wc -l)
-    echo -e "${GREEN}✔ Staged $CHANGED_COUNT file(s)${NC}"
-
-    section "Running pnpm smart-commit"
-    pnpm smart-commit
+    section "Creating or updating pull request"
+    bash scripts/create-pr.sh
     ;;
   *)
     echo
-    warn "Skipped smart-commit"
+    warn "Skipped commit and pull request"
     ;;
 esac
 

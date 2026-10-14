@@ -167,6 +167,7 @@ for (const [pkg, items] of Object.entries(advisories)) {
   }
 }
 if (realFindings.length > 0) {
+  process.exitCode = 1;
   console.log(`Found ${realFindings.length} active vulnerabilities:`);
   for (const f of realFindings) {
     console.log(
