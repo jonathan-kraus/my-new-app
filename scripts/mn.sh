@@ -28,6 +28,11 @@ fail() {
   echo -e "${RED}✖ $1${NC}"
 }
 
+# Status variables for summary table
+PRETTIER_STATUS="❔"
+TSC_STATUS="❔"
+BUILD_STATUS="❔"
+
 section "Updating pnpm"
 corepack prepare pnpm@latest --activate
 
@@ -43,32 +48,53 @@ if [ -n "$UNFORMATTED" ]; then
   echo "$UNFORMATTED" | sed 's/^/   • /'
   echo
 
-  echo "$UNFORMATTED" | xargs pnpm prettier --write --log-level=error
-  success "Prettier issues fixed"
+  if echo "$UNFORMATTED" | xargs pnpm prettier --write --log-level=error; then
+    PRETTIER_STATUS="✔"
+    success "Prettier issues fixed"
+  else
+    PRETTIER_STATUS="✖"
+    fail "Prettier formatting failed"
+    exit 1
+  fi
 else
+  PRETTIER_STATUS="✔"
   success "Prettier formatting OK"
 fi
 
 section "Running TypeScript type-check"
 echo "Checking types..."
 
-if ! pnpm type-check; then
+if pnpm type-check; then
+  TSC_STATUS="✔"
+  success "Types OK"
+else
+  TSC_STATUS="✖"
   warn "TypeScript errors detected"
   exit 1
 fi
 
-success "Types OK"
 section "Running build"
 echo "Building project..."
 
-if ! pnpm build; then
+if pnpm build; then
+  BUILD_STATUS="✔"
+  success "Build OK"
+else
+  BUILD_STATUS="✖"
   fail "Build failed"
   exit 1
 fi
 
-success "Build OK"
-
 section "Maintenance Summary"
+
+echo ""
+echo "Summary of checks:"
+echo ""
+printf "%-25s %-10s\n" "Prettier" "$PRETTIER_STATUS"
+printf "%-25s %-10s\n" "TypeScript" "$TSC_STATUS"
+printf "%-25s %-10s\n" "Build" "$BUILD_STATUS"
+echo ""
+
 echo -e "${GREEN}All checks completed.${NC}"
 
 echo
@@ -81,7 +107,7 @@ case "$answer" in
     section "Staging changes"
     git add .
     CHANGED_COUNT=$(git diff --name-only HEAD | wc -l)
-echo -e "${GREEN}✔ Staged $CHANGED_COUNT file(s)${NC}"
+    echo -e "${GREEN}✔ Staged $CHANGED_COUNT file(s)${NC}"
 
     section "Running pnpm smart-commit"
     pnpm smart-commit
@@ -94,3 +120,5 @@ esac
 
 echo
 echo -e "${GREEN}Done.${NC}"
+
+exit 0
