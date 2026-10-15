@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Use the same Windows Git/toolchain when PowerShell launches this via WSL.
+if [[ "${OSTYPE:-}" == linux* && -x '/mnt/c/Program Files/Git/bin/bash.exe' ]]; then
+  exec '/mnt/c/Program Files/Git/bin/bash.exe' --login "$(wslpath -w "$0")" "$@"
+fi
+
+cd "$(dirname "$0")/.."
+
 # Colors
 GREEN="\033[0;32m"
 YELLOW="\033[1;33m"

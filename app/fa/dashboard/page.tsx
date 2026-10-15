@@ -8,16 +8,21 @@ export default function FlightDashboard() {
   const [data, setData] = useState<FlightDashboardData | null>(null);
   const [identInput, setIdentInput] = useState("");
   const [error, setError] = useState("");
+  const [selectedFlightId, setSelectedFlightId] = useState<string | null>(null);
 
-  async function load() {
+  async function load(flightId: string | null = null) {
     try {
       // The endpoint reads the configured flight ID on the server.
-      const res = await fetch(`/api/fa/flight/`);
+      const res = await fetch(
+        `/api/fa/flight/${flightId ? `?flightId=${encodeURIComponent(flightId)}` : ""}`,
+        { cache: "no-store" },
+      );
       if (!res.ok) throw new Error("Could not load flight data.");
       const json = await res.json();
       setData(json);
       setError("");
     } catch {
+      setData(null);
       setError("Could not load flight data. Please try again.");
     }
   }
@@ -46,6 +51,7 @@ export default function FlightDashboard() {
         );
         return;
       }
+      setSelectedFlightId(null);
       await load();
     } catch {
       setError("Could not save the flight identifier. Please try again.");
@@ -62,7 +68,7 @@ export default function FlightDashboard() {
       )}
 
       <button
-        onClick={load}
+        onClick={() => load(selectedFlightId)}
         className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white"
       >
         Update Flight Data
@@ -123,7 +129,9 @@ export default function FlightDashboard() {
             </div>
           </div>
         ) : (
-          <p className="text-slate-400">Loading flight data…</p>
+          <p className="text-slate-400">
+            {error ? "Flight data unavailable." : "Loading flight data…"}
+          </p>
         )}
       </div>
 
@@ -148,7 +156,12 @@ export default function FlightDashboard() {
         </div>
       </div>
 
-      <Skybox />
+      <Skybox
+        onSelect={(flightId) => {
+          setSelectedFlightId(flightId);
+          void load(flightId);
+        }}
+      />
     </div>
   );
 }
