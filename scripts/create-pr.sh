@@ -54,11 +54,31 @@ fi
 # Resolve API errors before committing or pushing; never interpret them as no PR.
 existing_pr=$(gh pr list --head "$branch" --base main --state open --json url --jq '.[0].url // empty')
 if [[ -z "$existing_pr" ]]; then
-  closed_pr=$(gh pr list --head "$branch" --base main --state closed --json url --jq '.[0].url // empty')
+  closed_pr=$(gh pr list --head "$branch" --base main --state closed --json url,state,headRefOid --jq 'if length > 0 then .[0] | [.state, .headRefOid, .url] | @tsv else empty end')
   if [[ -n "$closed_pr" ]]; then
-    echo "This branch belongs to a closed or merged PR: $closed_pr" >&2
-    echo "Switch to main (preserving any local edits), then run mn again." >&2
-    exit 1
+    IFS=$'\t' read -r pr_state merged_head pr_url <<< "$closed_pr"
+    if [[ "$pr_state" != MERGED ]]; then
+      echo "This PR was closed without merging: $pr_url" >&2
+      echo "Reopen it or move your work to a new branch before retrying." >&2
+      exit 1
+    fi
+    if [[ "$(git rev-parse HEAD)" != "$merged_head" ]]; then
+      echo "The PR merged, but this branch has commits different from its merged head." >&2
+      echo "Move those commits to a new branch before retrying; no changes were discarded." >&2
+      exit 1
+    fi
+    if [[ -z "$(git status --porcelain)" ]]; then
+      echo "PR already merged; no new changes to submit."
+      exit 0
+    fi
+    branch="codex/mn-$(date +%Y%m%d-%H%M%S)-${RANDOM}"
+    echo "Previous PR merged. Moving local changes to $branch from origin/main."
+    # Plain switch preserves edits and refuses to overwrite conflicting files.
+    # Never reset, force-switch, or silently stash the user's changes.
+    if ! git switch --no-track -c "$branch" origin/main; then
+      echo "Could not carry local edits onto updated main. Your changes are still intact; resolve this before retrying." >&2
+      exit 1
+    fi
   fi
 fi
 

@@ -31,6 +31,44 @@ const future = {
 const bounds = { minLat: 40, maxLat: 41, minLon: -106, maxLon: -105 };
 
 describe("flight occurrence selection", () => {
+  it("uses the closest occurrence when none are airborne, ignoring invalid dates", () => {
+    const soon = {
+      ...future,
+      fa_flight_id: "soon",
+      estimated_out: "2026-10-15T12:30:00Z",
+    };
+    const invalid = { ...future, scheduled_out: "invalid" };
+    expect(selectFlight([future, invalid, soon], now)).toBe(soon);
+    const recent = {
+      ...future,
+      fa_flight_id: "recent",
+      actual_out: "2026-10-15T11:55:00Z",
+      actual_in: "2026-10-15T11:59:00Z",
+    };
+    expect(selectFlight([soon, recent], now)).toBe(recent);
+    expect(selectFlight([], now)).toBeUndefined();
+  });
+  it("ranks multiple active occurrences by position time without mutating the input", () => {
+    const missing = {
+      ...active,
+      fa_flight_id: "missing",
+      last_position: undefined,
+    };
+    const invalid = {
+      ...active,
+      fa_flight_id: "invalid",
+      last_position: { ...active.last_position!, timestamp: "invalid" },
+    };
+    const older = {
+      ...active,
+      fa_flight_id: "older",
+      last_position: { ...active.last_position!, timestamp: now - 120_000 },
+    };
+    const flights = [missing, invalid, older, active];
+    expect(selectFlight(flights, now)).toBe(active);
+    expect(flights[0]).toBe(missing);
+    expect(selectFlight([...flights].reverse(), now)).toBe(active);
+  });
   it("selects the airborne occurrence even when a future flight is first", () => {
     expect(selectFlight([future, active], now)?.fa_flight_id).toBe("active");
   });
