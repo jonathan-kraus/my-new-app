@@ -71,7 +71,7 @@ export async function GET(request: Request) {
     level: "info",
     message: `Arrivals GET started for stopId: ${JStop}`,
     file: "app/api/arrivals/[stop]/route.ts",
-    line: 60,
+    line: 69,
     payload: {
       stopId: stopId,
       computedstop: JStop,

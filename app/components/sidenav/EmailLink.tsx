@@ -15,7 +15,7 @@ export function EmailSideNavLink() {
           level: "warn",
           message: "Email test blocked: no active session",
           file: "app/components/sidenav/EmailLink.tsx",
-          line: 12,
+          line: 13,
           payload: {},
           meta: { built: { eventIndex: ++jei } },
         });
