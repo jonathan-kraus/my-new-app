@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# PowerShell's `bash` can resolve to WSL. This Windows checkout uses Windows
+# Git credentials and TLS settings, so run the whole script in Git Bash.
+if [[ "${OSTYPE:-}" == linux* && -x '/mnt/c/Program Files/Git/bin/bash.exe' ]]; then
+  exec '/mnt/c/Program Files/Git/bin/bash.exe' --login "$(wslpath -w "$0")" "$@"
+fi
+
+cd "$(dirname "$0")/.."
+
 # Keep the existing generated commit message, but never push directly to main.
 gh_cli=$(command -v gh || command -v gh.exe || true)
 if [[ -z "$gh_cli" ]]; then

@@ -2,9 +2,19 @@ import type { Flight, FlightPosition } from "@/lib/flight/types";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { getConfig } from "@/lib/runtime/config";
+import {
+  selectFlight,
+  latestPosition,
+  isFreshPosition,
+  isAirborne,
+} from "@/lib/flight/selection";
 import { detectFlightPhase } from "@/lib/flight/phase";
 
 export async function GET(_request: NextRequest) {
+  const flightId = _request.nextUrl.searchParams.get("flightId");
+  if (flightId && !/^[a-zA-Z0-9_-]{1,200}$/.test(flightId)) {
+    return NextResponse.json({ error: "Invalid flight ID" }, { status: 400 });
+  }
   const identRaw = await getConfig("flight-ID", "ident");
   const identStr = identRaw != null ? String(identRaw) : "";
   const identUpper = identStr.toUpperCase();
@@ -23,10 +33,15 @@ export async function GET(_request: NextRequest) {
   // 1. Fetch metadata for the ident
   //
   const metaRes = await fetch(
-    `https://aeroapi.flightaware.com/aeroapi/flights/${ident}`,
-    { headers },
+    `https://aeroapi.flightaware.com/aeroapi/flights/${encodeURIComponent(flightId ?? ident)}`,
+    { headers, cache: "no-store" },
   );
 
+  if (!metaRes.ok)
+    return NextResponse.json(
+      { error: "FlightAware lookup failed" },
+      { status: 502 },
+    );
   const metaText = await metaRes.text();
   console.log("FA META RESPONSE:", metaText);
 
@@ -34,114 +49,53 @@ export async function GET(_request: NextRequest) {
   try {
     metaData = JSON.parse(metaText);
   } catch {
-    return NextResponse.json({ error: "Invalid JSON from FlightAware META" });
+    return NextResponse.json(
+      { error: "Invalid JSON from FlightAware META" },
+      { status: 502 },
+    );
   }
 
   const flights = metaData?.flights ?? [];
   if (flights.length === 0) {
-    return NextResponse.json({ error: "No flights found for ident" });
-  }
-
-  //
-  // 2. Helper: detect active flights
-  //
-  function isActive(f: Flight) {
-    const s = (f.status ?? "").toLowerCase();
-
-    return (
-      s.includes("en route") ||
-      s.includes("enroute") ||
-      s.includes("airborne") ||
-      s.includes("departed") ||
-      f.actual_off != null ||
-      (typeof f.progress_percent === "number" && f.progress_percent > 0)
+    return NextResponse.json(
+      { error: "No flights found for ident" },
+      { status: 404 },
     );
   }
 
-  //
-  // 3. Helper: detect today's flight in origin's local timezone
-  //
-  function isTodayLocal(flight: Flight) {
-    const tz = flight.origin?.timezone;
-    if (!tz || !flight.scheduled_out) return false;
+  const flight = flightId
+    ? flights.find((candidate) => candidate.fa_flight_id === flightId)
+    : selectFlight(flights);
+  if (!flight)
+    return NextResponse.json({ error: "No flight found" }, { status: 404 });
 
-    const localDate = new Date(flight.scheduled_out).toLocaleDateString(
-      "en-US",
-      {
-        timeZone: tz,
-      },
+  // Fetch only the selected occurrence; do not mix its metadata with another track.
+  let positions: FlightPosition[] = [];
+  try {
+    const trackRes = await fetch(
+      `https://aeroapi.flightaware.com/aeroapi/flights/${encodeURIComponent(flight.fa_flight_id)}/track`,
+      { headers, cache: "no-store" },
     );
-
-    const todayLocal = new Date().toLocaleDateString("en-US", {
-      timeZone: tz,
-    });
-
-    return localDate === todayLocal;
-  }
-
-  //
-  // 4. Fetch track for each flight (in parallel)
-  //
-  async function getTrack(flightId: string): Promise<FlightPosition[]> {
-    const res = await fetch(
-      `https://aeroapi.flightaware.com/aeroapi/flights/${flightId}/track`,
-      { headers },
-    );
-    const text = await res.text();
-    console.log("FA TRACK RESPONSE:", text);
-
-    try {
-      const json = JSON.parse(text);
-      return json.positions ?? [];
-    } catch {
-      return [];
+    if (trackRes.ok) {
+      const track = await trackRes.json();
+      positions = Array.isArray(track.positions) ? track.positions : [];
     }
+  } catch {
+    // Last reported position remains useful when track service is unavailable.
   }
-
-  const tracks = await Promise.all(
-    flights.map((f: Flight) => getTrack(f.fa_flight_id)),
-  );
-
-  //
-  // 5. Pick the flight with the freshest telemetry
-  //
-  let bestIndex = 0;
-  let bestTimestamp = 0;
-
-  tracks.forEach((positions, i) => {
-    const last = positions[positions.length - 1];
-    if (last && last.timestamp > bestTimestamp) {
-      bestTimestamp = last.timestamp;
-      bestIndex = i;
-    }
-  });
-
-  const freshestFlight = flights[bestIndex];
-  const freshestTrack = tracks[bestIndex] ?? [];
-  const freshestLive = freshestTrack[freshestTrack.length - 1] ?? null;
-
-  //
-  // 6. Fallback logic (metadata-based)
-  //
-  const active = flights.find(isActive);
-  const todayFlight = flights.find(isTodayLocal);
-  const nextScheduled = flights[0];
-
-  // Final selection: telemetry freshness wins
-  const flight = freshestFlight ?? active ?? todayFlight ?? nextScheduled;
-  if (!flight) return NextResponse.json({ error: "No flight found" });
-  const live = freshestLive;
+  const latest = latestPosition([
+    ...positions,
+    ...(flight.last_position ? [flight.last_position] : []),
+  ]);
+  const live =
+    latest && isFreshPosition(latest) && isAirborne(flight) ? latest : null;
   const phase = detectFlightPhase(live);
-
-  console.log("FA FLIGHT:", flight);
-  console.log("FA LIVE:", live);
-  console.log("FA PHASE:", phase);
 
   //
   // 7. Return merged data
   //
   return NextResponse.json({
-    ident,
+    ident: flight.ident,
     fa_flight_id: flight.fa_flight_id,
 
     scheduled_out: flight.scheduled_out ?? null,

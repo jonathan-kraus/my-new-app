@@ -4,7 +4,7 @@ export type FlightPosition = {
   heading?: number;
   latitude?: number;
   longitude?: number;
-  timestamp: number;
+  timestamp: string | number;
 };
 
 type Airport = {

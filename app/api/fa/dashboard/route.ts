@@ -8,6 +8,8 @@ import { NextResponse } from "next/server";
 import { toZonedTime, format } from "date-fns-tz";
 import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
+import { isNearbyAirborne } from "@/lib/flight/selection";
+import type { Flight as NearbyFlight } from "@/lib/flight/types";
 
 type Flight = {
   scheduled_out?: string | null;
@@ -39,6 +41,7 @@ export async function GET() {
     )}`,
     {
       headers: { "x-apikey": process.env.FLIGHTAWARE_API_KEY! },
+      cache: "no-store",
     },
   );
 
@@ -65,10 +68,25 @@ export async function GET() {
     )}`,
     {
       headers: { "x-apikey": process.env.FLIGHTAWARE_API_KEY! },
+      cache: "no-store",
     },
   );
 
   const planesData = await planesRes.json();
+  if (!planesRes.ok) {
+    return NextResponse.json(
+      { error: "Could not load nearby flights" },
+      { status: 502 },
+    );
+  }
+  const planes = (planesData.flights ?? []).filter((flight: NearbyFlight) =>
+    isNearbyAirborne(flight, {
+      minLat: Number(minLat),
+      minLon: Number(minLon),
+      maxLat: Number(maxLat),
+      maxLon: Number(maxLon),
+    }),
+  );
   console.log("PLANE DATA", planesData);
 
   // 2. Fetch AA877 status
@@ -88,14 +106,14 @@ export async function GET() {
 
   const today = format(toZonedTime(new Date(), eastern), "yyyy-MM-dd");
 
-  const current = statusData.flights.find((f: Flight) => {
+  const current = (statusData.flights ?? []).find((f: Flight) => {
     const sched = f.scheduled_out?.slice(0, 10);
     return sched === today;
   });
 
   return NextResponse.json({
-    count: countData.count,
+    count: planes.length,
     flight: current ?? null,
-    planes: planesData.flights ?? [],
+    planes,
   });
 }
