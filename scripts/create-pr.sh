@@ -100,3 +100,4 @@ else
   gh pr create --base main --head "$branch" --fill
 fi
 echo "CI will run on the PR. Merge it on GitHub once checks pass."
+git switch main
