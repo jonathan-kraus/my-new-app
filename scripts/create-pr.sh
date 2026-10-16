@@ -24,7 +24,7 @@ if [[ -z "$gh_cli" ]]; then
   done
 fi
 if [[ -z "$gh_cli" ]]; then
-  echo "GitHub CLI was not found in this Bash session. Add its installation directory to PATH and restart your terminal." >&2
+  echo "GitHub CLI was not found in this Bash session. Add the installation directory to PATH and restart your terminal." >&2
   exit 1
 fi
 gh() { "$gh_cli" "$@"; }
@@ -100,3 +100,4 @@ else
   gh pr create --base main --head "$branch" --fill
 fi
 echo "CI will run on the PR. Merge it on GitHub once checks pass."
+git switch main
