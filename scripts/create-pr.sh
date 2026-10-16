@@ -24,7 +24,7 @@ if [[ -z "$gh_cli" ]]; then
   done
 fi
 if [[ -z "$gh_cli" ]]; then
-  echo "GitHub CLI was not found in this Bash session. Add its installation directory to PATH and restart your terminal." >&2
+  echo "GitHub CLI was not found in this Bash session. Add the installation directory to PATH and restart your terminal." >&2
   exit 1
 fi
 gh() { "$gh_cli" "$@"; }
