@@ -61,7 +61,7 @@ export async function writeEphemerisDebugEvent(data: DebugEventInput) {
   const now = Temporal.Instant.from(new Date().toISOString())
     .toZonedDateTimeISO("UTC")
     .toPlainDateTime();
-  console.log("writeEphemerisDebugEvent: called with data:", data);
+  console.log("writeEphemerisDebugEvent: called with data", data);
   try {
     const row = await db8.orm.public.EphemerisDebug.create({
       raw: toJsonSafe(data.raw),
