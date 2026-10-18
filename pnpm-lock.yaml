@@ -326,8 +326,8 @@ importers:
         specifier: 3.7.2
         version: 3.7.2
       mailparser:
-        specifier: 3.9.40
-        version: 3.9.40
+        specifier: 3.9.45
+        version: 3.9.45
       next:
         specifier: 16.4.2
         version: 16.4.2(@babel/core@7.29.7(supports-color@7.2.0))(@types/node@26.6.5)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -3230,8 +3230,8 @@ packages:
   '@vitest/utils@5.0.5':
     resolution: {integrity: sha512-/rBu7gzLDQI/SC79Tn98b5DwOgaHU/Gt4I9OVeP3YofzNaYtbImRCOJQmT1S6vOJg9gEIlWC+r3QxKkjuSa1nQ==}
 
-  '@zone-eu/mailsplit@5.4.23':
-    resolution: {integrity: sha512-2skZfQY5iOAIFwVO4jZzqtMPJyxFpCKemQGVT7O8QxUjHAK+W7LQY/UbK9BWrxeS0wZ64rKZaATY+T9BsF4JSw==}
+  '@zone-eu/mailsplit@5.4.25':
+    resolution: {integrity: sha512-cxrz8950Pzg/kFj5fP6pOEOYHbRlWvST6hb1XiJ6eMn4cSyMk9R+Gby8dUYmg+6AB9T/PTBPJF2oRblqJkoX/g==}
 
   abbrev@3.0.1:
     resolution: {integrity: sha512-AO2ac6pjRB3SJmGJo+v5/aK6Omggp6fsLrs6wN9bd35ulu4cCwaAU9+7ZhXjeqHVkaHThLuzH0nZr0YpCDhygg==}
@@ -4966,8 +4966,8 @@ packages:
   magicast@0.5.5:
     resolution: {integrity: sha512-UicdXN8zQ3JHlxVq+28afMXPr1z7WNY6+7EJnzTdQWkTAlMLF5fNCCKxJHBQwGaNGR11581EiQmQzx73+MvszA==}
 
-  mailparser@3.9.40:
-    resolution: {integrity: sha512-HixDwYB8sWHgng8/+9picXAh+cPGeI9RWlUyL6AD2m4EE6kV0/UtbmAVx9UyPys3Lu9FO4qUrXOoAgGowEebPQ==}
+  mailparser@3.9.45:
+    resolution: {integrity: sha512-oBwSsvoMGbcgJ/32yHf7shb/Vz48ZsqHiGThoFqzJ9lI2ZY8Yj2KhefpYG8e/KBKTqEFKpD6K83/gnBMBTk3Fg==}
     engines: {node: '>=20.0.0'}
 
   make-error@1.3.6:
@@ -5130,8 +5130,8 @@ packages:
     resolution: {integrity: sha512-kQK9LGGFiHtrWiNhZtA7Qbw17AQz+dmsEKODRIVTXA9+e5MS/2gZEBhYJt13GrAz5/IOZKddH/0Z3TP/Zgo+yw==}
     engines: {node: '>=18'}
 
-  nodemailer@10.1.2:
-    resolution: {integrity: sha512-rnQn9Rzh8RAwcp42MVsIvxbsv6YZ2a2/av+uyJ/LPU1+2QSlrRgFsWWZTKenyRUqkIl8urOI0c4+CEcmFdsvQw==}
+  nodemailer@10.1.6:
+    resolution: {integrity: sha512-8j/UEmA4AXr51URr3Ob0h+RCBtr0NKJ76Y2P9wJT6Eu3dRyruj2ULh2e6aiKrGg8nlUj1oX6N5h8dHA82EouaQ==}
     engines: {node: '>=20.0.0'}
 
   nopt@8.1.0:
@@ -9173,7 +9173,7 @@ snapshots:
       convert-source-map: 2.0.0
       tinyrainbow: 3.2.0
 
-  '@zone-eu/mailsplit@5.4.23':
+  '@zone-eu/mailsplit@5.4.25':
     dependencies:
       libbase64: 1.3.3
       libmime: 5.4.9
@@ -11061,16 +11061,16 @@ snapshots:
       '@babel/types': 7.29.8
       source-map-js: 1.2.2
 
-  mailparser@3.9.40:
+  mailparser@3.9.45:
     dependencies:
-      '@zone-eu/mailsplit': 5.4.23
+      '@zone-eu/mailsplit': 5.4.25
       encoding-japanese: 2.4.0
       he: 1.2.0
       html-to-text: 10.0.1
       iconv-lite: 0.7.3
       libmime: 5.4.9
       linkify-it: 5.0.2
-      nodemailer: 10.1.2
+      nodemailer: 10.1.6
       punycode.js: 2.3.1
       tlds: 1.261.0
 
@@ -11194,7 +11194,7 @@ snapshots:
 
   node-releases@2.0.57: {}
 
-  nodemailer@10.1.2: {}
+  nodemailer@10.1.6: {}
 
   nopt@8.1.0:
     dependencies:
