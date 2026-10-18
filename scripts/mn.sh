@@ -1,13 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Use the same Windows Git/toolchain when PowerShell launches this via WSL.
-if [[ "${OSTYPE:-}" == linux* && -x '/mnt/c/Program Files/Git/bin/bash.exe' ]]; then
-  exec '/mnt/c/Program Files/Git/bin/bash.exe' --login "$(wslpath -w "$0")" "$@"
-fi
-
-cd "$(dirname "$0")/.."
-
 # Colors
 GREEN="\033[0;32m"
 YELLOW="\033[1;33m"
@@ -15,74 +8,70 @@ RED="\033[0;31m"
 BLUE="\033[0;34m"
 NC="\033[0m"
 
-timestamp() {
-  date +"%Y-%m-%d %H:%M:%S"
-}
-
 section() {
-  echo -e "\n${BLUE}[$(timestamp)] === $1 ===${NC}"
+  echo -e "\n${BLUE}[$(date +"%Y-%m-%d %H:%M:%S")] === $1 ===${NC}"
 }
 
-success() {
-  echo -e "${GREEN}✔ $1${NC}"
-}
+success() { echo -e "${GREEN}✔ $1${NC}"; }
+warn()    { echo -e "${YELLOW}⚠ $1${NC}"; }
+fail()    { echo -e "${RED}✖ $1${NC}"; }
 
-warn() {
-  echo -e "${YELLOW}⚠ $1${NC}"
-}
-
-fail() {
-  echo -e "${RED}✖ $1${NC}"
-}
-
-# Status variables for summary table
+# Summary status variables
 PRETTIER_STATUS="❔"
 TSC_STATUS="❔"
 BUILD_STATUS="❔"
+COMMIT_STATUS="❔"
+PUSH_STATUS="❔"
 
-section "Updating pnpm"
-corepack prepare pnpm@latest --activate
+# --- Ensure we're on main ---
+section "Checking branch"
+branch=$(git symbolic-ref --quiet --short HEAD || true)
 
-section "Checking outdated dependencies"
-pnpm check-out || warn "Some dependencies are outdated."
+if [[ "$branch" != "main" ]]; then
+  fail "You must be on main to use this script."
+  exit 1
+fi
 
-echo "=== Running Prettier check ==="
+# --- Ensure main is up to date ---
+section "Updating main"
+git fetch origin main
+git merge --ff-only origin/main || {
+  fail "main is diverged — resolve manually."
+  exit 1
+}
 
+# --- Prettier ---
+section "Running Prettier"
 UNFORMATTED=$(pnpm prettier --list-different . 2>/dev/null || true)
 
-if [ -n "$UNFORMATTED" ]; then
-  warn "Found $(echo "$UNFORMATTED" | wc -l) file(s) needing formatting:"
-  echo "$UNFORMATTED" | sed 's/^/   • /'
-  echo
-
+if [[ -n "$UNFORMATTED" ]]; then
+  warn "Formatting $(echo "$UNFORMATTED" | wc -l) file(s)"
   if echo "$UNFORMATTED" | xargs pnpm prettier --write --log-level=error; then
     PRETTIER_STATUS="✔"
-    success "Prettier issues fixed"
+    success "Prettier fixed issues"
   else
     PRETTIER_STATUS="✖"
-    fail "Prettier formatting failed"
+    fail "Prettier failed"
     exit 1
   fi
 else
   PRETTIER_STATUS="✔"
-  success "Prettier formatting OK"
+  success "Prettier OK"
 fi
 
-section "Running TypeScript type-check"
-echo "Checking types..."
-
+# --- TypeScript ---
+section "Type-checking"
 if pnpm type-check; then
   TSC_STATUS="✔"
   success "Types OK"
 else
   TSC_STATUS="✖"
-  warn "TypeScript errors detected"
+  fail "TypeScript errors"
   exit 1
 fi
 
-section "Running build"
-echo "Building project..."
-
+# --- Build ---
+section "Building"
 if pnpm build; then
   BUILD_STATUS="✔"
   success "Build OK"
@@ -92,35 +81,38 @@ else
   exit 1
 fi
 
-section "Maintenance Summary"
+# --- Commit ---
+section "Committing"
+git add .
 
-echo ""
-echo "Summary of checks:"
-echo ""
-printf "%-25s %-10s\n" "Prettier" "$PRETTIER_STATUS"
-printf "%-25s %-10s\n" "TypeScript" "$TSC_STATUS"
-printf "%-25s %-10s\n" "Build" "$BUILD_STATUS"
-echo ""
+if git diff --cached --quiet; then
+  COMMIT_STATUS="✔"
+  warn "No changes to commit"
+else
+  pnpm genmsg
+  git commit -F "$(git rev-parse --git-path COMMIT_MSG)"
+  COMMIT_STATUS="✔"
+  success "Committed changes"
+fi
 
-echo -e "${GREEN}All checks completed.${NC}"
+# --- Push ---
+section "Pushing to main"
+if git push origin main; then
+  PUSH_STATUS="✔"
+  success "Pushed to main"
+else
+  PUSH_STATUS="✖"
+  fail "Push failed"
+  exit 1
+fi
 
-echo
-read -r -p "Commit changes and create/update a PR? [Y/n] " answer
-answer=${answer:-Y}
+# --- Summary ---
+section "Summary"
 
-case "$answer" in
-  [Yy]|[Yy][Ee][Ss])
-    echo
-    section "Creating or updating pull request"
-    bash scripts/create-pr.sh
-    ;;
-  *)
-    echo
-    warn "Skipped commit and pull request"
-    ;;
-esac
+printf "%-20s %s\n" "Prettier" "$PRETTIER_STATUS"
+printf "%-20s %s\n" "TypeScript" "$TSC_STATUS"
+printf "%-20s %s\n" "Build" "$BUILD_STATUS"
+printf "%-20s %s\n" "Commit" "$COMMIT_STATUS"
+printf "%-20s %s\n" "Push" "$PUSH_STATUS"
 
-echo
-echo -e "${GREEN}Done.${NC}"
-
-exit 0
+echo -e "\n${GREEN}Done.${NC}"
