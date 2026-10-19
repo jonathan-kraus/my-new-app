@@ -109,10 +109,10 @@ fi
 # --- Summary ---
 section "Summary"
 
-printf "%-20s %s\n" "Prettier" "$PRETTIER_STATUS"
-printf "%-20s %s\n" "TypeScript" "$TSC_STATUS"
-printf "%-20s %s\n" "Build" "$BUILD_STATUS"
-printf "%-20s %s\n" "Commit" "$COMMIT_STATUS"
-printf "%-20s %s\n" "Push" "$PUSH_STATUS"
+printf "%-20s %s\n" "Prettier" "     $PRETTIER_STATUS"
+printf "%-20s %s\n" "TypeScript" "     $TSC_STATUS"
+printf "%-20s %s\n" "Build" "     $BUILD_STATUS"
+printf "%-20s %s\n" "Commit" "     $COMMIT_STATUS"
+printf "%-20s %s\n" "Push" "     $PUSH_STATUS"
 
 echo -e "\n${GREEN}Done.${NC}"
