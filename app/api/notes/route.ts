@@ -37,7 +37,6 @@ export const GET = withLogging(async (req: Request) => {
     const email = session.user.email!;
     const notes = await db8.orm.public.Note.where({
       userEmail: email,
-      isArchived: false,
     })
       .orderBy((note) => note.createdAt.desc())
       .all();

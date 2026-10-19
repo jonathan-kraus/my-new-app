@@ -104,27 +104,28 @@ export default function NotesClient() {
   }, []);
 
   // Pure derived filtering: no setState, no effect needed
-  const filteredNotes = useMemo(() => {
-    if (!notes) return [];
+  const { activeNotes, archivedNotes } = useMemo(() => {
+    if (!notes) return { activeNotes: [], archivedNotes: [] };
+    const query = searchQuery.trim().toLowerCase();
+    const matches = (note: Note) => {
+      if (showFollowupsOnly && !isFollowupDueSoon(note)) return false;
+      if (!query) return true;
+      return Boolean(
+        note.title?.toLowerCase().includes(query) ||
+        note.content?.toLowerCase().includes(query),
+      );
+    };
 
-    let currentNotes = notes;
-
-    if (showFollowupsOnly) {
-      currentNotes = currentNotes.filter(isFollowupDueSoon);
-    }
-
-    if (searchQuery.trim() === "") {
-      return currentNotes;
-    }
-
-    const query = searchQuery.toLowerCase();
-
-    return currentNotes.filter(
-      (note) =>
-        (note.title && note.title.toLowerCase().includes(query)) ||
-        (note.content && note.content.toLowerCase().includes(query)),
-    );
+    return {
+      activeNotes: notes.filter((note) => !note.isArchived && matches(note)),
+      archivedNotes: query
+        ? notes.filter((note) => note.isArchived && matches(note))
+        : [],
+    };
   }, [notes, showFollowupsOnly, searchQuery]);
+
+  const isSearching = searchQuery.trim().length > 0;
+  const visibleNotes = [...activeNotes, ...archivedNotes];
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this note?")) return;
@@ -135,7 +136,13 @@ export default function NotesClient() {
       });
 
       if (res.ok) {
-        setNotes(notes?.filter((note) => note.id !== id) ?? []);
+        setNotes(
+          notes?.map((note) =>
+            note.id === id
+              ? { ...note, isArchived: true, isCompleted: true }
+              : note,
+          ) ?? [],
+        );
         toast.success("Note deleted successfully");
         await refreshFollowupsDueCount();
       } else {
@@ -286,7 +293,7 @@ export default function NotesClient() {
         />
       </div>
 
-      {filteredNotes.length === 0 && (
+      {visibleNotes.length === 0 && (
         <p>
           {searchQuery
             ? "No notes found matching your search."
@@ -294,7 +301,12 @@ export default function NotesClient() {
         </p>
       )}
 
-      {filteredNotes.map((note) => (
+      {isSearching && activeNotes.length > 0 && (
+        <h2 className="mb-3 text-lg font-semibold">
+          Active notes ({activeNotes.length})
+        </h2>
+      )}
+      {activeNotes.map((note) => (
         <div
           key={note.id}
           className={`mb-4 p-4 border rounded backdrop-blur-md ${
@@ -431,6 +443,29 @@ export default function NotesClient() {
           )}
         </div>
       ))}
+      {isSearching && archivedNotes.length > 0 && (
+        <>
+          <h2 className="mb-3 mt-6 text-lg font-semibold">
+            Archived notes ({archivedNotes.length})
+          </h2>
+          {archivedNotes.map((note) => (
+            <div
+              key={note.id}
+              className="mb-4 rounded border border-white/15 bg-white/5 p-4 opacity-80"
+            >
+              <h3 className="mb-2 font-semibold text-lg">
+                {note.title || "Untitled"}
+              </h3>
+              <p className="whitespace-pre-wrap text-white/80">
+                {note.content}
+              </p>
+              <p className="mt-2 text-xs text-white/60">
+                Created: {new Date(note.createdAt).toLocaleDateString()}
+              </p>
+            </div>
+          ))}
+        </>
+      )}
     </div>
   );
 }
