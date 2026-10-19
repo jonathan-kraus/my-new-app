@@ -151,7 +151,7 @@ export function ForecastCard({
     logj({
       domain: "forecast",
       level: "info",
-      message: "Forecast card data updated",
+      message: "Forecast card data updated.",
       file: "app/forecast/ForecastCard.tsx",
       line: 151,
       payload: {
