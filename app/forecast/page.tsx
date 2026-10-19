@@ -30,7 +30,7 @@ export async function sendForecastEmailAction(formData: FormData) {
   "use server";
 
   const session = await auth();
-  if (!session) redirect("/signin");
+  if (!session) redirect("/api/auth/signin");
   const to = session?.user?.email;
 
   if (!to) {
