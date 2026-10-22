@@ -32,14 +32,6 @@ if [[ "$branch" != "main" ]]; then
   exit 1
 fi
 
-# --- Ensure main is up to date ---
-section "Updating main"
-git fetch origin main
-git merge --ff-only origin/main || {
-  fail "main is diverged — resolve manually."
-  exit 1
-}
-
 # --- Prettier ---
 section "Running Prettier"
 UNFORMATTED=$(pnpm prettier --list-different . 2>/dev/null || true)
