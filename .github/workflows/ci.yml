@@ -73,12 +73,12 @@ jobs:
       - name: Type check
         run: pnpm run type-check
 
-      # - name: Audit
-      #   env:
-      #     AXIOM_TOKEN: ${{ secrets.AXIOM_TOKEN }}
-      #     AXIOM_DATASET: ${{ secrets.AXIOM_DATASET }}
-      #     AXIOM_ORG_ID: ${{ secrets.AXIOM_ORG_ID }}
-      #   run: node .github/scripts/audit.js
+      - name: Audit
+        env:
+          AXIOM_TOKEN: ${{ secrets.AXIOM_TOKEN }}
+          AXIOM_DATASET: ${{ secrets.AXIOM_DATASET }}
+          AXIOM_ORG_ID: ${{ secrets.AXIOM_ORG_ID }}
+        run: node .github/scripts/audit.js
 
       - name: Cache Next.js build
         uses: actions/cache@v6
@@ -87,11 +87,6 @@ jobs:
           key: ${{ runner.os }}-${{ runner.arch }}-nextjs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-${{ runner.arch }}-nextjs-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('pnpm-lock.yaml') }}-
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Pin pnpm
-        run: corepack prepare pnpm@12.14.0 --activate
 
       - name: Build
         env:
