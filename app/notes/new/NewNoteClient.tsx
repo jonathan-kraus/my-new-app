@@ -62,6 +62,7 @@ export default function NewNoteClient({ authorized, userId: _userId }: Props) {
         setFollowUpDate("");
         setColor("");
         setTimeout(() => {
+          // Redirect the user to the notes page after a short delay
           router.push("/notes");
         }, 1500);
       }

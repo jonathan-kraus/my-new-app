@@ -1,15 +1,22 @@
 {
   "models": [
     {
-      "title": "Llama 3.1 8B",
-      "provider": "ollama",
-      "model": "llama3.1:8b",
-      "contextLength": 8192
+      "title": "Claude 3.5 Sonnet",
+      "provider": "anthropic",
+      "model": "claude-3-5-sonnet",
+      "contextLength": 200000
     }
   ],
 
   "autocompleteModel": {
-    "provider": "ollama",
-    "model": "llama3.1:8b"
-  }
+    "provider": "anthropic",
+    "model": "claude-3-5-sonnet"
+  },
+
+  "tabAutocomplete": {
+    "disable": false,
+    "debounceDelay": 50
+  },
+
+  "allowAnonymousTelemetry": false
 }
