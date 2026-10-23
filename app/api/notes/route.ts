@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\api\notes\route.ts
- * @LastEditTime: 2026-09-21 19:00:28
+ * @LastEditTime: 2026-10-23 00:05:35
  */
 
 import { NextResponse } from "next/server";
@@ -10,6 +10,7 @@ import { logj } from "@/lib/log/logj";
 import { timestampString } from "@/lib/timestampString";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { withLogging } from "@/lib/logging/withLogging";
+import { getConfig } from "@/lib/runtime/config";
 
 export const GET = withLogging(async (req: Request) => {
   // Build context INSIDE the request handler
@@ -149,6 +150,7 @@ export const POST = withLogging(async (req: Request) => {
 export const PUT = withLogging(async (req: Request) => {
   let jei = 41;
   const built = await buildUniversalContext(req, "NOTES");
+  const N3 = await getConfig("N3");
   await logj({
     domain: "notes",
     level: "info",
@@ -156,7 +158,7 @@ export const PUT = withLogging(async (req: Request) => {
     file: "app/api/notes/route.ts",
     line: 153,
     payload: {
-      some: "data",
+      N3,
     },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
