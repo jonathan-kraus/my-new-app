@@ -1,5 +1,8 @@
 "use client";
-// app\fa\dashboard\page.tsx
+/*
+ * @FilePath: \my-new-app\app\fa\dashboard\page.tsx
+ * @LastEditTime: 2026-10-23 23:01:34
+ */
 import type { FlightDashboardData } from "@/lib/flight/types";
 import { useEffect, useState } from "react";
 import Skybox from "@/components/Skybox";
