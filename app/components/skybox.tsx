@@ -1,49 +1,18 @@
 "use client";
-
+/*
+ * @FilePath: \my-new-app\app\components\skybox.tsx
+ * @LastEditTime: 2026-10-23 22:36:20
+ */
 import type { Flight } from "@/lib/flight/types";
-import { useEffect, useReducer } from "react";
+import { useEffect, useState } from "react";
 
 export default function Skybox({
   onSelect,
 }: {
   onSelect: (flightId: string) => void;
 }) {
-  type SkyboxState = {
-    planes: Flight[];
-
-    error?: string;
-  };
-
-  const initialState: SkyboxState = {
-    planes: [],
-    error: "",
-  };
-
-  type SkyboxAction =
-    | { type: "SET_PLANES"; payload: Flight[] }
-    | { type: "SET_ERROR"; payload: string };
-
-  function skyboxReducer(
-    state: SkyboxState,
-    action: SkyboxAction,
-  ): SkyboxState {
-    switch (action.type) {
-      case "SET_PLANES":
-        return { ...state, planes: action.payload };
-      case "SET_ERROR":
-        return { ...state, error: action.payload };
-      default:
-        return state;
-    }
-  }
-
-  const [state, dispatch] = useReducer(skyboxReducer, initialState);
-  const { planes, error } = state;
-
-  const setPlanes = (planes: Flight[]) =>
-    dispatch({ type: "SET_PLANES", payload: planes });
-  const setError = (error: string) =>
-    dispatch({ type: "SET_ERROR", payload: error });
+  const [planes, setPlanes] = useState<Flight[]>([]);
+  const [error, setError] = useState("");
   async function loadSkybox() {
     try {
       const res = await fetch("/api/fa/dashboard", { cache: "no-store" });

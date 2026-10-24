@@ -2,7 +2,7 @@
 // app\fa\dashboard\page.tsx
 import type { FlightDashboardData } from "@/lib/flight/types";
 import { useEffect, useState } from "react";
-import Skybox from "@/components/skybox";
+import Skybox from "@/components/Skybox";
 
 export default function FlightDashboard() {
   const [data, setData] = useState<FlightDashboardData | null>(null);
