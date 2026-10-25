@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\dashboard\layout.tsx
- * @LastEditTime: 2026-09-03 13:30:46
+ * @LastEditTime: 2026-10-24 22:31:13
  */
 import type { ReactNode } from "react";
 import { auth } from "@/auth";
@@ -11,10 +11,9 @@ export default async function DashboardLayout({
 }: {
   children: ReactNode;
 }) {
-  console.log("DASHBOARD LAYOUT");
   const session = await auth();
-  console.log("SESSION:", session);
-  if (!session) redirect("/api/auth/signin");
+
+  if (!session) redirect("/profile");
 
   return <>{children}</>;
 }

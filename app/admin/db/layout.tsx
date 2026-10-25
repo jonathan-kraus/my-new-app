@@ -1,10 +1,10 @@
 /*
  * @FilePath: \my-new-app\app\admin\db\layout.tsx
- * @LastEditTime: 2026-10-05 07:05:33
+ * @LastEditTime: 2026-10-24 22:26:54
  */
 import type { ReactNode } from "react";
 import { requireRuntimeAdmin, RuntimeAccessError } from "@/lib/runtime/admin";
-console.log("Admin layout initialized.");
+
 export default async function AdminLayout({
   children,
 }: {
