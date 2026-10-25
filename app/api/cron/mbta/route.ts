@@ -52,7 +52,7 @@ export async function GET(request: Request) {
     logj({
       domain: "MBTA",
       level: "info",
-      message: `Scheduled MBTA refresh succeeded`,
+      message: `🚇 Cron job succeeded`,
       file: "app/api/cron/mbta/route.ts",
       line: 52,
       payload: {
