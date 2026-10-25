@@ -148,13 +148,24 @@ export async function fetchMbtaCatalog(fetcher = fetch): Promise<MbtaCatalog> {
     const tripId = relatedId(item, "representative_trip");
     const trip = tripId ? trips.get(tripId) : undefined;
     const stopData = trip?.relationships?.stops?.data;
+    const missing = [
+      !routeId || !routes.some((route) => route.id === routeId)
+        ? "valid route"
+        : null,
+      !tripId || !trip ? "included representative trip" : null,
+      !Array.isArray(stopData) || !stopData.length
+        ? "representative trip stops"
+        : null,
+    ].filter((part): part is string => part !== null);
     if (
       !routeId ||
       !routes.some((route) => route.id === routeId) ||
       !Array.isArray(stopData) ||
       !stopData.length
     ) {
-      throw new Error(`Incomplete MBTA pattern ${item.id}`);
+      throw new Error(
+        `Incomplete MBTA pattern ${item.id}: missing ${missing.join(", ")}`,
+      );
     }
     return {
       id: item.id,

@@ -52,6 +52,18 @@ export async function GET(request: Request) {
     if (error instanceof CatalogSyncBusyError)
       return Response.json({ error: error.message }, { status: 409 });
     console.error("Scheduled MBTA refresh failed", error);
+    await logj({
+      domain: "MBTA",
+      level: "error",
+      message: "Scheduled MBTA refresh failed",
+      file: "app/api/cron/mbta/route.ts",
+      line: 54,
+      payload: {
+        errorName: error instanceof Error ? error.name : "UnknownError",
+        errorMessage: error instanceof Error ? error.message : String(error),
+      },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    }).catch(() => undefined);
     return Response.json({ error: "MBTA refresh failed." }, { status: 502 });
   }
 }

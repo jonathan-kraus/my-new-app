@@ -1,4 +1,6 @@
 import { requireRuntimeAdmin, RuntimeAccessError } from "@/lib/runtime/admin";
+import { logj } from "@/lib/log/logj";
+import { staticUniversalContext } from "@/lib/log/buildj";
 import { CatalogSyncBusyError, getMbtaSyncState } from "@/lib/mbta/catalog";
 import { syncMbtaCatalog } from "@/lib/mbta/sync";
 
@@ -49,6 +51,20 @@ export async function POST(request: Request) {
     if (error instanceof CatalogSyncBusyError)
       return Response.json({ error: error.message }, { status: 409 });
     console.error("MBTA refresh failed", error);
+    await logj({
+      domain: "MBTA",
+      level: "error",
+      message: "MBTA refresh failed",
+      file: "app/api/admin/mbta/route.ts",
+      line: 53,
+      payload: {
+        errorName: error instanceof Error ? error.name : "UnknownError",
+        errorMessage: error instanceof Error ? error.message : String(error),
+      },
+      meta: {
+        built: { ...staticUniversalContext("admin-mbta"), eventIndex: 1 },
+      },
+    }).catch(() => undefined);
     return Response.json(
       { error: "Refresh failed. The previous catalog is still available." },
       { status: 502 },
