@@ -140,43 +140,42 @@ export async function fetchMbtaCatalog(fetcher = fetch): Promise<MbtaCatalog> {
       .filter((item) => item.type === "trip")
       .map((item) => [item.id, item]),
   );
-  const patterns: CatalogPattern[] = patternPage.data.map((item) => {
+  const routeIdsInCatalog = new Set(routes.map((route) => route.id));
+  const patterns: CatalogPattern[] = patternPage.data.flatMap((item) => {
     if (item.type !== "route_pattern")
       throw new Error("Expected MBTA route pattern");
-    const attrs = patternAttributes.parse(item.attributes);
     const routeId = relatedId(item, "route");
+    // MBTA can return shuttle patterns alongside the filtered rail patterns.
+    // They are outside this catalog's route-type scope and should not block it.
+    if (routeId && !routeIdsInCatalog.has(routeId)) return [];
+    const attrs = patternAttributes.parse(item.attributes);
     const tripId = relatedId(item, "representative_trip");
     const trip = tripId ? trips.get(tripId) : undefined;
     const stopData = trip?.relationships?.stops?.data;
     const missing = [
-      !routeId || !routes.some((route) => route.id === routeId)
-        ? "valid route"
-        : null,
+      !routeId ? "route relationship" : null,
       !tripId || !trip ? "included representative trip" : null,
       !Array.isArray(stopData) || !stopData.length
         ? "representative trip stops"
         : null,
     ].filter((part): part is string => part !== null);
-    if (
-      !routeId ||
-      !routes.some((route) => route.id === routeId) ||
-      !Array.isArray(stopData) ||
-      !stopData.length
-    ) {
+    if (!routeId || !Array.isArray(stopData) || !stopData.length) {
       throw new Error(
         `Incomplete MBTA pattern ${item.id}: missing ${missing.join(", ")}`,
       );
     }
-    return {
-      id: item.id,
-      routeId,
-      name: attrs.name,
-      directionId: attrs.direction_id,
-      typicality: attrs.typicality,
-      canonical: attrs.canonical,
-      sortOrder: attrs.sort_order,
-      stopIds: stopData.map((stop) => stop.id),
-    };
+    return [
+      {
+        id: item.id,
+        routeId,
+        name: attrs.name,
+        directionId: attrs.direction_id,
+        typicality: attrs.typicality,
+        canonical: attrs.canonical,
+        sortOrder: attrs.sort_order,
+        stopIds: stopData.map((stop) => stop.id),
+      },
+    ];
   });
   if (
     new Set(routes.map((route) => route.id)).size !== routes.length ||
