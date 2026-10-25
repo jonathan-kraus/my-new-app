@@ -1,3 +1,4 @@
+// app\api\cron\mbta\route.ts
 import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
 import { CatalogSyncBusyError } from "@/lib/mbta/catalog";
@@ -16,7 +17,7 @@ export async function GET(request: Request) {
       level: "info",
       message: `🚇 Cron job triggered`,
       file: "app/api/cron/mbta/route.ts",
-      line: 14,
+      line: 15,
       payload: {
         method: built.method,
       },
@@ -34,7 +35,7 @@ export async function GET(request: Request) {
       level: "warn",
       message: `Cron authorization rejected`,
       file: "app/api/cron/mbta/route.ts",
-      line: 32,
+      line: 33,
       payload: {
         secretConfigured: Boolean(secret),
         authorizationPresent: Boolean(authorization),
@@ -47,6 +48,18 @@ export async function GET(request: Request) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
   try {
+    console.log("Scheduled MBTA refresh succeeded");
+    logj({
+      domain: "MBTA",
+      level: "info",
+      message: `Scheduled MBTA refresh succeeded`,
+      file: "app/api/cron/mbta/route.ts",
+      line: 52,
+      payload: {
+        success: true,
+      },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
     return Response.json({ state: await syncMbtaCatalog() });
   } catch (error) {
     if (error instanceof CatalogSyncBusyError)
@@ -57,7 +70,7 @@ export async function GET(request: Request) {
       level: "error",
       message: "Scheduled MBTA refresh failed",
       file: "app/api/cron/mbta/route.ts",
-      line: 54,
+      line: 69,
       payload: {
         errorName: error instanceof Error ? error.name : "UnknownError",
         errorMessage: error instanceof Error ? error.message : String(error),
