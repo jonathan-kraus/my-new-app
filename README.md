@@ -4,6 +4,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Runtime settings administrators
 
+![Cron job status](https://api.cron-job.org/jobs/8600890/4b0b0ab333026eb5/status-7.svg)
 The runtime settings page, its server actions, the settings API, and the flight-ID
 endpoint require a signed-in user with `role = admin` in `UserRole`. Membership is
 matched to the email from the server-validated session. Internal scheduled jobs use
