@@ -48,19 +48,18 @@ export async function GET(request: Request) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
   try {
-    console.log("Scheduled MBTA refresh succeeded");
     logj({
       domain: "MBTA",
       level: "info",
       message: `🚇 Cron job succeeded`,
       file: "app/api/cron/mbta/route.ts",
-      line: 52,
+      line: 51,
       payload: {
         success: true,
       },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
-    console.log("Scheduled MBTA refresh succeeded after logging");
+
     return Response.json({ state: await syncMbtaCatalog() });
   } catch (error) {
     if (error instanceof CatalogSyncBusyError)
