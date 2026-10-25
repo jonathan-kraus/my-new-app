@@ -30,6 +30,9 @@ branch=$(git symbolic-ref --quiet --short HEAD || true)
 if [[ "$branch" != "main" ]]; then
   fail "You must be on main to use this script."
   exit 1
+else
+  success "On main"
+  git pull origin main
 fi
 
 # --- Prettier ---
