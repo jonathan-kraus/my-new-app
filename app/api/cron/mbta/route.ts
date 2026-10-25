@@ -60,6 +60,7 @@ export async function GET(request: Request) {
       },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
+    console.log("Scheduled MBTA refresh succeeded after logging");
     return Response.json({ state: await syncMbtaCatalog() });
   } catch (error) {
     if (error instanceof CatalogSyncBusyError)
