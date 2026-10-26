@@ -11,7 +11,7 @@ vi.mock("@/lib/db.prisma8", () => ({
 }));
 import { getConfig, setConfig, deleteConfig } from "@/lib/runtime/config";
 
-describe("runtime config", () => {
+describe("c", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });

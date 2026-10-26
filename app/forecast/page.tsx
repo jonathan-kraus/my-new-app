@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\forecast\page.tsx
- * @LastEditTime: 2026-09-17 22:35:46
+ * @LastEditTime: 2026-10-26 00:09:37
  */
 // app/forecast/page.tsx
 import { auth } from "@/auth";
@@ -20,6 +20,10 @@ export async function generateMetadata() {
     .orderBy((snapshot) => snapshot.fetchedAt.desc())
     .first();
 
+  const temperatureDecimal =
+    latestWeather?.temperature?.toString().split(".")[1] ?? null;
+  const N3 = temperatureDecimal ? parseInt(temperatureDecimal, 10) : null;
+  console.log(`N3: ${N3}`); // Log the value of N3 for debugging
   const temperature = latestWeather?.temperature ?? null;
   // const temp = Math.round(temperature?.temperature ?? 0);
 
