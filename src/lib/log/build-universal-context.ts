@@ -1,11 +1,11 @@
 /*
  * @FilePath: \my-new-app\src\lib\log\build-universal-context.ts
- * @LastEditTime: 2026-10-07 05:52:33
+ * @LastEditTime: 2026-10-26 17:36:20
  */
 
-import crypto from "crypto";
 import { auth } from "@/auth";
 import { enrichContext } from "./context";
+import { v7 } from "uuid";
 
 export async function buildUniversalContext(req: Request, route: string) {
   const now = new Date();
@@ -25,7 +25,7 @@ export async function buildUniversalContext(req: Request, route: string) {
 
     return {
       ...ctx,
-      requestId: ctx.requestId ?? crypto.randomUUID(),
+      requestId: ctx.requestId ?? v7(),
       userId: session?.user?.id ?? null,
       sessionEmail: session?.user?.email ?? null,
       sessionUser: session?.user?.name ?? null,
@@ -37,7 +37,7 @@ export async function buildUniversalContext(req: Request, route: string) {
     return {
       ip: null,
       url: null,
-      requestId: crypto.randomUUID(),
+      requestId: v7(),
       method: "UNKNOWN",
       route,
       userId: session?.user?.id ?? null,
