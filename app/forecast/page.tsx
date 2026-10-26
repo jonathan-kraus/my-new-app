@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\forecast\page.tsx
- * @LastEditTime: 2026-10-26 00:09:37
+ * @LastEditTime: 2026-10-26 14:02:32
  */
 // app/forecast/page.tsx
 import { auth } from "@/auth";
@@ -9,6 +9,7 @@ import ForecastWrapper from "./ForecastWrapper";
 import { buildWeatherEmail } from "./buildWeatherEmail";
 import { sendWeatherEmail } from "./mailresend";
 import { db8 } from "@/lib/db.prisma8";
+import { timestampString } from "@/lib/timestampString";
 
 //
 // ⭐ SERVER ACTION — must stay in a server component
@@ -23,10 +24,26 @@ export async function generateMetadata() {
   const temperatureDecimal =
     latestWeather?.temperature?.toString().split(".")[1] ?? null;
   const N3 = temperatureDecimal ? parseInt(temperatureDecimal, 10) : null;
+  const key = "N3";
+  const stringValue = String(N3);
+  const now = timestampString(new Date().toISOString());
   console.log(`N3: ${N3}`); // Log the value of N3 for debugging
   const temperature = latestWeather?.temperature ?? null;
-  // const temp = Math.round(temperature?.temperature ?? 0);
-
+  const row = await db8.orm.public.RuntimeConfig.upsert({
+    create: {
+      key,
+      value: stringValue,
+      updatedAt: now,
+    },
+    update: {
+      value: stringValue,
+      updatedAt: now,
+    },
+    conflictOn: {
+      key,
+    },
+  });
+  console.log(`Upserted row: ${JSON.stringify(row)}`); // Log the upserted row for debugging
   return { title: `Forecast - ${temperature}°F` };
 }
 
