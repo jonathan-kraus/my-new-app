@@ -2,15 +2,11 @@ import { formatEastern } from "@/lib/utils/global";
 import { v7 } from "uuid";
 /*
  * @FilePath: \my-new-app\src\lib\log\buildj.ts
- * @LastEditTime: 2026-10-26 21:35:59
+ * @LastEditTime: 2026-10-26 21:45:48
  */
 export function staticUniversalContext(route: string) {
   const now = new Date();
-  const var1 = "static";
-  const end = new Date();
-  const durationMs = end.getTime() - now.getTime();
-  console.log(`staticUniversalContext duration: ${durationMs} ms`);
-  console.log(`staticUniversalContext route: ${var1}`);
+
   return {
     ip: "1.2.3.4",
     url: "kraus.my.id/logs/static",
@@ -26,6 +22,5 @@ export function staticUniversalContext(route: string) {
       node: process.version,
       region: process.env.VERCEL_REGION ?? "local",
     },
-    durationMs,
   };
 }
