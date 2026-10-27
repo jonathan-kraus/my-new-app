@@ -7,19 +7,21 @@ import { formatInTimeZone } from "date-fns-tz";
 import { SolarArcBar } from "@/app/components/SolarArcBar";
 import { logj } from "@/lib/log/logj";
 import { auth } from "@/auth";
-import type { NextRequest } from "next/server";
-import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { buildPageUniversalContext } from "@/lib/log/build-universal-context";
 
 export const dynamic = "force-dynamic"; // ensure cookies + fresh SSR
 export const revalidate = 60;
 
-async function fetchWithRetry(req: NextRequest, station: string) {
+async function fetchWithRetry(station: string) {
   const attempt1 = await getEphemerisSnapshot(station);
   const session = await auth();
   if (!session || !session.user) {
     throw new Error("No active session found.");
   }
-  const built = buildUniversalContext(req, "ASTRONOMY");
+  const built = await buildPageUniversalContext(
+    "ASTRONOMY",
+    "/dashboard/astronomy",
+  );
   let jei = 0;
   await logj({
     domain: "jonathan",
@@ -59,8 +61,8 @@ async function fetchWithRetry(req: NextRequest, station: string) {
   return attempt2;
 }
 
-export default async function DashboardAstronomyPage(req: NextRequest) {
-  const snapshot = await fetchWithRetry(req, "KOP");
+export default async function DashboardAstronomyPage() {
+  const snapshot = await fetchWithRetry("KOP");
   const solar = snapshot.snapshot?.solar ?? null;
   const lunar = snapshot.snapshot?.lunar ?? null;
 

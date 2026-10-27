@@ -6,7 +6,7 @@
 /* eslint-disable react-hooks/purity -- This dynamic server page measures request durations for telemetry. */
 import { auth } from "@/auth";
 import { logj } from "@/lib/log/logj";
-import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { buildPageUniversalContext } from "@/lib/log/build-universal-context";
 import { Button } from "@/components/ui/button";
 import { UIProvider } from "@/components/providers/ui-provider";
 import CurrentWeatherCard from "@/app/components/dashboard/current-weather-card";
@@ -28,7 +28,7 @@ function getGreeting(): string {
   return "Good evening";
 }
 
-export default async function HomePage(req: Request) {
+export default async function HomePage() {
   // ---------------------------
   // DASHBOARD TIMING START
   // ---------------------------
@@ -50,7 +50,7 @@ export default async function HomePage(req: Request) {
   // UNIVERSAL CONTEXT TIMING
   // ---------------------------
   const contextStart = performance.now();
-  const built = await buildUniversalContext(req, "DASHBOARD");
+  const built = await buildPageUniversalContext("DASHBOARD", "/");
   const contextEnd = performance.now();
 
   let jei = 0;

@@ -5,18 +5,36 @@
 
 import { auth } from "@/auth";
 import { enrichContext } from "./context";
+import { headers } from "next/headers";
 import { v7 } from "uuid";
+
+/** Build request logging context for an App Router page (page props are not a Request). */
+export async function buildPageUniversalContext(
+  route: string,
+  pathname: string,
+) {
+  const incomingHeaders = await headers();
+  const host =
+    incomingHeaders.get("x-forwarded-host")?.split(",")[0]?.trim() ??
+    incomingHeaders.get("host") ??
+    "localhost";
+  const forwardedProtocol = incomingHeaders
+    .get("x-forwarded-proto")
+    ?.split(",")[0]
+    ?.trim();
+  const protocol = forwardedProtocol === "http" ? "http:" : "https:";
+  const request = new Request(new URL(pathname, `${protocol}//${host}`), {
+    method: "GET",
+    headers: incomingHeaders,
+  });
+  return buildUniversalContext(request, route);
+}
 
 export async function buildUniversalContext(req: Request, route: string) {
   const now = new Date();
 
-  // Load the session BEFORE enriching the request. Some callers (notably App
-  // Router pages like app/admin/runtime/page.tsx, which declare their props
-  // as `req: NextRequest`) pass a props object instead of a real Request.
-  // That makes enrichContext throw on req.headers.get(...) before auth() is
-  // ever reached, and the catch below used to wipe the session info to null.
-  // Loading auth() up front keeps user info populated even when enrichment
-  // fails.
+  // Load the session before enriching context so session fields remain
+  // available even if request enrichment fails.
   const session = await auth().catch(() => null);
 
   try {

@@ -10,7 +10,7 @@ import CurrentWeatherCard from "@/app/components/dashboard/current-weather-card"
 import VersionCard from "@/app/components/dashboard/version-card";
 import { logj } from "@/lib/log/logj";
 import { timestampString } from "@/lib/timestampString";
-import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { buildPageUniversalContext } from "@/lib/log/build-universal-context";
 import type { Metadata } from "next";
 import { auth } from "@/auth";
 import BuildCard from "../components/dashboard/build-card";
@@ -31,10 +31,10 @@ function hrElapsed(start: number) {
   return `${elapsed.toFixed(1)} ms`;
 }
 
-export default async function DashboardPage(req: Request) {
+export default async function DashboardPage() {
   let jei = 0;
   const pageStart = nowMs();
-  const built = buildUniversalContext(req, "DASHBOARD");
+  const built = await buildPageUniversalContext("DASHBOARD", "/dashboard");
   const session = await auth();
   // eslint-disable-next-line react-hooks/purity -- Sample request logs in this dynamic server page.
   const verbose = Math.random() < 0.1; // sample ~10% of requests
