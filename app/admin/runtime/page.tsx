@@ -7,14 +7,14 @@ import { db8 } from "@/lib/db.prisma8";
 import { requireRuntimeAdmin, RuntimeAccessError } from "@/lib/runtime/admin";
 import { ConfigTable } from "./ConfigTable";
 import { EmailThrottleCountdown } from "./EmailThrottleCountdown";
-import type { NextRequest } from "next/server";
+import { headers } from "next/headers";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 // Make this page fully dynamic so DB reads happen on every request
 export const dynamic = "force-dynamic";
 
-export default async function RuntimeAdminPage(req: NextRequest) {
+export default async function RuntimeAdminPage() {
   try {
     await requireRuntimeAdmin();
   } catch (error) {
@@ -37,7 +37,21 @@ export default async function RuntimeAdminPage(req: NextRequest) {
   const throttle = Number(
     configs.find((c) => c.key === "email.throttle.minutes")?.value ?? "0",
   );
-  const built = await buildUniversalContext(req, "RUNTIME");
+  const requestHeaders = await headers();
+  const host =
+    requestHeaders.get("x-forwarded-host") ??
+    requestHeaders.get("host") ??
+    "localhost";
+  const forwardedProtocol = requestHeaders
+    .get("x-forwarded-proto")
+    ?.split(",")[0]
+    ?.trim();
+  const protocol = forwardedProtocol === "http" ? "http:" : "https:";
+  const request = new Request(
+    new URL("/admin/runtime", `${protocol}//${host}`),
+    { method: "GET", headers: requestHeaders },
+  );
+  const built = await buildUniversalContext(request, "RUNTIME");
 
   await logj({
     domain: "jonathan",
