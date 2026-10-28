@@ -89,7 +89,7 @@ export async function writeEphemerisDebugEvent(data: DebugEventInput) {
     await logj({
       domain: "ephemeris",
       level: "info",
-      message: "Wrote ephemeris end debug event",
+      message: "Wrote ephemeris end debug event node 26",
       file: "src/lib/ephemeris/writeEphemerisDebugEvent.ts",
       line: 89,
       payload: { receivedAt: row.receivedAt },
