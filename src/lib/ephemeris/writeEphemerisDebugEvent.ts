@@ -27,7 +27,7 @@ let jei = 0;
 await logj({
   domain: "ephemeris",
   level: "info",
-  message: "Wrote ephemeris debug event",
+  message: "Wrote ephemeris start debug event",
   file: "src/lib/ephemeris/writeEphemerisDebugEvent.ts",
   line: 27,
   payload: { receivedAt: "data" },
@@ -89,7 +89,7 @@ export async function writeEphemerisDebugEvent(data: DebugEventInput) {
     await logj({
       domain: "ephemeris",
       level: "info",
-      message: "Wrote ephemeris debug event",
+      message: "Wrote ephemeris end debug event",
       file: "src/lib/ephemeris/writeEphemerisDebugEvent.ts",
       line: 89,
       payload: { receivedAt: row.receivedAt },
