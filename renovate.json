@@ -39,7 +39,7 @@
     },
     {
       "matchUpdateTypes": ["minor", "patch"],
-      "groupName": "safe-minor-patch-updates",
+      "groupName": "safe-minor-updates",
       "automerge": true
     }
   ]
