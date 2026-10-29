@@ -21,7 +21,7 @@ designation. Apply the canonical-field migration before deploying the updated
 client, then refresh the catalog to populate it. Existing rows use the typical
 service fallback until their first refresh.
 
-## Database setup
+## Database setup prisma 8
 
 The MBTA catalog shares the application's Prisma 8 contract, connection pool,
 and migration history. All current models live in `prisma8/contract.prisma`,
