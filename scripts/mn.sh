@@ -34,6 +34,7 @@ else
   success "On main"
   git pull origin main
 fi
+corepack prepare pnpm@latest --activate
 
 # --- Prettier ---
 section "Running Prettier"
