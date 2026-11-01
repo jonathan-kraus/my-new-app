@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\forecast\page.tsx
- * @LastEditTime: 2026-10-26 21:50:44
+ * @LastEditTime: 2026-10-31 22:10:36
  */
 // app/forecast/page.tsx
 import { auth } from "@/auth";
@@ -27,7 +27,7 @@ export async function generateMetadata() {
   const key = "N3";
   const stringValue = String(N3);
   const now = timestampString(new Date().toISOString());
-  console.log(`N3: ${N3}`); // Log the value of N3 for debugging
+  console.log(`N3 is ${N3}`);
   const temperature = latestWeather?.temperature ?? null;
   const row = await db8.orm.public.RuntimeConfig.upsert({
     create: {
