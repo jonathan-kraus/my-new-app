@@ -1,6 +1,5 @@
 export function getPhaseName(illumination: number | null): string {
   if (illumination === null) return "Unknown";
-
   if (illumination <= 1) return "New Moon";
   if (illumination <= 24) return "Waxing Crescent";
   if (illumination <= 26) return "First Quarter";
