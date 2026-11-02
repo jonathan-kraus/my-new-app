@@ -27,7 +27,7 @@ export async function generateMetadata() {
   const key = "N3";
   const stringValue = String(N3);
   const now = timestampString(new Date().toISOString());
-  console.log(`N3 is ${N3}`);
+  console.log(`N3 is ${N3} new pnpm`);
   const temperature = latestWeather?.temperature ?? null;
   const row = await db8.orm.public.RuntimeConfig.upsert({
     create: {
