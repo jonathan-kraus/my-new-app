@@ -1,4 +1,3 @@
-import { withAxiom } from "next-axiom";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -21,5 +20,3 @@ const nextConfig: NextConfig = {
     COMMIT_SHA: process.env.VERCEL_GIT_COMMIT_SHA, // MUST NOT use null
   },
 };
-
-export default withAxiom(nextConfig);

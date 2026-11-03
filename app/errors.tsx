@@ -2,7 +2,6 @@
 // app/errors.tsx
 
 import { useEffect } from "react";
-import { useLogger } from "next-axiom";
 import { usePathname } from "next/navigation";
 
 export default function ErrorPage({
@@ -13,10 +12,9 @@ export default function ErrorPage({
   reset: () => void;
 }) {
   const pathname = usePathname();
-  const log = useLogger({ source: "app/error.tsx" });
 
   useEffect(() => {
-    log.error("Unhandled error", {
+    console.log("log error", {
       message: error.message,
       name: error.name,
       stack: error.stack,
@@ -24,7 +22,7 @@ export default function ErrorPage({
       path: pathname,
       url: window.location.href,
     });
-  }, [error, pathname, log]);
+  }, [error, pathname]);
 
   return (
     <div className="p-8">

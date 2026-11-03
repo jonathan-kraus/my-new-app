@@ -1,9 +1,8 @@
 /*
  * @FilePath: \my-new-app\proxy.ts
- * @LastEditTime: 2026-09-07 23:17:24
+ * @LastEditTime: 2026-11-03 14:58:43
  */
 
-import { Logger } from "next-axiom";
 import { auth } from "@/auth";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
@@ -175,8 +174,8 @@ export async function proxy(req: NextRequest) {
   //
   // 7. Axiom instrumentation
   //
-  const logger = new Logger({ source: "middleware" });
-  logger.middleware(req);
+  // const logger = new Logger({ source: "middleware" });
+  // logger.middleware(req);
 
   //
   // 8. Session enforcement (ONLY for non-auth routes)
