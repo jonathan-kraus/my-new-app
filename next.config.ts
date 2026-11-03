@@ -20,3 +20,5 @@ const nextConfig: NextConfig = {
     COMMIT_SHA: process.env.VERCEL_GIT_COMMIT_SHA, // MUST NOT use null
   },
 };
+
+export default nextConfig;
