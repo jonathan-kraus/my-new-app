@@ -62,7 +62,9 @@ export function withRequestTiming<
         await logj({
           domain: "REQUEST",
           level: didFail ? "error" : "info",
-          message: didFail ? "Route request failed" : "Route request completed",
+          message: didFail
+            ? "Route request failed"
+            : `Route request completed in ${handlerDurationMs.toFixed(3)}ms`,
           file: route,
           payload: {
             requestId,
