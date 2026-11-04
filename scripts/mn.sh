@@ -52,7 +52,7 @@ if [[ -n "$UNFORMATTED" ]]; then
   fi
 else
   PRETTIER_STATUS="✔"
-  success "Prettier OK"
+  success "Prettier Good"
 fi
 
 # --- TypeScript ---
