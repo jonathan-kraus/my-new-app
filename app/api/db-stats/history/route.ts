@@ -1,3 +1,4 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 /*
  * @FilePath: \my-new-app\app\api\db-stats\history\route.ts
  */
@@ -13,7 +14,7 @@ function sanitizeBigInt(obj: unknown) {
   );
 }
 
-export async function GET(req: Request) {
+async function GETHandler(req: Request) {
   const { searchParams } = new URL(req.url);
   const table = searchParams.get("table");
 
@@ -52,3 +53,5 @@ export async function GET(req: Request) {
 
   return NextResponse.json(sanitizeBigInt(withDeltas));
 }
+
+export const GET = withRequestTiming("GET", "/db-stats/history", GETHandler);

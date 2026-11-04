@@ -1,3 +1,4 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 /*
  * @FilePath: \my-new-app\app\api\github-webhook\route.ts
  * @LastEditTime: 2026-09-18 00:02:03
@@ -17,7 +18,7 @@ import { db8 } from "@/lib/db.prisma8";
 
 const gw = Number(await getConfig("github_webhook", "0"));
 
-export const POST = withLogging(async (req: Request) => {
+const POSTHandler = withLogging(async (req: Request) => {
   const built = staticUniversalContext("GITHUB");
   let jei = 0;
   const raw = await req.text();
@@ -121,3 +122,5 @@ async function verifySignature(req: Request, body: string) {
     return false;
   }
 }
+
+export const POST = withRequestTiming("POST", "/github-webhook", POSTHandler);

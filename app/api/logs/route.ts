@@ -1,3 +1,4 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 // app/api/logs/route.ts
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
@@ -6,7 +7,7 @@ import { not, or } from "@prisma/orm-postgres/orm-client";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
-export async function GET(req: NextRequest) {
+async function GETHandler(req: NextRequest) {
   const search = req.nextUrl.searchParams.get("q") ?? "";
   const page = Number(req.nextUrl.searchParams.get("page") ?? 0);
   const limit = 80;
@@ -42,7 +43,7 @@ export async function GET(req: NextRequest) {
   });
 }
 
-export async function POST(req: NextRequest) {
+async function POSTHandler(req: NextRequest) {
   try {
     const body = await req.json();
     const { domain, level, message, payload } = body ?? {};
@@ -68,3 +69,6 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+export const GET = withRequestTiming("GET", "/logs", GETHandler);
+export const POST = withRequestTiming("POST", "/logs", POSTHandler);

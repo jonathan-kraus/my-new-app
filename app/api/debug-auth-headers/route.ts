@@ -1,3 +1,4 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 // app/api/debug-auth-headers/route.ts
 
 import {
@@ -7,7 +8,7 @@ import {
   clearLastAuthRequestHeaders,
 } from "@/lib/auth-debug";
 
-export async function GET() {
+async function GETHandler() {
   const responseHeaders = getLastAuthResponseHeaders();
   const requestHeaders = getLastAuthRequestHeaders();
   // Clear after read to avoid leaking between requests
@@ -18,3 +19,5 @@ export async function GET() {
     headers: { "content-type": "application/json" },
   });
 }
+
+export const GET = withRequestTiming("GET", "/debug-auth-headers", GETHandler);

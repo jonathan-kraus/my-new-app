@@ -1,10 +1,11 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 // app/api/test-account/route.ts
 import { NextResponse } from "next/server";
 import { logj } from "@/lib/log/logj";
 import { withLogging } from "@/lib/logging/withLogging";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
-export const GET = withLogging(async (req: Request) => {
+const GETHandler = withLogging(async (req: Request) => {
   const built = await buildUniversalContext(req, "JONATHAN");
   let jei = 0;
   await logj({
@@ -24,3 +25,5 @@ export const GET = withLogging(async (req: Request) => {
   //change to 200 after test
   return NextResponse.json({ error: "Intentional test 200" }, { status: 200 });
 });
+
+export const GET = withRequestTiming("GET", "/test-account", GETHandler);

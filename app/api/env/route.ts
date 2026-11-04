@@ -1,6 +1,7 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 import { NextResponse } from "next/server";
 
-export async function GET() {
+async function GETHandler() {
   const env = {
     nodeEnv: process.env.NODE_ENV ?? null,
 
@@ -35,3 +36,5 @@ export async function GET() {
 
   return NextResponse.json({ env });
 }
+
+export const GET = withRequestTiming("GET", "/env", GETHandler);

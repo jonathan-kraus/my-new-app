@@ -1,9 +1,10 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 import { NextResponse } from "next/server";
 
 const owner = "jonathan-kraus";
 const repo = "my-new-app";
 
-export async function GET() {
+async function GETHandler() {
   const token = process.env.GITHUB_TOKEN;
 
   const deploymentsRes = await fetch(
@@ -64,3 +65,5 @@ export async function GET() {
 
   return NextResponse.json(enriched);
 }
+
+export const GET = withRequestTiming("GET", "/deployments", GETHandler);

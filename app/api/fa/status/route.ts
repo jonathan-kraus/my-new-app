@@ -1,3 +1,4 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 /*
  * @FilePath: \my-new-app\app\api\fa\status\route.ts
  * @LastEditTime: 2026-07-24 17:04:24
@@ -7,7 +8,7 @@ import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { getConfig } from "@/lib/runtime/config";
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request) {
+async function GETHandler(req: Request) {
   const built = await buildUniversalContext(req, "fa-status");
   let jei = 0;
   const ident = await getConfig("flight-ID", "flight-ID");
@@ -79,3 +80,5 @@ export async function GET(req: Request) {
 
   return NextResponse.json({ flight: current });
 }
+
+export const GET = withRequestTiming("GET", "/fa/status", GETHandler);

@@ -1,3 +1,4 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 // app/api/cron/astronomy/route.ts
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
@@ -62,7 +63,7 @@ async function cleanupOldLogs(
   return deleteCount;
 }
 
-export async function GET(_req: NextRequest) {
+async function GETHandler(_req: NextRequest) {
   const start = Date.now();
   const built = staticUniversalContext("ASTRONOMY");
   let jei = 1;
@@ -171,3 +172,5 @@ export async function GET(_req: NextRequest) {
     daysProcessed,
   });
 }
+
+export const GET = withRequestTiming("GET", "/cron/astronomy", GETHandler);

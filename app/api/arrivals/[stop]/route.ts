@@ -1,3 +1,4 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 /*
  * @FilePath: \my-new-app\app\api\arrivals\[stop]\route.ts
  * @LastEditTime: 2026-09-13 20:26:21
@@ -6,7 +7,7 @@ import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { getStopName } from "@/lib/mbta/stops";
 
-export async function GET(request: Request) {
+async function GETHandler(request: Request) {
   // Extract stop ID from the URL path
   const url = new URL(request.url);
   const parts = url.pathname.split("/").filter(Boolean);
@@ -84,3 +85,5 @@ export async function GET(request: Request) {
 
   return Response.json(predictions);
 }
+
+export const GET = withRequestTiming("GET", "/arrivals/[stop]", GETHandler);

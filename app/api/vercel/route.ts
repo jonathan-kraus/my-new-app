@@ -1,8 +1,9 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 import { NextResponse } from "next/server";
 
 const VERCEL_API = "https://api.vercel.com";
 
-export async function GET() {
+async function GETHandler() {
   const token = process.env.VERCEL_TOKEN;
   const projectId = process.env.VERCEL_PROJECT_ID;
   const teamId = process.env.VERCEL_TEAM_ID;
@@ -47,3 +48,5 @@ export async function GET() {
     project,
   });
 }
+
+export const GET = withRequestTiming("GET", "/vercel", GETHandler);

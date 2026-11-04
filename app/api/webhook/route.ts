@@ -1,3 +1,4 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { logj } from "@/lib/log/logj";
@@ -31,7 +32,7 @@ const outboundData = z.object({
 
 export const runtime = "nodejs";
 
-export async function POST(request: Request) {
+async function POSTHandler(request: Request) {
   const webhookSecret = process.env.RESEND_WEBHOOK_SECRET;
   const apiKey = process.env.RESEND_API_KEY;
   const id = request.headers.get("svix-id");
@@ -188,3 +189,5 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export const POST = withRequestTiming("POST", "/webhook", POSTHandler);

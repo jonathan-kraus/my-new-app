@@ -1,3 +1,4 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 /*
  * @FilePath: \my-new-app\app\api\db-tables\send-db-email\route.ts
  * @LastEditTime: 2026-09-19 14:19:38
@@ -11,7 +12,7 @@ import { db8 } from "@/lib/db.prisma8";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
-export async function POST(req: Request) {
+async function POSTHandler(req: Request) {
   const { to, firstName } = await req.json();
   const built = await buildUniversalContext(req, "DB-TABLES");
   let jei = 0;
@@ -81,3 +82,9 @@ export async function POST(req: Request) {
 
   return NextResponse.json({ ok: true });
 }
+
+export const POST = withRequestTiming(
+  "POST",
+  "/db-tables/send-db-email",
+  POSTHandler,
+);

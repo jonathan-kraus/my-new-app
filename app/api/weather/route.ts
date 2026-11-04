@@ -1,3 +1,4 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 // app/api/weather/route.ts
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
@@ -26,7 +27,7 @@ const TomorrowRealtimeSchema = z.object({
   }),
 });
 
-export async function GET(req: NextRequest) {
+async function GETHandler(req: NextRequest) {
   const built = await buildUniversalContext(req, "WEATHER");
   const { searchParams } = new URL(req.url);
   const locationId = searchParams.get("locationId");
@@ -158,3 +159,5 @@ export async function GET(req: NextRequest) {
     },
   });
 }
+
+export const GET = withRequestTiming("GET", "/weather", GETHandler);

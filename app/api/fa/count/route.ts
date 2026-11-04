@@ -1,3 +1,4 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 /*
  * @FilePath: \my-new-app\app\api\fa\count\route.ts
  * @LastEditTime: 2026-06-21 23:54:11
@@ -8,7 +9,7 @@ import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { getConfig } from "@/lib/runtime/config";
 
-export async function GET(req: Request) {
+async function GETHandler(req: Request) {
   const built = await buildUniversalContext(req, "fa-count");
   let jei = 0;
   const minLat = await getConfig("minLat", "40.0893");
@@ -69,3 +70,5 @@ export async function GET(req: Request) {
   const data = await res.json();
   return NextResponse.json({ count: data.count });
 }
+
+export const GET = withRequestTiming("GET", "/fa/count", GETHandler);

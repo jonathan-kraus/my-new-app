@@ -1,3 +1,4 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 // app/api/cron/refreshLog/route.ts
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
@@ -7,7 +8,7 @@ import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
 export const runtime = "nodejs";
 
-export async function GET(req: NextRequest) {
+async function GETHandler(req: NextRequest) {
   const built = await buildUniversalContext(req, "REFRESHLOG");
   let jei = 0;
   try {
@@ -64,3 +65,5 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+
+export const GET = withRequestTiming("GET", "/cron/refreshLog", GETHandler);

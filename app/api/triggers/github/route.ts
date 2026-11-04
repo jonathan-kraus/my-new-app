@@ -1,8 +1,9 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 /*
  * @FilePath: \my-new-app\app\api\triggers\github\route.ts
  * @LastEditTime: 2026-09-01 01:35:02
  */
-export async function POST(req: Request) {
+async function POSTHandler(req: Request) {
   const headers = {
     delivery: req.headers.get("x-github-delivery"),
     event: req.headers.get("x-github-event"),
@@ -29,3 +30,5 @@ export async function POST(req: Request) {
 
   return new Response("OK");
 }
+
+export const POST = withRequestTiming("POST", "/triggers/github", POSTHandler);

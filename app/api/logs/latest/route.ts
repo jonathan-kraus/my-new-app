@@ -1,3 +1,4 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 // app/api/logs/latest/route.ts
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
@@ -8,7 +9,7 @@ import { logFromClient } from "@/app/actions/log";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(req: NextRequest) {
+async function GETHandler(req: NextRequest) {
   try {
     const since = req.nextUrl.searchParams.get("since");
     const search = req.nextUrl.searchParams.get("q") ?? "";
@@ -63,3 +64,5 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+
+export const GET = withRequestTiming("GET", "/logs/latest", GETHandler);

@@ -1,3 +1,4 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 /*
  * @FilePath: \my-new-app\app\api\db-tables\route.ts
  * @LastEditTime: 2026-09-10 16:21:13
@@ -17,7 +18,7 @@ type FormattedTable = {
   };
 };
 
-export async function GET(req: NextRequest) {
+async function GETHandler(req: NextRequest) {
   console.log("db-tables module loaded");
 
   const db = neon(process.env.DATABASE_URL!);
@@ -93,3 +94,5 @@ export async function GET(req: NextRequest) {
 
   return Response.json(results);
 }
+
+export const GET = withRequestTiming("GET", "/db-tables", GETHandler);

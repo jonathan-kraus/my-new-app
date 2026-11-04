@@ -1,3 +1,4 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 import { requireRuntimeAdmin, RuntimeAccessError } from "@/lib/runtime/admin";
 import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
@@ -21,7 +22,7 @@ async function authorize(request: Request, mutation = false) {
   return null;
 }
 
-export async function GET(request: Request) {
+async function GETHandler(request: Request) {
   try {
     const denied = await authorize(request);
     if (denied) return denied;
@@ -40,7 +41,7 @@ export async function GET(request: Request) {
   }
 }
 
-export async function POST(request: Request) {
+async function POSTHandler(request: Request) {
   try {
     const denied = await authorize(request, true);
     if (denied) return denied;
@@ -71,3 +72,6 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export const GET = withRequestTiming("GET", "/admin/mbta", GETHandler);
+export const POST = withRequestTiming("POST", "/admin/mbta", POSTHandler);

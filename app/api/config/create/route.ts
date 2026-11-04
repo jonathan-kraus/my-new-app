@@ -1,3 +1,4 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 /*
  * @FilePath: \my-new-app\app\api\config\create\route.ts
  * @LastEditTime: 2026-09-16 14:52:03
@@ -5,7 +6,7 @@
 import { axiomIngest } from "@/lib/axiom";
 import { NextResponse } from "next/server";
 
-export async function POST(request: Request) {
+async function POSTHandler(request: Request) {
   const body = await request.json();
   const dataset = "config";
   const events = Array.isArray(body.events) ? body.events : [body];
@@ -22,3 +23,5 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export const POST = withRequestTiming("POST", "/config/create", POSTHandler);

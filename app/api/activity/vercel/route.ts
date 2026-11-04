@@ -1,7 +1,8 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 import type { VercelDeployment } from "@/lib/vercel";
 import { NextResponse } from "next/server";
 
-export async function GET() {
+async function GETHandler() {
   const token = process.env.VERCEL_TOKEN;
   const projectId = process.env.VERCEL_PROJECT_ID;
   console.log("Started Vercel");
@@ -36,3 +37,5 @@ export async function GET() {
 
   return NextResponse.json(mapped);
 }
+
+export const GET = withRequestTiming("GET", "/activity/vercel", GETHandler);

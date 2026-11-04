@@ -1,3 +1,4 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 // app/api/environment/route.ts
 import { NextResponse } from "next/server";
 import { db8 } from "@/lib/db.prisma8";
@@ -6,7 +7,7 @@ import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { getPostgresVersion } from "@/app/db/PgVersion";
 import { getFullPackageData } from "@/lib/version/get-full-package-data";
 
-export async function GET(req: Request) {
+async function GETHandler(req: Request) {
   const built = await buildUniversalContext(req, "environment");
   let jei = 0;
 
@@ -297,3 +298,5 @@ export async function GET(req: Request) {
     );
   }
 }
+
+export const GET = withRequestTiming("GET", "/environment", GETHandler);

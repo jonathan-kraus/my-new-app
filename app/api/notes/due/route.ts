@@ -1,3 +1,4 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 /*
  * @FilePath: \my-new-app\app\api\notes\due\route.ts
  * @LastEditTime: 2026-05-22 01:01:33
@@ -26,7 +27,7 @@ interface NoteRow {
   color: string | null;
 }
 
-export async function GET(req: NextRequest) {
+async function GETHandler(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -89,3 +90,5 @@ export async function GET(req: NextRequest) {
     await pool.end();
   }
 }
+
+export const GET = withRequestTiming("GET", "/notes/due", GETHandler);

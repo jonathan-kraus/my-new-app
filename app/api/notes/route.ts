@@ -1,3 +1,4 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 /*
  * @FilePath: \my-new-app\app\api\notes\route.ts
  * @LastEditTime: 2026-10-23 00:05:35
@@ -12,7 +13,7 @@ import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { withLogging } from "@/lib/logging/withLogging";
 import { getConfig } from "@/lib/runtime/config";
 
-export const GET = withLogging(async (req: Request) => {
+const GETHandler = withLogging(async (req: Request) => {
   // Build context INSIDE the request handler
   const built = await buildUniversalContext(req, "NOTES");
   let jei = 0;
@@ -75,7 +76,7 @@ export const GET = withLogging(async (req: Request) => {
     );
   }
 });
-export const POST = withLogging(async (req: Request) => {
+const POSTHandler = withLogging(async (req: Request) => {
   const built = await buildUniversalContext(req, "NOTES");
   let jei = 20;
   await logj({
@@ -147,7 +148,7 @@ export const POST = withLogging(async (req: Request) => {
     );
   }
 });
-export const PUT = withLogging(async (req: Request) => {
+const PUTHandler = withLogging(async (req: Request) => {
   let jei = 41;
   const built = await buildUniversalContext(req, "NOTES");
   const N3 = await getConfig("N3");
@@ -237,7 +238,7 @@ export const PUT = withLogging(async (req: Request) => {
     );
   }
 });
-export const DELETE = withLogging(async (req: Request) => {
+const DELETEHandler = withLogging(async (req: Request) => {
   let jei = 60;
   const built = await buildUniversalContext(req, "NOTES");
   await logj({
@@ -308,3 +309,8 @@ export const DELETE = withLogging(async (req: Request) => {
     );
   }
 });
+
+export const GET = withRequestTiming("GET", "/notes", GETHandler);
+export const POST = withRequestTiming("POST", "/notes", POSTHandler);
+export const PUT = withRequestTiming("PUT", "/notes", PUTHandler);
+export const DELETE = withRequestTiming("DELETE", "/notes", DELETEHandler);

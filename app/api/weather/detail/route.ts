@@ -1,3 +1,4 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 /*
  * @FilePath: \my-new-app\app\api\weather\detail\route.ts
  * @LastEditTime: 2026-09-26 20:57:34
@@ -99,7 +100,7 @@ async function fetchOpenMeteoHourly(location: {
   }));
 }
 
-export async function GET(req: NextRequest) {
+async function GETHandler(req: NextRequest) {
   const built = await buildUniversalContext(req, "WEATHER_DETAIL");
   let eventIndex = 0;
   const locationId = new URL(req.url).searchParams.get("locationId");
@@ -340,3 +341,5 @@ export async function GET(req: NextRequest) {
     source: "Tomorrow.io",
   });
 }
+
+export const GET = withRequestTiming("GET", "/weather/detail", GETHandler);

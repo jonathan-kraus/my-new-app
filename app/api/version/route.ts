@@ -1,9 +1,10 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 import { getFullPackageData } from "@/lib/version/get-full-package-data";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import yaml from "yaml";
 
-export async function GET(request: Request) {
+async function GETHandler(request: Request) {
   const { searchParams } = new URL(request.url);
   const pkgName = searchParams.get("pkg");
 
@@ -82,3 +83,5 @@ export async function GET(request: Request) {
     return yaml.parse(readFileSync(lockPath, "utf8"));
   }
 }
+
+export const GET = withRequestTiming("GET", "/version", GETHandler);

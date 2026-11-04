@@ -1,10 +1,11 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { db8 } from "@/lib/db.prisma8";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 
-export async function GET(req: NextRequest) {
+async function GETHandler(req: NextRequest) {
   const start = performance.now();
   const built = await buildUniversalContext(req, "GITHUB_ACTIVITY");
   let eventIndex = 0;
@@ -148,10 +149,18 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function PUT() {
+async function PUTHandler() {
   return NextResponse.json({ ok: true, note: "PUT no longer needed" });
 }
 
-export async function DELETE() {
+async function DELETEHandler() {
   return NextResponse.json({ ok: true, note: "DELETE no longer needed" });
 }
+
+export const GET = withRequestTiming("GET", "/activity/github", GETHandler);
+export const PUT = withRequestTiming("PUT", "/activity/github", PUTHandler);
+export const DELETE = withRequestTiming(
+  "DELETE",
+  "/activity/github",
+  DELETEHandler,
+);

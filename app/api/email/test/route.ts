@@ -1,3 +1,4 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 // app/api/email/test/route.ts
 // app/api/email/test/route.ts
 import { withLogging } from "@/lib/logging/withLogging";
@@ -7,7 +8,7 @@ import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 
-export const POST = withLogging(async (req: Request) => {
+const POSTHandler = withLogging(async (req: Request) => {
   const session = await auth();
   if (!session?.user) {
     return NextResponse.json(
@@ -39,9 +40,12 @@ export const POST = withLogging(async (req: Request) => {
   return NextResponse.json(result);
 });
 
-export async function GET() {
+async function GETHandler() {
   return NextResponse.json({
     ok: true,
     message: "Email test endpoint. Use POST to send a test email.",
   });
 }
+
+export const POST = withRequestTiming("POST", "/email/test", POSTHandler);
+export const GET = withRequestTiming("GET", "/email/test", GETHandler);

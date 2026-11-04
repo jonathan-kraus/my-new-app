@@ -1,3 +1,4 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 /*
  * @FilePath: \my-new-app\app\api\fa\dashboard\route.ts
  * @LastEditTime: 2026-06-22 00:57:36
@@ -16,7 +17,7 @@ type Flight = {
 };
 const built = staticUniversalContext("DB");
 let jei = 0;
-export async function GET() {
+async function GETHandler() {
   await logj({
     domain: "jonathan",
     level: "info",
@@ -117,3 +118,5 @@ export async function GET() {
     planes,
   });
 }
+
+export const GET = withRequestTiming("GET", "/fa/dashboard", GETHandler);

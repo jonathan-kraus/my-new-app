@@ -1,8 +1,9 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 // app/api/prisma-test/route.ts
 import { NextResponse } from "next/server";
 import { db8 } from "@/lib/db.prisma8";
 
-export async function GET() {
+async function GETHandler() {
   try {
     const plan = db8.raw.sql`SELECT 1 AS "?column?"`
       .returnsRow({ "?column?": "pg/int4@1" })
@@ -14,3 +15,5 @@ export async function GET() {
     return NextResponse.json({ error: String(error) }, { status: 500 });
   }
 }
+
+export const GET = withRequestTiming("GET", "/prisma-test", GETHandler);

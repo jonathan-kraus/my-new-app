@@ -1,3 +1,4 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 // app\api\cron\mbta\route.ts
 import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
@@ -6,7 +7,7 @@ import { syncMbtaCatalog } from "@/lib/mbta/sync";
 export const runtime = "nodejs";
 export const maxDuration = 300;
 
-export async function GET(request: Request) {
+async function GETHandler(request: Request) {
   const built = staticUniversalContext("side-nav");
   let jei = 0;
   const secret = process.env.CRON_SECRET;
@@ -80,3 +81,5 @@ export async function GET(request: Request) {
     return Response.json({ error: "MBTA refresh failed." }, { status: 502 });
   }
 }
+
+export const GET = withRequestTiming("GET", "/cron/mbta", GETHandler);

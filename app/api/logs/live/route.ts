@@ -1,3 +1,4 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 /*
  * @FilePath: \my-new-app\app\api\logs\live\route.ts
  * @LastEditTime: 2026-09-18 17:30:53
@@ -5,7 +6,7 @@
 import { NextResponse } from "next/server";
 import { queryAxiom } from "@/lib/axiom/query";
 
-export async function GET() {
+async function GETHandler() {
   const dataset = process.env.AXIOM_DATASET?.trim();
   if (!dataset) {
     console.error("[GET /api/logs/live] AXIOM_DATASET is not configured");
@@ -44,3 +45,5 @@ export async function GET() {
     );
   }
 }
+
+export const GET = withRequestTiming("GET", "/logs/live", GETHandler);

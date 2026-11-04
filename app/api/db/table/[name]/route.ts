@@ -1,3 +1,4 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 import { NextResponse } from "next/server";
 import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
@@ -7,7 +8,7 @@ import {
 } from "@/lib/db/prisma-table";
 export const dynamic = "force-dynamic";
 
-export async function GET(
+async function GETHandler(
   request: Request,
   { params }: { params: Promise<{ name: string }> },
 ) {
@@ -52,3 +53,5 @@ export async function GET(
     );
   }
 }
+
+export const GET = withRequestTiming("GET", "/db/table/[name]", GETHandler);

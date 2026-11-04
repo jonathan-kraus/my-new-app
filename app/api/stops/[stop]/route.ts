@@ -1,7 +1,8 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 import { CatalogUnavailableError, getMbtaStop } from "@/lib/mbta/catalog";
 
 export const runtime = "nodejs";
-export async function GET(
+async function GETHandler(
   _request: Request,
   { params }: { params: Promise<{ stop: string }> },
 ) {
@@ -23,3 +24,5 @@ export async function GET(
     );
   }
 }
+
+export const GET = withRequestTiming("GET", "/stops/[stop]", GETHandler);

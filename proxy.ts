@@ -12,12 +12,27 @@ import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { getConfig } from "@/lib/runtime/config";
 
 export async function proxy(req: NextRequest) {
-  // Resend authenticates this endpoint with a signed raw request body.
-  // Avoid session/config lookups before the handler verifies the signature.
-  if (req.nextUrl.pathname === "/api/webhook") return NextResponse.next();
+  const requestStartedAt = Date.now();
 
+  // Resend authenticates this endpoint with a signed raw request body.
+  // Forward timing headers without reading the body or doing auth/config work.
+  if (req.nextUrl.pathname === "/api/webhook") {
+    const forwardedHeaders = new Headers(req.headers);
+    const requestId =
+      forwardedHeaders.get("x-app-request-id") ??
+      forwardedHeaders.get("x-request-id") ??
+      crypto.randomUUID();
+    forwardedHeaders.set("x-app-request-started-at", String(requestStartedAt));
+    forwardedHeaders.set("x-app-request-id", requestId);
+    forwardedHeaders.set("x-request-id", requestId);
+    return NextResponse.next({ request: { headers: forwardedHeaders } });
+  }
+
+  // Start before proxy work so downstream routes can measure the full
+  // proxy-to-handler duration from the forwarded request header.
   const url2 = req.nextUrl.clone();
   const built = await buildUniversalContext(req, "PROXY");
+  const requestId = built.requestId;
   let jei = 0;
   //
   // 2. Skip ALL NextAuth routes (signin, callback, session, providers, etc.)
@@ -118,9 +133,6 @@ export async function proxy(req: NextRequest) {
   //
   // 6. Normalize path
   //
-  const requestStartedAt = Date.now();
-  const requestId = crypto.randomUUID();
-
   const normalizeStartedAt = performance.now();
   const { last, lastTwo: initialLastTwo } = normalizePath(req.url);
 
@@ -193,6 +205,9 @@ export async function proxy(req: NextRequest) {
 
   forwardedHeaders.set("x-app-request-started-at", String(requestStartedAt));
   forwardedHeaders.set("x-app-request-id", requestId);
+  // Use the same ID in the standard header consumed by buildUniversalContext
+  // so proxy and route logs share one request ID.
+  forwardedHeaders.set("x-request-id", requestId);
 
   return NextResponse.next({
     request: {

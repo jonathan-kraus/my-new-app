@@ -1,3 +1,4 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 /*
  * @FilePath: \my-new-app\app\api\set-flight-id\route.ts
  * @LastEditTime: 2026-03-11 20:03:41
@@ -7,7 +8,7 @@ import { setConfig } from "@/lib/runtime/config"; // your existing config helper
 import { requireRuntimeAdmin, RuntimeAccessError } from "@/lib/runtime/admin";
 import { runtimeSettingSchema } from "@/lib/runtime/validation";
 
-export async function POST(req: Request) {
+async function POSTHandler(req: Request) {
   try {
     await requireRuntimeAdmin();
   } catch (error) {
@@ -41,3 +42,5 @@ export async function POST(req: Request) {
 
   return NextResponse.json({ success: true });
 }
+
+export const POST = withRequestTiming("POST", "/set-flight-id", POSTHandler);

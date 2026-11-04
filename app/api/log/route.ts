@@ -1,3 +1,4 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 /*
  * @FilePath: \my-new-app\app\api\log\route.ts
  * @LastEditTime: 2026-05-23 22:31:29
@@ -8,7 +9,7 @@ import { NextResponse } from "next/server";
 import { logj } from "@/lib/log/logj";
 import { auth } from "@/auth";
 
-export async function POST(req: NextRequest) {
+async function POSTHandler(req: NextRequest) {
   try {
     const body = await req.json();
     const session = await auth();
@@ -30,3 +31,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false }, { status: 500 });
   }
 }
+
+export const POST = withRequestTiming("POST", "/log", POSTHandler);

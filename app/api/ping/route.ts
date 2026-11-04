@@ -1,3 +1,4 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 // app/api/ping/route.ts
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
@@ -10,7 +11,7 @@ import { db8 } from "@/lib/db.prisma8";
 
 export const runtime = "nodejs";
 
-export async function GET(req: NextRequest) {
+async function GETHandler(req: NextRequest) {
   await headers();
   await auth();
   await cookies();
@@ -367,6 +368,9 @@ export async function GET(req: NextRequest) {
   });
 }
 
-export async function POST() {
+async function POSTHandler() {
   return NextResponse.json({ ok: true, time: Date.now() });
 }
+
+export const GET = withRequestTiming("GET", "/ping", GETHandler);
+export const POST = withRequestTiming("POST", "/ping", POSTHandler);

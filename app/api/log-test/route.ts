@@ -1,8 +1,9 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 // app/api/log-test/route.ts
 import { NextResponse } from "next/server";
 import { axiomIngest } from "@/lib/axiom";
 
-export async function GET() {
+async function GETHandler() {
   const timestamp = new Date().toISOString();
 
   const event = {
@@ -36,3 +37,5 @@ export async function GET() {
     );
   }
 }
+
+export const GET = withRequestTiming("GET", "/log-test", GETHandler);

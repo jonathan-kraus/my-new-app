@@ -1,3 +1,4 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 // /api/config/read/route.ts
 import { queryAxiom } from "@/lib/axiom/query";
 import { NextResponse } from "next/server";
@@ -6,7 +7,7 @@ import { staticUniversalContext } from "@/lib/log/buildj";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+async function GETHandler() {
   const built = staticUniversalContext("Config");
   let jei = 0;
   try {
@@ -64,3 +65,5 @@ export async function GET() {
     return NextResponse.json({ error: String(error) }, { status: 500 });
   }
 }
+
+export const GET = withRequestTiming("GET", "/config/read", GETHandler);

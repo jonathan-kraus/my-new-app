@@ -1,7 +1,8 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 import { NextResponse } from "next/server";
 import { ingestTravelEmails } from "@/lib/travel/ingest/email-ingest";
 
-export async function POST() {
+async function POSTHandler() {
   try {
     const result = await ingestTravelEmails();
     return NextResponse.json({ ok: true, result });
@@ -13,3 +14,5 @@ export async function POST() {
     );
   }
 }
+
+export const POST = withRequestTiming("POST", "/travel/ingest", POSTHandler);

@@ -1,3 +1,4 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 import type { Flight, FlightPosition } from "@/lib/flight/types";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
@@ -10,7 +11,7 @@ import {
 } from "@/lib/flight/selection";
 import { detectFlightPhase } from "@/lib/flight/phase";
 
-export async function GET(_request: NextRequest) {
+async function GETHandler(_request: NextRequest) {
   const flightId = _request.nextUrl.searchParams.get("flightId");
   if (flightId && !/^[a-zA-Z0-9_-]{1,200}$/.test(flightId)) {
     return NextResponse.json({ error: "Invalid flight ID" }, { status: 400 });
@@ -132,3 +133,5 @@ export async function GET(_request: NextRequest) {
     phase,
   });
 }
+
+export const GET = withRequestTiming("GET", "/fa/flight", GETHandler);

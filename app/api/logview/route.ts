@@ -1,3 +1,4 @@
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 // app\api\logview\route.ts
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
@@ -32,7 +33,7 @@ interface LevelRow {
   count: number;
 }
 
-export async function GET(req: NextRequest) {
+async function GETHandler(req: NextRequest) {
   const url = req.nextUrl;
   const level = url.searchParams.get("level") || null;
   const domain = url.searchParams.get("domain") || null;
@@ -143,3 +144,5 @@ export async function GET(req: NextRequest) {
     await pool.end();
   }
 }
+
+export const GET = withRequestTiming("GET", "/logview", GETHandler);
