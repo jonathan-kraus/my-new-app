@@ -64,7 +64,7 @@ export function withRequestTiming<
           level: didFail ? "error" : "info",
           message: didFail
             ? "Route request failed"
-            : `Route request completed in ${handlerDurationMs.toFixed(3)}ms`,
+            : `${route} ${method} request completed in ${handlerDurationMs.toFixed(3)}ms`,
           file: route,
           payload: {
             requestId,
