@@ -44,7 +44,7 @@ async function GETHandler(_request: NextRequest) {
       { status: 502 },
     );
   const metaText = await metaRes.text();
-  console.log("FA META RESPONSE:", metaText);
+  // console.log("FA META RESPONSE:", metaText);
 
   let metaData: { flights?: Flight[] } | null = null;
   try {
