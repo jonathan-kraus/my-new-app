@@ -1,0 +1,49 @@
+[
+  {
+    "id": "dropIndex.DbTableStats.DbTableStats_tableName_snapshotDate_idx",
+    "label": "Drop index \"DbTableStats_tableName_snapshotDate_idx\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "DbTableStats_tableName_snapshotDate_idx",
+        "table": "DbTableStats"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"DbTableStats_tableName_snapshotDate_idx\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"DbTableStats_tableName_snapshotDate_idx\""
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "index \"DbTableStats_tableName_snapshotDate_idx\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop index \"DbTableStats_tableName_snapshotDate_idx\"",
+        "sql": "DROP INDEX \"public\".\"DbTableStats_tableName_snapshotDate_idx\"",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"DbTableStats_tableName_snapshotDate_idx\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"DbTableStats_tableName_snapshotDate_idx\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"DbTableStats_tableName_snapshotDate_idx\""
+        }
+      }
+    ]
+  }
+]

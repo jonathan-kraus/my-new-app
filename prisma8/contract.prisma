@@ -1,7 +1,7 @@
 // use prisma-8
 // Application contract, including the MBTA catalog. Run `prisma contract emit` after edits.
 model User {
-  id            String              @id(map: "User_pkey")
+  id            String                @id(map: "User_pkey")
   name          String?
   email         String?
   emailVerified TimestampTemporal(3)?
@@ -82,7 +82,7 @@ model AstronomySnapshot {
 }
 
 model DbTableStats {
-  id           String             @id(map: "DbTableStats_pkey")
+  id           String               @id(map: "DbTableStats_pkey")
   tableName    String
   rowEstimate  Int
   totalBytes   BigInt
@@ -92,14 +92,13 @@ model DbTableStats {
   snapshotDate TimestampString(3)
   createdAt    TimestampTemporal(3) @default(now())
 
-  @@index([tableName, snapshotDate], map: "DbTableStats_tableName_snapshotDate_idx")
   @@index([tableName, snapshotDate], map: "DbTableStats_tableName_snapshotDate_key", unique: true)
 
   @@map("DbTableStats")
 }
 
 model EphemerisDebug {
-  id                 String             @id(map: "EphemerisDebug_pkey")
+  id                 String               @id(map: "EphemerisDebug_pkey")
   locationId         String?
   fetchedAt          String?
   createdAt          String?
@@ -134,9 +133,9 @@ model ForecastSnapshot {
 }
 
 model GithubEvent {
-  id            String             @id(map: "GithubEvent_pkey")
+  id            String               @id(map: "GithubEvent_pkey")
   eventId       String
-  _type         String             @map("type")
+  _type         String               @map("type")
   repo          String
   actor         String?
   status        String?
@@ -218,11 +217,11 @@ model RuntimeConfig {
 }
 
 model Session {
-  id           String             @id(map: "Session_pkey")
+  id           String               @id(map: "Session_pkey")
   sessionToken String
   userId       String
   expires      TimestampTemporal(3)
-  user         User               @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "Session_userId_fkey", index: false)
+  user         User                 @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "Session_userId_fkey", index: false)
 
   @@index([sessionToken], map: "Session_sessionToken_key", unique: true)
 
@@ -242,7 +241,7 @@ model ToolVersion {
 }
 
 model TravelSnapshot {
-  id               String             @id(map: "TravelSnapshot_pkey")
+  id               String               @id(map: "TravelSnapshot_pkey")
   source           String
   receivedAt       TimestampTemporal(3)
   confirmationCode String
@@ -288,7 +287,7 @@ model UserRole {
 }
 
 model Verification {
-  id         String             @id(map: "verification_pkey")
+  id         String               @id(map: "verification_pkey")
   identifier String
   value      String
   expiresAt  TimestampTemporal(3)
