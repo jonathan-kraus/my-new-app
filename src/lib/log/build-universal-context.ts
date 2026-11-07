@@ -44,7 +44,7 @@ export async function buildUniversalContext(req: Request, route: string) {
     return {
       ...ctx,
       requestId: ctx.requestId ?? v7(),
-      userId: session?.user?.id ?? null,
+      userId: session?.user?.id ?? "missing",
       sessionEmail: session?.user?.email ?? null,
       sessionUser: session?.user?.name ?? null,
       route,
@@ -58,7 +58,7 @@ export async function buildUniversalContext(req: Request, route: string) {
       requestId: v7(),
       method: "UNKNOWN",
       route,
-      userId: session?.user?.id ?? null,
+      userId: session?.user?.id ?? "missing",
       sessionEmail: session?.user?.email ?? null,
       sessionUser: session?.user?.name ?? null,
       zulu: now.toISOString(),
