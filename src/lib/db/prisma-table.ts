@@ -238,7 +238,7 @@ export async function getTableDataWithPrisma(
 
   const columns = Object.entries(storage.columns).map(([name, field]) => ({
     name,
-    type: field.dataType,
+    type: field.dataType.replace(/^pg\//, ""),
     nullable: field.nullable,
   }));
 
