@@ -12,10 +12,26 @@ import contractJson from "../../generated/prisma8/contract.json" with { type: "j
 
 export const contract = contractFromJson<Contract>(contractJson);
 
+function getRuntimeDatabaseUrl(): string {
+  const directUrl = process.env["DIRECT_URL"];
+  if (directUrl) return directUrl;
+
+  const databaseUrl = process.env["DATABASE_URL"]!;
+  const url = new URL(databaseUrl);
+
+  // Neon marks pooled endpoints with `-pooler` in the hostname. The Prisma
+  // runtime sends startup parameters PgBouncer rejects, so derive its direct
+  // endpoint when a separate DIRECT_URL is not configured (such as in CI).
+  if (url.hostname.endsWith(".neon.tech") && url.hostname.includes("-pooler.")) {
+    url.hostname = url.hostname.replace("-pooler.", ".");
+    url.searchParams.delete("pgbouncer");
+    return url.toString();
+  }
+
+  return databaseUrl;
+}
+
 export const db8 = postgres({
   contract,
-  // The Prisma runtime reads the contract marker during app initialization.
-  // Neon’s pooler rejects the startup option used by this driver, so use the
-  // direct endpoint when available (same as Prisma CLI); keep pooled as fallback.
-  url: process.env["DIRECT_URL"] ?? process.env["DATABASE_URL"]!,
+  url: getRuntimeDatabaseUrl(),
 });
