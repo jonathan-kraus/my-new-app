@@ -10,7 +10,7 @@ export default definePrismaConfig({
     // always use prisma.config.ts and the current application contract.
     contract: "prisma8/adoption-contract.ts",
     output:
-      "migrations/snapshots/2ad2cc87de48ba7f1789e861ab63a9f3c13e78430786da2aa8046ee90d18e572",
+      "migrations/snapshots/095c12ed1e8b26897e2a1e7573009635ae889450806cefb2db40a9c04c066e7a",
     migrations: { dir: "migrations" },
     db: { connection: process.env.DATABASE_URL },
   }),

@@ -14,7 +14,8 @@ export default definePrismaConfig({
     output: "generated/prisma8",
     migrations: { dir: "migrations" },
     db: {
-      connection: process.env["DATABASE_URL"],
+      // Prisma CLI commands need Neon's direct endpoint; keep DATABASE_URL pooled for the app.
+      connection: process.env["DIRECT_URL"] ?? process.env["DATABASE_URL"],
     },
   }),
 });

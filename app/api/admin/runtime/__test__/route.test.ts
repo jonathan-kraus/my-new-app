@@ -23,15 +23,12 @@ vi.mock("@/lib/db.prisma8", () => {
 });
 
 const { db8 } = await import("@/lib/db.prisma8");
-const mockedDb8 = vi.mocked(db8, true);
+// Keep assertions on this hand-written mock out of Prisma's recursive client types.
+const runtimeConfigMock = (db8 as any).orm.public.RuntimeConfig;
 
 beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(requireRuntimeAdmin).mockResolvedValue(undefined);
-
-  mockedDb8.orm.public.RuntimeConfig.orderBy.mockReturnValue(
-    mockedDb8.orm.public.RuntimeConfig,
-  );
 });
 
 describe("GET /api/admin/runtime", () => {
@@ -44,11 +41,11 @@ describe("GET /api/admin/runtime", () => {
       const { GET } = await import("../route");
       const res = await GET();
       expect(res.status).toBe(status);
-      expect(mockedDb8.orm.public.RuntimeConfig.all).not.toHaveBeenCalled();
+      expect(runtimeConfigMock.all).not.toHaveBeenCalled();
     },
   );
   it("returns an empty list when no configs exist", async () => {
-    mockedDb8.orm.public.RuntimeConfig.all.mockResolvedValue([]);
+    runtimeConfigMock.all.mockResolvedValue([]);
 
     const { GET } = await import("../route");
     const res = await GET();
@@ -80,7 +77,7 @@ describe("GET /api/admin/runtime", () => {
       },
     ];
 
-    mockedDb8.orm.public.RuntimeConfig.all.mockResolvedValue(
+    runtimeConfigMock.all.mockResolvedValue(
       mocked as unknown as Awaited<
         ReturnType<typeof db8.orm.public.RuntimeConfig.all>
       >,
@@ -92,7 +89,7 @@ describe("GET /api/admin/runtime", () => {
 
     expect(res.status).toBe(200);
 
-    expect(mockedDb8.orm.public.RuntimeConfig.orderBy).toHaveBeenCalled();
+    expect(runtimeConfigMock.orderBy).toHaveBeenCalled();
 
     expect(json.configs).toEqual(
       mocked.map((c) => ({ key: c.key, value: c.value })),

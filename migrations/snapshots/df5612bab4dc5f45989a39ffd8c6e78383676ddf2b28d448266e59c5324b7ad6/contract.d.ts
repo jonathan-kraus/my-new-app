@@ -34,7 +34,7 @@ import type {
 } from "@prisma/orm-postgres/contract/types";
 
 export type StorageHash =
-  StorageHashBase<"f916aa31ca4b0033350dc3583937caf3a00d48fd7a116742955c2866322cca1d">;
+  StorageHashBase<"df5612bab4dc5f45989a39ffd8c6e78383676ddf2b28d448266e59c5324b7ad6">;
 export type ExecutionHash = ExecutionHashBase<string>;
 export type ProfileHash =
   ProfileHashBase<"3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2">;
@@ -802,34 +802,40 @@ type ContractBase = Omit<
             readonly MbtaPattern: {
               columns: {
                 readonly directionId: {
-                  readonly nativeType: "int4";
+                  readonly dataType: "pg/int4";
                   readonly codecId: "pg/int4@1";
                   readonly nullable: false;
+                  readonly many: false;
                 };
                 readonly id: {
-                  readonly nativeType: "text";
+                  readonly dataType: "pg/text";
                   readonly codecId: "pg/text@1";
                   readonly nullable: false;
+                  readonly many: false;
                 };
                 readonly name: {
-                  readonly nativeType: "text";
+                  readonly dataType: "pg/text";
                   readonly codecId: "pg/text@1";
                   readonly nullable: false;
+                  readonly many: false;
                 };
                 readonly routeId: {
-                  readonly nativeType: "text";
+                  readonly dataType: "pg/text";
                   readonly codecId: "pg/text@1";
                   readonly nullable: false;
+                  readonly many: false;
                 };
                 readonly sortOrder: {
-                  readonly nativeType: "int4";
+                  readonly dataType: "pg/int4";
                   readonly codecId: "pg/int4@1";
                   readonly nullable: false;
+                  readonly many: false;
                 };
                 readonly typicality: {
-                  readonly nativeType: "int4";
+                  readonly dataType: "pg/int4";
                   readonly codecId: "pg/int4@1";
                   readonly nullable: false;
+                  readonly many: false;
                 };
               };
               primaryKey: { readonly columns: readonly ["id"] };
@@ -860,24 +866,28 @@ type ContractBase = Omit<
             readonly MbtaPatternStop: {
               columns: {
                 readonly id: {
-                  readonly nativeType: "text";
+                  readonly dataType: "pg/text";
                   readonly codecId: "pg/text@1";
                   readonly nullable: false;
+                  readonly many: false;
                 };
                 readonly patternId: {
-                  readonly nativeType: "text";
+                  readonly dataType: "pg/text";
                   readonly codecId: "pg/text@1";
                   readonly nullable: false;
+                  readonly many: false;
                 };
                 readonly position: {
-                  readonly nativeType: "int4";
+                  readonly dataType: "pg/int4";
                   readonly codecId: "pg/int4@1";
                   readonly nullable: false;
+                  readonly many: false;
                 };
                 readonly stopId: {
-                  readonly nativeType: "text";
+                  readonly dataType: "pg/text";
                   readonly codecId: "pg/text@1";
                   readonly nullable: false;
+                  readonly many: false;
                 };
               };
               primaryKey: { readonly columns: readonly ["id"] };
@@ -932,39 +942,46 @@ type ContractBase = Omit<
             readonly MbtaRoute: {
               columns: {
                 readonly attributes: {
-                  readonly nativeType: "jsonb";
+                  readonly dataType: "pg/jsonb";
                   readonly codecId: "pg/jsonb@1";
                   readonly nullable: false;
+                  readonly many: false;
                 };
                 readonly color: {
-                  readonly nativeType: "text";
+                  readonly dataType: "pg/text";
                   readonly codecId: "pg/text@1";
                   readonly nullable: false;
+                  readonly many: false;
                 };
                 readonly id: {
-                  readonly nativeType: "text";
+                  readonly dataType: "pg/text";
                   readonly codecId: "pg/text@1";
                   readonly nullable: false;
+                  readonly many: false;
                 };
                 readonly name: {
-                  readonly nativeType: "text";
+                  readonly dataType: "pg/text";
                   readonly codecId: "pg/text@1";
                   readonly nullable: false;
+                  readonly many: false;
                 };
                 readonly routeType: {
-                  readonly nativeType: "int4";
+                  readonly dataType: "pg/int4";
                   readonly codecId: "pg/int4@1";
                   readonly nullable: false;
+                  readonly many: false;
                 };
                 readonly sortOrder: {
-                  readonly nativeType: "int4";
+                  readonly dataType: "pg/int4";
                   readonly codecId: "pg/int4@1";
                   readonly nullable: false;
+                  readonly many: false;
                 };
                 readonly textColor: {
-                  readonly nativeType: "text";
+                  readonly dataType: "pg/text";
                   readonly codecId: "pg/text@1";
                   readonly nullable: false;
+                  readonly many: false;
                 };
               };
               primaryKey: { readonly columns: readonly ["id"] };
@@ -975,39 +992,46 @@ type ContractBase = Omit<
             readonly MbtaStop: {
               columns: {
                 readonly attributes: {
-                  readonly nativeType: "jsonb";
+                  readonly dataType: "pg/jsonb";
                   readonly codecId: "pg/jsonb@1";
                   readonly nullable: false;
+                  readonly many: false;
                 };
                 readonly id: {
-                  readonly nativeType: "text";
+                  readonly dataType: "pg/text";
                   readonly codecId: "pg/text@1";
                   readonly nullable: false;
+                  readonly many: false;
                 };
                 readonly latitude: {
-                  readonly nativeType: "float8";
+                  readonly dataType: "pg/float8";
                   readonly codecId: "pg/float8@1";
                   readonly nullable: true;
+                  readonly many: false;
                 };
                 readonly locationType: {
-                  readonly nativeType: "int4";
+                  readonly dataType: "pg/int4";
                   readonly codecId: "pg/int4@1";
                   readonly nullable: false;
+                  readonly many: false;
                 };
                 readonly longitude: {
-                  readonly nativeType: "float8";
+                  readonly dataType: "pg/float8";
                   readonly codecId: "pg/float8@1";
                   readonly nullable: true;
+                  readonly many: false;
                 };
                 readonly name: {
-                  readonly nativeType: "text";
+                  readonly dataType: "pg/text";
                   readonly codecId: "pg/text@1";
                   readonly nullable: false;
+                  readonly many: false;
                 };
                 readonly parentStationId: {
-                  readonly nativeType: "text";
+                  readonly dataType: "pg/text";
                   readonly codecId: "pg/text@1";
                   readonly nullable: true;
+                  readonly many: false;
                 };
               };
               primaryKey: { readonly columns: readonly ["id"] };
@@ -1025,39 +1049,46 @@ type ContractBase = Omit<
             readonly MbtaSyncState: {
               columns: {
                 readonly id: {
-                  readonly nativeType: "text";
+                  readonly dataType: "pg/text";
                   readonly codecId: "pg/text@1";
                   readonly nullable: false;
+                  readonly many: false;
                 };
                 readonly lastAttemptAt: {
-                  readonly nativeType: "text";
+                  readonly dataType: "pg/text";
                   readonly codecId: "pg/text@1";
                   readonly nullable: false;
+                  readonly many: false;
                 };
                 readonly lastError: {
-                  readonly nativeType: "text";
+                  readonly dataType: "pg/text";
                   readonly codecId: "pg/text@1";
                   readonly nullable: true;
+                  readonly many: false;
                 };
                 readonly lastSuccessAt: {
-                  readonly nativeType: "text";
+                  readonly dataType: "pg/text";
                   readonly codecId: "pg/text@1";
                   readonly nullable: true;
+                  readonly many: false;
                 };
                 readonly patternCount: {
-                  readonly nativeType: "int4";
+                  readonly dataType: "pg/int4";
                   readonly codecId: "pg/int4@1";
                   readonly nullable: false;
+                  readonly many: false;
                 };
                 readonly routeCount: {
-                  readonly nativeType: "int4";
+                  readonly dataType: "pg/int4";
                   readonly codecId: "pg/int4@1";
                   readonly nullable: false;
+                  readonly many: false;
                 };
                 readonly stopCount: {
-                  readonly nativeType: "int4";
+                  readonly dataType: "pg/int4";
                   readonly codecId: "pg/int4@1";
                   readonly nullable: false;
+                  readonly many: false;
                 };
               };
               primaryKey: { readonly columns: readonly ["id"] };

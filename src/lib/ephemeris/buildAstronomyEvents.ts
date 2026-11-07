@@ -7,8 +7,8 @@ export type AstronomyEvent = {
 };
 
 export function buildAstronomyEvents(
-  today: AstronomySnapshot,
-  tomorrow: AstronomySnapshot,
+  today: Omit<AstronomySnapshot, "fetchedAt">,
+  tomorrow: Omit<AstronomySnapshot, "fetchedAt">,
 ): AstronomyEvent[] {
   const raw = [
     // Solar

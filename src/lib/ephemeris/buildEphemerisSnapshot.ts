@@ -33,8 +33,8 @@ function buildEvent(
 }
 
 export function buildEphemerisSnapshot(
-  todayRow: AstronomySnapshot,
-  tomorrowRow: AstronomySnapshot,
+  todayRow: Omit<AstronomySnapshot, "fetchedAt">,
+  tomorrowRow: Omit<AstronomySnapshot, "fetchedAt">,
 ): EphemerisSnapshot {
   const events = [
     // Today

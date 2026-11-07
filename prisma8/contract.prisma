@@ -1,10 +1,10 @@
 // use prisma-8
 // Application contract, including the MBTA catalog. Run `prisma contract emit` after edits.
 model User {
-  id            String        @id(map: "User_pkey")
+  id            String              @id(map: "User_pkey")
   name          String?
   email         String?
-  emailVerified Timestamp(3)?
+  emailVerified TimestampTemporal(3)?
   image         String?
   accounts      Account[]
   sessions      Session[]
@@ -54,9 +54,9 @@ model Location {
 }
 
 model AstronomySnapshot {
-  id                 String       @id(map: "AstronomySnapshot_pkey")
+  id                 String                               @id(map: "AstronomySnapshot_pkey")
   locationId         String
-  fetchedAt          Timestamp(3)
+  fetchedAt          TimestampTemporal(3)
   sunrise            String
   sunset             String
   moonrise           String?
@@ -73,8 +73,8 @@ model AstronomySnapshot {
   solarNoon          String?
   illumination       Float?
   phaseName          String?
-  dateString         VarChar(10)
-  location           Location     @relation(fields: [locationId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "AstronomySnapshot_locationId_fkey", index: false)
+  dateString         String(storage: varchar, length: 10)
+  location           Location                             @relation(fields: [locationId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "AstronomySnapshot_locationId_fkey", index: false)
 
   @@index([locationId, dateString], map: "AstronomySnapshot_locationId_dateString_key", unique: true)
 
@@ -90,7 +90,7 @@ model DbTableStats {
   tableBytes   BigInt
   toastBytes   BigInt
   snapshotDate TimestampString(3)
-  createdAt    Timestamp(3)       @default(now())
+  createdAt    TimestampTemporal(3) @default(now())
 
   @@index([tableName, snapshotDate], map: "DbTableStats_tableName_snapshotDate_idx")
   @@index([tableName, snapshotDate], map: "DbTableStats_tableName_snapshotDate_key", unique: true)
@@ -99,7 +99,7 @@ model DbTableStats {
 }
 
 model EphemerisDebug {
-  id                 String       @id(map: "EphemerisDebug_pkey")
+  id                 String             @id(map: "EphemerisDebug_pkey")
   locationId         String?
   fetchedAt          String?
   createdAt          String?
@@ -118,7 +118,7 @@ model EphemerisDebug {
   sunsetBlueStart    String?
   sunsetBlueEnd      String?
   raw                Jsonb
-  receivedAt         Timestamp(3) @default(now())
+  receivedAt         TimestampTemporal(3) @default(now())
 
   @@map("EphemerisDebug")
 }
@@ -144,7 +144,7 @@ model GithubEvent {
   commitSha     String?
   commitMessage String?
   url           String?
-  createdAt     Timestamp(3)       @default(now())
+  createdAt     TimestampTemporal(3) @default(now())
   updatedAt     TimestampString(3)
   raw           Jsonb?
   title         String?
@@ -185,7 +185,7 @@ model Log {
 }
 
 model Note {
-  id          String              @id(map: "Note_pkey") @default(uuid())
+  id          String              @id(map: "Note_pkey") @onCreate(uuid())
   userId      String
   userEmail   String
   title       String?
@@ -196,7 +196,7 @@ model Note {
   isCompleted Boolean             @default(false)
   isArchived  Boolean             @default(false)
   pinned      Boolean             @default(false)
-  tags        String[]            @default([]) @noCheck(elementNotNull)
+  tags        String?[]           @default([])
   color       String?
 
   @@index([followUpAt], map: "Note_followUpAt_idx")
@@ -218,11 +218,11 @@ model RuntimeConfig {
 }
 
 model Session {
-  id           String       @id(map: "Session_pkey")
+  id           String             @id(map: "Session_pkey")
   sessionToken String
   userId       String
-  expires      Timestamp(3)
-  user         User         @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "Session_userId_fkey", index: false)
+  expires      TimestampTemporal(3)
+  user         User               @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "Session_userId_fkey", index: false)
 
   @@index([sessionToken], map: "Session_sessionToken_key", unique: true)
 
@@ -242,9 +242,9 @@ model ToolVersion {
 }
 
 model TravelSnapshot {
-  id               String          @id(map: "TravelSnapshot_pkey")
+  id               String             @id(map: "TravelSnapshot_pkey")
   source           String
-  receivedAt       Timestamp(3)
+  receivedAt       TimestampTemporal(3)
   confirmationCode String
   issuedDate       String
   passengers       Jsonb
@@ -274,7 +274,7 @@ model TravelSegment {
   marketedAs       String?
   cabin            String?
   fareClass        String?
-  seats            String[]       @noCheck(elementNotNull)
+  seats            String?[]
   snapshot         TravelSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Restrict, onUpdate: Cascade, map: "TravelSegment_snapshotId_fkey", index: false)
 
   @@map("TravelSegment")
@@ -288,12 +288,12 @@ model UserRole {
 }
 
 model Verification {
-  id         String       @id(map: "verification_pkey")
+  id         String             @id(map: "verification_pkey")
   identifier String
   value      String
-  expiresAt  Timestamp(3)
-  createdAt  Timestamp(3) @default(now())
-  updatedAt  Timestamp(3)
+  expiresAt  TimestampTemporal(3)
+  createdAt  TimestampTemporal(3) @default(now())
+  updatedAt  TimestampTemporal(3)
 
   @@index([identifier], map: "verification_identifier_idx")
   @@map("verification")
@@ -303,7 +303,7 @@ model Verification {
 model VerificationToken {
   identifier String
   token      String
-  expires    Timestamp(3)
+  expires    TimestampTemporal(3)
 
   @@index([identifier, token], map: "VerificationToken_identifier_token_key", unique: true)
   @@index([token], map: "VerificationToken_token_key", unique: true)
@@ -390,14 +390,14 @@ model MbtaSyncState {
 
 // Retained Prisma ORM history: create if absent, never alter or drop an existing table.
 model LegacyPrismaMigration {
-  id                VarChar(36)        @id(map: "_prisma_migrations_pkey")
-  checksum          VarChar(64)
-  finishedAt        TimestamptzString? @map("finished_at")
-  migrationName     VarChar(255)       @map("migration_name")
+  id                String(storage: varchar, length: 36)  @id(map: "_prisma_migrations_pkey")
+  checksum          String(storage: varchar, length: 64)
+  finishedAt        TimestamptzString?                    @map("finished_at")
+  migrationName     String(storage: varchar, length: 255) @map("migration_name")
   logs              String?
-  rolledBackAt      TimestamptzString? @map("rolled_back_at")
-  startedAt         TimestamptzString  @default(now()) @map("started_at")
-  appliedStepsCount Int                @default(0) @map("applied_steps_count")
+  rolledBackAt      TimestamptzString?                    @map("rolled_back_at")
+  startedAt         TimestamptzString                     @default(now()) @map("started_at")
+  appliedStepsCount Int                                   @default(0) @map("applied_steps_count")
 
   @@map("_prisma_migrations")
   @@control(tolerated)

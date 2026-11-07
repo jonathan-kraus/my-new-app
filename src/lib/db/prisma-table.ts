@@ -181,7 +181,7 @@ const tables = {
 type TableName = keyof typeof tables;
 
 type StorageColumn = {
-  nativeType: string;
+  dataType: string;
   nullable: boolean;
 };
 
@@ -238,7 +238,7 @@ export async function getTableDataWithPrisma(
 
   const columns = Object.entries(storage.columns).map(([name, field]) => ({
     name,
-    type: field.nativeType,
+    type: field.dataType,
     nullable: field.nullable,
   }));
 
@@ -253,7 +253,7 @@ export async function getTableDataWithPrisma(
           field
         ];
 
-        if (value != null && column?.nativeType === "timestamp") {
+        if (value != null && column?.dataType === "pg/timestamp") {
           value = new Date(`${String(value)}Z`).toISOString();
         }
 
