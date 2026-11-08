@@ -22,7 +22,10 @@ function getRuntimeDatabaseUrl(): string {
   // Neon marks pooled endpoints with `-pooler` in the hostname. The Prisma
   // runtime sends startup parameters PgBouncer rejects, so derive its direct
   // endpoint when a separate DIRECT_URL is not configured (such as in CI).
-  if (url.hostname.endsWith(".neon.tech") && url.hostname.includes("-pooler.")) {
+  if (
+    url.hostname.endsWith(".neon.tech") &&
+    url.hostname.includes("-pooler.")
+  ) {
     url.hostname = url.hostname.replace("-pooler.", ".");
     url.searchParams.delete("pgbouncer");
     return url.toString();
