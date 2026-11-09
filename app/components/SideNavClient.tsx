@@ -1,7 +1,7 @@
 "use client";
 /*
  * @FilePath: \my-new-app\app\components\SideNavClient.tsx
- * @LastEditTime: 2026-10-12 20:07:54
+ * @LastEditTime: 2026-11-09 02:33:41
  */
 
 import Link from "next/link";
@@ -72,7 +72,7 @@ export default function SideNavClient({
     { href: "/github", label: "GitHub", icon: "🐙" },
     { href: "/ping?run=11", label: "Ping", icon: "🛠️" },
     { href: "/mbta", label: "MBTA", icon: "🚋" },
-    { href: "/travel/next", label: "Travel", icon: "✈️" },
+
     {
       href: "/fa/dashboard",
       label: "Flight Dashboard",
