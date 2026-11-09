@@ -1,7 +1,6 @@
 
 param(
-    [string]$Model = "gemma4:31b",
-    [string]$ApiKey = $env:OLLAMA_API_KEY
+    [string]$Model = "gpt-oss:20b"
 )
 # ============================
 # Color Setup
@@ -14,13 +13,7 @@ $CYAN    = "Cyan"
 $MAGENTA = "Magenta"
 
 
-# ============================
-# API Key Check
-# ============================
-if (-not $ApiKey) {
-    Write-Host "[ERROR] OLLAMA_API_KEY is not set." -ForegroundColor $RED
-    exit 1
-}
+
 
 # ============================
 # Get Staged Diff
@@ -48,8 +41,6 @@ if (-not $diff) {
 # ============================
 if ($changedFiles -contains "package.json") {
     Write-Host "[INFO] Detected package.json changes" -ForegroundColor $YELLOW
-
-    $diff = git diff --cached package.json
 
     Write-Host "[INFO] Including all staged changes in the prompt" -ForegroundColor $CYAN
 
@@ -104,15 +95,14 @@ $body = @{
 # ============================
 # API Call
 # ============================
-$uri = [Uri]::new("https://ollama.com/api/chat")
+$uri = [Uri]::new("http://localhost:11434/api/chat")
 
 try {
-    Write-Host "[INFO] Contacting Ollama Cloud..." -ForegroundColor $CYAN
+    Write-Host "[INFO] Contacting local Ollama..." -ForegroundColor $CYAN
 
     $response = Invoke-RestMethod `
         -Uri $uri `
         -Method POST `
-        -Headers @{ "Authorization" = "Bearer $ApiKey" } `
         -ContentType "application/json" `
         -Body $body
 }
