@@ -43,26 +43,28 @@ if (-not $diff) {
 }
 
 # ============================
-# Special Handling: package.json
+# Include the full staged diff when package.json changes so mixed commits
+# still describe application changes alongside dependency updates.
 # ============================
 if ($changedFiles -contains "package.json") {
     Write-Host "[INFO] Detected package.json changes" -ForegroundColor $YELLOW
 
-    $pkgDiff = git diff --cached package.json
+    $diff = git diff --cached package.json
 
-    Write-Host "[INFO] Extracting dependency diff..." -ForegroundColor $CYAN
+    Write-Host "[INFO] Including all staged changes in the prompt" -ForegroundColor $CYAN
 
 $prompt = @"
-Write a single, concise, funny, and high-quality commit message describing the changes.
+Write a single, concise, funny, high-quality commit message describing all staged changes.
+If this commit includes both dependency updates and application changes, mention both.
 
 Return exactly ONE commit message.
 Do NOT provide multiple options, alternatives, or variations.
 Do NOT include explanations or commentary.
 Output ONLY the commit message text.
 
-Here is the diff:
+Here is the complete staged diff:
 
-$pkgDiff
+$diff
 "@
 
 }
