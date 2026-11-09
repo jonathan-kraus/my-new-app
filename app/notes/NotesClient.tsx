@@ -1,11 +1,10 @@
 /*
  * @FilePath: \my-new-app\app\notes\NotesClient.tsx
- * @LastEditTime: 2026-09-19 18:21:01
+ * @LastEditTime: 2026-11-08 22:50:11
  */
 // app/notes/NotesClient.tsx
 "use client";
-import { redirect } from "next/navigation";
-
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { logj } from "@/lib/log/logj";
@@ -21,8 +20,49 @@ type Note = {
   isCompleted?: boolean;
 };
 
+const noteColorClasses: Record<string, { card: string; indicator: string }> = {
+  red: {
+    card: "bg-red-500/20 border-red-500/30",
+    indicator: "bg-red-500",
+  },
+  blue: {
+    card: "bg-blue-500/20 border-blue-500/30",
+    indicator: "bg-blue-500",
+  },
+  green: {
+    card: "bg-green-500/20 border-green-500/30",
+    indicator: "bg-green-500",
+  },
+  yellow: {
+    card: "bg-yellow-500/20 border-yellow-500/30",
+    indicator: "bg-yellow-500",
+  },
+  purple: {
+    card: "bg-purple-500/20 border-purple-500/30",
+    indicator: "bg-purple-500",
+  },
+  pink: {
+    card: "bg-pink-500/20 border-pink-500/30",
+    indicator: "bg-pink-500",
+  },
+  orange: {
+    card: "bg-orange-500/20 border-orange-500/30",
+    indicator: "bg-orange-500",
+  },
+};
+
+const formatDateTimeLocal = (value: string) => {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return new Date(date.getTime() - date.getTimezoneOffset() * 60_000)
+    .toISOString()
+    .slice(0, 16);
+};
+
 export default function NotesClient() {
+  const router = useRouter();
   const [authorized, setAuthorized] = useState<boolean | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
@@ -31,9 +71,12 @@ export default function NotesClient() {
   const [editFollowUpDate, setEditFollowUpDate] = useState("");
   const [editColor, setEditColor] = useState("");
   const [notes, setNotes] = useState<Note[] | null>(null);
-  const [_userId, setUserId] = useState<string | null>(null);
   const [followupsDueCount, setFollowupsDueCount] = useState<number>(0);
   const [showFollowupsOnly, setShowFollowupsOnly] = useState(false);
+  const [pendingNoteActions, setPendingNoteActions] = useState<
+    Record<string, "archive" | "delete">
+  >({});
+  const [isSavingEdit, setIsSavingEdit] = useState(false);
 
   const colorOptions = [
     { value: "", label: "None", className: "bg-gray-500" },
@@ -73,22 +116,32 @@ export default function NotesClient() {
   // Initial load: notes, user, auth, followups
   useEffect(() => {
     async function load() {
-      const res = await fetch("/api/notes");
-      const data = await res.json();
+      try {
+        const res = await fetch("/api/notes");
 
-      if (res.status === 401) {
-        toast.error(
-          "🛑 Access denied — Authentication required for this mission.",
+        if (res.status === 401) {
+          toast.error(
+            "🛑 Access denied — Authentication required for this mission.",
+          );
+          setAuthorized(false);
+          return;
+        }
+
+        if (!res.ok) {
+          throw new Error(`Notes request failed with status ${res.status}`);
+        }
+
+        const data = await res.json();
+        setNotes(data.notes ?? []);
+        setAuthorized(true);
+        await refreshFollowupsDueCount();
+      } catch (error) {
+        console.error("Error loading notes:", error);
+        setLoadError(
+          "Unable to load notes. Please refresh the page to try again.",
         );
         setAuthorized(false);
-        return;
       }
-
-      setAuthorized(true);
-      setNotes(data.notes ?? []);
-      setUserId(data.userId ?? "JK");
-
-      await refreshFollowupsDueCount();
     }
 
     void load();
@@ -128,8 +181,15 @@ export default function NotesClient() {
   const visibleNotes = [...activeNotes, ...archivedNotes];
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this note?")) return;
+    if (pendingNoteActions[id]) return;
+    if (!confirm("Permanently delete this note? This cannot be undone.")) {
+      return;
+    }
 
+    setPendingNoteActions((currentActions) => ({
+      ...currentActions,
+      [id]: "delete",
+    }));
     try {
       const res = await fetch(`/api/notes?id=${id}`, {
         method: "DELETE",
@@ -137,11 +197,8 @@ export default function NotesClient() {
 
       if (res.ok) {
         setNotes(
-          notes?.map((note) =>
-            note.id === id
-              ? { ...note, isArchived: true, isCompleted: true }
-              : note,
-          ) ?? [],
+          (currentNotes) =>
+            currentNotes?.filter((note) => note.id !== id) ?? [],
         );
         toast.success("Note deleted successfully");
         await refreshFollowupsDueCount();
@@ -150,6 +207,12 @@ export default function NotesClient() {
       }
     } catch {
       toast.error("Error deleting note");
+    } finally {
+      setPendingNoteActions((currentActions) => {
+        const nextActions = { ...currentActions };
+        delete nextActions[id];
+        return nextActions;
+      });
     }
   };
 
@@ -159,14 +222,17 @@ export default function NotesClient() {
     setEditContent(note.content || "");
     setEditNeedsFollowUp(!!note.followUpAt);
     setEditFollowUpDate(
-      note.followUpAt
-        ? new Date(note.followUpAt).toISOString().slice(0, 16)
-        : "",
+      note.followUpAt ? formatDateTimeLocal(note.followUpAt) : "",
     );
     setEditColor(note.color || "");
   };
 
   const handleArchive = async (id: string) => {
+    if (pendingNoteActions[id]) return;
+    setPendingNoteActions((currentActions) => ({
+      ...currentActions,
+      [id]: "archive",
+    }));
     try {
       const res = await fetch("/api/notes", {
         method: "PUT",
@@ -179,7 +245,14 @@ export default function NotesClient() {
       });
 
       if (res.ok) {
-        setNotes(notes?.filter((note) => note.id !== id) ?? []);
+        setNotes(
+          (currentNotes) =>
+            currentNotes?.map((note) =>
+              note.id === id
+                ? { ...note, isArchived: true, isCompleted: true }
+                : note,
+            ) ?? [],
+        );
         toast.success("Note archived successfully");
         await refreshFollowupsDueCount();
       } else {
@@ -187,10 +260,20 @@ export default function NotesClient() {
       }
     } catch {
       toast.error("Error archiving note");
+    } finally {
+      setPendingNoteActions((currentActions) => {
+        const nextActions = { ...currentActions };
+        delete nextActions[id];
+        return nextActions;
+      });
     }
   };
 
   const handleSaveEdit = async () => {
+    if (!editingId || isSavingEdit) return;
+
+    const noteId = editingId;
+    setIsSavingEdit(true);
     try {
       const res = await fetch("/api/notes", {
         method: "PUT",
@@ -210,8 +293,10 @@ export default function NotesClient() {
       if (res.ok) {
         const data = await res.json();
         setNotes(
-          notes?.map((note) => (note.id === editingId ? data.note : note)) ??
-            [],
+          (currentNotes) =>
+            currentNotes?.map((note) =>
+              note.id === noteId ? data.note : note,
+            ) ?? [],
         );
         setEditingId(null);
         setEditTitle("");
@@ -226,6 +311,8 @@ export default function NotesClient() {
       }
     } catch {
       toast.error("Error updating note");
+    } finally {
+      setIsSavingEdit(false);
     }
   };
 
@@ -243,7 +330,15 @@ export default function NotesClient() {
   }
 
   if (!authorized) {
-    return <div className="p-6">You must be signed in to view notes.</div>;
+    return (
+      <div className="p-6">
+        {loadError ? (
+          <p role="alert">{loadError}</p>
+        ) : (
+          "You must be signed in to view notes."
+        )}
+      </div>
+    );
   }
 
   return (
@@ -266,7 +361,8 @@ export default function NotesClient() {
       <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex gap-2 flex-wrap">
           <button
-            onClick={() => redirect("/notes/new")}
+            type="button"
+            onClick={() => router.push("/notes/new")}
             className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 transition"
           >
             New Note
@@ -284,8 +380,12 @@ export default function NotesClient() {
           </button>
         </div>
 
+        <label className="sr-only" htmlFor="note-search">
+          Search notes
+        </label>
         <input
-          type="text"
+          id="note-search"
+          type="search"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search notes..."
@@ -311,22 +411,27 @@ export default function NotesClient() {
           key={note.id}
           className={`mb-4 p-4 border rounded backdrop-blur-md ${
             note.color
-              ? `bg-${note.color}-500/20 border-${note.color}-500/30`
-              : "bg-white/10"
+              ? (noteColorClasses[note.color]?.card ??
+                "bg-white/10 border-white/15")
+              : "bg-white/10 border-white/15"
           }`}
         >
           {editingId === note.id ? (
             <div>
               <input
                 type="text"
+                aria-label="Note title"
                 value={editTitle}
                 onChange={(e) => setEditTitle(e.target.value)}
+                disabled={isSavingEdit}
                 className="w-full mb-2 p-2 rounded bg-white/20 border border-white/30 text-white placeholder-white/60"
                 placeholder="Note title..."
               />
               <textarea
+                aria-label="Note content"
                 value={editContent}
                 onChange={(e) => setEditContent(e.target.value)}
+                disabled={isSavingEdit}
                 className="w-full h-32 p-2 rounded bg-white/20 border border-white/30 text-white placeholder-white/60 resize-none"
                 placeholder="Note content..."
               />
@@ -338,6 +443,7 @@ export default function NotesClient() {
                     id="editFollowUp"
                     checked={editNeedsFollowUp}
                     onChange={(e) => setEditNeedsFollowUp(e.target.checked)}
+                    disabled={isSavingEdit}
                     className="w-4 h-4 rounded border-white/30 bg-white/10 text-blue-600"
                   />
                   <label htmlFor="editFollowUp" className="text-white text-sm">
@@ -348,8 +454,10 @@ export default function NotesClient() {
                 {editNeedsFollowUp && (
                   <input
                     type="datetime-local"
+                    aria-label="Follow-up date and time"
                     value={editFollowUpDate}
                     onChange={(e) => setEditFollowUpDate(e.target.value)}
+                    disabled={isSavingEdit}
                     className="w-full bg-white/20 border border-white/30 rounded p-2 text-white text-sm"
                   />
                 )}
@@ -363,6 +471,9 @@ export default function NotesClient() {
                       key={colorOption.value}
                       type="button"
                       onClick={() => setEditColor(colorOption.value)}
+                      aria-label={`Select ${colorOption.label} note color`}
+                      aria-pressed={editColor === colorOption.value}
+                      disabled={isSavingEdit}
                       className={`w-6 h-6 rounded-full border-2 ${colorOption.className} ${
                         editColor === colorOption.value
                           ? "border-white ring-2 ring-white/50"
@@ -376,13 +487,17 @@ export default function NotesClient() {
 
               <div className="mt-2 flex gap-2">
                 <button
+                  type="button"
                   onClick={handleSaveEdit}
+                  disabled={isSavingEdit}
                   className="px-3 py-1 rounded bg-green-600 text-white hover:bg-green-700 transition"
                 >
-                  Save
+                  {isSavingEdit ? "Saving…" : "Save"}
                 </button>
                 <button
+                  type="button"
                   onClick={handleCancelEdit}
+                  disabled={isSavingEdit}
                   className="px-3 py-1 rounded bg-gray-600 text-white hover:bg-gray-700 transition"
                 >
                   Cancel
@@ -395,7 +510,9 @@ export default function NotesClient() {
                 <div className="flex items-center gap-2">
                   {note.color && (
                     <div
-                      className={`w-4 h-4 rounded-full bg-${note.color}-500`}
+                      className={`w-4 h-4 rounded-full ${
+                        noteColorClasses[note.color]?.indicator ?? "bg-gray-500"
+                      }`}
                     />
                   )}
                   <h2 className="font-semibold text-lg">
@@ -404,22 +521,32 @@ export default function NotesClient() {
                 </div>
                 <div className="flex gap-2">
                   <button
+                    type="button"
                     onClick={() => handleEdit(note)}
+                    disabled={!!pendingNoteActions[note.id]}
                     className="px-2 py-1 text-sm rounded bg-blue-600 text-white hover:bg-blue-700 transition"
                   >
                     Edit
                   </button>
                   <button
+                    type="button"
                     onClick={() => handleArchive(note.id)}
+                    disabled={!!pendingNoteActions[note.id]}
                     className="px-2 py-1 text-sm rounded bg-yellow-600 text-white hover:bg-yellow-700 transition"
                   >
-                    Archive
+                    {pendingNoteActions[note.id] === "archive"
+                      ? "Archiving…"
+                      : "Archive"}
                   </button>
                   <button
+                    type="button"
                     onClick={() => handleDelete(note.id)}
+                    disabled={!!pendingNoteActions[note.id]}
                     className="px-2 py-1 text-sm rounded bg-red-600 text-white hover:bg-red-700 transition"
                   >
-                    Delete
+                    {pendingNoteActions[note.id] === "delete"
+                      ? "Deleting…"
+                      : "Delete"}
                   </button>
                 </div>
               </div>
