@@ -9,5 +9,7 @@
   },
   "js/ts.tsdk.path": "node_modules\\typescript\\lib",
   "editor.defaultFormatter": "vscode.typescript-language-features",
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "WillLuke.nextjs.addTypesOnSave": true,
+  "WillLuke.nextjs.hasPrompted": true
 }
