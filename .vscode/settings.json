@@ -1,6 +1,7 @@
 {
   "files.autoSave": "afterDelay",
   "workbench.editor.empty.hint": "hidden",
+  "terminal.integrated.fontSize": 18,
   "terminal.integrated.initialHint": false,
   "terminal.integrated.shellIntegration.enabled": false,
   "fileheader.customMade": {
