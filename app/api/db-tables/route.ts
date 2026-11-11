@@ -32,7 +32,7 @@ async function GETHandler(req: NextRequest) {
     level: "info",
     message: `API db-tables started`,
     file: "app/api/db-tables/route.ts",
-    line: 29,
+    line: 30,
     payload: { some: "data" },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -54,7 +54,7 @@ async function GETHandler(req: NextRequest) {
       level: "info",
       message: `API db-tables count rows for table: ${table_name}`,
       file: "app/api/db-tables/route.ts",
-      line: 51,
+      line: 52,
       payload: { table_name },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -70,7 +70,7 @@ async function GETHandler(req: NextRequest) {
       level: "info",
       message: `API db-tables size metrics for table: ${table_name}`,
       file: "app/api/db-tables/route.ts",
-      line: 67,
+      line: 68,
       payload: { table_name },
       meta: { built: { ...built, eventIndex: ++jei } },
     });

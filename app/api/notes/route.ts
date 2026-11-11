@@ -22,7 +22,7 @@ const GETHandler = withLogging(async (req: Request) => {
     level: "info",
     message: "🎶 Notes GET started 🎶",
     file: "app/api/notes/route.ts",
-    line: 18,
+    line: 20,
     payload: {
       some: "data",
     },
@@ -50,7 +50,7 @@ const GETHandler = withLogging(async (req: Request) => {
       level: "info",
       message: `Notes GET completed with ${notes.length} notes`,
       file: "app/api/notes/route.ts",
-      line: 47,
+      line: 48,
       payload: {
         count: notes.length,
       },
@@ -64,7 +64,7 @@ const GETHandler = withLogging(async (req: Request) => {
       level: "error",
       message: `Notes GET failed with error: ${msg}`,
       file: "app/api/notes/route.ts",
-      line: 61,
+      line: 62,
       payload: {
         error: msg,
       },
@@ -84,7 +84,7 @@ const POSTHandler = withLogging(async (req: Request) => {
     level: "info",
     message: "🎶 Notes POST started 🎶",
     file: "app/api/notes/route.ts",
-    line: 81,
+    line: 82,
     payload: {
       some: "data",
     },
@@ -119,7 +119,7 @@ const POSTHandler = withLogging(async (req: Request) => {
       level: "info",
       message: "🎶 Note created 🎶",
       file: "app/api/notes/route.ts",
-      line: 116,
+      line: 117,
       payload: {
         noteId: note.id,
         title: note.title,
@@ -136,7 +136,7 @@ const POSTHandler = withLogging(async (req: Request) => {
       level: "error",
       message: `Notes GET failed with error: ${msg}`,
       file: "app/api/notes/route.ts",
-      line: 133,
+      line: 134,
       payload: {
         error: msg,
       },
@@ -157,7 +157,7 @@ const PUTHandler = withLogging(async (req: Request) => {
     level: "info",
     message: "🎶 Notes PUT started 🎶",
     file: "app/api/notes/route.ts",
-    line: 153,
+    line: 155,
     payload: {
       N3,
     },
@@ -208,7 +208,7 @@ const PUTHandler = withLogging(async (req: Request) => {
       level: "info",
       message: `🎶 Note updated - ${updatedNote?.title} 🎶`,
       file: "app/api/notes/route.ts",
-      line: 204,
+      line: 206,
       payload: {
         noteId: id,
         title: updatedNote?.title,
@@ -226,7 +226,7 @@ const PUTHandler = withLogging(async (req: Request) => {
       level: "error",
       message: `Notes PUT failed with error: ${msg}`,
       file: "app/api/notes/route.ts",
-      line: 222,
+      line: 224,
       payload: {
         error: msg,
       },
@@ -246,7 +246,7 @@ const DELETEHandler = withLogging(async (req: Request) => {
     level: "info",
     message: "🎶 Notes DELETE started 🎶",
     file: "app/api/notes/route.ts",
-    line: 242,
+    line: 244,
     payload: {
       some: "data",
     },
@@ -284,7 +284,7 @@ const DELETEHandler = withLogging(async (req: Request) => {
       level: "info",
       message: "Note deleted",
       file: "app/api/notes/route.ts",
-      line: 280,
+      line: 282,
       payload: { title: noteToDelete?.title, userEmail: email },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -297,7 +297,7 @@ const DELETEHandler = withLogging(async (req: Request) => {
       level: "error",
       message: `Notes DELETE failed with error: ${msg}`,
       file: "app/api/notes/route.ts",
-      line: 293,
+      line: 295,
       payload: {
         error: msg,
       },

@@ -158,7 +158,7 @@ async function GETHandler(req: NextRequest) {
       level: "error",
       message: "Tomorrow.io detail response was not JSON",
       file: "app/api/weather/detail/route.ts",
-      line: 155,
+      line: 156,
       payload: {
         status: response.status,
         error: String(error),
@@ -174,7 +174,7 @@ async function GETHandler(req: NextRequest) {
       level: "error",
       message: "Tomorrow.io detail request failed",
       file: "app/api/weather/detail/route.ts",
-      line: 171,
+      line: 172,
       payload: {
         status: response.status,
         body: responseText.slice(0, 1000),
@@ -194,7 +194,7 @@ async function GETHandler(req: NextRequest) {
     level: "info",
     message: "Tomorrow.io hourly timeline count",
     file: "app/api/weather/detail/route.ts",
-    line: 191,
+    line: 192,
     payload: {
       count: hourlyTimeline.length,
       hourlyTimeline: hourlyTimeline[7],
@@ -208,7 +208,7 @@ async function GETHandler(req: NextRequest) {
       level: "warn",
       message: "Tomorrow.io returned PARTIAL hourly timeline",
       file: "app/api/weather/detail/route.ts",
-      line: 205,
+      line: 206,
       payload: {
         count: hourlyTimeline.length,
         expected: 24,
@@ -245,7 +245,7 @@ async function GETHandler(req: NextRequest) {
       level: "warn",
       message: "Tomorrow.io returned PARTIAL hourly timeline",
       file: "app/api/weather/detail/route.ts",
-      line: 242,
+      line: 243,
       payload: {
         missingImportant,
         count: hourlyTimeline.length,
@@ -263,7 +263,7 @@ async function GETHandler(req: NextRequest) {
       level: "error",
       message: "Tomorrow.io detail response contained no hourly timeline",
       file: "app/api/weather/detail/route.ts",
-      line: 260,
+      line: 261,
       payload: {
         status: response.status,
         body: responseText.slice(0, 1000),
@@ -283,7 +283,7 @@ async function GETHandler(req: NextRequest) {
         level: "warn",
         message: "Using Open-Meteo hourly fallback",
         file: "app/api/weather/detail/route.ts",
-        line: 280,
+        line: 281,
         payload: { locationId, hourlyCount: hourly.length },
         meta: { built: { ...built, eventIndex: ++eventIndex } },
       });
@@ -292,7 +292,7 @@ async function GETHandler(req: NextRequest) {
         level: "info",
         message: "Final hourly forecast built",
         file: "app/api/weather/detail/route.ts",
-        line: 289,
+        line: 290,
         payload: {
           hours: hourly.map((h) => ({
             time: h.time,
@@ -316,7 +316,7 @@ async function GETHandler(req: NextRequest) {
         level: "error",
         message: "Hourly weather fallback failed",
         file: "app/api/weather/detail/route.ts",
-        line: 313,
+        line: 314,
         payload: { locationId, error: String(error) },
         meta: { built: { ...built, eventIndex: ++eventIndex } },
       });

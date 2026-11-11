@@ -16,7 +16,7 @@ async function GETHandler(req: Request) {
     level: "info",
     message: "** Environment -- Starting Status Check **",
     file: "app/api/environment/route.ts",
-    line: 13,
+    line: 14,
     payload: { some: "data" },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -32,7 +32,7 @@ async function GETHandler(req: Request) {
       level: "info",
       message: "Environment -- Retrieved Postgres Version",
       file: "app/api/environment/route.ts",
-      line: 29,
+      line: 30,
       payload: {
         pg: {
           version: postgresVersion,
@@ -65,7 +65,7 @@ async function GETHandler(req: Request) {
       level: "info",
       message: "Environment -- Retrieved Vercel Info",
       file: "app/api/environment/route.ts",
-      line: 62,
+      line: 63,
       payload: { vercelDeployment },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -113,7 +113,7 @@ async function GETHandler(req: Request) {
       level: "info",
       message: "Environment -- Retrieved GithubInfo",
       file: "app/api/environment/route.ts",
-      line: 110,
+      line: 111,
       payload: { github },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -184,7 +184,7 @@ async function GETHandler(req: Request) {
       level: "info",
       message: "Environment -- Retrieved Neon Info",
       file: "app/api/environment/route.ts",
-      line: 181,
+      line: 182,
       payload: { neon },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -277,7 +277,7 @@ async function GETHandler(req: Request) {
       level: "info",
       message: "Environment -- Expanded environment payload",
       file: "app/api/environment/route.ts",
-      line: 274,
+      line: 275,
       payload,
       meta: { built: { ...built, eventIndex: ++jei } },
     });

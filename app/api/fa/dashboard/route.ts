@@ -23,7 +23,7 @@ async function GETHandler() {
     level: "info",
     message: "Loading FA dashboard route",
     file: "app/api/fa/dashboard/route.ts",
-    line: 20,
+    line: 21,
     payload: { some: "data" },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -52,7 +52,7 @@ async function GETHandler() {
     level: "info",
     message: "Completed FA dashboard route",
     file: "app/api/fa/dashboard/route.ts",
-    line: 49,
+    line: 50,
     payload: {
       countData: countData,
       minLat: minLat,

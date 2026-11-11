@@ -30,7 +30,7 @@ const POSTHandler = withLogging(async (req: Request) => {
     level: "info",
     message: `Sent test email with message "${test_msg1}". Result: ${JSON.stringify(result)}`,
     file: "app/api/email/test/route.ts",
-    line: 27,
+    line: 28,
     payload: {
       result: result,
     },

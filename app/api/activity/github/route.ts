@@ -16,7 +16,7 @@ async function GETHandler(req: NextRequest) {
     level: "info",
     message: "GitHub activity request started",
     file: "app/api/activity/github/route.ts",
-    line: 13,
+    line: 14,
     meta: { built: { ...built, eventIndex: ++eventIndex } },
   });
 
@@ -27,7 +27,7 @@ async function GETHandler(req: NextRequest) {
       level: "debug",
       message: "Querying Prisma for recent GitHub events",
       file: "app/api/activity/github/route.ts",
-      line: 24,
+      line: 25,
       meta: { built: { ...built, eventIndex: ++eventIndex } },
     });
 
@@ -42,7 +42,7 @@ async function GETHandler(req: NextRequest) {
       level: "info",
       message: `Prisma returned ${events.length} events`,
       file: "app/api/activity/github/route.ts",
-      line: 39,
+      line: 40,
       payload: { count: events.length },
       meta: { built: { ...built, eventIndex: ++eventIndex } },
     });
@@ -69,7 +69,7 @@ async function GETHandler(req: NextRequest) {
       level: "debug",
       message: "Normalized GitHub events",
       file: "app/api/activity/github/route.ts",
-      line: 66,
+      line: 67,
       payload: { sample: normalized[0] ?? null, count: normalized.length },
       meta: { built: { ...built, eventIndex: ++eventIndex } },
     });
@@ -106,7 +106,7 @@ async function GETHandler(req: NextRequest) {
       level: "info",
       message: "Deduplication complete",
       file: "app/api/activity/github/route.ts",
-      line: 103,
+      line: 104,
       payload: {
         before: normalized.length,
         after: activity.length,
@@ -122,7 +122,7 @@ async function GETHandler(req: NextRequest) {
       level: "info",
       message: `GitHub activity request completed in ${duration.toFixed(2)}ms`,
       file: "app/api/activity/github/route.ts",
-      line: 119,
+      line: 120,
       meta: { built: { ...built, eventIndex: ++eventIndex } },
     });
 
@@ -137,7 +137,7 @@ async function GETHandler(req: NextRequest) {
       level: "error",
       message: `GitHub activity failed: ${message}`,
       file: "app/api/activity/github/route.ts",
-      line: 134,
+      line: 135,
       payload: {
         error: message,
         stack: err instanceof Error ? err.stack : null,

@@ -40,7 +40,7 @@ async function POSTHandler(req: Request) {
     level: "info",
     message: ` Top tables data retrieved with ${top.length} tables`,
     file: "app/api/db-tables/send-db-email/route.ts",
-    line: 37,
+    line: 38,
     payload: {
       to: to,
       firstname: firstName,

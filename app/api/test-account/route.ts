@@ -13,7 +13,7 @@ const GETHandler = withLogging(async (req: Request) => {
     level: "info",
     message: "test-account message",
     file: "app/api/test-account/route.ts",
-    line: 10,
+    line: 11,
     payload: {
       ip: built.ip,
       req: req,

@@ -29,7 +29,7 @@ async function GETHandler(req: Request) {
     level: "info",
     message: "Missing lat/long parameters",
     file: "app/api/fa/count/route.ts",
-    line: 26,
+    line: 27,
     payload: {
       minLat,
       minLon,

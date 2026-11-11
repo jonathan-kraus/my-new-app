@@ -18,7 +18,7 @@ async function GETHandler(request: Request) {
       level: "info",
       message: `🚇 Cron job triggered`,
       file: "app/api/cron/mbta/route.ts",
-      line: 15,
+      line: 16,
       payload: {
         method: built.method,
       },
@@ -36,7 +36,7 @@ async function GETHandler(request: Request) {
       level: "warn",
       message: `Cron authorization rejected`,
       file: "app/api/cron/mbta/route.ts",
-      line: 33,
+      line: 34,
       payload: {
         secretConfigured: Boolean(secret),
         authorizationPresent: Boolean(authorization),
@@ -54,7 +54,7 @@ async function GETHandler(request: Request) {
       level: "info",
       message: `🚇 Cron job succeeded`,
       file: "app/api/cron/mbta/route.ts",
-      line: 51,
+      line: 52,
       payload: {
         success: true,
       },

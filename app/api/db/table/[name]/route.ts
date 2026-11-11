@@ -21,7 +21,7 @@ async function GETHandler(
     level: "info",
     message: `In db table detail for ${name}`,
     file: "app/api/db/table/[name]/route.ts",
-    line: 18,
+    line: 19,
     payload: { name, moreinfo: "more info" },
     meta: { built: { ...built, eventIndex: ++jei } },
   });

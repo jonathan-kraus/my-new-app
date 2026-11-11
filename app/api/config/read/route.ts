@@ -23,7 +23,7 @@ async function GETHandler() {
       level: "info",
       message: "Config page loaded",
       file: "app/api/config/read/route.ts",
-      line: 20,
+      line: 21,
       payload: { qflight: qFlight },
       meta: { built: { ...built, eventIndex: ++jei } },
     });

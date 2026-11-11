@@ -72,7 +72,7 @@ async function GETHandler(request: Request) {
     level: "info",
     message: `Arrivals GET started for stopId: ${JStop}`,
     file: "app/api/arrivals/[stop]/route.ts",
-    line: 69,
+    line: 70,
     payload: {
       stopId: stopId,
       computedstop: JStop,

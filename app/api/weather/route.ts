@@ -69,7 +69,7 @@ async function GETHandler(req: NextRequest) {
       level: "info",
       message: "Using cached current weather data",
       file: "app/api/weather/route.ts",
-      line: 66,
+      line: 67,
       payload: {
         some: "data",
       },
@@ -116,7 +116,7 @@ async function GETHandler(req: NextRequest) {
     level: "info",
     message: "Fetched current weather data",
     file: "app/api/weather/route.ts",
-    line: 113,
+    line: 114,
     payload: {
       some: res.status,
       validated: validated,

@@ -55,7 +55,7 @@ async function POSTHandler(req: NextRequest) {
       level: level ?? "info",
       message: message ?? "Client log",
       file: "app/api/logs/route.ts",
-      line: 52,
+      line: 53,
       payload: payload ?? {},
       meta: { built: { ...built, eventIndex: ++jei } },
     });

@@ -1,86 +1,76 @@
-
 param(
     [string]$Model = "gpt-oss:20b"
 )
-# ============================
-# Color Setup
-# ============================
-$RED     = "Red"
-$GREEN   = "Green"
-$YELLOW  = "Yellow"
-$BLUE    = "Blue"
-$CYAN    = "Cyan"
-$MAGENTA = "Magenta"
 
-
-
+$ErrorActionPreference = "Stop"
 
 # ============================
-# Get Staged Diff
+# Colors
+# ============================
+$RED    = "Red"
+$GREEN  = "Green"
+$YELLOW = "Yellow"
+$CYAN   = "Cyan"
+
+# ============================
+# Get staged changes
 # ============================
 $diff = git diff --cached
-$changedFiles = git diff --cached --name-only
+$changedFiles = @(git diff --cached --name-only)
 
-if (-not $diff) {
+if ([string]::IsNullOrWhiteSpace($diff)) {
     $message = "chore: empty commit"
 
     Write-Host "[INFO] No staged changes detected." -ForegroundColor $YELLOW
-    Write-Host "[INFO] Using fallback commit message:" -ForegroundColor $BLUE
-    Write-Host "`n$message`n" -ForegroundColor $GREEN
 
-    $commitFile = ".git/COMMIT_MSG"
-    Set-Content -Path $commitFile -Value $message -Encoding UTF8
+    Set-Content `
+        -Path ".git/COMMIT_MSG" `
+        -Value $message `
+        -Encoding UTF8
 
-    Write-Host "[SAVED] Commit message written to $commitFile" -ForegroundColor $CYAN
     exit 0
 }
 
 # ============================
-# Include the full staged diff when package.json changes so mixed commits
-# still describe application changes alongside dependency updates.
+# Diagnostics
 # ============================
-if ($changedFiles -contains "package.json") {
-    Write-Host "[INFO] Detected package.json changes" -ForegroundColor $YELLOW
+Write-Host "[INFO] Changed files: $($changedFiles.Count)" -ForegroundColor $CYAN
+Write-Host "[INFO] Diff length : $($diff.Length) chars" -ForegroundColor $CYAN
 
-    Write-Host "[INFO] Including all staged changes in the prompt" -ForegroundColor $CYAN
+# ============================
+# Limit prompt size
+# ============================
+$maxDiffChars = 15000
 
-$prompt = @"
-Write a single, concise, funny, high-quality commit message describing all staged changes.
-If this commit includes both dependency updates and application changes, mention both.
-
-Return exactly ONE commit message.
-Do NOT provide multiple options, alternatives, or variations.
-Do NOT include explanations or commentary.
-Output ONLY the commit message text.
-
-Here is the complete staged diff:
-
-$diff
-"@
-
+if ($diff.Length -gt $maxDiffChars) {
+    Write-Host "[WARN] Diff truncated to $maxDiffChars chars" -ForegroundColor $YELLOW
+    $diff = $diff.Substring(0, $maxDiffChars)
 }
-else {
-    # Normal diff-based commit message
-    $prompt = @"
-Write a single, concise, funny, and high-quality commit message describing these changes.
 
-Return exactly ONE commit message.
-Do NOT provide multiple options, alternatives, or variations.
-Do NOT include explanations or commentary.
-Output ONLY the commit message text.
+# ============================
+# Prompt
+# ============================
+$prompt = @"
+Write one concise, funny, professional git commit message.
+
+Rules:
+- Return exactly ONE commit message
+- No quotes
+- No explanations
+- No markdown
+- Max 80 characters
+
+Changed files:
+$($changedFiles -join "`n")
 
 Diff:
 
 $diff
 "@
 
-}
-
 # ============================
-# Build Request Body
+# Request body
 # ============================
-Write-Host "[INFO] Generating commit message..." -ForegroundColor Magenta
-
 $body = @{
     model = $Model
     messages = @(
@@ -93,50 +83,74 @@ $body = @{
 } | ConvertTo-Json -Depth 10
 
 # ============================
-# API Call
+# API
 # ============================
-$uri = [Uri]::new("http://localhost:11434/api/chat")
+$uri = "http://127.0.0.1:11434/api/chat"
 
 try {
-    Write-Host "[INFO] Contacting local Ollama..." -ForegroundColor $CYAN
+
+    Write-Host "[INFO] Testing Ollama..." -ForegroundColor $CYAN
+
+    Invoke-RestMethod `
+        -Uri "http://127.0.0.1:11434/api/tags" `
+        -Method Get | Out-Null
+
+    Write-Host "[INFO] Ollama reachable" -ForegroundColor Green
+
+    Write-Host "[INFO] Generating commit message..." -ForegroundColor Cyan
+
+    $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
 
     $response = Invoke-RestMethod `
         -Uri $uri `
-        -Method POST `
+        -Method Post `
         -ContentType "application/json" `
+        -TimeoutSec 520 `
         -Body $body
+
+    $stopwatch.Stop()
+
+    Write-Host "[INFO] Generation completed in $($stopwatch.Elapsed.TotalSeconds.ToString('0.0'))s" `
+        -ForegroundColor Green
+
+    if (-not $response.message.content) {
+        throw "No content returned from Ollama."
+    }
+
+    $message = $response.message.content.Trim()
 }
 catch {
-    Write-Host "[ERROR] Commit message generation failed:" -ForegroundColor $RED
-    Write-Host $_.Exception.Message -ForegroundColor $RED
-    exit 1
+
+    Write-Host ""
+    Write-Host "[WARN] Ollama failed." -ForegroundColor Yellow
+    Write-Host $_.Exception.ToString() -ForegroundColor DarkYellow
+    Write-Host ""
+
+    # Fallback that never blocks a commit
+    if ($changedFiles -contains "package.json") {
+        $message = "chore: update dependencies and application code"
+    }
+    else {
+        $message = "chore: update project files"
+    }
+
+    Write-Host "[INFO] Using fallback commit message" -ForegroundColor Yellow
 }
 
 # ============================
-# Validate Response
+# Save commit message
 # ============================
-if (-not $response) {
-    Write-Host "[ERROR] Null response from API." -ForegroundColor $RED
-    exit 1
-}
+Set-Content `
+    -Path ".git/COMMIT_MSG" `
+    -Value $message `
+    -Encoding UTF8
 
-if (-not $response.message) {
-    Write-Host "[ERROR] No message field in API response." -ForegroundColor $RED
-    exit 1
-}
+Write-Host ""
+Write-Host "[SAVED] Commit message written to .git/COMMIT_MSG" `
+    -ForegroundColor Cyan
 
-$message = $response.message.content.Trim()
+Write-Host ""
+Write-Host $message -ForegroundColor Green
+Write-Host ""
 
-if (-not $message) {
-    Write-Host "[ERROR] Commit message is empty. Aborting commit!!!" -ForegroundColor $RED
-    exit 1
-}
-
-# ============================
-# Save Commit Message
-# ============================
-$commitFile = ".git/COMMIT_MSG"
-Set-Content -Path $commitFile -Value $message -Encoding UTF8
-
-Write-Host "[SAVED] Commit message written to $commitFile" -ForegroundColor $CYAN
-Write-Host "`n$message`n" -ForegroundColor $GREEN
+exit 0

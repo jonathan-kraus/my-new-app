@@ -17,7 +17,7 @@ async function GETHandler(req: NextRequest) {
       level: "info",
       message: `API cron refrehlog started`,
       file: "app/api/cron/refreshLog/route.ts",
-      line: 14,
+      line: 15,
       payload: {
         some: "data",
       },
@@ -35,7 +35,7 @@ async function GETHandler(req: NextRequest) {
       level: "info",
       message: "API cron refreshlog completed",
       file: "app/api/cron/refreshLog/route.ts",
-      line: 32,
+      line: 33,
       payload: {
         some: "data",
       },
@@ -52,7 +52,7 @@ async function GETHandler(req: NextRequest) {
       level: "error",
       message: "API cron refreshlog error",
       file: "app/api/cron/refreshLog/route.ts",
-      line: 49,
+      line: 50,
       payload: {
         some: "data",
       },

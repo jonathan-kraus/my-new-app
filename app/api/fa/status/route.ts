@@ -18,7 +18,7 @@ async function GETHandler(req: Request) {
     level: "info",
     message: "API FA status route accessed",
     file: "app/api/fa/status/route.ts",
-    line: 15,
+    line: 16,
     payload: { ident },
     meta: { built: { ...built, eventIndex: ++jei } },
   });

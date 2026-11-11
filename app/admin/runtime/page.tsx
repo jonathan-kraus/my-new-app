@@ -43,7 +43,7 @@ export default async function RuntimeAdminPage() {
     level: "info",
     message: `** Runtime Admin Page **`,
     file: "app/admin/runtime/page.tsx",
-    line: 42,
+    line: 41,
     payload: {
       lastsent: lastSent,
       throttle: throttle,

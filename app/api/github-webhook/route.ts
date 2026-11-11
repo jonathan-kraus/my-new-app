@@ -40,7 +40,7 @@ const POSTHandler = withLogging(async (req: Request) => {
       event +
       (normalized.title ? ` - ${JSON.stringify(normalized.title)}` : ""),
     file: "app/api/github-webhook/route.ts",
-    line: 34,
+    line: 35,
     payload: { event, type: normalized.type, gw },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -84,7 +84,7 @@ const POSTHandler = withLogging(async (req: Request) => {
       level: "info",
       message: "Github event upserted",
       file: "app/api/github-webhook/route.ts",
-      line: 81,
+      line: 82,
       payload: { event, type: normalized.type, gw },
       meta: { built: { ...built, eventIndex: ++jei } },
     });

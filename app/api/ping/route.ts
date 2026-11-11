@@ -26,7 +26,7 @@ async function GETHandler(req: NextRequest) {
       level: "info",
       message: "Ping work skipped. Add ?run=Jonathan to execute.",
       file: "app/api/ping/route.ts",
-      line: 23,
+      line: 24,
       payload: { jei: jei },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -45,7 +45,7 @@ async function GETHandler(req: NextRequest) {
     level: "info",
     message: "Starting ping request for weather fetch",
     file: "app/api/ping/route.ts",
-    line: 42,
+    line: 43,
     payload: {},
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -63,7 +63,7 @@ async function GETHandler(req: NextRequest) {
       level: "info",
       message: "ping retrieved ISS position data",
       file: "app/api/ping/route.ts",
-      line: 60,
+      line: 61,
       payload: { issPassData, issUrl },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -75,7 +75,7 @@ async function GETHandler(req: NextRequest) {
       level: "error",
       message: "ping failed to retrieve ISS position data",
       file: "app/api/ping/route.ts",
-      line: 72,
+      line: 73,
       payload: { error: String(error) },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -165,7 +165,7 @@ async function GETHandler(req: NextRequest) {
     level: "info",
     message: "Ping retrieved open-meteo weather forecast",
     file: "app/api/ping/route.ts",
-    line: 162,
+    line: 163,
     payload: {
       latitude: latitude,
       longitude: longitude,
@@ -239,7 +239,7 @@ async function GETHandler(req: NextRequest) {
     level: "info",
     message: "ping processed weather data",
     file: "app/api/ping/route.ts",
-    line: 236,
+    line: 237,
     payload: {
       Currenttime: weatherData.current.time,
       Currenttemperature_2m: weatherData.current.temperature_2m,
@@ -270,7 +270,7 @@ async function GETHandler(req: NextRequest) {
         level: "info",
         message: "ping retrieved reverse geocode for ISS location",
         file: "app/api/ping/route.ts",
-        line: 267,
+        line: 268,
         payload: { issLocation, geoUrl, issLatitude, issLongitude },
         meta: { built: { ...built, eventIndex: ++jei } },
       });
@@ -344,7 +344,7 @@ async function GETHandler(req: NextRequest) {
       level: "info",
       message: "ping retrieved reverse geocode for weather location",
       file: "app/api/ping/route.ts",
-      line: 341,
+      line: 342,
       payload: { geo, geoUrl },
       meta: { built: { ...built, eventIndex: ++jei } },
     });

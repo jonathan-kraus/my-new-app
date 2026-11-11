@@ -51,7 +51,7 @@ async function POSTHandler(request: Request) {
       level,
       message,
       file: "app/api/webhook/route.ts",
-      line: 48,
+      line: 49,
       payload,
       meta: {
         requestId,
