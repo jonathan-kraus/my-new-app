@@ -24,7 +24,7 @@ async function getTableData(name: string, page: number) {
   const built = staticUniversalContext("TablePage");
   let jei = 0;
   await logj({
-    domain: "jonathan",
+    domain: "Jonathan",
     level: "info",
     message: "Fetching table data with Prisma",
     file: "app/admin/db/table/[name]/page.tsx",
@@ -137,9 +137,9 @@ export default async function TablePage({ params, searchParams }: PageProps) {
               <div className="text-lg font-medium">
                 {firstSnapshot
                   ? new Date(formattedSnapshot).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                    })
+                    month: "short",
+                    day: "numeric",
+                  })
                   : "Not yet"}
               </div>
               <div className="text-xs text-muted-foreground mt-1">

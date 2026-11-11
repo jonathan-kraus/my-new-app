@@ -1,4 +1,4 @@
-Delivered-To: jonathanckraus@gmail.com
+Delivered-To: Jonathanckraus@gmail.com
 Received: by 2002:a05:6022:62a6:b0:ec:2638:ea94 with SMTP id bu38csp2231443lab;
         Sat, 21 Feb 2026 10:24:05 -0800 (PST)
 X-Received: by 2002:a05:620a:25ca:b0:8c9:f996:81f5 with SMTP id af79cd13be357-8cb8c9cf2e3mr485635985a.3.1771698244960;
@@ -26,19 +26,19 @@ ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc
 ARC-Authentication-Results: i=1; mx.google.com;
        dkim=pass header.i=@info.email.aa.com header.s=aa header.b=cKSQjGyb;
        dkim=pass header.i=@sendgrid.info header.s=smtpapi header.b=h6ezxaC5;
-       spf=pass (google.com: domain of bounces+24197214-782c-jonathanckraus=gmail.com@em9235.info.email.aa.com designates 149.72.114.188 as permitted sender) smtp.mailfrom="bounces+24197214-782c-jonathanckraus=gmail.com@em9235.info.email.aa.com";
+       spf=pass (google.com: domain of bounces+24197214-782c-Jonathanckraus=gmail.com@em9235.info.email.aa.com designates 149.72.114.188 as permitted sender) smtp.mailfrom="bounces+24197214-782c-Jonathanckraus=gmail.com@em9235.info.email.aa.com";
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=aa.com
-Return-Path: <bounces+24197214-782c-jonathanckraus=gmail.com@em9235.info.email.aa.com>
+Return-Path: <bounces+24197214-782c-Jonathanckraus=gmail.com@em9235.info.email.aa.com>
 Received: from o6.sg.info.email.aa.com (o6.sg.info.email.aa.com. [149.72.114.188])
         by mx.google.com with ESMTPS id 6a1803df08f44-8997e7b9e26si30519926d6.671.2026.02.21.10.24.03
-        for <jonathanckraus@gmail.com>
+        for <Jonathanckraus@gmail.com>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
         Sat, 21 Feb 2026 10:24:04 -0800 (PST)
-Received-SPF: pass (google.com: domain of bounces+24197214-782c-jonathanckraus=gmail.com@em9235.info.email.aa.com designates 149.72.114.188 as permitted sender) client-ip=149.72.114.188;
+Received-SPF: pass (google.com: domain of bounces+24197214-782c-Jonathanckraus=gmail.com@em9235.info.email.aa.com designates 149.72.114.188 as permitted sender) client-ip=149.72.114.188;
 Authentication-Results: mx.google.com;
        dkim=pass header.i=@info.email.aa.com header.s=aa header.b=cKSQjGyb;
        dkim=pass header.i=@sendgrid.info header.s=smtpapi header.b=h6ezxaC5;
-       spf=pass (google.com: domain of bounces+24197214-782c-jonathanckraus=gmail.com@em9235.info.email.aa.com designates 149.72.114.188 as permitted sender) smtp.mailfrom="bounces+24197214-782c-jonathanckraus=gmail.com@em9235.info.email.aa.com";
+       spf=pass (google.com: domain of bounces+24197214-782c-Jonathanckraus=gmail.com@em9235.info.email.aa.com designates 149.72.114.188 as permitted sender) smtp.mailfrom="bounces+24197214-782c-Jonathanckraus=gmail.com@em9235.info.email.aa.com";
        dmarc=pass (p=REJECT sp=REJECT dis=NONE) header.from=aa.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=info.email.aa.com;
 	h=content-transfer-encoding:content-type:date:from:mime-version:subject:
@@ -82,7 +82,7 @@ X-SG-ID:
  =?us-ascii?Q?Sef23+BmCIUTZRd3+ntun3BAja=2Fe1jZNGn05qlg?=
  =?us-ascii?Q?pxZUcYso4ucSDZk=2FgqQ2kAVJciGTtKRw+WMwj7M?=
  =?us-ascii?Q?WDfaHGYHxDZijM7MLuyOlJOV8lc0UBIcdmSk=3D?=
-To: JONATHANCKRAUS@GMAIL.COM
+To: JonathanCKRAUS@GMAIL.COM
 X-Entity-ID: u001.BDuCW0fU/6wcsIOcpfmVgw==
 
 <!DOCTYPE html>
@@ -3225,7 +3225,7 @@ rtant; ">aa.com/CanadaPassengers.</a></td>
 it is not monitored. This email was sent to</span>
                         <a style=3D"text-decoration:none;" href=3D"#">
                             <span class=3D"common_footer" style=3D"text-dec=
-oration:none;">jonathanckraus@gmail.com.</span></a>
+oration:none;">Jonathanckraus@gmail.com.</span></a>
                     </td>
                 </tr>
                 <tr>

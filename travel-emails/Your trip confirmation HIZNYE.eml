@@ -2,7 +2,7 @@ Received: by 2002:a05:6022:b099:b0:10f:5561:4f43 with SMTP id m25csp16279350laa;
         Thu, 24 Sep 2026 07:18:01 -0700 (PDT)
 Received: from o1.sg.info.email.aa.com (o1.sg.info.email.aa.com. [149.72.149.217])
         by mx.google.com with ESMTPS id 46e09a7af769-816059c23d2si9541929a34.73.2026.09.24.07.17.58
-        for <jonathanckraus@gmail.com>
+        for <Jonathanckraus@gmail.com>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
         Thu, 24 Sep 2026 07:17:59 -0700 (PDT)
 Received: by recvd-canary-76c5b7f6b5-dtjhv with SMTP id recvd-canary-76c5b7f6b5-dtjhv-1-6AB53116-CF
@@ -12,7 +12,7 @@ Received: from MjQxOTcyMTQ (unknown)
 	id 7XXWpE9GQLyWP7bk-aLQFg
 	Thu, 24 Sep 2026 14:17:58.313 +0000 (UTC)
 From: American Airlines <no-reply@info.email.aa.com>
-To: "JONATHANCKRAUS@GMAIL.COM" <JONATHANCKRAUS@GMAIL.COM>
+To: "JonathanCKRAUS@GMAIL.COM" <JonathanCKRAUS@GMAIL.COM>
 Subject: Your trip confirmation (PHL - BOS)
 Thread-Topic: Your trip confirmation (PHL - BOS)
 Thread-Index: AWdhN0xFFuajqMRHC2oo5j+napCDSg==
@@ -25,7 +25,7 @@ X-MS-Exchange-Organization-SCL: -1
 X-MS-TNEF-Correlator:
 X-MS-Exchange-Organization-RecordReviewCfmType: 0
 received-spf: pass (google.com: domain of
- bounces+24197214-782c-jonathanckraus=gmail.com@em9235.info.email.aa.com
+ bounces+24197214-782c-Jonathanckraus=gmail.com@em9235.info.email.aa.com
  designates 149.72.149.217 as permitted sender) client-ip=149.72.149.217;
 Content-Type: multipart/alternative;
 	boundary="_000_7XXWpE9GQLyWP7bkaLQFggeopodismtpd91_"

@@ -14,7 +14,7 @@ async function failure(error: unknown): Promise<RuntimeActionResult> {
   if (error instanceof RuntimeAccessError)
     return { ok: false, error: error.message };
   await logj({
-    domain: "jonathan",
+    domain: "Jonathan",
     level: "error",
     message: "Runtime settings operation failed",
     file: "src/lib/runtime/actions.ts",
@@ -35,7 +35,7 @@ export async function saveRuntimeSetting(
       return { ok: false, error: parsed.error.issues[0]!.message };
     await setConfig(parsed.data.key, parsed.data.value);
     await logj({
-      domain: "jonathan",
+      domain: "Jonathan",
       level: "info",
       message: "Runtime settings succeeded",
       file: "src/lib/runtime/actions.ts",

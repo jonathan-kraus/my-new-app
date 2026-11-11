@@ -1,4 +1,4 @@
-Delivered-To: jonathanckraus@gmail.com
+Delivered-To: Jonathanckraus@gmail.com
 Received: by 2002:a05:6022:611b:b0:ec:2638:ea94 with SMTP id y27csp785392lay;
         Sat, 28 Feb 2026 07:55:56 -0800 (PST)
 X-Forwarded-Encrypted: i=2; AJvYcCU8uZQNE0Z2WrcLJisjqVRTjNsGl3pLRsNKuE0xhAxfnPTrCWEMED+CvI4KLnS/J0mw1/vEq9O0IeAEuNwwug==@gmail.com
@@ -31,7 +31,7 @@ ARC-Authentication-Results: i=1; mx.google.com;
 Return-Path: <jack.m.london@comcast.net>
 Received: from resqmta-a2p-658764.sys.comcast.net (resqmta-a2p-658764.sys.comcast.net. [2001:558:fd01:2bb4::6])
         by mx.google.com with ESMTPS id 00721157ae682-79876d0ec86si69004707b3.222.2026.02.28.07.55.56
-        for <jonathanckraus@gmail.com>
+        for <Jonathanckraus@gmail.com>
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Sat, 28 Feb 2026 07:55:56 -0800 (PST)
 Received-SPF: pass (google.com: domain of jack.m.london@comcast.net designates 2001:558:fd01:2bb4::6 as permitted sender) client-ip=2001:558:fd01:2bb4::6;
@@ -69,7 +69,7 @@ Subject: Fwd: Your trip confirmation - LXCPTW
 Message-Id: <48710078-00A3-4982-B2A4-F01E258AF83C@comcast.net>
 References: <igbDpC4yRyuL7X0hLF0JcA@geopod-ismtpd-46>
 To: Susan Kraus <slkraus@comcast.net>,
- Jonathan Kraus <jonathanckraus@gmail.com>
+ Jonathan Kraus <Jonathanckraus@gmail.com>
 X-Mailer: iPhone Mail (23D127)
 X-CMAE-Envelope: MS4xfFB/tTKnFZ210fP0V9FfsvqVCPIDLkcH/ihUK1kZT2rW75riZNZn0KvN818ZJAeL28Og2LAVjLqxTu5esLCINDTHHa3iuxPyj34Nknu25CNw+mf/nodi
  RIbZgJP0LWzmmiU1boSq61KmcJXPHfJLVSeddXtbLooQhHUAjdEj4G8O00JIba+dQ0/u5L01vsOXrkoALsxZbANOqUIErWrC4mnJu5xiEPtjgM986iyWY3hr

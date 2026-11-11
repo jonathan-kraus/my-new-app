@@ -3,7 +3,7 @@
     "prefix": "logi",
     "body": [
       "await logj({",
-      "  domain: \"jonathan\",",
+      "  domain: \"Jonathan\",",
       "  level: \"info\",",
       "  message: \"$1\",",
       "  file: \"$TM_FILENAME\",",

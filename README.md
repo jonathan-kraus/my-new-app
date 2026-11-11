@@ -1,6 +1,6 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-![alt text](https://codecov.io/gh/<jonathan-kraus>/<my-new-app>/graph/badge.svg?token=<token>)
+![alt text](https://codecov.io/gh/<Jonathan-kraus>/<my-new-app>/graph/badge.svg?token=<token>)
 
 ## Runtime settings administrators
 
