@@ -18,7 +18,7 @@ export async function sendTestEmail(message?: string, subject?: string) {
 
   if (String(enabled) !== "1") {
     await logj({
-      domain: "jonathan",
+      domain: "Jonathan",
       level: "info",
       message: message_begin + "Email disabled by flag",
       file: "src/lib/server/email/sendTestEmail.ts",
@@ -51,7 +51,7 @@ export async function sendTestEmail(message?: string, subject?: string) {
 
   // --- 3. Throttle ----------------------------------------------------------
   await logj({
-    domain: "jonathan",
+    domain: "Jonathan",
     level: "info",
     message: message_begin + "Throttle check starting",
     file: "src/lib/server/email/sendTestEmail.ts",
@@ -71,7 +71,7 @@ export async function sendTestEmail(message?: string, subject?: string) {
   );
 
   await logj({
-    domain: "jonathan",
+    domain: "Jonathan",
     level: "info",
     message: message_begin + "Throttle status computed",
     file: "src/lib/server/email/sendTestEmail.ts",
@@ -88,7 +88,7 @@ export async function sendTestEmail(message?: string, subject?: string) {
 
   if (throttleStatus.isThrottled) {
     await logj({
-      domain: "jonathan",
+      domain: "Jonathan",
       level: "info",
       message: message_begin + "Throttled",
       file: "src/lib/server/email/sendTestEmail.ts",
@@ -109,7 +109,7 @@ export async function sendTestEmail(message?: string, subject?: string) {
 
   if (!apiKey) {
     await logj({
-      domain: "jonathan",
+      domain: "Jonathan",
       level: "error",
       message: message_begin + "RESEND_API_KEY is missing",
       file: "src/lib/server/email/sendTestEmail.ts",
@@ -131,7 +131,7 @@ export async function sendTestEmail(message?: string, subject?: string) {
   try {
     const { data: resendData, error } = await resend.emails.send({
       from: "Weather Bot <weather@kraus.my.id>",
-      to: ["jonathankraus2026@outlook.com"],
+      to: ["Jonathankraus2026@outlook.com"],
       subject: finalSubject,
       text: finalText,
       html: finalHtml,
@@ -142,14 +142,14 @@ export async function sendTestEmail(message?: string, subject?: string) {
     }
 
     await logj({
-      domain: "jonathan",
+      domain: "Jonathan",
       level: "info",
       message: message_begin + "Test email sent",
       file: "src/lib/server/email/sendTestEmail.ts",
       line: 144,
       payload: {
         emailId: resendData?.id,
-        recipient: "jonathankraus2026@outlook.com",
+        recipient: "Jonathankraus2026@outlook.com",
       },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -160,7 +160,7 @@ export async function sendTestEmail(message?: string, subject?: string) {
     await setConfig("email.last_sent_at", newTimestamp);
 
     await logj({
-      domain: "jonathan",
+      domain: "Jonathan",
       level: "info",
       message: message_begin + "Updated last_sent_at",
       file: "src/lib/server/email/sendTestEmail.ts",
@@ -182,7 +182,7 @@ export async function sendTestEmail(message?: string, subject?: string) {
       err instanceof Error ? err.message : "Unknown error while sending email.";
 
     await logj({
-      domain: "jonathan",
+      domain: "Jonathan",
       level: "error",
       message: message_begin + "Resend error",
       file: "src/lib/server/email/sendTestEmail.ts",

@@ -25,7 +25,7 @@ const getCachedAstronomySnapshot = unstable_cache(
     // This should now only run on a real cache miss
     const built = await staticUniversalContext("ASTRONOMY_SNAPSHOT");
     await logj({
-      domain: "jonathan",
+      domain: "Jonathan",
       level: "info",
       message: "Astronomy snapshot fetched",
       file: "src/lib/astronomy/getAstronomySnapshot.ts",
@@ -62,7 +62,7 @@ async function getAstronomySnapshotInternal(
 
   const built = await staticUniversalContext("ASTRONOMY_SNAPSHOT");
   await logj({
-    domain: "jonathan",
+    domain: "Jonathan",
     level: "info",
     message: "Astronomy snapshot fetched",
     file: "src/lib/astronomy/getAstronomySnapshot.ts",

@@ -69,7 +69,7 @@ export default function LogsPage() {
     let cancelled = false;
 
     const load = async () => {
-      const built = await staticUniversalContext("jonathan");
+      const built = await staticUniversalContext("Jonathan");
       let jei = 0;
       if (page === 0) setIsLoading(true);
       else setIsLoadingMore(true);
@@ -84,7 +84,7 @@ export default function LogsPage() {
         try {
           // new log below
           await logj({
-            domain: "jonathan",
+            domain: "Jonathan",
             level: "info",
             message: "🌟 in log page",
             file: "app/logs/page.tsx",

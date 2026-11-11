@@ -19,7 +19,7 @@ const built = staticUniversalContext("DB");
 let jei = 0;
 async function GETHandler() {
   await logj({
-    domain: "jonathan",
+    domain: "Jonathan",
     level: "info",
     message: "Loading FA dashboard route",
     file: "app/api/fa/dashboard/route.ts",
@@ -48,7 +48,7 @@ async function GETHandler() {
 
   const countData = await countRes.json();
   await logj({
-    domain: "jonathan",
+    domain: "Jonathan",
     level: "info",
     message: "Completed FA dashboard route",
     file: "app/api/fa/dashboard/route.ts",

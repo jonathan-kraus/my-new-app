@@ -38,7 +38,7 @@ export async function logDashboardAstronomy(snapshot: unknown) {
 export async function getDashboardData(): Promise<DashboardData> {
   const [vercelResult, githubResult, astronomyResult] = await Promise.all([
     safe<VercelDeploymentsResponse>(() => getVercelDeployments()),
-    safe(() => getRecentActivity("jonathan-kraus")),
+    safe(() => getRecentActivity("Jonathan-kraus")),
     safe(() => getEphemerisSnapshot("KOP")),
   ]);
 

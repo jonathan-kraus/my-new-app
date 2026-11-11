@@ -137,9 +137,9 @@ export default async function TablePage({ params, searchParams }: PageProps) {
               <div className="text-lg font-medium">
                 {firstSnapshot
                   ? new Date(formattedSnapshot).toLocaleDateString("en-US", {
-                    month: "short",
-                    day: "numeric",
-                  })
+                      month: "short",
+                      day: "numeric",
+                    })
                   : "Not yet"}
               </div>
               <div className="text-xs text-muted-foreground mt-1">

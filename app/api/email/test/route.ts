@@ -26,7 +26,7 @@ const POSTHandler = withLogging(async (req: Request) => {
   const built = await buildUniversalContext(req, "EMAILTEST");
 
   await logj({
-    domain: "jonathan",
+    domain: "Jonathan",
     level: "info",
     message: `Sent test email with message "${test_msg1}". Result: ${JSON.stringify(result)}`,
     file: "app/api/email/test/route.ts",

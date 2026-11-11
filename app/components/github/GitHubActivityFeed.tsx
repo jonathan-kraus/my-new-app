@@ -33,9 +33,9 @@ export default function GitHubActivityFeed() {
   const [type, setType] = useState<"repositories" | "user" | "workflows">(
     "repositories",
   );
-  const [username, setUsername] = useState("jonathan-kraus");
-  const [repos, setRepos] = useState("jonathan-kraus/my-new-app"); // Default repos
-  const [workflowOwner, setWorkflowOwner] = useState("jonathan-kraus");
+  const [username, setUsername] = useState("Jonathan-kraus");
+  const [repos, setRepos] = useState("Jonathan-kraus/my-new-app"); // Default repos
+  const [workflowOwner, setWorkflowOwner] = useState("Jonathan-kraus");
   const [workflowRepo, setWorkflowRepo] = useState("my-new-app");
 
   const fetchActivity = useCallback(async () => {

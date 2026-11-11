@@ -116,8 +116,8 @@ export async function sendWeatherEmail(message?: string, subject?: string) {
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     await resend.emails.send({
-      from: "Travel Weather Bot <jonathan@www.kraus.my.id>",
-      to: ["jonathankraus2026@outlook.com"],
+      from: "Travel Weather Bot <Jonathan@www.kraus.my.id>",
+      to: ["Jonathankraus2026@outlook.com"],
       subject: finalSubject,
       html: finalHtml,
       text: finalText,

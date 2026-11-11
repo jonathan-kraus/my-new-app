@@ -13,7 +13,7 @@ async function GETHandler(req: NextRequest) {
   let jei = 0;
   try {
     await logj({
-      domain: "jonathan",
+      domain: "Jonathan",
       level: "info",
       message: `API cron refrehlog started`,
       file: "app/api/cron/refreshLog/route.ts",
@@ -31,7 +31,7 @@ async function GETHandler(req: NextRequest) {
     });
 
     await logj({
-      domain: "jonathan",
+      domain: "Jonathan",
       level: "info",
       message: "API cron refreshlog completed",
       file: "app/api/cron/refreshLog/route.ts",
@@ -48,7 +48,7 @@ async function GETHandler(req: NextRequest) {
     });
   } catch {
     await logj({
-      domain: "jonathan",
+      domain: "Jonathan",
       level: "error",
       message: "API cron refreshlog error",
       file: "app/api/cron/refreshLog/route.ts",

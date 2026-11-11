@@ -12,7 +12,7 @@ export async function getPostgresVersion(req: Request) {
   const built = await buildUniversalContext(req, "PGVersion");
   let jei = 0;
   await logj({
-    domain: "jonathan",
+    domain: "Jonathan",
     level: "info",
     message: "Retrieving Postgres version from Neon (PGVersion.ts)",
     file: "app/db/PgVersion.ts",

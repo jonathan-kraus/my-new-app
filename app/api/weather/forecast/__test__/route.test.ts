@@ -24,7 +24,7 @@ vi.mock("@/lib/db.prisma8", () => ({
 
 vi.mock("@/auth", () => ({
   auth: vi.fn().mockResolvedValue({
-    user: { id: "u1", name: "Jonathan", email: "jonathan@kraus.my.id" },
+    user: { id: "u1", name: "Jonathan", email: "Jonathan@kraus.my.id" },
   }),
 }));
 vi.mock("@/lib/runtime/config", () => ({

@@ -36,7 +36,7 @@ export async function runDbTableStats(_ctx: {
   let jei = 1;
 
   await logj({
-    domain: "jonathan",
+    domain: "Jonathan",
     level: "info",
     message: "dbTables cron started",
     file: "src/lib/cron/runDbTableStats.ts",
@@ -69,7 +69,7 @@ export async function runDbTableStats(_ctx: {
     const tableName = row.table_name;
 
     await logj({
-      domain: "jonathan",
+      domain: "Jonathan",
       level: "info",
       message: `dbTables preparing to count rows for table ${tableName}`,
       file: "src/lib/cron/runDbTableStats.ts",
@@ -91,7 +91,7 @@ export async function runDbTableStats(_ctx: {
         )[0]?.count ?? 0;
 
       await logj({
-        domain: "jonathan",
+        domain: "Jonathan",
         level: "info",
         message: `dbTables update started for table ${tableName} with ${count} rows`,
         file: "src/lib/cron/runDbTableStats.ts",
@@ -134,7 +134,7 @@ export async function runDbTableStats(_ctx: {
       tablesProcessed++;
     } catch (err: unknown) {
       await logj({
-        domain: "jonathan",
+        domain: "Jonathan",
         level: "error",
         message: `dbTables error for table ${tableName}`,
         file: "src/lib/cron/runDbTableStats.ts",
@@ -152,7 +152,7 @@ export async function runDbTableStats(_ctx: {
   }
 
   await logj({
-    domain: "jonathan",
+    domain: "Jonathan",
     level: "info",
     message: "dbTables cron completed",
     file: "src/lib/cron/runDbTableStats.ts",

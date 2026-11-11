@@ -18,7 +18,7 @@ async function failure(error: unknown): Promise<RuntimeActionResult> {
     level: "error",
     message: "Runtime settings operation failed",
     file: "src/lib/runtime/actions.ts",
-    line: 14,
+    line: 16,
     payload: { error },
     meta: { built: { ...built, eventIndex: ++jei } },
   });
@@ -39,7 +39,7 @@ export async function saveRuntimeSetting(
       level: "info",
       message: "Runtime settings succeeded",
       file: "src/lib/runtime/actions.ts",
-      line: 38,
+      line: 37,
       payload: { error: false },
       meta: { built: { ...built, eventIndex: ++jei } },
     });

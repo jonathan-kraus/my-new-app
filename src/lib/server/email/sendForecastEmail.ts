@@ -166,7 +166,7 @@ export async function sendForecastEmail(form: FormData) {
 
     const { data: resendData, error } = await resend.emails.send({
       from: "Weather Bot <forecast@kraus.my.id>",
-      to: ["jonathankraus2026@outlook.com"],
+      to: ["Jonathankraus2026@outlook.com"],
       subject,
       react: renderForecastEmail(data, forecastRows),
     });

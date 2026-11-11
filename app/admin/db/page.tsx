@@ -10,7 +10,7 @@ export default async function DashboardPage() {
   const built = await staticUniversalContext("DB");
   let jei = 0;
   await logj({
-    domain: "jonathan",
+    domain: "Jonathan",
     level: "info",
     message: "Fetched DB overview and history",
     file: "app/admin/db/page.tsx",

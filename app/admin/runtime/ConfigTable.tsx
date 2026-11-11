@@ -37,7 +37,7 @@ export function ConfigTable({ configs }: { configs: RuntimeSetting[] }) {
     setError("");
     setStatus("");
     await logj({
-      domain: "jonathan",
+      domain: "Jonathan",
       level: "info",
       message: `** ConfigTable **`,
       file: "app/admin/runtime/ConfigTable.tsx",
@@ -76,7 +76,7 @@ export function ConfigTable({ configs }: { configs: RuntimeSetting[] }) {
         creating ? createRuntimeSetting : saveRuntimeSetting
       )(parsed.data);
       await logj({
-        domain: "jonathan",
+        domain: "Jonathan",
         level: "info",
         message: `** ConfigTable -- update **`,
         file: "app/admin/runtime/ConfigTable.tsx",

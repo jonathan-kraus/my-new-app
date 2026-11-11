@@ -39,7 +39,7 @@ export default async function RuntimeAdminPage() {
   const built = await buildPageUniversalContext("RUNTIME", "/admin/runtime");
 
   await logj({
-    domain: "jonathan",
+    domain: "Jonathan",
     level: "info",
     message: `** Runtime Admin Page **`,
     file: "app/admin/runtime/page.tsx",

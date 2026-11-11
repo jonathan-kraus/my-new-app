@@ -24,7 +24,7 @@ async function fetchWithRetry(station: string) {
   );
   let jei = 0;
   await logj({
-    domain: "jonathan",
+    domain: "Jonathan",
     level: "info",
     message: "Astronomy fetch attempt #1",
     file: "app/dashboard/astronomy/page.tsx",
@@ -49,7 +49,7 @@ async function fetchWithRetry(station: string) {
   const attempt2 = await getEphemerisSnapshot(station);
 
   await logj({
-    domain: "jonathan",
+    domain: "Jonathan",
     level: "info",
     message: "Astronomy fetch attempt #2",
     file: "app/dashboard/astronomy/page.tsx",

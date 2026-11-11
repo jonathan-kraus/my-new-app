@@ -17,7 +17,7 @@ async function GETHandler(
   let jei = 0;
 
   await logj({
-    domain: "jonathan",
+    domain: "Jonathan",
     level: "info",
     message: `In db table detail for ${name}`,
     file: "app/api/db/table/[name]/route.ts",

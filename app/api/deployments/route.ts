@@ -1,7 +1,7 @@
 import { withRequestTiming } from "@/lib/log/with-request-timing";
 import { NextResponse } from "next/server";
 
-const owner = "jonathan-kraus";
+const owner = "Jonathan-kraus";
 const repo = "my-new-app";
 
 async function GETHandler() {

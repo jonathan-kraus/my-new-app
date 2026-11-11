@@ -56,7 +56,7 @@ export default async function HomePage() {
   let jei = 0;
 
   await logj({
-    domain: "jonathan",
+    domain: "Jonathan",
     level: "info",
     message: `** Dashboard Start **`,
     file: "app/page.tsx",

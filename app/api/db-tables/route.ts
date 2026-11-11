@@ -28,7 +28,7 @@ async function GETHandler(req: NextRequest) {
   console.log("db-tables route called");
 
   await logj({
-    domain: "jonathan",
+    domain: "Jonathan",
     level: "info",
     message: `API db-tables started`,
     file: "app/api/db-tables/route.ts",
@@ -50,7 +50,7 @@ async function GETHandler(req: NextRequest) {
     const quoted = `"${table_name.replace(/"/g, '""')}"`;
 
     await logj({
-      domain: "jonathan",
+      domain: "Jonathan",
       level: "info",
       message: `API db-tables count rows for table: ${table_name}`,
       file: "app/api/db-tables/route.ts",
@@ -66,7 +66,7 @@ async function GETHandler(req: NextRequest) {
     const { exact_count } = countRows[0]!;
 
     await logj({
-      domain: "jonathan",
+      domain: "Jonathan",
       level: "info",
       message: `API db-tables size metrics for table: ${table_name}`,
       file: "app/api/db-tables/route.ts",

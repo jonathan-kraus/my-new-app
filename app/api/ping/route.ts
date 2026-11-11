@@ -22,7 +22,7 @@ async function GETHandler(req: NextRequest) {
 
   if (searchParams.get("run") !== "Jonathan") {
     await logj({
-      domain: "jonathan",
+      domain: "Jonathan",
       level: "info",
       message: "Ping work skipped. Add ?run=Jonathan to execute.",
       file: "app/api/ping/route.ts",
@@ -41,7 +41,7 @@ async function GETHandler(req: NextRequest) {
   }
 
   await logj({
-    domain: "jonathan",
+    domain: "Jonathan",
     level: "info",
     message: "Starting ping request for weather fetch",
     file: "app/api/ping/route.ts",
@@ -59,7 +59,7 @@ async function GETHandler(req: NextRequest) {
     issPassData = await issResponse.json();
 
     await logj({
-      domain: "jonathan",
+      domain: "Jonathan",
       level: "info",
       message: "ping retrieved ISS position data",
       file: "app/api/ping/route.ts",
@@ -71,7 +71,7 @@ async function GETHandler(req: NextRequest) {
     issPassData = { error: "ISS API failed", details: String(error) };
 
     await logj({
-      domain: "jonathan",
+      domain: "Jonathan",
       level: "error",
       message: "ping failed to retrieve ISS position data",
       file: "app/api/ping/route.ts",
@@ -161,7 +161,7 @@ async function GETHandler(req: NextRequest) {
     `\nTimezone difference to GMT+0: ${utcOffsetSeconds}s`,
   );
   await logj({
-    domain: "jonathan",
+    domain: "Jonathan",
     level: "info",
     message: "Ping retrieved open-meteo weather forecast",
     file: "app/api/ping/route.ts",
@@ -235,7 +235,7 @@ async function GETHandler(req: NextRequest) {
   );
 
   await logj({
-    domain: "jonathan",
+    domain: "Jonathan",
     level: "info",
     message: "ping processed weather data",
     file: "app/api/ping/route.ts",
@@ -261,12 +261,12 @@ async function GETHandler(req: NextRequest) {
 
     try {
       const geoRes = await fetch(geoUrl, {
-        headers: { "User-Agent": "jonathan-ping-iss" },
+        headers: { "User-Agent": "Jonathan-ping-iss" },
       });
       await geoRes.json();
 
       await logj({
-        domain: "jonathan",
+        domain: "Jonathan",
         level: "info",
         message: "ping retrieved reverse geocode for ISS location",
         file: "app/api/ping/route.ts",
@@ -335,12 +335,12 @@ async function GETHandler(req: NextRequest) {
 
   try {
     const geoRes = await fetch(geoUrl, {
-      headers: { "User-Agent": "jonathan-ping-api" }, // required by Nominatim
+      headers: { "User-Agent": "Jonathan-ping-api" }, // required by Nominatim
     });
     geo = await geoRes.json();
 
     await logj({
-      domain: "jonathan",
+      domain: "Jonathan",
       level: "info",
       message: "ping retrieved reverse geocode for weather location",
       file: "app/api/ping/route.ts",

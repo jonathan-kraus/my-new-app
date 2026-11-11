@@ -14,7 +14,7 @@ async function GETHandler(req: Request) {
   const ident = await getConfig("flight-ID", "flight-ID");
   console.log("FINAL IDENT:", ident);
   await logj({
-    domain: "jonathan",
+    domain: "Jonathan",
     level: "info",
     message: "API FA status route accessed",
     file: "app/api/fa/status/route.ts",
