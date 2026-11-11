@@ -1,27 +1,14 @@
 param(
-    [string]$Model = "gpt-oss:20b"
+    [string]$Model = "qwen2.5:3b"
 )
 
 $ErrorActionPreference = "Stop"
 
-# ============================
-# Colors
-# ============================
-$RED    = "Red"
-$GREEN  = "Green"
-$YELLOW = "Yellow"
-$CYAN   = "Cyan"
-
-# ============================
-# Get staged changes
-# ============================
 $diff = git diff --cached
 $changedFiles = @(git diff --cached --name-only)
 
 if ([string]::IsNullOrWhiteSpace($diff)) {
     $message = "chore: empty commit"
-
-    Write-Host "[INFO] No staged changes detected." -ForegroundColor $YELLOW
 
     Set-Content `
         -Path ".git/COMMIT_MSG" `
@@ -31,36 +18,30 @@ if ([string]::IsNullOrWhiteSpace($diff)) {
     exit 0
 }
 
-# ============================
-# Diagnostics
-# ============================
-Write-Host "[INFO] Changed files: $($changedFiles.Count)" -ForegroundColor $CYAN
-Write-Host "[INFO] Diff length : $($diff.Length) chars" -ForegroundColor $CYAN
+Write-Host "[INFO] Changed files: $($changedFiles.Count)"
+Write-Host "[INFO] Diff length : $($diff.Length) chars"
 
-# ============================
-# Limit prompt size
-# ============================
-$maxDiffChars = 15000
+# Prevent huge prompts
+$maxChars = 12000
 
-if ($diff.Length -gt $maxDiffChars) {
-    Write-Host "[WARN] Diff truncated to $maxDiffChars chars" -ForegroundColor $YELLOW
-    $diff = $diff.Substring(0, $maxDiffChars)
+if ($diff.Length -gt $maxChars) {
+    Write-Host "[WARN] Diff truncated to $maxChars chars"
+    $diff = $diff.Substring(0, $maxChars)
 }
 
-# ============================
-# Prompt
-# ============================
 $prompt = @"
-Write one concise, funny, professional git commit message.
+Generate ONE git commit message.
 
 Rules:
-- Return exactly ONE commit message
-- No quotes
-- No explanations
+- Conventional commit format
+- Maximum 72 characters
+- No explanation
 - No markdown
-- Max 80 characters
+- No quotes
+- Output one line only
 
 Changed files:
+
 $($changedFiles -join "`n")
 
 Diff:
@@ -68,56 +49,57 @@ Diff:
 $diff
 "@
 
-# ============================
-# Request body
-# ============================
 $body = @{
     model  = $Model
     prompt = $prompt
     stream = $false
 } | ConvertTo-Json -Depth 10
 
-$uri = "http://127.0.0.1:11434/api/generate"
 try {
 
-    Write-Host "[INFO] Testing Ollama..." -ForegroundColor $CYAN
+    Write-Host "[INFO] Testing Ollama..."
 
     Invoke-RestMethod `
         -Uri "http://127.0.0.1:11434/api/tags" `
         -Method Get | Out-Null
 
-    Write-Host "[INFO] Ollama reachable" -ForegroundColor Green
+    Write-Host "[INFO] Ollama reachable"
 
-    Write-Host "[INFO] Generating commit message..." -ForegroundColor Cyan
+    Write-Host "[INFO] Generating commit message..."
 
-    $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+    $sw = [System.Diagnostics.Stopwatch]::StartNew()
 
     $response = Invoke-RestMethod `
-        -Uri $uri `
+        -Uri "http://127.0.0.1:11434/api/generate" `
         -Method Post `
         -ContentType "application/json" `
-        -TimeoutSec 520 `
+        -TimeoutSec 180 `
         -Body $body
 
-    $stopwatch.Stop()
+    $sw.Stop()
 
-    Write-Host "[INFO] Generation completed in $($stopwatch.Elapsed.TotalSeconds.ToString('0.0'))s" `
-        -ForegroundColor Green
+    Write-Host "[INFO] Generation completed in $($sw.Elapsed.TotalSeconds.ToString('0.0'))s"
 
-    if (-not $response.message.content) {
-        throw "No content returned from Ollama."
+    if ([string]::IsNullOrWhiteSpace($response.response)) {
+        throw "Model returned empty response."
     }
 
     $message = $response.response.Trim()
+
+    # sanitize multiline accidents
+    $message = ($message -split "`r?`n")[0].Trim()
+
+    if ($message.Length -gt 120) {
+        $message = $message.Substring(0,120).Trim()
+    }
 }
 catch {
 
     Write-Host ""
-    Write-Host "[WARN] Ollama failed." -ForegroundColor Yellow
-    Write-Host $_.Exception.ToString() -ForegroundColor DarkYellow
+    Write-Host "[WARN] Ollama failed."
+    Write-Host $_.Exception.ToString()
     Write-Host ""
 
-    # Fallback that never blocks a commit
     if ($changedFiles -contains "package.json") {
         $message = "chore: update dependencies and application code"
     }
@@ -125,23 +107,16 @@ catch {
         $message = "chore: update project files"
     }
 
-    Write-Host "[INFO] Using fallback commit message" -ForegroundColor Yellow
+    Write-Host "[INFO] Using fallback commit message"
 }
 
-# ============================
-# Save commit message
-# ============================
 Set-Content `
     -Path ".git/COMMIT_MSG" `
     -Value $message `
     -Encoding UTF8
 
 Write-Host ""
-Write-Host "[SAVED] Commit message written to .git/COMMIT_MSG" `
-    -ForegroundColor Cyan
-
+Write-Host "[SAVED] Commit message written to .git/COMMIT_MSG"
 Write-Host ""
-Write-Host $message -ForegroundColor Green
+Write-Host $message
 Write-Host ""
-
-exit 0
