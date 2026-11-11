@@ -72,21 +72,12 @@ $diff
 # Request body
 # ============================
 $body = @{
-    model = $Model
-    messages = @(
-        @{
-            role    = "user"
-            content = $prompt
-        }
-    )
+    model  = $Model
+    prompt = $prompt
     stream = $false
 } | ConvertTo-Json -Depth 10
 
-# ============================
-# API
-# ============================
-$uri = "http://127.0.0.1:11434/api/chat"
-
+$uri = "http://127.0.0.1:11434/api/generate"
 try {
 
     Write-Host "[INFO] Testing Ollama..." -ForegroundColor $CYAN
@@ -117,7 +108,7 @@ try {
         throw "No content returned from Ollama."
     }
 
-    $message = $response.message.content.Trim()
+    $message = $response.response.Trim()
 }
 catch {
 
