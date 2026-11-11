@@ -37,7 +37,7 @@ export async function saveRuntimeSetting(
     await logj({
       domain: "jonathan",
       level: "info",
-      message: "Runtime settings operation succeeded",
+      message: "Runtime settings succeeded",
       file: "src/lib/runtime/actions.ts",
       line: 38,
       payload: { error: false },
