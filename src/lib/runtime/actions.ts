@@ -1,16 +1,27 @@
 "use server";
 
 import { db8 } from "@/lib/db.prisma8";
+import { logj } from "@/lib/log/logj";
+import { staticUniversalContext } from "@/lib/log/buildj";
 import { timestampString } from "@/lib/timestampString";
 import { deleteConfig, setConfig } from "./config";
 import { requireRuntimeAdmin, RuntimeAccessError } from "./admin";
 import { runtimeKeySchema, runtimeSettingSchema } from "./validation";
 import type { RuntimeActionResult } from "./validation";
-
-function failure(error: unknown): RuntimeActionResult {
+const built = staticUniversalContext("runtime");
+let jei = 0;
+async function failure(error: unknown): Promise<RuntimeActionResult> {
   if (error instanceof RuntimeAccessError)
     return { ok: false, error: error.message };
-  console.error("Runtime settings operation failed", error);
+  await logj({
+    domain: "jonathan",
+    level: "error",
+    message: "Runtime settings operation failed",
+    file: "src/lib/runtime/actions.ts",
+    line: 14,
+    payload: { error },
+    meta: { built: { ...built, eventIndex: ++jei } },
+  });
   return { ok: false, error: "Could not save the change. Please try again." };
 }
 
@@ -23,6 +34,15 @@ export async function saveRuntimeSetting(
     if (!parsed.success)
       return { ok: false, error: parsed.error.issues[0]!.message };
     await setConfig(parsed.data.key, parsed.data.value);
+    await logj({
+      domain: "jonathan",
+      level: "info",
+      message: "Runtime settings operation succeeded",
+      file: "src/lib/runtime/actions.ts",
+      line: 38,
+      payload: { error: false },
+      meta: { built: { ...built, eventIndex: ++jei } },
+    });
     return { ok: true };
   } catch (error) {
     return failure(error);
