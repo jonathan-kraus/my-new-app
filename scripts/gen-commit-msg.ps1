@@ -53,6 +53,10 @@ $body = @{
     model  = $Model
     prompt = $prompt
     stream = $false
+        options = @{
+        temperature = 0.2
+        num_predict = 32
+    }
 } | ConvertTo-Json -Depth 10
 
 try {
