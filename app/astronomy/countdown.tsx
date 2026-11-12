@@ -128,7 +128,7 @@ type MoonsetCountdownProps = {
   timezone: string;
 };
 
-export function MoonsetCountdown({ moonset, timezone }: MoonsetCountdownProps) {
+export function MoonsetCountdown({ moonset }: MoonsetCountdownProps) {
   const [remaining, setRemaining] = useState<number | null>(null);
 
   const lastHourRef = useRef<number | null>(null);
