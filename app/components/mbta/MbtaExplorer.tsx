@@ -36,7 +36,7 @@ export function MbtaExplorer({
   return (
     <div className="mx-auto max-w-3xl space-y-6 px-4 py-8 sm:px-6">
       <header>
-        <p className="text-sm font-medium text-blue-200">
+        <p className="text-sm font-medium text-blue-300">
           Subway &amp; trolley
         </p>
         <h1 className="mt-1 text-3xl font-bold">MBTA arrivals</h1>
