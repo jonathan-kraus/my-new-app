@@ -1,0 +1,141 @@
+param(
+    [string]$Model = "qwen2.5:7b"
+)
+
+$ErrorActionPreference = "Stop"
+
+$diff = git diff --cached
+$changedFiles = @(git diff --cached --name-only)
+
+if ([string]::IsNullOrWhiteSpace($diff)) {
+    $message = "chore: empty commit"
+
+    Set-Content `
+        -Path ".git/COMMIT_MSG" `
+        -Value $message `
+        -Encoding UTF8
+
+    exit 0
+}
+
+Write-Host "[INFO] Changed files: $($changedFiles.Count)"
+Write-Host "[INFO] Diff length : $($diff.Length) chars"
+
+# Prevent huge prompts
+$maxChars = 12000
+
+if ($diff.Length -gt $maxChars) {
+    Write-Host "[WARN] Diff truncated to $maxChars chars"
+    $diff = $diff.Substring(0, $maxChars)
+}
+
+$prompt = @"
+Generate ONE git commit message.
+
+Requirements:
+- English only
+- Conventional Commit format
+- Output exactly one line
+- Maximum 72 characters
+- No explanations
+- No commentary
+- No markdown
+- Humorous or witty messages are acceptable
+- Begin with feat:, fix:, chore:, docs:, refactor:, test:, or ci:
+- If uncertain, output exactly:
+  chore: update project files
+
+
+Changed files:
+
+$($changedFiles -join "`n")
+
+Diff:
+
+$diff
+"@
+
+$body = @{
+    model  = $Model
+    prompt = $prompt
+    stream = $false
+        options = @{
+        temperature = 0.2
+        num_predict = 72
+    }
+} | ConvertTo-Json -Depth 10
+
+try {
+
+    Write-Host "[INFO] Testing Ollama..."
+
+    Invoke-RestMethod `
+        -Uri "http://127.0.0.1:11434/api/tags" `
+        -Method Get | Out-Null
+
+    Write-Host "✔ Ollama reachable" -ForegroundColor Green
+
+    Write-Host "[INFO] Generating commit message..."
+
+    $sw = [System.Diagnostics.Stopwatch]::StartNew()
+
+    $response = Invoke-RestMethod `
+        -Uri "http://127.0.0.1:11434/api/generate" `
+        -Method Post `
+        -ContentType "application/json" `
+        -TimeoutSec 180 `
+        -Body $body
+
+    $sw.Stop()
+
+    Write-Host "[INFO] Generation completed in $($sw.Elapsed.TotalSeconds.ToString('0.0'))s"
+
+    if ([string]::IsNullOrWhiteSpace($response.response)) {
+        throw "Model returned empty response."
+    }
+
+    $message = $response.response.Trim()
+
+    # sanitize multiline accidents
+    $message = ($message -split "`r?`n")[0].Trim()
+
+    if ($message.Length -gt 120) {
+        $message = $message.Substring(0,120).Trim()
+    }
+    $isValid =
+    $message -match '^(feat|fix|chore|docs|refactor|test|ci)(\(.+\))?: '
+
+$containsChinese =
+    $message -match '[\u4e00-\u9fff]'
+
+if (-not $isValid -or $containsChinese) {
+    throw "Invalid commit message generated"
+}
+}
+catch {
+
+    Write-Host ""
+    Write-Host "[WARN] Ollama failed." -ForegroundColor Yellow
+    Write-Host $_.Exception.ToString()
+    Write-Host ""
+
+    if ($changedFiles -contains "package.json") {
+        $message = "chore: update dependencies and application code"
+    }
+    else {
+        $message = "chore: update project files"
+    }
+
+    Write-Host "[WARN] Using fallback commit message" -ForegroundColor Yellow
+}
+
+Set-Content `
+    -Path ".git/COMMIT_MSG" `
+    -Value $message `
+    -Encoding UTF8
+
+Write-Host ""
+Write-Host "[SAVED] Commit message written to .git/COMMIT_MSG" -ForegroundColor Green
+Write-Host ""
+Write-Host $message
+Write-Host ""
