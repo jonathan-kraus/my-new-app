@@ -32,13 +32,19 @@ if ($diff.Length -gt $maxChars) {
 $prompt = @"
 Generate ONE git commit message.
 
-Rules:
-- Conventional commit format
+Requirements:
+- English only
+- Conventional Commit format
+- Output exactly one line
 - Maximum 72 characters
-- No explanation
+- No explanations
+- No commentary
 - No markdown
-- No quotes
-- Output one line only
+- Humorous or witty messages are acceptable
+- Begin with feat:, fix:, chore:, docs:, refactor:, test:, or ci:
+- If uncertain, output exactly:
+  chore: update project files
+
 
 Changed files:
 
@@ -55,7 +61,7 @@ $body = @{
     stream = $false
         options = @{
         temperature = 0.2
-        num_predict = 32
+        num_predict = 72
     }
 } | ConvertTo-Json -Depth 10
 
@@ -96,6 +102,15 @@ try {
     if ($message.Length -gt 120) {
         $message = $message.Substring(0,120).Trim()
     }
+    $isValid =
+    $message -match '^(feat|fix|chore|docs|refactor|test|ci)(\(.+\))?: '
+
+$containsChinese =
+    $message -match '[\u4e00-\u9fff]'
+
+if (-not $isValid -or $containsChinese) {
+    throw "Invalid commit message generated"
+}
 }
 catch {
 
