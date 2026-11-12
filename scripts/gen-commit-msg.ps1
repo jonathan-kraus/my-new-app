@@ -83,7 +83,7 @@ try {
         -Uri "http://127.0.0.1:11434/api/tags" `
         -Method Get | Out-Null
 
-    Write-Host "[INFO] Ollama reachable"
+    Write-Host "[INFO] Ollama reachable" -ForegroundColor Green
 
     Write-Host "[INFO] Generating commit message..."
 
@@ -113,10 +113,8 @@ $message = $message.Trim('"'' ')
 if ($message.Length -gt 120) {
     $message = $message.Substring(0,120).Trim()
 }
-Write-Host "Valid: $isValid"
-$isValid = $message -match '^(feat|fix|chore|docs|refactor|test|ci)(\(.+\))?: '
 
-Write-Host "Valid: $isValid"
+$isValid = $message -match '^(feat|fix|chore|docs|refactor|test|ci)(\(.+\))?: '
 
 if (-not $isValid) {
     throw "Invalid commit message generated"
@@ -125,7 +123,6 @@ if (-not $isValid) {
 if (-not $isValid -or $containsChinese) {
     throw "Invalid commit message generated"
 }
-
 }
 catch {
 
