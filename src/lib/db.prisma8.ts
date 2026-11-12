@@ -15,10 +15,10 @@ import contractJson from "../../generated/prisma8/contract.json" with {
 export const contract = contractFromJson<Contract>(contractJson);
 
 function getRuntimeDatabaseUrl(): string {
-  const directUrl = process.env["DIRECT_URL"];
+  const directUrl = process.env.DIRECT_URL;
   if (directUrl) return directUrl;
 
-  const databaseUrl = process.env["DATABASE_URL"]!;
+  const databaseUrl = process.env.DATABASE_URL!;
   const url = new URL(databaseUrl);
 
   // Neon marks pooled endpoints with `-pooler` in the hostname. The Prisma

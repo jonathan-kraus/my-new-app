@@ -1,3 +1,7 @@
+/*
+ * @FilePath: \my-new-app\app\components\Countdown.tsx
+ * @LastEditTime: 2026-11-12 13:24:27
+ */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -12,7 +16,7 @@ export function Countdown({ timestamp }: { timestamp: Date | string }) {
 
   const target = timestamp instanceof Date ? timestamp : new Date(timestamp);
 
-  if (isNaN(target.getTime())) return <>—</>;
+  if (Number.isNaN(target.getTime())) return <>—</>;
 
   const diff = target.getTime() - now.getTime();
   if (diff <= 0) return <>Now</>;

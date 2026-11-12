@@ -1,7 +1,5 @@
 "use client";
 
-import React from "react";
-
 type LunarEvent = {
   name: string;
   timeLocal: string;

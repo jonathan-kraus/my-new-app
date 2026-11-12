@@ -32,7 +32,7 @@ export default function Skybox({
     });
     const timer = setInterval(loadSkybox, 60_000);
     return () => clearInterval(timer);
-  }, []);
+  }, [loadSkybox]);
 
   return (
     <div className="bg-slate-800 border border-slate-700 rounded-lg p-6 shadow-lg">

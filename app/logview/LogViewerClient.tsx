@@ -262,14 +262,14 @@ export default function LogViewerClient() {
   useEffect(() => {
     if (tailing) return;
     fetchRef.current({ reset: true });
-  }, [selectedLevel, selectedDomain, window_, tailing]);
+  }, [tailing]);
 
   // Debounced search.
   useEffect(() => {
     if (tailing) return;
     const t = setTimeout(() => fetchRef.current({ reset: true }), 350);
     return () => clearTimeout(t);
-  }, [search, tailing]);
+  }, [tailing]);
 
   // ── Pagination ───────────────────────────────────────────────────────────
   const goToOffset = useCallback((next: number) => {

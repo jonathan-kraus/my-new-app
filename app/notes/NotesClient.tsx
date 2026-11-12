@@ -145,7 +145,7 @@ export default function NotesClient() {
     }
 
     void load();
-  }, []);
+  }, [refreshFollowupsDueCount]);
 
   useEffect(() => {
     void logj.info({
@@ -175,7 +175,7 @@ export default function NotesClient() {
         ? notes.filter((note) => note.isArchived && matches(note))
         : [],
     };
-  }, [notes, showFollowupsOnly, searchQuery]);
+  }, [notes, showFollowupsOnly, searchQuery, isFollowupDueSoon]);
 
   const isSearching = searchQuery.trim().length > 0;
   const visibleNotes = [...activeNotes, ...archivedNotes];

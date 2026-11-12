@@ -1,9 +1,10 @@
 /*
  * @FilePath: \my-new-app\scripts\update-all-logj-lines.js
- * @LastEditTime: 2026-08-11 19:50:07
+ * @LastEditTime: 2026-11-12 13:29:27
  */
-import fs from "fs";
-import path from "path";
+
+import fs from "node:fs";
+import path from "node:path";
 
 const workspaceRoot = process.cwd();
 

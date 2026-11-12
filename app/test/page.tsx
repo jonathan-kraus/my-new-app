@@ -1,5 +1,3 @@
-// app/test/page.jsx
-import React from "react";
 import { getConfig } from "@/lib/runtime/config";
 
 export default async function TestPage() {

@@ -25,7 +25,7 @@ export function normalizeGitHubEvent(
   logj({
     domain: "github",
     level: "info",
-    message: "Github normalize event - " + event,
+    message: `Github normalize event - ${event}`,
     file: "src/lib/github/normalize/index.ts",
     line: 26,
     payload: { repo: repo, event: event },

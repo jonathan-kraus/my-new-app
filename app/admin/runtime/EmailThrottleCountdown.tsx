@@ -2,7 +2,7 @@
 
 /*
  * @FilePath: \my-new-app\app\admin\runtime\EmailThrottleCountdown.tsx
- * @LastEditTime: 2026-08-19 00:30:09
+ * @LastEditTime: 2026-11-12 13:27:21
  */
 
 import { formatDistanceToNow } from "date-fns";
@@ -18,7 +18,7 @@ export function EmailThrottleCountdown({
   // Keep the timer dependency stable between countdown renders.
   const nextAllowed = useMemo(() => {
     const last = lastSent ? new Date(lastSent) : null;
-    return last && !isNaN(last.getTime())
+    return last && !Number.isNaN(last.getTime())
       ? new Date(last.getTime() + throttleMinutes * 60 * 1000)
       : null;
   }, [lastSent, throttleMinutes]);

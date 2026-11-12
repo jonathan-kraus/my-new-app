@@ -31,7 +31,7 @@ const FORECAST_CACHE_MINUTES = fcm;
 // Include the zone in API responses so browsers do not interpret it as local time.
 function snapshotTimestamp(value: string) {
   return new Date(
-    value.replace(" ", "T").replace(/Z$/, "") + "Z",
+    `${value.replace(" ", "T").replace(/Z$/, "")}Z`,
   ).toISOString();
 }
 
@@ -314,13 +314,13 @@ export async function GET(req: Request) {
   // ----------------------------------------
   // GUARD AGAINST PARTIAL DAILY BLOCK
   // ----------------------------------------
-  if (!weather.daily || !weather.daily.temperature_2m_max) {
+  if (!weather.daily?.temperature_2m_max) {
     await logj({
       domain: "weather",
       level: "error",
       message: "Forecast unavailable (missing daily block)",
       file: "app/api/weather/forecast/route.ts",
-      line: 317,
+      line: 318,
       payload: { raw },
       meta: { built: { ...built, eventIndex: ++jei } },
     });

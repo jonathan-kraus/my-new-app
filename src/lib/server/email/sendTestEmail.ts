@@ -20,7 +20,7 @@ export async function sendTestEmail(message?: string, subject?: string) {
     await logj({
       domain: "Jonathan",
       level: "info",
-      message: message_begin + "Email disabled by flag",
+      message: `${message_begin}Email disabled by flag`,
       file: "src/lib/server/email/sendTestEmail.ts",
       line: 20,
       payload: { enabled },
@@ -53,7 +53,7 @@ export async function sendTestEmail(message?: string, subject?: string) {
   await logj({
     domain: "Jonathan",
     level: "info",
-    message: message_begin + "Throttle check starting",
+    message: `${message_begin}Throttle check starting`,
     file: "src/lib/server/email/sendTestEmail.ts",
     line: 53,
     payload: {
@@ -73,7 +73,7 @@ export async function sendTestEmail(message?: string, subject?: string) {
   await logj({
     domain: "Jonathan",
     level: "info",
-    message: message_begin + "Throttle status computed",
+    message: `${message_begin}Throttle status computed`,
     file: "src/lib/server/email/sendTestEmail.ts",
     line: 73,
     payload: {
@@ -90,7 +90,7 @@ export async function sendTestEmail(message?: string, subject?: string) {
     await logj({
       domain: "Jonathan",
       level: "info",
-      message: message_begin + "Throttled",
+      message: `${message_begin}Throttled`,
       file: "src/lib/server/email/sendTestEmail.ts",
       line: 90,
       payload: { throttleStatus },
@@ -111,7 +111,7 @@ export async function sendTestEmail(message?: string, subject?: string) {
     await logj({
       domain: "Jonathan",
       level: "error",
-      message: message_begin + "RESEND_API_KEY is missing",
+      message: `${message_begin}RESEND_API_KEY is missing`,
       file: "src/lib/server/email/sendTestEmail.ts",
       line: 111,
       payload: {},
@@ -144,7 +144,7 @@ export async function sendTestEmail(message?: string, subject?: string) {
     await logj({
       domain: "Jonathan",
       level: "info",
-      message: message_begin + "Test email sent",
+      message: `${message_begin}Test email sent`,
       file: "src/lib/server/email/sendTestEmail.ts",
       line: 144,
       payload: {
@@ -162,7 +162,7 @@ export async function sendTestEmail(message?: string, subject?: string) {
     await logj({
       domain: "Jonathan",
       level: "info",
-      message: message_begin + "Updated last_sent_at",
+      message: `${message_begin}Updated last_sent_at`,
       file: "src/lib/server/email/sendTestEmail.ts",
       line: 162,
       payload: {
@@ -184,7 +184,7 @@ export async function sendTestEmail(message?: string, subject?: string) {
     await logj({
       domain: "Jonathan",
       level: "error",
-      message: message_begin + "Resend error",
+      message: `${message_begin}Resend error`,
       file: "src/lib/server/email/sendTestEmail.ts",
       line: 184,
       payload: { detail },

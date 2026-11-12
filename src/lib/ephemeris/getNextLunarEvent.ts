@@ -1,3 +1,7 @@
+/*
+ * @FilePath: \my-new-app\src\lib\ephemeris\getNextLunarEvent.ts
+ * @LastEditTime: 2026-11-12 13:27:40
+ */
 // lib/ephemeris/events/getNextLunarEvent.ts
 
 export type NextLunarEvent = {
@@ -18,7 +22,7 @@ export function getNextLunarEvent(snapshot: {
   // Moonrise
   if (snapshot.moonriseAbsolute) {
     const d = new Date(snapshot.moonriseAbsolute);
-    if (!isNaN(d.getTime())) {
+    if (!Number.isNaN(d.getTime())) {
       events.push({ name: "Moonrise", time: d });
     }
   }
@@ -26,7 +30,7 @@ export function getNextLunarEvent(snapshot: {
   // Moonset
   if (snapshot.moonsetAbsolute) {
     const d = new Date(snapshot.moonsetAbsolute);
-    if (!isNaN(d.getTime())) {
+    if (!Number.isNaN(d.getTime())) {
       events.push({ name: "Moonset", time: d });
     }
   }

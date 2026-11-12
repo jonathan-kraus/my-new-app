@@ -24,7 +24,7 @@ export function getThrottleStatus(
   const lastSent = lastSentRaw ? new Date(lastSentRaw) : null;
 
   // If no last sent or invalid date, can send immediately
-  if (!lastSent || isNaN(lastSent.getTime())) {
+  if (!lastSent || Number.isNaN(lastSent.getTime())) {
     return {
       isThrottled: false,
       canSendNow: true,

@@ -6,8 +6,8 @@ import { withRequestTiming } from "@/lib/log/with-request-timing";
 // app/api/github-webhook/route.ts
 export const runtime = "nodejs";
 
+import crypto from "node:crypto";
 import { createId } from "@paralleldrive/cuid2";
-import crypto from "crypto";
 import { db8 } from "@/lib/db.prisma8";
 import { normalizeGitHubEvent } from "@/lib/github/normalize";
 import { staticUniversalContext } from "@/lib/log/buildj";
@@ -114,7 +114,7 @@ async function verifySignature(req: Request, body: string) {
   if (!signature || !secret) return false;
 
   const hmac = crypto.createHmac("sha256", secret);
-  const digest = "sha256=" + hmac.update(body).digest("hex");
+  const digest = `sha256=${hmac.update(body).digest("hex")}`;
 
   try {
     return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(digest));

@@ -65,7 +65,7 @@ export async function sendForecastEmail(form: FormData) {
     await logj({
       domain: "weather",
       level: "warn",
-      message: MESSAGE_PREFIX + "Invalid email data",
+      message: `${MESSAGE_PREFIX}Invalid email data`,
       file: "src/lib/server/email/sendForecastEmail.ts",
       line: 65,
       payload: {
@@ -94,7 +94,7 @@ export async function sendForecastEmail(form: FormData) {
     await logj({
       domain: "weather",
       level: "info",
-      message: MESSAGE_PREFIX + "Email disabled by flag",
+      message: `${MESSAGE_PREFIX}Email disabled by flag`,
       file: "src/lib/server/email/sendForecastEmail.ts",
       line: 94,
       payload: {
@@ -187,7 +187,7 @@ export async function sendForecastEmail(form: FormData) {
     await logj({
       domain: "weather",
       level: "info",
-      message: MESSAGE_PREFIX + "Forecast email sent",
+      message: `${MESSAGE_PREFIX}Forecast email sent`,
       file: "src/lib/server/email/sendForecastEmail.ts",
       line: 187,
       payload: {
@@ -225,7 +225,7 @@ export async function sendForecastEmail(form: FormData) {
     await logj({
       domain: "weather",
       level: "error",
-      message: MESSAGE_PREFIX + "Resend error",
+      message: `${MESSAGE_PREFIX}Resend error`,
       file: "src/lib/server/email/sendForecastEmail.ts",
       line: 225,
       payload: {

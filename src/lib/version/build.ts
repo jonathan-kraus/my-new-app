@@ -2,8 +2,9 @@
  * @FilePath: \my-new-app\lib\version\build.ts
  * @LastEditTime: 2026-07-22 13:11:10
  */
-import fs from "fs";
-import path from "path";
+
+import fs from "node:fs";
+import path from "node:path";
 
 export type BuildMetadata = {
   timestamp: string;

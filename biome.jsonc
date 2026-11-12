@@ -40,6 +40,9 @@
       "preset": "recommended",
       "style": {
         "noNonNullAssertion": "off"
+      },
+      "correctness": {
+        "useParseIntRadix": "off"
       }
     }
   }

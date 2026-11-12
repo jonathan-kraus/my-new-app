@@ -35,7 +35,7 @@ export default function LiveLogs() {
 
     const id = setInterval(fetchLogs, 22222);
     return () => clearInterval(id);
-  }, []);
+  }, [fetchLogs]);
 
   if (loading) {
     return <div className="text-gray-400">Loading logs…</div>;

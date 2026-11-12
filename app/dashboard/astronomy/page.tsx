@@ -15,7 +15,7 @@ export const revalidate = 60;
 async function fetchWithRetry(station: string) {
   const attempt1 = await getEphemerisSnapshot(station);
   const session = await auth();
-  if (!session || !session.user) {
+  if (!session?.user) {
     throw new Error("No active session found.");
   }
   const built = await buildPageUniversalContext(

@@ -1,3 +1,7 @@
+/*
+ * @FilePath: \my-new-app\src\lib\runtime\config.ts
+ * @LastEditTime: 2026-11-12 13:27:59
+ */
 import "server-only";
 
 import { db8 } from "@/lib/db.prisma8";
@@ -45,7 +49,7 @@ export async function deleteConfig(key: string) {
 function parseValue(v: string): RuntimeValue {
   if (v === "true") return true;
   if (v === "false") return false;
-  if (!isNaN(Number(v))) return Number(v);
+  if (!Number.isNaN(Number(v))) return Number(v);
 
   return v;
 }

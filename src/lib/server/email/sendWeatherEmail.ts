@@ -22,7 +22,7 @@ export async function sendWeatherEmail(message?: string, subject?: string) {
   await logj({
     domain: "email",
     level: "info",
-    message: message_begin + "Checked email_enabled",
+    message: `${message_begin}Checked email_enabled`,
     file: "src/lib/server/email/sendWeatherEmail.ts",
     line: 22,
     payload: {
@@ -38,7 +38,7 @@ export async function sendWeatherEmail(message?: string, subject?: string) {
     await logj({
       domain: "email",
       level: "warn",
-      message: message_begin + "Email sending disabled by runtime flag",
+      message: `${message_begin}Email sending disabled by runtime flag`,
       file: "src/lib/server/email/sendWeatherEmail.ts",
       line: 38,
       payload: {},
@@ -70,7 +70,7 @@ export async function sendWeatherEmail(message?: string, subject?: string) {
   await logj({
     domain: "email",
     level: "info",
-    message: message_begin + "Throttle check starting",
+    message: `${message_begin}Throttle check starting`,
     file: "src/lib/server/email/sendWeatherEmail.ts",
     line: 70,
     payload: {
@@ -90,7 +90,7 @@ export async function sendWeatherEmail(message?: string, subject?: string) {
   await logj({
     domain: "email",
     level: "info",
-    message: message_begin + "Throttle status computed",
+    message: `${message_begin}Throttle status computed`,
     file: "src/lib/server/email/sendWeatherEmail.ts",
     line: 90,
     payload: {
@@ -126,7 +126,7 @@ export async function sendWeatherEmail(message?: string, subject?: string) {
     await logj({
       domain: "email",
       level: "info",
-      message: message_begin + "Travel Weather email sent (Resend)",
+      message: `${message_begin}Travel Weather email sent (Resend)`,
       file: "src/lib/server/email/sendWeatherEmail.ts",
       line: 126,
       payload: {
@@ -143,7 +143,7 @@ export async function sendWeatherEmail(message?: string, subject?: string) {
     await logj({
       domain: "email",
       level: "info",
-      message: message_begin + "Updated last_sent_at",
+      message: `${message_begin}Updated last_sent_at`,
       file: "src/lib/server/email/sendWeatherEmail.ts",
       line: 143,
       payload: {
@@ -159,7 +159,7 @@ export async function sendWeatherEmail(message?: string, subject?: string) {
     await logj({
       domain: "email",
       level: "error",
-      message: message_begin + "Resend error",
+      message: `${message_begin}Resend error`,
       file: "src/lib/server/email/sendWeatherEmail.ts",
       line: 159,
       payload: {

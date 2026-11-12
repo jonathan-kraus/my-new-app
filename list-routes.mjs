@@ -1,8 +1,8 @@
 // list-routes.mjs
 // Run from your project root: node list-routes.mjs
 
-import { readdir, readFile } from "fs/promises";
-import { join, relative } from "path";
+import { readdir, readFile } from "node:fs/promises";
+import { join, relative } from "node:path";
 
 const APP_DIR = "./app";
 
@@ -37,7 +37,7 @@ async function findRoutes(dir, routes = []) {
 
     if (entry.isFile() && entry.name === "page.tsx") {
       const relativePath = relative(APP_DIR, dir);
-      const route = "/" + relativePath.replace(/\\/g, "/");
+      const route = `/${relativePath.replace(/\\/g, "/")}`;
       const comment = await getComment(fullPath);
       routes.push({
         route: route === "/." ? "/" : route,
@@ -54,7 +54,7 @@ const routes = await findRoutes(APP_DIR);
 
 routes.sort((a, b) => a.route.localeCompare(b.route));
 
-console.log("\n📁 App Routes\n" + "─".repeat(60));
+console.log(`\n📁 App Routes\n${"─".repeat(60)}`);
 
 for (const { route, file, comment } of routes) {
   const label = comment ? `  ← ${comment}` : "";

@@ -126,7 +126,7 @@ describe("Resend webhook", () => {
     const tampered = new Request(signed.url, {
       method: "POST",
       headers: signed.headers,
-      body: body + " ",
+      body: `${body} `,
     });
     expect((await POST(tampered)).status).toBe(400);
     expect(mocks.get).not.toHaveBeenCalled();

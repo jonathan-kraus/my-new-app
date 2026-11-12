@@ -34,7 +34,7 @@ export default function FlightDashboard() {
     queueMicrotask(() => {
       load();
     });
-  }, []);
+  }, [load]);
 
   async function updateFlight() {
     if (!identInput) return;

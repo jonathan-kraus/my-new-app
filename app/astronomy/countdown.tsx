@@ -19,7 +19,7 @@ export function SunriseCountdown({ sunrise, timezone }: SunriseCountdownProps) {
     const target = new Date(sunrise).getTime();
 
     const tick = () => {
-      const now = new Date().getTime();
+      const now = Date.now();
       const diff = target - now;
 
       if (diff <= 0) {
@@ -48,7 +48,7 @@ export function SunriseCountdown({ sunrise, timezone }: SunriseCountdownProps) {
     const interval = setInterval(tick, 1000);
 
     return () => clearInterval(interval);
-  }, [sunrise, timezone]);
+  }, [sunrise]);
 
   if (remaining == null) return null;
 
@@ -79,7 +79,7 @@ export function SunsetCountdown({ sunset, timezone }: SunsetCountdownProps) {
     const target = new Date(sunset).getTime();
 
     const tick = () => {
-      const now = new Date().getTime();
+      const now = Date.now();
       const diff = target - now;
 
       if (diff <= 0) {
@@ -108,7 +108,7 @@ export function SunsetCountdown({ sunset, timezone }: SunsetCountdownProps) {
     const interval = setInterval(tick, 1000);
 
     return () => clearInterval(interval);
-  }, [sunset, timezone]);
+  }, [sunset]);
 
   if (remaining == null) return null;
 
@@ -140,7 +140,7 @@ export function MoonsetCountdown({ moonset, timezone }: MoonsetCountdownProps) {
     const target = new Date(moonset).getTime();
 
     const tick = () => {
-      const now = new Date().getTime();
+      const now = Date.now();
       const diff = target - now;
 
       if (diff <= 0) {
@@ -167,7 +167,7 @@ export function MoonsetCountdown({ moonset, timezone }: MoonsetCountdownProps) {
     tick();
     const interval = setInterval(tick, 1000);
     return () => clearInterval(interval);
-  }, [moonset, timezone]);
+  }, [moonset]);
 
   if (remaining == null) return null;
 
@@ -187,10 +187,7 @@ type MoonriseCountdownProps = {
   timezone: string;
 };
 
-export function MoonriseCountdown({
-  moonrise,
-  timezone,
-}: MoonriseCountdownProps) {
+export function MoonriseCountdown({ moonrise }: MoonriseCountdownProps) {
   const [remaining, setRemaining] = useState<number | null>(null);
 
   const lastHourRef = useRef<number | null>(null);
@@ -202,7 +199,7 @@ export function MoonriseCountdown({
     const target = new Date(moonrise).getTime();
 
     const tick = () => {
-      const now = new Date().getTime();
+      const now = Date.now();
       const diff = target - now;
 
       if (diff <= 0) {
@@ -229,7 +226,7 @@ export function MoonriseCountdown({
     tick();
     const interval = setInterval(tick, 1000);
     return () => clearInterval(interval);
-  }, [moonrise, timezone]);
+  }, [moonrise]);
 
   if (remaining == null) return null;
 

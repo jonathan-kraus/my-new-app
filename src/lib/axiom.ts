@@ -24,8 +24,7 @@ export async function axiomIngest<T extends AxiomEvent>(
     };
   }
 
-  const url =
-    `${baseUrl.replace(/\/$/, "")}/v1/ingest/` + encodeURIComponent(dataset);
+  const url = `${baseUrl.replace(/\/$/, "")}/v1/ingest/${encodeURIComponent(dataset)}`;
 
   try {
     const res = await fetch(url, {

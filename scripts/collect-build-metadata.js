@@ -2,11 +2,12 @@
  * @FilePath: \my-new-app\scripts\collect-build-metadata.js
  * @LastEditTime: 2026-07-29 15:31:06
  */
-import { execSync } from "child_process";
-import fs from "fs";
-import { createRequire } from "module";
-import path from "path";
-import { fileURLToPath } from "url";
+
+import { execSync } from "node:child_process";
+import fs from "node:fs";
+import { createRequire } from "node:module";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

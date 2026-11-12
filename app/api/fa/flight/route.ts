@@ -23,7 +23,7 @@ async function GETHandler(_request: NextRequest) {
   // Convert AA#### → AAL####
   let ident = identUpper;
   if (/^AA\d+$/.test(identUpper)) {
-    ident = "AAL" + identUpper.slice(2);
+    ident = `AAL${identUpper.slice(2)}`;
   }
 
   const headers = {

@@ -2,7 +2,7 @@
  * @FilePath: \my-new-app\scripts\bump-ui-version.mjs
  * @LastEditTime: 2026-03-17 14:29:14
  */
-import { readFileSync, writeFileSync } from "fs";
+import { readFileSync, writeFileSync } from "node:fs";
 
 const path = new URL("../version.json", import.meta.url);
 const json = JSON.parse(readFileSync(path, "utf8"));
@@ -30,6 +30,6 @@ const fmt = (n) => String(n).padStart(2, "0");
 const newVersion = `${fmt(major)}.${fmt(minor)}.${fmt(patch)}`;
 
 json.version = newVersion;
-writeFileSync(path, JSON.stringify(json, null, 2) + "\n");
+writeFileSync(path, `${JSON.stringify(json, null, 2)}\n`);
 
 console.log(`Bumped UI version to ${newVersion}`);

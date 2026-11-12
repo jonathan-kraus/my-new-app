@@ -4,7 +4,7 @@
  */
 "use client";
 
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 
 type Plane = { x: number; y: number };
 

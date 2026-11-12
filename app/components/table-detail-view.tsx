@@ -33,7 +33,7 @@ function formatCellValue(value: unknown): string {
   if (value === null || value === undefined) return "null";
   if (typeof value === "object") return JSON.stringify(value);
   const str = String(value);
-  if (str.length > 100) return str.slice(0, 100) + "...";
+  if (str.length > 100) return `${str.slice(0, 100)}...`;
   return str;
 }
 

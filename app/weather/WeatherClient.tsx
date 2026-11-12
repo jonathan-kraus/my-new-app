@@ -87,7 +87,7 @@ export default function WeatherClient({
   const [weather, setWeather] = useState<WeatherResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [refreshKey, setRefreshKey] = useState(0);
+  const [_refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -151,7 +151,7 @@ export default function WeatherClient({
       .finally(() => setLoading(false));
 
     return () => controller.abort();
-  }, [built, refreshKey, selectedId]);
+  }, [built, selectedId]);
 
   const condition = weatherDescription(weather?.current.weatherCode);
   const current = weather?.current;

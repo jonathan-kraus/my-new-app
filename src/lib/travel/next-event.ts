@@ -7,7 +7,7 @@ function parseSegmentDateTime(segment: {
 }): Date | null {
   try {
     const dt = new Date(`${segment.date} ${segment.departureTime}`);
-    return isNaN(dt.getTime()) ? null : dt;
+    return Number.isNaN(dt.getTime()) ? null : dt;
   } catch {
     return null;
   }

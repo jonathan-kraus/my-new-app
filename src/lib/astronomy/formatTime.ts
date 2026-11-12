@@ -1,3 +1,7 @@
+/*
+ * @FilePath: \my-new-app\src\lib\astronomy\formatTime.ts
+ * @LastEditTime: 2026-11-12 13:24:48
+ */
 export function formatTime(value: Date | string | null | undefined): string {
   if (!value) return "—";
 
@@ -5,7 +9,7 @@ export function formatTime(value: Date | string | null | undefined): string {
   const date =
     value instanceof Date ? value : new Date(value.replace(" ", "T"));
 
-  if (isNaN(date.getTime())) return "—";
+  if (Number.isNaN(date.getTime())) return "—";
 
   return date.toLocaleTimeString("en-US", {
     hour: "2-digit",

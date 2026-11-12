@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { createContext, useContext, useState } from "react";
 
 const ToastContext = createContext({
-  show: (message: string, _type: string = "info") => {},
+  show: (_message: string, _type: string = "info") => {},
 });
 
 type ToastItem = {

@@ -63,7 +63,7 @@ describe("canonical branch membership", () => {
       ...mbtaFixture.patterns,
       ...["Green-B", "Green-C", "Green-E"].map((routeId) => ({
         ...mbtaFixture.patterns[0]!,
-        id: routeId + "-magoun",
+        id: `${routeId}-magoun`,
         routeId,
         canonical: routeId === "Green-E",
         typicality: routeId === "Green-E" ? 1 : 3,

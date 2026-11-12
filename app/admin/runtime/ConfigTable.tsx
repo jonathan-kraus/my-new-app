@@ -107,7 +107,7 @@ export function ConfigTable({ configs }: { configs: RuntimeSetting[] }) {
         setNewKey("");
         setNewValue("");
       }
-      setStatus("Saved " + parsed.data.key + ".");
+      setStatus(`Saved ${parsed.data.key}.`);
       router.refresh();
     });
   }
@@ -125,7 +125,7 @@ export function ConfigTable({ configs }: { configs: RuntimeSetting[] }) {
         delete next[key];
         return next;
       });
-      setStatus("Deleted " + key + ".");
+      setStatus(`Deleted ${key}.`);
       router.refresh();
     });
   }
@@ -178,7 +178,7 @@ export function ConfigTable({ configs }: { configs: RuntimeSetting[] }) {
               type="button"
               onClick={refresh}
               disabled={pending || hasUnsavedChanges}
-              className={buttonClass + " bg-gray-700"}
+              className={`${buttonClass} bg-gray-700`}
             >
               Refresh
             </button>
@@ -204,12 +204,12 @@ export function ConfigTable({ configs }: { configs: RuntimeSetting[] }) {
               onChange={(event) => setNewValue(event.target.value)}
             />
           </label>
-          <button type="submit" className={buttonClass + " bg-blue-600"}>
+          <button type="submit" className={`${buttonClass} bg-blue-600`}>
             Add setting
           </button>
           <button
             type="button"
-            className={buttonClass + " bg-gray-700"}
+            className={`${buttonClass} bg-gray-700`}
             disabled={pending || (!newKey && !newValue)}
             onClick={() => {
               setNewKey("");
@@ -257,14 +257,14 @@ export function ConfigTable({ configs }: { configs: RuntimeSetting[] }) {
               <button
                 type="submit"
                 disabled={pending || !dirty}
-                className={buttonClass + " bg-blue-600"}
+                className={`${buttonClass} bg-blue-600`}
               >
                 Save
               </button>
               <button
                 type="button"
                 disabled={pending || !dirty}
-                className={buttonClass + " bg-gray-700"}
+                className={`${buttonClass} bg-gray-700`}
                 onClick={() =>
                   setDrafts((current) => ({ ...current, [row.key]: row.value }))
                 }
@@ -274,7 +274,7 @@ export function ConfigTable({ configs }: { configs: RuntimeSetting[] }) {
               <button
                 type="button"
                 onClick={() => remove(row.key)}
-                className={buttonClass + " bg-red-800"}
+                className={`${buttonClass} bg-red-800`}
               >
                 Delete
               </button>
