@@ -32,13 +32,29 @@ if ($diff.Length -gt $maxChars) {
 $prompt = @"
 Generate ONE git commit message.
 
-Rules:
-- Conventional commit format
+Requirements:
+- English only
+- Conventional Commit format
+- Output exactly one line
 - Maximum 72 characters
-- No explanation
+- No explanations
+- No commentary
 - No markdown
 - No quotes
-- Output one line only
+- Humorous or witty messages are acceptable
+- Begin with feat:, fix:, chore:, docs:, refactor:, test:, or ci:
+- Describe only the supplied git diff
+- Never refer to "the user", "you", or provided files
+- If uncertain, output exactly:
+  chore: update project files
+
+Examples:
+feat: add keyboard shortcuts for command palette
+fix: correct version parsing in build script
+chore: bump ui version and build metadata
+docs: update installation instructions
+refactor: remove dead code
+test: add tests for new feature
 
 Changed files:
 
@@ -55,7 +71,7 @@ $body = @{
     stream = $false
         options = @{
         temperature = 0.2
-        num_predict = 32
+        num_predict = 72
     }
 } | ConvertTo-Json -Depth 10
 
@@ -92,10 +108,19 @@ try {
 
     # sanitize multiline accidents
     $message = ($message -split "`r?`n")[0].Trim()
+$message = $message.Trim('"'' ')
 
-    if ($message.Length -gt 120) {
-        $message = $message.Substring(0,120).Trim()
-    }
+if ($message.Length -gt 120) {
+    $message = $message.Substring(0,120).Trim()
+}
+Write-Host "Valid: $isValid"
+$isValid = $message -match '^(feat|fix|chore|docs|refactor|test|ci)(\(.+\))?: '
+$containsChinese = $message -match '[一-鿿]'
+
+if (-not $isValid -or $containsChinese) {
+    throw "Invalid commit message generated"
+}
+
 }
 catch {
 
