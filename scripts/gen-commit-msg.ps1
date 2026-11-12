@@ -105,7 +105,7 @@ try {
     }
 
     $message = $response.response.Trim()
-
+    Write-Host "[DEBUG] Response length: $($response.response.Length)"
     # sanitize multiline accidents
     $message = ($message -split "`r?`n")[0].Trim()
 $message = $message.Trim('"'' ')
