@@ -738,7 +738,9 @@ export namespace Models {
     forecastSnapshots: public_ForecastSnapshot[];
     weatherSnapshots: public_WeatherSnapshot[];
     readonly [RelationKeys]?:
-      "astronomySnapshots" | "forecastSnapshots" | "weatherSnapshots";
+      | "astronomySnapshots"
+      | "forecastSnapshots"
+      | "weatherSnapshots";
   };
   export type public_Log = {
     createdAt: FieldOutputTypes["public"]["Log"]["createdAt"];
