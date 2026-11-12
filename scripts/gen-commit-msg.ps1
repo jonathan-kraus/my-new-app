@@ -115,7 +115,12 @@ if ($message.Length -gt 120) {
 }
 Write-Host "Valid: $isValid"
 $isValid = $message -match '^(feat|fix|chore|docs|refactor|test|ci)(\(.+\))?: '
-$containsChinese = $message -match '[一-鿿]'
+
+Write-Host "Valid: $isValid"
+
+if (-not $isValid) {
+    throw "Invalid commit message generated"
+}
 
 if (-not $isValid -or $containsChinese) {
     throw "Invalid commit message generated"
