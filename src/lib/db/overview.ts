@@ -1,4 +1,4 @@
-import { sql, excludeTables } from "@/lib/db/utils";
+import { excludeTables, sql } from "@/lib/db/utils";
 
 export async function getTableSize(tableName: string) {
   if (excludeTables.includes(tableName)) return null;

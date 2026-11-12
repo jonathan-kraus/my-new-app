@@ -2,9 +2,10 @@
  * @FilePath: \my-new-app\prisma.config.ts
  * @LastEditTime: 2026-09-15 00:54:39
  */
+
+import { defineConfig as definePostgresConfig } from "@prisma/orm-postgres/config";
 import dotenv from "dotenv";
 import { definePrismaConfig } from "prisma/config";
-import { defineConfig as definePostgresConfig } from "@prisma/orm-postgres/config";
 
 dotenv.config({ path: [".env.local", ".env"], quiet: true });
 

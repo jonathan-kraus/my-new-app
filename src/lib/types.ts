@@ -22,7 +22,10 @@ export type Location = {
 };
 
 export type ActivityItemType =
-  "PushEvent" | "PullRequestEvent" | "WorkflowRunEvent" | "vercel";
+  | "PushEvent"
+  | "PullRequestEvent"
+  | "WorkflowRunEvent"
+  | "vercel";
 
 export interface ActivityItemData {
   id: string;

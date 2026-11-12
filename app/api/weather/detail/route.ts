@@ -1,4 +1,3 @@
-import { withRequestTiming } from "@/lib/log/with-request-timing";
 /*
  * @FilePath: \my-new-app\app\api\weather\detail\route.ts
  * @LastEditTime: 2026-09-26 20:57:34
@@ -8,6 +7,7 @@ import { NextResponse } from "next/server";
 import { db8 } from "@/lib/db.prisma8";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { logj } from "@/lib/log/logj";
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 
 const API_KEY = process.env.TOMORROWIO_APIKEY;
 

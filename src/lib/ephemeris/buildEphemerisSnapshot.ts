@@ -1,10 +1,10 @@
 import type { AstronomySnapshot } from "@/lib/astronomy";
+import { getPhaseName } from "@/lib/astronomy/getPhaseName";
 import type {
-  SolarSnapshot,
   EphemerisEvent,
   EphemerisSnapshot,
+  SolarSnapshot,
 } from "@/lib/ephemeris/types";
-import { getPhaseName } from "@/lib/astronomy/getPhaseName";
 import { writeEphemerisDebugEvent } from "@/lib/ephemeris/writeEphemerisDebugEvent";
 
 function buildEvent(

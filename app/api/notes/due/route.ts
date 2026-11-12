@@ -1,12 +1,10 @@
-import { withRequestTiming } from "@/lib/log/with-request-timing";
+import { Pool } from "@neondatabase/serverless";
 /*
  * @FilePath: \my-new-app\app\api\notes\due\route.ts
  * @LastEditTime: 2026-05-22 01:01:33
  */
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { Pool } from "@neondatabase/serverless";
-
 // GET /api/notes/due?days=7
 //
 // Returns notes with followUpAt within the next `days` days
@@ -14,6 +12,8 @@ import { Pool } from "@neondatabase/serverless";
 //
 // ── Swap this import for your actual session helper ───────────────────────────
 import { auth } from "@/auth"; // NextAuth v5 / Auth.js
+import { withRequestTiming } from "@/lib/log/with-request-timing";
+
 // import { getServerSession } from 'next-auth'
 // import { currentUser } from '@clerk/nextjs/server'
 // ─────────────────────────────────────────────────────────────────────────────

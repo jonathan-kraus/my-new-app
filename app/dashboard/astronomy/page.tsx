@@ -1,13 +1,13 @@
-import { computeSolarNoon } from "@/lib/ephemeris/utils/computeSolarNoon";
-import { getEphemerisSnapshot } from "@/lib/ephemeris/getEphemerisSnapshot";
-import { AstronomyTimeline } from "@/components/astronomy/AstronomyTimeline";
-import { NextEventCard } from "@/components/astronomy/NextEventCard";
 import { format, parseISO } from "date-fns";
 import { formatInTimeZone } from "date-fns-tz";
 import { SolarArcBar } from "@/app/components/SolarArcBar";
-import { logj } from "@/lib/log/logj";
 import { auth } from "@/auth";
+import { AstronomyTimeline } from "@/components/astronomy/AstronomyTimeline";
+import { NextEventCard } from "@/components/astronomy/NextEventCard";
+import { getEphemerisSnapshot } from "@/lib/ephemeris/getEphemerisSnapshot";
+import { computeSolarNoon } from "@/lib/ephemeris/utils/computeSolarNoon";
 import { buildPageUniversalContext } from "@/lib/log/build-universal-context";
+import { logj } from "@/lib/log/logj";
 
 export const dynamic = "force-dynamic"; // ensure cookies + fresh SSR
 export const revalidate = 60;

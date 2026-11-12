@@ -3,9 +3,8 @@
  * @LastEditTime: 2026-07-17 15:25:36
  */
 import { neon } from "@neondatabase/serverless";
-
-import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { logj } from "@/lib/log/logj";
 
 export async function getPostgresVersion(req: Request) {
   const sql = neon(process.env.DATABASE_URL!);

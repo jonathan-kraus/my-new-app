@@ -1,5 +1,5 @@
-import { beforeEach, expect, it, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
+import { beforeEach, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   data: vi.fn(),
@@ -29,6 +29,7 @@ vi.mock("next/navigation", () => ({
     throw new Error("not found");
   },
 }));
+
 import TablePage from "../app/admin/db/table/[name]/page";
 
 const props = {

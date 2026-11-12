@@ -1,9 +1,9 @@
 import { neon } from "@neondatabase/serverless";
-import { logj } from "@/lib/log/logj";
-import { staticUniversalContext } from "@/lib/log/buildj";
-import { db8 } from "@/lib/db.prisma8";
-import { timestampString } from "@/lib/timestampString";
 import { createId } from "@paralleldrive/cuid2";
+import { db8 } from "@/lib/db.prisma8";
+import { staticUniversalContext } from "@/lib/log/buildj";
+import { logj } from "@/lib/log/logj";
+import { timestampString } from "@/lib/timestampString";
 
 const sql = neon(process.env.DATABASE_URL!);
 
@@ -145,9 +145,6 @@ export async function runDbTableStats(_ctx: {
         },
         meta: { built: { ...built, eventIndex: ++jei } },
       });
-
-      // Continue to next table instead of aborting cron
-      continue;
     }
   }
 

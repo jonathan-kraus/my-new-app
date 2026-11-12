@@ -1,11 +1,11 @@
-import { withRequestTiming } from "@/lib/log/with-request-timing";
+import { not, or } from "@prisma/orm-postgres/orm-client";
 // app/api/logs/route.ts
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { db8 } from "@/lib/db.prisma8";
-import { not, or } from "@prisma/orm-postgres/orm-client";
-import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { logj } from "@/lib/log/logj";
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 
 async function GETHandler(req: NextRequest) {
   const search = req.nextUrl.searchParams.get("q") ?? "";

@@ -1,5 +1,6 @@
-import { enqueue, dequeueBatch, peek, clear } from "@/lib/log/queue";
+import { clear, dequeueBatch, enqueue, peek } from "@/lib/log/queue";
 import { fakeEvent } from "@/lib/log/test-utils";
+
 beforeEach(clear);
 
 test("enqueue and peek", () => {

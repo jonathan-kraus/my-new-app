@@ -1,10 +1,10 @@
-import { withRequestTiming } from "@/lib/log/with-request-timing";
 // app/api/environment/route.ts
 import { NextResponse } from "next/server";
-import { db8 } from "@/lib/db.prisma8";
-import { logj } from "@/lib/log/logj";
-import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import { getPostgresVersion } from "@/app/db/PgVersion";
+import { db8 } from "@/lib/db.prisma8";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { logj } from "@/lib/log/logj";
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 import { getFullPackageData } from "@/lib/version/get-full-package-data";
 
 async function GETHandler(req: Request) {
@@ -189,13 +189,12 @@ async function GETHandler(req: Request) {
       meta: { built: { ...built, eventIndex: ++jei } },
     });
     //
-    // 5. Filter dependencies (Radix, TS, ESLint, etc.)
+    // 5. Filter dependencies (Radix, TS, Biome, etc.)
     //
     const IGNORE_PREFIXES = [
       "@radix-ui/",
       "@types/",
-      "@typescript-eslint/",
-      "eslint",
+      "@biomejs/",
       "typescript",
       "ts-node",
       "vite",

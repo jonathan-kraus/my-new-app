@@ -1,12 +1,12 @@
-import { withRequestTiming } from "@/lib/log/with-request-timing";
 /*
  * @FilePath: \my-new-app\app\api\db-tables\route.ts
  * @LastEditTime: 2026-09-10 16:21:13
  */
 import { neon } from "@neondatabase/serverless";
-import { logj } from "@/lib/log/logj";
-import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import type { NextRequest } from "next/server";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { logj } from "@/lib/log/logj";
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 
 type FormattedTable = {
   name: string;

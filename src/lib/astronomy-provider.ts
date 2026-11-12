@@ -1,6 +1,6 @@
 import { addDays, format } from "date-fns";
-import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
+import { logj } from "@/lib/log/logj";
 
 export async function fetchAstronomyMultiDay(
   lat: number,

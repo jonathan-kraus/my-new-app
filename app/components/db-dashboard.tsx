@@ -1,4 +1,6 @@
 "use client";
+import { Columns3, Database, HardDrive, Rows3 } from "lucide-react";
+import AppShell from "@/app/components/layouts/AppShell";
 /*
  * @FilePath: \my-new-app\app\components\db-dashboard.tsx
  * @Author       : Jonathan
@@ -8,13 +10,11 @@
  * @LastEditTime: 2026-06-21 23:51:09
  */
 import { DashboardHeader } from "./dashboard-header";
-import { StatCard } from "./stat-card";
-import { TableList } from "./table-list";
 import { GrowthChart } from "./growth-chart";
-import { TableGrowthChart } from "./table-growth-chart";
 import { SnapshotButton } from "./snapshot-button";
-import { Database, Rows3, HardDrive, Columns3 } from "lucide-react";
-import AppShell from "@/app/components/layouts/AppShell";
+import { StatCard } from "./stat-card";
+import { TableGrowthChart } from "./table-growth-chart";
+import { TableList } from "./table-list";
 
 export type TableInfo = {
   name: string;

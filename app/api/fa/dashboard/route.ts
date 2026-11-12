@@ -1,3 +1,9 @@
+import { format, toZonedTime } from "date-fns-tz";
+import { NextResponse } from "next/server";
+import { isNearbyAirborne } from "@/lib/flight/selection";
+import type { Flight as NearbyFlight } from "@/lib/flight/types";
+import { staticUniversalContext } from "@/lib/log/buildj";
+import { logj } from "@/lib/log/logj";
 import { withRequestTiming } from "@/lib/log/with-request-timing";
 /*
  * @FilePath: \my-new-app\app\api\fa\dashboard\route.ts
@@ -5,12 +11,6 @@ import { withRequestTiming } from "@/lib/log/with-request-timing";
  */
 // app/api/fa/dashboard/route.ts
 import { getConfig } from "@/lib/runtime/config";
-import { NextResponse } from "next/server";
-import { toZonedTime, format } from "date-fns-tz";
-import { logj } from "@/lib/log/logj";
-import { staticUniversalContext } from "@/lib/log/buildj";
-import { isNearbyAirborne } from "@/lib/flight/selection";
-import type { Flight as NearbyFlight } from "@/lib/flight/types";
 
 type Flight = {
   scheduled_out?: string | null;

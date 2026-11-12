@@ -1,13 +1,13 @@
 import type { EphemerisSnapshot } from "@/lib/ephemeris/types";
 export const dynamic = "force-dynamic";
 
-import { getVercelDeployments } from "./vercel";
-import { getRecentActivity } from "./github";
 import { getEphemerisSnapshot } from "@/lib/ephemeris/getEphemerisSnapshot";
-import { getBuildMetadata } from "@/lib/version/build";
-import type { BuildMetadata } from "@/lib/version/build";
-import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
+import { logj } from "@/lib/log/logj";
+import type { BuildMetadata } from "@/lib/version/build";
+import { getBuildMetadata } from "@/lib/version/build";
+import { getRecentActivity } from "./github";
+import { getVercelDeployments } from "./vercel";
 
 export interface VercelDeploymentsResponse {
   deployments: unknown[];
@@ -82,7 +82,8 @@ export async function getDashboardData(): Promise<DashboardData> {
 }
 
 export type SafeResult<T> =
-  { ok: true; data: T } | { ok: false; error: unknown };
+  | { ok: true; data: T }
+  | { ok: false; error: unknown };
 
 export async function safe<T>(fn: () => Promise<T>): Promise<SafeResult<T>> {
   try {

@@ -51,13 +51,13 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Lint code
-        run: pnpm exec eslint .
+        run: pnpm exec biome lint .
 
       - name: Validate Prisma contract and generated artifacts
         run: |
           pnpm exec prisma contract format
           pnpm exec prisma contract emit
-          pnpm exec prettier --write generated/prisma8/contract.d.ts generated/prisma8/contract.json
+          pnpm exec biome format --write generated/prisma8/contract.d.ts generated/prisma8/contract.json
           git diff --exit-code -- prisma8 generated/prisma8
 
       - name: Coverage

@@ -3,7 +3,7 @@
  * @LastEditTime: 2026-10-05 16:43:36
  */
 import type { ReactNode } from "react";
-import { requireRuntimeAdmin, RuntimeAccessError } from "@/lib/runtime/admin";
+import { RuntimeAccessError, requireRuntimeAdmin } from "@/lib/runtime/admin";
 
 export default async function AdminLayout({
   children,

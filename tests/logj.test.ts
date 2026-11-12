@@ -1,4 +1,4 @@
-import { describe, test, expect, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 // Mock server-only so Vitest can import logj.ts
 vi.mock("server-only", () => ({}));
@@ -14,11 +14,11 @@ vi.mock("@/lib/axiom", () => ({
   axiomIngest: vi.fn().mockResolvedValue(undefined),
 }));
 
-import { db8 } from "@/lib/db.prisma8";
 import { axiomIngest } from "@/lib/axiom";
+import { db8 } from "@/lib/db.prisma8";
+import { logj } from "@/lib/log/logj";
 import type { CanonicalLogRecord } from "@/lib/log/server";
 import { safeForNeon } from "@/lib/log/server";
-import { logj } from "@/lib/log/logj";
 
 beforeEach(() => {
   vi.restoreAllMocks();

@@ -1,9 +1,9 @@
-import { withRequestTiming } from "@/lib/log/with-request-timing";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { db8 } from "@/lib/db.prisma8";
-import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { logj } from "@/lib/log/logj";
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 
 async function GETHandler(req: NextRequest) {
   const start = performance.now();

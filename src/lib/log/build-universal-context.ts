@@ -3,10 +3,10 @@
  * @LastEditTime: 2026-10-26 17:36:20
  */
 
-import { auth } from "@/auth";
-import { enrichContext } from "./context";
 import { headers } from "next/headers";
 import { v7 } from "uuid";
+import { auth } from "@/auth";
+import { enrichContext } from "./context";
 
 /** Build request logging context for an App Router page (page props are not a Request). */
 export async function buildPageUniversalContext(

@@ -16,6 +16,7 @@ vi.mock("@/lib/runtime/config", () => ({
   getConfig: vi.fn().mockResolvedValue(0),
 }));
 vi.mock("@/lib/log/logj", () => ({ logj: mocks.log }));
+
 import { POST } from "../app/api/github-webhook/route";
 
 const payload = {

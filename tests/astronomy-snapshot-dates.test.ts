@@ -27,6 +27,7 @@ vi.mock("@/lib/db.prisma8", () => {
   };
   return { db8: { orm: { public: { AstronomySnapshot: query } } } };
 });
+
 import { getAstronomySnapshot } from "@/lib/astronomy/getAstronomySnapshot";
 
 beforeEach(() => {

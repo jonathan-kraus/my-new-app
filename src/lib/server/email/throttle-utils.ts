@@ -1,9 +1,9 @@
 // lib\server\email\throttle-utils.ts
 import {
-  differenceInMinutes,
-  isAfter,
   addMinutes,
+  differenceInMinutes,
   formatDistanceToNow,
+  isAfter,
 } from "date-fns";
 
 export interface ThrottleStatus {

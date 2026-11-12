@@ -3,13 +3,14 @@
  * @LastEditTime: 2026-10-31 22:10:36
  */
 // app/forecast/page.tsx
-import { auth } from "@/auth";
+
 import { redirect } from "next/navigation";
-import ForecastWrapper from "./ForecastWrapper";
-import { buildWeatherEmail } from "./buildWeatherEmail";
-import { sendWeatherEmail } from "./mailresend";
+import { auth } from "@/auth";
 import { db8 } from "@/lib/db.prisma8";
 import { timestampString } from "@/lib/timestampString";
+import { buildWeatherEmail } from "./buildWeatherEmail";
+import ForecastWrapper from "./ForecastWrapper";
+import { sendWeatherEmail } from "./mailresend";
 
 //
 // ⭐ SERVER ACTION — must stay in a server component

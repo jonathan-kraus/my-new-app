@@ -1,5 +1,5 @@
-import { withRequestTiming } from "@/lib/log/with-request-timing";
 import { NextResponse } from "next/server";
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 
 async function GETHandler() {
   const env = {

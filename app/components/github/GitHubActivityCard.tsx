@@ -73,6 +73,7 @@ export function GitHubActivityCard({ event }: { event: GitHubActivityEvent }) {
           href={url}
           target="_blank"
           className="text-blue-400 text-sm underline mt-2 inline-block"
+          rel="noopener"
         >
           View on GitHub →
         </a>

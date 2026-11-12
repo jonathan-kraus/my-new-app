@@ -1,9 +1,9 @@
-import { fetchAstronomyMultiDay } from "./astronomy-provider";
-import { computeGoldenBlueHours } from "@/lib/computeGoldenBlueHours";
-import { db8 } from "./db.prisma8";
 import { createId } from "@paralleldrive/cuid2";
+import { addDays, format } from "date-fns";
+import { computeGoldenBlueHours } from "@/lib/computeGoldenBlueHours";
+import { fetchAstronomyMultiDay } from "./astronomy-provider";
 import { buildAstronomySnapshot } from "./buildAstronomySnapshot";
-import { format, addDays } from "date-fns";
+import { db8 } from "./db.prisma8";
 
 export async function refreshAstronomySnapshotsForLocation(
   location: { id: string; latitude: number; longitude: number },

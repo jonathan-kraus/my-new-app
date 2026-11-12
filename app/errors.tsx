@@ -1,8 +1,9 @@
 "use client";
+
 // app/errors.tsx
 
-import { useEffect } from "react";
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 
 export default function ErrorPage({
   error,

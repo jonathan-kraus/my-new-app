@@ -1,6 +1,6 @@
-import type { ActivityItemData } from "@/types/activity";
-import { formatTime } from "@/lib/astronomy/formatTime";
 import { GitCommit } from "lucide-react";
+import { formatTime } from "@/lib/astronomy/formatTime";
+import type { ActivityItemData } from "@/types/activity";
 
 export default function PushEventCard({ item }: { item: ActivityItemData }) {
   return (
@@ -17,6 +17,7 @@ export default function PushEventCard({ item }: { item: ActivityItemData }) {
             href={item.url}
             target="_blank"
             className="text-sm text-muted-foreground hover:underline"
+            rel="noopener"
           >
             View commit
           </a>

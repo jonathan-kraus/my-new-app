@@ -1,9 +1,9 @@
 // lib/ephemeris/writeEphemerisDebugEvent.ts
 
+import type { JsonValue } from "@prisma/orm-postgres/target/codec-types";
 import { Temporal } from "temporal-polyfill";
 import { db8 } from "@/lib/db.prisma8";
 import { logj } from "@/lib/log/logj";
-import type { JsonValue } from "@prisma/orm-postgres/target/codec-types";
 // -----------------------------
 // Exported helpers for tests
 // -----------------------------

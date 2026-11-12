@@ -1,12 +1,12 @@
-import { withRequestTiming } from "@/lib/log/with-request-timing";
+import { NextResponse } from "next/server";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
 /*
  * @FilePath: \my-new-app\app\api\fa\status\route.ts
  * @LastEditTime: 2026-07-24 17:04:24
  */
 import { logj } from "@/lib/log/logj";
-import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 import { getConfig } from "@/lib/runtime/config";
-import { NextResponse } from "next/server";
 
 async function GETHandler(req: Request) {
   const built = await buildUniversalContext(req, "fa-status");
@@ -61,7 +61,7 @@ async function GETHandler(req: Request) {
     return sched === today;
   });
 
-  let current: Flight | null = null;
+  const current: Flight | null = null;
 
   if (todaysFlights.length > 0) {
     const now = Date.now();

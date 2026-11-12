@@ -1,10 +1,10 @@
-import { withRequestTiming } from "@/lib/log/with-request-timing";
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import { z } from "zod";
+import { staticUniversalContext } from "@/lib/log/buildj";
 import { logj } from "@/lib/log/logj";
 import type { LogjInput } from "@/lib/log/types";
-import { staticUniversalContext } from "@/lib/log/buildj";
-import { z } from "zod";
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 
 const outboundTypes = z.enum([
   "email.sent",

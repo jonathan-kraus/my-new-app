@@ -1,11 +1,11 @@
-import { withRequestTiming } from "@/lib/log/with-request-timing";
 import { NextResponse } from "next/server";
-import { logj } from "@/lib/log/logj";
-import { buildUniversalContext } from "@/lib/log/build-universal-context";
 import {
-  getTableDataWithPrisma,
   getModelForTable,
+  getTableDataWithPrisma,
 } from "@/lib/db/prisma-table";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { logj } from "@/lib/log/logj";
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 export const dynamic = "force-dynamic";
 
 async function GETHandler(

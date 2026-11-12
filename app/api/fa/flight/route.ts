@@ -1,15 +1,15 @@
-import { withRequestTiming } from "@/lib/log/with-request-timing";
-import type { Flight, FlightPosition } from "@/lib/flight/types";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { getConfig } from "@/lib/runtime/config";
-import {
-  selectFlight,
-  latestPosition,
-  isFreshPosition,
-  isAirborne,
-} from "@/lib/flight/selection";
 import { detectFlightPhase } from "@/lib/flight/phase";
+import {
+  isAirborne,
+  isFreshPosition,
+  latestPosition,
+  selectFlight,
+} from "@/lib/flight/selection";
+import type { Flight, FlightPosition } from "@/lib/flight/types";
+import { withRequestTiming } from "@/lib/log/with-request-timing";
+import { getConfig } from "@/lib/runtime/config";
 
 async function GETHandler(_request: NextRequest) {
   const flightId = _request.nextUrl.searchParams.get("flightId");

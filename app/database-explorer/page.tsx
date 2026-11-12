@@ -1,7 +1,8 @@
 // app/database-explorer/page.tsx
 import { neon } from "@neondatabase/serverless";
-import { auth } from "@/auth";
 import { redirect } from "next/navigation";
+import { auth } from "@/auth";
+
 type Column = {
   table_name: string;
   column_name: string;

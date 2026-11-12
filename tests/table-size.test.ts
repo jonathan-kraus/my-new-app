@@ -2,6 +2,7 @@ import { beforeEach, expect, it, vi } from "vitest";
 
 const sql = vi.hoisted(() => vi.fn());
 vi.mock("@/lib/db/utils", () => ({ sql, excludeTables: ["User", "Session"] }));
+
 import { getTableSize } from "@/lib/db/overview";
 
 beforeEach(() => {

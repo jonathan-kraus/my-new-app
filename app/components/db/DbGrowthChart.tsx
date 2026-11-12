@@ -1,14 +1,15 @@
 "use client";
+import { format } from "date-fns";
 // app\components\db\DbGrowthChart.tsx
 import {
-  LineChart,
   Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  Tooltip,
-  ResponsiveContainer,
 } from "recharts";
-import { format } from "date-fns";
+
 type Point = {
   date: string;
   value: number;

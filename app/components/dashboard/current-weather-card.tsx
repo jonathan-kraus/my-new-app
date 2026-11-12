@@ -1,8 +1,8 @@
 "use client";
 
-import { formatEasternTime } from "@/lib/utils/global";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
+import { formatEasternTime } from "@/lib/utils/global";
 
 type CurrentWeatherCardProps = {
   location: {

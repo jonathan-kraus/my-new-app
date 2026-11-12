@@ -1,4 +1,3 @@
-import { withRequestTiming } from "@/lib/log/with-request-timing";
 /*
  * @FilePath: \my-new-app\app\api\db-tables\send-db-email\route.ts
  * @LastEditTime: 2026-09-19 14:19:38
@@ -6,11 +5,12 @@ import { withRequestTiming } from "@/lib/log/with-request-timing";
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { Temporal } from "temporal-polyfill";
-import { getTopTables } from "@/lib/getTopTables";
 import TopTablesEmail from "@/emails/TopTablesEmail";
 import { db8 } from "@/lib/db.prisma8";
-import { logj } from "@/lib/log/logj";
+import { getTopTables } from "@/lib/getTopTables";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { logj } from "@/lib/log/logj";
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 
 async function POSTHandler(req: Request) {
   const { to, firstName } = await req.json();

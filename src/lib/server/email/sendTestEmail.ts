@@ -1,10 +1,10 @@
 "use server";
 
-import { getConfig, setConfig } from "@/lib/runtime/config";
 import { Resend } from "resend";
 import { buildTestEmail } from "@/lib/buildTestEmail";
-import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
+import { logj } from "@/lib/log/logj";
+import { getConfig, setConfig } from "@/lib/runtime/config";
 import { getThrottleStatus } from "./throttle-utils";
 
 const built = staticUniversalContext("Jonathan");

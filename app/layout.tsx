@@ -1,7 +1,7 @@
 "use client";
+import ClientLayout from "@/app/ClientLayout";
 // app/layout.tsx
 import SideNav from "@/app/components/SideNav";
-import ClientLayout from "@/app/ClientLayout";
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 

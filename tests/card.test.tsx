@@ -1,13 +1,13 @@
-import { expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
+import { expect, it } from "vitest";
 import {
   Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
   CardAction,
   CardContent,
+  CardDescription,
   CardFooter,
+  CardHeader,
+  CardTitle,
 } from "../app/components/ui/card";
 
 it.each([

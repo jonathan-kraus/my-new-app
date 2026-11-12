@@ -1,5 +1,5 @@
-import { dequeueBatch } from "./queue";
 import { flush } from "./flush";
+import { dequeueBatch } from "./queue";
 
 let interval: NodeJS.Timeout | null = null;
 

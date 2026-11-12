@@ -5,13 +5,14 @@
  */
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { NextEventCard } from "@/app/components/astronomy/NextEventCard";
-import { useSideNavActivationCounter } from "@/app/hooks/useSideNavActivationCounter";
 import { EmailSideNavLink } from "@/app/components/sidenav/EmailLink";
+import { useSideNavActivationCounter } from "@/app/hooks/useSideNavActivationCounter";
 import { staticUniversalContext } from "@/lib/log/buildj";
-import { usePathname } from "next/navigation";
 import { logj } from "@/lib/log/logj";
+
 type SideNavClientProps = {
   nextEventLabel: string;
   nextEventTime: Date | null;

@@ -1,8 +1,9 @@
 "use client";
 
-import type { EphemerisSnapshot } from "@/lib/ephemeris/types";
-import { useNow } from "@/hooks/useNow";
 import { Countdown } from "@/app/components/Countdown";
+import { useNow } from "@/hooks/useNow";
+import type { EphemerisSnapshot } from "@/lib/ephemeris/types";
+
 type AstronomyCardProps = {
   data: EphemerisSnapshot | null;
 };

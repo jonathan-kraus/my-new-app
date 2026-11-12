@@ -1,8 +1,8 @@
 "use client";
+import { useEffect, useMemo, useState } from "react";
 // app/logs/page.tsx
 import { staticUniversalContext } from "@/lib/log/buildj";
 import { logj } from "@/lib/log/logj";
-import { useEffect, useMemo, useState } from "react";
 
 type LogRecord = {
   id: string;

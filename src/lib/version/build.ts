@@ -16,7 +16,7 @@ export type BuildMetadata = {
     pnpm: string;
     next: string;
     typescript: string;
-    eslint: string;
+    biome: string;
     openmeteo: string;
     prisma: string;
   };

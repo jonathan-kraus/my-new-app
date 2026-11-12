@@ -1,12 +1,12 @@
-import { withRequestTiming } from "@/lib/log/with-request-timing";
 /*
  * @FilePath: \my-new-app\app\api\fa\count\route.ts
  * @LastEditTime: 2026-06-21 23:54:11
  */
 // app/api/fa/count/route.ts
 import { NextResponse } from "next/server";
-import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { logj } from "@/lib/log/logj";
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 import { getConfig } from "@/lib/runtime/config";
 
 async function GETHandler(req: Request) {

@@ -3,22 +3,22 @@
  * @LastEditTime: 2026-09-17 18:31:30
  */
 
+import { headers } from "next/headers";
+import Link from "next/link";
+import CurrentWeatherCard from "@/app/components/dashboard/current-weather-card";
 /* eslint-disable react-hooks/purity -- This dynamic server page measures request durations for telemetry. */
 import { auth } from "@/auth";
-import { logj } from "@/lib/log/logj";
-import { buildPageUniversalContext } from "@/lib/log/build-universal-context";
-import { Button } from "@/components/ui/button";
-import { UIProvider } from "@/components/providers/ui-provider";
-import CurrentWeatherCard from "@/app/components/dashboard/current-weather-card";
-import Link from "next/link";
-import { db8 } from "@/lib/db.prisma8";
 import { RecentActivity } from "@/components/activity/RecentActivity";
+import { UIProvider } from "@/components/providers/ui-provider";
+import { Button } from "@/components/ui/button";
+import { db8 } from "@/lib/db.prisma8";
+import { buildPageUniversalContext } from "@/lib/log/build-universal-context";
+import { logj } from "@/lib/log/logj";
 import {
-  SessionSchema,
   LocationSchema,
+  SessionSchema,
   WeatherSchema,
 } from "@/lib/schemas/page-schemas";
-import { headers } from "next/headers";
 export const dynamic = "force-dynamic";
 function getGreeting(): string {
   const hour = new Date().getHours();

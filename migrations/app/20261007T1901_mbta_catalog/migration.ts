@@ -1,12 +1,14 @@
 #!/usr/bin/env -S node
-import type { Contract as End } from "../../snapshots/df5612bab4dc5f45989a39ffd8c6e78383676ddf2b28d448266e59c5324b7ad6/contract";
-import endContract from "../../snapshots/df5612bab4dc5f45989a39ffd8c6e78383676ddf2b28d448266e59c5324b7ad6/contract.json" with { type: "json" };
 import {
+  col,
   Migration,
   MigrationCLI,
-  col,
   primaryKey,
 } from "@prisma/orm-postgres/migration";
+import type { Contract as End } from "../../snapshots/df5612bab4dc5f45989a39ffd8c6e78383676ddf2b28d448266e59c5324b7ad6/contract";
+import endContract from "../../snapshots/df5612bab4dc5f45989a39ffd8c6e78383676ddf2b28d448266e59c5324b7ad6/contract.json" with {
+  type: "json",
+};
 
 export default class M extends Migration<never, End> {
   override readonly endContractJson = endContract;

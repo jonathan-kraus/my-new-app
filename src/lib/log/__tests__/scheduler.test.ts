@@ -1,12 +1,13 @@
+import { vi } from "vitest";
+import * as flushMod from "@/lib/log/flush";
+import * as queue from "@/lib/log/queue";
 import {
+  isSchedulerRunning,
   startScheduler,
   stopScheduler,
-  isSchedulerRunning,
 } from "@/lib/log/scheduler";
-import * as queue from "@/lib/log/queue";
-import * as flushMod from "@/lib/log/flush";
-import { vi } from "vitest";
 import { fakeEvent } from "@/lib/log/test-utils";
+
 vi.useFakeTimers();
 
 describe("scheduler", () => {

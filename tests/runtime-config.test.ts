@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const query = vi.hoisted(() => ({
   where: vi.fn().mockReturnThis(),
@@ -9,7 +9,8 @@ const query = vi.hoisted(() => ({
 vi.mock("@/lib/db.prisma8", () => ({
   db8: { orm: { public: { RuntimeConfig: query } } },
 }));
-import { getConfig, setConfig, deleteConfig } from "@/lib/runtime/config";
+
+import { deleteConfig, getConfig, setConfig } from "@/lib/runtime/config";
 
 describe("c", () => {
   beforeEach(() => {

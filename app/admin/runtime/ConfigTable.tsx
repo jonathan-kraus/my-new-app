@@ -1,16 +1,16 @@
 "use client";
 
-import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { logj } from "@/lib/log/logj";
+import { useRef, useState } from "react";
 import { staticUniversalContext } from "@/lib/log/buildj";
+import { logj } from "@/lib/log/logj";
 import {
   createRuntimeSetting,
   deleteRuntimeSetting,
   saveRuntimeSetting,
 } from "@/lib/runtime/actions";
-import { runtimeSettingSchema } from "@/lib/runtime/validation";
 import type { RuntimeSetting } from "@/lib/runtime/validation";
+import { runtimeSettingSchema } from "@/lib/runtime/validation";
 
 export function ConfigTable({ configs }: { configs: RuntimeSetting[] }) {
   const router = useRouter();
@@ -72,9 +72,9 @@ export function ConfigTable({ configs }: { configs: RuntimeSetting[] }) {
       return;
     }
     await run(async () => {
-      const result = await (
-        creating ? createRuntimeSetting : saveRuntimeSetting
-      )(parsed.data);
+      const result = await (creating
+        ? createRuntimeSetting
+        : saveRuntimeSetting)(parsed.data);
       await logj({
         domain: "Jonathan",
         level: "info",

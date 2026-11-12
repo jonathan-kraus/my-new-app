@@ -1,6 +1,6 @@
 import { Resend } from "resend";
-import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
+import { logj } from "@/lib/log/logj";
 import type { buildWeatherEmail } from "./buildWeatherEmail";
 
 export async function sendWeatherEmail({

@@ -1,20 +1,20 @@
 "use client";
 
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip } from "recharts";
+import { BarChart3 } from "lucide-react";
+import { Bar, BarChart, CartesianGrid, Tooltip, XAxis, YAxis } from "recharts";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from "@/components/ui/card";
 import {
+  type ChartConfig,
   ChartContainer,
   ChartTooltipContent,
-  type ChartConfig,
 } from "@/components/ui/chart";
-import { formatNumber, formatBytes } from "@/lib/format";
-import { BarChart3 } from "lucide-react";
+import { formatBytes, formatNumber } from "@/lib/format";
 
 interface HistoryEntry {
   tableName: string;

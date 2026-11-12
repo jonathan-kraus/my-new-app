@@ -1,4 +1,5 @@
 import type { JsonValue } from "@prisma/orm-postgres/target/codec-types";
+
 /*
  * @FilePath: \my-new-app\src\lib\log\server.ts
  * @LastEditTime: 2026-09-16 17:48:15
@@ -8,9 +9,9 @@ import type { JsonValue } from "@prisma/orm-postgres/target/codec-types";
  * Writes independently to DB + Axiom
  */
 
-import { db8 } from "@/lib/db.prisma8";
-import { axiomIngest } from "@/lib/axiom";
 import { z } from "zod";
+import { axiomIngest } from "@/lib/axiom";
+import { db8 } from "@/lib/db.prisma8";
 import type { LogjInput } from "@/lib/log/types";
 
 const NEON_MAX_JSON = 200_000;

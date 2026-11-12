@@ -12,12 +12,7 @@
     },
     {
       "groupName": "Next.js ecosystem",
-      "matchPackageNames": [
-        "/^next$/",
-        "/^eslint-config-next$/",
-        "/^@next\\//",
-        "/^@vercel\\//"
-      ]
+      "matchPackageNames": ["/^next$/", "/^@next\\//", "/^@vercel\\//"]
     },
     {
       "description": "Manage Prisma development package manually",

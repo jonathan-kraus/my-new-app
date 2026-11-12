@@ -1,6 +1,6 @@
+import { defineConfig as definePostgresConfig } from "@prisma/orm-postgres/config";
 import dotenv from "dotenv";
 import { definePrismaConfig } from "prisma/config";
-import { defineConfig as definePostgresConfig } from "@prisma/orm-postgres/config";
 
 dotenv.config({ path: [".env.local", ".env"], quiet: true });
 

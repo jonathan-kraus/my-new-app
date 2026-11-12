@@ -2,7 +2,8 @@
  * @FilePath: \my-new-app\emails\TopTablesEmail.tsx
  * @LastEditTime: 2026-09-10 21:56:29
  */
-import { Html, Body, Container, Text } from "react-email";
+import { Body, Container, Html, Text } from "react-email";
+
 interface TopTablesEmailProps {
   first_name: string;
   middle_init: string;
@@ -44,57 +45,51 @@ export default function TopTablesEmail({
   db5,
   ct5,
 }: TopTablesEmailProps) {
-  {
-    return (
-      <Html>
-        <Body>
-          <Container>
-            <Text>Hi {first_name},</Text>
+  return (
+    <Html>
+      <Body>
+        <Container>
+          <Text>Hi {first_name},</Text>
 
-            <Text>Latest weather snapshot</Text>
-            {weatherSnapshot ? (
-              <>
-                <Text>Temperature: {weatherSnapshot.temperature}°</Text>
-                <Text>Feels like: {weatherSnapshot.feelsLike ?? "N/A"}°</Text>
-                <Text>Humidity: {weatherSnapshot.humidity ?? "N/A"}%</Text>
-                <Text>Wind: {weatherSnapshot.windSpeed ?? "N/A"} mph</Text>
-                <Text>
-                  Wind direction: {weatherSnapshot.windDirection ?? "N/A"}°
-                </Text>
-                <Text>Pressure: {weatherSnapshot.pressure ?? "N/A"}</Text>
-                <Text>
-                  Visibility: {weatherSnapshot.visibility ?? "N/A"} mi
-                </Text>
-                <Text>
-                  Weather code: {weatherSnapshot.weatherCode ?? "N/A"}
-                </Text>
-                <Text>
-                  Fetched at:{" "}
-                  {new Date(weatherSnapshot.fetchedAt).toLocaleString()}
-                </Text>
-              </>
-            ) : (
-              <Text>No weather snapshot available.</Text>
-            )}
+          <Text>Latest weather snapshot</Text>
+          {weatherSnapshot ? (
+            <>
+              <Text>Temperature: {weatherSnapshot.temperature}°</Text>
+              <Text>Feels like: {weatherSnapshot.feelsLike ?? "N/A"}°</Text>
+              <Text>Humidity: {weatherSnapshot.humidity ?? "N/A"}%</Text>
+              <Text>Wind: {weatherSnapshot.windSpeed ?? "N/A"} mph</Text>
+              <Text>
+                Wind direction: {weatherSnapshot.windDirection ?? "N/A"}°
+              </Text>
+              <Text>Pressure: {weatherSnapshot.pressure ?? "N/A"}</Text>
+              <Text>Visibility: {weatherSnapshot.visibility ?? "N/A"} mi</Text>
+              <Text>Weather code: {weatherSnapshot.weatherCode ?? "N/A"}</Text>
+              <Text>
+                Fetched at:{" "}
+                {new Date(weatherSnapshot.fetchedAt).toLocaleString()}
+              </Text>
+            </>
+          ) : (
+            <Text>No weather snapshot available.</Text>
+          )}
 
-            <Text>
-              {db1} — {ct1} {middle_init}
-            </Text>
-            <Text>
-              {db2} — {ct2}
-            </Text>
-            <Text>
-              {db3} — {ct3}
-            </Text>
-            <Text>
-              {db4} — {ct4}
-            </Text>
-            <Text>
-              {db5} — {ct5}
-            </Text>
-          </Container>
-        </Body>
-      </Html>
-    );
-  }
+          <Text>
+            {db1} — {ct1} {middle_init}
+          </Text>
+          <Text>
+            {db2} — {ct2}
+          </Text>
+          <Text>
+            {db3} — {ct3}
+          </Text>
+          <Text>
+            {db4} — {ct4}
+          </Text>
+          <Text>
+            {db5} — {ct5}
+          </Text>
+        </Container>
+      </Body>
+    </Html>
+  );
 }

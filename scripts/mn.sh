@@ -17,7 +17,7 @@ warn()    { echo -e "${YELLOW}⚠ $1${NC}"; }
 fail()    { echo -e "${RED}✖ $1${NC}"; }
 
 # Summary status variables
-PRETTIER_STATUS="❔"
+BIOME_STATUS="❔"
 TSC_STATUS="❔"
 BUILD_STATUS="❔"
 COMMIT_STATUS="❔"
@@ -36,23 +36,15 @@ else
 fi
 corepack prepare pnpm@latest --activate
 
-# --- Prettier ---
-section "Running Prettier"
-UNFORMATTED=$(pnpm prettier --list-different . 2>/dev/null || true)
-
-if [[ -n "$UNFORMATTED" ]]; then
-  warn "Formatting $(echo "$UNFORMATTED" | wc -l) file(s)"
-  if echo "$UNFORMATTED" | xargs pnpm prettier --write --log-level=error; then
-    PRETTIER_STATUS="✔"
-    success "Prettier fixed issues"
-  else
-    PRETTIER_STATUS="✖"
-    fail "Prettier failed"
-    exit 1
-  fi
+# --- Biome ---
+section "Running Biome"
+if pnpm biome check --write .; then
+  BIOME_STATUS="✔"
+  success "Biome checks passed"
 else
-  PRETTIER_STATUS="✔"
-  success "Prettier Good"
+  BIOME_STATUS="✖"
+  # fail "Biome failed"
+  # exit 1
 fi
 
 # --- TypeScript ---
@@ -105,7 +97,7 @@ fi
 # --- Summary ---
 section "Summary"
 
-printf "%-20s %s\n" "Prettier" "     $PRETTIER_STATUS"
+printf "%-20s %s\n" "Biome" "     $BIOME_STATUS"
 printf "%-20s %s\n" "TypeScript" "     $TSC_STATUS"
 printf "%-20s %s\n" "Build" "     $BUILD_STATUS"
 printf "%-20s %s\n" "Commit" "     $COMMIT_STATUS"

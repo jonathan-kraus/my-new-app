@@ -1,6 +1,6 @@
 import { GitPullRequest } from "lucide-react";
-import type { ActivityItemData } from "@/types/activity";
 import { formatTime } from "@/lib/astronomy/formatTime";
+import type { ActivityItemData } from "@/types/activity";
 export default function PullRequestEventCard({
   item,
 }: {
@@ -18,6 +18,7 @@ export default function PullRequestEventCard({
             href={item.url}
             target="_blank"
             className="text-sm text-muted-foreground hover:underline"
+            rel="noopener"
           >
             View pull request
           </a>

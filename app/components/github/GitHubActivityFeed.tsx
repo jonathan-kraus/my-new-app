@@ -1,9 +1,9 @@
 "use client";
 // app\components\github\GitHubActivityFeed.tsx
 import { useCallback, useEffect, useState } from "react";
-import { GitHubActivityCard } from "./GitHubActivityCard";
-import type { GitHubActivityEvent } from "@/lib/types";
 import { staticUniversalContext } from "@/lib/log/buildj";
+import type { GitHubActivityEvent } from "@/lib/types";
+import { GitHubActivityCard } from "./GitHubActivityCard";
 
 type ActivityResponse = {
   id?: string;

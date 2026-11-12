@@ -14,8 +14,9 @@ vi.mock("../src/lib/mbta/catalog", () => ({
   recordMbtaSyncFailure: mocks.failure,
   CatalogSyncBusyError: class extends Error {},
 }));
-import { syncMbtaCatalog } from "../src/lib/mbta/sync";
+
 import { CatalogSyncBusyError } from "../src/lib/mbta/catalog";
+import { syncMbtaCatalog } from "../src/lib/mbta/sync";
 
 beforeEach(() => {
   vi.resetAllMocks();

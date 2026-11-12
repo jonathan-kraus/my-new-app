@@ -2,10 +2,11 @@
  * @FilePath: \my-new-app\app\profile\page.tsx
  * @LastEditTime: 2026-08-22 04:02:18
  */
-import { auth, signIn, signOut } from "@/auth";
-import { logj } from "@/lib/log/logj";
-import { staticUniversalContext } from "@/lib/log/buildj";
+
 import { formatDistanceToNow } from "date-fns";
+import { auth, signIn, signOut } from "@/auth";
+import { staticUniversalContext } from "@/lib/log/buildj";
+import { logj } from "@/lib/log/logj";
 import { ProfileCard } from "../components/ProfileCard";
 export default async function ProfilePage() {
   const built = staticUniversalContext("Jonathan");

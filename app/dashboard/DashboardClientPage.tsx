@@ -1,7 +1,7 @@
 "use client";
 
-import GitHubActivityFeed from "@/app/components/github/GitHubActivityFeed";
 import CurrentWeatherCard from "@/app/components/dashboard/current-weather-card";
+import GitHubActivityFeed from "@/app/components/github/GitHubActivityFeed";
 
 export async function DashboardClientPage({ data: _data }: { data: unknown }) {
   // Default location for weather  (you can make this dynamic later)

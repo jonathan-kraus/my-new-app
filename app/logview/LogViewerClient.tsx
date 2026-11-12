@@ -1,7 +1,8 @@
 "use client";
 // app\logview\LogViewerClient.tsx
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface Log {

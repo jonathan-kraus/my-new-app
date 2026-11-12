@@ -1,10 +1,10 @@
-import { withRequestTiming } from "@/lib/log/with-request-timing";
+import { NextResponse } from "next/server";
 /*
  * @FilePath: \my-new-app\app\api\config\create\route.ts
  * @LastEditTime: 2026-09-16 14:52:03
  */
 import { axiomIngest } from "@/lib/axiom";
-import { NextResponse } from "next/server";
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 
 async function POSTHandler(request: Request) {
   const body = await request.json();

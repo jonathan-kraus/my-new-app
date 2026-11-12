@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import useSWR from "swr";
+import { StopDetails } from "@/components/mbta/StopDetails";
 import type { MbtaCatalog } from "@/lib/mbta/catalog-types";
 import { stopsForRoute } from "@/lib/mbta/catalog-types";
 import { mbtaFetcher } from "@/lib/mbta/fetcher";
-import { StopDetails } from "@/components/mbta/StopDetails";
 
 type Prediction = {
   id: string;

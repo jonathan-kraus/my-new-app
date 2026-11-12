@@ -1,3 +1,7 @@
+/*
+ * @FilePath: \my-new-app\app\ClientProviders.tsx
+ * @LastEditTime: 2026-11-12 11:11:37
+ */
 // app/ClientProviders.tsx - CONDITIONAL SessionProvider
 "use client";
 
@@ -9,11 +13,9 @@ export default function ClientProviders({
   children: React.ReactNode;
 }) {
   return (
-    <>
-      <main style={{ flex: 1, padding: "2rem" }}>
-        {children}
-        <ToasterClient />
-      </main>
-    </>
+    <main style={{ flex: 1, padding: "2rem" }}>
+      {children}
+      <ToasterClient />
+    </main>
   );
 }

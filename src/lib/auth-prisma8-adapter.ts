@@ -1,13 +1,13 @@
 import { createId } from "@paralleldrive/cuid2";
-import { Temporal } from "temporal-polyfill";
 import type {
   Adapter,
   AdapterAccount,
   AdapterSession,
   AdapterUser,
 } from "next-auth/adapters";
-import type { Models } from "../../generated/prisma8/contract";
+import { Temporal } from "temporal-polyfill";
 import { db8 } from "@/lib/db.prisma8";
+import type { Models } from "../../generated/prisma8/contract";
 
 // Postgres timestamp columns hold UTC wall-clock values; Auth.js expects Dates.
 const toTimestamp = (date: Date) =>

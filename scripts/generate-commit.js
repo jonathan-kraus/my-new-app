@@ -41,10 +41,7 @@ Write only the commit message. No explanations.
         if (typeof json.response === "string") {
           full += json.response;
         }
-      } catch {
-        // Ignore malformed JSON lines
-        continue;
-      }
+      } catch {}
     }
   }
 

@@ -2,8 +2,9 @@
  * @FilePath: \my-new-app\app\config\readj\page.tsx
  * @LastEditTime: 2026-08-04 15:46:45
  */
-import { readFlightConfig, readWeatherConfig } from "./actions";
+
 import type { Metadata } from "next";
+import { readFlightConfig, readWeatherConfig } from "./actions";
 
 export const metadata: Metadata = { title: "Config" };
 export default async function ConfigReadPage() {

@@ -1,6 +1,6 @@
-import { CheckCircle, XCircle, Loader2 } from "lucide-react";
-import type { ActivityItemData } from "@/types/activity";
+import { CheckCircle, Loader2, XCircle } from "lucide-react";
 import { formatTime } from "@/lib/astronomy/formatTime";
+import type { ActivityItemData } from "@/types/activity";
 
 export default function VercelDeploymentCard({
   item,

@@ -1,8 +1,8 @@
-import { withRequestTiming } from "@/lib/log/with-request-timing";
-import { getFullPackageData } from "@/lib/version/get-full-package-data";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import yaml from "yaml";
+import { withRequestTiming } from "@/lib/log/with-request-timing";
+import { getFullPackageData } from "@/lib/version/get-full-package-data";
 
 async function GETHandler(request: Request) {
   const { searchParams } = new URL(request.url);

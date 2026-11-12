@@ -1,8 +1,9 @@
 // app\admin\db\page.tsx
-import { getOverview, getHistory } from "@/lib/db/overview";
+
 import { DbDashboard } from "@/components/db-dashboard";
-import { logj } from "@/lib/log/logj";
+import { getHistory, getOverview } from "@/lib/db/overview";
 import { staticUniversalContext } from "@/lib/log/buildj";
+import { logj } from "@/lib/log/logj";
 export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {

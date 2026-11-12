@@ -4,9 +4,10 @@
  */
 import { execSync } from "child_process";
 import fs from "fs";
-import path from "path";
 import { createRequire } from "module";
+import path from "path";
 import { fileURLToPath } from "url";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const require = createRequire(import.meta.url);
@@ -45,7 +46,7 @@ const metadata = {
     pnpm: run("pnpm --version"),
     next: run("pnpm exec next --version"),
     typescript: run("pnpm exec tsc --version"),
-    eslint: run("pnpm exec eslint --version"),
+    biome: run("pnpm exec biome --version"),
 
     // ⭐ Added: openmeteo
     openmeteo: safeVersion("openmeteo"),

@@ -7,11 +7,11 @@ import { withRequestTiming } from "@/lib/log/with-request-timing";
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { db8 } from "@/lib/db.prisma8";
-import { logj } from "@/lib/log/logj";
-import { timestampString } from "@/lib/timestampString";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { logj } from "@/lib/log/logj";
 import { withLogging } from "@/lib/logging/withLogging";
 import { getConfig } from "@/lib/runtime/config";
+import { timestampString } from "@/lib/timestampString";
 
 const GETHandler = withLogging(async (req: Request) => {
   // Build context INSIDE the request handler

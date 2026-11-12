@@ -1,9 +1,10 @@
 // app/github/page.tsx
+
+import type { Metadata } from "next";
 import { GitHubActivityCard } from "@/app/components/github/GitHubActivityCard";
-import type { GitHubActivityEvent } from "@/lib/types";
 import { staticUniversalContext } from "@/lib/log/buildj";
 import { logj } from "@/lib/log/logj";
-import type { Metadata } from "next";
+import type { GitHubActivityEvent } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "GitHub Activity" };

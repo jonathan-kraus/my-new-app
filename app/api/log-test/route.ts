@@ -1,7 +1,7 @@
-import { withRequestTiming } from "@/lib/log/with-request-timing";
 // app/api/log-test/route.ts
 import { NextResponse } from "next/server";
 import { axiomIngest } from "@/lib/axiom";
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 
 async function GETHandler() {
   const timestamp = new Date().toISOString();

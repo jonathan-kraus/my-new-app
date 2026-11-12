@@ -1,9 +1,9 @@
-import { withRequestTiming } from "@/lib/log/with-request-timing";
 /*
  * @FilePath: \my-new-app\app\api\travel\next\route.ts
  * @LastEditTime: 2026-02-22 18:21:15
  */
 import { NextResponse } from "next/server";
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 import { getNextTravelEvent } from "@/lib/travel/next-event";
 
 async function GETHandler() {

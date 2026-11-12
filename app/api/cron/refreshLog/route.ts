@@ -1,10 +1,10 @@
-import { withRequestTiming } from "@/lib/log/with-request-timing";
 // app/api/cron/refreshLog/route.ts
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { runDbTableStats } from "@/lib/cron/runDbTableStats";
-import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { logj } from "@/lib/log/logj";
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 
 export const runtime = "nodejs";
 

@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Temporal } from "temporal-polyfill";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Prisma8Adapter } from "../src/lib/auth-prisma8-adapter";
 
 const mocks = vi.hoisted(() => {

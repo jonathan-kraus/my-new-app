@@ -4,8 +4,8 @@
  */
 "use client";
 
-import { formatEastern } from "@/lib/utils/global";
 import { useEffect, useState } from "react";
+import { formatEastern } from "@/lib/utils/global";
 
 type LiveLog = {
   level: string;

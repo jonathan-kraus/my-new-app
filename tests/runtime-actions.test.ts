@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type * as RuntimeAdmin from "@/lib/runtime/admin";
+
 const mocks = vi.hoisted(() => ({
   requireAdmin: vi.fn(),
   set: vi.fn(),
@@ -20,12 +21,13 @@ vi.mock("@/lib/runtime/config", () => ({
 vi.mock("@/lib/db.prisma8", () => ({
   db8: { orm: { public: { RuntimeConfig: mocks } } },
 }));
-import { RuntimeAccessError } from "@/lib/runtime/admin";
+
 import {
-  saveRuntimeSetting,
   createRuntimeSetting,
   deleteRuntimeSetting,
+  saveRuntimeSetting,
 } from "@/lib/runtime/actions";
+import { RuntimeAccessError } from "@/lib/runtime/admin";
 import { POST } from "../app/api/set-flight-id/route";
 
 describe("runtime settings mutations", () => {

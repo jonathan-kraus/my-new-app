@@ -1,6 +1,6 @@
+import { NextResponse } from "next/server";
 import { withRequestTiming } from "@/lib/log/with-request-timing";
 import type { VercelDeployment } from "@/lib/vercel";
-import { NextResponse } from "next/server";
 
 async function GETHandler() {
   const token = process.env.VERCEL_TOKEN;

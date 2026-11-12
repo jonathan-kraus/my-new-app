@@ -1,8 +1,8 @@
 // lib/travel/next/route.ts
 import { NextResponse } from "next/server";
-import { getNextTravelEvent } from "@/lib/travel/next-event";
-import { logj } from "@/lib/log/logj";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { logj } from "@/lib/log/logj";
+import { getNextTravelEvent } from "@/lib/travel/next-event";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";

@@ -1,8 +1,8 @@
 import type { ActivityItemData } from "@/types/activity";
-import PushEventCard from "./PushEventCard";
 import PullRequestEventCard from "./PullRequestEventCard";
-import WorkflowRunCard from "./WorkflowRunCard";
+import PushEventCard from "./PushEventCard";
 import VercelDeploymentCard from "./VercelDeploymentCard";
+import WorkflowRunCard from "./WorkflowRunCard";
 
 export default function ActivityItem({ item }: { item: ActivityItemData }) {
   switch (item.type) {

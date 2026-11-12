@@ -6,6 +6,7 @@ vi.mock("@/lib/mbta/catalog", () => ({
   getMbtaStop: mocks.getStop,
   CatalogUnavailableError: class extends Error {},
 }));
+
 import { GET } from "../../app/api/stops/[stop]/route";
 
 beforeEach(() => vi.resetAllMocks());

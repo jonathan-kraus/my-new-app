@@ -205,6 +205,7 @@ export function EnvironmentStatus() {
               href={github.latestCommit?.url}
               target="_blank"
               className="text-blue-500 underline"
+              rel="noopener"
             >
               {github.latestCommit?.sha}
             </a>

@@ -1,8 +1,8 @@
-import { withRequestTiming } from "@/lib/log/with-request-timing";
+import { Pool } from "@neondatabase/serverless";
 // app\api\logview\route.ts
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { Pool } from "@neondatabase/serverless";
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 
 // GET /api/logview
 // Query params:

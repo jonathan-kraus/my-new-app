@@ -35,6 +35,7 @@ export interface DashboardAstronomyClientProps {
   today: NormalizedAstronomySnapshot | null;
   tomorrow: NormalizedAstronomySnapshot | null;
 }
+
 import { z } from "zod";
 
 export const NormalizedAstronomySnapshotSchema = z.object({

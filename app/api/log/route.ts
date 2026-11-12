@@ -1,4 +1,3 @@
-import { withRequestTiming } from "@/lib/log/with-request-timing";
 /*
  * @FilePath: \my-new-app\app\api\log\route.ts
  * @LastEditTime: 2026-05-23 22:31:29
@@ -6,8 +5,9 @@ import { withRequestTiming } from "@/lib/log/with-request-timing";
 // app/api/log/route.ts
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { logj } from "@/lib/log/logj";
 import { auth } from "@/auth";
+import { logj } from "@/lib/log/logj";
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 
 async function POSTHandler(req: NextRequest) {
   try {

@@ -37,8 +37,8 @@ export async function enrichContext(req: Request) {
   }
 
   // Session info
-  let sessionEmail: string | undefined = undefined;
-  let userId: string | undefined = undefined;
+  let sessionEmail: string | undefined;
+  let userId: string | undefined;
 
   try {
     const session = await auth();

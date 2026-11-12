@@ -4,8 +4,8 @@
  */
 "use client";
 
-import type { Flight } from "@/lib/flight/types";
 import { useState } from "react";
+import type { Flight } from "@/lib/flight/types";
 
 export default function FlightStatusPage() {
   const [status, setStatus] = useState<Flight | null>(null);

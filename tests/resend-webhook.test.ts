@@ -1,6 +1,6 @@
 import { createHmac } from "node:crypto";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Resend as ResendClient } from "resend";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({ get: vi.fn(), log: vi.fn() }));
 vi.mock("@/lib/log/logj", () => ({ logj: mocks.log }));
@@ -18,6 +18,7 @@ vi.mock("resend", async () => {
     },
   };
 });
+
 import { POST } from "../app/api/webhook/route";
 
 const key = Buffer.from("test-signing-key-for-resend-webhook");

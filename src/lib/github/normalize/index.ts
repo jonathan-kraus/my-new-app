@@ -1,19 +1,18 @@
 import type { GitHubPayload } from "@/lib/github/payload";
+import { staticUniversalContext } from "@/lib/log/buildj";
+import { logj } from "@/lib/log/logj";
+import { normalizeGeneric } from "./generic";
+import { normalizeIssueComment } from "./issueComment";
+import { normalizePullRequest } from "./pullRequest";
+import { normalizePush } from "./push";
 /*
  * @FilePath: \my-new-app\lib\github\normalize\index.ts
  * @LastEditTime: 2026-08-01 13:44:50
  */
 // lib/github/normalize/index.ts
 import type { BaseNormalizedGitHubEvent, NormalizedGitHubEvent } from "./types";
-
-import { normalizeWorkflowRun } from "./workflowRun";
 import { normalizeWorkflowJob } from "./workflowJob";
-import { normalizePush } from "./push";
-import { normalizePullRequest } from "./pullRequest";
-import { normalizeIssueComment } from "./issueComment";
-import { normalizeGeneric } from "./generic";
-import { logj } from "@/lib/log/logj";
-import { staticUniversalContext } from "@/lib/log/buildj";
+import { normalizeWorkflowRun } from "./workflowRun";
 export function normalizeGitHubEvent(
   event: string,
   payload: GitHubPayload,

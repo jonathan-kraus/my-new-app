@@ -1,6 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
 import { formatDistance, parseISO } from "date-fns";
+import { useEffect, useState } from "react";
 
 export interface LogEntry {
   id: number;

@@ -2,12 +2,12 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { LocationSelector } from "@/components/LocationSelector";
-import { ForecastCard } from "./ForecastCard";
-import { CurrentWeather } from "./CurrentWeather";
 import { useForecastTimeline } from "@/hooks/useForecastTimeline";
-import type { Location } from "@/lib/types";
-import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
+import { logj } from "@/lib/log/logj";
+import type { Location } from "@/lib/types";
+import { CurrentWeather } from "./CurrentWeather";
+import { ForecastCard } from "./ForecastCard";
 
 const subscribeToHydration = () => () => {};
 const clientSnapshot = () => true;

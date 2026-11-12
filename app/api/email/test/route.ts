@@ -1,12 +1,12 @@
+import { NextResponse } from "next/server";
+import { auth } from "@/auth";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { logj } from "@/lib/log/logj";
 import { withRequestTiming } from "@/lib/log/with-request-timing";
 // app/api/email/test/route.ts
 // app/api/email/test/route.ts
 import { withLogging } from "@/lib/logging/withLogging";
 import { sendTestEmail } from "@/lib/server/email/sendTestEmail";
-import { logj } from "@/lib/log/logj";
-import { buildUniversalContext } from "@/lib/log/build-universal-context";
-import { auth } from "@/auth";
-import { NextResponse } from "next/server";
 
 const POSTHandler = withLogging(async (req: Request) => {
   const session = await auth();

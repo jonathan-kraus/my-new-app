@@ -1,11 +1,12 @@
 "use client";
+
 /*
  * @FilePath: \my-new-app\app\admin\runtime\EmailThrottleCountdown.tsx
  * @LastEditTime: 2026-08-19 00:30:09
  */
 
-import { useEffect, useMemo, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
+import { useEffect, useMemo, useState } from "react";
 
 export function EmailThrottleCountdown({
   lastSent,

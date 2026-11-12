@@ -1,9 +1,9 @@
-import { withRequestTiming } from "@/lib/log/with-request-timing";
+import { NextResponse } from "next/server";
 // /api/config/read/route.ts
 import { queryAxiom } from "@/lib/axiom/query";
-import { NextResponse } from "next/server";
-import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
+import { logj } from "@/lib/log/logj";
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 
 export const dynamic = "force-dynamic";
 

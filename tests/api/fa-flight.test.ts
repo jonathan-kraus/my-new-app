@@ -1,10 +1,12 @@
-import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import type { NextRequest } from "next/server";
+import { afterEach, beforeEach, expect, it, vi } from "vitest";
+
 vi.mock("@/lib/runtime/config", () => ({
   getConfig: vi.fn(async () => "AAL3166"),
 }));
-import { GET } from "../../app/api/fa/flight/route";
+
 import { getConfig } from "@/lib/runtime/config";
+import { GET } from "../../app/api/fa/flight/route";
 
 const fetchMock = vi.fn();
 const position = {

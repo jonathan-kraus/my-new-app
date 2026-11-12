@@ -9,6 +9,7 @@ vi.mock("@/auth", () => ({ auth: mocks.auth }));
 vi.mock("@/lib/db.prisma8", () => ({
   db8: { orm: { public: { UserRole: mocks } } },
 }));
+
 import { requireRuntimeAdmin } from "@/lib/runtime/admin";
 
 describe("runtime administrator authorization", () => {

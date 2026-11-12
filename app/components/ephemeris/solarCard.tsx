@@ -1,8 +1,8 @@
 "use client";
 
-import type { SolarSnapshot } from "@/lib/ephemeris/types";
-import { useLiveCountdown } from "@/hooks/useLiveCountdown";
 import { useState } from "react";
+import { useLiveCountdown } from "@/hooks/useLiveCountdown";
+import type { SolarSnapshot } from "@/lib/ephemeris/types";
 
 export default function SolarCard({ snapshot }: { snapshot: SolarSnapshot }) {
   // Determine which solar event is next (sunrise or sunset)

@@ -3,14 +3,14 @@
  * @LastEditTime: 2026-09-06 21:49:34
  */
 import {
-  Html,
-  Head,
   Body,
   Container,
-  Section,
-  Text,
+  Head,
   Heading,
   Hr,
+  Html,
+  Section,
+  Text,
 } from "react-email";
 
 type ForecastRow = {

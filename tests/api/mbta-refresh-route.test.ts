@@ -20,10 +20,11 @@ vi.mock("@/lib/mbta/catalog", () => ({
 }));
 vi.mock("@/lib/mbta/sync", () => ({ syncMbtaCatalog: mocks.sync }));
 vi.mock("@/lib/log/logj", () => ({ logj: mocks.log }));
+
+import { CatalogSyncBusyError } from "@/lib/mbta/catalog";
+import { RuntimeAccessError } from "@/lib/runtime/admin";
 import { GET, POST } from "../../app/api/admin/mbta/route";
 import { GET as cron } from "../../app/api/cron/mbta/route";
-import { RuntimeAccessError } from "@/lib/runtime/admin";
-import { CatalogSyncBusyError } from "@/lib/mbta/catalog";
 
 beforeEach(() => {
   vi.resetAllMocks();

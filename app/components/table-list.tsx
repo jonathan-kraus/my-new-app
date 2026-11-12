@@ -1,6 +1,9 @@
 "use client";
 
+import { ArrowRight, Database } from "lucide-react";
 import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -9,10 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatBytes, formatNumber } from "@/lib/format";
-import { ArrowRight, Database } from "lucide-react";
 
 interface TableInfo {
   name: string;

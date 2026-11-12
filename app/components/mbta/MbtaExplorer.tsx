@@ -5,8 +5,8 @@ import useSWR from "swr";
 import { LineArrivals } from "@/components/LineArrivals";
 import {
   frequentStops,
-  stopsForRoute,
   type MbtaCatalog,
+  stopsForRoute,
 } from "@/lib/mbta/catalog-types";
 import { mbtaFetcher } from "@/lib/mbta/fetcher";
 

@@ -1,6 +1,6 @@
-import { afterEach, beforeEach, expect, it, vi } from "vitest";
-import { Temporal } from "temporal-polyfill";
 import type { NextRequest } from "next/server";
+import { Temporal } from "temporal-polyfill";
+import { afterEach, beforeEach, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   build: vi.fn(),
@@ -60,6 +60,7 @@ vi.mock("@/lib/db.prisma8", () => {
     },
   };
 });
+
 import { GET } from "../app/api/cron/astronomy/route";
 
 beforeEach(() => {

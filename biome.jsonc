@@ -1,0 +1,46 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.6.7/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "ignoreUnknown": true,
+    "includes": [
+      "**",
+      "!.agents/skills",
+      "!.claude/skills",
+      "!.cursor/skills",
+      "!.devin/skills",
+      "!.github",
+      "!.version",
+      "!.next",
+      "!out",
+      "!build",
+      "!dist",
+      "!node_modules",
+      "!coverage",
+      "!.vscode",
+      "!next-env.d.ts",
+      "!src/lib/generated",
+      "!lib/generated",
+      "!generated",
+      "!migrations/snapshots",
+      "!pnpm-lock.yaml"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space"
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "recommended",
+      "style": {
+        "noNonNullAssertion": "off"
+      }
+    }
+  }
+}

@@ -11,9 +11,9 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { LocationSelector } from "@/components/LocationSelector";
-import type { Location } from "@/lib/types";
-import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
+import { logj } from "@/lib/log/logj";
+import type { Location } from "@/lib/types";
 
 type WeatherPoint = {
   time: string;

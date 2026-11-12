@@ -165,7 +165,7 @@ export default function NotesClient() {
       if (!query) return true;
       return Boolean(
         note.title?.toLowerCase().includes(query) ||
-        note.content?.toLowerCase().includes(query),
+          note.content?.toLowerCase().includes(query),
       );
     };
 

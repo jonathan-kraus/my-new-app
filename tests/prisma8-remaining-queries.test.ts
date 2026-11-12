@@ -1,13 +1,13 @@
 import { beforeEach, expect, it, vi } from "vitest";
 import {
-  getTableDataWithPrisma,
+  getAstronomyForDashboard,
+  refreshAstronomySnapshotsForLocation,
+} from "@/lib/astronomy";
+import {
   getModelForTable,
+  getTableDataWithPrisma,
   getTableHistoryWithPrisma,
 } from "@/lib/db/prisma-table";
-import {
-  refreshAstronomySnapshotsForLocation,
-  getAstronomyForDashboard,
-} from "@/lib/astronomy";
 
 const mocks = vi.hoisted(() => {
   const query = {

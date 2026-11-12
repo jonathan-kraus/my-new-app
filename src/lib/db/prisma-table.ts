@@ -1,9 +1,9 @@
 import { db8 } from "@/lib/db.prisma8";
-
-import contract from "../../../generated/prisma8/contract.json" with { type: "json" };
-
-import { excludeTables } from "./utils";
 import { timestampString } from "@/lib/timestampString";
+import contract from "../../../generated/prisma8/contract.json" with {
+  type: "json",
+};
+import { excludeTables } from "./utils";
 
 // Explicitly registered collections keep dynamic table access typed and allowlisted.
 

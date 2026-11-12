@@ -1,9 +1,10 @@
 "use client";
-import type { Location } from "@/lib/types";
 import { useEffect, useRef, useState, useTransition } from "react";
-import { sendForecastEmail } from "@/lib/server/email/sendForecastEmail";
-import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
+import { logj } from "@/lib/log/logj";
+import { sendForecastEmail } from "@/lib/server/email/sendForecastEmail";
+import type { Location } from "@/lib/types";
+
 type ForecastRow = {
   date: Date;
   max: number;

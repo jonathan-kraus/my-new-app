@@ -3,9 +3,9 @@
  * @LastEditTime: 2026-09-15 18:52:19
  */
 
-import { getFullPackageData } from "@/lib/version/get-full-package-data";
-import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
+import { logj } from "@/lib/log/logj";
+import { getFullPackageData } from "@/lib/version/get-full-package-data";
 export default function VersionCard() {
   const data = getFullPackageData();
   const built = staticUniversalContext("VERSION_CARD");
@@ -22,8 +22,7 @@ export default function VersionCard() {
   const IGNORE_PREFIXES = [
     "@radix-ui/",
     "@types/",
-    "@typescript-eslint/",
-    "eslint",
+    "@biomejs/",
     "typescript",
     "ts-node",
     "vite",

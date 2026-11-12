@@ -1,5 +1,5 @@
-import { auth } from "@/auth";
 import { headers } from "next/headers";
+import { auth } from "@/auth";
 import NewNoteClient from "./NewNoteClient";
 
 export default async function NewNotePage() {

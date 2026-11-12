@@ -1,8 +1,8 @@
 "use client";
 
+import { Camera, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Camera, Loader2 } from "lucide-react";
 
 interface SnapshotButtonProps {
   onComplete?: () => void;

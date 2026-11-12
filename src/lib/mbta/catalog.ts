@@ -1,5 +1,4 @@
 import "server-only";
-import { mbtaDb as db8 } from "./db";
 import type { JsonValue } from "@prisma/orm-postgres/target/codec-types";
 import type {
   CatalogRoute,
@@ -8,6 +7,7 @@ import type {
   StopDetail,
 } from "./catalog-types";
 import { routesForStop, stationId } from "./catalog-types";
+import { mbtaDb as db8 } from "./db";
 
 export class CatalogUnavailableError extends Error {
   constructor() {
@@ -65,16 +65,18 @@ export async function getMbtaCatalog(): Promise<MbtaCatalog> {
       sequences.set(membership.patternId, sequence);
     }
     return {
-      routes: routes.map((route): CatalogRoute => ({
-        id: route.id,
-        name: route.name,
-        color: route.color,
-        textColor: route.textColor,
-        routeType: route.routeType,
-        sortOrder: route.sortOrder,
-        directionNames: (route.attributes as { directionNames: string[] })
-          .directionNames,
-      })),
+      routes: routes.map(
+        (route): CatalogRoute => ({
+          id: route.id,
+          name: route.name,
+          color: route.color,
+          textColor: route.textColor,
+          routeType: route.routeType,
+          sortOrder: route.sortOrder,
+          directionNames: (route.attributes as { directionNames: string[] })
+            .directionNames,
+        }),
+      ),
       stops: stops.map((stop) => ({
         id: stop.id,
         type: "stop" as const,

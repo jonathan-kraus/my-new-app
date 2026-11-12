@@ -2,10 +2,10 @@ import { withRequestTiming } from "@/lib/log/with-request-timing";
 // app/api/debug-auth-headers/route.ts
 
 import {
-  getLastAuthResponseHeaders,
+  clearLastAuthRequestHeaders,
   clearLastAuthResponseHeaders,
   getLastAuthRequestHeaders,
-  clearLastAuthRequestHeaders,
+  getLastAuthResponseHeaders,
 } from "@/lib/auth-debug";
 
 async function GETHandler() {

@@ -1,5 +1,5 @@
-import { withRequestTiming } from "@/lib/log/with-request-timing";
 import { NextResponse } from "next/server";
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 
 const owner = "Jonathan-kraus";
 const repo = "my-new-app";

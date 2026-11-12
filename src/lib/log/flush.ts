@@ -1,5 +1,5 @@
-import type { QueueEvent } from "./queue";
 import { axiomIngest } from "@/lib/axiom";
+import type { QueueEvent } from "./queue";
 
 export async function flush(batch: QueueEvent[]) {
   if (!batch.length) return;

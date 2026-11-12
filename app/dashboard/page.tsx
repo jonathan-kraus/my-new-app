@@ -3,20 +3,20 @@
  * @LastEditTime: 2026-10-04 01:49:45
  */
 
-import { getDashboardData } from "@/lib/dashboard";
-import { getFullPackageData } from "@/lib/version/get-full-package-data";
+import type { Metadata } from "next";
 import { AstronomyCard } from "@/app/astronomy/AstronomyCard";
 import CurrentWeatherCard from "@/app/components/dashboard/current-weather-card";
 import VersionCard from "@/app/components/dashboard/version-card";
-import { logj } from "@/lib/log/logj";
-import { timestampString } from "@/lib/timestampString";
-import { buildPageUniversalContext } from "@/lib/log/build-universal-context";
-import type { Metadata } from "next";
 import { auth } from "@/auth";
-import BuildCard from "../components/dashboard/build-card";
-import { LocationSchema, WeatherSchema } from "@/lib/schemas/page-schemas";
-import { LogsCard } from "./components/LogsCard";
+import { getDashboardData } from "@/lib/dashboard";
 import { db8 } from "@/lib/db.prisma8";
+import { buildPageUniversalContext } from "@/lib/log/build-universal-context";
+import { logj } from "@/lib/log/logj";
+import { LocationSchema, WeatherSchema } from "@/lib/schemas/page-schemas";
+import { timestampString } from "@/lib/timestampString";
+import { getFullPackageData } from "@/lib/version/get-full-package-data";
+import BuildCard from "../components/dashboard/build-card";
+import { LogsCard } from "./components/LogsCard";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = { title: "Dashboard " };
@@ -111,8 +111,7 @@ export default async function DashboardPage() {
   const IGNORE_PREFIXES = [
     "@radix-ui/",
     "@types/",
-    "@typescript-eslint/",
-    "eslint",
+    "@biomejs/",
     "typescript",
     "ts-node",
     "vite",
@@ -341,7 +340,7 @@ export default async function DashboardPage() {
     pnpm: filteredDeps.pnpm ?? "unknown",
     next: filteredDeps.next ?? "unknown",
     typescript: filteredDeps.typescript ?? "unknown",
-    eslint: filteredDeps.eslint ?? "unknown",
+    biome: filteredDeps.biome ?? "unknown",
     openmeteo: filteredDeps.openmeteo ?? "unknown",
     prisma: filteredDeps["@prisma/orm-postgres"] ?? "unknown",
   };

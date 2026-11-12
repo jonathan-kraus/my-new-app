@@ -1,9 +1,10 @@
 "use client";
+
 // app/ClientLayout.tsx
 
-import { ToastProvider } from "@/components/Toast";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { ToastProvider } from "@/components/Toast";
 
 export default function ClientLayout({
   children,

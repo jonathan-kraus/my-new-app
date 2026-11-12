@@ -1,10 +1,10 @@
 "use client";
+import { useEffect, useState } from "react";
 /*
  * @FilePath: \my-new-app\app\components\skybox.tsx
  * @LastEditTime: 2026-10-23 22:36:20
  */
 import type { Flight } from "@/lib/flight/types";
-import { useEffect, useState } from "react";
 
 export default function Skybox({
   onSelect,

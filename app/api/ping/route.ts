@@ -1,13 +1,13 @@
-import { withRequestTiming } from "@/lib/log/with-request-timing";
+import { cookies, headers } from "next/headers";
 // app/api/ping/route.ts
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { logj } from "@/lib/log/logj";
-import { buildUniversalContext } from "@/lib/log/build-universal-context";
-import { auth } from "@/auth";
-import { headers, cookies } from "next/headers";
 import { fetchWeatherApi } from "openmeteo";
+import { auth } from "@/auth";
 import { db8 } from "@/lib/db.prisma8";
+import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { logj } from "@/lib/log/logj";
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 
 export const runtime = "nodejs";
 

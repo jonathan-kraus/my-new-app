@@ -1,6 +1,6 @@
 import { db8 } from "@/lib/db.prisma8";
-import LogViewerClient from "./LogViewerClient";
 import { timestampString } from "@/lib/timestampString";
+import LogViewerClient from "./LogViewerClient";
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata() {

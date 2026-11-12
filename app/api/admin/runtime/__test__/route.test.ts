@@ -1,11 +1,13 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type * as RuntimeAdmin from "@/lib/runtime/admin";
+
 vi.mock("@/lib/runtime/admin", async (importOriginal) => ({
   ...(await importOriginal<typeof RuntimeAdmin>()),
   requireRuntimeAdmin: vi.fn(),
 }));
 vi.mock("@/auth", () => ({ auth: vi.fn() }));
-import { requireRuntimeAdmin, RuntimeAccessError } from "@/lib/runtime/admin";
+
+import { RuntimeAccessError, requireRuntimeAdmin } from "@/lib/runtime/admin";
 
 vi.mock("@/lib/db.prisma8", () => {
   const mockDb8 = {

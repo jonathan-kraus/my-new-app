@@ -1,4 +1,5 @@
 import { getEphemerisSnapshot } from "./lib/ephemeris/getEphemerisSnapshot.js";
+
 const snap = await getEphemerisSnapshot("KOP");
 console.log(
   JSON.stringify(

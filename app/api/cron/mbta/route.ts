@@ -1,7 +1,7 @@
-import { withRequestTiming } from "@/lib/log/with-request-timing";
+import { staticUniversalContext } from "@/lib/log/buildj";
 // app\api\cron\mbta\route.ts
 import { logj } from "@/lib/log/logj";
-import { staticUniversalContext } from "@/lib/log/buildj";
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 import { CatalogSyncBusyError } from "@/lib/mbta/catalog";
 import { syncMbtaCatalog } from "@/lib/mbta/sync";
 export const runtime = "nodejs";

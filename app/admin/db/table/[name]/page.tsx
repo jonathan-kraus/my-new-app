@@ -1,18 +1,18 @@
+import { ArrowLeft, Columns3, HardDrive, Rows3 } from "lucide-react";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { DashboardHeader } from "@/components/dashboard-header";
+import { StatCard } from "@/components/stat-card";
 import { TableDetailView } from "@/components/table-detail-view";
 import { TableHistoryChart } from "@/components/table-history-chart";
-import { StatCard } from "@/components/stat-card";
-import { Rows3, HardDrive, Columns3, ArrowLeft } from "lucide-react";
-import Link from "next/link";
-import { logj } from "@/lib/log/logj";
-import { assertNonEmptyArray } from "@/lib/db/safe";
-import { staticUniversalContext } from "@/lib/log/buildj";
 import { getTableSize } from "@/lib/db/overview";
 import {
   getTableDataWithPrisma,
   getTableHistoryWithPrisma,
 } from "@/lib/db/prisma-table";
+import { assertNonEmptyArray } from "@/lib/db/safe";
+import { staticUniversalContext } from "@/lib/log/buildj";
+import { logj } from "@/lib/log/logj";
 export const dynamic = "force-dynamic";
 
 interface PageProps {
@@ -64,19 +64,13 @@ export default async function TablePage({ params, searchParams }: PageProps) {
 
   // Find first and last snapshot dates
   const rows = assertNonEmptyArray(
-    history as Array<{ snapshotDate: String }>,
+    history as Array<{ snapshotDate: string }>,
     "history snapshots",
   );
 
   const firstSnapshot = rows[0]!.snapshotDate;
 
-  // Convert boxed String → primitive string
-  const firstSnapshotStr =
-    typeof firstSnapshot === "string"
-      ? firstSnapshot
-      : firstSnapshot.toString();
-
-  const formattedSnapshot = new Date(firstSnapshotStr).toLocaleDateString(
+  const formattedSnapshot = new Date(firstSnapshot).toLocaleDateString(
     "en-US",
     {
       year: "numeric",

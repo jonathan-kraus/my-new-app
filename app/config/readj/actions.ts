@@ -5,8 +5,8 @@
 "use server";
 
 import { queryAxiom } from "@/lib/axiom/query";
-import { logj } from "@/lib/log/logj";
 import { staticUniversalContext } from "@/lib/log/buildj";
+import { logj } from "@/lib/log/logj";
 
 const built = staticUniversalContext("Config");
 let jei = 0;

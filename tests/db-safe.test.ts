@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { assertRows, firstRow, assertNonEmptyArray } from "@/lib/db/safe";
+import { assertNonEmptyArray, assertRows, firstRow } from "@/lib/db/safe";
 
 describe.each([
   ["assertRows", assertRows, "Query returned no rows"],

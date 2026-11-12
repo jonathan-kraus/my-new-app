@@ -1,7 +1,7 @@
-import { withRequestTiming } from "@/lib/log/with-request-timing";
 // app/api/prisma-test/route.ts
 import { NextResponse } from "next/server";
 import { db8 } from "@/lib/db.prisma8";
+import { withRequestTiming } from "@/lib/log/with-request-timing";
 
 async function GETHandler() {
   try {

@@ -3,12 +3,12 @@
  * @LastEditTime: 2026-11-03 14:58:43
  */
 
-import { auth } from "@/auth";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import normalizePath from "@/lib/normalizePath";
-import { logj } from "@/lib/log/logj";
+import { auth } from "@/auth";
 import { buildUniversalContext } from "@/lib/log/build-universal-context";
+import { logj } from "@/lib/log/logj";
+import normalizePath from "@/lib/normalizePath";
 import { getConfig } from "@/lib/runtime/config";
 
 export async function proxy(req: NextRequest) {

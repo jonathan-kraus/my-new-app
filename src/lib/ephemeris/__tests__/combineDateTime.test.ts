@@ -2,7 +2,7 @@ vi.mock("@/lib/runtime/config", () => ({
   getConfig: vi.fn().mockResolvedValue("0"),
 }));
 
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { combineDateTime } from "@/lib/ephemeris/utils/combineDateTime";
 
 describe("combineDateTime", () => {

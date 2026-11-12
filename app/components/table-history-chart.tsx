@@ -1,27 +1,27 @@
 "use client";
 
+import { TrendingUp } from "lucide-react";
 import {
   Area,
   AreaChart,
   CartesianGrid,
+  Tooltip,
   XAxis,
   YAxis,
-  Tooltip,
 } from "recharts";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from "@/components/ui/card";
 import {
+  type ChartConfig,
   ChartContainer,
   ChartTooltipContent,
-  type ChartConfig,
 } from "@/components/ui/chart";
-import { formatDate, formatNumber, formatBytes } from "@/lib/format";
-import { TrendingUp } from "lucide-react";
+import { formatBytes, formatDate, formatNumber } from "@/lib/format";
 
 interface HistoryEntry {
   tableName: string;
