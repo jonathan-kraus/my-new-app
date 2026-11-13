@@ -1,7 +1,8 @@
 {
   "files.autoSave": "afterDelay",
   "workbench.editor.empty.hint": "hidden",
-  "terminal.integrated.fontSize": 18,
+  "terminal.integrated.fontFamily": "Cascadia Mono, Consolas, monospace",
+  "terminal.integrated.fontSize": 16,
   "terminal.integrated.initialHint": false,
   "terminal.integrated.shellIntegration.enabled": false,
   "fileheader.customMade": {
