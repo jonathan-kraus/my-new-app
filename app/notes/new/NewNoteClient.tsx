@@ -137,7 +137,7 @@ export default function NewNoteClient({ authorized, userId: _userId }: Props) {
       </div>
 
       <div className="mt-4">
-        <label className="block text-white text-sm mb-2">Color:</label>
+        <p className="block text-white text-sm mb-2">Color:</p>
         <div className="flex gap-2 flex-wrap">
           {colorOptions.map((colorOption) => (
             <button
@@ -164,6 +164,7 @@ export default function NewNoteClient({ authorized, userId: _userId }: Props) {
       )}
 
       <button
+        type="button"
         onClick={handleSave}
         disabled={saving || content.trim().length === 0}
         className="mt-4 bg-blue-500 hover:bg-blue-600 disabled:bg-blue-400 text-white font-semibold px-5 py-2 rounded-lg transition-colors"
@@ -172,6 +173,7 @@ export default function NewNoteClient({ authorized, userId: _userId }: Props) {
       </button>
 
       <button
+        type="button"
         onClick={() => router.push("/notes")}
         className="mt-4 ml-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold px-5 py-2 rounded-lg transition-colors"
       >

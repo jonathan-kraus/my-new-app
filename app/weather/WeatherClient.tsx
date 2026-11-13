@@ -208,7 +208,11 @@ export default function WeatherClient({
                       {condition.label}
                     </p>
                   </div>
-                  <span className="text-5xl" aria-label={condition.label}>
+                  <span
+                    className="text-5xl"
+                    role="img"
+                    aria-label={condition.label}
+                  >
                     {condition.icon}
                   </span>
                 </div>
@@ -285,6 +289,7 @@ export default function WeatherClient({
                       </p>
                       <p
                         className="my-3 text-2xl"
+                        role="img"
                         aria-label={pointCondition.label}
                       >
                         {pointCondition.icon}

@@ -21,7 +21,9 @@ export default function FlightAwareCount() {
   return (
     <div style={{ padding: 24 }}>
       <h1>FlightAware Count</h1>
-      <button onClick={fetchCount}>Get Flight Count</button>
+      <button type="button" onClick={fetchCount}>
+        Get Flight Count
+      </button>
 
       {count !== null && (
         <p style={{ marginTop: 16 }}> Flights in box: {count}</p>

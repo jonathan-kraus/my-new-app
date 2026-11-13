@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Skybox from "@/components/Skybox";
 /*
  * @FilePath: \my-new-app\app\fa\dashboard\page.tsx
@@ -13,7 +13,7 @@ export default function FlightDashboard() {
   const [error, setError] = useState("");
   const [selectedFlightId, setSelectedFlightId] = useState<string | null>(null);
 
-  async function load(flightId: string | null = null) {
+  const load = useCallback(async (flightId: string | null = null) => {
     try {
       // The endpoint reads the configured flight ID on the server.
       const res = await fetch(
@@ -28,7 +28,7 @@ export default function FlightDashboard() {
       setData(null);
       setError("Could not load flight data. Please try again.");
     }
-  }
+  }, []);
 
   useEffect(() => {
     queueMicrotask(() => {
@@ -71,6 +71,7 @@ export default function FlightDashboard() {
       )}
 
       <button
+        type="button"
         onClick={() => load(selectedFlightId)}
         className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white"
       >
@@ -151,6 +152,7 @@ export default function FlightDashboard() {
           />
 
           <button
+            type="button"
             onClick={updateFlight}
             className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-md text-white"
           >

@@ -30,6 +30,7 @@ export function Button({
 
   return (
     <button
+      type="button"
       onClick={onClick}
       style={{
         backgroundColor: "#2563eb",

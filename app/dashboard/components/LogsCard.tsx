@@ -120,6 +120,7 @@ function LogRow({ log, now }: { log: LogEntry; now: number | null }) {
       </div>
 
       <button
+        type="button"
         className="mt-2 text-xs text-blue-600 hover:underline"
         onClick={() => setOpen(!open)}
       >

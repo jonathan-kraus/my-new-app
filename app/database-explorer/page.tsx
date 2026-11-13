@@ -78,7 +78,9 @@ export default async function DatabaseExplorerPage() {
 
   for (const col of columns) {
     const key = col.table_name;
-    (columnsByTable[key] ??= [] as Column[]).push(col);
+    const tableColumns = columnsByTable[key] ?? [];
+    tableColumns.push(col);
+    columnsByTable[key] = tableColumns;
   }
 
   const totalSize = tables.reduce(

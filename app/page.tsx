@@ -100,7 +100,7 @@ export default async function HomePage() {
     },
   );
 
-  let weatherData;
+  let weatherData: unknown;
   try {
     weatherData = await weatherRes.json();
   } catch (err) {
@@ -137,9 +137,8 @@ export default async function HomePage() {
     },
   );
 
-  let forecastData;
   try {
-    forecastData = await forecastRes.json();
+    await forecastRes.json();
   } catch (err) {
     const raw = await forecastRes.text().catch(() => "Could not read body");
     await logj({
@@ -151,7 +150,6 @@ export default async function HomePage() {
       payload: {
         error: String(err),
         body: raw,
-        urld: forecastData.url,
         url: forecastRes.url,
         status: forecastRes.status,
         redirected: forecastRes.redirected,
@@ -169,9 +167,8 @@ export default async function HomePage() {
     cache: "no-store",
   });
 
-  let gitData;
   try {
-    gitData = await gitRes.json();
+    await gitRes.json();
   } catch (err) {
     const raw = await gitRes.text().catch(() => "Could not read body");
     await logj({
@@ -183,7 +180,6 @@ export default async function HomePage() {
       payload: {
         error: String(err),
         body: raw,
-        urld: gitData.url,
         url: gitRes.url,
         status: gitRes.status,
         redirected: gitRes.redirected,

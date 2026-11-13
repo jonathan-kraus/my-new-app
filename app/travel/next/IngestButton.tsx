@@ -22,6 +22,7 @@ export function IngestButton() {
 
   return (
     <button
+      type="button"
       onClick={handleIngest}
       className="px-4 py-2 rounded bg-cyan-600 hover:bg-cyan-700 text-white font-medium"
     >

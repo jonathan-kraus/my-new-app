@@ -5,7 +5,7 @@
 // app/notes/NotesClient.tsx
 "use client";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { logj } from "@/lib/log/logj";
 
@@ -89,16 +89,16 @@ export default function NotesClient() {
     { value: "orange", label: "Orange", className: "bg-orange-500" },
   ];
 
-  const isFollowupDueSoon = (note: Note) => {
+  const isFollowupDueSoon = useCallback((note: Note) => {
     if (!note.followUpAt) return false;
     const now = new Date();
     const dueAt = new Date(note.followUpAt);
     const deadline = new Date(now);
     deadline.setDate(deadline.getDate() + 7);
     return dueAt >= now && dueAt <= deadline;
-  };
+  }, []);
 
-  const refreshFollowupsDueCount = async () => {
+  const refreshFollowupsDueCount = useCallback(async () => {
     try {
       const dueRes = await fetch("/api/notes/due?days=7");
       if (dueRes.ok) {
@@ -111,7 +111,7 @@ export default function NotesClient() {
       setFollowupsDueCount(0);
       console.error("Error fetching follow-ups due count:", err);
     }
-  };
+  }, []);
 
   // Initial load: notes, user, auth, followups
   useEffect(() => {
@@ -464,7 +464,7 @@ export default function NotesClient() {
               </div>
 
               <div className="mt-3">
-                <label className="block text-white text-sm mb-2">Color:</label>
+                <p className="block text-white text-sm mb-2">Color:</p>
                 <div className="flex gap-2 flex-wrap">
                   {colorOptions.map((colorOption) => (
                     <button

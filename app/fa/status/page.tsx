@@ -19,7 +19,9 @@ export default function FlightStatusPage() {
   return (
     <div style={{ padding: 24 }}>
       <h1>Flight Status: AA 877</h1>
-      <button onClick={fetchStatus}>Get Status</button>
+      <button type="button" onClick={fetchStatus}>
+        Get Status
+      </button>
 
       {status && (
         <div style={{ marginTop: 16 }}>

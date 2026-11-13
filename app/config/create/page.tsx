@@ -53,6 +53,7 @@ export default function AxiomConfig() {
       <p>Trigger config ingest to Axiom (same API used by cron).</p>
 
       <button
+        type="button"
         onClick={handleIngest}
         className="rounded bg-sky-600 px-4 py-2 text-white hover:bg-sky-500"
       >

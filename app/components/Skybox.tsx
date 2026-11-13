@@ -13,26 +13,26 @@ export default function Skybox({
 }) {
   const [planes, setPlanes] = useState<Flight[]>([]);
   const [error, setError] = useState("");
-  async function loadSkybox() {
-    try {
-      const res = await fetch("/api/fa/dashboard", { cache: "no-store" });
-      if (!res.ok) throw new Error("Nearby flight lookup failed");
-      const json = await res.json();
-      setPlanes(json.planes || []);
-      setError("");
-    } catch {
-      setPlanes([]);
-      setError("Could not load nearby flights.");
-    }
-  }
-
   useEffect(() => {
+    async function loadSkybox() {
+      try {
+        const res = await fetch("/api/fa/dashboard", { cache: "no-store" });
+        if (!res.ok) throw new Error("Nearby flight lookup failed");
+        const json = await res.json();
+        setPlanes(json.planes || []);
+        setError("");
+      } catch {
+        setPlanes([]);
+        setError("Could not load nearby flights.");
+      }
+    }
+
     queueMicrotask(() => {
       loadSkybox();
     });
     const timer = setInterval(loadSkybox, 60_000);
     return () => clearInterval(timer);
-  }, [loadSkybox]);
+  }, []);
 
   return (
     <div className="bg-slate-800 border border-slate-700 rounded-lg p-6 shadow-lg">

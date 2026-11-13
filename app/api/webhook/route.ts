@@ -84,7 +84,7 @@ async function POSTHandler(request: Request) {
   }
 
   const resend = new Resend(apiKey);
-  let event;
+  let event: ReturnType<typeof resend.webhooks.verify>;
   try {
     // Verify the original bytes before parsing or fetching anything from Resend.
     event = resend.webhooks.verify({

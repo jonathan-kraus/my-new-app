@@ -5,7 +5,6 @@ import { toast } from "react-hot-toast";
 
 type SunriseCountdownProps = {
   sunrise: string;
-  timezone: string;
 };
 
 export function SunriseCountdown({ sunrise }: SunriseCountdownProps) {
@@ -65,9 +64,8 @@ export function SunriseCountdown({ sunrise }: SunriseCountdownProps) {
 
 type SunsetCountdownProps = {
   sunset: string;
-  timezone: string;
 };
-export function SunsetCountdown({ sunset, timezone }: SunsetCountdownProps) {
+export function SunsetCountdown({ sunset }: SunsetCountdownProps) {
   const [remaining, setRemaining] = useState<number | null>(null);
 
   const lastHourRef = useRef<number | null>(null);
@@ -125,7 +123,6 @@ export function SunsetCountdown({ sunset, timezone }: SunsetCountdownProps) {
 
 type MoonsetCountdownProps = {
   moonset: string; // ISO timestamp
-  timezone: string;
 };
 
 export function MoonsetCountdown({ moonset }: MoonsetCountdownProps) {
@@ -184,7 +181,6 @@ export function MoonsetCountdown({ moonset }: MoonsetCountdownProps) {
 
 type MoonriseCountdownProps = {
   moonrise: string; // ISO timestamp
-  timezone: string;
 };
 
 export function MoonriseCountdown({ moonrise }: MoonriseCountdownProps) {

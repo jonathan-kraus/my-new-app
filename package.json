@@ -39,7 +39,7 @@
     "smart-commit": "pnpm genmsg && git add . && git commit -F .git/COMMIT_MSG && git push origin main",
     "pfix": "biome check --write .",
     "postinstall": "prisma contract emit",
-    "pchk": "biome check .",
+    "pchk": "biome check . --max-diagnostics 888",
     "start": "next start",
     "coverage": "vitest run --coverage",
     "test": "vitest run",

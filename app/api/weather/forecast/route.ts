@@ -196,7 +196,7 @@ export async function GET(req: Request) {
     meta: { built: { ...built, eventIndex: ++jei } },
   });
 
-  let raw;
+  let raw: unknown;
 
   // ----------------------------------------
   // HARDENED FETCH + JSON PARSE

@@ -7,7 +7,9 @@ export async function mbta(path: string, params: Record<string, string> = {}) {
   url.searchParams.set("fields[trip]", "headsign,destination");
 
   // Add user params (like filter[stop])
-  Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
+  Object.entries(params).forEach(([k, v]) => {
+    url.searchParams.set(k, v);
+  });
 
   const res = await fetch(url.toString(), {
     headers: {

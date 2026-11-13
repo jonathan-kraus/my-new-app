@@ -168,6 +168,7 @@ export default function LogsPage() {
         <div className="flex items-center justify-between gap-4">
           {newCount > 0 && (
             <button
+              type="button"
               onClick={() => setNewCount(0)}
               className="px-3 py-1 bg-green-500/20 border border-green-500/40
                text-green-300 rounded-lg text-sm font-medium animate-fadeIn"
@@ -184,6 +185,7 @@ export default function LogsPage() {
           </div>
 
           <button
+            type="button"
             onClick={() => setLive((l) => !l)}
             className={`px-3 py-1 rounded-lg border text-sm transition flex items-center gap-2 ${
               live
@@ -209,6 +211,7 @@ export default function LogsPage() {
           />
 
           <button
+            type="button"
             onClick={() => {
               setPage(0);
               setSearch("");
@@ -304,6 +307,7 @@ export default function LogsPage() {
           {hasLogs && (
             <div className="mt-4 flex justify-center">
               <button
+                type="button"
                 onClick={() => setPage((p) => p + 1)}
                 disabled={isLoadingMore}
                 className="px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-sm text-gray-100 hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed transition"

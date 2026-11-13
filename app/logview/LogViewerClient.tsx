@@ -308,6 +308,7 @@ export default function LogViewerClient() {
           ["debug", "Debug", levelCounts.debug ?? 0],
         ].map(([val, label, cnt]) => (
           <button
+            type="button"
             key={val}
             onClick={() => setSelectedLevel(String(val))}
             className={`flex items-center gap-2 w-full px-4 py-1.5 text-xs font-sans text-left transition-colors rounded-none
@@ -334,6 +335,7 @@ export default function LogViewerClient() {
           {[{ domain: "all", count: totalAll }, ...domains].map(
             ({ domain, count }) => (
               <button
+                type="button"
                 key={domain}
                 onClick={() => setSelectedDomain(domain)}
                 className={`flex items-center gap-2 w-full px-4 py-1.5 text-xs font-sans text-left transition-colors
@@ -364,6 +366,7 @@ export default function LogViewerClient() {
               strokeWidth={2}
               viewBox="0 0 24 24"
             >
+              lv
               <circle cx="11" cy="11" r="8" />
               <path d="m21 21-4.35-4.35" />
             </svg>
@@ -408,6 +411,7 @@ export default function LogViewerClient() {
             )}
 
             <button
+              type="button"
               onClick={toggleTail}
               className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-sans rounded-md border transition-colors
                 ${
@@ -436,6 +440,7 @@ export default function LogViewerClient() {
                     fill="currentColor"
                     viewBox="0 0 24 24"
                   >
+                    lv
                     <path d="M8 5v14l11-7z" />
                   </svg>
                   Tail
@@ -446,6 +451,7 @@ export default function LogViewerClient() {
 
           {!tailing && (
             <button
+              type="button"
               onClick={() => fetchLogs({ reset: true })}
               className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-sans border border-zinc-200 dark:border-zinc-700 rounded-md bg-zinc-50 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors"
             >
@@ -456,6 +462,7 @@ export default function LogViewerClient() {
                 strokeWidth={2}
                 viewBox="0 0 24 24"
               >
+                lv
                 <path d="M21 12a9 9 0 1 1-6.219-8.56" />
               </svg>
               Refresh
@@ -573,6 +580,7 @@ export default function LogViewerClient() {
                   </span>
                 </div>
                 <button
+                  type="button"
                   onClick={() => setSelectedLog(null)}
                   className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
                 >
@@ -583,6 +591,7 @@ export default function LogViewerClient() {
                     strokeWidth={2}
                     viewBox="0 0 24 24"
                   >
+                    lv
                     <path d="M18 6 6 18M6 6l12 12" />
                   </svg>
                 </button>
@@ -652,6 +661,7 @@ export default function LogViewerClient() {
           {!loading && !tailing && total > PAGE_SIZE && (
             <div className="ml-auto flex items-center gap-2">
               <button
+                type="button"
                 onClick={() => goToOffset(offset - PAGE_SIZE)}
                 disabled={offset === 0}
                 className="disabled:opacity-30 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors"
@@ -663,6 +673,7 @@ export default function LogViewerClient() {
                 {Math.ceil(total / PAGE_SIZE)}
               </span>
               <button
+                type="button"
                 onClick={() => goToOffset(offset + PAGE_SIZE)}
                 disabled={offset + PAGE_SIZE >= total}
                 className="disabled:opacity-30 hover:text-zinc-700 dark:hover:text-zinc-200 transition-colors"

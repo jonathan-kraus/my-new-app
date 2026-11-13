@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { formatEastern } from "@/lib/utils/global";
 
 type ConfigRow = {
@@ -73,7 +73,7 @@ export default function ConfigReadPage() {
     new Date().toLocaleTimeString(),
   );
 
-  async function loadData() {
+  const loadData = useCallback(async () => {
     setStatus("loading");
     setError(null);
     console.log("ConfigReadPage: start function loadData");
@@ -92,7 +92,7 @@ export default function ConfigReadPage() {
       setStatus("error");
       setError(err instanceof Error ? err.message : String(err));
     }
-  }
+  }, []);
 
   useEffect(() => {
     queueMicrotask(() => {
@@ -110,6 +110,7 @@ export default function ConfigReadPage() {
         </div>
 
         <button
+          type="button"
           onClick={loadData}
           className="rounded bg-sky-600 px-3 py-1 text-sm font-medium hover:bg-sky-500"
         >

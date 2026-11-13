@@ -39,7 +39,10 @@ export default async function ProfilePage() {
             await signIn("github");
           }}
         >
-          <button className="px-4 py-2 bg-blue-600 text-white rounded">
+          <button
+            type="submit"
+            className="px-4 py-2 bg-blue-600 text-white rounded"
+          >
             Sign in with GitHub
           </button>
         </form>
@@ -69,7 +72,10 @@ export default async function ProfilePage() {
           await signOut();
         }}
       >
-        <button className="px-4 py-2 bg-red-600 text-white rounded">
+        <button
+          type="submit"
+          className="px-4 py-2 bg-red-600 text-white rounded"
+        >
           Sign out
         </button>
       </form>

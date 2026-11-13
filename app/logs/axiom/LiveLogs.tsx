@@ -4,7 +4,7 @@
  */
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { formatEastern } from "@/lib/utils/global";
 
 type LiveLog = {
@@ -20,13 +20,13 @@ export default function LiveLogs() {
   const [logs, setLogs] = useState<LiveLog[]>([]);
   const [loading, setLoading] = useState(true);
 
-  async function fetchLogs() {
+  const fetchLogs = useCallback(async () => {
     const res = await fetch("/api/logs/live", { cache: "no-store" });
     const json = await res.json();
     console.log("logs response:", json);
     setLogs(json.logs ?? []);
     setLoading(false);
-  }
+  }, []);
 
   useEffect(() => {
     queueMicrotask(() => {

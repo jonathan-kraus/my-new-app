@@ -168,6 +168,7 @@ export default function GitHubActivityFeed() {
       <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4">
         <p className="text-red-400">Error loading GitHub activity: {error}</p>
         <button
+          type="button"
           onClick={fetchActivity}
           className="mt-2 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
         >
@@ -183,7 +184,7 @@ export default function GitHubActivityFeed() {
       <div className="bg-black/20 rounded-lg p-4 space-y-3">
         <div className="flex gap-2">
           <button
-            type="submit"
+            type="button"
             onClick={() => setType("repositories")}
             className={`px-3 py-1 rounded ${
               type === "repositories"
@@ -194,6 +195,7 @@ export default function GitHubActivityFeed() {
             Repositories
           </button>
           <button
+            type="button"
             onClick={() => setType("user")}
             className={`px-3 py-1 rounded ${
               type === "user"
@@ -204,6 +206,7 @@ export default function GitHubActivityFeed() {
             User Activity
           </button>
           <button
+            type="button"
             onClick={() => setType("workflows")}
             className={`px-3 py-1 rounded ${
               type === "workflows"
@@ -255,6 +258,7 @@ export default function GitHubActivityFeed() {
         )}
 
         <button
+          type="button"
           onClick={fetchActivity}
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >

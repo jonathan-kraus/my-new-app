@@ -13,7 +13,9 @@ export default function GlobalError({
       <pre>{error.message}</pre>
       <pre>{error.digest}</pre>
 
-      <button onClick={() => reset()}>Try again</button>
+      <button type="button" onClick={() => reset()}>
+        Try again
+      </button>
     </div>
   );
 }
