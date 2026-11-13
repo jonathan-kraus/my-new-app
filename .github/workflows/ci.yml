@@ -51,7 +51,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Lint code
-        run: pnpm exec biome lint . | true
+        run: pnpm exec biome lint .
 
       - name: Validate Prisma contract and generated artifacts
         run: |
