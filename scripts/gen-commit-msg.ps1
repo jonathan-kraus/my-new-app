@@ -75,6 +75,8 @@ $body = @{
     }
 } | ConvertTo-Json -Depth 10
 
+$generatedMessage = $null
+
 try {
 
     Write-Host "[INFO] Testing Ollama..."
@@ -109,6 +111,7 @@ try {
     # sanitize multiline accidents
     $message = ($message -split "`r?`n")[0].Trim()
 $message = $message.Trim('"'' ')
+$generatedMessage = $message
 
 if ($message.Length -gt 120) {
     $message = $message.Substring(0,120).Trim()
@@ -129,6 +132,9 @@ catch {
     Write-Host ""
     Write-Host "[WARN] Ollama failed."
     Write-Host $_.Exception.ToString()
+    if (-not [string]::IsNullOrWhiteSpace($generatedMessage)) {
+        Write-Host "[DEBUG] Rejected generated commit message: $generatedMessage"
+    }
     Write-Host ""
 
     if ($changedFiles -contains "package.json") {
