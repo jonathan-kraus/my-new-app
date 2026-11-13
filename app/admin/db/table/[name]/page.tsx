@@ -152,6 +152,7 @@ export default async function TablePage({ params, searchParams }: PageProps) {
             name={tableData.name}
             columns={tableData.columns}
             rows={tableData.rows}
+            rowKeyFields={tableData.rowKeyFields}
             totalRows={tableData.totalRows}
             page={tableData.page}
             totalPages={tableData.totalPages}

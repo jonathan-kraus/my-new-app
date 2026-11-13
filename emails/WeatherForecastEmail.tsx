@@ -111,8 +111,8 @@ export default function WeatherForecastEmail(props: WeatherForecastEmailProps) {
                 </tr>
               </thead>
               <tbody>
-                {forecastRows.map((row, i) => (
-                  <tr key={i}>
+                {forecastRows.map((row) => (
+                  <tr key={`${row.date}-${row.max}-${row.min}`}>
                     <td style={styles.td}>{row.date}</td>
                     <td style={styles.td}>{row.max}°</td>
                     <td style={styles.td}>{row.min}°</td>

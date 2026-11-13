@@ -191,9 +191,9 @@ export function ForecastCard({
       <div className="overflow-hidden rounded-xl border border-white/10">
         <table className="w-full text-left">
           <tbody className="divide-y divide-white/10">
-            {rows.map((row, i) => (
+            {rows.map((row) => (
               <tr
-                key={i}
+                key={row.date.toISOString()}
                 className="hover:bg-white/5 transition-colors
                animate-[rowIn_0.4s_ease-out]
                [animation-delay:${i * 80}ms]"

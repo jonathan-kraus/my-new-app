@@ -103,7 +103,7 @@ export function RadarSkybox({ count }: { count: number }) {
           const x = (WIDTH / 10) * i;
           const y = (HEIGHT / 10) * i;
           return (
-            <g key={i}>
+            <g key={`${x}-${y}`}>
               <line
                 x1={x}
                 y1={0}
@@ -126,9 +126,9 @@ export function RadarSkybox({ count }: { count: number }) {
           );
         })}
         {/* Concentric rings (static base) */}
-        {[0.2, 0.4, 0.6, 0.8].map((r, i) => (
+        {[0.2, 0.4, 0.6, 0.8].map((r) => (
           <circle
-            key={i}
+            key={r}
             cx={WIDTH / 2}
             cy={HEIGHT / 2}
             r={(Math.min(WIDTH, HEIGHT) / 2) * r}
@@ -198,9 +198,9 @@ export function RadarSkybox({ count }: { count: number }) {
           </text>
         </g>
         {/* Planes */}
-        {planes.map((p, i) => (
+        {planes.map((p) => (
           <g
-            key={i}
+            key={`${p.x}-${p.y}`}
             transform={`translate(${p.x}, ${p.y})`}
             className="radar-plane"
           >

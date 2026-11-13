@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\logs\axiom\LiveLogs.tsx
- * @LastEditTime: 2026-07-24 17:55:27
+ * @LastEditTime: 2026-11-13 00:31:00
  */
 "use client";
 
@@ -8,9 +8,11 @@ import { useCallback, useEffect, useState } from "react";
 import { formatEastern } from "@/lib/utils/global";
 
 type LiveLog = {
+  requestId?: string | null;
+  eventIndex?: number;
+  _time?: string;
   level: string;
   domain?: string;
-  _time?: string;
   message?: string;
   file?: string;
   line?: number;
@@ -45,9 +47,9 @@ export default function LiveLogs() {
   console.log("jdate:", jdate);
   return (
     <div className="space-y-3">
-      {logs.map((log, i) => (
+      {logs.map((log) => (
         <div
-          key={i}
+          key={`${log.requestId ?? "no-request"}-${log.eventIndex ?? "no-index"}-${log._time ?? "no-time"}`}
           className="p-4 rounded-lg bg-black/40 border border-white/10 text-sm"
         >
           <div className="flex justify-between">

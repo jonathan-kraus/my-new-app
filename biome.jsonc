@@ -55,7 +55,8 @@
         "useSemanticElements": "off"
       },
       "suspicious": {
-        "noArrayIndexKey": "warn"
+        "noArrayIndexKey": "warn",
+        "noDocumentCookie": "warn"
       }
     }
   }

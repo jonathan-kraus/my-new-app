@@ -149,9 +149,9 @@ export default function GitHubActivityFeed() {
   if (loading) {
     return (
       <div className="space-y-4">
-        {[...Array(3)].map((_, i) => (
+        {["skeleton-1", "skeleton-2", "skeleton-3"].map((skeleton) => (
           <div
-            key={i}
+            key={skeleton}
             className="rounded-xl border bg-black/20 p-4 animate-pulse"
           >
             <div className="h-4 bg-gray-600 rounded mb-2"></div>

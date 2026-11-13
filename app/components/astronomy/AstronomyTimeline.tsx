@@ -152,14 +152,14 @@ export function AstronomyTimeline({
         {/* ...your existing ranges + markers + now line... */}
 
         {/* Golden + Blue Hour Ranges */}
-        {ranges.map((r, i) => {
+        {ranges.map((r) => {
           const left = pct(r.start);
           const right = pct(r.end);
           if (left === null || right === null) return null;
 
           return (
             <div
-              key={i}
+              key={`${r.start?.toISOString() ?? ""}-${r.end?.toISOString() ?? ""}-${r.color}`}
               className="absolute top-0 bottom-0"
               style={{
                 left: `${left}%`,

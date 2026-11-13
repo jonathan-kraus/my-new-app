@@ -187,6 +187,7 @@ type StorageColumn = {
 
 type StorageMetadata = {
   columns: Record<string, StorageColumn>;
+  primaryKey: { columns: string[] };
 };
 
 type DomainMetadata = {
@@ -270,6 +271,7 @@ export async function getTableDataWithPrisma(
     name: tableName,
     columns,
     rows,
+    rowKeyFields: storage.primaryKey.columns,
     totalRows,
     page,
     limit,

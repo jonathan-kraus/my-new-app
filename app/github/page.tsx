@@ -47,8 +47,8 @@ export default async function GitHubPage() {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {events.map((event, i) => (
-          <GitHubActivityCard key={i} event={event} />
+        {events.map((event) => (
+          <GitHubActivityCard key={event.id} event={event} />
         ))}
       </div>
     </div>

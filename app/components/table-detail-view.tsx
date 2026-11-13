@@ -24,6 +24,7 @@ interface TableDetailViewProps {
   name: string;
   columns: Column[];
   rows: Record<string, unknown>[];
+  rowKeyFields: string[];
   totalRows: number;
   page: number;
   totalPages: number;
@@ -41,6 +42,7 @@ export function TableDetailView({
   name,
   columns,
   rows,
+  rowKeyFields,
   totalRows,
   page,
   totalPages,
@@ -140,8 +142,12 @@ export function TableDetailView({
                   </TableCell>
                 </TableRow>
               ) : (
-                rows.map((row, i) => (
-                  <TableRow key={i}>
+                rows.map((row) => (
+                  <TableRow
+                    key={JSON.stringify(
+                      rowKeyFields.map((field) => row[field]),
+                    )}
+                  >
                     {columns.map((col) => (
                       <TableCell
                         key={col.name}
