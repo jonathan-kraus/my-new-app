@@ -48,7 +48,8 @@
       },
       "correctness": {
         "useParseIntRadix": "off",
-        "noComponentHookFactories": "off"
+        "noComponentHookFactories": "off",
+        "noUnusedVariables": "off"
       },
       "a11y": {
         "noSvgWithoutTitle": "off",
