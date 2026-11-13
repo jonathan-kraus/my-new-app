@@ -1,7 +1,7 @@
 "use client";
 /*
  * @FilePath: \my-new-app\app\components\SideNavClient.tsx
- * @LastEditTime: 2026-11-09 02:33:41
+ * @LastEditTime: 2026-11-12 19:28:20
  */
 
 import Link from "next/link";
@@ -172,6 +172,8 @@ export default function SideNavClient({
                 strokeLinejoin="round"
                 className="w-4 h-4"
               >
+                {" "}
+                pick
                 <path d="M4 4h16v16H4z" />
                 <path d="M4 4l8 8 8-8" />
               </svg>

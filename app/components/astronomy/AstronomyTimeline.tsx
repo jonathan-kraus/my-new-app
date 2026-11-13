@@ -138,6 +138,8 @@ export function AstronomyTimeline({
           viewBox="0 0 100 20"
           preserveAspectRatio="none"
         >
+          {" "}
+          mini
           <path
             d="M0 20 Q50 0 100 20"
             stroke="#fbbf24"

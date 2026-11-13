@@ -1,3 +1,7 @@
+/*
+ * @FilePath: \my-new-app\app\components\sidenav\EmailLink.tsx
+ * @LastEditTime: 2026-11-12 19:21:34
+ */
 "use client";
 // app\components\sidenav\EmailLink.tsx
 import { toast } from "react-hot-toast";
@@ -41,6 +45,7 @@ export function EmailSideNavLink() {
               {JSON.stringify(data, null, 2)}
             </pre>
             <button
+              type="submit"
               className="mt-3 px-3 py-1 bg-blue-600 rounded hover:bg-blue-700"
               onClick={() => toast.dismiss()}
             >
@@ -67,6 +72,7 @@ export function EmailSideNavLink() {
 
   return (
     <button
+      type="submit"
       onClick={handleClick}
       className="flex items-center gap-2 text-gray-300 hover:text-white"
     >

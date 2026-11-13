@@ -8,7 +8,7 @@ type SunriseCountdownProps = {
   timezone: string;
 };
 
-export function SunriseCountdown({ sunrise, timezone }: SunriseCountdownProps) {
+export function SunriseCountdown({ sunrise }: SunriseCountdownProps) {
   const [remaining, setRemaining] = useState<number | null>(null);
   const lastHourRef = useRef<number | null>(null);
   const eventFiredRef = useRef(false);

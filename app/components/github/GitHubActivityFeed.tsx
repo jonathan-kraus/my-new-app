@@ -183,6 +183,7 @@ export default function GitHubActivityFeed() {
       <div className="bg-black/20 rounded-lg p-4 space-y-3">
         <div className="flex gap-2">
           <button
+            type="submit"
             onClick={() => setType("repositories")}
             className={`px-3 py-1 rounded ${
               type === "repositories"

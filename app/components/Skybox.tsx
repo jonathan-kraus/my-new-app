@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 /*
- * @FilePath: \my-new-app\app\components\skybox.tsx
- * @LastEditTime: 2026-10-23 22:36:20
+ * @FilePath: \my-new-app\app\components\Skybox.tsx
+ * @LastEditTime: 2026-11-12 19:27:55
  */
 import type { Flight } from "@/lib/flight/types";
 
@@ -65,6 +65,7 @@ export default function Skybox({
               >
                 <td className="p-2">
                   <button
+                    type="submit"
                     onClick={() => onSelect(p.fa_flight_id)}
                     className="underline"
                   >

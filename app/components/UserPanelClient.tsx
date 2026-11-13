@@ -1,3 +1,7 @@
+/*
+ * @FilePath: \my-new-app\app\components\UserPanelClient.tsx
+ * @LastEditTime: 2026-11-12 19:27:13
+ */
 "use client";
 
 import { signIn } from "next-auth/react";
@@ -15,6 +19,7 @@ export default function UserPanelClient({ user }: { user: User }) {
         <p className="mb-2">Not signed in</p>
 
         <button
+          type="submit"
           onClick={() => signIn("github")}
           className="inline-flex items-center rounded bg-black px-3 py-1 text-[11px] font-medium"
         >

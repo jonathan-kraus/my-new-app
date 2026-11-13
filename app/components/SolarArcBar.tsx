@@ -1,3 +1,7 @@
+/*
+ * @FilePath: \my-new-app\app\components\SolarArcBar.tsx
+ * @LastEditTime: 2026-11-12 19:27:35
+ */
 "use client";
 // app/components/SolarArcBar.tsx
 
@@ -27,6 +31,7 @@ export function SolarArcBar({
         viewBox="0 0 100 50"
         preserveAspectRatio="none"
       >
+        arc
         <path
           d="M0,50 Q50,0 100,50"
           stroke="white"

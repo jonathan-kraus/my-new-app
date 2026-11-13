@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\components\RadarSkybox.tsx
- * @LastEditTime: 2026-03-10 14:57:04
+ * @LastEditTime: 2026-11-12 19:28:52
  */
 "use client";
 
@@ -72,6 +72,8 @@ export function RadarSkybox({ count }: { count: number }) {
         height="100%"
         style={{ display: "block" }}
       >
+        {" "}
+        box
         <defs>
           {/* Sweep gradient */}
           <linearGradient
@@ -94,10 +96,8 @@ export function RadarSkybox({ count }: { count: number }) {
             </feMerge>
           </filter>
         </defs>
-
         {/* Background */}
         <rect width={WIDTH} height={HEIGHT} fill="#050807" />
-
         {/* Grid */}
         {Array.from({ length: 10 }).map((_, i) => {
           const x = (WIDTH / 10) * i;
@@ -125,7 +125,6 @@ export function RadarSkybox({ count }: { count: number }) {
             </g>
           );
         })}
-
         {/* Concentric rings (static base) */}
         {[0.2, 0.4, 0.6, 0.8].map((r, i) => (
           <circle
@@ -139,7 +138,6 @@ export function RadarSkybox({ count }: { count: number }) {
             fill="none"
           />
         ))}
-
         {/* Pulsing ring */}
         <circle
           cx={WIDTH / 2}
@@ -151,7 +149,6 @@ export function RadarSkybox({ count }: { count: number }) {
           filter="url(#glow)"
           className="radar-pulse"
         />
-
         {/* Sweep (clockwise) */}
         <g
           style={{
@@ -169,7 +166,6 @@ export function RadarSkybox({ count }: { count: number }) {
             filter="url(#glow)"
           />
         </g>
-
         {/* Landmarks */}
         <g>
           {/* KPHL */}
@@ -201,7 +197,6 @@ export function RadarSkybox({ count }: { count: number }) {
             King of Prussia
           </text>
         </g>
-
         {/* Planes */}
         {planes.map((p, i) => (
           <g
