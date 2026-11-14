@@ -57,7 +57,9 @@ else
   fail "TypeScript errors"
   exit 1
 fi
-
+section "Check Outdated Dependencies"
+pnpm outdated
+pnpm update --latest
 # --- Build ---
 section "Building"
 if pnpm build; then
