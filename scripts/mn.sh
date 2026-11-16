@@ -59,6 +59,7 @@ else
 fi
 section "Check Outdated Dependencies"
 pnpm outdated
+section "Update Dependencies"
 pnpm update --latest
 # --- Build ---
 section "Building"
