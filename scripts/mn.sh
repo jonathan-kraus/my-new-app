@@ -58,7 +58,7 @@ else
   exit 1
 fi
 section "Check Outdated Dependencies"
-pnpm outdated
+pnpm check-out
 section "Update Dependencies"
 pnpm update --latest
 # --- Build ---
