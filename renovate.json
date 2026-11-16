@@ -5,7 +5,7 @@
   "ignoreTests": false,
   "packageRules": [
     {
-      "matchManagers": ["npm", "pnpm"],
+      "matchManagers": ["npm"],
       "automerge": true,
       "automergeType": "pr",
       "platformAutomerge": true
