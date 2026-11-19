@@ -22,9 +22,10 @@ async function GETHandler(request: Request) {
       level: "info",
       message: `🚇 Cron job triggered`,
       file: "app/api/cron/mbta/route.ts",
-      line: 16,
+      line: 20,
       payload: {
         method: built.method,
+        url: built.url,
       },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -40,7 +41,7 @@ async function GETHandler(request: Request) {
       level: "warn",
       message: `Cron authorization rejected`,
       file: "app/api/cron/mbta/route.ts",
-      line: 34,
+      line: 39,
       payload: {
         secretConfigured: Boolean(secret),
         authorizationPresent: Boolean(authorization),
@@ -58,9 +59,10 @@ async function GETHandler(request: Request) {
       level: "info",
       message: `🚇 Cron job succeeded`,
       file: "app/api/cron/mbta/route.ts",
-      line: 52,
+      line: 57,
       payload: {
         success: true,
+        url: built.url,
       },
       meta: { built: { ...built, eventIndex: ++jei } },
     });
@@ -75,7 +77,7 @@ async function GETHandler(request: Request) {
       level: "error",
       message: "Scheduled MBTA refresh failed",
       file: "app/api/cron/mbta/route.ts",
-      line: 69,
+      line: 75,
       payload: {
         errorName: error instanceof Error ? error.name : "UnknownError",
         errorMessage: error instanceof Error ? error.message : String(error),
