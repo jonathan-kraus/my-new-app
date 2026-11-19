@@ -21,6 +21,21 @@ function getRuntimeDatabaseUrl(): string {
   const databaseUrl = process.env.DATABASE_URL!;
   const url = new URL(databaseUrl);
 
+  console.log("sslmode =", url.searchParams.get("sslmode"));
+  console.log(
+    "connectionString =",
+    url.toString().replace(/:[^:@]+@/, ":***@"),
+  );
+
+  if (url) {
+    const parsed = new URL(url);
+
+    console.log("sslmode =", parsed.searchParams.get("sslmode"));
+    console.log(
+      "connectionString =",
+      parsed.toString().replace(/:[^:@]+@/, ":***@"),
+    );
+  }
   // Neon marks pooled endpoints with `-pooler` in the hostname. The Prisma
   // runtime sends startup parameters PgBouncer rejects, so derive its direct
   // endpoint when a separate DIRECT_URL is not configured (such as in CI).
