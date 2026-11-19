@@ -8,7 +8,11 @@ export const runtime = "nodejs";
 export const maxDuration = 300;
 
 async function GETHandler(request: Request) {
-  const built = staticUniversalContext("side-nav");
+  const built = {
+    ...staticUniversalContext("cron/mbta"),
+    method: request.method,
+    url: request.url,
+  };
   let jei = 0;
   const secret = process.env.CRON_SECRET;
   const authorization = request.headers.get("authorization");
