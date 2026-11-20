@@ -257,19 +257,13 @@ export default function LogViewerClient() {
     return () => clearTimeout(t);
   }, [newCount]);
 
-  // Initial load + refetch on filter changes (skipped while tailing, which
-  // drives its own fetching through the interval above).
-  useEffect(() => {
-    if (tailing) return;
-    fetchRef.current({ reset: true });
-  }, [tailing]);
-
-  // Debounced search.
+  // Initial load and refetch when any filter changes. While tailing, the
+  // polling interval below uses the latest fetchLogs callback instead.
   useEffect(() => {
     if (tailing) return;
     const t = setTimeout(() => fetchRef.current({ reset: true }), 350);
     return () => clearTimeout(t);
-  }, [tailing]);
+  }, [tailing, fetchLogs]);
 
   // ── Pagination ───────────────────────────────────────────────────────────
   const goToOffset = useCallback((next: number) => {
@@ -374,7 +368,7 @@ export default function LogViewerClient() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search message, requestId, user…"
+              placeholder="Search words across message, domain, file, user…"
               className="w-full pl-8 pr-3 py-1.5 text-xs bg-zinc-50 dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-md focus:outline-none focus:border-zinc-400 dark:focus:border-zinc-500 font-mono text-zinc-800 dark:text-zinc-200 placeholder-zinc-400"
             />
           </div>

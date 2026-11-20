@@ -8,7 +8,7 @@ import { withRequestTiming } from "@/lib/log/with-request-timing";
 // Query params:
 //   level    - filter by level (error|warn|info|debug)
 //   domain   - filter by domain
-//   search   - full-text search across message, requestId, sessionEmail, sessionUser
+//   search   - all words searched case-insensitively across log text fields
 //   window   - time window (1h|24h|7d|30d|all), default: 24h
 //   limit    - max rows, default 100, max 1000
 //   offset   - pagination offset, default: 0
@@ -70,12 +70,13 @@ async function GETHandler(req: NextRequest) {
     baseValues.push(domain);
   }
 
-  if (search) {
-    // same placeholder index repeated — Postgres allows this
+  const searchTerms = search?.trim().split(/\s+/).filter(Boolean) ?? [];
+  for (const term of searchTerms) {
+    // Each word must match one of these fields; words can match different fields.
     conditions.push(
-      `(message ILIKE $${p} OR "requestId" ILIKE $${p} OR "sessionEmail" ILIKE $${p} OR "sessionUser" ILIKE $${p} OR "userId" ILIKE $${p})`,
+      `(message ILIKE $${p} OR domain ILIKE $${p} OR level ILIKE $${p} OR file ILIKE $${p} OR "requestId" ILIKE $${p} OR "sessionEmail" ILIKE $${p} OR "sessionUser" ILIKE $${p} OR "userId" ILIKE $${p})`,
     );
-    baseValues.push(`%${search}%`);
+    baseValues.push(`%${term}%`);
     p++;
   }
 
