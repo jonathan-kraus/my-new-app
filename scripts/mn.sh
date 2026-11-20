@@ -59,6 +59,7 @@ else
 fi
 section "Check Outdated Dependencies"
 pnpm check-out
+echo -e "\n${GREEN}Done.${NC}"
 #section "Update Dependencies"
 #pnpm update --latest
 # --- Build ---

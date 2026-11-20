@@ -1,7 +1,7 @@
 /*
  * @FilePath: \my-new-app\src\lib\db.prisma8.ts
  * @LastEditors: Please set LastEditors
- * @LastEditTime: 2026-09-19 16:02:49
+ * @LastEditTime: 2026-11-19 17:22:09
  */
 import "temporal-polyfill/full/global";
 import "dotenv/config";
@@ -21,21 +21,6 @@ function getRuntimeDatabaseUrl(): string {
   const databaseUrl = process.env.DATABASE_URL!;
   const url = new URL(databaseUrl);
 
-  console.log("sslmode =", url.searchParams.get("sslmode"));
-  console.log(
-    "connectionString =",
-    url.toString().replace(/:[^:@]+@/, ":***@"),
-  );
-
-  if (url) {
-    const parsed = new URL(url);
-
-    console.log("sslmode =", parsed.searchParams.get("sslmode"));
-    console.log(
-      "connectionString =",
-      parsed.toString().replace(/:[^:@]+@/, ":***@"),
-    );
-  }
   // Neon marks pooled endpoints with `-pooler` in the hostname. The Prisma
   // runtime sends startup parameters PgBouncer rejects, so derive its direct
   // endpoint when a separate DIRECT_URL is not configured (such as in CI).
