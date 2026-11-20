@@ -261,7 +261,7 @@ export default function LogViewerClient() {
   // polling interval below uses the latest fetchLogs callback instead.
   useEffect(() => {
     if (tailing) return;
-    const t = setTimeout(() => fetchRef.current({ reset: true }), 350);
+    const t = setTimeout(() => fetchLogs({ reset: true }), 350);
     return () => clearTimeout(t);
   }, [tailing, fetchLogs]);
 
