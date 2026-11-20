@@ -74,7 +74,7 @@ async function GETHandler(req: NextRequest) {
   for (const term of searchTerms) {
     // Each word must match one of these fields; words can match different fields.
     conditions.push(
-      `(message ILIKE $${p} OR domain ILIKE $${p} OR level ILIKE $${p} OR file ILIKE $${p} OR "requestId" ILIKE $${p} OR "sessionEmail" ILIKE $${p} OR "sessionUser" ILIKE $${p} OR "userId" ILIKE $${p})`,
+      `(message ILIKE $${p} OR domain ILIKE $${p} OR level ILIKE $${p} OR file ILIKE $${p} OR "requestId" ILIKE $${p} OR "sessionEmail" ILIKE $${p} OR "sessionUser" ILIKE $${p} OR "userId" ILIKE $${p} OR payload::text ILIKE $${p} OR meta::text ILIKE $${p})`,
     );
     baseValues.push(`%${term}%`);
     p++;

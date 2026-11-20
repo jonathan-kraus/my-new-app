@@ -1,6 +1,6 @@
 /*
  * @FilePath: \my-new-app\app\forecast\page.tsx
- * @LastEditTime: 2026-10-31 22:10:36
+ * @LastEditTime: 2026-11-20 17:33:02
  */
 // app/forecast/page.tsx
 
@@ -24,11 +24,21 @@ export async function generateMetadata() {
 
   const temperatureDecimal =
     latestWeather?.temperature?.toString().split(".")[1] ?? null;
+  const snapshot = await db8.orm.public.AstronomySnapshot.where((row) =>
+    row.locationId.eq("KOP"),
+  )
+    .orderBy((row) => row.dateString.desc())
+    .select("moonPhase")
+    .first();
+
+  const moonPhase = snapshot?.moonPhase ?? null;
+  const moonDecimal = moonPhase?.toString().slice(4, 6);
+
   const N3 = temperatureDecimal ? parseInt(temperatureDecimal, 10) : null;
   const key = "N3";
   const stringValue = String(N3);
   const now = timestampString(new Date().toISOString());
-  console.log(`N3 is ${N3} new pnpm`);
+  console.log(`N3 is ${N3} MD is ${moonDecimal}`);
   const temperature = latestWeather?.temperature ?? null;
   const row = await db8.orm.public.RuntimeConfig.upsert({
     create: {
