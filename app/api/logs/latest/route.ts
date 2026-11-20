@@ -21,14 +21,18 @@ async function GETHandler(req: NextRequest) {
       query = query.where((log) => log.createdAt.gt(cutoff));
     }
 
-    if (search) {
-      const pattern = `%${search}%`;
+    const searchTerms = search.trim().split(/\s+/).filter(Boolean);
+    for (const term of searchTerms) {
+      const pattern = `%${term}%`;
       query = query.where((log) =>
         or(
-          log.message.like(pattern),
-          log.level.like(pattern),
-          log.file.like(pattern),
-          log.requestId.like(pattern),
+          log.message.ilike(pattern),
+          log.domain.ilike(pattern),
+          log.level.ilike(pattern),
+          log.file.ilike(pattern),
+          log.requestId.ilike(pattern),
+          log.sessionEmail.ilike(pattern),
+          log.sessionUser.ilike(pattern),
         ),
       );
     }
