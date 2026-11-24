@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-11-23T22:38:51.101Z",
+  "timestamp": "2026-11-24T07:59:09.637Z",
   "git": {
-    "commit": "e760dcf49caa0c1a50353ed08687adc58da7f8f0",
-    "branch": "main"
+    "commit": "859ef70c7da84f233f413afb50afd58360e37684",
+    "branch": "codex/prisma-rc25-rc35-dev"
   },
   "tools": {
     "node": "v26.12.1",
@@ -11,6 +11,6 @@
     "typescript": "Version 7.1.0-beta",
     "biome": "Version: 2.6.8",
     "openmeteo": "1.2.3",
-    "prisma": "8.0.0-rc.34"
+    "prisma": "8.0.0-rc.35-dev.197"
   }
 }
