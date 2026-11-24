@@ -7,7 +7,7 @@
   "packageManager": "pnpm@12.23.0+sha512.02da94ffaf133f46074322afe552f90d40b5f71ae259aefbccdacc5085b1d617e98d65e0131f5748b9b67445978ee5055d7d59a473f1eef0d504854fefcd5975",
   "overrides": {
     "ajv": "8.20.0",
-    "brace-expansion": "5.0.13",
+    "brace-expansion": "5.1.0",
     "effect": "4.1.5",
     "flatted": "3.4.4",
     "h3": "2.0.8",
