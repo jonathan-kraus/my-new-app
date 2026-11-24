@@ -154,7 +154,7 @@ export function ForecastCard({
       level: "info",
       message: "Forecast card data updated.",
       file: "app/forecast/ForecastCard.tsx",
-      line: 151,
+      line: 152,
       payload: {
         location: location,
         current: current,
