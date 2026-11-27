@@ -388,7 +388,7 @@ importers:
         version: 3.11.2(@types/react@19.3.3)(react-dom@19.3.1(react@19.3.1))(react-is@19.3.1)(react@19.3.1)(redux@5.0.1)
       resend:
         specifier: ^6.39.0
-        version: 6.40.1(@react-email/render@2.3.1(react-dom@19.3.1(react@19.3.1))(react@19.3.1))
+        version: 6.41.0(@react-email/render@2.3.1(react-dom@19.3.1(react@19.3.1))(react@19.3.1))
       semver:
         specifier: 7.8.6
         version: 7.8.6
@@ -4043,8 +4043,8 @@ packages:
   reselect@5.2.0:
     resolution: {integrity: sha512-AgZ3UOZm3YndfrJ4OYjgrT7bmCm/1iqkjvEfH/oYjzh6PD2qw4QuT3jjnXIrpdt4MTpMXclMT3lXbmRY+XRakw==}
 
-  resend@6.40.1:
-    resolution: {integrity: sha512-WUeXIMz4FkIyDuUlV++qMDubYrSB0qTo3ZD+upIxvsqoJmVNx/Q7oWCMd/7JbsiTiWMRsPtgOXKwRFfxzIUYxA==}
+  resend@6.41.0:
+    resolution: {integrity: sha512-9IjKh49JeICVsb3gd2YstwtBsfLHmWgmNh0uIRPJdT+qyGwyfbF/TiR8ce1w4ucPwh3iEeAUD29zjGr5tdJ0TQ==}
     engines: {node: '>=20'}
     peerDependencies:
       '@react-email/render': '*'
@@ -7791,7 +7791,7 @@ snapshots:
 
   reselect@5.2.0: {}
 
-  resend@6.40.1(@react-email/render@2.3.1(react-dom@19.3.1(react@19.3.1))(react@19.3.1)):
+  resend@6.41.0(@react-email/render@2.3.1(react-dom@19.3.1(react@19.3.1))(react@19.3.1)):
     dependencies:
       postal-mime: 2.7.6
       standardwebhooks: 1.1.1
