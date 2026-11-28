@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-11-28T02:33:45.315Z",
+  "timestamp": "2026-11-28T02:53:29.952Z",
   "git": {
-    "commit": "7d165d7cba60d0bc3a7af2b245c8904a313b72bf",
+    "commit": "ec3cf3d964348ab458e75762f44ecac48b1df03a",
     "branch": "main"
   },
   "tools": {
@@ -11,6 +11,6 @@
     "typescript": "Version 7.1.0-beta",
     "biome": "Version: 2.6.9",
     "openmeteo": "1.2.3",
-    "prisma": "8.0.0-rc.35-dev.197"
+    "prisma": "8.0.0-rc.36-dev.202"
   }
 }
